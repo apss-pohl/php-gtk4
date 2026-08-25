@@ -1,10 +1,9 @@
 # stubs/
 
-- `gtk4.stub.php` — **the API declaration, single source of truth** (php-src stub format: typed
-  signatures, docblocks, `@generate-class-entries`). Edit this.
-- `gtk4.php` — IDE stub **generated** by `gen/ide-stub.php` (same declarations with dummy bodies so
-  Intelephense/PhpStorm stay quiet). Do not edit; `./ci.sh --only=stubs --fix` regenerates it and
-  `src/gtk4_arginfo.h`.
+`gtk4.php` — IDE stub, **generated** from the API declaration `src/gtk4.stub.php` by
+`gen/ide-stub.php` (same declarations with dummy bodies so Intelephense/PhpStorm stay quiet,
+plus `__get/__set/__isset` on `GObject` so `@property` tags are honoured). Do not edit;
+`./ci.sh --only=stubs --fix` regenerates it together with `src/gtk4_arginfo.h`.
 
 **VS Code (Intelephense)**: any `.php` in the workspace is indexed. For a project outside this
 repo add to `settings.json`:

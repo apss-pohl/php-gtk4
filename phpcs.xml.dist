@@ -8,7 +8,6 @@
     <file>gen</file>
     <exclude-pattern>vendor/*</exclude-pattern>
     <exclude-pattern>stubs/gtk4.php</exclude-pattern>
-    <exclude-pattern>stubs/gtk4.stub.php</exclude-pattern>
     <exclude-pattern>gen/gen_stub.php</exclude-pattern>
     <exclude-pattern>gen/PHP-Parser-*</exclude-pattern>
 
@@ -28,8 +27,9 @@
         </properties>
     </rule>
 
-    <!-- stubs/gtk4.php mirrors the GTK C API: snake_case methods, all classes
-         in one file, one-line dummy bodies. -->
+    <!-- Decision (docs/PLAN.md): the API is snake_case like the GTK C API, final.
+         stubs/gtk4.php mirrors it: snake_case methods, all classes in one file,
+         one-line dummy bodies. -->
     <rule ref="PSR1.Methods.CamelCapsMethodName">
         <exclude-pattern>stubs/*</exclude-pattern>
     </rule>

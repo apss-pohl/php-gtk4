@@ -1,0 +1,607 @@
+<?php
+
+
+/**
+ * php-gtk4 API declaration - the single source of truth.
+ *
+ * gen/gen_stub.php turns this file into gtk4_arginfo.h next to it (class entries,
+ * method tables, typed arginfo); gen/ide-stub.php turns it into stubs/gtk4.php for
+ * IDEs (same declarations with dummy bodies). Never edit those two by hand;
+ * regenerate with `./ci.sh --only=stubs --fix`.
+ *
+ * PHP class names equal GType names; method names equal the GTK C function
+ * names with the type prefix stripped (gtk_window_set_title -> set_title).
+ *
+ * @generate-class-entries
+ * @generate-legacy-arginfo 80400
+ */
+
+namespace Gtk4;
+
+/**
+ * Extension version, version_compare()-friendly.
+ * @var string
+ */
+const VERSION = '0.1.0';
+
+/**
+ * "built <date>, git <hash>" of the loaded binary.
+ * @var string
+ * @cvalue PHPGTK_BUILD_INFO
+ */
+const BUILD_INFO = UNKNOWN;
+
+/**
+ * Compiled-in optional features, e.g. "webkit=no".
+ * @var string
+ * @cvalue PHPGTK_BUILD_FEATURES
+ */
+const FEATURES = UNKNOWN;
+
+/**
+ * Root handle for any GObject.
+ *
+ * A PHP object is a handle that owns one reference on the C object. Wrapping
+ * the same C object twice yields the same PHP object (`===` holds). Handles
+ * cannot be cloned or serialized. GObject properties are also readable and
+ * writable as PHP properties (`$window->title`).
+ *
+ * @link https://docs.gtk.org/gobject/class.Object.html
+ * @not-serializable
+ */
+class GObject
+{
+    /**
+     * Connect a handler to a signal (optionally detailed, e.g. "notify::title").
+     *
+     * The handler receives the emitting object first, then the signal's own
+     * parameters (`notify` passes a {@see GParamSpec}). Capture extra context with a closure (`use ($x)`). Its return
+     * value is used for signals that return one (e.g. `close-request` -> bool).
+     *
+     * What happens when the handler throws depends on {@see Gtk::set_exception_mode()}:
+     * `ExceptionMode::Log` (default) reports it to the {@see Gtk::set_exception_handler()}
+     * callable (or g_critical() on stderr) and GTK continues; `ExceptionMode::Rethrow`
+     * stops any running main loop and rethrows it to the PHP code that triggered the
+     * emission (or from {@see GtkApplication::run()} / {@see GMainLoop::run()}).
+     *
+     * @return int Handler id for {@see handler_disconnect()}
+     * @throws \ValueError If the signal does not exist on this object
+     */
+    public function connect(string $signal, callable $handler): int {}
+
+    /** Same as {@see connect()} but the handler runs after the default class handler. */
+    public function connect_after(string $signal, callable $handler): int {}
+
+    /**
+     * Emit a signal on this object with the given arguments (converted to the
+     * signal's parameter types) and return the signal's return value, if any.
+     *
+     * @throws \ValueError If the signal does not exist or the argument count is wrong
+     */
+    public function emit(string $signal, mixed ...$args): mixed {}
+
+    /** Disconnect a handler previously returned by connect(). No-op if already disconnected. */
+    public function handler_disconnect(int $handlerId): void {}
+
+    /**
+     * Read a GObject property by name, converted to the matching PHP type.
+     *
+     * @throws \ValueError If the property does not exist
+     */
+    public function get_property(string $name): mixed {}
+
+    /**
+     * Write a GObject property by name; the value is converted to the property's GType.
+     *
+     * @throws \ValueError If the property does not exist
+     * @throws \TypeError If the value cannot be converted
+     */
+    public function set_property(string $name, mixed $value): void {}
+}
+
+/**
+ * Metadata of a GObject property, as passed to `notify` handlers.
+ *
+ * @link https://docs.gtk.org/gobject/class.ParamSpec.html
+ * @not-serializable
+ */
+final class GParamSpec
+{
+    public function get_name(): string {}
+
+    public function get_nick(): ?string {}
+
+    public function get_blurb(): ?string {}
+
+    /** GType name of the value, e.g. "gchararray", "gint", "GtkWindow". */
+    public function get_value_type(): string {}
+
+    /** GParamFlags bitmask (READABLE = 1, WRITABLE = 2, CONSTRUCT_ONLY = 8, ...). */
+    public function get_flags(): int {}
+
+    public function is_readable(): bool {}
+
+    public function is_writable(): bool {}
+
+    /** The property's default, converted like get_property(); null if the type is unsupported. */
+    public function get_default_value(): mixed {}
+}
+
+/**
+ * How a Throwable thrown inside a signal handler or GLib callback is handled.
+ */
+enum ExceptionMode: int
+{
+    /** Report via {@see Gtk::set_exception_handler()} (or g_critical()) and keep going. */
+    case Log = 0;
+    /**
+     * Stop any running {@see GtkApplication::run()} / {@see GMainLoop::run()} and rethrow the
+     * Throwable to the PHP code that triggered the callback (the emitting method call, or
+     * the run() call). Remaining PHP callbacks of the same emission are skipped.
+     */
+    case Rethrow = 1;
+}
+
+/**
+ * Static entry points: initialisation and the callback exception policy.
+ * The main loop lives in {@see GtkApplication} (preferred) and {@see GMainLoop}.
+ */
+final class Gtk
+{
+    /** Initialise GTK (gtk_init_check). Returns false if no display is available. */
+    public static function init(): bool {}
+
+    /**
+     * Install (or with null, remove) the callable that receives exceptions
+     * thrown inside signal handlers and other callbacks. Signature:
+     * `function (\Throwable $exception, string $origin): void`; $origin is the
+     * signal name, or the installing method for non-signal callbacks. Called in
+     * both exception modes, before a rethrow.
+     */
+    public static function set_exception_handler(?callable $handler): void {}
+
+    public static function set_exception_mode(ExceptionMode $mode): void {}
+
+    public static function get_exception_mode(): ExceptionMode {}
+}
+
+/**
+ * GLib main-context helpers (idle and timeout sources on the default context).
+ * Callbacks return bool: true keeps the source, false removes it (missing/null = false).
+ */
+final class GLib
+{
+    /** @return int Source id for {@see source_remove()} */
+    public static function idle_add(callable $callback): int {}
+
+    /** @return int Source id for {@see source_remove()} */
+    public static function timeout_add(int $intervalMs, callable $callback): int {}
+
+    /** Remove an idle/timeout source; false if it was already gone. */
+    public static function source_remove(int $sourceId): bool {}
+}
+
+/**
+ * A bare GLib main loop on the default context. Prefer {@see GtkApplication}
+ * for applications; use this for scripts and tests that just need to pump
+ * events.
+ *
+ * @link https://docs.gtk.org/glib/struct.MainLoop.html
+ * @not-serializable
+ */
+final class GMainLoop
+{
+    public function __construct() {}
+
+    /**
+     * Run until {@see quit()}. Reentrant runs are refused.
+     *
+     * @throws \LogicException If this loop is already running
+     */
+    public function run(): void {}
+
+    public function quit(): void {}
+
+    public function is_running(): bool {}
+}
+
+/**
+ * An action: a named, optionally parameterised and stateful operation.
+ * GVariant parameters and states are mapped to plain PHP values (bool, int,
+ * float, string, list, associative array, null for "maybe" types).
+ *
+ * @link https://docs.gtk.org/gio/iface.Action.html
+ */
+interface GAction
+{
+    public function get_name(): string;
+
+    public function get_enabled(): bool;
+
+    /** GVariant type string of the activation parameter (e.g. "s", "i"), or null. */
+    public function get_parameter_type(): ?string;
+
+    /** Current state as a PHP value, or null for a stateless action. */
+    public function get_state(): mixed;
+}
+
+/**
+ * A container of actions, keyed by name.
+ *
+ * @link https://docs.gtk.org/gio/iface.ActionMap.html
+ */
+interface GActionMap
+{
+    public function add_action(GAction $action): void;
+
+    public function remove_action(string $name): void;
+
+    public function lookup_action(string $name): ?GAction;
+}
+
+/**
+ * Something that can activate its actions by name.
+ *
+ * @link https://docs.gtk.org/gio/iface.ActionGroup.html
+ */
+interface GActionGroup
+{
+    public function has_action(string $name): bool;
+
+    /** @return list<string> */
+    public function list_actions(): array;
+
+    /** Activate by name; $parameter is converted to the action's parameter type. */
+    public function activate_action(string $name, mixed $parameter = null): void;
+}
+
+/**
+ * The plain GAction implementation: emits `activate` (with the parameter as a
+ * PHP value) and, if stateful, `change-state`.
+ *
+ * ```php
+ * $quit = new GSimpleAction('quit');
+ * $quit->connect('activate', fn() => $app->quit());
+ * $app->add_action($quit);            // reachable as "app.quit"
+ * ```
+ *
+ * @property string $name
+ * @property bool $enabled
+ * @property ?string $parameter_type
+ * @property mixed $state
+ *
+ * @link https://docs.gtk.org/gio/class.SimpleAction.html
+ * @not-serializable
+ */
+class GSimpleAction extends GObject implements GAction
+{
+    /**
+     * @param string $name Action name (letters, digits, `-` and `.`)
+     * @param string|null $parameterType GVariant type string the `activate` parameter must have, or null for none
+     * @param mixed $state Initial state for a stateful action (its GVariant type is inferred), or null for stateless
+     */
+    public function __construct(string $name, ?string $parameterType = null, mixed $state = null) {}
+
+    public function get_name(): string {}
+
+    public function get_enabled(): bool {}
+
+    public function set_enabled(bool $enabled): void {}
+
+    public function get_parameter_type(): ?string {}
+
+    public function get_state(): mixed {}
+
+    /** Set the state directly (emits `notify::state`, not `change-state`). */
+    public function set_state(mixed $state): void {}
+
+    /** Activate as if through an action group; emits `activate`. */
+    public function activate(mixed $parameter = null): void {}
+}
+
+/**
+ * The application object: owns the main loop and the windows.
+ *
+ * ```php
+ * $app = new GtkApplication('org.example.Hello');
+ * $app->connect('activate', function (GtkApplication $app): void {
+ *     $win = new GtkWindow($app);
+ *     $win->present();
+ * });
+ * exit($app->run($argv));
+ * ```
+ *
+ * @property ?string $application_id
+ * @property ?GtkWindow $active_window
+ *
+ * @link https://docs.gtk.org/gtk4/class.Application.html
+ * @not-serializable
+ */
+class GtkApplication extends GObject implements GActionMap, GActionGroup
+{
+    /**
+     * @param string|null $applicationId Reverse-DNS id, or null for a non-unique app
+     * @param int $flags GApplicationFlags bitmask (0 = G_APPLICATION_DEFAULT_FLAGS)
+     */
+    public function __construct(?string $applicationId = null, int $flags = 0) {}
+
+    /**
+     * Run the application (emits `startup`, `activate`, ...) until the last
+     * window closes or {@see quit()} is called.
+     *
+     * @param array $argv Command line as passed to the script (list of strings)
+     * @return int Exit status
+     */
+    public function run(array $argv = []): int {}
+
+    public function quit(): void {}
+
+    public function add_window(GtkWindow $window): void {}
+
+    public function get_active_window(): ?GtkWindow {}
+
+    public function get_application_id(): ?string {}
+
+    public function add_action(GAction $action): void {}
+
+    public function remove_action(string $name): void {}
+
+    public function lookup_action(string $name): ?GAction {}
+
+    /**
+     * GActionGroup methods (has_action, list_actions, activate_action) work once the
+     * application is registered, i.e. from `startup` on; add/remove/lookup_action work any time.
+     */
+    public function has_action(string $name): bool {}
+
+    public function list_actions(): array {}
+
+    public function activate_action(string $name, mixed $parameter = null): void {}
+}
+
+/**
+ * An RGBA colour (a boxed value type: cloneable, compared by value).
+ *
+ * @property float $red   0.0 .. 1.0
+ * @property float $green 0.0 .. 1.0
+ * @property float $blue  0.0 .. 1.0
+ * @property float $alpha 0.0 .. 1.0
+ *
+ * @link https://docs.gtk.org/gdk4/struct.RGBA.html
+ * @not-serializable
+ */
+final class GdkRGBA
+{
+    /**
+     * @param string|null $css A CSS colour (`#rrggbb`, `rgba(...)`, a name); null = transparent black
+     * @throws \ValueError If the string cannot be parsed
+     */
+    public function __construct(?string $css = null) {}
+
+    /** Parse a CSS colour into this value; false if it is not valid. */
+    public function parse(string $css): bool {}
+
+    /** CSS representation, e.g. `rgb(255,0,0)` or `rgba(255,0,0,0.5)`. */
+    public function to_string(): string {}
+
+    public function equal(GdkRGBA $other): bool {}
+
+    public function is_opaque(): bool {}
+}
+
+/**
+ * An integer rectangle (a boxed value type: cloneable, compared by value).
+ *
+ * @property int $x
+ * @property int $y
+ * @property int $width
+ * @property int $height
+ *
+ * @link https://docs.gtk.org/gdk4/struct.Rectangle.html
+ * @not-serializable
+ */
+final class GdkRectangle
+{
+    public function __construct(int $x = 0, int $y = 0, int $width = 0, int $height = 0) {}
+
+    /** The overlap with $other, or null if they do not intersect. */
+    public function intersect(GdkRectangle $other): ?GdkRectangle {}
+
+    /** The smallest rectangle containing both. */
+    public function union(GdkRectangle $other): GdkRectangle {}
+
+    public function contains_point(int $x, int $y): bool {}
+
+    public function equal(GdkRectangle $other): bool {}
+}
+
+/**
+ * Base class of all widgets. Not instantiable from PHP.
+ *
+ * GObject properties are also available as PHP properties (dashes become
+ * underscores).
+ *
+ * @property bool $visible
+ * @property bool $sensitive
+ * @property bool $can_focus
+ * @property bool $has_focus
+ * @property ?string $tooltip_text
+ * @property ?string $name
+ * @property int $halign
+ * @property int $valign
+ * @property int $margin_start
+ * @property int $margin_end
+ * @property int $margin_top
+ * @property int $margin_bottom
+ * @property float $opacity
+ * @property array $css_classes
+ * @property int $width_request
+ * @property int $height_request
+ * @property ?GtkWidget $parent
+ *
+ * @link https://docs.gtk.org/gtk4/class.Widget.html
+ * @not-serializable
+ */
+abstract class GtkWidget extends GObject
+{
+    public function show(): void {}
+
+    public function hide(): void {}
+
+    public function set_visible(bool $visible): void {}
+
+    public function get_visible(): bool {}
+
+    /** Whether the widget and all its ancestors are visible. */
+    public function is_visible(): bool {}
+
+    public function set_sensitive(bool $sensitive): void {}
+
+    public function get_sensitive(): bool {}
+
+    /** Minimum size in pixels; -1 = natural size. */
+    public function set_size_request(int $width, int $height): void {}
+
+    public function get_parent(): ?GtkWidget {}
+
+    /** The toplevel GtkWindow (or other root) this widget is in, if any. */
+    public function get_root(): ?GtkWidget {}
+
+    public function grab_focus(): bool {}
+
+    /** Activate the widget (a button emits `clicked`); false if it is not activatable. */
+    public function activate(): bool {}
+
+    public function set_tooltip_text(?string $text): void {}
+
+    public function get_tooltip_text(): ?string {}
+
+    public function set_name(?string $name): void {}
+
+    public function get_name(): ?string {}
+
+    public function add_css_class(string $cssClass): void {}
+
+    public function remove_css_class(string $cssClass): void {}
+
+    public function has_css_class(string $cssClass): bool {}
+
+    /** @return list<string> */
+    public function get_css_classes(): array {}
+
+    /** @param array $classes list of class names (replaces all current ones) */
+    public function set_css_classes(array $classes): void {}
+
+    /**
+     * Activate a named action ("app.quit", "win.close") found on this widget's ancestry.
+     * $parameter is converted to the action's parameter type. False if no such action.
+     */
+    public function activate_action(string $name, mixed $parameter = null): bool {}
+
+    /** Queue a redraw of the widget. */
+    public function queue_draw(): void {}
+}
+
+/**
+ * A widget that emits `clicked` when activated.
+ *
+ * @property ?string $label
+ * @property ?GtkWidget $child
+ *
+ * @link https://docs.gtk.org/gtk4/class.Button.html
+ * @not-serializable
+ */
+class GtkButton extends GtkWidget
+{
+    /** @param string|null $label Text label; null for an empty button */
+    public function __construct(?string $label = null) {}
+
+    public function set_label(?string $label): void {}
+
+    public function get_label(): ?string {}
+
+    public function set_child(?GtkWidget $child): void {}
+
+    public function get_child(): ?GtkWidget {}
+}
+
+/**
+ * A widget that displays a small amount of text.
+ *
+ * @property string $label
+ * @property bool $use_markup
+ * @property bool $selectable
+ * @property bool $wrap
+ *
+ * @link https://docs.gtk.org/gtk4/class.Label.html
+ * @not-serializable
+ */
+class GtkLabel extends GtkWidget
+{
+    public function __construct(?string $text = null) {}
+
+    public function set_text(string $text): void {}
+
+    public function get_text(): string {}
+
+    /** Set Pango markup, e.g. `<b>bold</b>`. */
+    public function set_markup(string $markup): void {}
+
+    public function set_selectable(bool $selectable): void {}
+
+    public function get_selectable(): bool {}
+}
+
+/**
+ * A toplevel window.
+ *
+ * GObject properties are also available as PHP properties (dashes become
+ * underscores). The generator will list every property here from the GIR;
+ * until then only the ones the tests and the example use are declared.
+ *
+ * @property ?string $title
+ * @property int $default_width
+ * @property int $default_height
+ * @property bool $resizable
+ * @property bool $modal
+ * @property bool $visible
+ * @property ?GtkWindow $transient_for
+ * @property ?GtkWidget $child
+ * @property ?GtkApplication $application
+ *
+ * @link https://docs.gtk.org/gtk4/class.Window.html
+ * @not-serializable
+ */
+class GtkWindow extends GtkWidget
+{
+    /** @param GtkApplication|null $application Owning application (keeps its main loop alive) */
+    public function __construct(?GtkApplication $application = null) {}
+
+    public function set_application(?GtkApplication $application): void {}
+
+    public function get_application(): ?GtkApplication {}
+
+    public function set_title(?string $title): void {}
+
+    public function get_title(): ?string {}
+
+    /** Default size in pixels; -1 to unset one dimension. */
+    public function set_default_size(int $width, int $height): void {}
+
+    /** Set (or with null, remove) the single child widget. */
+    public function set_child(?GtkWidget $child): void {}
+
+    public function get_child(): ?GtkWidget {}
+
+    /** Show the window and bring it to the front. */
+    public function present(): void {}
+
+    /** Request the window to close (emits close-request; a handler returning true cancels). */
+    public function close(): void {}
+
+    /**
+     * Drop GTK's reference to the toplevel and unrealize it. The PHP handle
+     * stays valid; `destroy` is emitted when the last handle is released.
+     */
+    public function destroy(): void {}
+}

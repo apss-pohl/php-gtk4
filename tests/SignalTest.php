@@ -9,20 +9,28 @@ use Gtk4\GObject;
 /** src/core/gsignal: connect(), marshalling of signal args, return values. */
 final class SignalTest extends GtkTestCase
 {
-    public function testHandlerReceivesObjectSignalArgsAndUserData(): void
+    public function testHandlerReceivesObjectAndSignalArgs(): void
     {
         $w = $this->window();
         $args = [];
-        $w->connect('notify::title', function (...$a) use (&$args): void {
-            $args = $a;
-        }, 'u1', 2);
+        $context = 'captured with use()';
+        $w->connect('notify::title', function (...$a) use (&$args, $context): void {
+            $args = [...$a, $context];
+        });
         $w->set_title('x');
 
-        self::assertCount(4, $args);
+        self::assertCount(3, $args);
         self::assertSame($w, $args[0]);
-        self::assertSame('title', $args[1], 'GParamSpec is exposed as its name for now');
-        self::assertSame('u1', $args[2]);
-        self::assertSame(2, $args[3]);
+        self::assertInstanceOf(\Gtk4\GParamSpec::class, $args[1]);
+        self::assertSame('title', $args[1]->get_name());
+        self::assertSame('captured with use()', $args[2]);
+    }
+
+    public function testExtraArgumentsAreRejected(): void
+    {
+        // php-gtk3 style user data is gone: closures capture context with use().
+        $this->expectException(\ArgumentCountError::class);
+        self::opaque([$this->window(), 'connect'])('notify::title', fn() => null, 'userdata');
     }
 
     public function testConnectReturnsUsableHandlerId(): void
@@ -72,8 +80,8 @@ final class SignalTest extends GtkTestCase
     {
         $w = $this->window();
         $props = [];
-        $w->connect('notify', function (GObject $o, string $pspec) use (&$props): void {
-            $props[] = $pspec;
+        $w->connect('notify', function (GObject $o, \Gtk4\GParamSpec $pspec) use (&$props): void {
+            $props[] = $pspec->get_name();
         });
         $w->set_property('resizable', false);
         $w->set_title('x');
@@ -96,6 +104,27 @@ final class SignalTest extends GtkTestCase
         $w->connect('close-request', fn() => false);
         $w->close();
         self::assertFalse($w->get_property('visible'));
+    }
+
+    public function testEmitDeliversArgumentsAndReturnValue(): void
+    {
+        $w = $this->window();
+        $w->present();
+        $w->connect('close-request', fn() => true);
+        self::assertTrue($w->emit('close-request'), 'handler return value comes back');
+        self::assertTrue($w->get_property('visible'), 'the veto really applied');
+    }
+
+    public function testEmitRejectsWrongArgumentCount(): void
+    {
+        $this->expectException(\ValueError::class);
+        $this->window()->emit('close-request', 'extra');
+    }
+
+    public function testEmitUnknownSignalThrows(): void
+    {
+        $this->expectException(\ValueError::class);
+        $this->window()->emit('no-such-signal');
     }
 
     public function testUnknownSignalThrows(): void
@@ -136,7 +165,8 @@ final class SignalTest extends GtkTestCase
         $w = $this->window();
         $ids = [];
         for ($i = 0; $i < 500; $i++) {
-            $ids[] = $w->connect('notify::title', fn() => null, str_repeat('x', 100));
+            $pad = str_repeat('x', 100);
+            $ids[] = $w->connect('notify::title', fn() => $pad);
         }
         foreach ($ids as $id) {
             $w->handler_disconnect($id);

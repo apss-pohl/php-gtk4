@@ -65,11 +65,13 @@ if test "$PHP_GTK4" != "no"; then
 
   PHP_SUBST([GTK4_SHARED_LIBADD])
 
-  GTK4_SOURCES="src/gtk4.cpp src/core/object.cpp src/core/marshal.cpp src/core/gsignal.cpp src/core/error.cpp src/Gtk/Gtk.cpp src/Gtk/GtkWindow.cpp"
+  GTK4_SOURCES="src/gtk4.cpp src/core/object.cpp src/core/marshal.cpp src/core/gsignal.cpp src/core/error.cpp src/core/callback.cpp src/core/mainloop.cpp src/core/paramspec.cpp src/core/teardown.cpp src/core/boxed.cpp src/core/variant.cpp src/Gio/GSimpleAction.cpp src/Gdk/GdkRGBA.cpp src/Gdk/GdkRectangle.cpp src/Gtk/Gtk.cpp src/Gtk/GtkWidget.cpp src/Gtk/GtkButton.cpp src/Gtk/GtkLabel.cpp src/Gtk/GMainLoop.cpp src/Gtk/GtkApplication.cpp src/Gtk/GtkWindow.cpp"
   PHP_NEW_EXTENSION([gtk4], [$GTK4_SOURCES], [$ext_shared], [], [$GTK4_CXXFLAGS], [cxx])
   PHP_ADD_BUILD_DIR([$ext_builddir/src])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/core])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/Gtk])
+  PHP_ADD_BUILD_DIR([$ext_builddir/src/Gdk])
+  PHP_ADD_BUILD_DIR([$ext_builddir/src/Gio])
   PHP_ADD_INCLUDE([$ext_srcdir])
   PHP_ADD_INCLUDE([$ext_srcdir/src])
 fi

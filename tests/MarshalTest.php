@@ -67,10 +67,10 @@ final class MarshalTest extends GtkTestCase
 
     public function testUnsupportedGTypeIsAnExceptionNotACrash(): void
     {
-        // css-classes is a GStrv (boxed) - not marshalled yet.
+        // GtkLabel:attributes is a PangoAttrList - a boxed type without a PHP class (yet).
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessageMatches('/to_php: unsupported GType GStrv/');
-        $this->window()->get_property('css-classes');
+        $this->expectExceptionMessageMatches('/PangoAttrList/');
+        new \Gtk4\GtkLabel()->set_property('attributes', 'x');
     }
 
     public function testStringCoercion(): void

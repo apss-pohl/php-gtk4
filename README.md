@@ -7,21 +7,30 @@
 [![GTK 4](https://img.shields.io/badge/GTK-4.14%2B-4A86CF?logo=gtk&logoColor=white)](https://www.gtk.org/)
 [![C++20](https://img.shields.io/badge/C%2B%2B-20-00599C?logo=cplusplus&logoColor=white)](https://en.cppreference.com/w/cpp/20)
 
-PHP extension binding GTK 4, written in C++20 against the native Zend API (standard `phpize` build). See `PLAN.md` for the design.
+PHP extension binding GTK 4, written in C++20 against the native Zend API (standard `phpize` build). See `docs/PLAN.md` for the design.
 
 ## Usage
 
 ```php
 <?php
-use Gtk4\{Gtk, GtkWindow};
+use Gtk4\{Gtk, GtkApplication, GtkWindow};
 
-Gtk::init();
-$win = new GtkWindow();
-$win->set_title('php-gtk4');
-$win->connect('close-request', function () { Gtk::main_quit(); return false; });
-$win->present();
-Gtk::main();
+$app = new GtkApplication('org.example.Hello');
+$app->connect('activate', function (GtkApplication $app): void {
+    $win = new GtkWindow($app);
+    $win->title = 'php-gtk4';            // GObject properties are PHP properties
+    $win->set_default_size(300, 200);
+    $win->connect('close-request', fn() => false);
+    $win->present();
+});
+exit($app->run($argv));
 ```
+
+Actions: `new GSimpleAction('quit')` + `$app->add_action()` — reachable as `app.quit` from widgets
+(`$button->activate_action('app.quit')`); GVariant parameters/states are plain PHP values.
+Exceptions thrown in handlers are logged by default; `Gtk::set_exception_mode(ExceptionMode::Rethrow)`
+makes them propagate out of `run()` instead. `Gtk4\GMainLoop` + `Gtk4\GLib::timeout_add()` cover
+scripts without windows.
 
 ## Build & install
 
@@ -37,7 +46,7 @@ bin/php-gtk4 examples/example.php          # canonical showcase of every element
 ```
 
 Configure options: `--enable-gtk4-webkit`, `--enable-gtk4-sanitize`, `--enable-gtk4-coverage`.
-The API is declared in `stubs/gtk4.stub.php`; `src/gtk4_arginfo.h` and the IDE stub `stubs/gtk4.php`
+The API is declared in `src/gtk4.stub.php`; `src/gtk4_arginfo.h` and the IDE stub `stubs/gtk4.php`
 are generated from it (`./ci.sh --only=stubs --fix`).
 
 ## Coexisting with php-gtk3
@@ -68,7 +77,7 @@ php-gtk4 stands on the shoulders of [**php-gtk3**](https://github.com/scorninpc/
 [Bruno Pitteli Gonçalves](https://github.com/scorninpc) and contributors, which kept PHP desktop
 development alive through the GTK 3 era. Its API shape (snake_case methods mirroring
 docs.gtk.org, signal handling, the examples) is the mental model this project starts from — even
-where php-gtk4 deliberately departs from it (see `PLAN.md`), the departures were only possible
+where php-gtk4 deliberately departs from it (see `docs/PLAN.md`), the departures were only possible
 because php-gtk3 showed what works. Thank you, Bruno.
 
 Further thanks to:
@@ -76,7 +85,7 @@ Further thanks to:
 - the [GTK](https://www.gtk.org/) and [GLib/GObject](https://docs.gtk.org/gobject/) teams for the
   toolkit and the introspection machinery that makes a binding feasible;
 - the [PHP](https://www.php.net/) project, whose `build/gen_stub.php` this repository vendors to
-  turn `stubs/gtk4.stub.php` into class entries and arginfo;
+  turn `src/gtk4.stub.php` into class entries and arginfo;
 - everyone who filed issues and sent patches to php-gtk3 — many of them shaped what is here.
 
 php-gtk3 is licensed under the LGPL-3.0; php-gtk4 is a from-scratch reimplementation against the

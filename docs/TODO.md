@@ -1,7 +1,7 @@
 # TODO
 
 Findings of the 2026-08-25 review ("best practice or php-gtk3 ballast?"). Ordered by impact.
-Tick items off here; design rationale lives in PLAN.md.
+Tick items off here; design rationale lives in docs/PLAN.md.
 
 ## 1. Runtime foundation — replace PHP-CPP with the native Zend API  ✅ done 2026-08-25
 
@@ -10,7 +10,7 @@ longer holds for a PHP 8.4+ target, and it blocks idiomatic PHP:
 
 - [x] `struct { GObject *obj; zend_object std; }` objects with custom handlers
       (`free_obj`, no clone, `get_debug_info`, `read_property`/`write_property` → GObject props)
-- [x] `stubs/gtk4.stub.php` as the **single source**: `gen_stub.php` → `gtk4_arginfo.h`
+- [x] `src/gtk4.stub.php` as the **single source**: `gen_stub.php` → `gtk4_arginfo.h`
       (typed arginfo, return types, nullable class types, enums, `#[\Deprecated]`); IDE stub is
       derived, not hand-synced → delete the sync half of `StubsTest`
 - [x] `phpize` / `config.m4` build (PIE/PECL-installable, Windows via php-sdk); drop the
@@ -19,22 +19,25 @@ longer holds for a PHP 8.4+ target, and it blocks idiomatic PHP:
       directly (no `call_user_func_array` round trip)
 - [x] arity/type violations = `ArgumentCountError`/`TypeError` (PHP 8 semantics), not `E_WARNING`
 - [x] exception boundary: capture the real `Throwable` (`EG(exception)`), hand the object to
-      `Gtk::set_exception_handler` (done); optional rethrow after the main loop returns (open)
+      `Gtk::set_exception_handler` (done); rethrow mode (done, §2)
 - [x] `var_dump($obj)` shows GObject properties (`get_debug_info`)
 
-## 2. GTK3 mental-model ballast in the PHP API
+## 2. GTK3 mental-model ballast in the PHP API  ✅ done 2026-08-25
 
-- [ ] `Gtk::main()` / `Gtk::main_quit()` (+ the `quit_pending` hack) → `GtkApplication::run()`
-      as the documented path, `GLib\MainLoop` for scripts that need a bare loop; keep `Gtk::init()`
-- [ ] `connect($signal, $handler, ...$userData)` → `connect(string $signal, callable $handler): int`;
+- [x] `Gtk::main()` / `Gtk::main_quit()` (+ the `quit_pending` hack) → `GtkApplication::run()`
+      as the documented path, `Gtk4\GMainLoop` (+ `GLib::idle_add/timeout_add/source_remove`) for
+      scripts that need a bare loop; `Gtk::init()` kept
+- [x] `connect($signal, $handler, ...$userData)` → `connect(string $signal, callable $handler): int`;
       PHP closures capture context with `use`
 - [x] `Gtk4\PHPGTK_VERSION` → `Gtk4\VERSION` etc. (double prefix)
-- [ ] exception model: keep log-and-continue as default, add rethrow mode (see 1)
+- [x] exception model: `Gtk4\ExceptionMode::Log` (default) / `::Rethrow` via
+      `Gtk::set_exception_mode()`; Rethrow stops running loops and propagates the Throwable
 
-## 3. Decisions to write down (currently inherited by inertia)
+## 3. Decisions to write down  ✅ done 2026-08-25
 
-- [ ] **snake_case methods** (`set_title`) — keep, for 1:1 mapping to docs.gtk.org and every other
-      binding (PyGObject, gjs, Vala); record in PLAN.md; phpcs exclusions become intentional
+- [x] **snake_case methods** (`set_title`) — kept, final. 1:1 mapping to docs.gtk.org and every
+      other binding (PyGObject, gjs, gtk-rs, Vala); recorded in docs/PLAN.md; single spelling, no
+      camelCase aliases; phpcs exclusion for the stub is intentional
 - [x] property access: `get_property()/set_property()` *and* `$obj->prop` via handlers
 
 - [ ] **Branch protection for `main`** — blocked: private repo on a Free plan (GitHub API returns
@@ -45,14 +48,18 @@ longer holds for a PHP 8.4+ target, and it blocks idiomatic PHP:
 - [x] **License file** — MIT, `LICENSE` added 2026-08-25 (matches composer.json);
       keep php-src header on `gen/gen_stub.php` (PHP License 3.01, MIT-compatible)
 
-## 4. Milestone 2 leftovers (unchanged by the review)
+## 4. Milestone 2 leftovers  ✅ done 2026-08-25
 
-- [ ] `BoxedWrapper` (GdkRectangle, GdkRGBA, GStrv, graphene types)
-- [ ] `G_TYPE_POINTER` (opaque handle), `G_TYPE_VARIANT`, real `GParamSpec` wrapper
-- [ ] interfaces as PHP interfaces (`GtkOrientable`, `GListModel`, …)
-- [ ] one `PhpCallable` abstraction for non-signal callbacks (timeout/idle, sorters, draw funcs)
-- [ ] `GtkWidget` layer between `GObject` and `GtkWindow`
-- [ ] closure teardown before Zend shutdown (MSHUTDOWN/RSHUTDOWN disconnect)
+- [x] boxed core (`src/core/boxed.*`: value handles, clone/compare by value, field properties) +
+      `GdkRGBA`, `GdkRectangle`, `GStrv` ↔ `list<string>`; graphene/GBytes/GError when an API needs them
+- [x] `G_TYPE_VARIANT` ↔ PHP values (`src/core/variant.*`), real `GParamSpec` class;
+      `G_TYPE_POINTER` deliberately unsupported (no meaningful PHP value)
+- [x] interface mechanism (`zend_class_implements` from the stub's `implements`): `GAction`,
+      `GActionMap`, `GActionGroup`; the rest come with the generator
+- [x] one callback abstraction for non-signal callbacks (`src/core/callback.*`, used by GLib
+      idle/timeout; reuse for sorters, draw funcs, factories)
+- [x] `GtkWidget` layer (+ `GtkButton`, `GtkLabel`), `GObject::emit()`
+- [x] closure/source teardown in RSHUTDOWN (`src/core/teardown.*`, `tests/scripts/shutdown.php`)
 
 ## 5. Keep (verified good, do not "clean up")
 

@@ -1,8 +1,12 @@
 #include "marshal.h"
 #include "object.h"
+#include "paramspec.h"
+#include "boxed.h"
+#include "variant.h"
 
 namespace phpgtk {
 
+// Whether to_php() can convert a value of this GType (used to skip fields in var_dump()).
 bool to_php_supported(GType t) {
   if (t == G_TYPE_GTYPE) return true;
   switch (G_TYPE_FUNDAMENTAL(t)) {
@@ -24,11 +28,16 @@ bool to_php_supported(GType t) {
     case G_TYPE_INTERFACE:
     case G_TYPE_PARAM:
       return true;
+    case G_TYPE_BOXED:
+      return t == G_TYPE_STRV || boxed_class_for_type(t) != nullptr;
+    case G_TYPE_VARIANT:
+      return true;
     default:
       return false;
   }
 }
 
+// GValue -> zval. Unsupported types: TypeError + null.
 void to_php(const GValue *v, zval *rv) {
   GType t = G_VALUE_TYPE(v);
   if (t == G_TYPE_GTYPE) {  // not a fundamental
@@ -88,22 +97,30 @@ void to_php(const GValue *v, zval *rv) {
     case G_TYPE_INTERFACE:
       wrap(G_OBJECT(g_value_get_object(v)), rv);
       return;
-    case G_TYPE_PARAM: {
-      // TODO: a GParamSpec class; until then expose the property name.
-      GParamSpec *spec = g_value_get_param(v);
-      if (spec == nullptr)
-        ZVAL_NULL(rv);
-      else
-        ZVAL_STRING(rv, g_param_spec_get_name(spec));
+    case G_TYPE_PARAM:
+      wrap_param_spec(g_value_get_param(v), rv);
+      return;
+    case G_TYPE_BOXED: {
+      if (t == G_TYPE_STRV) {
+        auto **strv = static_cast<char **>(g_value_get_boxed(v));
+        array_init(rv);
+        for (char **s = strv; s != nullptr && *s != nullptr; s++) add_next_index_string(rv, *s);
+        return;
+      }
+      wrap_boxed(t, g_value_get_boxed(v), rv);
       return;
     }
-    // TODO: BOXED (Boxed handle), VARIANT, POINTER (opaque handle)
+    case G_TYPE_VARIANT:
+      variant_to_php(g_value_get_variant(v), rv);
+      return;
+    // G_TYPE_POINTER stays unsupported on purpose (no meaningful PHP value).
     default:
       ZVAL_NULL(rv);
       zend_type_error("to_php: unsupported GType %s", g_type_name(t));
   }
 }
 
+// zval -> GValue of type `t`. Returns false (TypeError thrown, *out unset) on failure.
 bool to_gvalue(zval *pv, GType t, GValue *out) {
   g_value_init(out, t);
   switch (G_TYPE_FUNDAMENTAL(t)) {
@@ -168,6 +185,52 @@ bool to_gvalue(zval *pv, GType t, GValue *out) {
         return false;
       }
       g_value_set_object(out, o);
+      return true;
+    }
+    case G_TYPE_BOXED: {
+      if (t == G_TYPE_STRV) {
+        if (Z_TYPE_P(pv) != IS_ARRAY) {
+          g_value_unset(out);
+          zend_type_error("expected array of strings for %s, %s given", g_type_name(t),
+                          zend_zval_value_name(pv));
+          return false;
+        }
+        auto *builder = g_strv_builder_new();
+        zval *item;
+        // NOLINTNEXTLINE(readability-math-missing-parentheses) Zend macro expansion
+        ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(pv), item) {
+          zend_string *s = zval_get_string(item);
+          g_strv_builder_add(builder, ZSTR_VAL(s));
+          zend_string_release(s);
+        }
+        ZEND_HASH_FOREACH_END();
+        g_value_take_boxed(out, static_cast<gpointer>(g_strv_builder_end(builder)));
+        g_strv_builder_unref(builder);
+        return true;
+      }
+      if (Z_TYPE_P(pv) == IS_NULL) {
+        g_value_set_boxed(out, nullptr);
+        return true;
+      }
+      gpointer data = unwrap_boxed(pv, t);
+      if (data == nullptr) {
+        g_value_unset(out);
+        return false;
+      }
+      g_value_set_boxed(out, data);  // copies
+      return true;
+    }
+    case G_TYPE_VARIANT: {
+      if (Z_TYPE_P(pv) == IS_NULL) {
+        g_value_set_variant(out, nullptr);
+        return true;
+      }
+      GVariant *variant = php_to_variant(pv, nullptr);
+      if (variant == nullptr) {
+        g_value_unset(out);
+        return false;
+      }
+      g_value_take_variant(out, g_variant_ref_sink(variant));
       return true;
     }
     default:

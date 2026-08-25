@@ -9,7 +9,7 @@ use ReflectionExtension;
 use ReflectionMethod;
 
 /**
- * The API is declared once in stubs/gtk4.stub.php; gen_stub.php derives the
+ * The API is declared once in src/gtk4.stub.php; gen_stub.php derives the
  * arginfo the extension registers and gen/ide-stub.php derives stubs/gtk4.php.
  * These tests guard that chain: the IDE stub is current, and it agrees with
  * what the loaded extension actually registers.
@@ -33,7 +33,8 @@ final class StubsTest extends TestCase
         foreach ($ext->getClasses() as $class) {
             $own = array_filter(
                 $class->getMethods(),
-                fn(ReflectionMethod $m) => $m->getDeclaringClass()->getName() === $class->getName(),
+                fn(ReflectionMethod $m) => $m->getDeclaringClass()->getName() === $class->getName()
+                    && !in_array($m->getName(), ['cases', 'from', 'tryFrom'], true),  // enum built-ins
             );
             $methods = array_map(fn(ReflectionMethod $m) => $m->getName(), $own);
             sort($methods);
@@ -53,7 +54,8 @@ final class StubsTest extends TestCase
         $ns = isset($m[1]) ? $m[1] . '\\' : '';
 
         $classes = [];
-        preg_match_all('/^(?:final\s+)?class\s+(\w+)[^{]*\{(.*?)^\}/ms', $src, $found, PREG_SET_ORDER);
+        $classPattern = '/^(?:(?:final|abstract)\s+)?(?:class|enum|interface)\s+(\w+)[^{]*\{(.*?)^\}/ms';
+        preg_match_all($classPattern, $src, $found, PREG_SET_ORDER);
         foreach ($found as [, $name, $body]) {
             preg_match_all('/function\s+(\w+)\s*\(/', $body, $mm);
             // __get/__set/__isset in the IDE stub model the engine-level property handlers
@@ -77,7 +79,7 @@ final class StubsTest extends TestCase
 
     public function testIdeStubIsGeneratedFromTheStubSource(): void
     {
-        // stubs/gtk4.php is derived from stubs/gtk4.stub.php by gen/ide-stub.php.
+        // stubs/gtk4.php is derived from src/gtk4.stub.php by gen/ide-stub.php.
         $out = [];
         $cmd = sprintf(
             '%s %s --check 2>&1',

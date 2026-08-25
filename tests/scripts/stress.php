@@ -10,8 +10,11 @@ declare(strict_types=1);
  * dead objects around. ASan/LSan report use-after-free, overflows and leaks.
  */
 
+use Gtk4\GLib;
+use Gtk4\GMainLoop;
 use Gtk4\GObject;
 use Gtk4\Gtk;
+use Gtk4\GtkApplication;
 use Gtk4\GtkWindow;
 
 if (!Gtk::init()) {
@@ -33,9 +36,9 @@ for ($i = 0; $i < $rounds; $i++) {
 
     $ids = [];
     for ($j = 0; $j < 5; $j++) {
-        $ids[] = $w->connect('notify::title', function (GObject $o, string $p, int $n) use (&$hits): void {
-            $hits = ($hits ?? 0) + $n;
-        }, $j);
+        $ids[] = $w->connect('notify::title', function (GObject $o, Gtk4\GParamSpec $p) use (&$hits, $j): void {
+            $hits = ($hits ?? 0) + $j;
+        });
     }
     $ids[] = $w->connect_after('notify::title', fn() => null);
     $w->connect('notify::title', function (): void {
@@ -79,14 +82,30 @@ for ($i = 0; $i < $rounds; $i++) {
     unset($other);
 }
 
+// main loops: bare loop with idle/timeout sources, then an application run
+$loop = new GMainLoop();
+$ticks = 0;
+GLib::timeout_add(1, function () use (&$ticks, $loop): bool {
+    if (++$ticks >= 5) {
+        $loop->quit();
+        return false;
+    }
+    return true;
+});
+GLib::idle_add(fn() => throw new RuntimeException('expected idle'));
+$loop->run();
+$app = new GtkApplication(null, 1 << 5);
+$app->connect('activate', function (GtkApplication $a): void {
+    $w = new GtkWindow($a);
+    $w->present();
+    $w->close();
+});
+$app->run();
+
 Gtk::set_exception_handler(null);
-if ($reported !== 2 * $rounds) {  // two set_title() emissions per round
-    fwrite(STDERR, 'expected ' . (2 * $rounds) . " reported exceptions, got $reported\n");
+if ($reported !== 2 * $rounds + 1) {  // two set_title() emissions per round + the idle source
+    fwrite(STDERR, 'expected ' . (2 * $rounds + 1) . " reported exceptions, got $reported\n");
     exit(1);
 }
-
-// main loop enter/leave
-Gtk::main_quit();
-Gtk::main();
 
 echo "stress ok: $rounds rounds, ", count($keep), " windows alive at shutdown\n";

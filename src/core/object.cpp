@@ -14,15 +14,18 @@ static std::unordered_map<std::string, zend_class_entry *> &registry() {
   return map;
 }
 
+// qdata key under which a GObject stores the pointer to its PHP handle.
 static GQuark handle_quark() {
   static GQuark q = g_quark_from_static_string("php-gtk4-handle");
   return q;
 }
 
+// GWeakNotify: GTK finalized the object behind our back - null the handle instead of dangling.
 static void on_finalized(gpointer data, GObject *) {
   static_cast<Object *>(data)->obj = nullptr;
 }
 
+// Take ownership: ref_sink, register the back-pointer, arm the weak notify.
 void attach(Object *self, GObject *obj) {
   if (self->obj != nullptr || obj == nullptr) {
     g_critical("php-gtk4: attach() misuse");
@@ -33,6 +36,7 @@ void attach(Object *self, GObject *obj) {
   g_object_weak_ref(self->obj, on_finalized, self);
 }
 
+// Release ownership (free_obj): drop weak notify and back-pointer, unref.
 static void detach(Object *self) {
   if (self->obj == nullptr) return;
   g_object_weak_unref(self->obj, on_finalized, self);
@@ -52,6 +56,7 @@ static zend_object *create_object(zend_class_entry *ce) {
   return &self->std;
 }
 
+// free_obj handler: release the C object, then the standard zend_object parts.
 static void free_obj(zend_object *o) {
   Object *self = object_from_zend(o);
   detach(self);
@@ -68,6 +73,7 @@ static GParamSpec *find_property(Object *self, zend_string *member) {
   return g_object_class_find_property(G_OBJECT_GET_CLASS(self->obj), name.c_str());
 }
 
+// read_property handler: GObject properties first, then standard (declared/dynamic) ones.
 static zval *read_property(zend_object *o, zend_string *member, int type, void **cache_slot,
                            zval *rv) {
   Object *self = object_from_zend(o);
@@ -83,6 +89,7 @@ static zval *read_property(zend_object *o, zend_string *member, int type, void *
   return rv;
 }
 
+// write_property handler: GObject properties first, then standard ones.
 static zval *write_property(zend_object *o, zend_string *member, zval *value, void **cache_slot) {
   Object *self = object_from_zend(o);
   GParamSpec *spec = find_property(self, member);
@@ -97,6 +104,7 @@ static zval *write_property(zend_object *o, zend_string *member, zval *value, vo
   return value;
 }
 
+// has_property handler: isset()/empty()/property_exists() for GObject properties.
 static int has_property(zend_object *o, zend_string *member, int has_set_exists,
                         void **cache_slot) {
   Object *self = object_from_zend(o);
@@ -138,11 +146,13 @@ static HashTable *get_debug_info(zend_object *o, int *is_temp) {
   return ht;
 }
 
+// compare handler: handles are only equal to themselves (identity == same C object).
 static int compare_objects(zval *a, zval *b) {
   ZEND_COMPARE_OBJECTS_FALLBACK(a, b);
   return Z_OBJ_P(a) == Z_OBJ_P(b) ? 0 : 1;
 }
 
+// MINIT: build the shared handler table for all GObject classes.
 void object_handlers_init() {
   memcpy(&handlers, &std_object_handlers, sizeof(zend_object_handlers));
   handlers.offset = XtOffsetOf(Object, std);
@@ -162,6 +172,7 @@ void register_class(const char *gtype_name, zend_class_entry *ce) {
   registry()[gtype_name] = ce;
 }
 
+// Registry lookup by GType name.
 zend_class_entry *class_for_gtype_name(const char *gtype_name) {
   auto it = registry().find(gtype_name);
   return it == registry().end() ? nullptr : it->second;
@@ -189,6 +200,7 @@ void wrap(GObject *obj, zval *rv) {
   zend_throw_error(nullptr, "no PHP class registered for %s", G_OBJECT_TYPE_NAME(obj));
 }
 
+// PHP -> C: the live GObject behind a handle that is-a `expected`, else TypeError + nullptr.
 GObject *unwrap(zval *zv, GType expected) {
   zend_class_entry *root = class_for_gtype_name("GObject");
   if (Z_TYPE_P(zv) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(zv), root)) {
@@ -207,6 +219,7 @@ GObject *unwrap(zval *zv, GType expected) {
   return self->obj;
 }
 
+// $this of a method as the C object, validated for liveness and GType.
 GObject *self_object(zend_execute_data *execute_data, GType expected, const char *method) {
   Object *self = object_from_zend(Z_OBJ_P(ZEND_THIS));
   if (self->obj == nullptr) {

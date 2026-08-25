@@ -1,4 +1,4 @@
-// $obj->connect(string $signal, callable $handler, mixed ...$userData): int
+// $obj->connect(string $signal, callable $handler): int
 //
 // A GClosure with a custom marshaller receiving GValue arrays - no varargs,
 // so every parameter type the marshal bridge knows is supported and unknown
@@ -12,5 +12,7 @@ namespace phpgtk {
 
 // Implements connect()/connect_after(); parses its own arguments.
 void signal_connect_method(INTERNAL_FUNCTION_PARAMETERS, bool after);
+// Implements emit(); parses its own arguments.
+void signal_emit_method(INTERNAL_FUNCTION_PARAMETERS);
 
 }  // namespace phpgtk

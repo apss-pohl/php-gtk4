@@ -3,6 +3,7 @@ path:
   - tests
   - examples
   - stubs
+  - src/gtk4.stub.php
   - gen
   - bin
 exclude:

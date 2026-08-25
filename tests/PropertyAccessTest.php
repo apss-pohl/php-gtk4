@@ -86,7 +86,7 @@ final class PropertyAccessTest extends GtkTestCase
         self::assertStringContainsString('["title"]=>', $dump);
         self::assertStringContainsString('string(6) "dumped"', $dump);
         self::assertStringContainsString('["resizable"]=>', $dump);
-        self::assertStringNotContainsString('css-classes', $dump, 'unsupported GTypes are skipped, not fatal');
+        self::assertStringContainsString('["css-classes"]=>', $dump, 'GStrv is shown as an array');
     }
 
     public function testPrintRWorksToo(): void

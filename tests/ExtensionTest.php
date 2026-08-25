@@ -35,6 +35,7 @@ final class ExtensionTest extends GtkTestCase
     {
         $w = $this->window();
         self::assertInstanceOf(\Gtk4\GObject::class, $w);
-        self::assertSame(\Gtk4\GObject::class, get_parent_class($w));
+        self::assertSame(\Gtk4\GtkWidget::class, get_parent_class($w));
+        self::assertSame(\Gtk4\GObject::class, get_parent_class(\Gtk4\GtkWidget::class));
     }
 }

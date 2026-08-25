@@ -3,12 +3,13 @@
 parameters:
     level: max
     phpVersion: 80400
-    # stubs/gtk4.stub.php is php-src stub syntax (empty bodies, UNKNOWN) - not analysable;
+    # src/gtk4.stub.php is php-src stub syntax (empty bodies, UNKNOWN) - not analysable;
     # the derived stubs/gtk4.php is scanned for the Gtk4\ symbols instead.
     paths:
         - tests
         - examples
         - gen/ide-stub.php
+        - gen/method-comments.php
     scanFiles:
         - stubs/gtk4.php
     tmpDir: .phpstan.cache
