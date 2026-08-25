@@ -1,0 +1,108 @@
+name: PHP-GTK4 C++ CI (static analysis)
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  cpp-static-analysis:
+    name: C++ static analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      # Dev headers needed to compile (not link) every source file. `bear`
+      # records the compiler invocations into compile_commands.json.
+      # ubuntu-latest ships PHP 8.3; the project is PHP 8.4+ only.
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: none
+
+      - name: Install GTK4 / WebKitGTK dev headers
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libgtk-4-dev libwebkitgtk-6.0-dev bear
+
+      # Only PHP-CPP's public headers are needed (sources include <phpcpp.h>
+      # only). Replicate the installed layout (phpcpp.h + phpcpp/*.h) from a
+      # shallow clone pinned to a commit; no PHP-CPP build or link.
+      - name: Fetch PHP-CPP public headers
+        run: |
+          git clone https://github.com/fast-debug/PHP-CPP.git /tmp/phpcpp-src
+          git -C /tmp/phpcpp-src checkout 640d12b1fee231e73b4dbbb8b0e10284bfbfb170
+          mkdir -p /tmp/PHP-CPP/phpcpp
+          cp /tmp/phpcpp-src/phpcpp.h /tmp/PHP-CPP/
+          cp /tmp/phpcpp-src/include/*.h /tmp/PHP-CPP/phpcpp/
+
+      # Compile every object (no link, so no libphpcpp needed) to capture
+      # per-file flags into compile_commands.json. PHP-CPP and GTK headers are
+      # passed with -isystem so their internal warnings are not reported.
+      # The package list must mirror the Makefile's GTK_PKGS with WITH_WEBKIT=1.
+      - name: Generate compile_commands.json
+        run: |
+          make compile_commands \
+            WITH_WEBKIT=1 \
+            PHP_CONFIG="$(command -v php-config)" \
+            PHPFLAGS="-isystem /tmp/PHP-CPP $(php-config --includes | sed 's/-I/-isystem/g')" \
+            GTKFLAGS="$(pkg-config --cflags gtk4 webkitgtk-6.0 | sed 's/-I/-isystem/g')"
+
+      # Unlike php-gtk3 there is no findings backlog: this repo starts clean,
+      # so the linter FAILS the job on any finding, over the whole tree.
+      - name: C++ Linter (clang-tidy/clang-format)
+        id: linter
+        uses: cpp-linter/cpp-linter-action@v2
+        with:
+          extensions: cpp,h
+          files-changed-only: false
+          database: .
+          style: file
+          # Empty -> defer entirely to .clang-tidy at the repo root.
+          tidy-checks: ''
+          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fail on findings
+        if: steps.linter.outputs.checks-failed > 0
+        run: exit 1
+
+  php-tests:
+    name: Build and run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: none
+
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libgtk-4-dev xvfb build-essential
+
+      # Full PHP-CPP build against the same php-config used below - the two
+      # must pair, or the resulting .so corrupts the heap on shutdown.
+      - name: Build and install PHP-CPP
+        run: |
+          git clone --depth 1 https://github.com/fast-debug/PHP-CPP.git /tmp/phpcpp
+          cd /tmp/phpcpp
+          make -j"$(nproc)" PHP_CONFIG="$(command -v php-config)"
+          sudo make install PHP_CONFIG="$(command -v php-config)"
+
+      - name: Build extension
+        run: make -j"$(nproc)" PHP_CONFIG="$(command -v php-config)"
+
+      - name: Run tests
+        run: ./tests/run.sh

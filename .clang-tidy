@@ -1,0 +1,40 @@
+Checks: >-
+  -*,
+  bugprone-*,
+  performance-*,
+  readability-*,
+  modernize-*,
+  cppcoreguidelines-*,
+  -modernize-use-trailing-return-type,
+  -modernize-use-auto,
+  -modernize-use-default-member-init,
+  -modernize-loop-convert,
+  -modernize-use-equals-default,
+  -cppcoreguidelines-pro-type-cstyle-cast,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-type-vararg,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-macro-usage,
+  -cppcoreguidelines-avoid-do-while,
+  -cppcoreguidelines-slicing,
+  -cppcoreguidelines-init-variables,
+  -cppcoreguidelines-noexcept-swap,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -performance-noexcept-swap,
+  -readability-convert-member-functions-to-static,
+  -readability-make-member-function-const,
+  -readability-implicit-bool-conversion,
+  -readability-identifier-length,
+  -readability-braces-around-statements,
+  -readability-named-parameter,
+  -readability-magic-numbers,
+  -bugprone-easily-swappable-parameters
+
+# Rationale for the deny-list: GLib macros expand to do/while, varargs,
+# C-style casts and pointer arithmetic; PHP-CPP's Php::Object -> Php::Value
+# conversions are slicing by design; wrappers are handed to PHP-CPP as raw
+# owning pointers. Everything else is enforced - CI fails on findings.
+WarningsAsErrors: ''
+HeaderFilterRegex: '^(src/|main\.h)'
+FormatStyle: file
