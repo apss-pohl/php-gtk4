@@ -41,7 +41,7 @@ void GtkWindow_::destroy() {
   gtk_window_destroy(SELF);
 }
 
-void register_GtkWindow(Php::Extension &ext, const Php::Class<GObjectWrapper> &gobject) {
+void register_GtkWindow(Php::Namespace &ns, const Php::Class<GObjectWrapper> &gobject) {
   Php::Class<GtkWindow_> c("GtkWindow");
   c.extends(gobject);  // TODO: extends GtkWidget once the hierarchy exists
   c.method<&GtkWindow_::__construct>("__construct");
@@ -52,7 +52,7 @@ void register_GtkWindow(Php::Extension &ext, const Php::Class<GObjectWrapper> &g
   c.method<&GtkWindow_::present>("present");
   c.method<&GtkWindow_::close>("close");
   c.method<&GtkWindow_::destroy>("destroy");
-  ext.add(std::move(c));
+  ns.add(std::move(c));
 }
 
 }  // namespace phpgtk

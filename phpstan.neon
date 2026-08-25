@@ -1,0 +1,20 @@
+# PHPStan - max level over the PHP side of the project. The Gtk4\ classes come
+# from stubs/gtk4.php (scanFiles), so this runs without the extension loaded.
+parameters:
+    level: max
+    phpVersion: 80400
+    paths:
+        - tests
+        - examples
+        - stubs
+    scanFiles:
+        - stubs/gtk4.php
+    tmpDir: .phpstan.cache
+    # PHPStan 2 auto-detects the core count; this only raises the default cap.
+    parallel:
+        maximumNumberOfProcesses: 64
+    ignoreErrors:
+        # Stub bodies are placeholders, so a documented @throws is never "used".
+        -
+            path: stubs/gtk4.php
+            identifier: throws.unusedType

@@ -19,6 +19,6 @@ class GtkWindow_ : public GObjectWrapper {
   void destroy();
 };
 
-void register_GtkWindow(Php::Extension &ext, const Php::Class<GObjectWrapper> &gobject);
+void register_GtkWindow(Php::Namespace &ns, const Php::Class<GObjectWrapper> &gobject);
 
 }  // namespace phpgtk

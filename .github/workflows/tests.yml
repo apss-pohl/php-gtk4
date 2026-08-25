@@ -1,0 +1,71 @@
+name: Build & tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  php-tests:
+    name: Build extension and run PHPUnit
+    runs-on: ubuntu-latest
+    env:
+      # tests/run.sh and bin/php-gtk4 default to `php8.4`; setup-php provides `php`.
+      PHP: php
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, mbstring, tokenizer, xml, xmlwriter
+          tools: composer
+          coverage: none
+
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libgtk-4-dev xvfb build-essential
+
+      # Full PHP-CPP build against the same php-config used below - the two
+      # must pair, or the resulting .so corrupts the heap on shutdown. Pinned
+      # to the same commit as the static-analysis job.
+      - name: Build and install PHP-CPP
+        run: |
+          git clone https://github.com/fast-debug/PHP-CPP.git /tmp/phpcpp
+          git -C /tmp/phpcpp checkout 640d12b1fee231e73b4dbbb8b0e10284bfbfb170
+          cd /tmp/phpcpp
+          make -j"$(nproc)" PHP_CONFIG="$(command -v php-config)"
+          sudo make install PHP_CONFIG="$(command -v php-config)"
+          sudo ldconfig
+
+      - name: Build extension
+        run: make -j"$(nproc)" PHP_CONFIG="$(command -v php-config)"
+
+      - name: Extension loads
+        run: ./ci.sh --only=load
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+
+      - name: Install PHPUnit
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      # xvfb-run + bin/php-gtk4 (gtk3 filter, keeps PHPUnit's extensions) + phpunit
+      - name: Run PHPUnit
+        run: ./ci.sh --only=test --log-junit phpunit-junit.xml --display-warnings
+
+      - name: Upload PHPUnit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpunit-junit
+          path: phpunit-junit.xml
+          if-no-files-found: ignore

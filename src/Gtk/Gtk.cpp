@@ -7,6 +7,7 @@
 namespace phpgtk {
 
 static GMainLoop *main_loop = nullptr;
+static bool quit_pending = false;  // main_quit() called before main()
 
 Php::Value Gtk_::init() {
   return (bool)gtk_init_check();
@@ -15,6 +16,10 @@ Php::Value Gtk_::init() {
 // GTK4 has no gtk_main(); run a GMainLoop on the default context.
 void Gtk_::main() {
   if (main_loop != nullptr) throw Php::Exception("Gtk::main() is already running");
+  if (quit_pending) {
+    quit_pending = false;
+    return;
+  }
   main_loop = g_main_loop_new(nullptr, FALSE);
   g_main_loop_run(main_loop);
   g_main_loop_unref(main_loop);
@@ -22,7 +27,11 @@ void Gtk_::main() {
 }
 
 void Gtk_::main_quit() {
-  if (main_loop != nullptr) g_main_loop_quit(main_loop);
+  if (main_loop != nullptr) {
+    g_main_loop_quit(main_loop);
+  } else {
+    quit_pending = true;
+  }
 }
 
 void Gtk_::set_exception_handler(Php::Parameters &params) {
@@ -36,7 +45,7 @@ void Gtk_::set_exception_handler(Php::Parameters &params) {
   phpgtk::set_exception_handler(params[0]);
 }
 
-void register_Gtk(Php::Extension &ext) {
+void register_Gtk(Php::Namespace &ns) {
   // Root handle class - PHP name matches the GType name.
   Php::Class<GObjectWrapper> gobject("GObject");
   gobject.method<&GObjectWrapper::connect>("connect");
@@ -50,13 +59,13 @@ void register_Gtk(Php::Extension &ext) {
   gtk.method<&Gtk_::main>("main");
   gtk.method<&Gtk_::main_quit>("main_quit");
   gtk.method<&Gtk_::set_exception_handler>("set_exception_handler");
-  ext.add(std::move(gtk));
+  ns.add(std::move(gtk));
 
   // PHP-CPP initialises classes in add() order and a derived class added
   // before its base silently loses the base. So add the parent first (copy
   // overload), then pass it to children for extends().
-  ext.add(gobject);
-  register_GtkWindow(ext, gobject);
+  ns.add(gobject);
+  register_GtkWindow(ns, gobject);
 }
 
 }  // namespace phpgtk

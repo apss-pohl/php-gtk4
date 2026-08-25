@@ -1,0 +1,46 @@
+{
+  // ---- PHP: this project is PHP 8.4+ only (see CLAUDE.md) ----
+  "php.version": "8.4",
+  "php.validate.executablePath": "/usr/bin/php8.4",
+  "php.validate.run": "onSave",
+  "intelephense.environment.phpVersion": "8.4.0",
+  "intelephense.environment.includePaths": ["${workspaceFolder}/stubs"],
+
+  // ---- C/C++ extension (ms-vscode.cpptools) ----
+  "C_Cpp.default.cppStandard": "c++20",
+  "C_Cpp.default.compileCommands": "${workspaceFolder}/compile_commands.json",
+  "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+  "C_Cpp.codeAnalysis.clangTidy.path": "clang-tidy-17",
+  "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
+  "C_Cpp.codeAnalysis.runAutomatically": true,
+  "C_Cpp.clang_format_path": "clang-format-17",
+  "C_Cpp.clang_format_style": "file",
+  "C_Cpp.clang_format_fallbackStyle": "Google",
+
+  // ---- clangd (llvm-vs-code-extensions.vscode-clangd); checks come from .clang-tidy ----
+  "clangd.path": "/usr/bin/clangd-17",
+  "clangd.arguments": [
+    "--clang-tidy",
+    "--compile-commands-dir=${workspaceFolder}",
+    "--header-insertion=never",
+    "--completion-style=detailed"
+  ],
+
+  "[cpp]": {
+    "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
+    "editor.formatOnSave": true
+  },
+  "[php]": {
+    "editor.defaultFormatter": "junstyle.php-cs-fixer"
+  },
+  "php-cs-fixer.executablePath": "${workspaceFolder}/vendor/bin/php-cs-fixer",
+  "php-cs-fixer.config": ".php-cs-fixer.dist.php",
+  "php-cs-fixer.onsave": true,
+  "phpsab.executablePathCS": "${workspaceFolder}/vendor/bin/phpcs",
+  "phpsab.executablePathCBF": "${workspaceFolder}/vendor/bin/phpcbf",
+  "phpsab.standard": "phpcs.xml.dist",
+  "phpstan.configFile": "phpstan.neon",
+  "phpstan.binPath": "${workspaceFolder}/vendor/bin/phpstan",
+  "files.associations": { "*.h": "cpp" },
+  "files.exclude": { "build/": true, "**/*.o": true, "**/*.d": true }
+}

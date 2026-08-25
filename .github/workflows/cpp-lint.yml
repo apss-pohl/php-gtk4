@@ -1,4 +1,4 @@
-name: PHP-GTK4 C++ CI (static analysis)
+name: C++ lint
 
 on:
   workflow_dispatch:
@@ -72,37 +72,3 @@ jobs:
       - name: Fail on findings
         if: steps.linter.outputs.checks-failed > 0
         run: exit 1
-
-  php-tests:
-    name: Build and run tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Set up PHP 8.4
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          tools: none
-
-      - name: Install build deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            libgtk-4-dev xvfb build-essential
-
-      # Full PHP-CPP build against the same php-config used below - the two
-      # must pair, or the resulting .so corrupts the heap on shutdown.
-      - name: Build and install PHP-CPP
-        run: |
-          git clone --depth 1 https://github.com/fast-debug/PHP-CPP.git /tmp/phpcpp
-          cd /tmp/phpcpp
-          make -j"$(nproc)" PHP_CONFIG="$(command -v php-config)"
-          sudo make install PHP_CONFIG="$(command -v php-config)"
-
-      - name: Build extension
-        run: make -j"$(nproc)" PHP_CONFIG="$(command -v php-config)"
-
-      - name: Run tests
-        run: ./tests/run.sh

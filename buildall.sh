@@ -2,7 +2,7 @@
 #
 # One-liner build + install of the gtk4 extension for every enabled PHP version.
 #
-#   ./buildall.sh                       # builds & installs all enabled versions (re-execs with sudo)
+#   ./buildall.sh                       # builds as the current user, installs with sudo
 #   PHPCPP_BASE=/custom/dist ./buildall.sh
 #   ONLY=8.4 ./buildall.sh              # restrict to one version from the table
 #
@@ -15,9 +15,13 @@
 set -e
 cd "$(dirname "$0")"
 
-if [ "$EUID" -ne 0 ]; then
-    exec sudo PHPCPP_BASE="$PHPCPP_BASE" ONLY="$ONLY" "$0" "$@"
+# Build as the invoking user - never as root, or build/ and gtk4.so end up
+# root-owned and every later make/ci.sh run fails with "Permission denied".
+if [ "$EUID" -eq 0 ]; then
+    echo "ERROR: run buildall.sh as your normal user; it uses sudo only for the install step" >&2
+    exit 1
 fi
+SUDO=sudo
 
 PHPCPP_BASE="${PHPCPP_BASE:-/mnt/share/dev/code/PHP-CPP/dist}"
 JOBS=${JOBS:-$(nproc)}
@@ -61,17 +65,19 @@ for BUILD in "${BUILDS[@]}"; do
     make PHP_CONFIG="${PHP_CONFIG}" INI_DIR="${INI_DIR}/" WITH_WEBKIT="${WITH_WEBKIT}" \
          PHPCPP_STATIC="${PHPCPP_STATIC}" -j"${JOBS}"
 
-    echo "=== Installing gtk4.so -> ${SO_DEST}, gtk4.ini -> ${INI_DIR} ==="
-    install -m 644 gtk4.so "${SO_DEST}/"
-    install -m 644 gtk4.ini "${INI_DIR}/"
+    echo "=== Installing gtk4.so -> ${SO_DEST}, gtk4.ini -> ${INI_DIR} (sudo) ==="
+    $SUDO install -m 644 gtk4.so "${SO_DEST}/"
+    $SUDO install -m 644 gtk4.ini "${INI_DIR}/"
 
-    # Enable via the Debian/Ubuntu conf.d mechanism when available
-    if command -v phpenmod >/dev/null 2>&1; then
-        phpenmod -v "${VERSION}" gtk4 || true
+    # Deliberately NOT enabled globally (no phpenmod): php-gtk3 defines the
+    # same class names, so gtk3 and gtk4 must not be loaded in one process.
+    # Use bin/php-gtk4 (or php -n -dextension=gtk4) per script, or enable
+    # explicitly with: phpenmod -v ${VERSION} gtk4 (and phpdismod gtk3).
+    if "/usr/bin/php${VERSION}" -n -dextension=gtk4 -r 'exit(extension_loaded("gtk4") ? 0 : 1);'; then
+        echo "PHP ${VERSION}: gtk4 loads OK (php${VERSION} -n -dextension=gtk4)"
+    else
+        echo "WARNING: php${VERSION} -n -dextension=gtk4 failed"
     fi
-
-    "/usr/bin/php${VERSION}" -m | grep -qx gtk4 && echo "PHP ${VERSION}: gtk4 loaded OK" \
-        || echo "WARNING: PHP ${VERSION} does not list gtk4 (check ${INI_DIR}/gtk4.ini)"
 done
 
 echo "=== Done ==="

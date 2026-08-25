@@ -1,0 +1,33 @@
+<?php
+// php-cs-fixer: PER-CS 2.0 + strict types, PHP 8.4 target. Runs in parallel
+// on all cores (ParallelConfigFactory::detect()). Invoked by ci.sh.
+declare(strict_types=1);
+
+use PhpCsFixer\Config;
+use PhpCsFixer\Finder;
+use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
+
+$finder = Finder::create()
+    ->in([__DIR__ . '/tests', __DIR__ . '/examples', __DIR__ . '/stubs', __DIR__ . '/gen'])
+    ->name('*.php')
+    ->exclude(['vendor']);
+
+return (new Config())
+    ->setParallelConfig(ParallelConfigFactory::detect())
+    ->setRiskyAllowed(true)
+    ->setCacheFile('.php-cs-fixer.cache')
+    ->setRules([
+        '@PER-CS2.0' => true,
+        '@PHP84Migration' => true,
+        'declare_strict_types' => true,
+        'no_unused_imports' => true,
+        'ordered_imports' => ['sort_algorithm' => 'alpha'],
+        'single_quote' => true,
+        'trailing_comma_in_multiline' => ['elements' => ['arrays', 'arguments', 'parameters']],
+        'array_syntax' => ['syntax' => 'short'],
+        'no_superfluous_phpdoc_tags' => false,
+        'phpdoc_align' => false,
+        // stubs: keep one-line dummy bodies readable
+        'braces_position' => ['allow_single_line_empty_anonymous_classes' => true, 'allow_single_line_anonymous_functions' => true],
+    ])
+    ->setFinder($finder);

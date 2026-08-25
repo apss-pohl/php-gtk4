@@ -3,5 +3,12 @@ build/
 *.o
 *.d
 compile_commands.json
-build-*.sh
 .cache/
+vendor/
+.phpunit.cache/
+.phpunit.result.cache
+.phpstan.cache/
+.php-cs-fixer.cache
+.phpcs.cache
+.phplint.cache
+phpunit-junit.xml

@@ -1,0 +1,13 @@
+# overtrue/phplint - syntax check. ci.sh passes -j $(nproc).
+path:
+  - tests
+  - examples
+  - stubs
+  - gen
+  - bin
+exclude:
+  - vendor
+extensions:
+  - php
+warning: true
+cache: .phplint.cache

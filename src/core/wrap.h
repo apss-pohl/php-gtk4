@@ -1,6 +1,7 @@
 #pragma once
 #include <phpcpp.h>
 #include <glib-object.h>
+#include <string>
 
 // PHP handle for a GObject.
 //
@@ -8,6 +9,13 @@
 // destruction) and registers itself in the GObject's qdata so that wrapping
 // the same C object twice yields the same PHP object (identity, `===`).
 namespace phpgtk {
+
+// All PHP classes live in the `Gtk4` namespace so the extension can coexist
+// with php-gtk3 (flat names) in one process. PHP class name = Gtk4\<GTypeName>.
+constexpr const char *PHP_NAMESPACE = "Gtk4";
+inline std::string php_class_name(const char *gtype_name) {
+  return std::string(PHP_NAMESPACE) + "\\" + gtype_name;
+}
 
 class GObjectWrapper : public Php::Base {
  public:

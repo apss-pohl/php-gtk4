@@ -1,0 +1,38 @@
+name: PHP QA
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  php-qa:
+    name: PHP QA (phplint, phpcs, php-cs-fixer, phpstan)
+    runs-on: ubuntu-latest
+    env:
+      PHP: php
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer
+          coverage: none
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+
+      - name: Install tools
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      # No extension needed: PHPStan sees Gtk4\ classes via stubs/gtk4.php.
+      # Every tool uses all cores (JOBS defaults to nproc).
+      - name: Run PHP QA
+        run: ./ci.sh --only=php-qa

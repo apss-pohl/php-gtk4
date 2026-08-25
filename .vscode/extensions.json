@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "bmewburn.vscode-intelephense-client",
+    "ms-vscode.cpptools",
+    "llvm-vs-code-extensions.vscode-clangd",
+    "junstyle.php-cs-fixer",
+    "valeryanm.vscode-phpsab",
+    "swordev.phpstan"
+  ]
+}

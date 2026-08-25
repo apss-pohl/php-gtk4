@@ -13,7 +13,7 @@ fragile, or GTK3-specific.
 | GTK target | GTK 4.14+ (`gtk4` pkg-config), GLib 2.76+ | Current LTS distros |
 | Module name | `gtk4` everywhere (Makefile `NAME`, `Php::Extension("gtk4")`, `gtk4.ini`) | php-gtk3 lesson: the four names must agree |
 | PHP versions | **8.4+ only** (Makefile and `main.cpp` refuse older) | One Zend ABI to care about; lets stubs/tests use 8.4 syntax (property hooks, `#[\Deprecated]`, `new X()->m()`, typed constants) |
-| Class naming | PHP class name == GType name (`GtkButton`, `GdkTexture`, `GtkEventControllerKey`) | Enables generic C→PHP wrapping by `g_type_name()` |
+| Class naming | `Gtk4\` namespace + GType name (`Gtk4\GtkButton`, `Gtk4\GdkTexture`) | Generic C→PHP wrapping by `g_type_name()`; namespace lets gtk3 and gtk4 be installed side by side (using both in one process is still impossible — identical libgtk C symbols) |
 | Code generation | **Generated** wrapper skeletons from GObject-Introspection (`Gtk-4.0.gir`), hand-written runtime core | php-gtk3 hand-wrote 260 classes + a 5000-line `get_module()`; GTK4 ships complete GIR |
 
 ## 1. Architecture

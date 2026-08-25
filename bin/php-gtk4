@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#
+# Run a PHP script with the gtk4 extension and WITHOUT php-gtk3, even when
+# gtk3 is enabled system-wide. Both extensions register the same class names,
+# so they must never be loaded into one process.
+#
+#   bin/php-gtk4 script.php [args...]
+#   PHP=php8.4 GTK4_SO=./gtk4.so bin/php-gtk4 script.php     # use a fresh build
+#
+# How: PHP_INI_SCAN_DIR replaces the conf.d directory with a temporary one
+# containing every ini except gtk3's, then gtk4 is added with -dextension.
+# All other extensions (mbstring, curl, ...) stay available - unlike `php -n`.
+set -euo pipefail
+
+PHP=${PHP:-php8.4}
+GTK4_SO=${GTK4_SO:-gtk4}   # bare name -> from extension_dir; or a path to a .so
+
+SCAN_DIR=$("$PHP" -n -r 'echo PHP_CONFIG_FILE_SCAN_DIR;')
+TMP=$(mktemp -d)
+trap 'rm -rf "$TMP"' EXIT
+
+if [[ -d "$SCAN_DIR" ]]; then
+    for ini in "$SCAN_DIR"/*.ini; do
+        [[ -e "$ini" ]] || continue
+        # Skip any ini that loads gtk3 (installed as gtk.ini / gtk3.ini / 20-gtk.ini ...)
+        if grep -qE '^\s*extension\s*=\s*"?(php_)?gtk3?(\.so)?"?\s*$' "$ini"; then continue; fi
+        # Skip gtk4's own ini too; it is added explicitly below
+        if grep -qE '^\s*extension\s*=\s*"?(php_)?gtk4(\.so)?"?\s*$' "$ini"; then continue; fi
+        ln -s "$ini" "$TMP/$(basename "$ini")"
+    done
+fi
+
+[[ "$GTK4_SO" == */* ]] && GTK4_SO=$(readlink -f "$GTK4_SO")
+
+PHP_INI_SCAN_DIR="$TMP" exec "$PHP" -dextension="$GTK4_SO" "$@"

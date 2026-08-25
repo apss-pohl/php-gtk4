@@ -79,24 +79,28 @@ Php::Value wrap(GObject *obj) {
   if (obj == nullptr) return nullptr;
 
   if (auto *existing = static_cast<GObjectWrapper *>(g_object_get_qdata(obj, wrapper_quark()))) {
-    return Php::Object(G_OBJECT_TYPE_NAME(obj),
-                       existing);  // TODO: return the existing zval directly
+    // TODO: return the existing zval directly
+    return Php::Object(php_class_name(G_OBJECT_TYPE_NAME(obj)).c_str(), existing);
   }
 
   // Nearest registered PHP class walking up the GType chain.
   for (GType t = G_OBJECT_TYPE(obj); t != 0; t = g_type_parent(t)) {
-    const char *name = g_type_name(t);
+    const std::string name = php_class_name(g_type_name(t));
     if (Php::call("class_exists", name, false).boolValue()) {
       auto *w = new GObjectWrapper();
       w->attach(obj);
-      return Php::Object(name, w);
+      return Php::Object(name.c_str(), w);
     }
   }
   throw Php::Exception(std::string("no PHP class registered for ") + G_OBJECT_TYPE_NAME(obj));
 }
 
 GObject *unwrap(const Php::Value &value, GType expected) {
-  if (!value.isObject()) throw Php::Exception("expected a GObject instance");
+  // implementation() assumes a PHP-CPP-created object and crashes on anything
+  // else (stdClass, closures, ...), so check the class first.
+  if (!value.isObject() || !value.instanceOf(php_class_name("GObject"))) {
+    throw Php::Exception("expected a GObject instance");
+  }
   auto *w = dynamic_cast<GObjectWrapper *>(value.implementation());
   if (w == nullptr || w->obj() == nullptr) throw Php::Exception("expected a live GObject instance");
   if (g_type_is_a(G_OBJECT_TYPE(w->obj()), expected) == FALSE) {
