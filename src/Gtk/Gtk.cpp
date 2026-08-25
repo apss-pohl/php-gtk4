@@ -48,23 +48,33 @@ void Gtk_::set_exception_handler(Php::Parameters &params) {
 void register_Gtk(Php::Namespace &ns) {
   // Root handle class - PHP name matches the GType name.
   Php::Class<GObjectWrapper> gobject("GObject");
-  gobject.method<&GObjectWrapper::connect>("connect");
-  gobject.method<&GObjectWrapper::connect_after>("connect_after");
-  gobject.method<&GObjectWrapper::handler_disconnect>("handler_disconnect");
-  gobject.method<&GObjectWrapper::get_property>("get_property");
-  gobject.method<&GObjectWrapper::set_property>("set_property");
+  // Declare parameters (arginfo): reflection, stubs and PHP's own arity
+  // checks then agree with the C++ side, which additionally validates.
+  gobject.method<&GObjectWrapper::connect>("connect", {Php::ByVal("signal", Php::Type::String),
+                                                       Php::ByVal("handler", Php::Type::Callable)});
+  gobject.method<&GObjectWrapper::connect_after>(
+      "connect_after",
+      {Php::ByVal("signal", Php::Type::String), Php::ByVal("handler", Php::Type::Callable)});
+  gobject.method<&GObjectWrapper::handler_disconnect>(
+      "handler_disconnect", {Php::ByVal("handlerId", Php::Type::Numeric)});
+  gobject.method<&GObjectWrapper::get_property>("get_property",
+                                                {Php::ByVal("name", Php::Type::String)});
+  gobject.method<&GObjectWrapper::set_property>(
+      "set_property", {Php::ByVal("name", Php::Type::String), Php::ByVal("value")});
 
   Php::Class<Gtk_> gtk("Gtk");
   gtk.method<&Gtk_::init>("init");
   gtk.method<&Gtk_::main>("main");
   gtk.method<&Gtk_::main_quit>("main_quit");
-  gtk.method<&Gtk_::set_exception_handler>("set_exception_handler");
+  gtk.method<&Gtk_::set_exception_handler>("set_exception_handler",
+                                           {Php::ByVal("handler", Php::Type::Null, false)});
   ns.add(std::move(gtk));
 
   // PHP-CPP initialises classes in add() order and a derived class added
   // before its base silently loses the base. So add the parent first (copy
   // overload), then pass it to children for extends().
   ns.add(gobject);
+  register_wrapper<GObjectWrapper>("GObject");
   register_GtkWindow(ns, gobject);
 }
 

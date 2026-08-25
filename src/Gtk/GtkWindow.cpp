@@ -47,12 +47,15 @@ void register_GtkWindow(Php::Namespace &ns, const Php::Class<GObjectWrapper> &go
   c.method<&GtkWindow_::__construct>("__construct");
   c.method<&GtkWindow_::set_title>("set_title", {Php::ByVal("title", Php::Type::String)});
   c.method<&GtkWindow_::get_title>("get_title");
-  c.method<&GtkWindow_::set_default_size>("set_default_size");
-  c.method<&GtkWindow_::set_child>("set_child");
+  c.method<&GtkWindow_::set_default_size>(
+      "set_default_size",
+      {Php::ByVal("width", Php::Type::Numeric), Php::ByVal("height", Php::Type::Numeric)});
+  c.method<&GtkWindow_::set_child>("set_child", {Php::ByVal("child", Php::Type::Null, false)});
   c.method<&GtkWindow_::present>("present");
   c.method<&GtkWindow_::close>("close");
   c.method<&GtkWindow_::destroy>("destroy");
   ns.add(std::move(c));
+  register_wrapper<GtkWindow_>("GtkWindow");
 }
 
 }  // namespace phpgtk

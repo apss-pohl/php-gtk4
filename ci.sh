@@ -11,6 +11,7 @@
 # Extra stages, not run by default (opt in with --only=... or --with=...):
 #   asan       ASan+UBSan+LSan build (gtk4-asan.so) running tests/scripts/stress.php and the PHPUnit suite
 #   coverage   gcov build (gtk4-cov.so), runs the suite + stress script, prints per-file C++ line coverage
+#   valgrind   memcheck on the stress script with the normal gtk4.so (uninitialised reads, definite leaks)
 #
 # Usage:
 #   ./ci.sh                          all stages, in that order
@@ -20,7 +21,7 @@
 #   ./ci.sh --filter SignalTest      unknown args are passed to phpunit
 #   ./ci.sh --no-stan                php-qa without phpstan
 #   ./ci.sh --fail-fast              clang-tidy stops at the first failing file
-#   ./ci.sh --with=asan,coverage     default stages plus the extra ones
+#   ./ci.sh --with=asan,coverage,valgrind   default stages plus the extra ones
 #   ./ci.sh --only=asan              just the sanitizer run
 #   ./ci.sh --skip=tidy | --skip=format   sub-steps of cpp-lint
 #
@@ -41,8 +42,8 @@ newest_tool() { ls /usr/bin/"$1"-[0-9]* 2>/dev/null | sort -t- -k2 -V | tail -1;
 CLANG_TIDY=${CLANG_TIDY:-$(basename "$(newest_tool clang-tidy)" 2>/dev/null || echo clang-tidy)}
 CLANG_FORMAT=${CLANG_FORMAT:-$(basename "$(newest_tool clang-format)" 2>/dev/null || echo clang-format)}
 
-ALL_STAGES="cpp-lint php-qa build load test asan coverage"
-DEFAULT_OFF="asan coverage"
+ALL_STAGES="cpp-lint php-qa build load test asan coverage valgrind"
+DEFAULT_OFF="asan coverage valgrind"
 ONLY=""; SKIP=""; WITH=""; FIX=0; STAN=1; FAIL_FAST=0; PHPUNIT_ARGS=()
 for arg in "$@"; do
     case "$arg" in
@@ -55,6 +56,10 @@ for arg in "$@"; do
         *)          PHPUNIT_ARGS+=("$arg") ;;
     esac
 done
+
+substep() {  # substep <name>: sub-steps (tidy, format) only honour --skip
+    [[ ",$SKIP," != *",$1,"* ]]
+}
 
 enabled() {  # enabled <stage>
     if [[ -n "$ONLY" ]]; then [[ ",$ONLY," == *",$1,"* ]] || return 1; fi
@@ -112,7 +117,7 @@ stage_cpp_lint() {
     # shellcheck disable=SC2064
     trap "rm -rf '$err_dir'" RETURN
 
-    if enabled tidy; then
+    if substep tidy; then
         step "clang-tidy ($CLANG_TIDY, $JOBS jobs, $action)"
         local active=0
         for f in "${cpp_files[@]}"; do
@@ -132,7 +137,7 @@ stage_cpp_lint() {
         wait
     fi
 
-    if enabled format; then
+    if substep format; then
         step "clang-format ($CLANG_FORMAT, $JOBS jobs, $action)"
         local active=0
         for f in "${all_files[@]}"; do
@@ -234,8 +239,15 @@ stage_asan() {
     xvfb-run -a env "${env[@]}" GSK_RENDERER=cairo "$PHP" -n -dextension=./gtk4-asan.so tests/scripts/stress.php 300 \
         || fail "asan stress (see report above)"
 
-    step "asan: phpunit suite"
-    PHP="$PHP" GTK4_SO=./gtk4-asan.so PHP_GTK4_ENV="${env[*]}" ./tests/run.sh "${PHPUNIT_ARGS[@]}" || fail "asan phpunit"
+    # The PHPUnit process also loads dom/mbstring/intl/... from the system ini;
+    # those leak at their own shutdown (frames show as <unknown module>), which
+    # is not ours to fix. Leak detection therefore runs only on the php -n
+    # stress run above (our extension is the only module in that process);
+    # here ASan/UBSan still catch memory errors across the whole suite.
+    step "asan: phpunit suite (memory errors only, leaks checked by the stress run)"
+    local -a env_nolsan=("${env[@]}")
+    env_nolsan[2]="ASAN_OPTIONS=detect_leaks=0:abort_on_error=0:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1"
+    PHP="$PHP" GTK4_SO=./gtk4-asan.so PHP_GTK4_ENV="${env_nolsan[*]}" ./tests/run.sh "${PHPUNIT_ARGS[@]}" || fail "asan phpunit"
 }
 
 # ---------------------------------------------------------------- coverage
@@ -286,6 +298,23 @@ stage_test() {
     PHP="$PHP" GTK4_SO=./gtk4.so ./tests/run.sh "${PHPUNIT_ARGS[@]}" || fail "test"
 }
 
+# ---------------------------------------------------------------- valgrind
+# memcheck complements ASan (uninitialised reads, which ASan cannot see) on the
+# normal, uninstrumented gtk4.so. Only the php -n stress run: valgrind is slow
+# and the PHPUnit process would report other extensions' shutdown leaks.
+stage_valgrind() {
+    step "valgrind memcheck (tests/scripts/stress.php)"
+    command -v valgrind >/dev/null || fail "valgrind not installed"
+    [[ -f gtk4.so ]] || fail "gtk4.so missing (run the build stage)"
+    local glib_supp=/usr/share/glib-2.0/valgrind/glib.supp
+    local -a supp=(--suppressions="$PWD/tests/valgrind.supp")
+    [[ -f "$glib_supp" ]] && supp+=(--suppressions="$glib_supp")
+    xvfb-run -a env USE_ZEND_ALLOC=0 GSK_RENDERER=cairo \
+        valgrind --quiet --error-exitcode=42 --leak-check=full --errors-for-leak-kinds=definite \
+                 --track-origins=yes --num-callers=24 "${supp[@]}" \
+        "$PHP" -n -dextension=./gtk4.so tests/scripts/stress.php 50 || fail "valgrind (see report above)"
+}
+
 # ---------------------------------------------------------------- main
 ran=""
 for stage in $ALL_STAGES; do
@@ -298,6 +327,7 @@ for stage in $ALL_STAGES; do
         test)     stage_test ;;
         asan)     stage_asan ;;
         coverage) stage_coverage ;;
+        valgrind) stage_valgrind ;;
     esac
     ran="$ran $stage"
 done

@@ -110,10 +110,22 @@ final class SignalTest extends GtkTestCase
         self::opaque([$this->window(), 'connect'])('notify::title', 'definitely_not_a_function');
     }
 
-    public function testMissingArgumentsThrow(): void
+    public function testMissingArgumentsAreRejected(): void
     {
-        $this->expectExceptionMessage('connect() expects');
-        self::opaque([$this->window(), 'connect'])('notify::title');
+        // Declared arginfo: PHP-CPP reports the arity violation as an E_WARNING and
+        // does not call into C++ (which validates again as a second line of defence).
+        $warning = null;
+        set_error_handler(function (int $no, string $msg) use (&$warning): bool {
+            $warning = $msg;
+            return true;
+        }, E_WARNING);
+        try {
+            self::opaque([$this->window(), 'connect'])('notify::title');
+        } finally {
+            restore_error_handler();
+        }
+        self::assertNotNull($warning);
+        self::assertStringContainsString('connect() expects at least 2 parameter', $warning);
     }
 
     public function testHandlerOnDestroyedWindowStillWorksWhileHandleLives(): void

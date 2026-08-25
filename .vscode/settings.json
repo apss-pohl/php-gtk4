@@ -42,5 +42,5 @@
   "phpstan.configFile": "phpstan.neon",
   "phpstan.binPath": "${workspaceFolder}/vendor/bin/phpstan",
   "files.associations": { "*.h": "cpp" },
-  "files.exclude": { "build/": true, "**/*.o": true, "**/*.d": true }
+  "files.exclude": { "build/": true, "coverage/": true, "**/*.o": true, "**/*.d": true }
 }

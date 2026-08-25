@@ -2,8 +2,19 @@
 #include "gsignal.h"
 #include "marshal.h"
 #include <string>
+#include <unordered_map>
 
 namespace phpgtk {
+
+static std::unordered_map<std::string, WrapperFactory> &factories() {
+  static auto *map =
+      new std::unordered_map<std::string, WrapperFactory>();  // never freed (see error.cpp)
+  return *map;
+}
+
+void register_wrapper(const char *gtype_name, WrapperFactory factory) {
+  factories()[gtype_name] = factory;
+}
 
 static GQuark wrapper_quark() {
   static GQuark q = g_quark_from_static_string("php-gtk4-wrapper");
@@ -46,12 +57,15 @@ Php::Value GObjectWrapper::connect_after(Php::Parameters &params) {
   return signal_connect(this, params, true);
 }
 void GObjectWrapper::handler_disconnect(Php::Parameters &params) {
+  if (params.empty()) throw Php::Exception("handler_disconnect() expects (int $handlerId)");
   if (obj_ == nullptr) return;
   gulong id = static_cast<gulong>(params[0].numericValue());
   if (g_signal_handler_is_connected(obj_, id)) g_signal_handler_disconnect(obj_, id);
 }
 
 Php::Value GObjectWrapper::get_property(Php::Parameters &params) {
+  if (params.empty()) throw Php::Exception("get_property() expects (string $name)");
+  if (obj_ == nullptr) throw Php::Exception("get_property() on a dead GObject");
   std::string name = params[0];
   GParamSpec *spec = g_object_class_find_property(G_OBJECT_GET_CLASS(obj_), name.c_str());
   if (spec == nullptr)
@@ -65,6 +79,9 @@ Php::Value GObjectWrapper::get_property(Php::Parameters &params) {
 }
 
 void GObjectWrapper::set_property(Php::Parameters &params) {
+  if (params.size() < 2)
+    throw Php::Exception("set_property() expects (string $name, mixed $value)");
+  if (obj_ == nullptr) throw Php::Exception("set_property() on a dead GObject");
   std::string name = params[0];
   GParamSpec *spec = g_object_class_find_property(G_OBJECT_GET_CLASS(obj_), name.c_str());
   if (spec == nullptr)
@@ -83,13 +100,15 @@ Php::Value wrap(GObject *obj) {
     return Php::Object(php_class_name(G_OBJECT_TYPE_NAME(obj)).c_str(), existing);
   }
 
-  // Nearest registered PHP class walking up the GType chain.
+  // Nearest registered PHP class walking up the GType chain; the registry
+  // gives us the factory for the matching C++ type.
   for (GType t = G_OBJECT_TYPE(obj); t != 0; t = g_type_parent(t)) {
-    const std::string name = php_class_name(g_type_name(t));
-    if (Php::call("class_exists", name, false).boolValue()) {
-      auto *w = new GObjectWrapper();
+    const char *gtype_name = g_type_name(t);
+    auto it = factories().find(gtype_name);
+    if (it != factories().end()) {
+      GObjectWrapper *w = it->second();
       w->attach(obj);
-      return Php::Object(name.c_str(), w);
+      return Php::Object(php_class_name(gtype_name).c_str(), w);
     }
   }
   throw Php::Exception(std::string("no PHP class registered for ") + G_OBJECT_TYPE_NAME(obj));

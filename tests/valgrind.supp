@@ -1,0 +1,28 @@
+# Valgrind memcheck suppressions for ci.sh --only=valgrind (used together with
+# GLib's own /usr/share/glib-2.0/valgrind/glib.supp). Third-party one-time
+# allocations only - never suppress frames from gtk4*.so, phpgtk or libphpcpp.
+{
+   gio-module-scan-in-gtk_init
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:g_io_module_new
+   fun:g_io_modules_scan_all_in_directory_with_scope
+   ...
+}
+{
+   fontconfig-config-parse
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   obj:*/libfontconfig.so*
+   ...
+}
+{
+   fontconfig-via-expat
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:XML_ParseBuffer
+   ...
+}

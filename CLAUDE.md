@@ -53,7 +53,11 @@ make clean
 
 ## Lint, QA, build, test — `./ci.sh`
 
-One script, five stages, same as GitHub Actions: `cpp-lint` → `php-qa` → `build` → `load` → `test`.
+One script, same stages as GitHub Actions: `cpp-lint` → `php-qa` → `build` → `load` → `test`, plus
+the opt-in `asan` (ASan+UBSan on the suite, LSan on `tests/scripts/stress.php`, `gtk4-asan.so`) and
+`coverage` (gcov per-file C++ line coverage, `gtk4-cov.so`, gcovr HTML in `coverage/`) and `valgrind`
+(memcheck on the stress script — uninitialised reads, definite leaks; `tests/valgrind.supp` +
+GLib's `glib.supp`).
 
 ```sh
 ./ci.sh                          # everything (tests included)
@@ -62,6 +66,8 @@ One script, five stages, same as GitHub Actions: `cpp-lint` → `php-qa` → `bu
 ./ci.sh --skip=cpp-lint,php-qa   # fast edit-build-test loop
 ./ci.sh --filter SignalTest      # unknown args go to phpunit
 ./ci.sh --no-stan                # php-qa without phpstan
+./ci.sh --with=asan,coverage,valgrind   # default stages + all extra ones (what CI runs in total)
+./ci.sh --only=asan --filter X   # sanitizer run of one test class
 ```
 
 Env:
@@ -116,9 +122,18 @@ display, and calls `Gtk::init()` once.
 - Tests are the *only* thing that exercises the C++ — a segfault shows up as PHPUnit dying
   mid-run; isolate with `--filter 'Class::method$'` per test to find it.
 - `ExampleTest` checks `examples/example.php` uses every registered class and lints it.
+- `EveryClassTest` constructs every instantiable class and calls every arg-less `get_*/is_*/has_*`
+  — generic on purpose, never edit it for a new class; it found the arginfo/segfault bug on day one.
+- `tests/scripts/stress.php` (not PHPUnit) churns handles/signals/exceptions/lifetimes N rounds and
+  exits normally; used by the `asan` (with LSan) and `coverage` stages. Extend it when adding runtime
+  paths. `tests/lsan.supp` and `tests/valgrind.supp` may only contain third-party symbols.
 - `MarshalTest` uses real `GtkWindow` properties per fundamental type (`title` string,
   `default-width` int, `resizable` bool, `opacity` double, `halign` enum, `display` object,
   `css-classes` = unsupported GStrv). Add a row when the marshaller learns a type.
+- `tests/run.sh` forces `XDEBUG_MODE=off`: xdebug's develop-mode observer segfaults at request
+  shutdown after `ReflectionMethod::invoke()` on PHP-CPP methods. Not our bug; don't debug it.
+- Methods are registered **with arginfo** (`Php::ByVal(...)`) so reflection/stubs/PHP arity checks
+  agree; PHP-CPP answers an arity violation with `E_WARNING` + no call, the C++ validates again.
 - GLib `CRITICAL` lines on stderr from `ErrorTest` are expected (the g_critical fallback path for
   the no-handler case). They cannot be captured from PHP and must not be turned into PHP warnings
   (PHPUnit would throw inside the C++ callback). `tests/run.sh` sets `GSK_RENDERER=cairo` so GTK
@@ -141,7 +156,8 @@ together. Three workflows (one per README badge): `.github/workflows/cpp-lint.ym
 `tests.yml`. (1) static analysis — setup-php 8.4, GTK4 headers, PHP-CPP
 *headers only*, `make compile_commands`, cpp-linter over the whole tree, fails on findings;
 (2) build PHP-CPP + extension and run `tests/run.sh` over a PHP {8.4, 8.5} × Ubuntu {24.04, 26.04}
-matrix (four jobs; `fail-fast: false`). The apt package list must mirror the
+matrix (four jobs; `fail-fast: false`), plus `sanitizers` (`ci.sh --only=valgrind` + `--only=asan`) and `coverage`
+(`ci.sh --only=coverage`, gcovr HTML artifact) jobs on 24.04/8.4. The apt package list must mirror the
 Makefile's `GTK_PKGS`.
 
 ## Architecture
@@ -157,7 +173,10 @@ Makefile's `GTK_PKGS`.
   replaces individual generated method bodies.
 - **Everything PHP-visible is in the `Gtk4\` namespace** (`Php::Namespace` in `main.cpp`;
   `register_*()` take a `Php::Namespace&`). Class name = `Gtk4\<GTypeName>` via
-  `phpgtk::php_class_name()`; `wrap()` depends on it. Constants too (`Gtk4\PHPGTK_VERSION`).
+  `phpgtk::php_class_name()`. Constants too (`Gtk4\PHPGTK_VERSION`). Every registered class also
+  calls `register_wrapper<T_>("GTypeName")` so `wrap()` constructs the exact C++ type for that PHP
+  class (PHP-CPP casts `Php::Base*` to `T*`; allocating only the base is UB — UBSan catches it in
+  `ci.sh --only=asan`).
   Stubs declare `namespace Gtk4;`, scripts `use Gtk4\{Gtk, GtkWindow};`.
 - Exception rule (from php-gtk3, keep it): a PHP throwable must never unwind through GLib frames.
   Trampolines catch `Php::Throwable` around their whole body, copy message/code, leave the catch

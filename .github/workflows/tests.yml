@@ -82,3 +82,92 @@ jobs:
           name: phpunit-junit-php${{ matrix.php }}-${{ matrix.os }}
           path: phpunit-junit.xml
           if-no-files-found: ignore
+
+  sanitizers:
+    name: Valgrind / ASan / UBSan / LSan
+    runs-on: ubuntu-24.04
+    env:
+      PHP: php
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, mbstring, tokenizer, xml, xmlwriter
+          tools: composer
+          coverage: none
+
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libgtk-4-dev xvfb build-essential valgrind
+
+      - name: Build and install PHP-CPP
+        run: |
+          git clone https://github.com/apss-pohl/PHP-CPP.git /tmp/phpcpp
+          git -C /tmp/phpcpp checkout 4d1a856
+          cd /tmp/phpcpp
+          make -j"$(nproc)" PHP_CONFIG="$(command -v php-config)"
+          sudo make install PHP_CONFIG="$(command -v php-config)"
+          sudo ldconfig
+
+      - name: Install PHPUnit
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Build extension (uninstrumented, for valgrind)
+        run: ./ci.sh --only=build
+
+      - name: Run valgrind stage
+        run: ./ci.sh --only=valgrind
+
+      # Instrumented gtk4-asan.so: stress script with LeakSanitizer (only our
+      # module in that process), then the PHPUnit suite for memory errors.
+      - name: Run sanitizer stage
+        run: ./ci.sh --only=asan
+
+  coverage:
+    name: C++ line coverage (gcov)
+    runs-on: ubuntu-24.04
+    env:
+      PHP: php
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, mbstring, tokenizer, xml, xmlwriter
+          tools: composer
+          coverage: none
+
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libgtk-4-dev xvfb build-essential gcovr
+
+      - name: Build and install PHP-CPP
+        run: |
+          git clone https://github.com/apss-pohl/PHP-CPP.git /tmp/phpcpp
+          git -C /tmp/phpcpp checkout 4d1a856
+          cd /tmp/phpcpp
+          make -j"$(nproc)" PHP_CONFIG="$(command -v php-config)"
+          sudo make install PHP_CONFIG="$(command -v php-config)"
+          sudo ldconfig
+
+      - name: Install PHPUnit
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Run coverage stage
+        run: ./ci.sh --only=coverage
+
+      - name: Upload HTML coverage report
+        uses: actions/upload-artifact@v7
+        with:
+          name: cpp-coverage
+          path: coverage/
+          if-no-files-found: ignore

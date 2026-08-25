@@ -170,6 +170,11 @@ early when `php-config` differs from the one PHP-CPP was built with.
 
 ## 6. Testing
 
+Status 2026-08-25: PHPUnit 12 suite (`tests/*Test.php`, one class per core module + `ExtensionTest`,
+`MainLoopTest`, `StubsTest`, `ExampleTest`, `EveryClassTest`), `tests/scripts/stress.php` for the
+sanitizer/coverage runs, all driven by `ci.sh` (stages `cpp-lint php-qa build load test`, opt-in
+`asan coverage`) and mirrored by the GitHub workflows.
+
 - `tests/run.sh`: runs every `tests/*.php` under `xvfb-run -a php -n -dextension=./gtk4.so`,
   non-zero exit on any assert failure. (php-gtk3 had none; `-n` is mandatory to avoid double-loading.)
 - Minimum suites: object identity & refcount (`===`, weak-ref after destroy), signal marshalling of
@@ -177,15 +182,39 @@ early when `php-config` differs from the one PHP-CPP was built with.
   properties), exception boundary (handler called, app survives, rethrow mode), callback teardown
   (destroy notifies actually run), list-model factory round-trip, property get/set for every
   fundamental.
-- CI: build against PHP-CPP for one PHP version + run tests headless; lint (clang-tidy/format) as
-  a second job.
+- CI: PHP {8.4, 8.5} × Ubuntu {24.04 = GTK 4.14 floor, 26.04 = GTK 4.22} matrix, plus a
+  sanitizer job (ASan+UBSan on the suite, LSan on the `php -n` stress run) and a gcov coverage job
+  (gcovr HTML artifact); C++ lint on both Ubuntus, PHP QA (phplint/phpcs/php-cs-fixer/phpstan max).
+
+### Tooling decisions (2026-08-25)
+- **Leak/memory checking = ASan/UBSan/LSan via `make SANITIZE=1`, plus valgrind memcheck** on the
+  uninstrumented build (`ci.sh --only=valgrind`) for what ASan cannot see (uninitialised reads). LSan only on the `php -n`
+  stress process (only our module loaded); in the PHPUnit process other PHP extensions leak at their
+  own shutdown. Suppressions in `tests/lsan.supp` are third-party only.
+- **Coverage = gcov of the C++ (`make COVERAGE=1`)**, not pcov/xdebug: the code under test is the
+  extension, PHP-side coverage of `tests/` would measure nothing.
+- **Build system stays a Makefile** (dependency-tracked, variants via `BUILD_DIR`/`EXTENSION`).
+  Meson was considered for `b_sanitize`/GIR handling; both are covered by `SANITIZE=1` and the
+  generator reading GIR XML directly, so a second build system buys nothing right now. Revisit only
+  if Windows/MSVC support needs it.
+- `EveryClassTest` is the generic "instantiate every class, call every getter" smoke test — it must
+  never need editing when classes are added; the generator's output is covered by it automatically.
+- Tests never run under xdebug (`XDEBUG_MODE=off` in `tests/run.sh`): its develop-mode observer
+  segfaults after `ReflectionMethod::invoke()` on PHP-CPP methods.
 
 ## 7. Milestones
 
-1. **Skeleton** — Makefile, `main.cpp`, `gtk4.ini`, `Gtk::init()`, `GtkApplication::run()` with
-   `activate` signal, a `GtkWindow` with a `GtkButton` and `clicked`. Proves toolchain + PHP-CPP pairing.
-2. **Core runtime** — `wrap`, `marshal`, `signal` (GClosure marshaller), `callback`, `error`, `params`
-   fully implemented and unit-tested on a hand-written `GObject`/`GtkWidget`/`GtkWindow`/`GtkButton`.
+1. ✅ **Skeleton** — Makefile, `main.cpp`, `gtk4.ini`, `Gtk::init()`/`main()`, `GtkWindow` (done, plus
+   the complete CI/QA/test infrastructure: `ci.sh`, three workflows with matrices, sanitizer and
+   coverage jobs, stubs, badges). `GtkApplication`/`GtkButton` moved to milestone 2/3.
+2. 🟡 **Core runtime** — done and tested: `wrap` (owned ref, qdata identity, weak-ref, GType→factory
+   registry), `marshal` (all scalar fundamentals, enum/flags, object/interface, GParamSpec→name),
+   `gsignal` (GClosure marshaller, detail, user data, return values), `error`, `params`, arginfo on
+   every method. **Open:** `BoxedWrapper` (GdkRectangle/GdkRGBA/GStrv…), `G_TYPE_POINTER`/`VARIANT`,
+   a real `GParamSpec` wrapper, `Php::Interface` registration, the `PhpCallable` abstraction for
+   non-signal callbacks (`timeout_add`, `idle_add`, sorters, draw funcs), `wrap()` reusing the
+   existing zval, closure teardown before Zend shutdown, exception rethrow mode from `Gtk::main()`,
+   the `GtkWidget` layer between `GObject` and `GtkWindow`.
 3. **Generator** — GIR parser + emitter producing Gtk/Gdk/Gio/GLib/Pango namespaces; replace the
    hand-written milestone-2 classes with generated ones (they must be byte-for-byte compatible in
    behaviour). Topological registration order. Stubs + coverage doc output.

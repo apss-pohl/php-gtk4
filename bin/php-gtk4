@@ -32,4 +32,8 @@ fi
 
 [[ "$GTK4_SO" == */* ]] && GTK4_SO=$(readlink -f "$GTK4_SO")
 
-PHP_INI_SCAN_DIR="$TMP" exec "$PHP" -dextension="$GTK4_SO" "$@"
+# PHP_GTK4_ENV: extra VAR=value pairs applied to the php process only (used by
+# ci.sh --only=asan for LD_PRELOAD=libasan etc. - must not leak into this script's
+# own helper processes).
+# shellcheck disable=SC2086
+PHP_INI_SCAN_DIR="$TMP" exec env ${PHP_GTK4_ENV:-} "$PHP" -dextension="$GTK4_SO" "$@"

@@ -37,7 +37,7 @@ for ($i = 0; $i < $rounds; $i++) {
             $hits = ($hits ?? 0) + $n;
         }, $j);
     }
-    $w->connect_after('notify::title', fn() => null);
+    $ids[] = $w->connect_after('notify::title', fn() => null);
     $w->connect('notify::title', function (): void {
         throw new RuntimeException('expected');
     });

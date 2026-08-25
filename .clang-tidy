@@ -29,12 +29,14 @@ Checks: >-
   -readability-braces-around-statements,
   -readability-named-parameter,
   -readability-magic-numbers,
-  -bugprone-easily-swappable-parameters
+  -bugprone-easily-swappable-parameters,
+  -bugprone-casting-through-void
 
 # Rationale for the deny-list: GLib macros expand to do/while, varargs,
-# C-style casts and pointer arithmetic; PHP-CPP's Php::Object -> Php::Value
+# C-style casts through void* (G_OBJECT(), GTK_WINDOW(), ...) and pointer arithmetic; PHP-CPP's Php::Object -> Php::Value
 # conversions are slicing by design; wrappers are handed to PHP-CPP as raw
 # owning pointers. Everything else is enforced - CI fails on findings.
-WarningsAsErrors: ''
+# Every enabled check is an error, locally (ci.sh) and in CI (cpp-linter) alike.
+WarningsAsErrors: '*'
 HeaderFilterRegex: '^(src/|main\.h)'
 FormatStyle: file

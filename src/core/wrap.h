@@ -48,6 +48,17 @@ class GObjectWrapper : public Php::Base {
   static void on_finalized(gpointer data, GObject *where_the_object_was);
 };
 
+// Registry GType name -> factory creating the matching C++ wrapper type.
+// Every registered PHP class adds itself here so that wrap() constructs the
+// exact C++ type PHP-CPP expects for that PHP class (PHP-CPP static_casts the
+// Php::Base to Class<T>'s T; allocating only the base class would be UB).
+using WrapperFactory = GObjectWrapper *(*)();
+void register_wrapper(const char *gtype_name, WrapperFactory factory);
+template <typename T>
+void register_wrapper(const char *gtype_name) {
+  register_wrapper(gtype_name, []() -> GObjectWrapper * { return new T(); });
+}
+
 // C -> PHP: return the existing PHP object for obj, or create a new wrapper
 // whose PHP class is the nearest registered ancestor of obj's GType.
 Php::Value wrap(GObject *obj);
