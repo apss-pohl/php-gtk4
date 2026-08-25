@@ -13,6 +13,11 @@
 set -euo pipefail
 
 PHP=${PHP:-php8.4}
+# Prefer the freshly built extension in the repo (./gtk4.so next to bin/) over the
+# installed one, so the launcher never silently runs a stale system copy.
+# GTK4_SO=gtk4 forces the installed extension; a path forces that file.
+REPO_SO="$(cd "$(dirname "$0")/.." && pwd)/gtk4.so"
+if [[ -z "${GTK4_SO:-}" && -f "$REPO_SO" ]]; then GTK4_SO="$REPO_SO"; fi
 GTK4_SO=${GTK4_SO:-gtk4}   # bare name -> from extension_dir; or a path to a .so
 
 SCAN_DIR=$("$PHP" -n -r 'echo PHP_CONFIG_FILE_SCAN_DIR;')

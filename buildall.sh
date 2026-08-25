@@ -17,6 +17,11 @@ if [ "$EUID" -eq 0 ]; then
     exit 1
 fi
 JOBS=${JOBS:-$(nproc)}
+FOREIGN=$(find . -path ./vendor -prune -o -path ./.git -prune -o ! -user "$(id -un)" -print 2>/dev/null | head -1)
+if [ -n "$FOREIGN" ]; then
+    echo "ERROR: build artifacts owned by $(stat -c %U "$FOREIGN") (e.g. $FOREIGN) - run: sudo chown -R \"\$USER\" ." >&2
+    exit 1
+fi
 WITH_WEBKIT=${WITH_WEBKIT:-0}
 
 # FORMAT: "version:enabled"   (enabled: 1=build by default, 0=skip; ONLY=x forces)

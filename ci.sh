@@ -213,6 +213,13 @@ stage_php_qa() {
 build_variant() {  # build_variant <output.so> [configure args...]
     local out="$1"; shift
     step "build ($PHPIZE / $PHP_CONFIG${*:+ $*}) -> $out"
+    # Build artifacts owned by someone else (a build run under sudo) make make fail
+    # with "Permission denied" - say so instead of dumping assembler errors.
+    local foreign
+    foreign=$(find . -path ./vendor -prune -o -path ./.git -prune -o ! -user "$(id -un)" -print 2>/dev/null | head -1)
+    if [[ -n "$foreign" ]]; then
+        fail "build artifacts owned by $(stat -c %U "$foreign") (e.g. $foreign) - run: sudo chown -R \"\$USER\" ."
+    fi
     # NEVER `phpize --clean`: it deletes tests/*.php (php-src assumes .phpt there).
     # And phpize's `make clean` runs `find . -name '*.so' | xargs rm`, which would
     # take the already built variants in the repo root with it - stash them.

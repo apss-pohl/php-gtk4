@@ -31,7 +31,7 @@ checking if PHP is built with thread safety (ZTS)... no
 [1mConfiguring extension[m
 checking whether to enable the gtk4 extension... yes, shared
 checking whether to build gtk4 with ASan/UBSan... no
-checking whether to build gtk4 with gcov coverage... yes
+checking whether to build gtk4 with gcov coverage... no
 checking whether to enable WebKitGTK in gtk4... no
 checking for g++... g++
 checking whether the compiler supports GNU C++... yes

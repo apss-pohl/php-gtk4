@@ -52,8 +52,9 @@ gtk4 calls land in GTK 3 and fail. gtk4 prints a warning at startup when it sees
 `buildall.sh` installs `gtk4.ini` without enabling it globally. Pick one per process:
 
 ```sh
-bin/php-gtk4 script.php               # gtk4 only; keeps all other extensions (filters gtk3 via PHP_INI_SCAN_DIR)
-GTK4_SO=./gtk4.so bin/php-gtk4 t.php  # same, with a fresh uninstalled build
+bin/php-gtk4 script.php               # gtk4 only; keeps all other extensions (filters gtk3 via PHP_INI_SCAN_DIR);
+                                      # uses the repo's freshly built ./gtk4.so if present, else the installed one
+GTK4_SO=gtk4 bin/php-gtk4 script.php  # force the installed extension
 php8.4 -n -dextension=gtk4 script.php # minimal: no ini files at all
 sudo phpdismod gtk3 && sudo phpenmod gtk4   # switch the system default (Debian/Ubuntu)
 ```
