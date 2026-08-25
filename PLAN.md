@@ -8,10 +8,10 @@ fragile, or GTK3-specific.
 
 | Topic | Decision | Reason |
 |---|---|---|
-| Zend abstraction | **PHP-CPP** ([apss-pohl fork](https://github.com/apss-pohl/PHP-CPP) = upstream v2.4.16 + const-heap fix), same as php-gtk3 | Proven; maintainer knows it; exceptions ↔ throwables for free |
+| Zend abstraction | **None — native Zend API** (decided 2026-08-25, replacing PHP-CPP after one day of use) | PHP-CPP needed a fork for a heap bug, could not express return/nullable types, enums, attributes, object handlers (`$obj->prop`), threw `E_WARNING` on arity errors, hid the `Throwable`, and forced a non-standard build. Native + `gen_stub.php` gives typed arginfo from one stub file, `phpize`/PIE-installable builds, and idiomatic PHP 8.4 objects. |
 | Language | C++20 (GCC 11+/Clang 14+) | PHP 8.4 itself needs a modern toolchain, so nothing is lost; gives `std::span`, concepts, designated initialisers for the marshaller/generator output |
 | GTK target | GTK 4.14+ (`gtk4` pkg-config), GLib 2.76+ | Current LTS distros |
-| Module name | `gtk4` everywhere (Makefile `NAME`, `Php::Extension("gtk4")`, `gtk4.ini`) | php-gtk3 lesson: the four names must agree |
+| Module name | `gtk4` everywhere (`config.m4`, `zend_module_entry`, `gtk4.ini`) | php-gtk3 lesson: the names must agree |
 | PHP versions | **8.4+ only** (Makefile and `main.cpp` refuse older) | One Zend ABI to care about; lets stubs/tests use 8.4 syntax (property hooks, `#[\Deprecated]`, `new X()->m()`, typed constants) |
 | Class naming | `Gtk4\` namespace + GType name (`Gtk4\GtkButton`, `Gtk4\GdkTexture`) | Generic C→PHP wrapping by `g_type_name()`; namespace lets gtk3 and gtk4 be installed side by side (using both in one process is still impossible — identical libgtk C symbols) |
 | Code generation | **Generated** wrapper skeletons from GObject-Introspection (`Gtk-4.0.gir`), hand-written runtime core | php-gtk3 hand-wrote 260 classes + a 5000-line `get_module()`; GTK4 ships complete GIR |
@@ -29,7 +29,7 @@ gen/ output         src/gen/<Ns>/<Type>.{h,cpp}  — one class per GType, method
   │
 src/core/           hand-written runtime (the real work):
                       wrap.{h,cpp}      PHP object <-> GObject* mapping, refcounting, identity
-                      marshal.{h,cpp}   GValue <-> Php::Value (complete, both directions)
+                      marshal.{h,cpp}   GValue <-> zval (complete, both directions)
                       gsignal.{h,cpp}   GClosure-based signal connection, PHP callable invocation
                       callback.{h,cpp}  one abstraction for every C callback entry point (timeouts, funcs, closures)
                       error.{h,cpp}     the exception boundary + Gtk::set_exception_handler
@@ -38,90 +38,70 @@ src/core/           hand-written runtime (the real work):
 GTK4 / GLib C API
 ```
 
-## 2. Core runtime (hand-written, build first)
+## 2. Core runtime (hand-written; status 2026-08-25: implemented natively, tested)
 
-### 2.1 Object wrapping and lifetime (`wrap`)
-- `GObjectWrapper : Php::Base` holds `GObject *obj` (typed, not `gpointer*`).
-- **Own a reference**: on wrap, `g_object_ref_sink()`; in the C++ destructor, `g_object_unref()`.
-  php-gtk3 never ref'd anything and relied on GTK container ownership — works for widgets, leaks or
-  dangles for everything else (GdkTexture, GListStore, GtkStringList...).
-- **Identity**: store a weak back-pointer to the PHP object in `g_object_set_qdata(obj, PHPGTK_QUARK, …)`.
-  `wrap(GObject*)` returns the *existing* PHP object if one exists, else creates one — so
-  `$a->get_parent() === $box` holds and per-object PHP state (dynamic properties) survives round trips.
-  Clear the qdata in the destructor. Use a weak ref (`g_object_weak_ref`) so a GTK-side finalize
-  nulls the PHP handle instead of leaving a dangling pointer.
-- **Dynamic class selection**: `wrap()` walks `G_TYPE_FROM_INSTANCE` up the parent chain until it
-  finds a registered PHP class (so an unregistered subclass still returns e.g. `GtkWidget` rather than
-  throwing "Unknown class name" as php-gtk3 does on `query-tooltip`).
-- Boxed types: `BoxedWrapper` holding `GType` + `gpointer`, copied with `g_boxed_copy`/freed with
-  `g_boxed_free`. Covers `GdkRectangle`, `GdkRGBA`, `GtkTreeIter`, `GVariant`-likes, `graphene_*`.
-- Interfaces registered as real `Php::Interface`s (`GtkOrientable`, `GListModel`, `GtkSelectionModel`…) and
-  attached with `implements()` — no `liststore_type` bool hacks.
-- Enums/flags: PHP classes with constants (same as php-gtk3), *plus* GType-aware conversion in the
-  marshaller so `set_property('orientation', GtkOrientation::VERTICAL)` works.
+### 2.1 Objects (`src/core/object`)
+- `struct Object { GObject *obj; zend_object std; }`; `create_object` allocates it for every
+  registered class (one struct serves all — per-class state lives in the GObject).
+- Handlers: `free_obj` (weak-unref, clear qdata, `g_object_unref`), `clone_obj = NULL`,
+  `read/write/has_property` map `$obj->some_prop` (underscores → dashes) to GObject properties and
+  fall back to the standard handlers, `get_debug_info` lists readable properties for `var_dump`.
+- **Ownership**: `attach()` does `g_object_ref_sink`; the handle owns one ref. **Identity**: a qdata
+  back-pointer makes `wrap()` return the existing `zend_object` (`ZVAL_OBJ_COPY`), so `===` holds and
+  dynamic properties survive round trips. A `g_object_weak_ref` nulls `obj` if GTK finalizes anyway.
+- **Registry**: `register_class("GTypeName", ce)` (GType name → `zend_class_entry`, installs
+  `create_object`). `wrap()` walks `g_type_parent()` to the nearest registered class, so an
+  unregistered subclass still yields e.g. `Gtk4\GObject` instead of failing.
+- `unwrap(zv, expected_gtype)` and `PHPGTK_SELF(CType, GTYPE)` validate class, liveness and GType
+  and raise `TypeError` / `Error("... on a dead GObject")`.
+- Open: boxed types (`GdkRectangle`, `GdkRGBA`, `GStrv`, graphene) as a `Boxed` handle struct with
+  `g_boxed_copy/free`; interfaces as real PHP interfaces (`zend_class_implements`); `G_TYPE_POINTER`
+  opaque handle; `GVariant`.
 
-### 2.2 Value marshalling (`marshal`)
-- Single table-driven `to_gvalue(Php::Value, GType)` / `to_php(const GValue*)` covering **all**
-  fundamentals: CHAR, UCHAR, BOOL, INT, UINT, LONG, ULONG, INT64, UINT64, FLOAT, DOUBLE, STRING,
-  ENUM, FLAGS, OBJECT, INTERFACE, BOXED, POINTER (opaque handle class), PARAM, VARIANT, GTYPE.
-- Everything that touches values — properties, signal args, list-model items, callback returns —
-  goes through this one place. php-gtk3 had three partial copies (connect_callback, generic_callback,
-  phpgtk_get_gvalue) that drifted.
-- `GList`/`GSList`/`GPtrArray`/`char**` → `Php::Array` helpers with explicit ownership flags
-  (transfer none / container / full), taken from GIR.
+### 2.2 Values (`src/core/marshal`)
+- `to_php(const GValue*, zval*)` / `to_gvalue(zval*, GType, GValue*)`: all scalar fundamentals,
+  enum/flags (as int for now — PHP enums come with the generator), object/interface (via
+  `wrap`/`unwrap`), `GParamSpec` (name only until a class exists). Unsupported types raise
+  `TypeError("... unsupported GType X")` — never crash. `to_php_supported()` lets `get_debug_info`
+  skip them.
+- Open: BOXED, VARIANT, POINTER; `GList`/`GSList`/`GPtrArray`/`char**` ↔ array helpers with GIR
+  transfer semantics.
 
-### 2.3 Signals (`signal`)
-- Connect with `g_signal_connect_closure()` using a **custom `GClosure` with `g_closure_set_marshal`**
-  (or `g_cclosure_new` + `g_closure_set_meta_marshal`). The marshaller receives
-  `(GValue *return, guint n_params, const GValue *params)` — **no varargs**. This removes the
-  entire "unsupported type, cannot skip the va_arg slot" bug class and the `BOXED == GdkEvent`
-  assumption from php-gtk3.
-- Closure data = `PhpClosure { Php::Value callable; Php::Array user_args; }` freed in the
-  `GClosureNotify` (php-gtk3 leaked these on purpose because destroying `Php::Value` from a notify
-  crashed — root-cause it here: the fix is to make sure the notify runs while PHP is alive, i.e.
-  disconnect all closures in MSHUTDOWN/RSHUTDOWN before Zend tears down).
-- Return values honoured: handler return converted to `return_value` GValue via `marshal` (needed
-  for `gboolean`-returning signals like `close-request`).
-- Handler ID returned as int; `disconnect`, `block`, `unblock`, `is_connected` on `GObject`.
-- Detailed signals (`notify::title`) supported by parsing the detail with `g_signal_parse_name`.
+### 2.3 Signals (`src/core/gsignal`)
+- `connect()`/`connect_after()` use `g_signal_parse_name` (detail support) and a `GClosure` with a
+  custom marshaller receiving `GValue` arrays — no varargs. Closure data: the callable zval (kept
+  alive), user args, signal name; freed by the closure finalize notifier.
+- The callable is validated at connect time (`Z_PARAM_FUNC`), resolved with `zend_fcall_info_init`
+  and invoked with `zend_call_function`; the handler's return value is converted to the signal's
+  return `GValue` (e.g. `close-request` → bool).
+- Open (TODO §2): drop `...$userData`; disconnect all closures in RSHUTDOWN before Zend teardown;
+  the `PhpCallable` abstraction for non-signal callbacks.
 
-### 2.4 Callbacks (`callback`)
-- One `PhpCallable` class (callable + bound args + context string) with `invoke(args…) -> Php::Value`
-  that contains the *only* try/catch for the C→PHP direction. Every entry point
-  (`GLib::timeout_add`, `idle_add`, `GtkSortListModel` sorters, `GtkListItemFactory` signals,
-  `GtkCustomFilter`, `GtkDrawingArea::set_draw_func`, tick callbacks…) wraps a `PhpCallable`.
-  No per-site re-implementation of marshal-and-catch.
-- Destroy-notify frees the `PhpCallable`; `GDestroyNotify` is always supplied.
+### 2.4 Exception boundary (`src/core/error`)
+- Rule unchanged from php-gtk3: a throwable never unwinds through GLib, and Zend refuses to run PHP
+  while one is pending. Every trampoline ends with `report_pending_exception(origin)`: take
+  `EG(exception)`, `zend_clear_exception()`, call the handler installed via
+  `Gtk::set_exception_handler(callable(\Throwable, string $origin))` with the **real object**
+  (class, file, line, trace intact); if none or if it throws itself, `g_critical()`. The emitting
+  GTK call continues. Handler is request-scoped (released in RSHUTDOWN).
+- Open: opt-in rethrow of the stored throwable after `Gtk::main()`/`GtkApplication::run()` return.
 
-### 2.5 Exception boundary (`error`)
-Keep php-gtk3's hard-won rules exactly:
-- A PHP throwable must never unwind through GLib frames. Catch `Php::Throwable` (not just
-  `Php::Exception`) around the *whole* trampoline body including marshalling.
-- Capture message/code, **leave the catch scope** (PHP-CPP clears the pending Zend exception on
-  destruction of the caught object), then report.
-- `Gtk::set_exception_handler(?callable)` stores a *registered* `Php::Value` (never looked up by
-  name at report time); fall back to `g_critical()`. Handler slot is heap-allocated and never freed.
-- Improvement: also capture the throwable's class name and, if PHP-CPP allows, keep the exception
-  object alive and re-throw it from `Gtk::main()` / `GtkApplication::run()` return when the app
-  opts in (`Gtk::set_exception_mode(Gtk::EXCEPTION_RETHROW)`). This gives users a real `try/catch`
-  around the main loop. Implement by stashing the exception, calling `g_main_loop_quit`, rethrowing
-  after the C frame returns.
-
-### 2.6 Parameter validation (`params`)
-- Typed helpers: `arg_string(params, i)`, `arg_int`, `arg_object<T>(params, i, "GtkWidget")`
-  (does `Php::is_a` + `implementation()` — php-gtk3 skipped the `is_a` check and read bogus pointers),
-  `arg_optional_*`. Required → throw `TypeError`-like `Php::Exception`; optional → default.
+### 2.5 Arguments
+- Arginfo is generated from the stub; bodies parse with `ZEND_PARSE_PARAMETERS_*` → PHP 8
+  `ArgumentCountError`/`TypeError` semantics for free. `Z_PARAM_OBJECT_OF_CLASS_OR_NULL` + `unwrap()`
+  for GObject arguments.
 
 ## 3. Code generation (`gen/`)
 
 - Input: `/usr/share/gir-1.0/{GLib,GObject,Gio,Gdk-4.0,Gsk-4.0,Gtk-4.0,Pango,GdkPixbuf}.gir` (XML).
 - Generator: PHP script (like php-gtk3's `gen/run.php` but reading GIR instead of `defs.txt`).
-- Emits per class: header, `.cpp` with method bodies calling `params`/`marshal`/`wrap`, and a
-  `register_<Ns>(Php::Extension&)` function with all `Php::Class`, `extends`, `implements`,
-  `method<>`, `constant` lines in **dependency order** (topologically sorted by parent type — this
-  was a manual, error-prone ordering in php-gtk3's `get_module()`).
+- Emits per namespace: a section of `stubs/gtk4.stub.php` (classes, typed signatures, enums,
+  `#[\Deprecated]`, docblocks with docs.gtk.org links) and per class a `.cpp` with `ZEND_METHOD`
+  bodies calling `marshal`/`wrap`/`unwrap`; plus the MINIT registration block in **dependency
+  order** (topologically sorted by parent type). `gen_stub.php` then produces the arginfo, so
+  types are declared exactly once.
 - Honour GIR annotations: `transfer`, `nullable`, `optional`, `out`/`inout` (returned as array or
-  by-ref), `array length=`, `deprecated` (emit `Php::deprecated` and still register).
+  by-ref), `array length=`, `deprecated` (`#[\Deprecated]` in the stub + `E_DEPRECATED` in the body).
 - Skip-list / override mechanism: `gen/overrides/<Type>.<method>.cpp` replaces a generated body
   (for the handful of APIs needing hand code: `GtkDrawingArea::set_draw_func`, `GtkListItemFactory`,
   `Gio::Application::run` with argv). Generated code is **regenerable**; never hand-edit it.
@@ -187,16 +167,15 @@ sanitizer/coverage runs, all driven by `ci.sh` (stages `cpp-lint php-qa build lo
   (gcovr HTML artifact); C++ lint on both Ubuntus, PHP QA (phplint/phpcs/php-cs-fixer/phpstan max).
 
 ### Tooling decisions (2026-08-25)
-- **Leak/memory checking = ASan/UBSan/LSan via `make SANITIZE=1`, plus valgrind memcheck** on the
+- **Leak/memory checking = ASan/UBSan/LSan via `--enable-gtk4-sanitize`, plus valgrind memcheck** on the
   uninstrumented build (`ci.sh --only=valgrind`) for what ASan cannot see (uninitialised reads). LSan only on the `php -n`
   stress process (only our module loaded); in the PHPUnit process other PHP extensions leak at their
   own shutdown. Suppressions in `tests/lsan.supp` are third-party only.
-- **Coverage = gcov of the C++ (`make COVERAGE=1`)**, not pcov/xdebug: the code under test is the
+- **Coverage = gcov of the C++ (`--enable-gtk4-coverage`, gcovr)**, not pcov/xdebug: the code under test is the
   extension, PHP-side coverage of `tests/` would measure nothing.
-- **Build system stays a Makefile** (dependency-tracked, variants via `BUILD_DIR`/`EXTENSION`).
-  Meson was considered for `b_sanitize`/GIR handling; both are covered by `SANITIZE=1` and the
-  generator reading GIR XML directly, so a second build system buys nothing right now. Revisit only
-  if Windows/MSVC support needs it.
+- **Build system = standard `phpize`/`config.m4`** (the only build PECL/PIE and the php-sdk on
+  Windows understand). Variants via `--enable-gtk4-sanitize` / `--enable-gtk4-coverage`. The former
+  PHP-CPP-template Makefile is gone.
 - `EveryClassTest` is the generic "instantiate every class, call every getter" smoke test — it must
   never need editing when classes are added; the generator's output is covered by it automatically.
 - Tests never run under xdebug (`XDEBUG_MODE=off` in `tests/run.sh`): its develop-mode observer
@@ -211,7 +190,7 @@ sanitizer/coverage runs, all driven by `ci.sh` (stages `cpp-lint php-qa build lo
    registry), `marshal` (all scalar fundamentals, enum/flags, object/interface, GParamSpec→name),
    `gsignal` (GClosure marshaller, detail, user data, return values), `error`, `params`, arginfo on
    every method. **Open:** `BoxedWrapper` (GdkRectangle/GdkRGBA/GStrv…), `G_TYPE_POINTER`/`VARIANT`,
-   a real `GParamSpec` wrapper, `Php::Interface` registration, the `PhpCallable` abstraction for
+   a real `GParamSpec` wrapper, PHP interface registration, the `PhpCallable` abstraction for
    non-signal callbacks (`timeout_add`, `idle_add`, sorters, draw funcs), `wrap()` reusing the
    existing zval, closure teardown before Zend shutdown, exception rethrow mode from `Gtk::main()`,
    the `GtkWidget` layer between `GObject` and `GtkWindow`.

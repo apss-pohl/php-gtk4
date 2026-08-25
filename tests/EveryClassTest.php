@@ -23,9 +23,6 @@ final class EveryClassTest extends GtkTestCase
     {
         foreach (new ReflectionExtension('gtk4')->getClasses() as $class) {
             $name = $class->getName();
-            if (str_starts_with($name, 'PhpCpp')) {
-                continue;
-            }
             $ctor = $class->getConstructor();
             $instantiable = $class->isInstantiable()
                 && $ctor !== null

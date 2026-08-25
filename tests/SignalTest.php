@@ -100,32 +100,23 @@ final class SignalTest extends GtkTestCase
 
     public function testUnknownSignalThrows(): void
     {
+        $this->expectException(\ValueError::class);
         $this->expectExceptionMessage("unknown signal 'no-such-signal' on GtkWindow");
         $this->window()->connect('no-such-signal', fn() => null);
     }
 
     public function testNonCallableHandlerThrows(): void
     {
-        $this->expectExceptionMessage('not callable');
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessageMatches('/must be a valid callback|must be of type callable/');
         self::opaque([$this->window(), 'connect'])('notify::title', 'definitely_not_a_function');
     }
 
     public function testMissingArgumentsAreRejected(): void
     {
-        // Declared arginfo: PHP-CPP reports the arity violation as an E_WARNING and
-        // does not call into C++ (which validates again as a second line of defence).
-        $warning = null;
-        set_error_handler(function (int $no, string $msg) use (&$warning): bool {
-            $warning = $msg;
-            return true;
-        }, E_WARNING);
-        try {
-            self::opaque([$this->window(), 'connect'])('notify::title');
-        } finally {
-            restore_error_handler();
-        }
-        self::assertNotNull($warning);
-        self::assertStringContainsString('connect() expects at least 2 parameter', $warning);
+        // PHP 8 semantics for internal functions: ArgumentCountError, not a warning.
+        $this->expectException(\ArgumentCountError::class);
+        self::opaque([$this->window(), 'connect'])('notify::title');
     }
 
     public function testHandlerOnDestroyedWindowStillWorksWhileHandleLives(): void

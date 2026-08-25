@@ -9,8 +9,10 @@ use ReflectionExtension;
 use ReflectionMethod;
 
 /**
- * stubs/gtk4.php must list exactly the classes, declared methods and
- * constants the loaded extension registers (names only; types are docs).
+ * The API is declared once in stubs/gtk4.stub.php; gen_stub.php derives the
+ * arginfo the extension registers and gen/ide-stub.php derives stubs/gtk4.php.
+ * These tests guard that chain: the IDE stub is current, and it agrees with
+ * what the loaded extension actually registers.
  */
 final class StubsTest extends TestCase
 {
@@ -29,9 +31,6 @@ final class StubsTest extends TestCase
         $ext = new ReflectionExtension('gtk4');
         $classes = [];
         foreach ($ext->getClasses() as $class) {
-            if (str_starts_with($class->getName(), 'PhpCpp')) {
-                continue;
-            }
             $own = array_filter(
                 $class->getMethods(),
                 fn(ReflectionMethod $m) => $m->getDeclaringClass()->getName() === $class->getName(),
@@ -57,7 +56,9 @@ final class StubsTest extends TestCase
         preg_match_all('/^(?:final\s+)?class\s+(\w+)[^{]*\{(.*?)^\}/ms', $src, $found, PREG_SET_ORDER);
         foreach ($found as [, $name, $body]) {
             preg_match_all('/function\s+(\w+)\s*\(/', $body, $mm);
-            $methods = $mm[1];
+            // __get/__set/__isset in the IDE stub model the engine-level property handlers
+            // (gen/ide-stub.php); the extension registers no such methods.
+            $methods = array_values(array_diff($mm[1], ['__get', '__set', '__isset']));
             sort($methods);
             $classes[$ns . $name] = $methods;
         }
@@ -72,6 +73,19 @@ final class StubsTest extends TestCase
     public function testStubDeclaresNamespace(): void
     {
         self::assertMatchesRegularExpression('/^namespace Gtk4;/m', self::source());
+    }
+
+    public function testIdeStubIsGeneratedFromTheStubSource(): void
+    {
+        // stubs/gtk4.php is derived from stubs/gtk4.stub.php by gen/ide-stub.php.
+        $out = [];
+        $cmd = sprintf(
+            '%s %s --check 2>&1',
+            escapeshellarg(PHP_BINARY),
+            escapeshellarg(__DIR__ . '/../gen/ide-stub.php'),
+        );
+        exec($cmd, $out, $rc);
+        self::assertSame(0, $rc, implode("\n", $out));
     }
 
     public function testClassesMatch(): void

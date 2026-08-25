@@ -1,61 +1,70 @@
-#include "GtkWindow.h"
-#include "../core/params.h"
-#include <gtk/gtk.h>
+// Gtk4\GtkWindow - the single hand-written widget of milestone 1.
+// NOTE: extends GObject directly until the GtkWidget layer exists (TODO.md).
+#include "php_gtk4.h"
+#include "core/object.h"
 
-namespace phpgtk {
+using namespace phpgtk;
 
-#define SELF as<GtkWindow>(GTK_TYPE_WINDOW)
-
-void GtkWindow_::__construct() {
-  attach(G_OBJECT(gtk_window_new()));
+ZEND_METHOD(Gtk4_GtkWindow, __construct) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  attach(object_from_zval(ZEND_THIS), G_OBJECT(gtk_window_new()));
 }
 
-void GtkWindow_::set_title(Php::Parameters &p) {
-  require(p, 1, "set_title(string $title)");
-  gtk_window_set_title(SELF, arg_string(p, 0).c_str());
+ZEND_METHOD(Gtk4_GtkWindow, set_title) {
+  zend_string *title = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_STR_OR_NULL(title)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWindow *w = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
+  gtk_window_set_title(w, title != nullptr ? ZSTR_VAL(title) : nullptr);
 }
 
-Php::Value GtkWindow_::get_title() {
-  const char *t = gtk_window_get_title(SELF);
-  return t ? Php::Value(t) : Php::Value(nullptr);
+ZEND_METHOD(Gtk4_GtkWindow, get_title) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWindow *w = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
+  const char *t = gtk_window_get_title(w);
+  if (t == nullptr) RETURN_NULL();
+  RETURN_STRING(t);
 }
 
-void GtkWindow_::set_default_size(Php::Parameters &p) {
-  require(p, 2, "set_default_size(int $width, int $height)");
-  gtk_window_set_default_size(SELF, (int)arg_int(p, 0), (int)arg_int(p, 1));
+ZEND_METHOD(Gtk4_GtkWindow, set_default_size) {
+  zend_long width, height;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_LONG(width)
+  Z_PARAM_LONG(height)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWindow *w = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
+  gtk_window_set_default_size(w, static_cast<int>(width), static_cast<int>(height));
 }
 
-void GtkWindow_::set_child(Php::Parameters &p) {
-  require(p, 1, "set_child(?GtkWidget $child)");
-  GObject *child = p[0].isNull() ? nullptr : unwrap(p[0], GTK_TYPE_WIDGET);
-  gtk_window_set_child(SELF, child ? GTK_WIDGET(child) : nullptr);
+ZEND_METHOD(Gtk4_GtkWindow, set_child) {
+  zval *child = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(child, class_for_gtype_name("GObject"))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWindow *w = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
+  GObject *c = nullptr;
+  if (child != nullptr) {
+    c = unwrap(child, GTK_TYPE_WIDGET);
+    if (c == nullptr) RETURN_THROWS();
+  }
+  gtk_window_set_child(w, c != nullptr ? GTK_WIDGET(c) : nullptr);
 }
 
-void GtkWindow_::present() {
-  gtk_window_present(SELF);
-}
-void GtkWindow_::close() {
-  gtk_window_close(SELF);
-}
-void GtkWindow_::destroy() {
-  gtk_window_destroy(SELF);
+ZEND_METHOD(Gtk4_GtkWindow, present) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWindow *w = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
+  gtk_window_present(w);
 }
 
-void register_GtkWindow(Php::Namespace &ns, const Php::Class<GObjectWrapper> &gobject) {
-  Php::Class<GtkWindow_> c("GtkWindow");
-  c.extends(gobject);  // TODO: extends GtkWidget once the hierarchy exists
-  c.method<&GtkWindow_::__construct>("__construct");
-  c.method<&GtkWindow_::set_title>("set_title", {Php::ByVal("title", Php::Type::String)});
-  c.method<&GtkWindow_::get_title>("get_title");
-  c.method<&GtkWindow_::set_default_size>(
-      "set_default_size",
-      {Php::ByVal("width", Php::Type::Numeric), Php::ByVal("height", Php::Type::Numeric)});
-  c.method<&GtkWindow_::set_child>("set_child", {Php::ByVal("child", Php::Type::Null, false)});
-  c.method<&GtkWindow_::present>("present");
-  c.method<&GtkWindow_::close>("close");
-  c.method<&GtkWindow_::destroy>("destroy");
-  ns.add(std::move(c));
-  register_wrapper<GtkWindow_>("GtkWindow");
+ZEND_METHOD(Gtk4_GtkWindow, close) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWindow *w = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
+  gtk_window_close(w);
 }
 
-}  // namespace phpgtk
+ZEND_METHOD(Gtk4_GtkWindow, destroy) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWindow *w = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
+  gtk_window_destroy(w);
+}

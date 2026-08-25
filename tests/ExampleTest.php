@@ -23,9 +23,6 @@ final class ExampleTest extends TestCase
         $missing = [];
         foreach (new ReflectionExtension('gtk4')->getClasses() as $class) {
             $name = $class->getName();
-            if (str_starts_with($name, 'PhpCpp')) {
-                continue;
-            }
             $short = substr($name, strrpos($name, '\\') + 1);
             // Used as `new X(`, `X::`, a type hint `X $`, or imported and used.
             if (!preg_match('/\b' . preg_quote($short, '/') . '\b(?!\s*[,}])/', $src)) {

@@ -54,6 +54,7 @@ final class MarshalTest extends GtkTestCase
 
     public function testUnknownPropertyThrows(): void
     {
+        $this->expectException(\ValueError::class);
         $this->expectExceptionMessage("no property 'no-such-prop' on GtkWindow");
         $this->window()->get_property('no-such-prop');
     }
@@ -67,6 +68,7 @@ final class MarshalTest extends GtkTestCase
     public function testUnsupportedGTypeIsAnExceptionNotACrash(): void
     {
         // css-classes is a GStrv (boxed) - not marshalled yet.
+        $this->expectException(\TypeError::class);
         $this->expectExceptionMessageMatches('/to_php: unsupported GType GStrv/');
         $this->window()->get_property('css-classes');
     }

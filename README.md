@@ -7,7 +7,7 @@
 [![GTK 4](https://img.shields.io/badge/GTK-4.14%2B-4A86CF?logo=gtk&logoColor=white)](https://www.gtk.org/)
 [![C++20](https://img.shields.io/badge/C%2B%2B-20-00599C?logo=cplusplus&logoColor=white)](https://en.cppreference.com/w/cpp/20)
 
-PHP extension binding GTK 4, built on [PHP-CPP](https://github.com/apss-pohl/PHP-CPP) (fork with the const-heap fix). See `PLAN.md` for the design.
+PHP extension binding GTK 4, written in C++20 against the native Zend API (standard `phpize` build). See `PLAN.md` for the design.
 
 ## Usage
 
@@ -25,32 +25,25 @@ Gtk::main();
 
 ## Build & install
 
-Requires **PHP 8.4+** (8.4 and 8.5 are tested; older php-configs are rejected by the Makefile). Prerequisites: `libgtk-4-dev`, `php8.4-dev`, and a PHP-CPP static lib built with the same
-`php-config` (`PHP-CPP/build-dist.sh` puts it in `PHP-CPP/dist/php8.4/`).
+Requires **PHP 8.4+** (8.4 and 8.5 are tested) with the dev package (`php8.4-dev`: phpize,
+php-config) and `libgtk-4-dev` (GTK ≥ 4.14).
 
 ```sh
-./buildall.sh                               # build + install for every enabled PHP version (uses sudo)
-ONLY=8.4 ./buildall.sh                      # a single version from the table in buildall.sh
-PHPCPP_BASE=/path/to/PHP-CPP/dist ./buildall.sh
-
-# manual, without installing
-make PHP_CONFIG=/usr/bin/php-config8.4 PHPCPP_STATIC=/path/libphpcpp.a.2.4.16 -j"$(nproc)"
-php8.4 /usr/local/bin/composer install     # once, for PHPUnit
-./ci.sh                                     # cpp-lint, php-qa, build, load, test - same as GitHub Actions
+phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(nproc)"
+sudo make install                           # or: ./buildall.sh (builds + installs every enabled PHP version)
+./ci.sh                                     # stubs, cpp-lint, php-qa, build, load, test - same as GitHub Actions
 ./ci.sh --only=test --filter SignalTest    # single stage / single test class; --fix applies all auto-fixes
-make test                                   # PHPUnit under xvfb-run against ./gtk4.so (./tests/run.sh --filter X for one)
 bin/php-gtk4 examples/example.php          # canonical showcase of every element
 ```
 
-## Contributing
-
-A new element (class/method/constant) is only done when it comes with tests in `tests/`, a typed
-entry in `stubs/gtk4.php`, and a use in `examples/example.php`; `make test` enforces the last two.
+Configure options: `--enable-gtk4-webkit`, `--enable-gtk4-sanitize`, `--enable-gtk4-coverage`.
+The API is declared in `stubs/gtk4.stub.php`; `src/gtk4_arginfo.h` and the IDE stub `stubs/gtk4.php`
+are generated from it (`./ci.sh --only=stubs --fix`).
 
 ## Coexisting with php-gtk3
 
 All PHP-visible names live in the **`Gtk4` namespace** (`use Gtk4\{Gtk, GtkWindow};`,
-`Gtk4\PHPGTK_VERSION`), so gtk3 and gtk4 can be *installed* side by side and never hijack each
+`Gtk4\VERSION`), so gtk3 and gtk4 can be *installed* side by side and never hijack each
 other's class names.
 
 They still cannot be *used* in one process: libgtk-3 and libgtk-4 export the same C symbols, and
@@ -67,3 +60,27 @@ sudo phpdismod gtk3 && sudo phpenmod gtk4   # switch the system default (Debian/
 
 Editing the version table in `buildall.sh` (`version:php-config:ini-dir:with_webkit:enabled`) is
 how a PHP version is added.
+
+## Credits & inspiration
+
+php-gtk4 stands on the shoulders of [**php-gtk3**](https://github.com/scorninpc/php-gtk3) by
+[Bruno Pitteli Gonçalves](https://github.com/scorninpc) and contributors, which kept PHP desktop
+development alive through the GTK 3 era. Its API shape (snake_case methods mirroring
+docs.gtk.org, signal handling, the examples) is the mental model this project starts from — even
+where php-gtk4 deliberately departs from it (see `PLAN.md`), the departures were only possible
+because php-gtk3 showed what works. Thank you, Bruno.
+
+Further thanks to:
+
+- the [GTK](https://www.gtk.org/) and [GLib/GObject](https://docs.gtk.org/gobject/) teams for the
+  toolkit and the introspection machinery that makes a binding feasible;
+- the [PHP](https://www.php.net/) project, whose `build/gen_stub.php` this repository vendors to
+  turn `stubs/gtk4.stub.php` into class entries and arginfo;
+- everyone who filed issues and sent patches to php-gtk3 — many of them shaped what is here.
+
+php-gtk3 is licensed under the LGPL-3.0; php-gtk4 is a from-scratch reimplementation against the
+native Zend API and shares no code with it.
+
+## License
+
+[MIT](LICENSE). `gen/gen_stub.php` is vendored from [php-src](https://github.com/php/php-src/blob/master/build/gen_stub.php) (PHP License 3.01).

@@ -18,8 +18,10 @@ jobs:
         php: ['8.4', '8.5']
         os: [ubuntu-24.04, ubuntu-26.04]
     env:
-      # tests/run.sh and bin/php-gtk4 default to `php8.4`; setup-php provides `php`.
+      # tests/run.sh, bin/php-gtk4 and ci.sh default to the php8.4 binaries; setup-php provides plain names.
       PHP: php
+      PHP_CONFIG: php-config
+      PHPIZE: phpize
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -38,21 +40,8 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             libgtk-4-dev xvfb build-essential
 
-      # Full PHP-CPP build against the same php-config used below - the two
-      # must pair, or the resulting .so corrupts the heap on shutdown. The
-      # apss-pohl fork = upstream v2.4.16 + const-heap fix (PR #557), pinned to
-      # the same commit as the cpp-lint job.
-      - name: Build and install PHP-CPP
-        run: |
-          git clone https://github.com/apss-pohl/PHP-CPP.git /tmp/phpcpp
-          git -C /tmp/phpcpp checkout 4d1a856
-          cd /tmp/phpcpp
-          make -j"$(nproc)" PHP_CONFIG="$(command -v php-config)"
-          sudo make install PHP_CONFIG="$(command -v php-config)"
-          sudo ldconfig
-
-      - name: Build extension
-        run: make -j"$(nproc)" PHP_CONFIG="$(command -v php-config)"
+      - name: Build extension (phpize)
+        run: ./ci.sh --only=build
 
       - name: Extension loads
         run: ./ci.sh --only=load
@@ -88,6 +77,8 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       PHP: php
+      PHP_CONFIG: php-config
+      PHPIZE: phpize
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -105,19 +96,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends libgtk-4-dev xvfb build-essential valgrind
 
-      - name: Build and install PHP-CPP
-        run: |
-          git clone https://github.com/apss-pohl/PHP-CPP.git /tmp/phpcpp
-          git -C /tmp/phpcpp checkout 4d1a856
-          cd /tmp/phpcpp
-          make -j"$(nproc)" PHP_CONFIG="$(command -v php-config)"
-          sudo make install PHP_CONFIG="$(command -v php-config)"
-          sudo ldconfig
-
       - name: Install PHPUnit
         run: composer install --no-interaction --no-progress --prefer-dist
 
-      - name: Build extension (uninstrumented, for valgrind)
+      - name: Build extension (phpize)
         run: ./ci.sh --only=build
 
       - name: Run valgrind stage
@@ -133,6 +115,8 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       PHP: php
+      PHP_CONFIG: php-config
+      PHPIZE: phpize
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -149,15 +133,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends libgtk-4-dev xvfb build-essential gcovr
-
-      - name: Build and install PHP-CPP
-        run: |
-          git clone https://github.com/apss-pohl/PHP-CPP.git /tmp/phpcpp
-          git -C /tmp/phpcpp checkout 4d1a856
-          cd /tmp/phpcpp
-          make -j"$(nproc)" PHP_CONFIG="$(command -v php-config)"
-          sudo make install PHP_CONFIG="$(command -v php-config)"
-          sudo ldconfig
 
       - name: Install PHPUnit
         run: composer install --no-interaction --no-progress --prefer-dist

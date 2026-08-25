@@ -36,47 +36,19 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             libgtk-4-dev libwebkitgtk-6.0-dev bear
 
-      # Only PHP-CPP's public headers are needed (sources include <phpcpp.h>
-      # only). Replicate the installed layout (phpcpp.h + phpcpp/*.h) from a
-      # clone pinned to a commit; no PHP-CPP build or link. The apss-pohl fork
-      # is upstream v2.4.16 + the const-heap fix (upstream PR #557).
-      - name: Fetch PHP-CPP public headers
-        run: |
-          git clone https://github.com/apss-pohl/PHP-CPP.git /tmp/phpcpp-src
-          git -C /tmp/phpcpp-src checkout 4d1a856
-          mkdir -p /tmp/PHP-CPP/phpcpp
-          cp /tmp/phpcpp-src/phpcpp.h /tmp/PHP-CPP/
-          cp /tmp/phpcpp-src/include/*.h /tmp/PHP-CPP/phpcpp/
-
-      # Compile every object (no link, so no libphpcpp needed) to capture
-      # per-file flags into compile_commands.json. PHP-CPP and GTK headers are
-      # passed with -isystem so their internal warnings are not reported.
-      # The package list must mirror the Makefile's GTK_PKGS with WITH_WEBKIT=1.
+      # phpize build under bear -> compile_commands.json with the real include
+      # paths, so clang-tidy sees GTK/PHP headers exactly as the compiler does.
+      # Nothing is linked into a PHP here; this is analysis only.
       - name: Generate compile_commands.json
-        run: |
-          make compile_commands \
-            WITH_WEBKIT=1 \
-            PHP_CONFIG="$(command -v php-config)" \
-            PHPFLAGS="-isystem /tmp/PHP-CPP $(php-config --includes | sed 's/-I/-isystem/g')" \
-            GTKFLAGS="$(pkg-config --cflags gtk4 webkitgtk-6.0 | sed 's/-I/-isystem/g')"
-
-      # Unlike php-gtk3 there is no findings backlog: this repo starts clean,
-      # so the linter FAILS the job on any finding, over the whole tree.
-      - name: C++ Linter (clang-tidy/clang-format)
-        id: linter
-        uses: cpp-linter/cpp-linter-action@v2
-        with:
-          extensions: cpp,h
-          files-changed-only: false
-          database: .
-          style: file
-          # Empty -> defer entirely to .clang-tidy at the repo root.
-          tidy-checks: ''
-          # match the local toolchain (ci.sh picks the newest installed clang-*)
-          version: '20'
-          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PHP_CONFIG: php-config
+          PHPIZE: phpize
+        run: |
+          phpize && ./configure --with-php-config="$(command -v php-config)" --enable-gtk4-webkit
+          bear -- make -j"$(nproc)"
+
+      - name: Generated stubs are up to date
+        run: composer install --no-interaction --no-progress --prefer-dist && ./ci.sh --only=stubs
 
       - name: Fail on findings
         if: steps.linter.outputs.checks-failed > 0

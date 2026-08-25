@@ -1,13 +1,16 @@
+// The single GValue <-> zval bridge. Properties, signal arguments, signal
+// return values and (later) list-model items all go through here.
 #pragma once
-#include <phpcpp.h>
-#include <glib-object.h>
+#include "php_gtk4.h"
 
-// The single GValue <-> Php::Value bridge. Properties, signal arguments,
-// signal return values and list-model items all go through here.
 namespace phpgtk {
 
-Php::Value to_php(const GValue *value);
-// Initialises *out with `type` and fills it from value. Caller g_value_unset()s.
-void to_gvalue(const Php::Value &value, GType type, GValue *out);
+// GValue -> zval. On an unsupported GType throws (TypeError) and sets rv to null.
+void to_php(const GValue *v, zval *rv);
+bool to_php_supported(GType type);
+
+// zval -> GValue. Initialises *out with `type`; caller g_value_unset()s.
+// Returns false (exception thrown) if the value cannot be converted.
+bool to_gvalue(zval *pv, GType t, GValue *out);
 
 }  // namespace phpgtk

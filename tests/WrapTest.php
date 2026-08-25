@@ -59,8 +59,7 @@ final class WrapTest extends GtkTestCase
 
     public function testCloneIsRefused(): void
     {
-        // PHP-CPP refuses because the wrapper's copy constructor is deleted;
-        // GObjectWrapper::__clone() is a second line of defence.
+        // clone_obj handler is NULL -> "Trying to clone an uncloneable object of class ...".
         $this->expectExceptionMessageMatches('/uncloneable|cannot be cloned/');
         $w = $this->window();
         $c = clone $w;

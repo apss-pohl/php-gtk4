@@ -26,3 +26,12 @@
    fun:XML_ParseBuffer
    ...
 }
+{
+   glibc-dlopen-scope-table-via-gmodule
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:dlopen*
+   fun:g_module_open_full
+   ...
+}

@@ -1,16 +1,16 @@
+// $obj->connect(string $signal, callable $handler, mixed ...$userData): int
+//
+// A GClosure with a custom marshaller receiving GValue arrays - no varargs,
+// so every parameter type the marshal bridge knows is supported and unknown
+// ones fail per-signal instead of corrupting the stack. The callable is
+// resolved once at connect time (zend_fcall_info_cache) and invoked with
+// zend_call_function directly.
 #pragma once
-#include <phpcpp.h>
-#include <glib-object.h>
+#include "php_gtk4.h"
 
 namespace phpgtk {
 
-class GObjectWrapper;
-
-// $obj->connect(string $signal, callable $cb, mixed ...$userdata): int
-//
-// Uses a GClosure with a custom marshaller that receives GValue arrays -
-// no varargs, so every parameter type the marshal bridge knows is supported
-// and unknown ones fail loudly per-signal instead of corrupting the stack.
-Php::Value signal_connect(GObjectWrapper *self, Php::Parameters &params, bool after);
+// Implements connect()/connect_after(); parses its own arguments.
+void signal_connect_method(INTERNAL_FUNCTION_PARAMETERS, bool after);
 
 }  // namespace phpgtk

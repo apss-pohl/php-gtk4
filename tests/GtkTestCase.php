@@ -66,8 +66,8 @@ abstract class GtkTestCase extends TestCase
     protected function captureHandlerException(callable $trigger): ?array
     {
         $captured = null;
-        Gtk::set_exception_handler(function (string $m, string $o, int $c) use (&$captured): void {
-            $captured = [$m, $o, $c];
+        Gtk::set_exception_handler(function (\Throwable $e, string $origin) use (&$captured): void {
+            $captured = [$e->getMessage(), $origin, $e->getCode()];
         });
         $trigger();
         Gtk::set_exception_handler(null);

@@ -7,6 +7,7 @@ path:
   - bin
 exclude:
   - vendor
+  - gen/PHP-Parser-5.0.0
 extensions:
   - php
 warning: true

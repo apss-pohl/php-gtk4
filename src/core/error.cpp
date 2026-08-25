@@ -1,41 +1,76 @@
 #include "error.h"
-#include <glib.h>
+
+#include <array>
 
 namespace phpgtk {
 
-// Heap-allocated and never freed: a static Php::Value would be destroyed after
-// Zend has shut down. Reassigning releases the previous callable while PHP is
-// still alive.
-static Php::Value &handler_slot() {
-  static Php::Value *slot = new Php::Value();
-  return *slot;
+static zval handler;  // IS_UNDEF when none
+
+void set_exception_handler(zval *h) {
+  if (!Z_ISUNDEF(handler)) zval_ptr_dtor(&handler);
+  if (h == nullptr || Z_TYPE_P(h) == IS_NULL) {
+    ZVAL_UNDEF(&handler);
+  } else {
+    ZVAL_COPY(&handler, h);
+  }
 }
 
-void set_exception_handler(const Php::Value &handler) {
-  handler_slot() = handler;
-}
-
-// Inspects only the zval type - must not call into PHP.
 bool has_exception_handler() {
-  return !handler_slot().isNull();
+  return !Z_ISUNDEF(handler);
 }
 
-void report_callback_exception(const std::string &message, long code, const char *context) {
-  const char *origin = context ? context : "";
-  bool reported = false;
+void exception_handler_shutdown() {
+  set_exception_handler(nullptr);
+}
 
+static void log_uncaught(zval *exception, const char *origin) {
+  zval rv;
+  zval *msg =
+      zend_read_property_ex(Z_OBJCE_P(exception), Z_OBJ_P(exception), ZSTR_KNOWN(ZEND_STR_MESSAGE),
+                            /* silent */ true, &rv);
+  g_critical("php-gtk4: uncaught %s in '%s' handler: %s", ZSTR_VAL(Z_OBJCE_P(exception)->name),
+             origin, msg != nullptr && Z_TYPE_P(msg) == IS_STRING ? Z_STRVAL_P(msg) : "");
+}
+
+bool report_pending_exception(const char *origin_c) {
+  if (EG(exception) == nullptr) return false;
+  const char *origin = origin_c != nullptr ? origin_c : "";
+
+  zval exception;
+  ZVAL_OBJ_COPY(&exception, EG(exception));
+  zend_clear_exception();  // Zend would refuse to run the handler otherwise
+
+  bool reported = false;
   if (has_exception_handler()) {
-    try {
-      Php::call("call_user_func", handler_slot(), message, std::string(origin),
-                static_cast<int64_t>(code));
-      reported = true;
-    } catch (...) {
-      g_critical("php-gtk4: exception handler itself failed while reporting from '%s'", origin);
+    std::array<zval, 2> args{};
+    ZVAL_COPY(args.data(), &exception);
+    ZVAL_STRING(&args[1], origin);
+    zval retval;
+    ZVAL_UNDEF(&retval);
+    zend_fcall_info fci;
+    zend_fcall_info_cache fcc;
+    if (zend_fcall_info_init(&handler, 0, &fci, &fcc, nullptr, nullptr) == SUCCESS) {
+      fci.retval = &retval;
+      fci.params = args.data();
+      fci.param_count = 2;
+      zend_call_function(&fci, &fcc);
+      zval_ptr_dtor(&retval);
+      if (EG(exception) != nullptr) {
+        // The handler itself failed; it must not escape into GLib either.
+        g_critical(
+            "php-gtk4: Gtk::set_exception_handler() callback threw %s while reporting from '%s'",
+            ZSTR_VAL(EG(exception)->ce->name), origin);
+        zend_clear_exception();
+      } else {
+        reported = true;
+      }
     }
+    zval_ptr_dtor(args.data());
+    zval_ptr_dtor(&args[1]);
   }
-  if (!reported) {
-    g_critical("php-gtk4: uncaught exception in '%s' handler: %s", origin, message.c_str());
-  }
+  if (!reported) log_uncaught(&exception, origin);
+  zval_ptr_dtor(&exception);
+  return true;
 }
 
 }  // namespace phpgtk

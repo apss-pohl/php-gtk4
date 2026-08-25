@@ -1,21 +1,89 @@
-#include "Gtk.h"
-#include "GtkWindow.h"
-#include "../core/error.h"
-#include "../core/wrap.h"
-#include <gtk/gtk.h>
+// Gtk4\GObject methods and the static Gtk4\Gtk class.
+#include "php_gtk4.h"
+#include "core/error.h"
+#include "core/gsignal.h"
+#include "core/marshal.h"
+#include "core/object.h"
 
-namespace phpgtk {
+using namespace phpgtk;
+
+// ---------------------------------------------------------------- GObject
+
+ZEND_METHOD(Gtk4_GObject, connect) {
+  signal_connect_method(INTERNAL_FUNCTION_PARAM_PASSTHRU, false);
+}
+ZEND_METHOD(Gtk4_GObject, connect_after) {
+  signal_connect_method(INTERNAL_FUNCTION_PARAM_PASSTHRU, true);
+}
+
+ZEND_METHOD(Gtk4_GObject, handler_disconnect) {
+  zend_long id;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_LONG(id)
+  ZEND_PARSE_PARAMETERS_END();
+  Object *self = object_from_zval(ZEND_THIS);
+  if (self->obj == nullptr) return;  // nothing to disconnect from
+  if (id > 0 && g_signal_handler_is_connected(self->obj, static_cast<gulong>(id))) {
+    g_signal_handler_disconnect(self->obj, static_cast<gulong>(id));
+  }
+}
+
+static GParamSpec *require_property(GObject *obj, zend_string *name) {
+  GParamSpec *spec = g_object_class_find_property(G_OBJECT_GET_CLASS(obj), ZSTR_VAL(name));
+  if (spec == nullptr) {
+    zend_value_error("no property '%s' on %s", ZSTR_VAL(name), G_OBJECT_TYPE_NAME(obj));
+  }
+  return spec;
+}
+
+ZEND_METHOD(Gtk4_GObject, get_property) {
+  zend_string *name;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_STR(name)
+  ZEND_PARSE_PARAMETERS_END();
+  GObject *obj = PHPGTK_SELF(GObject, G_TYPE_OBJECT);
+  GParamSpec *spec = require_property(obj, name);
+  if (spec == nullptr) RETURN_THROWS();
+  GValue v = G_VALUE_INIT;
+  g_value_init(&v, spec->value_type);
+  g_object_get_property(obj, spec->name, &v);
+  to_php(&v, return_value);
+  g_value_unset(&v);
+}
+
+ZEND_METHOD(Gtk4_GObject, set_property) {
+  zend_string *name;
+  zval *value;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_STR(name)
+  Z_PARAM_ZVAL(value)
+  ZEND_PARSE_PARAMETERS_END();
+  GObject *obj = PHPGTK_SELF(GObject, G_TYPE_OBJECT);
+  GParamSpec *spec = require_property(obj, name);
+  if (spec == nullptr) RETURN_THROWS();
+  GValue v = G_VALUE_INIT;
+  if (!to_gvalue(value, spec->value_type, &v)) RETURN_THROWS();
+  g_object_set_property(obj, spec->name, &v);
+  g_value_unset(&v);
+}
+
+// ---------------------------------------------------------------- Gtk (static)
 
 static GMainLoop *main_loop = nullptr;
 static bool quit_pending = false;  // main_quit() called before main()
 
-Php::Value Gtk_::init() {
-  return (bool)gtk_init_check();
+ZEND_METHOD(Gtk4_Gtk, init) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  RETURN_BOOL(gtk_init_check());
 }
 
 // GTK4 has no gtk_main(); run a GMainLoop on the default context.
-void Gtk_::main() {
-  if (main_loop != nullptr) throw Php::Exception("Gtk::main() is already running");
+ZEND_METHOD(Gtk4_Gtk, main) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  if (main_loop != nullptr) {
+    zend_throw_exception(spl_ce_LogicException, "Gtk::main() is already running", 0);
+    RETURN_THROWS();
+  }
   if (quit_pending) {
     quit_pending = false;
     return;
@@ -26,7 +94,8 @@ void Gtk_::main() {
   main_loop = nullptr;
 }
 
-void Gtk_::main_quit() {
+ZEND_METHOD(Gtk4_Gtk, main_quit) {
+  ZEND_PARSE_PARAMETERS_NONE();
   if (main_loop != nullptr) {
     g_main_loop_quit(main_loop);
   } else {
@@ -34,48 +103,11 @@ void Gtk_::main_quit() {
   }
 }
 
-void Gtk_::set_exception_handler(Php::Parameters &params) {
-  if (params.empty() || params[0].isNull()) {
-    phpgtk::set_exception_handler(nullptr);
-    return;
-  }
-  if (!Php::call("is_callable", params[0]).boolValue()) {
-    throw Php::Exception("Gtk::set_exception_handler() expects a callable or null");
-  }
-  phpgtk::set_exception_handler(params[0]);
+ZEND_METHOD(Gtk4_Gtk, set_exception_handler) {
+  zend_fcall_info fci;
+  zend_fcall_info_cache fcc;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_FUNC_OR_NULL(fci, fcc)
+  ZEND_PARSE_PARAMETERS_END();
+  set_exception_handler(ZEND_FCI_INITIALIZED(fci) ? &fci.function_name : nullptr);
 }
-
-void register_Gtk(Php::Namespace &ns) {
-  // Root handle class - PHP name matches the GType name.
-  Php::Class<GObjectWrapper> gobject("GObject");
-  // Declare parameters (arginfo): reflection, stubs and PHP's own arity
-  // checks then agree with the C++ side, which additionally validates.
-  gobject.method<&GObjectWrapper::connect>("connect", {Php::ByVal("signal", Php::Type::String),
-                                                       Php::ByVal("handler", Php::Type::Callable)});
-  gobject.method<&GObjectWrapper::connect_after>(
-      "connect_after",
-      {Php::ByVal("signal", Php::Type::String), Php::ByVal("handler", Php::Type::Callable)});
-  gobject.method<&GObjectWrapper::handler_disconnect>(
-      "handler_disconnect", {Php::ByVal("handlerId", Php::Type::Numeric)});
-  gobject.method<&GObjectWrapper::get_property>("get_property",
-                                                {Php::ByVal("name", Php::Type::String)});
-  gobject.method<&GObjectWrapper::set_property>(
-      "set_property", {Php::ByVal("name", Php::Type::String), Php::ByVal("value")});
-
-  Php::Class<Gtk_> gtk("Gtk");
-  gtk.method<&Gtk_::init>("init");
-  gtk.method<&Gtk_::main>("main");
-  gtk.method<&Gtk_::main_quit>("main_quit");
-  gtk.method<&Gtk_::set_exception_handler>("set_exception_handler",
-                                           {Php::ByVal("handler", Php::Type::Null, false)});
-  ns.add(std::move(gtk));
-
-  // PHP-CPP initialises classes in add() order and a derived class added
-  // before its base silently loses the base. So add the parent first (copy
-  // overload), then pass it to children for extends().
-  ns.add(gobject);
-  register_wrapper<GObjectWrapper>("GObject");
-  register_GtkWindow(ns, gobject);
-}
-
-}  // namespace phpgtk

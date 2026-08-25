@@ -19,8 +19,15 @@ if (!Gtk::init()) {
 
 // Exceptions thrown inside signal handlers cannot propagate through GTK's
 // main loop; route them somewhere visible instead of relying on stderr.
-Gtk::set_exception_handler(function (string $message, string $origin, int $code): void {
-    error_log("[example] handler for '$origin' failed (code $code): $message");
+Gtk::set_exception_handler(function (\Throwable $e, string $origin): void {
+    error_log(sprintf(
+        "[example] handler for '%s' failed: %s: %s at %s:%d",
+        $origin,
+        $e::class,
+        $e->getMessage(),
+        $e->getFile(),
+        $e->getLine(),
+    ));
 });
 
 // GtkWindow -----------------------------------------------------------------
@@ -28,9 +35,11 @@ $win = new GtkWindow();
 $win->set_title('php-gtk4 example');
 $win->set_default_size(400, 300);
 
-// GObject: generic property access and signals work on every object.
+// GObject: properties are reachable three ways - typed methods, get/set_property(),
+// and as PHP properties (underscores map to dashes: $win->default_width).
 $win->set_property('resizable', true);
-printf("title=%s resizable=%s\n", $win->get_title(), var_export($win->get_property('resizable'), true));
+$win->default_width = 480;
+printf("title=%s resizable=%s width=%d\n", $win->get_title(), var_export($win->resizable, true), $win->default_width);
 
 $id = $win->connect('notify::title', function (GObject $obj, string $property, string $tag): void {
     printf("[%s] %s changed on %s\n", $tag, $property, $obj::class);
