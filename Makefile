@@ -6,6 +6,8 @@
 #   INI_DIR=/etc/php/8.4/mods-available
 #   PHPCPP_STATIC=/path/libphpcpp.a.x.y.z  link a specific PHP-CPP by full path
 #   WITH_WEBKIT=1                       enable webkitgtk-6.0 (not yet implemented)
+#   SANITIZE=1                          AddressSanitizer + UBSan build (BUILD_DIR=build/asan-*), run via ci.sh --only=asan
+#   COVERAGE=1                          gcov instrumentation (BUILD_DIR=build/cov-*), run via ci.sh --only=coverage
 #
 NAME            = gtk4
 PHP_CONFIG     ?= /usr/bin/php-config8.4
@@ -21,9 +23,20 @@ PHP_VERSION_ID  = $(shell $(PHP_CONFIG) --vernum)
 ifeq ($(shell test $(PHP_VERSION_ID) -ge 80400 && echo ok),)
     $(error php-gtk4 requires PHP >= 8.4, $(PHP_CONFIG) reports $(PHP_VERSION))
 endif
-BUILD_DIR       = build/php$(PHP_VERSION)
+BUILD_VARIANT   =
+ifeq ($(SANITIZE),1)
+    BUILD_VARIANT = asan-
+endif
+ifeq ($(COVERAGE),1)
+    BUILD_VARIANT = cov-
+endif
+BUILD_DIR       = build/$(BUILD_VARIANT)php$(PHP_VERSION)
 
 GTK_PKGS        = gtk4
+GTK_MIN         = 4.14
+ifeq ($(shell pkg-config --atleast-version=$(GTK_MIN) gtk4 && echo ok),)
+    $(error php-gtk4 requires GTK >= $(GTK_MIN) (pkg-config gtk4 reports '$(shell pkg-config --modversion gtk4 2>/dev/null)'))
+endif
 GTKFLAGS        = $(shell pkg-config --cflags $(GTK_PKGS))
 GTKLIBS         = $(shell pkg-config --libs $(GTK_PKGS))
 
@@ -38,8 +51,19 @@ endif
 
 CXX             = g++
 PHPFLAGS        = $(shell $(PHP_CONFIG) --includes)
-CXXFLAGS        = -Wall -Wextra -std=c++20 -fpic -O2 -MMD -MP $(PHPFLAGS) $(GTKFLAGS) $(FEATURE_DEFS) -I.
-LDFLAGS         = -shared
+OPTFLAGS        = -O2
+EXTRA_LDFLAGS   =
+ifeq ($(SANITIZE),1)
+    # -fsanitize=address needs the runtime in the *process*: ci.sh LD_PRELOADs libasan.
+    OPTFLAGS      = -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined
+    EXTRA_LDFLAGS = -fsanitize=address,undefined
+endif
+ifeq ($(COVERAGE),1)
+    OPTFLAGS      = -O0 -g --coverage
+    EXTRA_LDFLAGS = --coverage
+endif
+CXXFLAGS        = -Wall -Wextra -std=c++20 -fpic $(OPTFLAGS) -MMD -MP $(PHPFLAGS) $(GTKFLAGS) $(FEATURE_DEFS) -I.
+LDFLAGS         = -shared $(EXTRA_LDFLAGS)
 ifdef PHPCPP_STATIC
     PHPCPP_LIB  = $(PHPCPP_STATIC)
 else
@@ -49,7 +73,7 @@ LIBS            = $(PHPCPP_LIB) $(GTKLIBS)
 
 SOURCES         = main.cpp version.cpp $(wildcard src/core/*.cpp) $(wildcard src/Gtk/*.cpp) $(wildcard src/gen/*/*.cpp)
 OBJECTS         = $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
-EXTENSION       = $(NAME).so
+EXTENSION      ?= $(NAME).so
 INI             = $(NAME).ini
 
 all: $(EXTENSION)

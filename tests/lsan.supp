@@ -1,0 +1,14 @@
+# LeakSanitizer suppressions for ci.sh --only=asan.
+# Only third-party one-time/global allocations that are never freed by design.
+# NEVER add gtk4*.so, phpgtk, or libphpcpp here - those are our leaks.
+leak:libfontconfig
+leak:libexpat
+leak:g_type_register
+leak:g_type_add_interface
+leak:g_quark_from
+leak:g_intern_string
+leak:g_param_spec
+leak:gtk_init
+leak:gdk_display_open
+leak:php_module_startup
+leak:zend_startup

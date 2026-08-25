@@ -8,8 +8,15 @@ on:
 
 jobs:
   php-tests:
-    name: Build extension and run PHPUnit
-    runs-on: ubuntu-latest
+    name: PHP ${{ matrix.php }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # PHP: everything we claim to support (8.4+). OS: the GTK floor
+        # (24.04 = GTK 4.14) and current (26.04 = GTK 4.22).
+        php: ['8.4', '8.5']
+        os: [ubuntu-24.04, ubuntu-26.04]
     env:
       # tests/run.sh and bin/php-gtk4 default to `php8.4`; setup-php provides `php`.
       PHP: php
@@ -17,10 +24,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Set up PHP 8.4
+      - name: Set up PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          php-version: ${{ matrix.php }}
           extensions: dom, mbstring, tokenizer, xml, xmlwriter
           tools: composer
           coverage: none
@@ -32,12 +39,13 @@ jobs:
             libgtk-4-dev xvfb build-essential
 
       # Full PHP-CPP build against the same php-config used below - the two
-      # must pair, or the resulting .so corrupts the heap on shutdown. Pinned
-      # to the same commit as the static-analysis job.
+      # must pair, or the resulting .so corrupts the heap on shutdown. The
+      # apss-pohl fork = upstream v2.4.16 + const-heap fix (PR #557), pinned to
+      # the same commit as the cpp-lint job.
       - name: Build and install PHP-CPP
         run: |
-          git clone https://github.com/fast-debug/PHP-CPP.git /tmp/phpcpp
-          git -C /tmp/phpcpp checkout 640d12b1fee231e73b4dbbb8b0e10284bfbfb170
+          git clone https://github.com/apss-pohl/PHP-CPP.git /tmp/phpcpp
+          git -C /tmp/phpcpp checkout 4d1a856
           cd /tmp/phpcpp
           make -j"$(nproc)" PHP_CONFIG="$(command -v php-config)"
           sudo make install PHP_CONFIG="$(command -v php-config)"
@@ -50,22 +58,27 @@ jobs:
         run: ./ci.sh --only=load
 
       - name: Cache Composer packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: vendor
-          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          key: composer-${{ matrix.os }}-php${{ matrix.php }}-${{ hashFiles('composer.lock') }}
 
       - name: Install PHPUnit
         run: composer install --no-interaction --no-progress --prefer-dist
 
       # xvfb-run + bin/php-gtk4 (gtk3 filter, keeps PHPUnit's extensions) + phpunit
+      - name: Show versions
+        run: |
+          php -v | head -1
+          pkg-config --modversion gtk4
+
       - name: Run PHPUnit
         run: ./ci.sh --only=test --log-junit phpunit-junit.xml --display-warnings
 
       - name: Upload PHPUnit report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: phpunit-junit
+          name: phpunit-junit-php${{ matrix.php }}-${{ matrix.os }}
           path: phpunit-junit.xml
           if-no-files-found: ignore

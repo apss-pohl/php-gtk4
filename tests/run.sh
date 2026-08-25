@@ -16,4 +16,6 @@ export LIBGL_ALWAYS_SOFTWARE=1
 # CRITICAL lines from ErrorTest are expected: they are the g_critical() fallback
 # path for exceptions thrown in handlers when no Gtk::set_exception_handler is set.
 [[ -x vendor/bin/phpunit ]] || { echo "vendor/bin/phpunit missing - run: $PHP /usr/local/bin/composer install" >&2; exit 1; }
-exec xvfb-run -a bin/php-gtk4 vendor/bin/phpunit "$@"
+# PHP_GTK4_ENV: extra VAR=value pairs for the php process (ci.sh --only=asan uses it for LD_PRELOAD etc.)
+# shellcheck disable=SC2086
+exec xvfb-run -a env ${PHP_GTK4_ENV:-} bin/php-gtk4 vendor/bin/phpunit "$@"

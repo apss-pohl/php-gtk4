@@ -8,6 +8,10 @@
 #   load       php -n -dextension=./gtk4.so smoke check
 #   test       PHPUnit under xvfb-run via bin/php-gtk4 (gtk3 filtered out)
 #
+# Extra stages, not run by default (opt in with --only=... or --with=...):
+#   asan       ASan+UBSan+LSan build (gtk4-asan.so) running tests/scripts/stress.php and the PHPUnit suite
+#   coverage   gcov build (gtk4-cov.so), runs the suite + stress script, prints per-file C++ line coverage
+#
 # Usage:
 #   ./ci.sh                          all stages, in that order
 #   ./ci.sh --fix                    apply clang-tidy/clang-format/phpcbf/php-cs-fixer fixes first
@@ -16,10 +20,13 @@
 #   ./ci.sh --filter SignalTest      unknown args are passed to phpunit
 #   ./ci.sh --no-stan                php-qa without phpstan
 #   ./ci.sh --fail-fast              clang-tidy stops at the first failing file
+#   ./ci.sh --with=asan,coverage     default stages plus the extra ones
+#   ./ci.sh --only=asan              just the sanitizer run
 #   ./ci.sh --skip=tidy | --skip=format   sub-steps of cpp-lint
 #
 # Env: PHP=php8.4 PHP_CONFIG=/usr/bin/php-config8.4 PHPCPP_STATIC=... PHPCPP_BASE=... BUILD_DIR=build
-#      JOBS=$(nproc) CLANG_TIDY=clang-tidy-17 CLANG_FORMAT=clang-format-17 COMPOSER=/usr/local/bin/composer
+#      JOBS=$(nproc) CLANG_TIDY=clang-tidy-20 CLANG_FORMAT=clang-format-20 (default: newest installed)
+#      COMPOSER=/usr/local/bin/composer
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -29,15 +36,19 @@ PHPCPP_BASE=${PHPCPP_BASE:-/mnt/share/dev/code/PHP-CPP/dist}
 BUILD_DIR=${BUILD_DIR:-build}
 JOBS=${JOBS:-$(nproc)}
 COMPOSER=${COMPOSER:-/usr/local/bin/composer}
-CLANG_TIDY=${CLANG_TIDY:-clang-tidy-17}
-CLANG_FORMAT=${CLANG_FORMAT:-clang-format-17}
+# Newest installed clang-tidy-N / clang-format-N unless overridden.
+newest_tool() { ls /usr/bin/"$1"-[0-9]* 2>/dev/null | sort -t- -k2 -V | tail -1; }
+CLANG_TIDY=${CLANG_TIDY:-$(basename "$(newest_tool clang-tidy)" 2>/dev/null || echo clang-tidy)}
+CLANG_FORMAT=${CLANG_FORMAT:-$(basename "$(newest_tool clang-format)" 2>/dev/null || echo clang-format)}
 
-ALL_STAGES="cpp-lint php-qa build load test"
-ONLY=""; SKIP=""; FIX=0; STAN=1; FAIL_FAST=0; PHPUNIT_ARGS=()
+ALL_STAGES="cpp-lint php-qa build load test asan coverage"
+DEFAULT_OFF="asan coverage"
+ONLY=""; SKIP=""; WITH=""; FIX=0; STAN=1; FAIL_FAST=0; PHPUNIT_ARGS=()
 for arg in "$@"; do
     case "$arg" in
         --only=*)   ONLY="${arg#--only=}" ;;
         --skip=*)   SKIP="${arg#--skip=}" ;;
+        --with=*)   WITH="${arg#--with=}" ;;
         --fix)      FIX=1 ;;
         --no-stan)  STAN=0 ;;
         --fail-fast) FAIL_FAST=1 ;;
@@ -48,6 +59,7 @@ done
 enabled() {  # enabled <stage>
     if [[ -n "$ONLY" ]]; then [[ ",$ONLY," == *",$1,"* ]] || return 1; fi
     [[ ",$SKIP," == *",$1,"* ]] && return 1
+    if [[ " $DEFAULT_OFF " == *" $1 "* && -z "$ONLY" ]]; then [[ ",$WITH," == *",$1,"* ]] || return 1; fi
     return 0
 }
 
@@ -176,12 +188,8 @@ stage_php_qa() {
     [[ $status -eq 0 ]] || fail "php-qa"
 }
 
-# ---------------------------------------------------------------- build
-stage_build() {
-    step "build ($PHP_CONFIG -> $BUILD_DIR, -j$JOBS)"
-    if [[ -e "$BUILD_DIR" && ! -w "$BUILD_DIR" ]] || [[ -e gtk4.so && ! -w gtk4.so ]]; then
-        fail "$BUILD_DIR/ or gtk4.so is not writable (owned by $(stat -c %U "$BUILD_DIR")) - run: sudo chown -R \"\$USER\" $BUILD_DIR gtk4.so"
-    fi
+# make with the right libphpcpp; extra args are appended
+run_make() {
     local static="${PHPCPP_STATIC:-}"
     if [[ -z "$static" ]]; then
         local ver; ver=$("$PHP_CONFIG" --version | cut -d. -f1,2)
@@ -189,10 +197,76 @@ stage_build() {
     fi
     if [[ -n "$static" ]]; then
         echo "  libphpcpp: $static"
-        make -j"$JOBS" PHP_CONFIG="$PHP_CONFIG" BUILD_DIR="$BUILD_DIR" PHPCPP_STATIC="$static" || fail "build"
+        make -j"$JOBS" PHP_CONFIG="$PHP_CONFIG" PHPCPP_STATIC="$static" "$@"
     else
         echo "  no static libphpcpp under $PHPCPP_BASE - linking system -lphpcpp"
-        make -j"$JOBS" PHP_CONFIG="$PHP_CONFIG" BUILD_DIR="$BUILD_DIR" || fail "build"
+        make -j"$JOBS" PHP_CONFIG="$PHP_CONFIG" "$@"
+    fi
+}
+
+# ---------------------------------------------------------------- build
+stage_build() {
+    step "build ($PHP_CONFIG -> $BUILD_DIR, -j$JOBS)"
+    if [[ -e "$BUILD_DIR" && ! -w "$BUILD_DIR" ]] || [[ -e gtk4.so && ! -w gtk4.so ]]; then
+        fail "$BUILD_DIR/ or gtk4.so is not writable (owned by $(stat -c %U "$BUILD_DIR")) - run: sudo chown -R \"\$USER\" $BUILD_DIR gtk4.so"
+    fi
+    run_make BUILD_DIR="$BUILD_DIR" || fail "build"
+}
+
+# ---------------------------------------------------------------- asan
+# AddressSanitizer + UBSan + LeakSanitizer. The instrumented gtk4-asan.so is
+# loaded into an uninstrumented php, so libasan is LD_PRELOADed into php only
+# (not into xvfb-run/Xvfb). USE_ZEND_ALLOC=0 makes Zend use malloc so ASan
+# sees every allocation. Suppressions: tests/lsan.supp (third-party only).
+stage_asan() {
+    ensure_vendor
+    step "asan build (gtk4-asan.so)"
+    local libasan; libasan=$(gcc -print-file-name=libasan.so)
+    [[ -f "$libasan" ]] || fail "libasan.so not found (install libasan for your gcc)"
+    run_make SANITIZE=1 EXTENSION=gtk4-asan.so || fail "asan build"
+
+    local -a env=(LD_PRELOAD="$libasan" USE_ZEND_ALLOC=0
+                  ASAN_OPTIONS="detect_leaks=1:abort_on_error=0:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1"
+                  LSAN_OPTIONS="suppressions=$PWD/tests/lsan.supp:print_suppressions=0"
+                  UBSAN_OPTIONS="print_stacktrace=1:halt_on_error=1")
+
+    step "asan: stress script (tests/scripts/stress.php)"
+    xvfb-run -a env "${env[@]}" GSK_RENDERER=cairo "$PHP" -n -dextension=./gtk4-asan.so tests/scripts/stress.php 300 \
+        || fail "asan stress (see report above)"
+
+    step "asan: phpunit suite"
+    PHP="$PHP" GTK4_SO=./gtk4-asan.so PHP_GTK4_ENV="${env[*]}" ./tests/run.sh "${PHPUNIT_ARGS[@]}" || fail "asan phpunit"
+}
+
+# ---------------------------------------------------------------- coverage
+# gcov line coverage of the C++ sources, driven by the PHPUnit suite and the
+# stress script. Prints a per-file table; gcovr (if installed) writes
+# coverage/index.html as well.
+stage_coverage() {
+    ensure_vendor
+    step "coverage build (gtk4-cov.so)"
+    local dir="build/cov-php$("$PHP_CONFIG" --version | cut -d. -f1,2)"
+    find "$dir" -name '*.gcda' -delete 2>/dev/null || true
+    run_make COVERAGE=1 EXTENSION=gtk4-cov.so || fail "coverage build"
+
+    step "coverage: phpunit suite + stress script"
+    PHP="$PHP" GTK4_SO=./gtk4-cov.so ./tests/run.sh "${PHPUNIT_ARGS[@]}" || fail "coverage phpunit"
+    xvfb-run -a env GSK_RENDERER=cairo "$PHP" -n -dextension=./gtk4-cov.so tests/scripts/stress.php 50 || fail "coverage stress"
+
+    step "coverage: report"
+    mkdir -p coverage
+    if command -v gcovr >/dev/null 2>&1; then
+        gcovr -r . --object-directory "$dir" -f 'src/' -f 'main.cpp' --html-details coverage/index.html --print-summary
+    else
+        # plain gcov: one summary line per source file
+        printf '  %-32s %s\n' FILE LINES
+        while IFS= read -r obj; do
+            local src; src=$(sed -n 's/^\([^:]*\.o\): \([^ ]*\.cpp\).*/\2/p' "${obj%.o}.d" | head -1)
+            [[ -n "$src" ]] || continue
+            local pct; pct=$(gcov -n -o "$(dirname "$obj")" "$src" 2>/dev/null | awk -v f="$src" '$0 ~ "File .*"f {getline; print $0; exit}' | sed -E 's/Lines executed://')
+            printf '  %-32s %s\n' "$src" "${pct:-n/a}"
+        done < <(find "$dir" -name '*.o' | sort)
+        echo "  (install gcovr for an HTML report in coverage/)"
     fi
 }
 
@@ -222,6 +296,8 @@ for stage in $ALL_STAGES; do
         build)    stage_build ;;
         load)     stage_load ;;
         test)     stage_test ;;
+        asan)     stage_asan ;;
+        coverage) stage_coverage ;;
     esac
     ran="$ran $stage"
 done

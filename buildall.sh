@@ -29,8 +29,10 @@ JOBS=${JOBS:-$(nproc)}
 # FORMAT: "version:php_config_path:ini_dir:with_webkit:enabled"
 # The extension dir is taken from php-config --extension-dir.
 # enabled: 1=build by default, 0=skip. PHP 8.4+ only - the Makefile rejects older php-configs.
+# Local default is 8.4 only; 8.5 is covered by the CI matrix.
 BUILDS=(
     "8.4:/usr/bin/php-config8.4:/etc/php/8.4/mods-available:0:1"
+    "8.5:/usr/bin/php-config8.5:/etc/php/8.5/mods-available:0:0"   # CI only for now; ONLY=8.5 ./buildall.sh to force
 )
 
 for BUILD in "${BUILDS[@]}"; do
@@ -44,15 +46,15 @@ for BUILD in "${BUILDS[@]}"; do
         continue
     fi
     if [ ! -x "$PHP_CONFIG" ]; then
-        echo "ERROR: $PHP_CONFIG not found" >&2
-        exit 1
+        echo "=== Skipping PHP ${VERSION}: $PHP_CONFIG not found (apt install php${VERSION}-dev) ==="
+        continue
     fi
 
     PHPCPP_DIR="${PHPCPP_BASE}/php${VERSION}"
     PHPCPP_STATIC=$(find "${PHPCPP_DIR}" -maxdepth 1 -name "libphpcpp.a.*" 2>/dev/null | head -1)
     if [ -z "$PHPCPP_STATIC" ]; then
-        echo "ERROR: no static libphpcpp found in ${PHPCPP_DIR} (run PHP-CPP/build-dist.sh)" >&2
-        exit 1
+        echo "=== Skipping PHP ${VERSION}: no static libphpcpp in ${PHPCPP_DIR} (add ${VERSION} to PHP-CPP/build-dist.sh VERSIONS and run it) ==="
+        continue
     fi
 
     SO_DEST=$("$PHP_CONFIG" --extension-dir)

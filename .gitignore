@@ -12,3 +12,7 @@ vendor/
 .phpcs.cache
 .phplint.cache
 phpunit-junit.xml
+gtk4-asan.so
+gtk4-cov.so
+coverage/
+*.gcov

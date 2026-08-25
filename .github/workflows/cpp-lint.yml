@@ -8,8 +8,14 @@ on:
 
 jobs:
   cpp-static-analysis:
-    name: C++ static analysis
-    runs-on: ubuntu-latest
+    name: C++ static analysis (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # GTK floor (24.04 = 4.14) and current (26.04 = 4.22): every source
+        # must compile against both.
+        os: [ubuntu-24.04, ubuntu-26.04]
 
     steps:
       - name: Checkout repository
@@ -32,11 +38,12 @@ jobs:
 
       # Only PHP-CPP's public headers are needed (sources include <phpcpp.h>
       # only). Replicate the installed layout (phpcpp.h + phpcpp/*.h) from a
-      # shallow clone pinned to a commit; no PHP-CPP build or link.
+      # clone pinned to a commit; no PHP-CPP build or link. The apss-pohl fork
+      # is upstream v2.4.16 + the const-heap fix (upstream PR #557).
       - name: Fetch PHP-CPP public headers
         run: |
-          git clone https://github.com/fast-debug/PHP-CPP.git /tmp/phpcpp-src
-          git -C /tmp/phpcpp-src checkout 640d12b1fee231e73b4dbbb8b0e10284bfbfb170
+          git clone https://github.com/apss-pohl/PHP-CPP.git /tmp/phpcpp-src
+          git -C /tmp/phpcpp-src checkout 4d1a856
           mkdir -p /tmp/PHP-CPP/phpcpp
           cp /tmp/phpcpp-src/phpcpp.h /tmp/PHP-CPP/
           cp /tmp/phpcpp-src/include/*.h /tmp/PHP-CPP/phpcpp/
@@ -65,6 +72,8 @@ jobs:
           style: file
           # Empty -> defer entirely to .clang-tidy at the repo root.
           tidy-checks: ''
+          # match the local toolchain (ci.sh picks the newest installed clang-*)
+          version: '20'
           thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

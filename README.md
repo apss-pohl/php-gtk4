@@ -7,7 +7,7 @@
 [![GTK 4](https://img.shields.io/badge/GTK-4.14%2B-4A86CF?logo=gtk&logoColor=white)](https://www.gtk.org/)
 [![C++20](https://img.shields.io/badge/C%2B%2B-20-00599C?logo=cplusplus&logoColor=white)](https://en.cppreference.com/w/cpp/20)
 
-PHP extension binding GTK 4, built on PHP-CPP. See `PLAN.md` for the design.
+PHP extension binding GTK 4, built on [PHP-CPP](https://github.com/apss-pohl/PHP-CPP) (fork with the const-heap fix). See `PLAN.md` for the design.
 
 ## Usage
 
@@ -25,7 +25,7 @@ Gtk::main();
 
 ## Build & install
 
-Requires **PHP 8.4+** (older php-configs are rejected by the Makefile). Prerequisites: `libgtk-4-dev`, `php8.4-dev`, and a PHP-CPP static lib built with the same
+Requires **PHP 8.4+** (8.4 and 8.5 are tested; older php-configs are rejected by the Makefile). Prerequisites: `libgtk-4-dev`, `php8.4-dev`, and a PHP-CPP static lib built with the same
 `php-config` (`PHP-CPP/build-dist.sh` puts it in `PHP-CPP/dist/php8.4/`).
 
 ```sh

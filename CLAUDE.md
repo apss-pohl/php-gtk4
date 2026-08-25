@@ -5,7 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 php-gtk4 is a PHP extension written in C++ that binds GTK 4 to PHP via
-[PHP-CPP](https://github.com/fast-debug/PHP-CPP) (the fast-debug fork). It is the successor to
+[PHP-CPP](https://github.com/apss-pohl/PHP-CPP) (the apss-pohl fork: upstream v2.4.16 + the
+const-heap fix from upstream PR #557 — string constants corrupt the heap at shutdown without it). It is the successor to
 `/mnt/share/dev/code/php-gtk3`; `PLAN.md` records the design and what is deliberately *not* carried
 over from php-gtk3. Read `PLAN.md` before changing anything under `src/core/`.
 
@@ -14,12 +15,14 @@ Module name is **`gtk4`** everywhere: Makefile `NAME`, `Php::Extension("gtk4")` 
 
 Hard constraints:
 
-- **PHP 8.4+ only.** The Makefile (`php-config --vernum >= 80400`) and `main.cpp`
+- **PHP 8.4+ only** — 8.4 and 8.5 in the CI matrix; **locally only 8.4 is built/tested** (`ci.sh`
+  defaults, `buildall.sh` has 8.5 disabled — `ONLY=8.5 ./buildall.sh` to force). The Makefile (`php-config --vernum >= 80400`) and `main.cpp`
   (`#error` on `PHP_VERSION_ID < 80400`) both refuse older PHP. Don't add compatibility shims for
   older PHP; do use PHP 8.4 features in stubs/tests/examples (property hooks, `#[\Deprecated]`,
   `new X()->m()`, typed constants).
 - **C++20** (`-std=c++20`, GCC 11+/Clang 14+). `ci.sh` (clang-tidy) and `.clang-format` use the same standard.
-- **GTK 4.14+** (`pkg-config gtk4`). Never use GTK 3 APIs (`gtk_main`, `GdkEvent` unions,
+- **GTK 4.14+** (`pkg-config gtk4`); CI compiles and tests on Ubuntu 24.04 (GTK 4.14, the floor) and
+  26.04 (GTK 4.22, current) — guard anything newer than 4.14 with `GTK_CHECK_VERSION`. Never use GTK 3 APIs (`gtk_main`, `GdkEvent` unions,
   `GtkContainer`, …).
 - Linux is the primary target; Windows/WebKit follow later (see PLAN.md milestones).
 
@@ -63,7 +66,7 @@ One script, five stages, same as GitHub Actions: `cpp-lint` → `php-qa` → `bu
 
 Env:
 `PHP`, `PHP_CONFIG`, `PHPCPP_STATIC`/`PHPCPP_BASE`, `BUILD_DIR`, `JOBS` (default nproc, used by every
-tool), `CLANG_TIDY`, `CLANG_FORMAT`.
+tool), `CLANG_TIDY`, `CLANG_FORMAT` (default: newest installed `clang-*-N`; CI and `.vscode` use 20).
 
 
 C++: `.clang-tidy` has a documented deny-list (GLib macros, PHP-CPP slicing); everything else is
@@ -133,10 +136,12 @@ display, and calls `Gtk::init()` once.
 
 ## CI
 
-Three workflows (one per README badge): `.github/workflows/cpp-lint.yml`, `php-qa.yml`,
+PHP-CPP in CI is `apss-pohl/PHP-CPP@4d1a856`; bump that SHA in both `cpp-lint.yml` and `tests.yml`
+together. Three workflows (one per README badge): `.github/workflows/cpp-lint.yml`, `php-qa.yml`,
 `tests.yml`. (1) static analysis — setup-php 8.4, GTK4 headers, PHP-CPP
 *headers only*, `make compile_commands`, cpp-linter over the whole tree, fails on findings;
-(2) build PHP-CPP + extension and run `tests/run.sh`. The apt package list must mirror the
+(2) build PHP-CPP + extension and run `tests/run.sh` over a PHP {8.4, 8.5} × Ubuntu {24.04, 26.04}
+matrix (four jobs; `fail-fast: false`). The apt package list must mirror the
 Makefile's `GTK_PKGS`.
 
 ## Architecture

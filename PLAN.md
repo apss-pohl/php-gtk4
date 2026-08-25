@@ -8,7 +8,7 @@ fragile, or GTK3-specific.
 
 | Topic | Decision | Reason |
 |---|---|---|
-| Zend abstraction | **PHP-CPP** (fast-debug fork, PHP 8.4-capable), same as php-gtk3 | Proven; maintainer knows it; exceptions ↔ throwables for free |
+| Zend abstraction | **PHP-CPP** ([apss-pohl fork](https://github.com/apss-pohl/PHP-CPP) = upstream v2.4.16 + const-heap fix), same as php-gtk3 | Proven; maintainer knows it; exceptions ↔ throwables for free |
 | Language | C++20 (GCC 11+/Clang 14+) | PHP 8.4 itself needs a modern toolchain, so nothing is lost; gives `std::span`, concepts, designated initialisers for the marshaller/generator output |
 | GTK target | GTK 4.14+ (`gtk4` pkg-config), GLib 2.76+ | Current LTS distros |
 | Module name | `gtk4` everywhere (Makefile `NAME`, `Php::Extension("gtk4")`, `gtk4.ini`) | php-gtk3 lesson: the four names must agree |
