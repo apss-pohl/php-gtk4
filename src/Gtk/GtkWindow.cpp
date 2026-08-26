@@ -1,6 +1,7 @@
 // Gtk4\GtkWindow - the single hand-written widget of milestone 1.
 #include "php_gtk4.h"
 #include "core/object.h"
+#include "children.h"
 
 using namespace phpgtk;
 
@@ -69,9 +70,7 @@ ZEND_METHOD(Gtk4_GtkWindow, set_title) {
 ZEND_METHOD(Gtk4_GtkWindow, get_title) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWindow *w = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
-  const char *t = gtk_window_get_title(w);
-  if (t == nullptr) RETURN_NULL();
-  RETURN_STRING(t);
+  PHPGTK_RETURN_STRING_OR_NULL(gtk_window_get_title(w));
 }
 
 /**
@@ -100,12 +99,9 @@ ZEND_METHOD(Gtk4_GtkWindow, set_child) {
   Z_PARAM_OBJECT_OF_CLASS_OR_NULL(child, class_for_gtype_name("GtkWidget"))
   ZEND_PARSE_PARAMETERS_END();
   GtkWindow *w = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
-  GObject *c = nullptr;
-  if (child != nullptr) {
-    c = unwrap(child, GTK_TYPE_WIDGET);
-    if (c == nullptr) RETURN_THROWS();
-  }
-  gtk_window_set_child(w, c != nullptr ? GTK_WIDGET(c) : nullptr);
+  GtkWidget *c = nullptr;
+  if (!widget_or_null(child, &c)) RETURN_THROWS();
+  gtk_window_set_child(w, c);
 }
 
 /**

@@ -131,8 +131,8 @@ void signal_emit_method(INTERNAL_FUNCTION_PARAMETERS) {
 
   // instance + params
   auto *values = static_cast<GValue *>(safe_emalloc(argc + 1, sizeof(GValue), 0));
-  for (uint32_t i = 0; i <= argc; i++)
-    values[i] = G_VALUE_INIT;  // NOLINT(readability-math-missing-parentheses)
+  // NOLINTNEXTLINE(readability-math-missing-parentheses) G_VALUE_INIT expands to a brace list
+  for (uint32_t i = 0; i <= argc; i++) values[i] = G_VALUE_INIT;
   g_value_init(&values[0], G_OBJECT_TYPE(obj));
   g_value_set_object(&values[0], obj);
   bool ok = true;

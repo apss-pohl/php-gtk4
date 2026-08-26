@@ -1,7 +1,7 @@
 // Gtk4\GMainLoop - a bare main loop on the default context. Not a GObject
 // (GMainLoop is a refcounted GLib struct), so it has its own object layout.
 #include "php_gtk4.h"
-#include "core/classes.h"
+#include "classes.h"
 #include "core/mainloop.h"
 
 namespace {
@@ -95,7 +95,7 @@ ZEND_METHOD(Gtk4_GMainLoop, is_running) {
 
 namespace phpgtk {
 // MINIT: install the object handlers on the class entry.
-void register_GMainLoop_handlers(zend_class_entry *ce) {
+void register_GMainLoop(zend_class_entry *ce) {
   memcpy(&handlers, &std_object_handlers, sizeof(zend_object_handlers));
   handlers.offset = XtOffsetOf(MainLoopObject, std);
   handlers.free_obj = free_obj;

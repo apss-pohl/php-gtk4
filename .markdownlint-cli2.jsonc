@@ -1,11 +1,11 @@
 // Markdown lint for the docs (./ci.sh --only=md-lint, --fix applies the fixable rules).
-// The prose in this repo wraps at ~100 columns by hand; tables, fenced code and long
+// The prose in this repo wraps at 110 columns by hand; tables, fenced code and long
 // reference URLs are exempt rather than reflowed.
 {
   "config": {
     "default": true,
 
-    // MD013: prose wraps at 100; tables (docs/GTK3-MAP.md) and code samples do not.
+    // MD013: prose wraps at 110; tables (docs/GTK3-MAP.md) and code samples do not.
     "MD013": {
       "line_length": 110,
       "tables": false,

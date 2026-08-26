@@ -5,7 +5,7 @@
 #include <cairo-gobject.h>
 
 #include "core/boxed.h"
-#include "core/classes.h"
+#include "classes.h"
 #include "core/fundamental.h"
 
 using namespace phpgtk;
@@ -26,11 +26,8 @@ void cr_unref(gpointer p) {
 
 namespace phpgtk {
 
-zend_class_entry *ce_CairoContext = nullptr;
-
 // MINIT: put cairo_t on the fundamental registry (marshal's boxed arm falls back to it).
 void register_CairoContext(zend_class_entry *ce) {
-  ce_CairoContext = ce;
   register_fundamental(FundamentalClass{
       .type = CAIRO_GOBJECT_TYPE_CONTEXT, .ce = ce, .ref = cr_ref, .unref = cr_unref});
 }

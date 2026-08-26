@@ -6,7 +6,7 @@
 using namespace phpgtk;
 
 /**
- * Gtk4\GSimpleAction::__construct(string $name, ?string $parameterType = null, mixed $state =
+ * Gtk4\GSimpleAction::__construct(string $name, ?string $parameter_type = null, mixed $state =
  * null)
  */
 ZEND_METHOD(Gtk4_GSimpleAction, __construct) {
@@ -106,8 +106,9 @@ ZEND_METHOD(Gtk4_GSimpleAction, set_state) {
   GSimpleAction *a = PHPGTK_SELF(GSimpleAction, G_TYPE_SIMPLE_ACTION);
   const GVariantType *t = g_action_get_state_type(G_ACTION(a));
   if (t == nullptr) {
-    zend_throw_error(nullptr, "GSimpleAction::set_state(): action '%s' is stateless",
-                     g_action_get_name(G_ACTION(a)));
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "GSimpleAction::set_state(): action '%s' is stateless",
+                            g_action_get_name(G_ACTION(a)));
     RETURN_THROWS();
   }
   GVariant *v = php_to_variant(state, t);

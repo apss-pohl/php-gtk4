@@ -122,7 +122,8 @@ per merge. It buys a release job that cannot publish a broken artifact because o
 at this stage is the better half of the trade. `concurrency: release-main` with `cancel-in-progress: false`
 serialises two merges landing back to back — which also keeps the prune step from racing itself.
 
-Branch protection on `main` should require `cpp-lint`, `php-qa` and `tests`, with squash merges — one merge
+Branch protection on `main` should require the `C++ static analysis`, `PHP QA (...)` and `PHP 8.4` /
+`PHP 8.5` checks (the job names in `.github/workflows/`), with squash merges — one merge
 is one commit is one dev build.
 
 ## Not covered yet

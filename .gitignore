@@ -49,7 +49,6 @@ compile_commands.json
 # --- logs and tool caches
 *.log
 /.ci/
-.phpunit.cache/
 .phpunit.result.cache
 .phpstan.cache/
 .php-cs-fixer.cache
@@ -62,17 +61,19 @@ phpunit-junit.xml
 /gen/PHP-Parser-*/
 /gen/PHP-Parser-install-lock
 
-# run-tests.php per-test artefacts (tests/phpt)
+# run-tests.php per-test artefacts (tests/phpt): for every x.phpt it writes x.php, x.sh, ...
+# Hence *every* .php here is ignored - hand-written helpers use .inc (skipif-display.inc).
 /tests/phpt/*.diff
 /tests/phpt/*.exp
 /tests/phpt/*.log
 /tests/phpt/*.out
 /tests/phpt/*.php
 /tests/phpt/*.sh
-/tmp-php.ini
 
 # Release workflow scratch (dist/ + generated notes)
 dist/
 NOTES.md
 .notes-body
-configure~
+
+# Claude Code session state (per clone)
+/.claude/RESUME.md

@@ -46,7 +46,7 @@ ZEND_METHOD(Gtk4_GtkDrawingArea, __construct) {
 }
 
 /**
- * Gtk4\GtkDrawingArea::set_draw_func(?callable $drawFunc): void
+ * Gtk4\GtkDrawingArea::set_draw_func(?callable $draw_func): void
  *
  * Install (or with null, remove) the draw function: `function (GtkDrawingArea $area, CairoContext
  * $cr, int $width, int $height): void`. Kept until replaced or the widget dies.

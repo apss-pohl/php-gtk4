@@ -240,9 +240,10 @@ checklist; Dependabot watches composer and actions.
 ## CI
 
 Four workflows (three have a README badge): `.github/workflows/cpp-lint.yml`, `php-qa.yml`,
-`tests.yml`, `release.yml`. (1) static analysis — setup-php 8.4, GTK4 headers, phpize build under `bear` for
-`compile_commands.json`, stubs up-to-date check, cpp-linter over the whole tree, fails on
-findings; (2) `./ci.sh --only=php-qa` + `--only=md-lint`; (3) build the extension and run the
+`tests.yml`, `release.yml`. (1) static analysis — setup-php 8.4, GTK4/WebKitGTK headers, clang 20
+from apt.llvm.org, `phpize && ./configure` (for `config.h`), then `./ci.sh --only=stubs` and
+`./ci.sh --only=cpp-lint` (same clang-tidy/clang-format stage as locally, any finding fails);
+(2) `./ci.sh --only=php-qa` + `--only=md-lint`; (3) build the extension and run the
 PHPUnit suite *and* `./ci.sh --only=phpt` for PHP 8.4 and 8.5 on Ubuntu 24.04 (`fail-fast: false`;
 failing `.out`/`.diff` files upload as the `phpt-failures-php*` artifact), plus `sanitizers`
 (`ci.sh --only=valgrind` + `--only=asan`) and `coverage` (`--only=coverage`, gcovr HTML artifact)
@@ -288,16 +289,23 @@ conventions here only.
   tracked closure/source and clears every notified-scope callable so nothing finalizes
   after Zend is gone — `tests/scripts/shutdown.php` guards it), `mainloop` (running-loop registry
   for `ExceptionMode::Rethrow`).
-- `src/Gtk/`, `src/Gdk/`, `src/Gio/`, `src/Cairo/` — `ZEND_METHOD` implementations per class;
-  registration lives in `src/gtk4.cpp`
-  MINIT: `register_class("GTypeName", register_class_Gtk4_X(parent_ce))` parents first —
-  `register_class()` installs `create_object` (inherited by subclasses registered afterwards) and
-  records the GType → class mapping `wrap()` uses — pass the `*_TYPE_*` macro, never look types up by
-  name at MINIT (GTK registers GTypes lazily). Enums:
-  `register_enum(GTK_TYPE_X, register_class_Gtk4_X())`. Boxed classes use `register_boxed()` with
-  their
-  field table; interfaces (`GAction`, `GActionMap`, `GActionGroup`) come from `implements` in the
-  stub (gen_stub emits `zend_class_implements`). `G_TYPE_POINTER` is unsupported on purpose.
+- `src/GLib/`, `src/GObject/`, `src/Gio/`, `src/Gdk/`, `src/Gtk/`, `src/Cairo/` — `ZEND_METHOD`
+  implementations, one directory per GIR namespace, one file per class (`GtkFilter.cpp` and
+  `GtkSorter.cpp` also hold their `GtkCustom*`/`*ListModel` siblings because they share the
+  trampoline; `PhpValue`, our own GObject subclass, sits in `src/GObject/`). `src/core/` holds no
+  `ZEND_METHOD`s. Registration lives in `src/gtk4.cpp` MINIT in exactly three shapes:
+  `register_class("GTypeName", register_class_Gtk4_X(parent_ce), G_TYPE_X)` for GObject handles,
+  parents first — `register_class()` installs `create_object` (inherited by subclasses registered
+  afterwards) and records the GType → class mapping `wrap()` uses — pass the `*_TYPE_*` macro, never
+  look types up by name at MINIT (GTK registers GTypes lazily); `register_enum/flags(GTK_TYPE_X,
+  register_class_Gtk4_X())` for enums; and `register_X(register_class_Gtk4_X())` for everything
+  else (boxed, fundamental, own object layout), declared in `src/classes.h` and defined next to
+  the class. Interfaces (`GAction`, `GActionMap`, `GActionGroup`, `GListModel`) come from
+  `implements` in the stub (gen_stub emits `zend_class_implements`); when an interface's methods
+  have one C implementation, write it **once** as `ZEND_METHOD(Gtk4_<Interface>, m)`
+  (`src/Gio/GListModel.cpp`, prototypes in its header) and tag every implementing class's method
+  in the stub with `/** @implementation-alias Gtk4\<Interface>::m */` — gen_stub emits a
+  `ZEND_MALIAS`, no per-class C++. `G_TYPE_POINTER` is unsupported on purpose.
 - `gen/` — `gen_stub.php` (vendored), `ide-stub.php`; the GIR generator (docs/PLAN.md milestone 3) will
   live here and emit stub sections, `ZEND_METHOD` skeletons and the MINIT block.
 - **Everything PHP-visible is in the `Gtk4\` namespace**; PHP class name = `Gtk4\<GTypeName>`, and
@@ -320,7 +328,14 @@ conventions here only.
 - Actions: `GSimpleAction` + `GtkApplication::add_action()`; GVariant parameters/states are plain
   PHP values. `has_action/list_actions/activate_action` only work once the app is registered
   (from `startup` on); `add/remove/lookup_action` always. Errors raised *to* PHP from methods use the PHP 8
-  vocabulary: `zend_value_error`, `zend_type_error`, `zend_argument_*`, `spl_ce_LogicException`.
+  vocabulary, by what went wrong: bad *argument* → `zend_argument_value_error`/`zend_type_error`/
+  `zend_value_error` (`ValueError`/`TypeError`); the wrapped object is in the wrong *state* for the
+  call (running loop, stateless action) → `spl_ce_LogicException`; the *handle itself* cannot do
+  it — dead GObject, `new`/`clone` of a C-created handle, `unset()` of a GObject property → plain
+  `\Error` via `zend_throw_error(nullptr, …)`, as the engine does for readonly/uncloneable. Shared
+  helpers: `PHPGTK_RETURN_STRING_OR_NULL(expr)` for nullable C strings (`php_gtk4.h`),
+  `src/Gtk/children.h` for `?GtkWidget` arguments and the unparented/child-of checks every
+  container needs.
 - **Naming is snake_case, final** (decided 2026-08-25, docs/PLAN.md): methods mirror the GTK C API
   with the type prefix stripped (`gtk_window_set_title` → `set_title`), properties keep GTK's names
   with underscores (`$win->default_width`). Never add camelCase aliases; the phpcs camelCaps

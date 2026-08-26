@@ -2,7 +2,7 @@
 // and Gtk4\GtkSortListModel.
 #include "php_gtk4.h"
 #include "core/callback.h"
-#include "core/classes.h"
+#include "Gio/GListModel.h"
 #include "core/enums.h"
 #include "core/object.h"
 #include "core/teardown.h"
@@ -124,40 +124,6 @@ ZEND_METHOD(Gtk4_GtkSortListModel, __construct) {
   GtkSortListModel *slm =
       gtk_sort_list_model_new(G_LIST_MODEL(m), s != nullptr ? GTK_SORTER(s) : nullptr);
   attach_new(object_from_zval(ZEND_THIS), G_OBJECT(slm));
-}
-
-/**
- * Gtk4\GtkSortListModel::get_item_type(): string
- */
-ZEND_METHOD(Gtk4_GtkSortListModel, get_item_type) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GListModel *m = PHPGTK_SELF(GListModel, G_TYPE_LIST_MODEL);
-  RETURN_STRING(g_type_name(g_list_model_get_item_type(m)));
-}
-
-/**
- * Gtk4\GtkSortListModel::get_n_items(): int
- */
-ZEND_METHOD(Gtk4_GtkSortListModel, get_n_items) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GListModel *m = PHPGTK_SELF(GListModel, G_TYPE_LIST_MODEL);
-  RETURN_LONG(g_list_model_get_n_items(m));
-}
-
-/**
- * Gtk4\GtkSortListModel::get_item(int $position): ?GObject
- */
-ZEND_METHOD(Gtk4_GtkSortListModel, get_item) {
-  zend_long position;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_LONG(position)
-  ZEND_PARSE_PARAMETERS_END();
-  GListModel *m = PHPGTK_SELF(GListModel, G_TYPE_LIST_MODEL);
-  if (position < 0) RETURN_NULL();
-  gpointer item = g_list_model_get_item(m, static_cast<guint>(position));  // transfer full
-  wrap(static_cast<GObject *>(item), return_value);
-  if (item != nullptr) g_object_unref(item);
-  if (EG(exception) != nullptr) RETURN_THROWS();  // a PHP filter/sort func threw (Rethrow mode)
 }
 
 /**

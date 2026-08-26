@@ -11,7 +11,7 @@
 using namespace phpgtk;
 
 /**
- * Gtk4\GtkApplication::__construct(?string $applicationId = null, int $flags = 0)
+ * Gtk4\GtkApplication::__construct(?string $application_id = null, int $flags = 0)
  */
 ZEND_METHOD(Gtk4_GtkApplication, __construct) {
   zend_string *id = nullptr;
@@ -117,9 +117,7 @@ ZEND_METHOD(Gtk4_GtkApplication, get_active_window) {
 ZEND_METHOD(Gtk4_GtkApplication, get_application_id) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkApplication *app = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
-  const gchar *id = g_application_get_application_id(G_APPLICATION(app));
-  if (id == nullptr) RETURN_NULL();
-  RETURN_STRING(id);
+  PHPGTK_RETURN_STRING_OR_NULL(g_application_get_application_id(G_APPLICATION(app)));
 }
 
 /**

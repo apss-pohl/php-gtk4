@@ -1,4 +1,4 @@
-// Gtk4\GListStore (+ the GListModel interface methods it implements)
+// Gtk4\GListStore (the GListModel interface methods come from Gio/GListModel.cpp)
 #include "php_gtk4.h"
 #include "core/object.h"
 
@@ -19,7 +19,7 @@ static GType item_type_from_string(zend_string *name) {
 }
 
 /**
- * Gtk4\GListStore::__construct(string $itemType = GObject::class)
+ * Gtk4\GListStore::__construct(string $item_type = GObject::class)
  */
 ZEND_METHOD(Gtk4_GListStore, __construct) {
   zend_string *type = nullptr;
@@ -33,39 +33,6 @@ ZEND_METHOD(Gtk4_GListStore, __construct) {
     if (t == 0) RETURN_THROWS();
   }
   attach_new(object_from_zval(ZEND_THIS), G_OBJECT(g_list_store_new(t)));
-}
-
-/**
- * Gtk4\GListStore::get_item_type(): string
- */
-ZEND_METHOD(Gtk4_GListStore, get_item_type) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GListModel *m = PHPGTK_SELF(GListModel, G_TYPE_LIST_MODEL);
-  RETURN_STRING(g_type_name(g_list_model_get_item_type(m)));
-}
-
-/**
- * Gtk4\GListStore::get_n_items(): int
- */
-ZEND_METHOD(Gtk4_GListStore, get_n_items) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GListModel *m = PHPGTK_SELF(GListModel, G_TYPE_LIST_MODEL);
-  RETURN_LONG(g_list_model_get_n_items(m));
-}
-
-/**
- * Gtk4\GListStore::get_item(int $position): ?GObject
- */
-ZEND_METHOD(Gtk4_GListStore, get_item) {
-  zend_long position;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_LONG(position)
-  ZEND_PARSE_PARAMETERS_END();
-  GListModel *m = PHPGTK_SELF(GListModel, G_TYPE_LIST_MODEL);
-  if (position < 0) RETURN_NULL();
-  gpointer item = g_list_model_get_item(m, static_cast<guint>(position));  // transfer full
-  wrap(static_cast<GObject *>(item), return_value);
-  if (item != nullptr) g_object_unref(item);
 }
 
 // Validate an item against the store's item type; nullptr + TypeError if it does not fit.

@@ -17,6 +17,10 @@
 #if PHP_VERSION_ID < 80400
 #error "php-gtk4 requires PHP >= 8.4"
 #endif
+#ifdef ZTS
+#error \
+    "php-gtk4 is NTS-only: the runtime keeps request state in plain statics (config.m4 refuses ZTS too)"
+#endif
 
 #define PHP_GTK4_VERSION "0.1.0-dev"
 #define PHP_GTK4_NAMESPACE "Gtk4"
@@ -30,3 +34,11 @@
 
 extern zend_module_entry gtk4_module_entry;
 #define phpext_gtk4_ptr &gtk4_module_entry
+
+// `const char *` that may be NULL (transfer none) -> ?string.
+#define PHPGTK_RETURN_STRING_OR_NULL(expr)   \
+  do {                                       \
+    const char *phpgtk_s_ = (expr);          \
+    if (phpgtk_s_ == nullptr) RETURN_NULL(); \
+    RETURN_STRING(phpgtk_s_);                \
+  } while (0)

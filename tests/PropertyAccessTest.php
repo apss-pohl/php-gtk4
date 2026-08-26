@@ -23,6 +23,28 @@ final class PropertyAccessTest extends GtkTestCase
         self::assertSame(321, $w->default_width);
     }
 
+    public function testCompoundAssignmentWritesThrough(): void
+    {
+        // Without get_property_ptr_ptr these would create a shadow dynamic property and drop the write.
+        $w = $this->window();
+        $w->default_width = 100;
+        $w->default_width++;
+        self::assertSame(101, $w->get_property('default-width'));
+        $w->default_width += 9;
+        self::assertSame(110, $w->default_width);
+        $w->title = 'a';
+        $w->title .= 'b';
+        self::assertSame('ab', $w->get_title());
+    }
+
+    public function testUnsetGObjectPropertyThrows(): void
+    {
+        $w = $this->window();
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessage('Cannot unset GObject property Gtk4\GtkWindow::$title');
+        unset($w->title);
+    }
+
     public function testIssetAndEmpty(): void
     {
         $w = $this->window();

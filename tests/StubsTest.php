@@ -108,6 +108,32 @@ final class StubsTest extends TestCase
         self::assertSame(self::fromExtension()['constants'], self::fromStub()['constants']);
     }
 
+    public function testStubNamesAreSnakeCase(): void
+    {
+        // docs/PLAN.md: one spelling, snake_case, no camelCase - parameter names are API (named arguments).
+        $src = self::source();
+        preg_match_all('/function\s+(\w+)\s*\(([^)]*)\)/', $src, $m, PREG_SET_ORDER);
+        self::assertNotEmpty($m);
+        $allowed = ['getDomain'];   // GError: aligned with Exception::getCode()/getMessage()
+        foreach ($m as [, $name, $params]) {
+            if (!in_array($name, $allowed, true)) {
+                self::assertMatchesRegularExpression(
+                    '/^(__)?[a-z][a-z0-9_]*$/',
+                    $name,
+                    "method $name() is not snake_case",
+                );
+            }
+            preg_match_all('/\$(\w+)/', $params, $pm);
+            foreach ($pm[1] as $p) {
+                self::assertMatchesRegularExpression(
+                    '/^[a-z][a-z0-9_]*$/',
+                    $p,
+                    "$name(): parameter \$$p is not snake_case",
+                );
+            }
+        }
+    }
+
     public function testStubMethodsHaveDummyBodies(): void
     {
         // IDE rule (CLAUDE.md): never `{}` - unset() params, placeholder return for non-void.

@@ -25,7 +25,8 @@
 #   ./ci.sh --only=test              one stage   (--only=cpp-lint,php-qa for several)
 #   ./ci.sh --only=phpt              just the run-tests.php suite (TESTS=tests/phpt/x.phpt for one file)
 #   ./ci.sh --skip=cpp-lint,php-qa   fastest edit-build-test loop
-#   ./ci.sh --filter SignalTest      unknown args are passed to phpunit
+#   ./ci.sh --filter SignalTest      common phpunit options pass through; anything else after --
+#   ./ci.sh --help                   this text
 #   ./ci.sh --no-stan                php-qa without phpstan
 #   ./ci.sh --fail-fast              clang-tidy stops at the first failing file
 #   ./ci.sh --with=asan,coverage,valgrind   default stages plus the extra ones
@@ -48,23 +49,41 @@ JOBS=${JOBS:-$(nproc)}
 COMPOSER=${COMPOSER:-/usr/local/bin/composer}
 # What the phpt stage hands to run-tests.php; narrow it to one file while iterating.
 PHPT_TESTS=${PHPT_TESTS:-tests/phpt}
-# Newest installed clang-tidy-N / clang-format-N unless overridden.
-newest_tool() { ls /usr/bin/"$1"-[0-9]* 2>/dev/null | sort -t- -k2 -V | tail -1; }
-CLANG_TIDY=${CLANG_TIDY:-$(basename "$(newest_tool clang-tidy)" 2>/dev/null || echo clang-tidy)}
-CLANG_FORMAT=${CLANG_FORMAT:-$(basename "$(newest_tool clang-format)" 2>/dev/null || echo clang-format)}
+# Newest installed clang-tidy-N / clang-format-N (Debian naming), else the unversioned
+# name from PATH, unless overridden.
+newest_tool() {
+    local versioned
+    versioned=$(ls /usr/bin/"$1"-[0-9]* 2>/dev/null | sort -t- -k2 -V | tail -1)
+    if [[ -n "$versioned" ]]; then basename "$versioned"; else echo "$1"; fi
+}
+CLANG_TIDY=${CLANG_TIDY:-$(newest_tool clang-tidy)}
+CLANG_FORMAT=${CLANG_FORMAT:-$(newest_tool clang-format)}
 
 ALL_STAGES="version stubs cpp-lint md-lint php-qa build load test phpt asan coverage valgrind"
 DEFAULT_OFF="asan coverage valgrind"
 ONLY=""; SKIP=""; WITH=""; FIX=0; STAN=1; FAIL_FAST=0; PHPUNIT_ARGS=()
+usage() { sed -n '2,/^set -/p' "$0" | sed '$d' | sed 's/^# \{0,1\}//'; }
+PASSTHRU=0
 for arg in "$@"; do
+    if [[ $PASSTHRU -eq 1 ]]; then PHPUNIT_ARGS+=("$arg"); continue; fi
     case "$arg" in
+        -h|--help)  usage; exit 0 ;;
         --only=*)   ONLY="${arg#--only=}" ;;
         --skip=*)   SKIP="${arg#--skip=}" ;;
         --with=*)   WITH="${arg#--with=}" ;;
         --fix)      FIX=1 ;;
         --no-stan)  STAN=0 ;;
         --fail-fast) FAIL_FAST=1 ;;
-        *)          PHPUNIT_ARGS+=("$arg") ;;
+        --)         PASSTHRU=1 ;;   # everything after goes to phpunit verbatim
+        --filter|--filter=*|--testsuite|--testsuite=*|--group|--group=*|--exclude-group|--exclude-group=*|--stop-on-failure|--testdox|--debug|--display-*|--no-progress|--order-by=*|--random-order-seed=*)
+                    PHPUNIT_ARGS+=("$arg") ;;
+        --*)        echo "ci.sh: unknown option '$arg' (see --help; phpunit options go after --)" >&2; exit 2 ;;
+        *)          PHPUNIT_ARGS+=("$arg") ;;   # bare values (e.g. the argument of --filter)
+    esac
+done
+for stage in ${ONLY//,/ } ${SKIP//,/ } ${WITH//,/ }; do
+    case "$stage" in tidy|format|stan) ;; *)
+        [[ " $ALL_STAGES " == *" $stage "* ]] || { echo "ci.sh: unknown stage '$stage' (stages: $ALL_STAGES)" >&2; exit 2; } ;;
     esac
 done
 
@@ -219,7 +238,6 @@ stage_cpp_lint() {
     [[ $tidy_errors -eq 0 && $fmt_errors -eq 0 ]] || fail "cpp-lint"
 }
 
-# ---------------------------------------------------------------- php-qa
 # ---------------------------------------------------------------- md-lint
 # markdownlint-cli2 over every tracked *.md; rules live in .markdownlint-cli2.jsonc.
 # Prefers a global install, falls back to npx (CI has neither pre-installed).

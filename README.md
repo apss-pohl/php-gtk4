@@ -74,8 +74,8 @@ php8.4 -n -dextension=gtk4 script.php # minimal: no ini files at all
 sudo phpdismod gtk3 && sudo phpenmod gtk4   # switch the system default (Debian/Ubuntu)
 ```
 
-Editing the version table in `buildall.sh` (`version:php-config:ini-dir:with_webkit:enabled`) is
-how a PHP version is added.
+Editing the version table in `buildall.sh` (`version:enabled`, one line per PHP version) is how a
+PHP version is added.
 
 ## Credits & inspiration
 

@@ -22,6 +22,40 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   enums `GtkAlign`, `GtkOrientation`, `GtkFilterChange`, `GtkSorterChange`, flags `GApplicationFlags`.
 - Tooling: `ci.sh` stages, sanitizer/valgrind/coverage runs, stub-driven arginfo, IDE stub and
   method comments, git hooks, Dependabot.
+- `get_property_ptr_ptr`/`unset_property` handlers on GObject and boxed handles: `$w->width++`,
+  `$w->title .= 'x'`, `$rgba->red += 0.1` now write through (they used to create a shadow dynamic
+  property and drop the write); `unset($w->title)` throws `Error`. `StubsTest` gates snake_case
+  method and parameter names in the stub (`GError::getDomain()` is the one allowed exception).
+
+### Changed
+
+- Source layout follows the GIR namespaces: `src/GLib/` (`GLib`, `GMainLoop`, `GError`),
+  `src/GObject/` (`GObject`, `GParamSpec`, `PhpValue`), `src/Gio/`, `src/Gdk/`, `src/Gtk/`,
+  `src/Cairo/`; `src/core/` contains no `ZEND_METHOD` any more. The `GListModel` interface methods
+  are implemented once (`src/Gio/GListModel.cpp`) and aliased into `GListStore`,
+  `GtkFilterListModel` and `GtkSortListModel` via `@implementation-alias` in the stub. The MINIT
+  block has three registration shapes only (`src/classes.h` declares the non-GObject hooks);
+  `config.m4` compiles every `src/**/*.cpp` it finds instead of a hand-kept list.
+- `ci.sh` rejects unknown `--options` and stages (exit 2) instead of forwarding them to phpunit,
+  has `--help`, and falls back to the unversioned `clang-tidy`/`clang-format` when no
+  `/usr/bin/clang-*-N` exists. `tests/run.sh`/`buildall.sh` run with `set -euo pipefail`.
+- CI: the PR workflows declare a read-only token; `release.yml` pins its actions by commit SHA.
+- Error vocabulary settled (CLAUDE.md): argument errors → `ValueError`/`TypeError`, wrong object
+  state → `LogicException` (`GSimpleAction::set_state()` on a stateless action now throws
+  `LogicException` instead of `Error`), handle-level impossibilities → `Error`. Shared helpers
+  `PHPGTK_RETURN_STRING_OR_NULL` and `src/Gtk/children.h` (`?GtkWidget` arguments, unparented /
+  child-of checks; `GtkBox` messages now say "this GtkBox" / "its parent").
+- Parameter names in the public API are snake_case (`$handler_id`, `$interval_ms`, `$source_id`,
+  `$item_type`, `$parameter_type`, `$application_id`, `$css_class`, `$draw_func`, `$match_func`);
+  named-argument callers using the old camelCase spellings break.
+
+### Fixed
+
+- RSHUTDOWN teardown walks the live registries instead of a snapshot, so a disconnect that
+  finalizes another tracked object can no longer leave a dangling pointer for the next iteration.
+- `config.m4` lacked the `src/Cairo` build directory (out-of-tree builds failed).
+- `cpp-lint.yml` never ran clang-tidy/clang-format (it gated on a step that did not exist); it now
+  installs clang 20 and runs `./ci.sh --only=cpp-lint` like the pre-commit hook.
 
 ## Release checklist
 

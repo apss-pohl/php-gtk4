@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: a2dd49a175b88d749392a4dcc2647ebf427454ff */
+ * Stub hash: 3baa732bbff5bfb4ee5c9787beecad2a31994c18 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GObject_connect, 0, 2, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, signal, IS_STRING, 0)
@@ -14,7 +14,7 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GObject_emit, 0, 1, I
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GObject_handler_disconnect, 0, 1, IS_VOID, 0)
-	ZEND_ARG_TYPE_INFO(0, handlerId, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, handler_id, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GObject_get_property, 0, 1, IS_MIXED, 0)
@@ -65,12 +65,12 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GLib_idle_add, 0, 1, 
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GLib_timeout_add, 0, 2, IS_LONG, 0)
-	ZEND_ARG_TYPE_INFO(0, intervalMs, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, interval_ms, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GLib_source_remove, 0, 1, _IS_BOOL, 0)
-	ZEND_ARG_TYPE_INFO(0, sourceId, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, source_id, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GMainLoop___construct, 0, 0, 0)
@@ -122,7 +122,7 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GListModel_get_item, 0
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GListStore___construct, 0, 0, 0)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, itemType, IS_STRING, 0, "Gtk4\\GObject::class")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, item_type, IS_STRING, 0, "Gtk4\\GObject::class")
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GListStore_get_item_type arginfo_class_Gtk4_GParamSpec_get_name
@@ -184,7 +184,7 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GSimpleAction___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameterType, IS_STRING, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameter_type, IS_STRING, 1, "null")
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, state, IS_MIXED, 0, "null")
 ZEND_END_ARG_INFO()
 
@@ -209,7 +209,7 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GSimpleAction_activat
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkApplication___construct, 0, 0, 0)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, applicationId, IS_STRING, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, application_id, IS_STRING, 1, "null")
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 0, "0")
 ZEND_END_ARG_INFO()
 
@@ -331,13 +331,13 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GtkWidget_get_name arginfo_class_Gtk4_GParamSpec_get_nick
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWidget_add_css_class, 0, 1, IS_VOID, 0)
-	ZEND_ARG_TYPE_INFO(0, cssClass, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, css_class, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkWidget_remove_css_class arginfo_class_Gtk4_GtkWidget_add_css_class
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWidget_has_css_class, 0, 1, _IS_BOOL, 0)
-	ZEND_ARG_TYPE_INFO(0, cssClass, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, css_class, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkWidget_get_css_classes arginfo_class_Gtk4_GActionGroup_list_actions
@@ -539,7 +539,7 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GtkDrawingArea___construct arginfo_class_Gtk4_GMainLoop___construct
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkDrawingArea_set_draw_func, 0, 1, IS_VOID, 0)
-	ZEND_ARG_TYPE_INFO(0, drawFunc, IS_CALLABLE, 1)
+	ZEND_ARG_TYPE_INFO(0, draw_func, IS_CALLABLE, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkDrawingArea_set_content_width, 0, 1, IS_VOID, 0)
@@ -559,11 +559,11 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFilter_changed, 0,
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkCustomFilter___construct, 0, 0, 0)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, matchFunc, IS_CALLABLE, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, match_func, IS_CALLABLE, 1, "null")
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkCustomFilter_set_filter_func, 0, 1, IS_VOID, 0)
-	ZEND_ARG_TYPE_INFO(0, matchFunc, IS_CALLABLE, 1)
+	ZEND_ARG_TYPE_INFO(0, match_func, IS_CALLABLE, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkFilterListModel___construct, 0, 0, 0)
@@ -692,9 +692,6 @@ ZEND_METHOD(Gtk4_PhpValue, __construct);
 ZEND_METHOD(Gtk4_PhpValue, get_value);
 ZEND_METHOD(Gtk4_PhpValue, set_value);
 ZEND_METHOD(Gtk4_GListStore, __construct);
-ZEND_METHOD(Gtk4_GListStore, get_item_type);
-ZEND_METHOD(Gtk4_GListStore, get_n_items);
-ZEND_METHOD(Gtk4_GListStore, get_item);
 ZEND_METHOD(Gtk4_GListStore, append);
 ZEND_METHOD(Gtk4_GListStore, insert);
 ZEND_METHOD(Gtk4_GListStore, remove);
@@ -820,9 +817,6 @@ ZEND_METHOD(Gtk4_GtkFilter, changed);
 ZEND_METHOD(Gtk4_GtkCustomFilter, __construct);
 ZEND_METHOD(Gtk4_GtkCustomFilter, set_filter_func);
 ZEND_METHOD(Gtk4_GtkFilterListModel, __construct);
-ZEND_METHOD(Gtk4_GtkFilterListModel, get_item_type);
-ZEND_METHOD(Gtk4_GtkFilterListModel, get_n_items);
-ZEND_METHOD(Gtk4_GtkFilterListModel, get_item);
 ZEND_METHOD(Gtk4_GtkFilterListModel, set_filter);
 ZEND_METHOD(Gtk4_GtkFilterListModel, get_filter);
 ZEND_METHOD(Gtk4_GtkFilterListModel, set_model);
@@ -831,9 +825,6 @@ ZEND_METHOD(Gtk4_GtkSorter, changed);
 ZEND_METHOD(Gtk4_GtkCustomSorter, __construct);
 ZEND_METHOD(Gtk4_GtkCustomSorter, set_sort_func);
 ZEND_METHOD(Gtk4_GtkSortListModel, __construct);
-ZEND_METHOD(Gtk4_GtkSortListModel, get_item_type);
-ZEND_METHOD(Gtk4_GtkSortListModel, get_n_items);
-ZEND_METHOD(Gtk4_GtkSortListModel, get_item);
 ZEND_METHOD(Gtk4_GtkSortListModel, set_sorter);
 ZEND_METHOD(Gtk4_GtkSortListModel, get_sorter);
 ZEND_METHOD(Gtk4_GtkSortListModel, set_model);
@@ -927,9 +918,9 @@ static const zend_function_entry class_Gtk4_GListModel_methods[] = {
 
 static const zend_function_entry class_Gtk4_GListStore_methods[] = {
 	ZEND_ME(Gtk4_GListStore, __construct, arginfo_class_Gtk4_GListStore___construct, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GListStore, get_item_type, arginfo_class_Gtk4_GListStore_get_item_type, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GListStore, get_n_items, arginfo_class_Gtk4_GListStore_get_n_items, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GListStore, get_item, arginfo_class_Gtk4_GListStore_get_item, ZEND_ACC_PUBLIC)
+	ZEND_RAW_FENTRY("get_item_type", zim_Gtk4_GListModel_get_item_type, arginfo_class_Gtk4_GListStore_get_item_type, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_n_items", zim_Gtk4_GListModel_get_n_items, arginfo_class_Gtk4_GListStore_get_n_items, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_item", zim_Gtk4_GListModel_get_item, arginfo_class_Gtk4_GListStore_get_item, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_ME(Gtk4_GListStore, append, arginfo_class_Gtk4_GListStore_append, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GListStore, insert, arginfo_class_Gtk4_GListStore_insert, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GListStore, remove, arginfo_class_Gtk4_GListStore_remove, ZEND_ACC_PUBLIC)
@@ -1129,9 +1120,9 @@ static const zend_function_entry class_Gtk4_GtkCustomFilter_methods[] = {
 
 static const zend_function_entry class_Gtk4_GtkFilterListModel_methods[] = {
 	ZEND_ME(Gtk4_GtkFilterListModel, __construct, arginfo_class_Gtk4_GtkFilterListModel___construct, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GtkFilterListModel, get_item_type, arginfo_class_Gtk4_GtkFilterListModel_get_item_type, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GtkFilterListModel, get_n_items, arginfo_class_Gtk4_GtkFilterListModel_get_n_items, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GtkFilterListModel, get_item, arginfo_class_Gtk4_GtkFilterListModel_get_item, ZEND_ACC_PUBLIC)
+	ZEND_RAW_FENTRY("get_item_type", zim_Gtk4_GListModel_get_item_type, arginfo_class_Gtk4_GtkFilterListModel_get_item_type, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_n_items", zim_Gtk4_GListModel_get_n_items, arginfo_class_Gtk4_GtkFilterListModel_get_n_items, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_item", zim_Gtk4_GListModel_get_item, arginfo_class_Gtk4_GtkFilterListModel_get_item, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_ME(Gtk4_GtkFilterListModel, set_filter, arginfo_class_Gtk4_GtkFilterListModel_set_filter, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFilterListModel, get_filter, arginfo_class_Gtk4_GtkFilterListModel_get_filter, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFilterListModel, set_model, arginfo_class_Gtk4_GtkFilterListModel_set_model, ZEND_ACC_PUBLIC)
@@ -1152,9 +1143,9 @@ static const zend_function_entry class_Gtk4_GtkCustomSorter_methods[] = {
 
 static const zend_function_entry class_Gtk4_GtkSortListModel_methods[] = {
 	ZEND_ME(Gtk4_GtkSortListModel, __construct, arginfo_class_Gtk4_GtkSortListModel___construct, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GtkSortListModel, get_item_type, arginfo_class_Gtk4_GtkSortListModel_get_item_type, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GtkSortListModel, get_n_items, arginfo_class_Gtk4_GtkSortListModel_get_n_items, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GtkSortListModel, get_item, arginfo_class_Gtk4_GtkSortListModel_get_item, ZEND_ACC_PUBLIC)
+	ZEND_RAW_FENTRY("get_item_type", zim_Gtk4_GListModel_get_item_type, arginfo_class_Gtk4_GtkSortListModel_get_item_type, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_n_items", zim_Gtk4_GListModel_get_n_items, arginfo_class_Gtk4_GtkSortListModel_get_n_items, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_item", zim_Gtk4_GListModel_get_item, arginfo_class_Gtk4_GtkSortListModel_get_item, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_ME(Gtk4_GtkSortListModel, set_sorter, arginfo_class_Gtk4_GtkSortListModel_set_sorter, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkSortListModel, get_sorter, arginfo_class_Gtk4_GtkSortListModel_get_sorter, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkSortListModel, set_model, arginfo_class_Gtk4_GtkSortListModel_set_model, ZEND_ACC_PUBLIC)

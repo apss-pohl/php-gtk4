@@ -9,10 +9,12 @@
 namespace phpgtk {
 
 namespace {
+// A connected PHP signal handler: the instance it is connected to and its handler id.
 struct Handler {
   GObject *instance;
   gulong id;
 };
+// Live closures created by connect(), keyed by the GClosure.
 std::unordered_map<GClosure *, Handler> &closures() {
   static std::unordered_map<GClosure *, Handler> map;
   return map;
@@ -64,29 +66,28 @@ void teardown_untrack_notified(gpointer key) {
 }
 
 // RSHUTDOWN: disconnect every live handler, destroy every armed source and clear every
-// notified callable while Zend is up.
+// notified callable while Zend is up. Every entry's pointer is valid as long as the entry
+// exists (finalizing the instance/owner runs the finalize/destroy notify, which untracks),
+// so each step takes the *current* first entry rather than iterating a snapshot: one
+// disconnect/clear may finalize other tracked objects and remove their entries too.
 void teardown_request() {
-  // Disconnecting finalizes the closure, which untracks it - iterate a copy.
-  const std::vector<std::pair<GClosure *, Handler>> live(closures().begin(), closures().end());
-  for (const auto &[closure, h] : live) {
-    if (G_IS_OBJECT(h.instance) && g_signal_handler_is_connected(h.instance, h.id)) {
+  while (!closures().empty()) {
+    const auto [closure, h] = *closures().begin();
+    closures().erase(closure);  // in case the disconnect does not finalize it right away
+    if (g_signal_handler_is_connected(h.instance, h.id)) {
       g_signal_handler_disconnect(h.instance, h.id);
-    } else {
-      closures().erase(closure);
     }
   }
-  const std::vector<guint> ids(sources().begin(), sources().end());
-  for (guint id : ids) {
-    GSource *source = g_main_context_find_source_by_id(nullptr, id);
-    if (source != nullptr) g_source_destroy(source);  // runs the destroy notify -> untrack
+  while (!sources().empty()) {
+    const guint id = *sources().begin();
     sources().erase(id);
+    GSource *source = g_main_context_find_source_by_id(nullptr, id);
+    if (source != nullptr) g_source_destroy(source);  // runs the destroy notify
   }
-  const std::vector<std::pair<gpointer, Notified>> pending(notified().begin(), notified().end());
-  for (const auto &[key, n] : pending) {
-    if (G_IS_OBJECT(n.owner))
-      n.clear(n.owner);  // runs the destroy notify -> untrack
-    else
-      notified().erase(key);
+  while (!notified().empty()) {
+    const auto [key, n] = *notified().begin();
+    notified().erase(key);
+    n.clear(n.owner);  // runs the destroy notify
   }
   callback_drain();
 }

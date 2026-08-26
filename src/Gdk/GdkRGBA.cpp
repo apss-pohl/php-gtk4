@@ -1,5 +1,6 @@
 // Gtk4\GdkRGBA (boxed value type)
 #include "php_gtk4.h"
+#include "classes.h"
 #include "core/boxed.h"
 
 #include <cstring>

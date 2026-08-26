@@ -1,6 +1,7 @@
 // Gtk4\GtkButton
 #include "php_gtk4.h"
 #include "core/object.h"
+#include "children.h"
 
 using namespace phpgtk;
 
@@ -35,9 +36,7 @@ ZEND_METHOD(Gtk4_GtkButton, set_label) {
 ZEND_METHOD(Gtk4_GtkButton, get_label) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkButton *b = PHPGTK_SELF(GtkButton, GTK_TYPE_BUTTON);
-  const char *l = gtk_button_get_label(b);
-  if (l == nullptr) RETURN_NULL();
-  RETURN_STRING(l);
+  PHPGTK_RETURN_STRING_OR_NULL(gtk_button_get_label(b));
 }
 
 /**
@@ -49,12 +48,9 @@ ZEND_METHOD(Gtk4_GtkButton, set_child) {
   Z_PARAM_OBJECT_OF_CLASS_OR_NULL(child, class_for_gtype_name("GtkWidget"))
   ZEND_PARSE_PARAMETERS_END();
   GtkButton *b = PHPGTK_SELF(GtkButton, GTK_TYPE_BUTTON);
-  GObject *c = nullptr;
-  if (child != nullptr) {
-    c = unwrap(child, GTK_TYPE_WIDGET);
-    if (c == nullptr) RETURN_THROWS();
-  }
-  gtk_button_set_child(b, c != nullptr ? GTK_WIDGET(c) : nullptr);
+  GtkWidget *c = nullptr;
+  if (!widget_or_null(child, &c)) RETURN_THROWS();
+  gtk_button_set_child(b, c);
 }
 
 /**

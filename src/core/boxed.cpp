@@ -84,6 +84,33 @@ int has_property(zend_object *o, zend_string *member, int has_set_exists, void *
   return zend_std_has_property(o, member, has_set_exists, cache_slot);
 }
 
+// True when `member` names a struct field of this handle's boxed class.
+bool is_field(const Boxed *self, const zend_string *member) {
+  const BoxedClass *info = info_of(self);
+  if (info == nullptr) return false;
+  for (const char *const *f = info->fields; *f != nullptr; f++) {
+    if (strcmp(*f, ZSTR_VAL(member)) == 0) return true;
+  }
+  return false;
+}
+
+// get_property_ptr_ptr handler: fields have no zval slot, so compound assignments (`+=`, `++`)
+// and by-reference access are routed through read_property/write_property.
+zval *get_property_ptr_ptr(zend_object *o, zend_string *member, int type, void **cache_slot) {
+  if (is_field(boxed_from_zend(o), member)) return nullptr;
+  return zend_std_get_property_ptr_ptr(o, member, type, cache_slot);
+}
+
+// unset_property handler: struct fields cannot be unset.
+void unset_property(zend_object *o, zend_string *member, void **cache_slot) {
+  if (is_field(boxed_from_zend(o), member)) {
+    zend_throw_error(nullptr, "Cannot unset boxed field %s::$%s", ZSTR_VAL(o->ce->name),
+                     ZSTR_VAL(member));
+    return;
+  }
+  zend_std_unset_property(o, member, cache_slot);
+}
+
 // get_debug_info handler: var_dump()/print_r() show every field.
 HashTable *get_debug_info(zend_object *o, int *is_temp) {
   Boxed *self = boxed_from_zend(o);
@@ -130,6 +157,8 @@ void boxed_handlers_init() {
   handlers.read_property = read_property;
   handlers.write_property = write_property;
   handlers.has_property = has_property;
+  handlers.get_property_ptr_ptr = get_property_ptr_ptr;
+  handlers.unset_property = unset_property;
   handlers.get_debug_info = get_debug_info;
   handlers.compare = compare_objects;
 }

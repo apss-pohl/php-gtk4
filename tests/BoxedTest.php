@@ -76,6 +76,26 @@ final class BoxedTest extends GtkTestCase
         self::assertSame([0, 0, 0, 0], [$zero->x, $zero->y, $zero->width, $zero->height]);
     }
 
+    public function testCompoundAssignmentOnFieldWritesThrough(): void
+    {
+        $c = new GdkRGBA();
+        $c->red = 0.5;
+        $c->red += 0.25;
+        self::assertSame(0.75, $c->red);
+        $r = new GdkRectangle();
+        $r->width = 10;
+        $r->width++;
+        self::assertSame(11, $r->width);
+    }
+
+    public function testUnsetFieldThrows(): void
+    {
+        $r = new GdkRectangle();
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessage('Cannot unset boxed field Gtk4\GdkRectangle::$x');
+        unset($r->x);
+    }
+
     public function testVarDumpShowsFields(): void
     {
         ob_start();

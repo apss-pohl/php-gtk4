@@ -9,7 +9,7 @@
 # Standard phpize build: needs php<ver>-dev (phpize<ver>, php-config<ver>)
 # and libgtk-4-dev. No PHP-CPP any more.
 #
-set -e
+set -euo pipefail
 cd "$(dirname "$0")"
 
 if [ "$EUID" -eq 0 ]; then

@@ -1,29 +1,18 @@
 // Module entry for the gtk4 extension.
 #include "php_gtk4.h"
+#include "classes.h"
 #include "core/boxed.h"
-#include "core/cairo.h"
-#include "core/classes.h"
 #include "core/enums.h"
 #include "core/fundamental.h"
 #include "core/gerror.h"
 #include "core/error.h"
 #include "core/object.h"
-#include "core/paramspec.h"
 #include "core/phpvalue.h"
 #include "core/teardown.h"
+#include "Gio/GListModel.h"
 #include <Zend/zend_modules.h>
 
 #include <string>
-
-namespace phpgtk {
-zend_class_entry *ce_ExceptionMode = nullptr;
-zend_class_entry *ce_GMainLoop = nullptr;
-zend_class_entry *ce_GParamSpec = nullptr;
-zend_class_entry *ce_GListModel = nullptr;
-void register_GdkRGBA(zend_class_entry *ce);
-void register_GdkRectangle(zend_class_entry *ce);
-void register_GMainLoop_handlers(zend_class_entry *ce);
-}  // namespace phpgtk
 
 // Generated from src/gtk4.stub.php by gen/gen_stub.php. Included exactly
 // once with the method tables; other TUs only need the ZEND_METHOD prototypes
@@ -44,6 +33,10 @@ static PHP_MINIT_FUNCTION(gtk4) {
   phpgtk::fundamental_handlers_init();
 
   // Class registration, parents first (the generator will emit this block).
+  // Three shapes, nothing else:
+  //   register_class("GType", register_class_Gtk4_X(parent...), G_TYPE_X)  GObject handles
+  //   register_X(register_class_Gtk4_X())                                    classes.h hooks
+  //   register_enum/flags(G_TYPE_X, register_class_Gtk4_X())                 enums
   // register_class() installs create_object before subclasses inherit it and
   // records the GType name -> class mapping used by wrap().
   zend_class_entry *ce_GObject = register_class_Gtk4_GObject();
@@ -57,19 +50,17 @@ static PHP_MINIT_FUNCTION(gtk4) {
   phpgtk::register_enum(GTK_TYPE_SORTER_CHANGE, register_class_Gtk4_GtkSorterChange());
   register_class_Gtk4_Gtk();
   register_class_Gtk4_GLib();
-  phpgtk::ce_GMainLoop = register_class_Gtk4_GMainLoop();
-  phpgtk::register_GMainLoop_handlers(phpgtk::ce_GMainLoop);
+  phpgtk::register_GMainLoop(register_class_Gtk4_GMainLoop());
   phpgtk::register_GdkRGBA(register_class_Gtk4_GdkRGBA());
   phpgtk::register_GdkRectangle(register_class_Gtk4_GdkRectangle());
-  phpgtk::ce_GParamSpec = register_class_Gtk4_GParamSpec();
-  phpgtk::register_GParamSpec(phpgtk::ce_GParamSpec);
+  phpgtk::register_GParamSpec(register_class_Gtk4_GParamSpec());
   phpgtk::ce_GError = register_class_Gtk4_GError(spl_ce_RuntimeException);
   phpgtk::register_class("GdkTexture", register_class_Gtk4_GdkTexture(ce_GObject),
                          GDK_TYPE_TEXTURE);
   phpgtk::register_class("PhpValue", register_class_Gtk4_PhpValue(ce_GObject), PHP_TYPE_VALUE);
   phpgtk::register_CairoContext(register_class_Gtk4_CairoContext());
   zend_class_entry *ce_GListModel = register_class_Gtk4_GListModel();
-  phpgtk::ce_GListModel = ce_GListModel;
+  phpgtk::ce_GListModel = ce_GListModel;  // for ?GListModel parameters (Gio/GListModel.h)
   phpgtk::register_class("GListStore", register_class_Gtk4_GListStore(ce_GObject, ce_GListModel),
                          G_TYPE_LIST_STORE);
   zend_class_entry *ce_GAction = register_class_Gtk4_GAction();

@@ -157,6 +157,8 @@ $out = $printer->prettyPrintFile($ast);
 $out = $header . (preg_replace('/^<\?php\s*/', '', $out) ?? '') . "\n";
 // Drop the .stub.php file docblock (ours replaces it) and gen_stub's annotations.
 $out = preg_replace('#^/\*\*\n \* php-gtk4 API declaration.*?\*/\n#ms', '', $out, 1) ?? '';
+// gen_stub-only tags (which C function implements an interface method) mean nothing to an IDE.
+$out = preg_replace('#^[ \t]*/\*\* @implementation-alias [^*]*\*/\n#m', '', $out) ?? '';
 $out = preg_replace(
     '/^ \* @(generate-class-entries|generate-legacy-arginfo|not-serializable|cvalue)\b.*\n/m',
     '',

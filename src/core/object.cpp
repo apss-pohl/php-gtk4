@@ -137,6 +137,27 @@ static int has_property(zend_object *o, zend_string *member, int has_set_exists,
   return result;
 }
 
+// get_property_ptr_ptr handler: no direct slot for GObject properties, so `++`, `.=`, `+=`
+// and `&$obj->prop` go through read_property/write_property instead of creating a dynamic
+// property that would shadow nothing and silently swallow the write.
+static zval *get_property_ptr_ptr(zend_object *o, zend_string *member, int type,
+                                  void **cache_slot) {
+  Object *self = object_from_zend(o);
+  if (find_property(self, member) != nullptr) return nullptr;
+  return zend_std_get_property_ptr_ptr(o, member, type, cache_slot);
+}
+
+// unset_property handler: GObject properties cannot be unset (they always exist on the C object).
+static void unset_property(zend_object *o, zend_string *member, void **cache_slot) {
+  Object *self = object_from_zend(o);
+  if (find_property(self, member) != nullptr) {
+    zend_throw_error(nullptr, "Cannot unset GObject property %s::$%s", ZSTR_VAL(o->ce->name),
+                     ZSTR_VAL(member));
+    return;
+  }
+  zend_std_unset_property(o, member, cache_slot);
+}
+
 // var_dump()/print_r(): every readable GObject property that we can convert.
 static HashTable *get_debug_info(zend_object *o, int *is_temp) {
   Object *self = object_from_zend(o);
@@ -180,16 +201,23 @@ void object_handlers_init() {
   handlers.read_property = read_property;
   handlers.write_property = write_property;
   handlers.has_property = has_property;
+  handlers.get_property_ptr_ptr = get_property_ptr_ptr;
+  handlers.unset_property = unset_property;
   handlers.get_debug_info = get_debug_info;
   handlers.compare = compare_objects;
 }
 
 // ---------------------------------------------------------------- registry
 
+// The root class entry, cached for unwrap() (registered first, before any other GObject class).
+static zend_class_entry *ce_root = nullptr;
+
+// MINIT: install create_object on a GObject class and record its GType (name and value).
 void register_class(const char *gtype_name, zend_class_entry *ce, GType type) {
   ce->create_object = create_object;
   registry()[gtype_name] = ce;
   gtypes()[ce] = type;
+  if (type == G_TYPE_OBJECT) ce_root = ce;
 }
 
 // GType of a registered class (walks up to a registered parent for subclasses).
@@ -231,8 +259,7 @@ void wrap(GObject *obj, zval *rv) {
 
 // PHP -> C: the live GObject behind a handle that is-a `expected`, else TypeError + nullptr.
 GObject *unwrap(zval *zv, GType expected) {
-  zend_class_entry *root = class_for_gtype_name("GObject");
-  if (Z_TYPE_P(zv) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(zv), root)) {
+  if (Z_TYPE_P(zv) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(zv), ce_root)) {
     zend_type_error("expected a GObject instance, %s given", zend_zval_value_name(zv));
     return nullptr;
   }

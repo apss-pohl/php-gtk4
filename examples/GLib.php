@@ -33,7 +33,7 @@ return Demo::page(
             public float $progress = 0.0;
             public string $idleNote = 'idle_add() has not run yet';
             public int $ticks = 0;
-            public int $sourceId = 0;
+            public int $source_id = 0;
             public bool $removed = false;
         };
 
@@ -57,7 +57,7 @@ return Demo::page(
                 $cr,
                 18,
                 96,
-                sprintf('%d tick(s), source id %d', $state->ticks, $state->sourceId),
+                sprintf('%d tick(s), source id %d', $state->ticks, $state->source_id),
                 Demo::MUTED,
                 12,
             );
@@ -81,7 +81,7 @@ return Demo::page(
             return false;
         });
 
-        $state->sourceId = GLib::timeout_add(40, function () use ($state, $area): bool {
+        $state->source_id = GLib::timeout_add(40, function () use ($state, $area): bool {
             $state->ticks++;
             $state->progress = min(1.0, $state->progress + 0.01);
             $area->queue_draw();
@@ -90,7 +90,7 @@ return Demo::page(
 
         // Removing a source from outside it - the counterpart to returning false.
         GLib::timeout_add(4200, function () use ($state, $area): bool {
-            $state->removed = GLib::source_remove($state->sourceId);   // false if it was already gone
+            $state->removed = GLib::source_remove($state->source_id);   // false if it was already gone
             $area->queue_draw();
             return false;
         });

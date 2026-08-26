@@ -17,10 +17,11 @@ std::vector<Entry> &stack() {
 }
 }  // namespace
 
-// Push on construction (a run() started), pop on destruction (it returned).
+// Push on construction (a run() started).
 RunningLoop::RunningLoop(QuitFn quit, gpointer data) {
   stack().push_back({quit, data});
 }
+// Pop on destruction (the run() returned).
 RunningLoop::~RunningLoop() {
   stack().pop_back();
 }

@@ -6,6 +6,10 @@ on:
   push:
     branches: [main]
 
+# Read-only token: these workflows only check out and build.
+permissions:
+  contents: read
+
 jobs:
   cpp-static-analysis:
     name: C++ static analysis
@@ -16,8 +20,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      # Dev headers needed to compile (not link) every source file. `bear`
-      # records the compiler invocations into compile_commands.json.
       # ubuntu-latest ships PHP 8.3; the project is PHP 8.4+ only.
       - name: Set up PHP 8.4
         uses: shivammathur/setup-php@v2
@@ -25,26 +27,32 @@ jobs:
           php-version: '8.4'
           tools: none
 
-      - name: Install GTK4 / WebKitGTK dev headers
+      # clang 20 = what .vscode and ci.sh default to locally; the Ubuntu 24.04 image ships an
+      # older one, so take it from apt.llvm.org. WebKitGTK headers so the --enable-gtk4-webkit
+      # TU is analysed too. No bear/compile_commands.json: ci.sh derives the flags itself.
+      - name: Install GTK4 / WebKitGTK dev headers and clang 20
         run: |
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc >/dev/null
+          echo "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-20 main" | sudo tee /etc/apt/sources.list.d/llvm-20.list
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            libgtk-4-dev libwebkitgtk-6.0-dev bear
+            libgtk-4-dev libwebkitgtk-6.0-dev clang-tidy-20 clang-format-20
 
-      # phpize build under bear -> compile_commands.json with the real include
-      # paths, so clang-tidy sees GTK/PHP headers exactly as the compiler does.
-      # Nothing is linked into a PHP here; this is analysis only.
-      - name: Generate compile_commands.json
+      # config.h (build metadata) is what src/php_gtk4.h includes; configure generates it.
+      - name: Configure
         env:
           PHP_CONFIG: php-config
           PHPIZE: phpize
-        run: |
-          phpize && ./configure --with-php-config="$(command -v php-config)" --enable-gtk4-webkit
-          bear -- make -j"$(nproc)"
+        run: phpize && ./configure --with-php-config="$(command -v php-config)" --enable-gtk4-webkit
 
       - name: Generated stubs are up to date
         run: composer install --no-interaction --no-progress --prefer-dist && ./ci.sh --only=stubs
 
-      - name: Fail on findings
-        if: steps.linter.outputs.checks-failed > 0
-        run: exit 1
+      # Same stage as the pre-commit hook and `./ci.sh --only=cpp-lint`: clang-tidy with
+      # WarningsAsErrors '*' and clang-format --dry-run over src/. Any finding fails the job.
+      - name: clang-tidy + clang-format
+        env:
+          PHP_CONFIG: php-config
+          CLANG_TIDY: clang-tidy-20
+          CLANG_FORMAT: clang-format-20
+        run: ./ci.sh --only=cpp-lint

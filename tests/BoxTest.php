@@ -124,7 +124,7 @@ final class BoxTest extends GtkTestCase
         $stranger = new GtkLabel('elsewhere');
 
         $this->expectException(\ValueError::class);
-        $this->expectExceptionMessage('must be a child of this box');
+        $this->expectExceptionMessage('must be a child of this GtkBox');
         $box->remove($stranger);
     }
 
@@ -134,7 +134,7 @@ final class BoxTest extends GtkTestCase
         $box->append(new GtkLabel('mine'));
 
         $this->expectException(\ValueError::class);
-        $this->expectExceptionMessage('must be a child of this box');
+        $this->expectExceptionMessage('must be a child of this GtkBox');
         $box->insert_child_after(new GtkLabel('new'), new GtkLabel('theirs'));
     }
 

@@ -17,9 +17,11 @@ struct Object {
   zend_object std;  // must be last (zend_object is variable-sized)
 };
 
+// zend_object -> the embedding handle.
 inline Object *object_from_zend(zend_object *o) {
   return reinterpret_cast<Object *>(reinterpret_cast<char *>(o) - XtOffsetOf(Object, std));
 }
+// zval (IS_OBJECT) -> the embedding handle.
 inline Object *object_from_zval(const zval *zv) {
   return object_from_zend(Z_OBJ_P(zv));
 }

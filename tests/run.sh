@@ -5,7 +5,7 @@
 #   ./tests/run.sh --filter SignalTest      # one class
 #   ./tests/run.sh --filter 'testReturnValue'
 #   PHP=php8.4 GTK4_SO=/path/gtk4.so ./tests/run.sh
-set -u
+set -euo pipefail
 cd "$(dirname "$0")/.."
 export PHP=${PHP:-php8.4}
 export GTK4_SO=${GTK4_SO:-./gtk4.so}

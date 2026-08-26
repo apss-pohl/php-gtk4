@@ -21,6 +21,7 @@
 namespace phpgtk {
 
 enum class ExceptionMode : zend_long { Log = 0, Rethrow = 1 };
+extern zend_class_entry *ce_ExceptionMode;  // the PHP enum, set in MINIT
 
 void set_exception_handler(zval *handler);  // ADDREF'd copy, nullptr clears
 bool has_exception_handler();

@@ -6,6 +6,8 @@
 
 namespace phpgtk {
 
+zend_class_entry *ce_ExceptionMode = nullptr;
+
 static zval handler;  // IS_UNDEF when none
 static ExceptionMode mode = ExceptionMode::Log;
 

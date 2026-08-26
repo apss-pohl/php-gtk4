@@ -5,10 +5,12 @@
 namespace phpgtk {
 
 namespace {
+// GEnum GType -> the PHP enum class.
 std::unordered_map<GType, zend_class_entry *> &registry() {
   static std::unordered_map<GType, zend_class_entry *> map;
   return map;
 }
+// GFlags GType -> the PHP constants class.
 std::unordered_map<GType, zend_class_entry *> &flags_registry() {
   static std::unordered_map<GType, zend_class_entry *> map;
   return map;

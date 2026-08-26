@@ -3,6 +3,7 @@
 #include "php_gtk4.h"
 #include "core/enums.h"
 #include "core/object.h"
+#include "children.h"
 
 using namespace phpgtk;
 
@@ -18,21 +19,6 @@ bool box_and_child(zend_execute_data *execute_data, const char *fn, zval *child,
   if (c == nullptr) return false;
   *widget = GTK_WIDGET(c);
   return true;
-}
-
-// gtk_box_remove() is silent about a foreign child; say so.
-bool child_of(GtkBox *box, GtkWidget *child, int argNum) {
-  if (gtk_widget_get_parent(child) == GTK_WIDGET(box)) return true;
-  zend_argument_value_error(argNum, "must be a child of this box");
-  return false;
-}
-
-// append/prepend/insert_child_after all assert child->parent == NULL inside GTK
-// (they insert, they never reparent). Raise a PHP error rather than a Gtk-CRITICAL.
-bool unparented(GtkWidget *child, int argNum) {
-  if (gtk_widget_get_parent(child) == nullptr) return true;
-  zend_argument_value_error(argNum, "must not already have a parent; remove it from its box first");
-  return false;
 }
 
 }  // namespace
@@ -74,7 +60,7 @@ ZEND_METHOD(Gtk4_GtkBox, append) {
   GtkBox *box = nullptr;
   GtkWidget *widget = nullptr;
   if (!box_and_child(execute_data, __func__, child, &box, &widget)) RETURN_THROWS();
-  if (!unparented(widget, 1)) RETURN_THROWS();
+  if (!require_unparented(widget, 1)) RETURN_THROWS();
   gtk_box_append(box, widget);
 }
 
@@ -91,7 +77,7 @@ ZEND_METHOD(Gtk4_GtkBox, prepend) {
   GtkBox *box = nullptr;
   GtkWidget *widget = nullptr;
   if (!box_and_child(execute_data, __func__, child, &box, &widget)) RETURN_THROWS();
-  if (!unparented(widget, 1)) RETURN_THROWS();
+  if (!require_unparented(widget, 1)) RETURN_THROWS();
   gtk_box_prepend(box, widget);
 }
 
@@ -110,13 +96,13 @@ ZEND_METHOD(Gtk4_GtkBox, insert_child_after) {
   GtkBox *box = nullptr;
   GtkWidget *widget = nullptr;
   if (!box_and_child(execute_data, __func__, child, &box, &widget)) RETURN_THROWS();
-  if (!unparented(widget, 1)) RETURN_THROWS();
+  if (!require_unparented(widget, 1)) RETURN_THROWS();
   GtkWidget *after = nullptr;
   if (sibling != nullptr) {
     GObject *s = unwrap(sibling, GTK_TYPE_WIDGET);
     if (s == nullptr) RETURN_THROWS();
     after = GTK_WIDGET(s);
-    if (!child_of(box, after, 2)) RETURN_THROWS();
+    if (!require_child_of(GTK_WIDGET(box), after, 2)) RETURN_THROWS();
   }
   gtk_box_insert_child_after(box, widget, after);
 }
@@ -134,7 +120,7 @@ ZEND_METHOD(Gtk4_GtkBox, remove) {
   GtkBox *box = nullptr;
   GtkWidget *widget = nullptr;
   if (!box_and_child(execute_data, __func__, child, &box, &widget)) RETURN_THROWS();
-  if (!child_of(box, widget, 1)) RETURN_THROWS();
+  if (!require_child_of(GTK_WIDGET(box), widget, 1)) RETURN_THROWS();
   gtk_box_remove(box, widget);
 }
 

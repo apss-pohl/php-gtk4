@@ -130,7 +130,7 @@ final class ActionTest extends GtkTestCase
         self::assertSame(['x' => 1, 'y' => 'two'], $s->get_state());
         $s->set_state(['x' => 2]);
         self::assertSame(['x' => 2], $s->get_state());
-        $this->expectException(\Error::class);
+        $this->expectException(\LogicException::class);
         new GSimpleAction('stateless')->set_state(1);
     }
 

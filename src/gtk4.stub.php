@@ -81,7 +81,7 @@ class GObject
     public function emit(string $signal, mixed ...$args): mixed {}
 
     /** Disconnect a handler previously returned by connect(). No-op if already disconnected. */
-    public function handler_disconnect(int $handlerId): void {}
+    public function handler_disconnect(int $handler_id): void {}
 
     /**
      * Read a GObject property by name, converted to the matching PHP type.
@@ -238,10 +238,10 @@ final class GLib
     public static function idle_add(callable $callback): int {}
 
     /** @return int Source id for {@see source_remove()} */
-    public static function timeout_add(int $intervalMs, callable $callback): int {}
+    public static function timeout_add(int $interval_ms, callable $callback): int {}
 
     /** Remove an idle/timeout source; false if it was already gone. */
-    public static function source_remove(int $sourceId): bool {}
+    public static function source_remove(int $source_id): bool {}
 }
 
 /**
@@ -277,7 +277,10 @@ class GError extends \RuntimeException
 {
     protected string $domain = '';
 
-    /** Error domain (quark name), e.g. "g-io-error-quark", "gdk-texture-error-quark". */
+    /**
+     * Error domain (quark name), e.g. "g-io-error-quark", "gdk-texture-error-quark".
+     * camelCase on purpose: sits next to the inherited getCode()/getMessage().
+     */
     public function getDomain(): string {}
 }
 
@@ -363,15 +366,18 @@ interface GListModel
 class GListStore extends GObject implements GListModel
 {
     /**
-     * @param string $itemType PHP class (e.g. PhpValue::class) or GType name of the items
+     * @param string $item_type PHP class (e.g. PhpValue::class) or GType name of the items
      * @throws \ValueError If the type is unknown or not a GObject type
      */
-    public function __construct(string $itemType = GObject::class) {}
+    public function __construct(string $item_type = GObject::class) {}
 
+    /** @implementation-alias Gtk4\GListModel::get_item_type */
     public function get_item_type(): string {}
 
+    /** @implementation-alias Gtk4\GListModel::get_n_items */
     public function get_n_items(): int {}
 
+    /** @implementation-alias Gtk4\GListModel::get_item */
     public function get_item(int $position): ?GObject {}
 
     /** @throws \TypeError If $item is not of the item type */
@@ -460,10 +466,10 @@ class GSimpleAction extends GObject implements GAction
 {
     /**
      * @param string $name Action name (letters, digits, `-` and `.`)
-     * @param string|null $parameterType GVariant type string the `activate` parameter must have, or null for none
+     * @param string|null $parameter_type GVariant type string the `activate` parameter must have, or null for none
      * @param mixed $state Initial state for a stateful action (its GVariant type is inferred), or null for stateless
      */
-    public function __construct(string $name, ?string $parameterType = null, mixed $state = null) {}
+    public function __construct(string $name, ?string $parameter_type = null, mixed $state = null) {}
 
     public function get_name(): string {}
 
@@ -503,10 +509,10 @@ class GSimpleAction extends GObject implements GAction
 class GtkApplication extends GObject implements GActionMap, GActionGroup
 {
     /**
-     * @param string|null $applicationId Reverse-DNS id, or null for a non-unique app
+     * @param string|null $application_id Reverse-DNS id, or null for a non-unique app
      * @param int $flags Bitmask of {@see GApplicationFlags} constants
      */
-    public function __construct(?string $applicationId = null, int $flags = 0) {}
+    public function __construct(?string $application_id = null, int $flags = 0) {}
 
     /**
      * Run the application (emits `startup`, `activate`, ...) until the last
@@ -686,11 +692,11 @@ abstract class GtkWidget extends GObject
 
     public function get_name(): ?string {}
 
-    public function add_css_class(string $cssClass): void {}
+    public function add_css_class(string $css_class): void {}
 
-    public function remove_css_class(string $cssClass): void {}
+    public function remove_css_class(string $css_class): void {}
 
-    public function has_css_class(string $cssClass): bool {}
+    public function has_css_class(string $css_class): bool {}
 
     /** @return list<string> */
     public function get_css_classes(): array {}
@@ -946,7 +952,7 @@ class GtkDrawingArea extends GtkWidget
      * Install (or with null, remove) the draw function: `function (GtkDrawingArea $area,
      * CairoContext $cr, int $width, int $height): void`. Kept until replaced or the widget dies.
      */
-    public function set_draw_func(?callable $drawFunc): void {}
+    public function set_draw_func(?callable $draw_func): void {}
 
     public function set_content_width(int $width): void {}
 
@@ -977,10 +983,10 @@ abstract class GtkFilter extends GObject
  */
 class GtkCustomFilter extends GtkFilter
 {
-    public function __construct(?callable $matchFunc = null) {}
+    public function __construct(?callable $match_func = null) {}
 
     /** Replace the callback (null = everything matches) and notify users. */
-    public function set_filter_func(?callable $matchFunc): void {}
+    public function set_filter_func(?callable $match_func): void {}
 }
 
 /**
@@ -996,10 +1002,13 @@ class GtkFilterListModel extends GObject implements GListModel
 {
     public function __construct(?GListModel $model = null, ?GtkFilter $filter = null) {}
 
+    /** @implementation-alias Gtk4\GListModel::get_item_type */
     public function get_item_type(): string {}
 
+    /** @implementation-alias Gtk4\GListModel::get_n_items */
     public function get_n_items(): int {}
 
+    /** @implementation-alias Gtk4\GListModel::get_item */
     public function get_item(int $position): ?GObject {}
 
     public function set_filter(?GtkFilter $filter): void {}
@@ -1050,10 +1059,13 @@ class GtkSortListModel extends GObject implements GListModel
 {
     public function __construct(?GListModel $model = null, ?GtkSorter $sorter = null) {}
 
+    /** @implementation-alias Gtk4\GListModel::get_item_type */
     public function get_item_type(): string {}
 
+    /** @implementation-alias Gtk4\GListModel::get_n_items */
     public function get_n_items(): int {}
 
+    /** @implementation-alias Gtk4\GListModel::get_item */
     public function get_item(int $position): ?GObject {}
 
     public function set_sorter(?GtkSorter $sorter): void {}
