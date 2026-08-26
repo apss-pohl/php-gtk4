@@ -32,6 +32,13 @@ if test "$PHP_GTK4" != "no"; then
   ])
   AC_MSG_RESULT([$gtk4_php_version])
 
+  dnl The runtime keeps request state in plain statics (exception handler,
+  dnl registries, running-loop stack) - correct for NTS, wrong for ZTS. Refuse
+  dnl a thread-safe PHP instead of producing a subtly broken module.
+  if test "$PHP_THREAD_SAFETY" = "yes"; then
+    AC_MSG_ERROR([php-gtk4 does not support thread-safe (ZTS) PHP builds; use an NTS PHP])
+  fi
+
   dnl GTK floor is 4.14 (Ubuntu 24.04); CI also compiles against 4.22.
   PKG_CHECK_MODULES([GTK4], [gtk4 >= 4.14 gobject-2.0 >= 2.76 glib-2.0 >= 2.76])
   PHP_EVAL_INCLINE([$GTK4_CFLAGS])

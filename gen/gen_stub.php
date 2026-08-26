@@ -6007,6 +6007,16 @@ function initPhpParser() {
         return;
     }
 
+    // php-gtk4: use the composer-installed nikic/php-parser instead of downloading one.
+    $vendorAutoload = __DIR__ . '/../vendor/autoload.php';
+    if (file_exists($vendorAutoload)) {
+        require_once $vendorAutoload;
+        if (class_exists(\PhpParser\ParserFactory::class)) {
+            $isInitialized = true;
+            return;
+        }
+    }
+
     if (!extension_loaded("tokenizer")) {
         throw new Exception("The \"tokenizer\" extension is not available");
     }

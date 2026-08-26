@@ -10,7 +10,8 @@ final class ExtensionTest extends GtkTestCase
 {
     public function testConstantsAreNamespaced(): void
     {
-        self::assertSame('0.1.0', \Gtk4\VERSION);
+        self::assertSame(phpversion('gtk4'), \Gtk4\VERSION, 'stub constant and module version must agree');
+        self::assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', \Gtk4\VERSION);
         $build = \Gtk4\BUILD_INFO;
         $features = \Gtk4\FEATURES;
         self::assertStringContainsString('git', $build);

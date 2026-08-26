@@ -12,3 +12,5 @@ leak:gtk_init
 leak:gdk_display_open
 leak:php_module_startup
 leak:zend_startup
+leak:driCreateContextAttribs
+leak:/dri/

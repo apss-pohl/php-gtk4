@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Full gate before anything leaves the machine: what CI runs (minus sanitizers).
+# Enable once per clone:  git config core.hooksPath .githooks
+# Skip once:              git push --no-verify
+set -e
+cd "$(git rev-parse --show-toplevel)"
+./ci.sh

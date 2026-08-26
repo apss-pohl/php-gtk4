@@ -45,6 +45,9 @@ sudo make install                           # or: ./buildall.sh (builds + instal
 bin/php-gtk4 examples/example.php          # canonical showcase of every element
 ```
 
+After cloning: `composer install` and `git config core.hooksPath .githooks` (pre-commit = fast QA,
+pre-push = full `./ci.sh`).
+
 Configure options: `--enable-gtk4-webkit`, `--enable-gtk4-sanitize`, `--enable-gtk4-coverage`.
 The API is declared in `src/gtk4.stub.php`; `src/gtk4_arginfo.h` and the IDE stub `stubs/gtk4.php`
 are generated from it (`./ci.sh --only=stubs --fix`).

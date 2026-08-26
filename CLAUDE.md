@@ -164,6 +164,15 @@ display, and calls `Gtk::init()` once.
   (PHPUnit would throw inside the C callback). `tests/run.sh` sets `GSK_RENDERER=cairo` so GTK
   does not try EGL under Xvfb.
 
+## Local gates
+
+`git config core.hooksPath .githooks` once per clone: `pre-commit` runs the fast checks (stubs,
+PHP QA without phpstan, clang-format), `pre-push` runs `./ci.sh`. `--no-verify` skips once.
+`config.m4` refuses ZTS PHP (the runtime uses plain statics — NTS only). Coverage has a floor
+(`COVERAGE_MIN_LINES`, default 80). `RobustnessTest` calls every method with garbage arguments;
+`DocsTest` guards CLAUDE.md sections and doc-mentioned paths. `CHANGELOG.md` has the release
+checklist; Dependabot watches composer and actions.
+
 ## CI
 
 Three workflows (one per README badge): `.github/workflows/cpp-lint.yml`, `php-qa.yml`,

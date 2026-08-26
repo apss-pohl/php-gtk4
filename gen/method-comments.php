@@ -67,9 +67,14 @@ foreach (new NodeFinder()->findInstanceOf($ast, Stmt\ClassLike::class) as $class
 }
 
 // ---------------------------------------------------------------- C++ files
-/** @var \Closure(string, int): string[] $wrapText */
-$wrapText = static fn(string $text, int $width): array =>
-    $text === '' ? [] : (preg_split('/\R/', wordwrap($text, $width, "\n", true)) ?: []);
+/** @return list<string> */
+$wrapText = static function (string $text, int $width): array {
+    if ($text === '') {
+        return [];
+    }
+    $parts = preg_split('/\R/', wordwrap($text, $width, "\n", true));
+    return $parts === false ? [] : array_map('strval', $parts);
+};
 
 $problems = [];
 $files = array_merge(glob($root . '/src/*.cpp') ?: [], glob($root . '/src/*/*.cpp') ?: []);
@@ -138,8 +143,8 @@ foreach ($files as $file) {
             continue;
         }
         // --- any other function definition at column 0 needs a comment right above
-        $isDefinition = preg_match('/^(?:static |inline )?[A-Za-z_][\w:<>\*& ]*\**\s*&?\s*\b(\w+)\s*\([^;]*$/', $line, $fm)
-            && !str_contains($line, '=');
+        $definition = '/^(?:static |inline )?[A-Za-z_][\w:<>\*& ]*\**\s*&?\s*\b(\w+)\s*\([^;]*$/';
+        $isDefinition = preg_match($definition, $line, $fm) && !str_contains($line, '=');
         $keywords = '/^(?:namespace|using|struct|class|enum|return|if|for|while|switch|extern|#|PHP_|ZEND_)/';
         if ($isDefinition && !preg_match($keywords, $line)) {
             $prev = count($out) - 1;

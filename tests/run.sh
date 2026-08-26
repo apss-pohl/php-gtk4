@@ -13,6 +13,9 @@ export GTK4_SO=${GTK4_SO:-./gtk4.so}
 # (avoids "libEGL warning: DRI3 error" noise and any GL-driver flakiness).
 export GSK_RENDERER=${GSK_RENDERER:-cairo}
 export LIBGL_ALWAYS_SOFTWARE=1
+# ...and keep GDK from initialising GL at all (Mesa's llvmpipe leaks thread pools under
+# valgrind/LSan on CI runners). GDK_DISABLE is the GTK >= 4.14 feature switch.
+export GDK_DISABLE=${GDK_DISABLE:-gl}
 # Never run the suite under xdebug: its develop-mode observer segfaults at
 # request shutdown after ReflectionMethod::invoke() on PHP-CPP methods
 # (EveryClassTest), and it slows everything down. The stress/ASan runs use

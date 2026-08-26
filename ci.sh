@@ -25,7 +25,8 @@
 #   ./ci.sh --fail-fast              clang-tidy stops at the first failing file
 #   ./ci.sh --with=asan,coverage,valgrind   default stages plus the extra ones
 #   ./ci.sh --only=asan              just the sanitizer run
-#   ./ci.sh --skip=tidy | --skip=format   sub-steps of cpp-lint
+#   ./ci.sh --skip=tidy | --skip=format | --skip=stan   sub-steps of cpp-lint / php-qa
+#   COVERAGE_MIN_LINES=80 ./ci.sh --only=coverage   fail below this line coverage (default 80)
 #
 # Env: PHP=php8.4 PHP_CONFIG=/usr/bin/php-config8.4 PHPIZE=phpize8.4
 #      JOBS=$(nproc) CLANG_TIDY=clang-tidy-20 CLANG_FORMAT=clang-format-20 (default: newest installed)
@@ -204,7 +205,7 @@ stage_php_qa() {
     step "php-cs-fixer check (all cores)"
     "${run[@]}" vendor/bin/php-cs-fixer check --diff --show-progress=none || status=1
 
-    if [[ $STAN -eq 1 ]]; then
+    if [[ $STAN -eq 1 ]] && substep stan; then
         step "phpstan (level max, all cores)"
         "${run[@]}" vendor/bin/phpstan analyse --no-progress --memory-limit=-1 || status=1
     fi
@@ -262,7 +263,7 @@ stage_asan() {
                   UBSAN_OPTIONS="print_stacktrace=1:halt_on_error=1")
 
     step "asan: stress script (tests/scripts/stress.php)"
-    xvfb-run -a env "${env[@]}" GSK_RENDERER=cairo "$PHP" -n -dextension=./gtk4-asan.so tests/scripts/stress.php 300 \
+    xvfb-run -a env "${env[@]}" GSK_RENDERER=cairo GDK_DISABLE=gl "$PHP" -n -dextension=./gtk4-asan.so tests/scripts/stress.php 300 \
         || fail "asan stress (see report above)"
 
     # The PHPUnit process also loads dom/mbstring/intl/... from the system ini;
@@ -288,13 +289,14 @@ stage_coverage() {
 
     step "coverage: phpunit suite + stress script"
     PHP="$PHP" GTK4_SO=./gtk4-cov.so ./tests/run.sh "${PHPUNIT_ARGS[@]}" || fail "coverage phpunit"
-    xvfb-run -a env GSK_RENDERER=cairo "$PHP" -n -dextension=./gtk4-cov.so tests/scripts/stress.php 50 || fail "coverage stress"
+    xvfb-run -a env GSK_RENDERER=cairo GDK_DISABLE=gl "$PHP" -n -dextension=./gtk4-cov.so tests/scripts/stress.php 50 || fail "coverage stress"
 
     step "coverage: report (gcovr)"
     command -v gcovr >/dev/null || fail "gcovr not installed"
     mkdir -p coverage
     gcovr -r . -f 'src/' -e 'src/gtk4_arginfo.h' --gcov-ignore-parse-errors=negative_hits.warn \
-          --html-details coverage/index.html --print-summary || fail "gcovr"
+          --fail-under-line "${COVERAGE_MIN_LINES:-80}" \
+          --html-details coverage/index.html --print-summary || fail "gcovr (line coverage below ${COVERAGE_MIN_LINES:-80}%?)"
 }
 
 # ---------------------------------------------------------------- load
@@ -324,9 +326,11 @@ stage_valgrind() {
     local glib_supp=/usr/share/glib-2.0/valgrind/glib.supp
     local -a supp=(--suppressions="$PWD/tests/valgrind.supp")
     [[ -f "$glib_supp" ]] && supp+=(--suppressions="$glib_supp")
-    xvfb-run -a env USE_ZEND_ALLOC=0 GSK_RENDERER=cairo \
+    # GDK_DISABLE=gl: no Mesa/llvmpipe in the process (its thread pools leak on CI runners).
+    # --show-leak-kinds=definite keeps the report readable; the exit code is what matters.
+    xvfb-run -a env USE_ZEND_ALLOC=0 GSK_RENDERER=cairo GDK_DISABLE=gl \
         valgrind --quiet --error-exitcode=42 --leak-check=full --errors-for-leak-kinds=definite \
-                 --track-origins=yes --num-callers=24 "${supp[@]}" \
+                 --show-leak-kinds=definite --track-origins=yes --num-callers=16 "${supp[@]}" \
         "$PHP" -n -dextension=./gtk4.so tests/scripts/stress.php 50 || fail "valgrind (see report above)"
 }
 

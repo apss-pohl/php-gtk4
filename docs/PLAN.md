@@ -106,7 +106,7 @@ GTK4 / GLib C API
 ## 3. Code generation (`gen/`)
 
 - Input: `/usr/share/gir-1.0/{GLib,GObject,Gio,Gdk-4.0,Gsk-4.0,Gtk-4.0,Pango,GdkPixbuf}.gir` (XML).
-- Generator: PHP script (like php-gtk3's `gen/run.php` but reading GIR instead of `defs.txt`).
+- Generator: PHP script (like php-gtk3's php-gtk3's generator script (run.php) but reading GIR instead of `defs.txt`).
 - Emits per namespace: a section of `src/gtk4.stub.php` (classes, typed signatures, enums,
   `#[\Deprecated]`, docblocks with docs.gtk.org links) and per class a `.cpp` with `ZEND_METHOD`
   bodies calling `marshal`/`wrap`/`unwrap`; plus the MINIT registration block in **dependency
@@ -117,7 +117,7 @@ GTK4 / GLib C API
 - Skip-list / override mechanism: `gen/overrides/<Type>.<method>.cpp` replaces a generated body
   (for the handful of APIs needing hand code: `GtkDrawingArea::set_draw_func`, `GtkListItemFactory`,
   `Gio::Application::run` with argv). Generated code is **regenerable**; never hand-edit it.
-- Also generate `docs/reference-objects.md` coverage map and PHP stub files (`stubs/*.php`) for IDE
+- Also generate a reference-objects coverage doc coverage map and PHP stub files (`stubs/*.php`) for IDE
   autocompletion — the VS Code experience was a third-party afterthought in php-gtk3.
 - Stubs target PHP 8.4: typed class constants for enums, `#[\Deprecated(since:, message:)]` on
   deprecated GTK APIs (so IDEs and `E_USER_DEPRECATED` agree), property hooks declaring GObject
@@ -226,5 +226,5 @@ sanitizer/coverage runs, all driven by `ci.sh` (stages `cpp-lint php-qa build lo
 - `GtkTreeModel_` dual `instance`/`model` pointers and the `"model"` special case in `set_property`
 - `get_property` initialising the GValue as `G_TYPE_OBJECT` unconditionally
 - `set_data`/`get_data` storing raw pointers to temporaries
-- hand-maintained `get_module()` ordering and `docs/reference-objects.md`
+- hand-maintained `get_module()` ordering and a reference-objects coverage doc
 - the C++11 constraint and object rules without source prerequisites

@@ -5440,6 +5440,10 @@ esac
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $gtk4_php_version" >&5
 printf "%s\n" "$gtk4_php_version" >&6; }
 
+        if test "$PHP_THREAD_SAFETY" = "yes"; then
+    as_fn_error $? "php-gtk4 does not support thread-safe (ZTS) PHP builds; use an NTS PHP" "$LINENO" 5
+  fi
+
 
 pkg_failed=no
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for gtk4 >= 4.14 gobject-2.0 >= 2.76 glib-2.0 >= 2.76" >&5

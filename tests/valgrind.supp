@@ -35,3 +35,19 @@
    fun:g_module_open_full
    ...
 }
+{
+   mesa-dri-driver-threads-and-contexts
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:driCreateContextAttribs
+   ...
+}
+{
+   mesa-dri-driver-objects
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   obj:*/dri/*.so*
+   ...
+}
