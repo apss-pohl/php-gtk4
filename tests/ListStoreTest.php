@@ -40,7 +40,7 @@ final class ListStoreTest extends GtkTestCase
         $again = $weak->get();
         self::assertInstanceOf(\stdClass::class, $again);
         self::assertSame(2, $again->n, 'same object, not a copy');
-        unset($item);
+        unset($item, $held, $again);
         self::assertNull($weak->get(), 'released with the last handle');
     }
 

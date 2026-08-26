@@ -14,7 +14,9 @@ ZEND_METHOD(Gtk4_GtkWindow, __construct) {
   Z_PARAM_OBJECT_OF_CLASS_OR_NULL(application, class_for_gtype_name("GtkApplication"))
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *w = gtk_window_new();
-  attach_new(object_from_zval(ZEND_THIS), G_OBJECT(w));
+  // Not attach_new(): the reference gtk_window_new() returns belongs to GTK's toplevel
+  // list (dropped by gtk_window_destroy()); the handle needs its own -> borrow.
+  attach(object_from_zval(ZEND_THIS), G_OBJECT(w));
   if (application != nullptr) {
     GObject *app = unwrap(application, GTK_TYPE_APPLICATION);
     if (app == nullptr) RETURN_THROWS();
