@@ -41,6 +41,8 @@
 /mkinstalldirs
 /run-tests.php
 /tmp-php.ini
+/php_test_results_*.txt
+/tests/phpt/*.mem
 compile_commands.json
 .cache/
 
@@ -59,3 +61,12 @@ phpunit-junit.xml
 /vendor/
 /gen/PHP-Parser-*/
 /gen/PHP-Parser-install-lock
+
+# run-tests.php per-test artefacts (tests/phpt)
+/tests/phpt/*.diff
+/tests/phpt/*.exp
+/tests/phpt/*.log
+/tests/phpt/*.out
+/tests/phpt/*.php
+/tests/phpt/*.sh
+/tmp-php.ini

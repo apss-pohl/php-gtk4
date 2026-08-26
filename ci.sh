@@ -9,6 +9,7 @@
 #   build      phpize + configure + make -> ./gtk4.so
 #   load       php -n -dextension=./gtk4.so smoke check
 #   test       PHPUnit under xvfb-run via bin/php-gtk4 (gtk3 filtered out)
+#   phpt       php-src run-tests.php over tests/phpt (process-level: stderr, fatals, RSHUTDOWN, INI/ENV)
 #
 # Extra stages, not run by default (opt in with --only=... or --with=...):
 #   asan       ASan+UBSan+LSan build (gtk4-asan.so) running tests/scripts/stress.php and the PHPUnit suite
@@ -19,6 +20,7 @@
 #   ./ci.sh                          all stages, in that order
 #   ./ci.sh --fix                    apply clang-tidy/clang-format/phpcbf/php-cs-fixer fixes first
 #   ./ci.sh --only=test              one stage   (--only=cpp-lint,php-qa for several)
+#   ./ci.sh --only=phpt              just the run-tests.php suite (TESTS=tests/phpt/x.phpt for one file)
 #   ./ci.sh --skip=cpp-lint,php-qa   fastest edit-build-test loop
 #   ./ci.sh --filter SignalTest      unknown args are passed to phpunit
 #   ./ci.sh --no-stan                php-qa without phpstan
@@ -39,12 +41,14 @@ PHP_CONFIG=${PHP_CONFIG:-/usr/bin/php-config8.4}
 PHPIZE=${PHPIZE:-$(dirname "$PHP_CONFIG")/phpize$(basename "$PHP_CONFIG" | sed 's/php-config//')}
 JOBS=${JOBS:-$(nproc)}
 COMPOSER=${COMPOSER:-/usr/local/bin/composer}
+# What the phpt stage hands to run-tests.php; narrow it to one file while iterating.
+PHPT_TESTS=${PHPT_TESTS:-tests/phpt}
 # Newest installed clang-tidy-N / clang-format-N unless overridden.
 newest_tool() { ls /usr/bin/"$1"-[0-9]* 2>/dev/null | sort -t- -k2 -V | tail -1; }
 CLANG_TIDY=${CLANG_TIDY:-$(basename "$(newest_tool clang-tidy)" 2>/dev/null || echo clang-tidy)}
 CLANG_FORMAT=${CLANG_FORMAT:-$(basename "$(newest_tool clang-format)" 2>/dev/null || echo clang-format)}
 
-ALL_STAGES="stubs cpp-lint php-qa build load test asan coverage valgrind"
+ALL_STAGES="stubs cpp-lint php-qa build load test phpt asan coverage valgrind"
 DEFAULT_OFF="asan coverage valgrind"
 ONLY=""; SKIP=""; WITH=""; FIX=0; STAN=1; FAIL_FAST=0; PHPUNIT_ARGS=()
 for arg in "$@"; do
@@ -315,6 +319,20 @@ stage_test() {
     PHP="$PHP" GTK4_SO=./gtk4.so ./tests/run.sh "${PHPUNIT_ARGS[@]}" || fail "test"
 }
 
+# ---------------------------------------------------------------- phpt
+# php-src's run-tests.php harness. Complements PHPUnit: each test is its own
+# process and the harness compares stdout *and stderr*, so it can assert the
+# g_critical fallback text, uncaught fatals, RSHUTDOWN teardown output and
+# --INI--/--ENV-- dependent startup - none of which PHPUnit can reach.
+# `make test` strips every extension= line from the scanned ini into tmp-php.ini
+# and re-adds only modules/gtk4.so, so gtk3 is filtered out without bin/php-gtk4.
+stage_phpt() {
+    step "run-tests.php (xvfb-run + make test TESTS=$PHPT_TESTS)"
+    [[ -f Makefile ]] || fail "no Makefile (run the build stage first)"
+    GSK_RENDERER=cairo xvfb-run -a make --no-print-directory test TESTS="$PHPT_TESTS" \
+        || fail "phpt (see the FAILED TEST SUMMARY above; .out/.diff files sit next to each .phpt)"
+}
+
 # ---------------------------------------------------------------- valgrind
 # memcheck complements ASan (uninitialised reads, which ASan cannot see) on the
 # normal, uninstrumented gtk4.so. Only the php -n stress run: valgrind is slow
@@ -345,6 +363,7 @@ for stage in $ALL_STAGES; do
         build)    stage_build ;;
         load)     stage_load ;;
         test)     stage_test ;;
+        phpt)     stage_phpt ;;
         asan)     stage_asan ;;
         coverage) stage_coverage ;;
         valgrind) stage_valgrind ;;

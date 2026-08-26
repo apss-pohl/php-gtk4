@@ -70,7 +70,7 @@ bear -- make                           # compile_commands.json for clangd / clan
 ## Lint, QA, build, test — `./ci.sh`
 
 One script, same stages as GitHub Actions: `stubs` → `cpp-lint` → `php-qa` → `build` → `load` →
-`test`, plus the opt-in `asan` (ASan+UBSan on the suite, LSan on `tests/scripts/stress.php`,
+`test` → `phpt` (php-src `run-tests.php` over `tests/phpt`), plus the opt-in `asan` (ASan+UBSan on the suite, LSan on `tests/scripts/stress.php`,
 `gtk4-asan.so`), `coverage` (gcov per-file C++ line coverage via gcovr, `gtk4-cov.so`, HTML in
 `coverage/`) and `valgrind` (memcheck on the stress script — uninitialised reads, definite leaks;
 `tests/valgrind.supp` + GLib's `glib.supp`).
@@ -85,10 +85,12 @@ One script, same stages as GitHub Actions: `stubs` → `cpp-lint` → `php-qa` �
 ./ci.sh --with=asan,coverage,valgrind   # default stages + all extra ones (what CI runs in total)
 ./ci.sh --only=asan --filter X          # sanitizer run of one test class
 ./ci.sh --skip=tidy | --skip=format     # sub-steps of cpp-lint
+./ci.sh --only=phpt                     # run-tests.php only (PHPT_TESTS=tests/phpt/x.phpt for one)
 ```
 
 Env: `PHP`, `PHP_CONFIG`, `PHPIZE`, `JOBS` (default nproc, used by every tool), `CLANG_TIDY`,
-`CLANG_FORMAT` (default: newest installed `clang-*-N`; CI and `.vscode` use 20), `COMPOSER`.
+`CLANG_FORMAT` (default: newest installed `clang-*-N`; CI and `.vscode` use 20), `COMPOSER`,
+`PHPT_TESTS` (default `tests/phpt`).
 
 C++: `.clang-tidy` has a documented deny-list (GLib and Zend macro expansions: do/while, varargs,
 void* casts, zval union access, ZPP cognitive complexity, C-array tables); everything else is
@@ -122,13 +124,18 @@ Every new class, method or constant ships with **all four** in the same change:
 
 ## Tests
 
-PHPUnit 12 (`composer install` once; `vendor/` is gitignored).
+Two harnesses. **PHPUnit 12** (`tests/*.php`, `composer install` once; `vendor/` is gitignored) is
+the primary one and where every new class/method is tested. **`tests/phpt/`** is php-src's
+`run-tests.php`, run by `./ci.sh --only=phpt`, and only carries assertions PHPUnit structurally
+cannot make (see the end of this section).
 
 ```sh
 ./ci.sh --only=test                             # whole suite
 ./ci.sh --only=test --filter SignalTest         # one class
 ./tests/run.sh --filter 'ErrorTest::testNullRemovesHandler$'
 GTK4_SO=/path/gtk4.so ./tests/run.sh            # against another build (default ./gtk4.so)
+./ci.sh --only=phpt                             # run-tests.php over tests/phpt
+PHPT_TESTS=tests/phpt/error-log-signal.phpt ./ci.sh --only=phpt   # one .phpt
 ```
 
 `tests/run.sh` = `xvfb-run -a bin/php-gtk4 vendor/bin/phpunit`: Xvfb for the display, `bin/php-gtk4`
@@ -162,7 +169,17 @@ display, and calls `Gtk::init()` once.
 - GLib `CRITICAL` lines on stderr from `ErrorTest` are expected (the g_critical fallback path for
   the no-handler case). They cannot be captured from PHP and must not be turned into PHP warnings
   (PHPUnit would throw inside the C callback). `tests/run.sh` sets `GSK_RENDERER=cairo` so GTK
-  does not try EGL under Xvfb.
+  does not try EGL under Xvfb. **Their text is asserted in `tests/phpt/` instead**, where
+  run-tests.php compares the process's stderr.
+- `tests/phpt/` (`make test` / `./ci.sh --only=phpt`, see `tests/phpt/README.md`): one process per
+  test, expected output covers stdout **and** stderr. Put a test here only for what PHPUnit cannot
+  reach — `g_critical`/GLib warning text, uncaught fatals and exit codes, RSHUTDOWN teardown
+  output, `--INI--`/`--ENV--` dependent startup, and crash isolation (run-tests names the crashing
+  test and continues, PHPUnit just dies). Everything else belongs in `tests/*.php`.
+  `make test` strips every `extension=` line from the scanned ini into `tmp-php.ini` and re-adds
+  only `modules/gtk4.so`, so gtk3 is filtered out here without `bin/php-gtk4`
+  (`extension-isolation.phpt` guards that). Failures leave `.out`/`.diff` next to the `.phpt`
+  (gitignored). Display-dependent tests guard with `--SKIPIF--` on `tests/phpt/skipif-display.inc`.
 
 ## Local gates
 
@@ -178,7 +195,8 @@ checklist; Dependabot watches composer and actions.
 Three workflows (one per README badge): `.github/workflows/cpp-lint.yml`, `php-qa.yml`,
 `tests.yml`. (1) static analysis — setup-php 8.4, GTK4 headers, phpize build under `bear` for
 `compile_commands.json`, stubs up-to-date check, cpp-linter over the whole tree, fails on findings; (2) `./ci.sh --only=php-qa`; (3) build the extension and run the
-suite for PHP 8.4 and 8.5 on Ubuntu 24.04 (`fail-fast: false`), plus `sanitizers`
+PHPUnit suite *and* `./ci.sh --only=phpt` for PHP 8.4 and 8.5 on Ubuntu 24.04 (`fail-fast: false`;
+failing `.out`/`.diff` files upload as the `phpt-failures-php*` artifact), plus `sanitizers`
 (`ci.sh --only=valgrind` + `--only=asan`) and `coverage` (`--only=coverage`, gcovr HTML artifact)
 jobs on 8.4. The apt package lists must mirror `config.m4`'s pkg-config modules.
 `.github/copilot-instructions.md` is a one-liner pointing at this file — keep project-wide

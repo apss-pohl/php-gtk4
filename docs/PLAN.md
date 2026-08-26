@@ -83,7 +83,8 @@ GTK4 / GLib C API
 - No user data (closures capture with `use`). Non-signal callbacks (`GLib::idle_add`,
   `timeout_add`, later sorters/draw funcs/factories) share `src/core/callback.*`: keeps the
   callable alive, invokes with zval args, routes throwables with the installing method as origin.
-- Open: disconnect all closures in RSHUTDOWN before Zend teardown.
+- Teardown: every closure and source is tracked and disconnected/destroyed in RSHUTDOWN
+  (`src/core/teardown.*`); `PhpValue` instances are drained the same way.
 
 ### 2.4 Exception boundary (`src/core/error`)
 - Rule unchanged from php-gtk3: a throwable never unwinds through GLib, and Zend refuses to run PHP
@@ -207,14 +208,12 @@ is renderer-specific; repeat this check before a release (`docs/TODO.md` §6).
 1. ✅ **Skeleton** — Makefile, `main.cpp`, `gtk4.ini`, `Gtk::init()`/`main()`, `GtkWindow` (done, plus
    the complete CI/QA/test infrastructure: `ci.sh`, three workflows with matrices, sanitizer and
    coverage jobs, stubs, badges). `GtkApplication`/`GtkButton` moved to milestone 2/3.
-2. 🟡 **Core runtime** — done and tested: `wrap` (owned ref, qdata identity, weak-ref, GType→factory
-   registry), `marshal` (all scalar fundamentals, enum/flags, object/interface, GParamSpec→name),
-   `gsignal` (GClosure marshaller, detail, user data, return values), `error`, `params`, arginfo on
-   every method. **Open:** `BoxedWrapper` (GdkRectangle/GdkRGBA/GStrv…), `G_TYPE_POINTER`/`VARIANT`,
-   a real `GParamSpec` wrapper, PHP interface registration, `wrap()` reusing the existing zval,
-   closure teardown before Zend shutdown, the `GtkWidget` layer between `GObject` and `GtkWindow`.
-   Done since: `GtkApplication`, `GMainLoop`, `GLib` sources via the shared callback abstraction,
-   `ExceptionMode::Rethrow`, `connect()` without user data.
+2. ✅ **Core runtime** — done and tested (2026-08-26): objects (owned ref with `attach`/`attach_new`
+   ownership rules, qdata identity, weak ref, GType→class registry, property handlers), marshal
+   (all fundamentals, enum/flags as int, object/interface, `GParamSpec`, boxed + `GStrv`,
+   `GVariant`), signals (GClosure marshaller, `emit()`), callbacks (`GLib` sources), exception
+   boundary with `ExceptionMode`, RSHUTDOWN teardown, `GtkWidget` layer with `GtkButton`/`GtkLabel`,
+   `GtkApplication` + `GMainLoop`, actions with real PHP interfaces, `PhpValue` + `GListStore`.
 3. **Generator** — GIR parser + emitter producing Gtk/Gdk/Gio/GLib/Pango namespaces; replace the
    hand-written milestone-2 classes with generated ones (they must be byte-for-byte compatible in
    behaviour). Topological registration order. Stubs + coverage doc output.

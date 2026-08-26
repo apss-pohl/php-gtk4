@@ -71,6 +71,22 @@ jobs:
           path: phpunit-junit.xml
           if-no-files-found: ignore
 
+      # php-src run-tests.php: the process-level assertions PHPUnit cannot make
+      # (g_critical on stderr, uncaught fatals, RSHUTDOWN output, --INI--/--ENV--).
+      - name: Run run-tests.php (tests/phpt)
+        run: ./ci.sh --only=phpt
+
+      - name: Upload failing phpt output
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: phpt-failures-php${{ matrix.php }}
+          path: |
+            tests/phpt/*.out
+            tests/phpt/*.diff
+            tests/phpt/*.log
+          if-no-files-found: ignore
+
   sanitizers:
     name: Valgrind / ASan / UBSan / LSan
     runs-on: ubuntu-24.04
