@@ -27,7 +27,7 @@ ZEND_METHOD(Gtk4_GtkApplication, __construct) {
   }
   GtkApplication *app = gtk_application_new(id != nullptr ? ZSTR_VAL(id) : nullptr,
                                             static_cast<GApplicationFlags>(flags));
-  attach(object_from_zval(ZEND_THIS), G_OBJECT(app));
+  attach_new(object_from_zval(ZEND_THIS), G_OBJECT(app));
 }
 
 // QuitFn for the running-loop registry: g_application_quit() ends run().

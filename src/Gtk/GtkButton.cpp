@@ -14,7 +14,7 @@ ZEND_METHOD(Gtk4_GtkButton, __construct) {
   Z_PARAM_STR_OR_NULL(label)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *b = label != nullptr ? gtk_button_new_with_label(ZSTR_VAL(label)) : gtk_button_new();
-  attach(object_from_zval(ZEND_THIS), G_OBJECT(b));
+  attach_new(object_from_zval(ZEND_THIS), G_OBJECT(b));
 }
 
 /**

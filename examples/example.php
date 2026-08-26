@@ -14,6 +14,8 @@ use Gtk4\ExceptionMode;
 use Gtk4\GdkRectangle;
 use Gtk4\GdkRGBA;
 use Gtk4\GLib;
+use Gtk4\GListModel;
+use Gtk4\GListStore;
 use Gtk4\GMainLoop;
 use Gtk4\GObject;
 use Gtk4\GParamSpec;
@@ -24,6 +26,7 @@ use Gtk4\GtkButton;
 use Gtk4\GtkLabel;
 use Gtk4\GtkWidget;
 use Gtk4\GtkWindow;
+use Gtk4\PhpValue;
 
 if (!Gtk::init()) {
     fwrite(STDERR, "no display\n");
@@ -136,6 +139,21 @@ $app->connect('activate', function (GtkApplication $app): void {
         var_export($area->contains_point(10, 10), true),
     );
     $button->set_css_classes(['suggested-action', 'pill']);   // GStrv <-> list<string>
+
+    // PHP data where GTK wants GObjects: a GListStore of PhpValue items - the model
+    // behind GtkListView / GtkColumnView once those are bound.
+    $people = new GListStore(PhpValue::class);
+    foreach ([['name' => 'Ada', 'born' => 1815], ['name' => 'Grace', 'born' => 1906]] as $row) {
+        $people->append(new PhpValue($row));
+    }
+    $people->connect('items-changed', function (GListModel $m, int $pos, int $removed, int $added): void {
+        printf("list changed at %d (-%d +%d), now %d items\n", $pos, $removed, $added, $m->get_n_items());
+    });
+    $people->append(new PhpValue(['name' => 'Margaret', 'born' => 1936]));
+    $first = $people->get_item(0);
+    if ($first instanceof PhpValue) {
+        printf("first person: %s\n", json_encode($first->get_value()));
+    }
 
     // GLib sources on the application's main context.
     GLib::timeout_add(1000, function () use ($win): bool {

@@ -35,7 +35,7 @@ ZEND_METHOD(Gtk4_GSimpleAction, __construct) {
   } else {
     action = g_simple_action_new(ZSTR_VAL(name), vt);
   }
-  attach(object_from_zval(ZEND_THIS), G_OBJECT(action));
+  attach_new(object_from_zval(ZEND_THIS), G_OBJECT(action));
 }
 
 /**

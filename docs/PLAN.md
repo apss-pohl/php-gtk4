@@ -178,6 +178,15 @@ sanitizer/coverage runs, all driven by `ci.sh` (stages `cpp-lint php-qa build lo
   sanitizer job (ASan+UBSan on the suite, LSan on the `php -n` stress run) and a gcov coverage job
   (gcovr HTML artifact); C++ lint on both Ubuntus, PHP QA (phplint/phpcs/php-cs-fixer/phpstan max).
 
+### GL / GPU rendering (verified 2026-08-26)
+
+The test infrastructure runs GTK with `GSK_RENDERER=cairo` and `GDK_DISABLE=gl` because Xvfb has
+no GL and Mesa's llvmpipe leaks under valgrind/LSan on CI runners. Real applications use GTK's
+defaults; verified manually on a Wayland session with an AMD GPU (Mesa 25.2, radeonsi):
+`examples/example.php` runs with the default renderer (EGL context), with `GSK_RENDERER=gl`, and
+with `GSK_RENDERER=vulkan` (`GskVulkanRenderer` on `GdkWaylandToplevel`). Nothing in the binding
+is renderer-specific; repeat this check before a release (`docs/TODO.md` §6).
+
 ### Tooling decisions (2026-08-25)
 - **Leak/memory checking = ASan/UBSan/LSan via `--enable-gtk4-sanitize`, plus valgrind memcheck** on the
   uninstrumented build (`ci.sh --only=valgrind`) for what ASan cannot see (uninitialised reads). LSan only on the `php -n`

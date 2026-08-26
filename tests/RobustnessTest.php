@@ -44,6 +44,8 @@ final class RobustnessTest extends GtkTestCase
             \Gtk4\GObject::class, \Gtk4\GtkWindow::class => $this->window(),   // GObject: any handle
             \Gtk4\GtkApplication::class => new \Gtk4\GtkApplication(null, 1 << 5),
             \Gtk4\GSimpleAction::class => new \Gtk4\GSimpleAction('a', 's'),
+            \Gtk4\PhpValue::class => new \Gtk4\PhpValue('v'),
+            \Gtk4\GListStore::class => new \Gtk4\GListStore(),
             \Gtk4\GtkWidget::class => new \Gtk4\GtkButton(),   // abstract: exercise through a subclass
             \Gtk4\GParamSpec::class => self::paramSpec(),
             \Gtk4\GdkRGBA::class, \Gtk4\GdkRectangle::class, \Gtk4\GMainLoop::class,
@@ -148,6 +150,7 @@ final class RobustnessTest extends GtkTestCase
             \Gtk4\GtkWindow::class => new \Gtk4\GtkWindow(),
             \Gtk4\GtkApplication::class => new \Gtk4\GtkApplication(null, 1 << 5),
             \Gtk4\GAction::class, \Gtk4\GSimpleAction::class => new \Gtk4\GSimpleAction('v'),
+            \Gtk4\GObject::class, \Gtk4\PhpValue::class => new \Gtk4\PhpValue('v'),
             \Gtk4\GdkRGBA::class => new \Gtk4\GdkRGBA(),
             \Gtk4\GdkRectangle::class => new \Gtk4\GdkRectangle(),
             \Gtk4\ExceptionMode::class => \Gtk4\ExceptionMode::Log,

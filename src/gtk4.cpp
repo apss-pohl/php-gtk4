@@ -5,6 +5,7 @@
 #include "core/error.h"
 #include "core/object.h"
 #include "core/paramspec.h"
+#include "core/phpvalue.h"
 #include "core/teardown.h"
 #include <Zend/zend_modules.h>
 
@@ -50,6 +51,9 @@ static PHP_MINIT_FUNCTION(gtk4) {
   phpgtk::register_GdkRectangle(register_class_Gtk4_GdkRectangle());
   phpgtk::ce_GParamSpec = register_class_Gtk4_GParamSpec();
   phpgtk::register_GParamSpec_handlers(phpgtk::ce_GParamSpec);
+  phpgtk::register_class("PhpValue", register_class_Gtk4_PhpValue(ce_GObject));
+  zend_class_entry *ce_GListModel = register_class_Gtk4_GListModel();
+  phpgtk::register_class("GListStore", register_class_Gtk4_GListStore(ce_GObject, ce_GListModel));
   zend_class_entry *ce_GAction = register_class_Gtk4_GAction();
   zend_class_entry *ce_GActionMap = register_class_Gtk4_GActionMap();
   zend_class_entry *ce_GActionGroup = register_class_Gtk4_GActionGroup();
@@ -84,6 +88,7 @@ static PHP_MSHUTDOWN_FUNCTION(gtk4) {
 // Request shutdown: tear down callables before Zend goes away, reset the exception state.
 static PHP_RSHUTDOWN_FUNCTION(gtk4) {
   phpgtk::teardown_request();  // before anything that holds callables could finalize later
+  phpgtk::phpvalue_request_shutdown();
   phpgtk::exception_state_shutdown();
   return SUCCESS;
 }

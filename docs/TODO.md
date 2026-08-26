@@ -61,6 +61,33 @@ longer holds for a PHP 8.4+ target, and it blocks idiomatic PHP:
 - [x] `GtkWidget` layer (+ `GtkButton`, `GtkLabel`), `GObject::emit()`
 - [x] closure/source teardown in RSHUTDOWN (`src/core/teardown.*`, `tests/scripts/shutdown.php`)
 
+## 6. GTK4 feature surface (what the binding still has to expose to deliver GTK4's benefits)
+
+Inherited for free (nothing to do): GSK/GPU rendering, the flat widget hierarchy (no
+GtkContainer), Wayland/HiDPI/platform backends, the cleaned-up API (the stub is generated from
+GTK4 GIR only).
+
+- [ ] **Event controllers** — `GtkGestureClick`, `GtkEventControllerKey/Motion/Scroll/Focus`,
+      `GtkWidget::add_controller()/remove_controller()`; signals already marshal (ints/doubles/flags).
+      Pure generator output (milestone 3).
+- [ ] **List models** — `GListModel` interface, `GtkStringList`, `GListStore`, selection models,
+      `GtkListView`/`GtkColumnView`/`GtkGridView`, `GtkSignalListItemFactory` (`setup`/`bind`),
+      `GtkListItem`. Core prework done 2026-08-26: `Gtk4\PhpValue` (GType `PhpValue`, a GObject
+      carrying a zval) + `GListModel` interface + `GListStore`. The views are generator output.
+- [ ] **Drag and drop** — `GtkDragSource`, `GtkDropTarget`, `GdkContentProvider` (GValue payloads:
+      boxed/variant support exists). Generator output.
+- [ ] **CSS** — `GtkCssProvider` + `gtk_style_context_add_provider_for_display`; custom properties.
+      Two small classes.
+- [ ] **Concrete layouts** — `GtkBox`, `GtkGrid`, `GtkCenterBox`, `GtkStack`, `GtkPaned`,
+      `GtkScrolledWindow` (+ `GtkOrientable` interface). Generator output.
+- [ ] **Custom `GtkLayoutManager` / GObject subclassing from PHP** — vfunc overriding; separate
+      design, after milestone 4.
+- [ ] **Rendering from PHP** — `GtkSnapshot`, `GdkTexture`, `GdkPaintable`, `GtkDrawingArea::set_draw_func`
+      (cairo interop). Milestone 4.
+- [x] **GL renderer smoke test** — the test infrastructure forces `GSK_RENDERER=cairo` +
+      `GDK_DISABLE=gl` (Xvfb). Verified manually on a real Wayland session with an AMD GPU on
+      2026-08-26 (see PLAN.md §6 "GL"); repeat before a release, no automation possible on CI runners.
+
 ## 5. Keep (verified good, do not "clean up")
 
 Namespace `Gtk4\`; PHP class == GType name + registry; owned refs + qdata identity + weak ref;

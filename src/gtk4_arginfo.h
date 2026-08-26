@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 753e03c3e60e2d9333d4e998133a1633ecef6b67 */
+ * Stub hash: bf971a82e85967fe23706847d2164538128cde1c */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GObject_connect, 0, 2, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, signal, IS_STRING, 0)
@@ -82,6 +82,53 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GMainLoop_quit arginfo_class_Gtk4_GMainLoop_run
 
 #define arginfo_class_Gtk4_GMainLoop_is_running arginfo_class_Gtk4_GParamSpec_is_readable
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_PhpValue___construct, 0, 0, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_PhpValue_get_value arginfo_class_Gtk4_GParamSpec_get_default_value
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_PhpValue_set_value, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, value, IS_MIXED, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GListModel_get_item_type arginfo_class_Gtk4_GParamSpec_get_name
+
+#define arginfo_class_Gtk4_GListModel_get_n_items arginfo_class_Gtk4_GParamSpec_get_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GListModel_get_item, 0, 1, Gtk4\\GObject, 1)
+	ZEND_ARG_TYPE_INFO(0, position, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GListStore___construct, 0, 0, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, itemType, IS_STRING, 0, "Gtk4\\GObject::class")
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GListStore_get_item_type arginfo_class_Gtk4_GParamSpec_get_name
+
+#define arginfo_class_Gtk4_GListStore_get_n_items arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_GListStore_get_item arginfo_class_Gtk4_GListModel_get_item
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GListStore_append, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, item, Gtk4\\GObject, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GListStore_insert, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, position, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, item, Gtk4\\GObject, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GListStore_remove, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, position, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GListStore_remove_all arginfo_class_Gtk4_GMainLoop_run
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GListStore_find, 0, 1, IS_LONG, 1)
+	ZEND_ARG_OBJ_INFO(0, item, Gtk4\\GObject, 0)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GAction_get_name arginfo_class_Gtk4_GParamSpec_get_name
 
@@ -370,6 +417,18 @@ ZEND_METHOD(Gtk4_GMainLoop, __construct);
 ZEND_METHOD(Gtk4_GMainLoop, run);
 ZEND_METHOD(Gtk4_GMainLoop, quit);
 ZEND_METHOD(Gtk4_GMainLoop, is_running);
+ZEND_METHOD(Gtk4_PhpValue, __construct);
+ZEND_METHOD(Gtk4_PhpValue, get_value);
+ZEND_METHOD(Gtk4_PhpValue, set_value);
+ZEND_METHOD(Gtk4_GListStore, __construct);
+ZEND_METHOD(Gtk4_GListStore, get_item_type);
+ZEND_METHOD(Gtk4_GListStore, get_n_items);
+ZEND_METHOD(Gtk4_GListStore, get_item);
+ZEND_METHOD(Gtk4_GListStore, append);
+ZEND_METHOD(Gtk4_GListStore, insert);
+ZEND_METHOD(Gtk4_GListStore, remove);
+ZEND_METHOD(Gtk4_GListStore, remove_all);
+ZEND_METHOD(Gtk4_GListStore, find);
 ZEND_METHOD(Gtk4_GSimpleAction, __construct);
 ZEND_METHOD(Gtk4_GSimpleAction, get_name);
 ZEND_METHOD(Gtk4_GSimpleAction, get_enabled);
@@ -488,6 +547,33 @@ static const zend_function_entry class_Gtk4_GMainLoop_methods[] = {
 	ZEND_ME(Gtk4_GMainLoop, run, arginfo_class_Gtk4_GMainLoop_run, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMainLoop, quit, arginfo_class_Gtk4_GMainLoop_quit, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMainLoop, is_running, arginfo_class_Gtk4_GMainLoop_is_running, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_PhpValue_methods[] = {
+	ZEND_ME(Gtk4_PhpValue, __construct, arginfo_class_Gtk4_PhpValue___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_PhpValue, get_value, arginfo_class_Gtk4_PhpValue_get_value, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_PhpValue, set_value, arginfo_class_Gtk4_PhpValue_set_value, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GListModel_methods[] = {
+	ZEND_RAW_FENTRY("get_item_type", NULL, arginfo_class_Gtk4_GListModel_get_item_type, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+	ZEND_RAW_FENTRY("get_n_items", NULL, arginfo_class_Gtk4_GListModel_get_n_items, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+	ZEND_RAW_FENTRY("get_item", NULL, arginfo_class_Gtk4_GListModel_get_item, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GListStore_methods[] = {
+	ZEND_ME(Gtk4_GListStore, __construct, arginfo_class_Gtk4_GListStore___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GListStore, get_item_type, arginfo_class_Gtk4_GListStore_get_item_type, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GListStore, get_n_items, arginfo_class_Gtk4_GListStore_get_n_items, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GListStore, get_item, arginfo_class_Gtk4_GListStore_get_item, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GListStore, append, arginfo_class_Gtk4_GListStore_append, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GListStore, insert, arginfo_class_Gtk4_GListStore_insert, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GListStore, remove, arginfo_class_Gtk4_GListStore_remove, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GListStore, remove_all, arginfo_class_Gtk4_GListStore_remove_all, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GListStore, find, arginfo_class_Gtk4_GListStore_find, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -688,6 +774,37 @@ static zend_class_entry *register_class_Gtk4_GMainLoop(void)
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GMainLoop", class_Gtk4_GMainLoop_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_PhpValue(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "PhpValue", class_Gtk4_PhpValue_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GListModel(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GListModel", class_Gtk4_GListModel_methods);
+	class_entry = zend_register_internal_interface(&ce);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GListStore(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_GListModel)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GListStore", class_Gtk4_GListStore_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_NOT_SERIALIZABLE);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_GListModel);
 
 	return class_entry;
 }

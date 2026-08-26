@@ -13,8 +13,8 @@ ZEND_METHOD(Gtk4_GtkLabel, __construct) {
   Z_PARAM_OPTIONAL
   Z_PARAM_STR_OR_NULL(text)
   ZEND_PARSE_PARAMETERS_END();
-  attach(object_from_zval(ZEND_THIS),
-         G_OBJECT(gtk_label_new(text != nullptr ? ZSTR_VAL(text) : nullptr)));
+  attach_new(object_from_zval(ZEND_THIS),
+             G_OBJECT(gtk_label_new(text != nullptr ? ZSTR_VAL(text) : nullptr)));
 }
 
 /**

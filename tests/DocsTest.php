@@ -47,10 +47,33 @@ final class DocsTest extends TestCase
             if (str_contains($path, '*') || str_contains($path, '<')) {
                 continue;  // globs / placeholders
             }
+            if (self::isGitIgnored($path)) {
+                continue;  // generated on demand, absent in a fresh checkout
+            }
             if (!file_exists(self::ROOT . '/' . $path)) {
                 $missing[] = $path;
             }
         }
         self::assertSame([], $missing, "$doc mentions paths that do not exist");
+    }
+
+    /**
+     * Whether git ignores $path: paths the build downloads or generates on demand
+     * (gen/PHP-Parser-*, gtk4.so, ...) exist locally but never in a fresh CI
+     * checkout, so documenting them is right and asserting they exist is not.
+     */
+    private static function isGitIgnored(string $path): bool
+    {
+        /** @var array<string, bool> $cache */
+        static $cache = [];
+
+        if (!isset($cache[$path])) {
+            $cmd = 'git -C ' . escapeshellarg(self::ROOT)
+                . ' check-ignore -q ' . escapeshellarg($path) . ' 2>/dev/null';
+            exec($cmd, $ignoredOutput, $status);
+            $cache[$path] = $status === 0;
+        }
+
+        return $cache[$path];
     }
 }

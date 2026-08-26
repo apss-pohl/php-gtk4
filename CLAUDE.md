@@ -197,7 +197,8 @@ conventions here only.
   `Gtk::set_exception_handler`, else `g_critical`), `boxed` (value-type handles: owned
   `g_boxed_copy`, clone/compare by value, fields as properties via per-class reader/writer;
   `GdkRGBA`, `GdkRectangle`; `GStrv` ↔ `list<string>` is a value mapping), `variant` (`GVariant` ↔
-  PHP values, type-directed or inferred), `paramspec` (`GParamSpec` handle), `callback` (non-signal
+  PHP values, type-directed or inferred), `paramspec` (`GParamSpec` handle), `phpvalue` (GType `PhpValue`: a GObject subclass carrying a zval so PHP data can sit in
+  `GListStore`; instances drained in RSHUTDOWN), `callback` (non-signal
   callables), `teardown` (RSHUTDOWN disconnects every tracked closure/source so nothing finalizes
   after Zend is gone — `tests/scripts/shutdown.php` guards it), `mainloop` (running-loop registry
   for `ExceptionMode::Rethrow`).

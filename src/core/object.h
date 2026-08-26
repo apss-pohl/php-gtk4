@@ -24,8 +24,13 @@ inline Object *object_from_zval(const zval *zv) {
   return object_from_zend(Z_OBJ_P(zv));
 }
 
-// Take (ref_sink) ownership of obj and bind the handle to it.
+// Bind a handle to an object we are BORROWING (wrap() of something GTK owns,
+// or a floating widget): takes its own reference with g_object_ref_sink().
 void attach(Object *self, GObject *obj);
+// Bind a handle to an object we just CREATED (constructors): a floating
+// instance is sunk, a plain GObject's initial reference is adopted as ours -
+// no extra ref, so the object really dies with the last handle/owner.
+void attach_new(Object *self, GObject *obj);
 
 // Call once from MINIT before registering classes.
 void object_handlers_init();

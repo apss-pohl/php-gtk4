@@ -36,6 +36,17 @@ void attach(Object *self, GObject *obj) {
   g_object_weak_ref(self->obj, on_finalized, self);
 }
 
+// Constructor variant of attach(): adopt the initial ref instead of adding one.
+void attach_new(Object *self, GObject *obj) {
+  if (self->obj != nullptr || obj == nullptr) {
+    g_critical("php-gtk4: attach_new() misuse");
+    return;
+  }
+  self->obj = g_object_is_floating(obj) ? G_OBJECT(g_object_ref_sink(obj)) : obj;
+  g_object_set_qdata(self->obj, handle_quark(), self);
+  g_object_weak_ref(self->obj, on_finalized, self);
+}
+
 // Release ownership (free_obj): drop weak notify and back-pointer, unref.
 static void detach(Object *self) {
   if (self->obj == nullptr) return;

@@ -206,6 +206,81 @@ final class GMainLoop
 }
 
 /**
+ * A GObject that carries an arbitrary PHP value, so PHP data can live where
+ * GTK expects GObjects - above all in a {@see GListStore} feeding list views.
+ * The value is held by reference (objects and arrays keep their identity);
+ * it is released when the last handle and every list holding the item are gone.
+ *
+ * ```php
+ * $store = new GListStore(PhpValue::class);
+ * $store->append(new PhpValue(['name' => 'Ada']));
+ * $store->get_item(0)->get_value()['name'];   // "Ada"
+ * ```
+ *
+ * @not-serializable
+ */
+final class PhpValue extends GObject
+{
+    public function __construct(mixed $value = null) {}
+
+    public function get_value(): mixed {}
+
+    public function set_value(mixed $value): void {}
+}
+
+/**
+ * A list of GObjects with change notification (`items-changed`).
+ *
+ * @link https://docs.gtk.org/gio/iface.ListModel.html
+ */
+interface GListModel
+{
+    /** GType name of the items, e.g. "PhpValue" or "GObject". */
+    public function get_item_type(): string;
+
+    public function get_n_items(): int;
+
+    /** The item at $position, or null past the end. */
+    public function get_item(int $position): ?GObject;
+}
+
+/**
+ * A GListModel backed by an array; items must be instances of the item type.
+ *
+ * @property int $n_items
+ *
+ * @link https://docs.gtk.org/gio/class.ListStore.html
+ * @not-serializable
+ */
+class GListStore extends GObject implements GListModel
+{
+    /**
+     * @param string $itemType PHP class (e.g. PhpValue::class) or GType name of the items
+     * @throws \ValueError If the type is unknown or not a GObject type
+     */
+    public function __construct(string $itemType = GObject::class) {}
+
+    public function get_item_type(): string {}
+
+    public function get_n_items(): int {}
+
+    public function get_item(int $position): ?GObject {}
+
+    /** @throws \TypeError If $item is not of the item type */
+    public function append(GObject $item): void {}
+
+    /** @throws \TypeError If $item is not of the item type */
+    public function insert(int $position, GObject $item): void {}
+
+    public function remove(int $position): void {}
+
+    public function remove_all(): void {}
+
+    /** Position of $item, or null if it is not in the store. */
+    public function find(GObject $item): ?int {}
+}
+
+/**
  * An action: a named, optionally parameterised and stateful operation.
  * GVariant parameters and states are mapped to plain PHP values (bool, int,
  * float, string, list, associative array, null for "maybe" types).

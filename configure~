@@ -5966,7 +5966,7 @@ printf "%s\n" "#define PHPGTK_BUILD_INFO \"built $GTK4_BUILD_DATE, git $GTK4_GIT
   PHP_VAR_SUBST="$PHP_VAR_SUBST GTK4_SHARED_LIBADD"
 
 
-  GTK4_SOURCES="src/gtk4.cpp src/core/object.cpp src/core/marshal.cpp src/core/gsignal.cpp src/core/error.cpp src/core/callback.cpp src/core/mainloop.cpp src/core/paramspec.cpp src/core/teardown.cpp src/core/boxed.cpp src/core/variant.cpp src/Gio/GSimpleAction.cpp src/Gdk/GdkRGBA.cpp src/Gdk/GdkRectangle.cpp src/Gtk/Gtk.cpp src/Gtk/GtkWidget.cpp src/Gtk/GtkButton.cpp src/Gtk/GtkLabel.cpp src/Gtk/GMainLoop.cpp src/Gtk/GtkApplication.cpp src/Gtk/GtkWindow.cpp"
+  GTK4_SOURCES="src/gtk4.cpp src/core/object.cpp src/core/marshal.cpp src/core/gsignal.cpp src/core/error.cpp src/core/callback.cpp src/core/mainloop.cpp src/core/paramspec.cpp src/core/teardown.cpp src/core/boxed.cpp src/core/variant.cpp src/core/phpvalue.cpp src/Gio/GSimpleAction.cpp src/Gio/GListStore.cpp src/Gdk/GdkRGBA.cpp src/Gdk/GdkRectangle.cpp src/Gtk/Gtk.cpp src/Gtk/GtkWidget.cpp src/Gtk/GtkButton.cpp src/Gtk/GtkLabel.cpp src/Gtk/GMainLoop.cpp src/Gtk/GtkApplication.cpp src/Gtk/GtkWindow.cpp"
 
   ext_builddir=.
   ext_srcdir=$abs_srcdir
