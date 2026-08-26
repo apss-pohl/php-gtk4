@@ -16,34 +16,42 @@ use Gtk4\GtkWindow;
  * get_selection_bounds() live, which is a boolean C function whose out
  * parameters come back as a list (or null when nothing is selected).
  *
- *   bin/php-gtk4 examples/GtkLabel.php
+ *   bin/php-gtk4 examples/demo.php GtkLabel
  */
 
-require __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 
-Demo::run('GtkLabel', function (GtkWindow $win): GtkWidget {
-    $label = new GtkLabel('plain text, replaced by markup below');
-    $label->set_markup(
-        "<span size=\"xx-large\" foreground=\"" . Demo::ACCENT . "\">Gtk4\\GtkLabel</span>\n\n"
-        . "<b>bold</b> · <i>italic</i> · <u>underline</u> · <s>strike</s> · <tt>monospace</tt>\n"
-        . "<span foreground=\"" . Demo::WARN . "\">coloured</span> · <sub>sub</sub> · <sup>sup</sup>\n\n"
-        . 'This paragraph is long enough to wrap, because wrap is on and the window is narrow.',
-    );
-    $label->set_selectable(true);
-    $label->wrap = true;
-    $label->use_markup = true;
+return Demo::page(
+    'GtkLabel',
+    'text, Pango markup and selections',
+    function (GtkWindow $win): GtkWidget {
+        $label = new GtkLabel('plain text, replaced by markup below');
+        $label->set_markup(
+            '<span size="xx-large" foreground="' . Demo::ACCENT . "\">Gtk4\\GtkLabel</span>\n\n"
+            . "<b>bold</b> · <i>italic</i> · <u>underline</u> · <s>strike</s> · <tt>monospace</tt>\n"
+            . '<span foreground="' . Demo::WARN . "\">coloured</span> · <sub>sub</sub> · <sup>sup</sup>\n\n"
+            . 'This paragraph is long enough to wrap, because wrap is on and the window is narrow.',
+        );
+        $label->set_selectable(true);
+        $label->wrap = true;
+        $label->use_markup = true;
 
-    $label->select_region(0, 14);   // pre-select the heading
+        $label->select_region(0, 14);   // pre-select the heading
 
-    // Poll the selection instead of rewriting the label - rewriting it would
-    // clear the very selection we are reporting.
-    GLib::timeout_add(250, function () use ($label, $win): bool {
-        $bounds = $label->get_selection_bounds();
-        $win->set_title($bounds === null
-            ? 'php-gtk4 · GtkLabel — nothing selected'
-            : sprintf('php-gtk4 · GtkLabel — selection %d..%d of %d', $bounds[0], $bounds[1], mb_strlen($label->get_text())));
-        return true;
-    });
+        // Poll the selection instead of rewriting the label - rewriting it would
+        // clear the very selection we are reporting.
+        GLib::timeout_add(250, function () use ($label): bool {
+            $bounds = $label->get_selection_bounds();
+            // Demo::status() writes under whichever heading is current, so this reads
+            // the same standalone and inside demo.php.
+            Demo::status($bounds === null
+            ? 'nothing selected'
+            : sprintf('selection %d..%d of %d', $bounds[0], $bounds[1], mb_strlen($label->get_text())));
+            return true;
+        });
 
-    return $label;
-}, 460, 320);
+        return $label;
+    },
+    460,
+    320,
+);

@@ -84,6 +84,7 @@ static PHP_MINIT_FUNCTION(gtk4) {
   zend_class_entry *ce_GtkWidget = register_class_Gtk4_GtkWidget(ce_GObject);
   phpgtk::register_class("GtkWidget", ce_GtkWidget, GTK_TYPE_WIDGET);
   phpgtk::register_class("GtkButton", register_class_Gtk4_GtkButton(ce_GtkWidget), GTK_TYPE_BUTTON);
+  phpgtk::register_class("GtkBox", register_class_Gtk4_GtkBox(ce_GtkWidget), GTK_TYPE_BOX);
   phpgtk::register_class("GtkLabel", register_class_Gtk4_GtkLabel(ce_GtkWidget), GTK_TYPE_LABEL);
   phpgtk::register_class("GtkWindow", register_class_Gtk4_GtkWindow(ce_GtkWidget), GTK_TYPE_WINDOW);
   phpgtk::register_class("GtkDrawingArea", register_class_Gtk4_GtkDrawingArea(ce_GtkWidget),

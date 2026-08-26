@@ -1,24 +1,47 @@
 # Examples
 
-One file per PHP-visible class, named after it, runnable on its own:
+One demo application, one source file per class:
 
 ```sh
-bin/php-gtk4 examples/GtkButton.php
+bin/php-gtk4 examples/demo.php              # the application
+bin/php-gtk4 examples/demo.php GtkButton    # only that class, in a window of its own
+bin/php-gtk4 examples/demo.php --list       # what is available
 ```
 
-Each one opens a window and *shows* what the class does rather than printing about it. GTK 4 has no
-container widget bound yet, so a window holds exactly one child — the two surfaces the examples draw on
-are a Pango-markup `GtkLabel` and a cairo `GtkDrawingArea`, sometimes wrapped in a `GtkButton` so that
-clicking anywhere advances the demo.
+Every `<Class>.php` ends in `return Demo::page(...)` and does nothing else — it *describes* a demo
+rather than running one. `demo.php` requires them all, so a file that ran itself would fire on
+import. `ExampleTest` enforces that.
 
-`bootstrap.php` is the shared harness (`Demo::run()`, `Demo::label()`, `Demo::canvas()`, `Demo::bars()`
-and the sample dataset). It only declares — GTK is initialised lazily — so requiring it has no side
-effects. `tests/ExampleTest.php` fails if a registered class has no file here.
+The application is a header row, a sidebar and a content area, all `GtkBox`. That container is what
+made it an application at all: before it, a `GtkWindow` held exactly one child and a `GtkButton` one
+more, so navigation could not sit next to the thing it navigates and the demo had to be a timed
+slideshow. The sidebar shows the current section only, because `GtkScrolledWindow` is not bound yet
+and 36 buttons do not fit; `Demo::SECTIONS` is the grouping and every registered class must appear
+in it exactly once.
+
+Each page opens on what its class does rather than printing about it. A window still holds one
+child, so a page is usually a Pango-markup `GtkLabel` or a cairo `GtkDrawingArea`, sometimes inside
+a `GtkButton` so clicking anywhere advances it.
+
+The `$win` a page receives is the *application's* window. Reading it is fine; taking it over is not
+— a page that vetoed its `close-request` left the application with no working close button. A page
+that wants a window of its own creates one, as `GtkWindow.php` does. The main window is primary:
+closing it quits, however many toplevels a page has opened.
+
+`bootstrap.php` is the shared harness — `Demo::page()`, `pages()`, `showcase()`, `single()`,
+`run()`, `status()`, plus `label()`, `canvas()`, `bars()` and the sample dataset. It only declares
+(GTK is initialised lazily), so requiring it has no side effects.
+
+Two pages own a main loop and so do more when run on their own than the application can show:
+`ExceptionMode` needs a `try`/`catch` around `run()` to demonstrate `Rethrow`, and `GMainLoop`
+drives a window with no `GtkApplication`. Both pass a standalone override to `Demo::page()`, which
+`demo.php <Class>` uses.
 
 ## Widgets
 
 | File | Shows |
 | ---- | ----- |
+| [GtkBox.php](GtkBox.php) | the layout container — what holds more than one widget |
 | [GtkWidget.php](GtkWidget.php) | the inherited API; the button walks the alignment cases, so it moves |
 | [GtkWindow.php](GtkWindow.php) | title, default size, and a `close-request` veto you can toggle |
 | [GtkButton.php](GtkButton.php) | `clicked`, a widget child, `activate()` |

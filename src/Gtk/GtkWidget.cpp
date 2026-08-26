@@ -221,6 +221,50 @@ WIDGET_METHOD(has_css_class) {
 }
 
 /**
+ * Gtk4\GtkWidget::set_hexpand(bool $expand): void
+ *
+ * Whether the widget takes the horizontal space its parent has spare.
+ */
+WIDGET_METHOD(set_hexpand) {
+  bool expand = false;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_BOOL(expand)
+  ZEND_PARSE_PARAMETERS_END();
+  SELF_WIDGET;
+  gtk_widget_set_hexpand(w, static_cast<gboolean>(expand));
+}
+
+/**
+ * Gtk4\GtkWidget::get_hexpand(): bool
+ */
+WIDGET_METHOD(get_hexpand) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  SELF_WIDGET;
+  RETURN_BOOL(gtk_widget_get_hexpand(w));
+}
+
+/**
+ * Gtk4\GtkWidget::set_vexpand(bool $expand): void
+ */
+WIDGET_METHOD(set_vexpand) {
+  bool expand = false;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_BOOL(expand)
+  ZEND_PARSE_PARAMETERS_END();
+  SELF_WIDGET;
+  gtk_widget_set_vexpand(w, static_cast<gboolean>(expand));
+}
+
+/**
+ * Gtk4\GtkWidget::get_vexpand(): bool
+ */
+WIDGET_METHOD(get_vexpand) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  SELF_WIDGET;
+  RETURN_BOOL(gtk_widget_get_vexpand(w));
+}
+
+/**
  * Gtk4\GtkWidget::queue_draw(): void
  *
  * Queue a redraw of the widget.

@@ -21,7 +21,11 @@ export GDK_DEBUG=${GDK_DEBUG:-gl-disable}
 # GDK prefers Wayland over the DISPLAY xvfb-run provides when WAYLAND_DISPLAY is set in the
 # developer's session - the suite would then run on the real compositor (and hit a GTK
 # Wayland-backend heap corruption on 4.14). Pin the X11 backend: Xvfb is the target.
-export GDK_BACKEND=${GDK_BACKEND:-x11}
+# Forced, not defaulted: ${GDK_BACKEND:-x11} keeps an inherited GDK_BACKEND=wayland, which
+# is exactly the case this guards against - a desktop session exports it. Unset the socket
+# too, or GDK still finds the compositor.
+export GDK_BACKEND=x11
+unset WAYLAND_DISPLAY
 # Never run the suite under xdebug: its develop-mode observer segfaults at
 # request shutdown after ReflectionMethod::invoke() on PHP-CPP methods
 # (EveryClassTest), and it slows everything down. The stress/ASan runs use

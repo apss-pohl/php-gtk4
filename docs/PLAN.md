@@ -12,7 +12,7 @@ fragile, or GTK3-specific.
 | Language | C++20 (GCC 11+/Clang 14+) | PHP 8.4 itself needs a modern toolchain, so nothing is lost; gives `std::span`, concepts, designated initialisers for the marshaller/generator output |
 | GTK target | GTK 4.14+ (`gtk4` pkg-config), GLib 2.76+ | Current LTS distros |
 | Module name | `gtk4` everywhere (`config.m4`, `zend_module_entry`, `gtk4.ini`) | php-gtk3 lesson: the names must agree |
-| PHP versions | **8.4+ only** (Makefile and `main.cpp` refuse older) | One Zend ABI to care about; lets stubs/tests use 8.4 syntax (property hooks, `#[\Deprecated]`, `new X()->m()`, typed constants) |
+| PHP versions | **8.4+ only** (`config.m4` and `src/php_gtk4.h` refuse older) | One Zend ABI to care about; lets stubs/tests use 8.4 syntax (property hooks, `#[\Deprecated]`, `new X()->m()`, typed constants) |
 | Class naming | `Gtk4\` namespace + GType name (`Gtk4\GtkButton`, `Gtk4\GdkTexture`) | Generic C→PHP wrapping by `g_type_name()`; namespace lets gtk3 and gtk4 be installed side by side (using both in one process is still impossible — identical libgtk C symbols) |
 | Naming | **snake_case methods and properties, final** (`set_default_size`, `$win->default_width`, `notify::title`) — decided 2026-08-25 | 1:1 with the C API and docs.gtk.org; same choice as PyGObject, gjs, gtk-rs, Vala; trivial for the generator (strip the type prefix, no camelCase exceptions); PHP's own function library is snake_case. **No camelCase aliases** — one spelling. PSR-1 camelCaps is a userland-class convention; the phpcs exclusion is deliberate. |
 | Code generation | **Generated** wrapper skeletons from GObject-Introspection (`Gtk-4.0.gir`), hand-written runtime core | php-gtk3 hand-wrote 260 classes + a 5000-line `get_module()`; GTK4 ships complete GIR |
@@ -22,19 +22,21 @@ fragile, or GTK3-specific.
 ```text
 PHP script
   │
-PHP-CPP
+Zend engine        arginfo + class tables generated from src/gtk4.stub.php (gen/gen_stub.php)
   │
-main.cpp            get_module(): calls generated registrar per namespace (G, Gio, Gdk, Gsk, Gtk, Pango)
+src/gtk4.cpp       MINIT: register_class()/register_enum()/register_boxed()/register_fundamental()
+  │                parents first; RINIT enums_verify(); RSHUTDOWN teardown/phpvalue/exception state
+src/Gtk|Gdk|Gio|Cairo/   one .cpp per class: ZEND_METHODs (hand-written today, generated in milestone 3)
   │
-gen/ output         src/gen/<Ns>/<Type>.{h,cpp}  — one class per GType, method bodies generated
-  │
-src/core/           hand-written runtime (the real work):
-                      wrap.{h,cpp}      PHP object <-> GObject* mapping, refcounting, identity
-                      marshal.{h,cpp}   GValue <-> zval (complete, both directions)
-                      gsignal.{h,cpp}   GClosure-based signal connection, PHP callable invocation
-                      callback.{h,cpp}  one abstraction for every C callback entry point (timeouts, funcs, closures)
-                      error.{h,cpp}     the exception boundary + Gtk::set_exception_handler
-                      params.{h,cpp}    parameter validation helpers
+src/core/          hand-written runtime (the real work):
+                     object       PHP handle <-> GObject* (owned ref, qdata identity, weak ref,
+                                  property handlers, GType -> class registry, wrap()/unwrap())
+                     marshal      GValue <-> zval (all fundamentals, enums/flags, boxed, variant)
+                     gsignal      GClosure-based connect()/emit(), PHP callable invocation
+                     callback     non-signal C callbacks (sources, draw/filter/sort funcs), deferred release
+                     error        the exception boundary + Gtk::set_exception_handler / ExceptionMode
+                     boxed, fundamental, enums, collections, variant, gerror, phpvalue, paramspec,
+                     teardown (RSHUTDOWN), mainloop (Rethrow support)
   │
 GTK4 / GLib C API
 ```
@@ -130,6 +132,73 @@ GTK4 / GLib C API
   properties as virtual PHP properties (`$win->title` ↔ `get/set_property('title')`), `never`/union
   return types from GIR nullability.
 
+### Rollout: map-driven generation, drafts, hand-finishing (decided 2026-08-26)
+
+The generator does **not** emit all of Gtk/Gdk/Gio (≈ 500 classes, 7 000 methods) in one go. The
+port target is `docs/GTK3-MAP.md`: the ≈ 77 classes php-gtk3 users actually need (❌ rows) plus
+their GTK 4 replacements, in the map's "Recommended port order". The generator is run *per wave*
+on an allow-list taken from that map, its output is reviewed as a draft, and what the project
+requires beyond the mechanical translation is hand-written. Reviewed and adopted because:
+
+- it validates the generator on a realistic subset before it touches 500 classes (the 27
+  hand-written classes are wave 0: regenerate them, the existing suite must stay green);
+- a human reads every generated class once, which is the only way to catch convention mistakes
+  early (a wrong template is a wrong template 7 000 times);
+- the definition of done (tests, example, docs) stays feasible per wave (10–15 classes).
+
+Rules that make "draft then hand-write" work without losing regenerability:
+
+1. **Allow-list + transitive closure.** `allowlist.txt` (in `gen/`, planned) names the classes/enums of the wave.
+   The generator adds what they need: parent classes, implemented interfaces, and every type
+   that appears in a kept signature (parameters, returns, properties, signal arguments). Methods
+   whose types fall outside the closure are *skipped* and listed in `report.md` (in `gen/`), never
+   emitted with a `mixed`/unbound placeholder. The allow-list selects **classes**; for a selected
+   class the whole GTK 4 method set is generated (not php-gtk3's subset — GTK 4 is the API).
+2. **Generated files are owned by the generator.** They carry a `// GENERATED by gen/gir.php -
+   do not edit` header and `./ci.sh --only=stubs` (later `--only=gen`) fails when a fresh run
+   differs. "Hand-writing what's needed" happens in exactly three places:
+   - `gen/overrides/<Type>.<method>.cpp` — replaces one generated method body (callbacks with
+     non-standard scopes, argv handling, anything with a `G_TYPE_POINTER`);
+   - `skip.txt` — `<Type>.<method>` entries the binding deliberately does not expose
+     (deprecated-in-4.10 ballast, `*_get_type`, vfunc plumbing), with a reason per line;
+   - `handwritten.txt` — a class listed here is **promoted to hand-written**: the generator
+     stops emitting it and `src/<Ns>/<Type>.cpp` + its stub section are owned by hand from then
+     on. This is the "use the draft" path: generate, review, promote when the class needs more
+     than overrides can express (`GtkListItemFactory`, `GtkBuilder` scope, future PHP subclassing).
+     Promotion is one-way and rare; a promoted class is no longer updated on GTK upgrades.
+3. **Stub sections per namespace, one MINIT block.** Generated stub text lives in
+   `src/gen/<Ns>.stub.php`, hand-written classes stay in `src/gtk4.stub.php`; `gen_stub.php` gets
+   the concatenation. The MINIT block is generated for *all* registered classes (generated and
+   promoted) so parent-first order is never maintained by hand again.
+4. **Version policy.** Emit API with GIR `version ≤ 4.14` (the CI floor) unconditionally; anything
+   newer is wrapped in `GTK_CHECK_VERSION` *and* marked `@since 4.16` in the stub, or skipped if
+   the wave does not need it. `deprecated` → `#[\Deprecated(since:, message:)]` in the stub and
+   `E_DEPRECATED` in the body; classes deprecated in 4.10 that the map marks "(dep. 4.10 →
+   X)" are skipped in favour of X.
+5. **Definition of done per wave** (CLAUDE.md, adapted for generated code): generated methods are
+   covered by the generic suites (`EveryClassTest`, `RobustnessTest`, `StubsTest`, `ExampleTest`)
+   plus one generated smoke test per class (constructor + every arg-less getter, property
+   round-trips); every **override** and every **promoted** class gets hand-written tests like
+   today; every class gets its `examples/<Class>.php`; `docs/GTK3-MAP.md`'s status column is
+   regenerated from the stub. A wave is merged only with `./ci.sh --with=asan,coverage,valgrind`
+   green.
+
+Waves (from the map's port order; each = allow-list → generate → review → overrides/tests/
+examples → CI → commit):
+
+| wave | allow-list (❌ rows of docs/GTK3-MAP.md) | new runtime needs |
+| --- | --- | --- |
+| 0 | the 27 existing classes, regenerated; suite unchanged | override + promote mechanism, `report.md` (in `gen/`) |
+| 1 | layout: `GtkScrolledWindow`, `GtkGrid`, `GtkPaned`, `GtkFrame`, `GtkStack`(+Switcher/Sidebar), `GtkNotebook`, `GtkOverlay`, `GtkRevealer`, `GtkFixed`, `GtkSeparator`, `GtkSizeGroup`, `GtkWidget` margins | — |
+| 2 | controls: `GtkEntry`/`GtkEditable`/`GtkEntryBuffer`, `GtkCheckButton`, `GtkToggleButton`, `GtkSpinButton`, `GtkScale`, `GtkAdjustment`, `GtkProgressBar`, `GtkImage`, `GtkSpinner`, `GtkCalendar` | `GtkEditable` interface methods once per interface |
+| 3 | event controllers: `GtkEventController*`, `GtkGestureClick/Drag`, `GdkEvent` family | `GdkEvent` on the fundamental registry; `GdkModifierType` flags |
+| 4 | menus/actions: `GMenu`, `GMenuItem`, `GtkPopoverMenu(Bar)`, `GtkMenuButton`, `GtkHeaderBar`, `GtkApplicationWindow`, accels | `GMenuModel` |
+| 5 | dialogs (4.10 async API): `GtkAlertDialog`, `GtkFileDialog`, `GtkColorDialog`, `GtkFontDialog`, `GtkAboutDialog`, `GtkFileFilter` | `GAsyncReadyCallback` scope (async) + `*_finish` → `GError` throws |
+| 6 | text: `GtkTextView`, `GtkTextBuffer`, `GtkTextIter` (boxed), `GtkTextMark/Tag/TagTable` | boxed with many methods (`GtkTextIter`) |
+| 7 | list models/views: `GtkStringList`, `GtkSingleSelection`, `GtkMultiSelection`, `GtkListView`, `GtkColumnView(+Column)`, `GtkSignalListItemFactory`, `GtkTreeListModel` | `GtkListItemFactory` promoted |
+| 8 | styling/builder/Gdk: `GtkCssProvider`, `GtkBuilder`, `GtkIconTheme`, `GdkDisplay`, `GdkMonitor`, `GdkSurface`, `GdkCursor`, `GdkClipboard` | `GtkBuilder` scope promoted |
+| later | printing, `GdkPixbuf*` (prefer `GdkTexture`), WebKitGTK 6 | — |
+
 ## 4. GTK4-specific surface
 
 - ✅ No `gtk_main`: `GtkApplication::run()` is the documented path (`activate` drives
@@ -150,32 +219,34 @@ GTK4 / GLib C API
 
 ```text
 php-gtk4/
-  Makefile            PHP-CPP template, NAME=gtk4, -std=c++17, pkg-config gtk4 (+ optional webkitgtk-6.0)
-  main.cpp / main.h   get_module(): constants, ini directives, then register_G(), register_Gio()…
-  version.cpp         build info constants (copy php-gtk3's approach: FORCE-rebuilt TU)
+  VERSION             single source of the version (mirrored into php_gtk4.h / the stub by ci.sh)
+  config.m4           phpize build: PHP >= 8.4, NTS only, gtk4 >= 4.14 + cairo-gobject, variants
+                      --enable-gtk4-sanitize / -coverage / -webkit, build info baked into config.h
+  ci.sh, buildall.sh  the pipeline (see CLAUDE.md) and build+install for the enabled PHP versions
+  bin/php-gtk4        launcher that filters php-gtk3 out of the ini scan dir
+  src/gtk4.cpp        module entry, MINIT registration block, RINIT/RSHUTDOWN
+  src/gtk4.stub.php   the API declaration -> src/gtk4_arginfo.h (generated, committed)
   src/core/           hand-written runtime (§2)
-  src/gen/            generated wrappers (committed, but regenerable)
-  gen/                generator + overrides
-  stubs/              generated PHP stubs
-  tests/              PHPUnit-free plain PHP scripts with asserts, run under xvfb-run (see §6)
-  examples/
-  docs/
+  src/Gtk|Gdk|Gio|Cairo/  one .cpp per class (generated ones move under src/gen/ in milestone 3)
+  gen/                gen_stub.php (vendored), ide-stub.php, method-comments.php; the GIR generator + overrides
+  stubs/gtk4.php      generated IDE stub
+  tests/              PHPUnit 12 suite, tests/phpt (run-tests.php), tests/scripts (stress, shutdown)
+  examples/           demo.php + bootstrap.php + one <Class>.php page per registered class
+  docs/               PLAN, TODO, GTK3-MAP, RELEASING
   gtk4.ini
 ```
 
-Fix php-gtk3's Makefile pain points: real source prerequisites on object rules (`.d` files via
-`-MMD`), version-tagged build dirs (`build/php8.3/`), `PHPCPP_STATIC` pairing check that fails
-early when `php-config` differs from the one PHP-CPP was built with.
-
 ## 6. Testing
 
-Status 2026-08-25: PHPUnit 12 suite (`tests/*Test.php`, one class per core module + `ExtensionTest`,
-`MainLoopTest`, `StubsTest`, `ExampleTest`, `EveryClassTest`), `tests/scripts/stress.php` for the
-sanitizer/coverage runs, all driven by `ci.sh` (stages `cpp-lint php-qa build load test`, opt-in
-`asan coverage`) and mirrored by the GitHub workflows.
+Status 2026-08-26: PHPUnit 12 suite (`tests/*Test.php`, one class per core module and per GTK
+class, plus the generic `ExtensionTest`, `StubsTest`, `ExampleTest`, `EveryClassTest`,
+`RobustnessTest`, `DocsTest`), `tests/phpt` under php-src's `run-tests.php`,
+`tests/scripts/stress.php` + `shutdown.php` for the sanitizer/valgrind/coverage runs, all driven by
+`ci.sh` (stages `version stubs cpp-lint md-lint php-qa build load test phpt`, opt-in
+`asan coverage valgrind`) and mirrored by the GitHub workflows.
 
-- `tests/run.sh`: runs every `tests/*.php` under `xvfb-run -a php -n -dextension=./gtk4.so`,
-  non-zero exit on any assert failure. (php-gtk3 had none; `-n` is mandatory to avoid double-loading.)
+- `tests/run.sh`: `xvfb-run -a bin/php-gtk4 vendor/bin/phpunit` with `GDK_BACKEND=x11`,
+  `GSK_RENDERER=cairo`, `GDK_DEBUG=gl-disable`, `XDEBUG_MODE=off` (php-gtk3 had no tests at all).
 - Minimum suites: object identity & refcount (`===`, weak-ref after destroy), signal marshalling of
   every fundamental type (use `GObject::signal_new`-style test objects or `notify::` on real
   properties), exception boundary (handler called, app survives, rethrow mode), callback teardown
@@ -183,7 +254,7 @@ sanitizer/coverage runs, all driven by `ci.sh` (stages `cpp-lint php-qa build lo
   fundamental.
 - CI: PHP {8.4, 8.5} on Ubuntu 24.04 (GTK 4.14 floor), plus a
   sanitizer job (ASan+UBSan on the suite, LSan on the `php -n` stress run) and a gcov coverage job
-  (gcovr HTML artifact); C++ lint on both Ubuntus, PHP QA (phplint/phpcs/php-cs-fixer/phpstan max).
+  (gcovr HTML artifact); C++ lint, PHP QA (phplint/phpcs/php-cs-fixer/phpstan max).
 
 ### Milestone 2b — generator prerequisites (2026-08-26)
 
@@ -251,11 +322,12 @@ load (verified with valgrind: write into a freed block inside libgtk, no php-gtk
 - `EveryClassTest` is the generic "instantiate every class, call every getter" smoke test — it must
   never need editing when classes are added; the generator's output is covered by it automatically.
 - Tests never run under xdebug (`XDEBUG_MODE=off` in `tests/run.sh`): its develop-mode observer
-  segfaults after `ReflectionMethod::invoke()` on PHP-CPP methods.
+  segfaults after `ReflectionMethod::invoke()` on internal methods.
 
 ## 7. Milestones
 
-1. ✅ **Skeleton** — Makefile, `main.cpp`, `gtk4.ini`, `Gtk::init()`/`main()`, `GtkWindow` (done, plus
+1. ✅ **Skeleton** — first build (then PHP-CPP, replaced by phpize in milestone 2), `gtk4.ini`,
+   `Gtk::init()`, `GtkWindow` (done, plus
    the complete CI/QA/test infrastructure: `ci.sh`, three workflows with matrices, sanitizer and
    coverage jobs, stubs, badges). `GtkApplication`/`GtkButton` moved to milestone 2/3.
 2. ✅ **Core runtime** — done and tested (2026-08-26): objects (owned ref with `attach`/`attach_new`

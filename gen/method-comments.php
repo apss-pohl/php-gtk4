@@ -105,7 +105,11 @@ foreach ($files as $file) {
             $block = [];
             if ($info !== null) {
                 $block[] = '/**';
-                $block[] = ' * ' . $info['sig'];
+                // Wrapped like the description below: a long signature (an enum
+                // parameter default is enough) would otherwise break clang-format.
+                foreach ($wrapText($info['sig'], 96) as $l) {
+                    $block[] = ' * ' . $l;
+                }
                 if ($info['doc'] !== '') {
                     $block[] = ' *';
                     foreach ($wrapText($info['doc'], 96) as $l) {

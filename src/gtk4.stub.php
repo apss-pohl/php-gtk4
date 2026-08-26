@@ -619,6 +619,8 @@ final class GdkRectangle
  * @property ?string $name
  * @property GtkAlign $halign
  * @property GtkAlign $valign
+ * @property bool $hexpand
+ * @property bool $vexpand
  * @property int $margin_start
  * @property int $margin_end
  * @property int $margin_top
@@ -710,6 +712,15 @@ abstract class GtkWidget extends GObject
 
     public function get_valign(): GtkAlign {}
 
+    /** Whether the widget takes the horizontal space its parent has spare. */
+    public function set_hexpand(bool $expand): void {}
+
+    public function get_hexpand(): bool {}
+
+    public function set_vexpand(bool $expand): void {}
+
+    public function get_vexpand(): bool {}
+
     /** Queue a redraw of the widget. */
     public function queue_draw(): void {}
 }
@@ -735,6 +746,87 @@ class GtkButton extends GtkWidget
     public function set_child(?GtkWidget $child): void {}
 
     public function get_child(): ?GtkWidget {}
+}
+
+/**
+ * The layout container: children in a row or a column.
+ *
+ * GTK 4 has no GtkContainer - a window or a button holds exactly one child, and
+ * this is what holds several. `pack_start`/`pack_end` are gone; children are
+ * appended, prepended or inserted after a sibling, and where the spare space goes
+ * is the child's own {@see GtkWidget::set_hexpand()} / `set_vexpand()`.
+ *
+ * ```php
+ * $row = new GtkBox(GtkOrientation::Horizontal, 6);
+ * $row->append(new GtkLabel('left'));
+ * $row->append(new GtkButton('right'));
+ * $window->set_child($row);
+ * ```
+ *
+ * @property int $spacing
+ * @property bool $homogeneous
+ * @property GtkOrientation $orientation
+ *
+ * @link https://docs.gtk.org/gtk4/class.Box.html
+ * @not-serializable
+ */
+class GtkBox extends GtkWidget
+{
+    public function __construct(
+        GtkOrientation $orientation = GtkOrientation::Horizontal,
+        int $spacing = 0,
+    ) {}
+
+    /**
+     * Add $child at the end.
+     *
+     * @throws \ValueError If $child already has a parent - GTK inserts, it never reparents
+     */
+    public function append(GtkWidget $child): void {}
+
+    /**
+     * Add $child at the start.
+     *
+     * @throws \ValueError If $child already has a parent
+     */
+    public function prepend(GtkWidget $child): void {}
+
+    /**
+     * Insert $child directly after $sibling, or at the start when $sibling is null.
+     *
+     * To move a child that is already in this box, {@see remove()} it first.
+     *
+     * @throws \ValueError If $child already has a parent, or $sibling is not a child of this box
+     */
+    public function insert_child_after(GtkWidget $child, ?GtkWidget $sibling): void {}
+
+    /**
+     * Remove a child.
+     *
+     * @throws \ValueError If $child is not a child of this box
+     */
+    public function remove(GtkWidget $child): void {}
+
+    /** Pixels between children. */
+    public function set_spacing(int $spacing): void {}
+
+    public function get_spacing(): int {}
+
+    /** Whether every child gets the same amount of space. */
+    public function set_homogeneous(bool $homogeneous): void {}
+
+    public function get_homogeneous(): bool {}
+
+    public function set_orientation(GtkOrientation $orientation): void {}
+
+    public function get_orientation(): GtkOrientation {}
+
+    /**
+     * This box's children, in order.
+     *
+     * @return list<GtkWidget>
+     */
+    public function get_children(): array {}
 }
 
 /**

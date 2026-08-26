@@ -115,8 +115,12 @@ is rewrapped by hand. The stage prefers a global `markdownlint-cli2` and falls b
 
 ## PHP QA
 
-`php-qa` = phplint → phpcs (PSR-12) → php-cs-fixer check (PER-CS 2.0) → phpstan (level max) over
-`tests/`, `examples/`, `gen/ide-stub.php`. Every tool runs on all cores. The tools run with
+`php-qa` = phplint → phpcs (PSR-12) → php-cs-fixer (PER-CS 2.0) → phpstan (level max) over
+`tests/`, `examples/`, `gen/ide-stub.php`. Like `cpp-lint`, each formatter is **one** step that either
+checks or fixes: without `--fix` phpcs reports and php-cs-fixer prints a diff; with `--fix` phpcbf and
+`php-cs-fixer fix` apply the changes and no diff is printed. phpcs still gates in `--fix` mode, because
+it is the only one that reports what no fixer can repair (line length above 120). Every tool runs on
+all cores. The tools run with
 gtk3/gtk4 filtered out of the ini scan dir, so PHPStan resolves `Gtk4\*` from the generated
 `stubs/gtk4.php` only — a stub with wrong types fails PHPStan on the tests that use it. Generated
 `stubs/gtk4.php`, the php-src-syntax `src/gtk4.stub.php` and vendored `gen/gen_stub.php` are
@@ -133,12 +137,20 @@ Every new class, method or constant ships with **all four** in the same change:
 3. its declaration in **`src/gtk4.stub.php`** (typed signature, docblock, `@property` tags) +
    regenerated `src/gtk4_arginfo.h` and `stubs/gtk4.php` (`./ci.sh --only=stubs --fix`;
    `StubsTest`/CI enforce),
-4. **`examples/<Class>.php`** — the examples are atomic, one runnable file per registered class,
-   named after it and requiring `examples/bootstrap.php` for the shared harness. Make it *visual*:
-   the file opens a window that shows what the class does (a markup `GtkLabel` or a cairo
-   `GtkDrawingArea`, often inside a `GtkButton` so clicking advances the demo) rather than printing
-   about it. `ExampleTest` fails if a registered class has no file, and `examples/README.md` indexes
-   them.
+4. **`examples/<Class>.php`** — one source file per registered class, named after it, ending in
+   `return Demo::page('<Class>', '<summary>', function (GtkWindow $win, GtkApplication $app) {...})`
+   and requiring `examples/bootstrap.php` (with `require_once`). The file *describes* a demo and runs
+   nothing — `examples/demo.php` requires them all, so anything that ran itself would fire on import.
+   That one application mounts every page (header, sidebar, content — all `GtkBox`); `demo.php
+   <Class>` shows one on its own. Also add the class to `Demo::SECTIONS` in `examples/bootstrap.php`
+   or it is unreachable in the sidebar. Make it *visual*: open a window that shows what the class does
+   (a markup `GtkLabel` or a cairo `GtkDrawingArea`, often inside a `GtkButton` so clicking advances
+   the demo) rather than printing about it, and use `Demo::status()` rather than `set_title()` for
+   incidental state. **The `$win` a page is handed is the application's own window** when `demo.php`
+   mounts it: read it, but never veto its `close-request`, make it modal, or destroy it — a page that
+   did made the application unclosable. A page that needs a window to play with creates one
+   (`GtkWindow.php`, `GParamSpec.php`). `ExampleTest` enforces all of this; `examples/README.md`
+   indexes them.
 
 ## Tests
 
@@ -163,8 +175,10 @@ display, and calls `Gtk::init()` once.
 
 - One test class per `src/core` module: `WrapTest`, `MarshalTest`, `SignalTest`, `ErrorTest`,
   `PropertyAccessTest`, `RethrowModeTest`, `BoxedTest`, `ParamSpecTest`, `WidgetTest`, `ActionTest`
-  (variants + interfaces), `ShutdownTest`, plus `ExtensionTest`, `MainLoopTest` (GMainLoop + GLib
-  sources), `ApplicationTest`, `StubsTest`, `ExampleTest`, `EveryClassTest`. Extend `GtkTestCase`
+  (variants + interfaces), `ShutdownTest`, `EnumTest`, `FoundationTest` (collections/fundamental/
+  out-params), `TextureTest` (+ `GError`), `ListStoreTest`, `FilterSortTest`, `DrawingAreaTest`
+  (+ `CairoContext`), `BoxTest`, plus `ExtensionTest`, `MainLoopTest` (GMainLoop + GLib sources),
+  `ApplicationTest`, `StubsTest`, `ExampleTest`, `EveryClassTest`, `RobustnessTest`, `DocsTest`. Extend `GtkTestCase`
   — `$this->window()` gives a `GtkWindow` destroyed in
   `tearDown()`, `captureHandlerException()` installs a temporary `Gtk::set_exception_handler`,
   `latch()`/`latched()` for flags set from GTK callbacks, `opaque()` to pass deliberately wrong
@@ -174,7 +188,9 @@ display, and calls `Gtk::init()` once.
 - `EveryClassTest` constructs every instantiable class and calls every arg-less `get_*/is_*/has_*`
   — generic on purpose, never edit it for a new class.
 - `ExampleTest` checks that every registered class has its own `examples/<Class>.php`, that the file
-  mentions the class outside its imports, that it requires the shared harness, and lints all of them.
+  mentions the class outside its imports, requires the shared harness, returns a page and never runs
+  itself, that the page set and the registered-class set are identical, that `Demo::SECTIONS` lists
+  every class exactly once, and lints every file in `examples/`.
 - `MarshalTest` uses real `GtkWindow` properties per fundamental type (`title` string,
   `default-width` int, `resizable` bool, `opacity` double, `halign` enum, `display` object,
   `css-classes` = unsupported GStrv). Add a row when the marshaller learns a type.
@@ -189,6 +205,12 @@ display, and calls `Gtk::init()` once.
   libgtk, zero frames of ours). Xvfb/X11 is the test target; Wayland is exercised manually.
 - `tests/run.sh` forces `XDEBUG_MODE=off`: xdebug's develop-mode observer segfaults at request
   shutdown after `ReflectionMethod::invoke()` on internal methods. Not our bug; don't debug it.
+- It also forces `GDK_BACKEND=x11` and unsets `WAYLAND_DISPLAY` — **forced, not defaulted**. A
+  desktop session exports `GDK_BACKEND=wayland`, GDK then prefers the real compositor over the
+  display Xvfb provides, and GTK 4.14's Wayland backend corrupts the heap partway through the suite
+  (`gtk_widget_queue_draw: assertion 'GTK_IS_WIDGET (widget)' failed`, then a `malloc()` abort around
+  test 252). CI never saw it because runners have no compositor. `GSK_RENDERER` and `GDK_DEBUG` stay
+  overridable on purpose (docs/PLAN.md wants a `GSK_RENDERER=gl` run); the backend must not be.
 - Arginfo comes from the stub, argument parsing from `ZEND_PARSE_PARAMETERS_*` — arity/type
   violations are `ArgumentCountError`/`TypeError` (PHP 8 semantics).
 - GLib `CRITICAL` lines on stderr from `ErrorTest` are expected (the g_critical fallback path for
@@ -248,8 +270,10 @@ conventions here only.
   `Gtk::set_exception_handler`, else `g_critical`), `boxed` (value-type handles: owned
   `g_boxed_copy`, clone/compare by value, fields as properties via per-class reader/writer;
   `GdkRGBA`, `GdkRectangle`; `GStrv` ↔ `list<string>` is a value mapping), `variant` (`GVariant` ↔
-  PHP values, type-directed or inferred), `paramspec` (`GParamSpec` handle), `phpvalue` (GType
-  `PhpValue`: a GObject subclass carrying a zval so PHP data can sit in
+  PHP values, type-directed or inferred), `paramspec` (`GParamSpec` handle), `gerror`
+  (`throw_gerror()` for `GError **` APIs,
+  `GError` values → `Gtk4\GError` exceptions), `cairo` (`CairoContext` registration),
+  `phpvalue` (GType `PhpValue`: a GObject subclass carrying a zval so PHP data can sit in
   `GListStore`; instances drained in RSHUTDOWN), `collections` (`GList`/`GSList`/`GPtrArray`/`char**`
   → PHP lists with GIR transfer semantics),
   `fundamental` (registry-driven handles for refcounted non-GObject types: `GParamSpec`,

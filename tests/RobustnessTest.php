@@ -18,6 +18,38 @@ use ReflectionNamedType;
  */
 final class RobustnessTest extends GtkTestCase
 {
+    private string $cwd = '';
+    private string $scratch = '';
+
+    /**
+     * Methods that write files get garbage paths too, and coercive mode turns
+     * -1 / 3.5 / true / 'garbage' into perfectly good relative ones - so
+     * GdkTexture::save_to_png() really did write those four files into the
+     * repository root. Run the sweep from a scratch directory instead.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->cwd = (string) getcwd();
+        $this->scratch = sys_get_temp_dir() . '/php-gtk4-robustness-' . getmypid();
+        if (!is_dir($this->scratch) && !mkdir($this->scratch, 0o700, true) && !is_dir($this->scratch)) {
+            self::fail('cannot create ' . $this->scratch);
+        }
+        chdir($this->scratch);
+    }
+
+    protected function tearDown(): void
+    {
+        chdir($this->cwd);
+        foreach (glob($this->scratch . '/*') ?: [] as $stray) {
+            if (is_file($stray)) {
+                unlink($stray);
+            }
+        }
+        @rmdir($this->scratch);
+        parent::tearDown();
+    }
+
     /** @return iterable<string, array{class-string, string}> */
     public static function methods(): iterable
     {

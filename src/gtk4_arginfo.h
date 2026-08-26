@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c3b5c78d191e0193acad367812c5483d5c18362d */
+ * Stub hash: a2dd49a175b88d749392a4dcc2647ebf427454ff */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GObject_connect, 0, 2, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, signal, IS_STRING, 0)
@@ -362,6 +362,16 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkWidget_get_valign arginfo_class_Gtk4_GtkWidget_get_halign
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWidget_set_hexpand, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, expand, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkWidget_get_hexpand arginfo_class_Gtk4_GParamSpec_is_readable
+
+#define arginfo_class_Gtk4_GtkWidget_set_vexpand arginfo_class_Gtk4_GtkWidget_set_hexpand
+
+#define arginfo_class_Gtk4_GtkWidget_get_vexpand arginfo_class_Gtk4_GParamSpec_is_readable
+
 #define arginfo_class_Gtk4_GtkWidget_queue_draw arginfo_class_Gtk4_GMainLoop_run
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkButton___construct, 0, 0, 0)
@@ -379,6 +389,45 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkButton_set_child, 
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkButton_get_child arginfo_class_Gtk4_GtkWidget_get_parent
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkBox___construct, 0, 0, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, orientation, Gtk4\\GtkOrientation, 0, "Gtk4\\GtkOrientation::Horizontal")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, spacing, IS_LONG, 0, "0")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkBox_append, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, child, Gtk4\\GtkWidget, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkBox_prepend arginfo_class_Gtk4_GtkBox_append
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkBox_insert_child_after, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, child, Gtk4\\GtkWidget, 0)
+	ZEND_ARG_OBJ_INFO(0, sibling, Gtk4\\GtkWidget, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkBox_remove arginfo_class_Gtk4_GtkBox_append
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkBox_set_spacing, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, spacing, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkBox_get_spacing arginfo_class_Gtk4_GParamSpec_get_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkBox_set_homogeneous, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, homogeneous, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkBox_get_homogeneous arginfo_class_Gtk4_GParamSpec_is_readable
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkBox_set_orientation, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, orientation, Gtk4\\GtkOrientation, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkBox_get_orientation, 0, 0, Gtk4\\GtkOrientation, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkBox_get_children arginfo_class_Gtk4_GActionGroup_list_actions
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkLabel___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, text, IS_STRING, 1, "null")
@@ -710,12 +759,28 @@ ZEND_METHOD(Gtk4_GtkWidget, set_halign);
 ZEND_METHOD(Gtk4_GtkWidget, get_halign);
 ZEND_METHOD(Gtk4_GtkWidget, set_valign);
 ZEND_METHOD(Gtk4_GtkWidget, get_valign);
+ZEND_METHOD(Gtk4_GtkWidget, set_hexpand);
+ZEND_METHOD(Gtk4_GtkWidget, get_hexpand);
+ZEND_METHOD(Gtk4_GtkWidget, set_vexpand);
+ZEND_METHOD(Gtk4_GtkWidget, get_vexpand);
 ZEND_METHOD(Gtk4_GtkWidget, queue_draw);
 ZEND_METHOD(Gtk4_GtkButton, __construct);
 ZEND_METHOD(Gtk4_GtkButton, set_label);
 ZEND_METHOD(Gtk4_GtkButton, get_label);
 ZEND_METHOD(Gtk4_GtkButton, set_child);
 ZEND_METHOD(Gtk4_GtkButton, get_child);
+ZEND_METHOD(Gtk4_GtkBox, __construct);
+ZEND_METHOD(Gtk4_GtkBox, append);
+ZEND_METHOD(Gtk4_GtkBox, prepend);
+ZEND_METHOD(Gtk4_GtkBox, insert_child_after);
+ZEND_METHOD(Gtk4_GtkBox, remove);
+ZEND_METHOD(Gtk4_GtkBox, set_spacing);
+ZEND_METHOD(Gtk4_GtkBox, get_spacing);
+ZEND_METHOD(Gtk4_GtkBox, set_homogeneous);
+ZEND_METHOD(Gtk4_GtkBox, get_homogeneous);
+ZEND_METHOD(Gtk4_GtkBox, set_orientation);
+ZEND_METHOD(Gtk4_GtkBox, get_orientation);
+ZEND_METHOD(Gtk4_GtkBox, get_children);
 ZEND_METHOD(Gtk4_GtkLabel, __construct);
 ZEND_METHOD(Gtk4_GtkLabel, set_text);
 ZEND_METHOD(Gtk4_GtkLabel, get_text);
@@ -971,6 +1036,10 @@ static const zend_function_entry class_Gtk4_GtkWidget_methods[] = {
 	ZEND_ME(Gtk4_GtkWidget, get_halign, arginfo_class_Gtk4_GtkWidget_get_halign, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, set_valign, arginfo_class_Gtk4_GtkWidget_set_valign, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, get_valign, arginfo_class_Gtk4_GtkWidget_get_valign, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkWidget, set_hexpand, arginfo_class_Gtk4_GtkWidget_set_hexpand, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkWidget, get_hexpand, arginfo_class_Gtk4_GtkWidget_get_hexpand, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkWidget, set_vexpand, arginfo_class_Gtk4_GtkWidget_set_vexpand, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkWidget, get_vexpand, arginfo_class_Gtk4_GtkWidget_get_vexpand, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, queue_draw, arginfo_class_Gtk4_GtkWidget_queue_draw, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
@@ -981,6 +1050,22 @@ static const zend_function_entry class_Gtk4_GtkButton_methods[] = {
 	ZEND_ME(Gtk4_GtkButton, get_label, arginfo_class_Gtk4_GtkButton_get_label, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkButton, set_child, arginfo_class_Gtk4_GtkButton_set_child, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkButton, get_child, arginfo_class_Gtk4_GtkButton_get_child, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkBox_methods[] = {
+	ZEND_ME(Gtk4_GtkBox, __construct, arginfo_class_Gtk4_GtkBox___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkBox, append, arginfo_class_Gtk4_GtkBox_append, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkBox, prepend, arginfo_class_Gtk4_GtkBox_prepend, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkBox, insert_child_after, arginfo_class_Gtk4_GtkBox_insert_child_after, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkBox, remove, arginfo_class_Gtk4_GtkBox_remove, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkBox, set_spacing, arginfo_class_Gtk4_GtkBox_set_spacing, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkBox, get_spacing, arginfo_class_Gtk4_GtkBox_get_spacing, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkBox, set_homogeneous, arginfo_class_Gtk4_GtkBox_set_homogeneous, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkBox, get_homogeneous, arginfo_class_Gtk4_GtkBox_get_homogeneous, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkBox, set_orientation, arginfo_class_Gtk4_GtkBox_set_orientation, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkBox, get_orientation, arginfo_class_Gtk4_GtkBox_get_orientation, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkBox, get_children, arginfo_class_Gtk4_GtkBox_get_children, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -1467,6 +1552,16 @@ static zend_class_entry *register_class_Gtk4_GtkButton(zend_class_entry *class_e
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkButton", class_Gtk4_GtkButton_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkWidget, ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkBox(zend_class_entry *class_entry_Gtk4_GtkWidget)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkBox", class_Gtk4_GtkBox_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkWidget, ZEND_ACC_NOT_SERIALIZABLE);
 
 	return class_entry;

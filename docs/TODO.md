@@ -102,21 +102,38 @@ GTK4 GIR only).
       Pure generator output (milestone 3).
 - [ ] **List models** — `GListModel` interface, `GtkStringList`, `GListStore`, selection models,
       `GtkListView`/`GtkColumnView`/`GtkGridView`, `GtkSignalListItemFactory` (`setup`/`bind`),
-      `GtkListItem`. Core prework done 2026-08-26: `Gtk4\PhpValue` (GType `PhpValue`, a GObject
-      carrying a zval) + `GListModel` interface + `GListStore`. The views are generator output.
+      `GtkListItem`. Done 2026-08-26: `Gtk4\PhpValue` (GType `PhpValue`, a GObject carrying a zval),
+      `GListModel` interface, `GListStore`, `GtkFilterListModel`/`GtkCustomFilter`,
+      `GtkSortListModel`/`GtkCustomSorter`. Selection models and the views are generator wave 7.
 - [ ] **Drag and drop** — `GtkDragSource`, `GtkDropTarget`, `GdkContentProvider` (GValue payloads:
       boxed/variant support exists). Generator output.
 - [ ] **CSS** — `GtkCssProvider` + `gtk_style_context_add_provider_for_display`; custom properties.
       Two small classes.
-- [ ] **Concrete layouts** — `GtkBox`, `GtkGrid`, `GtkCenterBox`, `GtkStack`, `GtkPaned`,
-      `GtkScrolledWindow` (+ `GtkOrientable` interface). Generator output.
+- [ ] **Concrete layouts** — `GtkBox` ✅ (2026-08-26); `GtkGrid`, `GtkCenterBox`, `GtkStack`, `GtkPaned`,
+      `GtkScrolledWindow` (+ `GtkOrientable` interface) are generator wave 1.
 - [ ] **Custom `GtkLayoutManager` / GObject subclassing from PHP** — vfunc overriding; separate
       design, after milestone 4.
-- [ ] **Rendering from PHP** — `GtkSnapshot`, `GdkTexture`, `GdkPaintable`, `GtkDrawingArea::set_draw_func`
-      (cairo interop). Milestone 4.
+- [ ] **Rendering from PHP** — `GdkTexture` ✅ and `GtkDrawingArea::set_draw_func` + `CairoContext` ✅
+      (2026-08-26); `GtkSnapshot`, `GdkPaintable` open. Milestone 4.
 - [x] **GL renderer smoke test** — the test infrastructure forces `GSK_RENDERER=cairo` +
-      `GDK_DISABLE=gl` (Xvfb). Verified manually on a real Wayland session with an AMD GPU on
+      `GDK_DEBUG=gl-disable` (Xvfb). Verified manually on a real Wayland session with an AMD GPU on
       2026-08-26 (see PLAN.md §6 "GL"); repeat before a release, no automation possible on CI runners.
+
+## 8. Milestone 3 — generator rollout (decided 2026-08-26, see PLAN.md §3 "Rollout")
+
+Map-driven: generate only the classes in `docs/GTK3-MAP.md`, wave by wave, review each wave as a
+draft, hand-write via overrides / promotion where the project needs more.
+
+- [ ] **Prep** — commit milestone 2/2b; generic `tests/scripts/stress.php`; interface methods
+      emitted once per interface (refactor the three `GListModel` copies to that shape).
+- [ ] **`gir.php` in `gen/`** — GIR parser (Gtk/Gdk/Gio/GObject/GLib/Pango/Gsk), allow-list + transitive
+      closure, emitters (stub section, `.cpp` per class, MINIT block, `config.m4` list, smoke tests,
+      `report.md` (in `gen/`)), `overrides/` (under `gen/`), `skip.txt`, `handwritten.txt`, `GENERATED` header
+      + staleness check in `ci.sh`, version policy (≤ 4.14 unconditional, newer guarded).
+- [ ] **Wave 0** — regenerate the 27 existing classes; the current suite passes unchanged; the
+      hand-written trampolines become the first overrides.
+- [ ] **Waves 1–8** as listed in PLAN.md; each merged only with the full pipeline green and the
+      map's status column regenerated.
 
 ## 5. Keep (verified good, do not "clean up")
 

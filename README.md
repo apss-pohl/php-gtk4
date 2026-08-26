@@ -44,7 +44,8 @@ sudo make install                           # or: ./buildall.sh (builds + instal
 ./ci.sh                                     # stubs, cpp-lint, md-lint, php-qa, build, load, test, phpt
 ./ci.sh --only=test --filter SignalTest    # single stage / single test class; --fix applies all auto-fixes
 ./ci.sh --only=phpt                        # php-src run-tests.php over tests/phpt (stderr, fatals, RSHUTDOWN)
-bin/php-gtk4 examples/GtkButton.php       # one runnable example per class (examples/README.md)
+bin/php-gtk4 examples/demo.php            # the demo app: every class, one page at a time
+bin/php-gtk4 examples/GtkButton.php       # the same source, just that class (examples/README.md)
 ```
 
 After cloning: `composer install` and `git config core.hooksPath .githooks` (pre-commit = fast QA,

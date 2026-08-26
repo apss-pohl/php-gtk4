@@ -6,7 +6,8 @@
 using namespace phpgtk;
 
 /**
- * Gtk4\GSimpleAction::__construct(string $name, ?string $parameterType = null, mixed $state = null)
+ * Gtk4\GSimpleAction::__construct(string $name, ?string $parameterType = null, mixed $state =
+ * null)
  */
 ZEND_METHOD(Gtk4_GSimpleAction, __construct) {
   zend_string *name;

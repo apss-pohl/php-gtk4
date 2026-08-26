@@ -11,6 +11,9 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 - Native Zend API runtime (`GObject` handles with property access, `GValue`/`GVariant`/boxed
   marshalling, GClosure-based signals, `emit()`, exception boundary with `ExceptionMode`).
+- `GtkBox`, the first layout container: GTK 4 has no `GtkContainer`, so this is what lets a window
+  hold more than one widget. With `GtkWidget::set_hexpand()`/`set_vexpand()` it turns
+  `examples/demo.php` into a real application (header, sidebar, content) instead of a slideshow.
 - Classes: `GObject`, `GParamSpec`, `GtkWidget`, `GtkWindow`, `GtkButton`, `GtkLabel`,
   `GtkApplication`, `GMainLoop`, `GLib` (sources), `GSimpleAction` + `GAction`/`GActionMap`/
   `GActionGroup`, `GdkRGBA`, `GdkRectangle`, `Gtk`, `ExceptionMode`, `GError`, `GdkTexture`,

@@ -23,15 +23,19 @@ Generated 2026-08-26. Regenerate the *status* column from `src/gtk4.stub.php` wh
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 6 | — |
-| 🟡 partial | 8 | — |
+| ✅ implemented | 9 | — |
+| 🟡 partial | 9 | — |
 | ❌ to port (GTK 4 equivalent exists) | ~95 | ~1750 |
 | ⛔ removed in GTK 4 | ~35 | ~520 |
 | 🧩 out of scope / later milestone | ~14 | ~130 |
 
-php-gtk4 currently registers: `GObject`, `GParamSpec`, `Gtk`, `GLib`, `GMainLoop`, `GdkRGBA`,
-`GdkRectangle`, `GAction`, `GActionMap`, `GActionGroup`, `GSimpleAction`, `GtkApplication`,
-`GtkWidget`, `GtkButton`, `GtkLabel`, `GtkWindow`. Everything else in this document is open work.
+php-gtk4 currently registers (2026-08-26): `GObject`, `GParamSpec`, `Gtk`, `GLib`, `GMainLoop`,
+`GError`, `GdkRGBA`, `GdkRectangle`, `GdkTexture`, `GAction`, `GActionMap`, `GActionGroup`,
+`GSimpleAction`, `GListModel`, `GListStore`, `PhpValue`, `GtkApplication`, `GtkWidget`, `GtkBox`,
+`GtkButton`, `GtkLabel`, `GtkWindow`, `GtkDrawingArea`, `CairoContext`, `GtkFilter`,
+`GtkCustomFilter`, `GtkFilterListModel`, `GtkSorter`, `GtkCustomSorter`, `GtkSortListModel`, enums
+`GtkAlign`, `GtkOrientation`, `GtkFilterChange`, `GtkSorterChange`, `ExceptionMode`, flags
+`GApplicationFlags`. Everything else in this document is open work.
 
 ---
 
@@ -65,7 +69,7 @@ php-gtk4 currently registers: `GObject`, `GParamSpec`, `Gtk`, `GLib`, `GMainLoop
 | `GtkWidget` | 257 | `GtkWidget` | 🟡 | 26 methods bound (show/hide, visible, sensitive, size request, parent/root, focus, tooltip, name, CSS classes, `activate_action`, `queue_draw`). The other ~230 are GTK 3-only (`GdkEvent` unions, `size_allocate` w/ `GtkAllocation`, style properties, `gtk_widget_destroy`, DnD, `set_state_flags`, accel closures) or still to port (layout manager, `set_hexpand`/`vexpand`, `set_margin_*`, `set_halign`/`valign`, `insert_action_group`, `set_layout_manager`, `observe_children`). |
 | `GtkContainer` | 38 | — | ⛔ | **Removed in GTK 4.** Children are set per-widget (`set_child`) or via container-specific API (`GtkBox::append`, `GtkGrid::attach`). `set_child()` is already on `GtkWindow`/`GtkButton`. |
 | `GtkBin` | 2 | — | ⛔ | Removed; folded into `set_child`/`get_child`. |
-| `GtkBox` | 14 | `GtkBox` | ❌ | GTK 4 API: `append`, `prepend`, `insert_child_after`, `remove`, `set_spacing`, `set_homogeneous`. `pack_start`/`pack_end` are gone. |
+| `GtkBox` | 14 | `GtkBox` | ✅ | `append`, `prepend`, `insert_child_after`, `remove`, `set_spacing`, `set_homogeneous`, `set_orientation`, `get_children`. `pack_start`/`pack_end` are gone, and GTK inserts rather than reparents — move = `remove()` then insert. |
 | `GtkHBox` / `GtkVBox` | 1 + 1 | `GtkBox` w/ orientation | ⛔ | Removed in GTK 3.2 already; use `new GtkBox(Orientation::Horizontal)`. |
 | `GtkGrid` | 21 | `GtkGrid` | ❌ | Largely unchanged (`attach`, `attach_next_to`, `insert_row/column`). |
 | `GtkTable` | 15 | `GtkGrid` | ⛔ | Removed; port callers to `GtkGrid`. |
@@ -94,7 +98,7 @@ php-gtk4 currently registers: `GObject`, `GParamSpec`, `Gtk`, `GLib`, `GMainLoop
 | `GtkEventBox` | 5 | — | ⛔ | Removed; every `GtkWidget` takes event controllers now (`GtkGestureClick`, `GtkEventControllerMotion`). |
 | `GtkSizeGroup` | 6 | `GtkSizeGroup` | ❌ | |
 | `GtkSeparator` | 1 | `GtkSeparator` | ❌ | |
-| `GtkDrawingArea` | 1 | `GtkDrawingArea` | ❌ | `set_draw_func` replaces the `draw` signal; needs a cairo binding. |
+| `GtkDrawingArea` | 1 | `GtkDrawingArea` | ✅ | `set_draw_func` replaces the `draw` signal; needs a cairo binding. |
 | `GtkRequisition` | 1 | `GtkRequisition` | ⛔ | Superseded by `measure()` / `GtkRequisition` is boxed-only. |
 
 ## Widgets — controls
@@ -175,12 +179,12 @@ php-gtk4 currently registers: `GObject`, `GParamSpec`, `Gtk`, `GLib`, `GMainLoop
 | --- | ---: | --- | :---: | --- |
 | `GtkTreeView` | 38 | `GtkColumnView` / `GtkListView` | ❌ | `GtkTreeView` still exists in 4.x but is **deprecated since 4.10**. Recommendation: bind the list-model stack instead. |
 | `GtkTreeViewColumn` | 28 | `GtkColumnViewColumn` | ❌ | |
-| `GtkTreeModel` | 6 | `GListModel` | ❌ | |
-| `GtkListStore` | 25 | `GListStore` / `GtkStringList` | ❌ | |
+| `GtkTreeModel` | 6 | `GListModel` | ✅ | |
+| `GtkListStore` | 25 | `GListStore` / `GtkStringList` | 🟡 | |
 | `GtkTreeStore` | 17 | `GtkTreeListModel` | ❌ | |
 | `GtkTreeIter` | 1 | — | ⛔ | No iterator concept in `GListModel`. |
 | `GtkTreeSelection` | 20 | `GtkSelectionModel` (`GtkSingleSelection`, `GtkMultiSelection`) | ❌ | |
-| `GtkTreeSortable` | 4 | `GtkSortListModel` + `GtkSorter` | ❌ | |
+| `GtkTreeSortable` | 4 | `GtkSortListModel` + `GtkSorter` | ✅ | |
 | `GtkCellRenderer` (+ `Text`, `Toggle`, `Pixbuf`, `Combo`) | 3 + 2 + 7 + 1 + 1 | `GtkListItemFactory` (`GtkSignalListItemFactory`, `GtkBuilderListItemFactory`) | ⛔ | Cell renderers are deprecated in 4.10; the factory model replaces them. |
 
 ## Styling / builder / clipboard
@@ -239,9 +243,13 @@ php-gtk4 currently registers: `GObject`, `GParamSpec`, `Gtk`, `GLib`, `GMainLoop
 
 ## Recommended port order
 
-1. **Layout containers** — `GtkBox`, `GtkGrid`, `GtkPaned`, `GtkScrolledWindow`, `GtkFrame`,
-   plus the missing `GtkWidget` layout methods (`set_margin_*`, `set_hexpand`, `set_halign`).
-   Without these, an example window cannot grow past a single child.
+This order is the wave plan of docs/PLAN.md §3 "Rollout": each wave is an allow-list for the
+generator, reviewed as a draft, hand-finished through overrides/promotion, merged with CI green.
+
+1. **Layout containers** — `GtkBox` ✅ and `GtkWidget::set_hexpand`/`set_vexpand` ✅ are done (they
+   are what turned `examples/demo.php` into an application); `GtkScrolledWindow` is next and is what
+   the demo's sidebar needs, then `GtkGrid`, `GtkPaned`, `GtkFrame` and the remaining `GtkWidget`
+   layout methods (`set_margin_*`).
 2. **Controls** — `GtkEntry`/`GtkEditable`, `GtkCheckButton`, `GtkToggleButton`, `GtkSpinButton`,
    `GtkScale`, `GtkProgressBar`, `GtkImage`, `GtkSpinner`.
 3. **Event controllers** — `GtkEventControllerKey`, `GtkGestureClick`,
