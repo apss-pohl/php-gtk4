@@ -45,7 +45,12 @@ final class RobustnessTest extends GtkTestCase
             \Gtk4\GtkApplication::class => new \Gtk4\GtkApplication(null, 1 << 5),
             \Gtk4\GSimpleAction::class => new \Gtk4\GSimpleAction('a', 's'),
             \Gtk4\PhpValue::class => new \Gtk4\PhpValue('v'),
+            \Gtk4\GdkTexture::class => \Gtk4\GdkTexture::new_from_bytes(TestPng::red(2, 1)),
+            \Gtk4\GError::class => new \Gtk4\GError('x'),
             \Gtk4\GListStore::class => new \Gtk4\GListStore(),
+            \Gtk4\GtkFilter::class, \Gtk4\GtkCustomFilter::class => new \Gtk4\GtkCustomFilter(fn() => true),
+            \Gtk4\GtkSorter::class, \Gtk4\GtkCustomSorter::class => new \Gtk4\GtkCustomSorter(fn() => 0),
+            \Gtk4\GtkFilterListModel::class, \Gtk4\GtkSortListModel::class, \Gtk4\GtkDrawingArea::class => new $class(),
             \Gtk4\GtkWidget::class => new \Gtk4\GtkButton(),   // abstract: exercise through a subclass
             \Gtk4\GParamSpec::class => self::paramSpec(),
             \Gtk4\GdkRGBA::class, \Gtk4\GdkRectangle::class, \Gtk4\GMainLoop::class,
@@ -111,8 +116,8 @@ final class RobustnessTest extends GtkTestCase
                 $checks++;
                 try {
                     $call($args);
-                } catch (\TypeError | \ValueError | \Error) {
-                    // expected for garbage; a plain \Error covers "dead object"-style refusals
+                } catch (\Throwable) {
+                    // any exception is fine (TypeError, ValueError, GError, ...); a crash is not
                     continue;
                 }
                 // A garbage value that happens to be acceptable (e.g. null for ?T, true for bool)
@@ -154,6 +159,8 @@ final class RobustnessTest extends GtkTestCase
             \Gtk4\GdkRGBA::class => new \Gtk4\GdkRGBA(),
             \Gtk4\GdkRectangle::class => new \Gtk4\GdkRectangle(),
             \Gtk4\ExceptionMode::class => \Gtk4\ExceptionMode::Log,
+            \Gtk4\GtkAlign::class => \Gtk4\GtkAlign::Fill,
+            \Gtk4\GtkOrientation::class => \Gtk4\GtkOrientation::Horizontal,
             default => null,
         };
     }

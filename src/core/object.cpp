@@ -1,4 +1,5 @@
 #include "object.h"
+#include "callback.h"
 #include "marshal.h"
 #include <string>
 #include <unordered_map>
@@ -11,6 +12,12 @@ static std::unordered_map<std::string, zend_class_entry *> &registry() {
   // Plain function-static: destroyed when the module is unloaded, holds no Zend
   // resources (class entries belong to the engine), so that is safe.
   static std::unordered_map<std::string, zend_class_entry *> map;
+  return map;
+}
+
+// GType per registered class (for GListStore item types etc.).
+static std::unordered_map<zend_class_entry *, GType> &gtypes() {
+  static std::unordered_map<zend_class_entry *, GType> map;
   return map;
 }
 
@@ -71,6 +78,7 @@ static zend_object *create_object(zend_class_entry *ce) {
 static void free_obj(zend_object *o) {
   Object *self = object_from_zend(o);
   detach(self);
+  callback_drain();  // the unref may have run destroy notifies
   zend_object_std_dtor(o);
 }
 
@@ -178,9 +186,19 @@ void object_handlers_init() {
 
 // ---------------------------------------------------------------- registry
 
-void register_class(const char *gtype_name, zend_class_entry *ce) {
+void register_class(const char *gtype_name, zend_class_entry *ce, GType type) {
   ce->create_object = create_object;
   registry()[gtype_name] = ce;
+  gtypes()[ce] = type;
+}
+
+// GType of a registered class (walks up to a registered parent for subclasses).
+GType gtype_for_class(zend_class_entry *ce) {
+  for (; ce != nullptr; ce = ce->parent) {
+    auto it = gtypes().find(ce);
+    if (it != gtypes().end()) return it->second;
+  }
+  return 0;
 }
 
 // Registry lookup by GType name.

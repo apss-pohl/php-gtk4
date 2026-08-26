@@ -40,7 +40,7 @@ if test "$PHP_GTK4" != "no"; then
   fi
 
   dnl GTK floor is 4.14 (Ubuntu 24.04); CI also compiles against 4.22.
-  PKG_CHECK_MODULES([GTK4], [gtk4 >= 4.14 gobject-2.0 >= 2.76 glib-2.0 >= 2.76])
+  PKG_CHECK_MODULES([GTK4], [gtk4 >= 4.14 cairo-gobject gobject-2.0 >= 2.76 glib-2.0 >= 2.76])
   PHP_EVAL_INCLINE([$GTK4_CFLAGS])
   PHP_EVAL_LIBLINE([$GTK4_LIBS], [GTK4_SHARED_LIBADD])
 
@@ -53,6 +53,20 @@ if test "$PHP_GTK4" != "no"; then
     GTK4_FEATURES="webkit=yes"
   fi
   AC_DEFINE_UNQUOTED([PHPGTK_BUILD_FEATURES], ["$GTK4_FEATURES"], [Compiled-in optional features])
+
+  dnl ./VERSION is the single source of truth (docs/RELEASING.md); src/php_gtk4.h
+  dnl mirrors it via `./ci.sh --only=version --fix`. Refuse to build a module that
+  dnl would report a version nobody released.
+  AC_MSG_CHECKING([that src/php_gtk4.h matches ./VERSION])
+  gtk4_version=`tr -d ' \t\r\n' < "$srcdir/VERSION" 2>/dev/null`
+  gtk4_hdr_version=`sed -n -E 's/^#define PHP_GTK4_VERSION "(.*)"$/\1/p' "$srcdir/src/php_gtk4.h"`
+  if test -z "$gtk4_version"; then
+    AC_MSG_ERROR([./VERSION is missing or empty])
+  fi
+  if test "$gtk4_version" != "$gtk4_hdr_version"; then
+    AC_MSG_ERROR([version mismatch: ./VERSION is $gtk4_version, src/php_gtk4.h is $gtk4_hdr_version; run ./ci.sh --only=version --fix])
+  fi
+  AC_MSG_RESULT([$gtk4_version])
 
   dnl Build metadata baked in at configure time.
   GTK4_GIT_HASH=`git -C "$srcdir" rev-parse --short HEAD 2>/dev/null || echo unknown`
@@ -72,7 +86,7 @@ if test "$PHP_GTK4" != "no"; then
 
   PHP_SUBST([GTK4_SHARED_LIBADD])
 
-  GTK4_SOURCES="src/gtk4.cpp src/core/object.cpp src/core/marshal.cpp src/core/gsignal.cpp src/core/error.cpp src/core/callback.cpp src/core/mainloop.cpp src/core/paramspec.cpp src/core/teardown.cpp src/core/boxed.cpp src/core/variant.cpp src/core/phpvalue.cpp src/Gio/GSimpleAction.cpp src/Gio/GListStore.cpp src/Gdk/GdkRGBA.cpp src/Gdk/GdkRectangle.cpp src/Gtk/Gtk.cpp src/Gtk/GtkWidget.cpp src/Gtk/GtkButton.cpp src/Gtk/GtkLabel.cpp src/Gtk/GMainLoop.cpp src/Gtk/GtkApplication.cpp src/Gtk/GtkWindow.cpp"
+  GTK4_SOURCES="src/gtk4.cpp src/core/object.cpp src/core/marshal.cpp src/core/gsignal.cpp src/core/error.cpp src/core/callback.cpp src/core/mainloop.cpp src/core/paramspec.cpp src/core/teardown.cpp src/core/boxed.cpp src/core/variant.cpp src/core/enums.cpp src/core/collections.cpp src/core/fundamental.cpp src/core/gerror.cpp src/core/phpvalue.cpp src/Gdk/GdkTexture.cpp src/Gio/GSimpleAction.cpp src/Gio/GListStore.cpp src/Gdk/GdkRGBA.cpp src/Gdk/GdkRectangle.cpp src/Gtk/Gtk.cpp src/Gtk/GtkWidget.cpp src/Gtk/GtkButton.cpp src/Gtk/GtkLabel.cpp src/Gtk/GMainLoop.cpp src/Gtk/GtkApplication.cpp src/Gtk/GtkWindow.cpp src/Gtk/GtkDrawingArea.cpp src/Gtk/GtkFilter.cpp src/Gtk/GtkSorter.cpp src/Cairo/CairoContext.cpp"
   PHP_NEW_EXTENSION([gtk4], [$GTK4_SOURCES], [$ext_shared], [], [$GTK4_CXXFLAGS], [cxx])
   PHP_ADD_BUILD_DIR([$ext_builddir/src])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/core])

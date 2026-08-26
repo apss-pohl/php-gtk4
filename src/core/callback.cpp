@@ -2,6 +2,16 @@
 
 #include "error.h"
 
+#include <vector>
+
+namespace {
+// Callables whose release was deferred by callback_free().
+std::vector<zval> &graveyard() {
+  static std::vector<zval> parked;
+  return parked;
+}
+}  // namespace
+
 namespace phpgtk {
 
 // Allocate a Callback holding an ADDREF'd copy of the (already validated) callable.
@@ -14,11 +24,20 @@ Callback *callback_new(zval *callable, const char *origin) {
   return cb;
 }
 
-// GDestroyNotify-compatible release of a Callback.
+// GDestroyNotify-compatible: park the callable for callback_drain(), free the struct.
 void callback_free(gpointer p) {
   auto *cb = static_cast<Callback *>(p);
-  zval_ptr_dtor(&cb->callable);
+  graveyard().push_back(cb->callable);
   efree(cb);
+}
+
+// Release parked callables; re-entrant (a release may park more).
+void callback_drain() {
+  while (!graveyard().empty()) {
+    std::vector<zval> batch;
+    batch.swap(graveyard());
+    for (zval &zv : batch) zval_ptr_dtor(&zv);
+  }
 }
 
 // Invoke the callable; a Throwable goes through the exception policy with cb->origin.
@@ -35,13 +54,14 @@ bool callback_invoke(Callback *cb, uint32_t argc, zval *args, zval *retval) {
   fci.params = args;
   fci.param_count = argc;
   zend_call_function(&fci, &fcc);
-  if (EG(exception) != nullptr) {
+  const bool ok = EG(exception) == nullptr;
+  if (!ok) {
     zval_ptr_dtor(retval);
     ZVAL_UNDEF(retval);
     report_pending_exception(cb->origin);
-    return false;
   }
-  return true;
+  callback_drain();  // the call may have replaced/removed callbacks
+  return ok;
 }
 
 }  // namespace phpgtk

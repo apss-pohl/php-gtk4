@@ -11,7 +11,11 @@ final class ExtensionTest extends GtkTestCase
     public function testConstantsAreNamespaced(): void
     {
         self::assertSame(phpversion('gtk4'), \Gtk4\VERSION, 'stub constant and module version must agree');
-        self::assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', \Gtk4\VERSION);
+        // ./VERSION is the single source of truth for the release version
+        // (docs/RELEASING.md); everything else mirrors it, including this binary.
+        $file = trim((string) file_get_contents(__DIR__ . '/../VERSION'));
+        self::assertSame($file, \Gtk4\VERSION, './VERSION and the built module must agree');
+        self::assertMatchesRegularExpression('/^\d+\.\d+\.\d+(-dev)?$/', \Gtk4\VERSION);
         $build = \Gtk4\BUILD_INFO;
         $features = \Gtk4\FEATURES;
         self::assertStringContainsString('git', $build);

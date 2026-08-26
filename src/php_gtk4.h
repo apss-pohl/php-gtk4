@@ -18,7 +18,7 @@
 #error "php-gtk4 requires PHP >= 8.4"
 #endif
 
-#define PHP_GTK4_VERSION "0.1.0"
+#define PHP_GTK4_VERSION "0.1.0-dev"
 #define PHP_GTK4_NAMESPACE "Gtk4"
 
 #ifndef PHPGTK_BUILD_INFO

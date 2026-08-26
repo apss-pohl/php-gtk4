@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: bf971a82e85967fe23706847d2164538128cde1c */
+ * Stub hash: c3b5c78d191e0193acad367812c5483d5c18362d */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GObject_connect, 0, 2, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, signal, IS_STRING, 0)
@@ -82,6 +82,26 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GMainLoop_quit arginfo_class_Gtk4_GMainLoop_run
 
 #define arginfo_class_Gtk4_GMainLoop_is_running arginfo_class_Gtk4_GParamSpec_is_readable
+
+#define arginfo_class_Gtk4_GError_getDomain arginfo_class_Gtk4_GParamSpec_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkTexture_new_from_filename, 0, 1, Gtk4\\GdkTexture, 0)
+	ZEND_ARG_TYPE_INFO(0, path, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkTexture_new_from_bytes, 0, 1, Gtk4\\GdkTexture, 0)
+	ZEND_ARG_TYPE_INFO(0, bytes, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkTexture_get_width arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_GdkTexture_get_height arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_GdkTexture_save_to_png_bytes arginfo_class_Gtk4_GParamSpec_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkTexture_save_to_png, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, path, IS_STRING, 0)
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_PhpValue___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
@@ -208,6 +228,8 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkApplication_get_application_id arginfo_class_Gtk4_GParamSpec_get_nick
 
+#define arginfo_class_Gtk4_GtkApplication_get_windows arginfo_class_Gtk4_GActionGroup_list_actions
+
 #define arginfo_class_Gtk4_GtkApplication_add_action arginfo_class_Gtk4_GActionMap_add_action
 
 #define arginfo_class_Gtk4_GtkApplication_remove_action arginfo_class_Gtk4_GActionMap_remove_action
@@ -283,6 +305,10 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWidget_set_size_re
 	ZEND_ARG_TYPE_INFO(0, height, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
+#define arginfo_class_Gtk4_GtkWidget_get_size_request arginfo_class_Gtk4_GActionGroup_list_actions
+
+#define arginfo_class_Gtk4_GtkWidget_list_mnemonic_labels arginfo_class_Gtk4_GActionGroup_list_actions
+
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkWidget_get_parent, 0, 0, Gtk4\\GtkWidget, 1)
 ZEND_END_ARG_INFO()
 
@@ -325,6 +351,17 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWidget_activate_ac
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameter, IS_MIXED, 0, "null")
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWidget_set_halign, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, align, Gtk4\\GtkAlign, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkWidget_get_halign, 0, 0, Gtk4\\GtkAlign, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkWidget_set_valign arginfo_class_Gtk4_GtkWidget_set_halign
+
+#define arginfo_class_Gtk4_GtkWidget_get_valign arginfo_class_Gtk4_GtkWidget_get_halign
+
 #define arginfo_class_Gtk4_GtkWidget_queue_draw arginfo_class_Gtk4_GMainLoop_run
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkButton___construct, 0, 0, 0)
@@ -363,6 +400,182 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkLabel_get_selectable arginfo_class_Gtk4_GParamSpec_is_readable
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkLabel_get_selection_bounds, 0, 0, IS_ARRAY, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkLabel_select_region, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, start, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, end, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoContext_set_source_rgb, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, red, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, green, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, blue, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoContext_set_source_rgba, 0, 4, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, red, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, green, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, blue, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, alpha, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoContext_set_source_color, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, color, Gtk4\\GdkRGBA, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoContext_set_line_width, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, width, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoContext_move_to, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, x, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, y, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_CairoContext_line_to arginfo_class_Gtk4_CairoContext_move_to
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoContext_rectangle, 0, 4, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, x, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, y, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, width, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, height, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoContext_arc, 0, 5, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, xc, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, yc, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, radius, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, angle1, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, angle2, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_CairoContext_close_path arginfo_class_Gtk4_GMainLoop_run
+
+#define arginfo_class_Gtk4_CairoContext_fill arginfo_class_Gtk4_GMainLoop_run
+
+#define arginfo_class_Gtk4_CairoContext_fill_preserve arginfo_class_Gtk4_GMainLoop_run
+
+#define arginfo_class_Gtk4_CairoContext_stroke arginfo_class_Gtk4_GMainLoop_run
+
+#define arginfo_class_Gtk4_CairoContext_stroke_preserve arginfo_class_Gtk4_GMainLoop_run
+
+#define arginfo_class_Gtk4_CairoContext_paint arginfo_class_Gtk4_GMainLoop_run
+
+#define arginfo_class_Gtk4_CairoContext_save arginfo_class_Gtk4_GMainLoop_run
+
+#define arginfo_class_Gtk4_CairoContext_restore arginfo_class_Gtk4_GMainLoop_run
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoContext_translate, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, tx, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, ty, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoContext_scale, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, sx, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, sy, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoContext_rotate, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, angle, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoContext_set_font_size, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, size, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_CairoContext_show_text arginfo_class_Gtk4_GtkLabel_set_text
+
+#define arginfo_class_Gtk4_GtkDrawingArea___construct arginfo_class_Gtk4_GMainLoop___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkDrawingArea_set_draw_func, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, drawFunc, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkDrawingArea_set_content_width, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, width, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkDrawingArea_get_content_width arginfo_class_Gtk4_GParamSpec_get_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkDrawingArea_set_content_height, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, height, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkDrawingArea_get_content_height arginfo_class_Gtk4_GParamSpec_get_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFilter_changed, 0, 0, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, change, Gtk4\\GtkFilterChange, 0, "Gtk4\\GtkFilterChange::Different")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkCustomFilter___construct, 0, 0, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, matchFunc, IS_CALLABLE, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkCustomFilter_set_filter_func, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, matchFunc, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkFilterListModel___construct, 0, 0, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, model, Gtk4\\GListModel, 1, "null")
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, filter, Gtk4\\GtkFilter, 1, "null")
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkFilterListModel_get_item_type arginfo_class_Gtk4_GParamSpec_get_name
+
+#define arginfo_class_Gtk4_GtkFilterListModel_get_n_items arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_GtkFilterListModel_get_item arginfo_class_Gtk4_GListModel_get_item
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFilterListModel_set_filter, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, filter, Gtk4\\GtkFilter, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkFilterListModel_get_filter, 0, 0, Gtk4\\GtkFilter, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFilterListModel_set_model, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, model, Gtk4\\GListModel, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkFilterListModel_get_model, 0, 0, Gtk4\\GListModel, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkSorter_changed, 0, 0, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, change, Gtk4\\GtkSorterChange, 0, "Gtk4\\GtkSorterChange::Different")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkCustomSorter___construct, 0, 0, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, compare, IS_CALLABLE, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkCustomSorter_set_sort_func, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, compare, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkSortListModel___construct, 0, 0, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, model, Gtk4\\GListModel, 1, "null")
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, sorter, Gtk4\\GtkSorter, 1, "null")
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkSortListModel_get_item_type arginfo_class_Gtk4_GParamSpec_get_name
+
+#define arginfo_class_Gtk4_GtkSortListModel_get_n_items arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_GtkSortListModel_get_item arginfo_class_Gtk4_GListModel_get_item
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkSortListModel_set_sorter, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, sorter, Gtk4\\GtkSorter, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkSortListModel_get_sorter, 0, 0, Gtk4\\GtkSorter, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkSortListModel_set_model arginfo_class_Gtk4_GtkFilterListModel_set_model
+
+#define arginfo_class_Gtk4_GtkSortListModel_get_model arginfo_class_Gtk4_GtkFilterListModel_get_model
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkWindow___construct, 0, 0, 0)
 	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, application, Gtk4\\GtkApplication, 1, "null")
 ZEND_END_ARG_INFO()
@@ -381,6 +594,8 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GtkWindow_get_title arginfo_class_Gtk4_GParamSpec_get_nick
 
 #define arginfo_class_Gtk4_GtkWindow_set_default_size arginfo_class_Gtk4_GtkWidget_set_size_request
+
+#define arginfo_class_Gtk4_GtkWindow_get_default_size arginfo_class_Gtk4_GActionGroup_list_actions
 
 #define arginfo_class_Gtk4_GtkWindow_set_child arginfo_class_Gtk4_GtkButton_set_child
 
@@ -417,6 +632,13 @@ ZEND_METHOD(Gtk4_GMainLoop, __construct);
 ZEND_METHOD(Gtk4_GMainLoop, run);
 ZEND_METHOD(Gtk4_GMainLoop, quit);
 ZEND_METHOD(Gtk4_GMainLoop, is_running);
+ZEND_METHOD(Gtk4_GError, getDomain);
+ZEND_METHOD(Gtk4_GdkTexture, new_from_filename);
+ZEND_METHOD(Gtk4_GdkTexture, new_from_bytes);
+ZEND_METHOD(Gtk4_GdkTexture, get_width);
+ZEND_METHOD(Gtk4_GdkTexture, get_height);
+ZEND_METHOD(Gtk4_GdkTexture, save_to_png_bytes);
+ZEND_METHOD(Gtk4_GdkTexture, save_to_png);
 ZEND_METHOD(Gtk4_PhpValue, __construct);
 ZEND_METHOD(Gtk4_PhpValue, get_value);
 ZEND_METHOD(Gtk4_PhpValue, set_value);
@@ -443,6 +665,7 @@ ZEND_METHOD(Gtk4_GtkApplication, quit);
 ZEND_METHOD(Gtk4_GtkApplication, add_window);
 ZEND_METHOD(Gtk4_GtkApplication, get_active_window);
 ZEND_METHOD(Gtk4_GtkApplication, get_application_id);
+ZEND_METHOD(Gtk4_GtkApplication, get_windows);
 ZEND_METHOD(Gtk4_GtkApplication, add_action);
 ZEND_METHOD(Gtk4_GtkApplication, remove_action);
 ZEND_METHOD(Gtk4_GtkApplication, lookup_action);
@@ -467,6 +690,8 @@ ZEND_METHOD(Gtk4_GtkWidget, is_visible);
 ZEND_METHOD(Gtk4_GtkWidget, set_sensitive);
 ZEND_METHOD(Gtk4_GtkWidget, get_sensitive);
 ZEND_METHOD(Gtk4_GtkWidget, set_size_request);
+ZEND_METHOD(Gtk4_GtkWidget, get_size_request);
+ZEND_METHOD(Gtk4_GtkWidget, list_mnemonic_labels);
 ZEND_METHOD(Gtk4_GtkWidget, get_parent);
 ZEND_METHOD(Gtk4_GtkWidget, get_root);
 ZEND_METHOD(Gtk4_GtkWidget, grab_focus);
@@ -481,6 +706,10 @@ ZEND_METHOD(Gtk4_GtkWidget, has_css_class);
 ZEND_METHOD(Gtk4_GtkWidget, get_css_classes);
 ZEND_METHOD(Gtk4_GtkWidget, set_css_classes);
 ZEND_METHOD(Gtk4_GtkWidget, activate_action);
+ZEND_METHOD(Gtk4_GtkWidget, set_halign);
+ZEND_METHOD(Gtk4_GtkWidget, get_halign);
+ZEND_METHOD(Gtk4_GtkWidget, set_valign);
+ZEND_METHOD(Gtk4_GtkWidget, get_valign);
 ZEND_METHOD(Gtk4_GtkWidget, queue_draw);
 ZEND_METHOD(Gtk4_GtkButton, __construct);
 ZEND_METHOD(Gtk4_GtkButton, set_label);
@@ -493,12 +722,64 @@ ZEND_METHOD(Gtk4_GtkLabel, get_text);
 ZEND_METHOD(Gtk4_GtkLabel, set_markup);
 ZEND_METHOD(Gtk4_GtkLabel, set_selectable);
 ZEND_METHOD(Gtk4_GtkLabel, get_selectable);
+ZEND_METHOD(Gtk4_GtkLabel, get_selection_bounds);
+ZEND_METHOD(Gtk4_GtkLabel, select_region);
+ZEND_METHOD(Gtk4_CairoContext, set_source_rgb);
+ZEND_METHOD(Gtk4_CairoContext, set_source_rgba);
+ZEND_METHOD(Gtk4_CairoContext, set_source_color);
+ZEND_METHOD(Gtk4_CairoContext, set_line_width);
+ZEND_METHOD(Gtk4_CairoContext, move_to);
+ZEND_METHOD(Gtk4_CairoContext, line_to);
+ZEND_METHOD(Gtk4_CairoContext, rectangle);
+ZEND_METHOD(Gtk4_CairoContext, arc);
+ZEND_METHOD(Gtk4_CairoContext, close_path);
+ZEND_METHOD(Gtk4_CairoContext, fill);
+ZEND_METHOD(Gtk4_CairoContext, fill_preserve);
+ZEND_METHOD(Gtk4_CairoContext, stroke);
+ZEND_METHOD(Gtk4_CairoContext, stroke_preserve);
+ZEND_METHOD(Gtk4_CairoContext, paint);
+ZEND_METHOD(Gtk4_CairoContext, save);
+ZEND_METHOD(Gtk4_CairoContext, restore);
+ZEND_METHOD(Gtk4_CairoContext, translate);
+ZEND_METHOD(Gtk4_CairoContext, scale);
+ZEND_METHOD(Gtk4_CairoContext, rotate);
+ZEND_METHOD(Gtk4_CairoContext, set_font_size);
+ZEND_METHOD(Gtk4_CairoContext, show_text);
+ZEND_METHOD(Gtk4_GtkDrawingArea, __construct);
+ZEND_METHOD(Gtk4_GtkDrawingArea, set_draw_func);
+ZEND_METHOD(Gtk4_GtkDrawingArea, set_content_width);
+ZEND_METHOD(Gtk4_GtkDrawingArea, get_content_width);
+ZEND_METHOD(Gtk4_GtkDrawingArea, set_content_height);
+ZEND_METHOD(Gtk4_GtkDrawingArea, get_content_height);
+ZEND_METHOD(Gtk4_GtkFilter, changed);
+ZEND_METHOD(Gtk4_GtkCustomFilter, __construct);
+ZEND_METHOD(Gtk4_GtkCustomFilter, set_filter_func);
+ZEND_METHOD(Gtk4_GtkFilterListModel, __construct);
+ZEND_METHOD(Gtk4_GtkFilterListModel, get_item_type);
+ZEND_METHOD(Gtk4_GtkFilterListModel, get_n_items);
+ZEND_METHOD(Gtk4_GtkFilterListModel, get_item);
+ZEND_METHOD(Gtk4_GtkFilterListModel, set_filter);
+ZEND_METHOD(Gtk4_GtkFilterListModel, get_filter);
+ZEND_METHOD(Gtk4_GtkFilterListModel, set_model);
+ZEND_METHOD(Gtk4_GtkFilterListModel, get_model);
+ZEND_METHOD(Gtk4_GtkSorter, changed);
+ZEND_METHOD(Gtk4_GtkCustomSorter, __construct);
+ZEND_METHOD(Gtk4_GtkCustomSorter, set_sort_func);
+ZEND_METHOD(Gtk4_GtkSortListModel, __construct);
+ZEND_METHOD(Gtk4_GtkSortListModel, get_item_type);
+ZEND_METHOD(Gtk4_GtkSortListModel, get_n_items);
+ZEND_METHOD(Gtk4_GtkSortListModel, get_item);
+ZEND_METHOD(Gtk4_GtkSortListModel, set_sorter);
+ZEND_METHOD(Gtk4_GtkSortListModel, get_sorter);
+ZEND_METHOD(Gtk4_GtkSortListModel, set_model);
+ZEND_METHOD(Gtk4_GtkSortListModel, get_model);
 ZEND_METHOD(Gtk4_GtkWindow, __construct);
 ZEND_METHOD(Gtk4_GtkWindow, set_application);
 ZEND_METHOD(Gtk4_GtkWindow, get_application);
 ZEND_METHOD(Gtk4_GtkWindow, set_title);
 ZEND_METHOD(Gtk4_GtkWindow, get_title);
 ZEND_METHOD(Gtk4_GtkWindow, set_default_size);
+ZEND_METHOD(Gtk4_GtkWindow, get_default_size);
 ZEND_METHOD(Gtk4_GtkWindow, set_child);
 ZEND_METHOD(Gtk4_GtkWindow, get_child);
 ZEND_METHOD(Gtk4_GtkWindow, present);
@@ -547,6 +828,21 @@ static const zend_function_entry class_Gtk4_GMainLoop_methods[] = {
 	ZEND_ME(Gtk4_GMainLoop, run, arginfo_class_Gtk4_GMainLoop_run, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMainLoop, quit, arginfo_class_Gtk4_GMainLoop_quit, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMainLoop, is_running, arginfo_class_Gtk4_GMainLoop_is_running, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GError_methods[] = {
+	ZEND_ME(Gtk4_GError, getDomain, arginfo_class_Gtk4_GError_getDomain, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkTexture_methods[] = {
+	ZEND_ME(Gtk4_GdkTexture, new_from_filename, arginfo_class_Gtk4_GdkTexture_new_from_filename, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GdkTexture, new_from_bytes, arginfo_class_Gtk4_GdkTexture_new_from_bytes, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GdkTexture, get_width, arginfo_class_Gtk4_GdkTexture_get_width, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkTexture, get_height, arginfo_class_Gtk4_GdkTexture_get_height, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkTexture, save_to_png_bytes, arginfo_class_Gtk4_GdkTexture_save_to_png_bytes, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkTexture, save_to_png, arginfo_class_Gtk4_GdkTexture_save_to_png, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -618,6 +914,7 @@ static const zend_function_entry class_Gtk4_GtkApplication_methods[] = {
 	ZEND_ME(Gtk4_GtkApplication, add_window, arginfo_class_Gtk4_GtkApplication_add_window, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkApplication, get_active_window, arginfo_class_Gtk4_GtkApplication_get_active_window, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkApplication, get_application_id, arginfo_class_Gtk4_GtkApplication_get_application_id, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkApplication, get_windows, arginfo_class_Gtk4_GtkApplication_get_windows, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkApplication, add_action, arginfo_class_Gtk4_GtkApplication_add_action, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkApplication, remove_action, arginfo_class_Gtk4_GtkApplication_remove_action, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkApplication, lookup_action, arginfo_class_Gtk4_GtkApplication_lookup_action, ZEND_ACC_PUBLIC)
@@ -654,6 +951,8 @@ static const zend_function_entry class_Gtk4_GtkWidget_methods[] = {
 	ZEND_ME(Gtk4_GtkWidget, set_sensitive, arginfo_class_Gtk4_GtkWidget_set_sensitive, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, get_sensitive, arginfo_class_Gtk4_GtkWidget_get_sensitive, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, set_size_request, arginfo_class_Gtk4_GtkWidget_set_size_request, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkWidget, get_size_request, arginfo_class_Gtk4_GtkWidget_get_size_request, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkWidget, list_mnemonic_labels, arginfo_class_Gtk4_GtkWidget_list_mnemonic_labels, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, get_parent, arginfo_class_Gtk4_GtkWidget_get_parent, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, get_root, arginfo_class_Gtk4_GtkWidget_get_root, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, grab_focus, arginfo_class_Gtk4_GtkWidget_grab_focus, ZEND_ACC_PUBLIC)
@@ -668,6 +967,10 @@ static const zend_function_entry class_Gtk4_GtkWidget_methods[] = {
 	ZEND_ME(Gtk4_GtkWidget, get_css_classes, arginfo_class_Gtk4_GtkWidget_get_css_classes, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, set_css_classes, arginfo_class_Gtk4_GtkWidget_set_css_classes, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, activate_action, arginfo_class_Gtk4_GtkWidget_activate_action, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkWidget, set_halign, arginfo_class_Gtk4_GtkWidget_set_halign, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkWidget, get_halign, arginfo_class_Gtk4_GtkWidget_get_halign, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkWidget, set_valign, arginfo_class_Gtk4_GtkWidget_set_valign, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkWidget, get_valign, arginfo_class_Gtk4_GtkWidget_get_valign, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, queue_draw, arginfo_class_Gtk4_GtkWidget_queue_draw, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
@@ -688,6 +991,89 @@ static const zend_function_entry class_Gtk4_GtkLabel_methods[] = {
 	ZEND_ME(Gtk4_GtkLabel, set_markup, arginfo_class_Gtk4_GtkLabel_set_markup, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkLabel, set_selectable, arginfo_class_Gtk4_GtkLabel_set_selectable, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkLabel, get_selectable, arginfo_class_Gtk4_GtkLabel_get_selectable, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkLabel, get_selection_bounds, arginfo_class_Gtk4_GtkLabel_get_selection_bounds, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkLabel, select_region, arginfo_class_Gtk4_GtkLabel_select_region, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_CairoContext_methods[] = {
+	ZEND_ME(Gtk4_CairoContext, set_source_rgb, arginfo_class_Gtk4_CairoContext_set_source_rgb, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, set_source_rgba, arginfo_class_Gtk4_CairoContext_set_source_rgba, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, set_source_color, arginfo_class_Gtk4_CairoContext_set_source_color, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, set_line_width, arginfo_class_Gtk4_CairoContext_set_line_width, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, move_to, arginfo_class_Gtk4_CairoContext_move_to, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, line_to, arginfo_class_Gtk4_CairoContext_line_to, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, rectangle, arginfo_class_Gtk4_CairoContext_rectangle, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, arc, arginfo_class_Gtk4_CairoContext_arc, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, close_path, arginfo_class_Gtk4_CairoContext_close_path, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, fill, arginfo_class_Gtk4_CairoContext_fill, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, fill_preserve, arginfo_class_Gtk4_CairoContext_fill_preserve, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, stroke, arginfo_class_Gtk4_CairoContext_stroke, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, stroke_preserve, arginfo_class_Gtk4_CairoContext_stroke_preserve, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, paint, arginfo_class_Gtk4_CairoContext_paint, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, save, arginfo_class_Gtk4_CairoContext_save, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, restore, arginfo_class_Gtk4_CairoContext_restore, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, translate, arginfo_class_Gtk4_CairoContext_translate, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, scale, arginfo_class_Gtk4_CairoContext_scale, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, rotate, arginfo_class_Gtk4_CairoContext_rotate, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, set_font_size, arginfo_class_Gtk4_CairoContext_set_font_size, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, show_text, arginfo_class_Gtk4_CairoContext_show_text, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkDrawingArea_methods[] = {
+	ZEND_ME(Gtk4_GtkDrawingArea, __construct, arginfo_class_Gtk4_GtkDrawingArea___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDrawingArea, set_draw_func, arginfo_class_Gtk4_GtkDrawingArea_set_draw_func, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDrawingArea, set_content_width, arginfo_class_Gtk4_GtkDrawingArea_set_content_width, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDrawingArea, get_content_width, arginfo_class_Gtk4_GtkDrawingArea_get_content_width, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDrawingArea, set_content_height, arginfo_class_Gtk4_GtkDrawingArea_set_content_height, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDrawingArea, get_content_height, arginfo_class_Gtk4_GtkDrawingArea_get_content_height, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkFilter_methods[] = {
+	ZEND_ME(Gtk4_GtkFilter, changed, arginfo_class_Gtk4_GtkFilter_changed, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkCustomFilter_methods[] = {
+	ZEND_ME(Gtk4_GtkCustomFilter, __construct, arginfo_class_Gtk4_GtkCustomFilter___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkCustomFilter, set_filter_func, arginfo_class_Gtk4_GtkCustomFilter_set_filter_func, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkFilterListModel_methods[] = {
+	ZEND_ME(Gtk4_GtkFilterListModel, __construct, arginfo_class_Gtk4_GtkFilterListModel___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFilterListModel, get_item_type, arginfo_class_Gtk4_GtkFilterListModel_get_item_type, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFilterListModel, get_n_items, arginfo_class_Gtk4_GtkFilterListModel_get_n_items, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFilterListModel, get_item, arginfo_class_Gtk4_GtkFilterListModel_get_item, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFilterListModel, set_filter, arginfo_class_Gtk4_GtkFilterListModel_set_filter, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFilterListModel, get_filter, arginfo_class_Gtk4_GtkFilterListModel_get_filter, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFilterListModel, set_model, arginfo_class_Gtk4_GtkFilterListModel_set_model, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFilterListModel, get_model, arginfo_class_Gtk4_GtkFilterListModel_get_model, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkSorter_methods[] = {
+	ZEND_ME(Gtk4_GtkSorter, changed, arginfo_class_Gtk4_GtkSorter_changed, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkCustomSorter_methods[] = {
+	ZEND_ME(Gtk4_GtkCustomSorter, __construct, arginfo_class_Gtk4_GtkCustomSorter___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkCustomSorter, set_sort_func, arginfo_class_Gtk4_GtkCustomSorter_set_sort_func, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkSortListModel_methods[] = {
+	ZEND_ME(Gtk4_GtkSortListModel, __construct, arginfo_class_Gtk4_GtkSortListModel___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkSortListModel, get_item_type, arginfo_class_Gtk4_GtkSortListModel_get_item_type, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkSortListModel, get_n_items, arginfo_class_Gtk4_GtkSortListModel_get_n_items, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkSortListModel, get_item, arginfo_class_Gtk4_GtkSortListModel_get_item, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkSortListModel, set_sorter, arginfo_class_Gtk4_GtkSortListModel_set_sorter, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkSortListModel, get_sorter, arginfo_class_Gtk4_GtkSortListModel_get_sorter, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkSortListModel, set_model, arginfo_class_Gtk4_GtkSortListModel_set_model, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkSortListModel, get_model, arginfo_class_Gtk4_GtkSortListModel_get_model, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -698,6 +1084,7 @@ static const zend_function_entry class_Gtk4_GtkWindow_methods[] = {
 	ZEND_ME(Gtk4_GtkWindow, set_title, arginfo_class_Gtk4_GtkWindow_set_title, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWindow, get_title, arginfo_class_Gtk4_GtkWindow_get_title, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWindow, set_default_size, arginfo_class_Gtk4_GtkWindow_set_default_size, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkWindow, get_default_size, arginfo_class_Gtk4_GtkWindow_get_default_size, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWindow, set_child, arginfo_class_Gtk4_GtkWindow_set_child, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWindow, get_child, arginfo_class_Gtk4_GtkWindow_get_child, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWindow, present, arginfo_class_Gtk4_GtkWindow_present, ZEND_ACC_PUBLIC)
@@ -708,7 +1095,7 @@ static const zend_function_entry class_Gtk4_GtkWindow_methods[] = {
 
 static void register_gtk4_symbols(int module_number)
 {
-	REGISTER_STRING_CONSTANT("Gtk4\\VERSION", "0.1.0", CONST_PERSISTENT);
+	REGISTER_STRING_CONSTANT("Gtk4\\VERSION", "0.1.0-dev", CONST_PERSISTENT);
 	REGISTER_STRING_CONSTANT("Gtk4\\BUILD_INFO", PHPGTK_BUILD_INFO, CONST_PERSISTENT);
 	REGISTER_STRING_CONSTANT("Gtk4\\FEATURES", PHPGTK_BUILD_FEATURES, CONST_PERSISTENT);
 }
@@ -729,6 +1116,164 @@ static zend_class_entry *register_class_Gtk4_GParamSpec(void)
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GParamSpec", class_Gtk4_GParamSpec_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkAlign(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GtkAlign", IS_LONG, NULL);
+
+	zval enum_case_Fill_value;
+	ZVAL_LONG(&enum_case_Fill_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Fill", &enum_case_Fill_value);
+
+	zval enum_case_Start_value;
+	ZVAL_LONG(&enum_case_Start_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Start", &enum_case_Start_value);
+
+	zval enum_case_End_value;
+	ZVAL_LONG(&enum_case_End_value, 2);
+	zend_enum_add_case_cstr(class_entry, "End", &enum_case_End_value);
+
+	zval enum_case_Center_value;
+	ZVAL_LONG(&enum_case_Center_value, 3);
+	zend_enum_add_case_cstr(class_entry, "Center", &enum_case_Center_value);
+
+	zval enum_case_BaselineFill_value;
+	ZVAL_LONG(&enum_case_BaselineFill_value, 4);
+	zend_enum_add_case_cstr(class_entry, "BaselineFill", &enum_case_BaselineFill_value);
+
+	zval enum_case_BaselineCenter_value;
+	ZVAL_LONG(&enum_case_BaselineCenter_value, 5);
+	zend_enum_add_case_cstr(class_entry, "BaselineCenter", &enum_case_BaselineCenter_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkOrientation(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GtkOrientation", IS_LONG, NULL);
+
+	zval enum_case_Horizontal_value;
+	ZVAL_LONG(&enum_case_Horizontal_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Horizontal", &enum_case_Horizontal_value);
+
+	zval enum_case_Vertical_value;
+	ZVAL_LONG(&enum_case_Vertical_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Vertical", &enum_case_Vertical_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GApplicationFlags(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GApplicationFlags", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_DEFAULT_FLAGS_value;
+	ZVAL_LONG(&const_DEFAULT_FLAGS_value, 0);
+	zend_string *const_DEFAULT_FLAGS_name = zend_string_init_interned("DEFAULT_FLAGS", sizeof("DEFAULT_FLAGS") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_DEFAULT_FLAGS_name, &const_DEFAULT_FLAGS_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_DEFAULT_FLAGS_name);
+
+	zval const_IS_SERVICE_value;
+	ZVAL_LONG(&const_IS_SERVICE_value, 1);
+	zend_string *const_IS_SERVICE_name = zend_string_init_interned("IS_SERVICE", sizeof("IS_SERVICE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_IS_SERVICE_name, &const_IS_SERVICE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_IS_SERVICE_name);
+
+	zval const_IS_LAUNCHER_value;
+	ZVAL_LONG(&const_IS_LAUNCHER_value, 2);
+	zend_string *const_IS_LAUNCHER_name = zend_string_init_interned("IS_LAUNCHER", sizeof("IS_LAUNCHER") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_IS_LAUNCHER_name, &const_IS_LAUNCHER_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_IS_LAUNCHER_name);
+
+	zval const_HANDLES_OPEN_value;
+	ZVAL_LONG(&const_HANDLES_OPEN_value, 4);
+	zend_string *const_HANDLES_OPEN_name = zend_string_init_interned("HANDLES_OPEN", sizeof("HANDLES_OPEN") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_HANDLES_OPEN_name, &const_HANDLES_OPEN_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_HANDLES_OPEN_name);
+
+	zval const_HANDLES_COMMAND_LINE_value;
+	ZVAL_LONG(&const_HANDLES_COMMAND_LINE_value, 8);
+	zend_string *const_HANDLES_COMMAND_LINE_name = zend_string_init_interned("HANDLES_COMMAND_LINE", sizeof("HANDLES_COMMAND_LINE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_HANDLES_COMMAND_LINE_name, &const_HANDLES_COMMAND_LINE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_HANDLES_COMMAND_LINE_name);
+
+	zval const_SEND_ENVIRONMENT_value;
+	ZVAL_LONG(&const_SEND_ENVIRONMENT_value, 16);
+	zend_string *const_SEND_ENVIRONMENT_name = zend_string_init_interned("SEND_ENVIRONMENT", sizeof("SEND_ENVIRONMENT") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_SEND_ENVIRONMENT_name, &const_SEND_ENVIRONMENT_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_SEND_ENVIRONMENT_name);
+
+	zval const_NON_UNIQUE_value;
+	ZVAL_LONG(&const_NON_UNIQUE_value, 32);
+	zend_string *const_NON_UNIQUE_name = zend_string_init_interned("NON_UNIQUE", sizeof("NON_UNIQUE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NON_UNIQUE_name, &const_NON_UNIQUE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NON_UNIQUE_name);
+
+	zval const_CAN_OVERRIDE_APP_ID_value;
+	ZVAL_LONG(&const_CAN_OVERRIDE_APP_ID_value, 64);
+	zend_string *const_CAN_OVERRIDE_APP_ID_name = zend_string_init_interned("CAN_OVERRIDE_APP_ID", sizeof("CAN_OVERRIDE_APP_ID") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_CAN_OVERRIDE_APP_ID_name, &const_CAN_OVERRIDE_APP_ID_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_CAN_OVERRIDE_APP_ID_name);
+
+	zval const_ALLOW_REPLACEMENT_value;
+	ZVAL_LONG(&const_ALLOW_REPLACEMENT_value, 128);
+	zend_string *const_ALLOW_REPLACEMENT_name = zend_string_init_interned("ALLOW_REPLACEMENT", sizeof("ALLOW_REPLACEMENT") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_ALLOW_REPLACEMENT_name, &const_ALLOW_REPLACEMENT_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_ALLOW_REPLACEMENT_name);
+
+	zval const_REPLACE_value;
+	ZVAL_LONG(&const_REPLACE_value, 256);
+	zend_string *const_REPLACE_name = zend_string_init_interned("REPLACE", sizeof("REPLACE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_REPLACE_name, &const_REPLACE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_REPLACE_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkFilterChange(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GtkFilterChange", IS_LONG, NULL);
+
+	zval enum_case_Different_value;
+	ZVAL_LONG(&enum_case_Different_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Different", &enum_case_Different_value);
+
+	zval enum_case_LessStrict_value;
+	ZVAL_LONG(&enum_case_LessStrict_value, 1);
+	zend_enum_add_case_cstr(class_entry, "LessStrict", &enum_case_LessStrict_value);
+
+	zval enum_case_MoreStrict_value;
+	ZVAL_LONG(&enum_case_MoreStrict_value, 2);
+	zend_enum_add_case_cstr(class_entry, "MoreStrict", &enum_case_MoreStrict_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkSorterChange(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GtkSorterChange", IS_LONG, NULL);
+
+	zval enum_case_Different_value;
+	ZVAL_LONG(&enum_case_Different_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Different", &enum_case_Different_value);
+
+	zval enum_case_Inverted_value;
+	ZVAL_LONG(&enum_case_Inverted_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Inverted", &enum_case_Inverted_value);
+
+	zval enum_case_LessStrict_value;
+	ZVAL_LONG(&enum_case_LessStrict_value, 2);
+	zend_enum_add_case_cstr(class_entry, "LessStrict", &enum_case_LessStrict_value);
+
+	zval enum_case_MoreStrict_value;
+	ZVAL_LONG(&enum_case_MoreStrict_value, 3);
+	zend_enum_add_case_cstr(class_entry, "MoreStrict", &enum_case_MoreStrict_value);
 
 	return class_entry;
 }
@@ -774,6 +1319,32 @@ static zend_class_entry *register_class_Gtk4_GMainLoop(void)
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GMainLoop", class_Gtk4_GMainLoop_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GError(zend_class_entry *class_entry_RuntimeException)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GError", class_Gtk4_GError_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_RuntimeException, 0);
+
+	zval property_domain_default_value;
+	ZVAL_EMPTY_STRING(&property_domain_default_value);
+	zend_string *property_domain_name = zend_string_init("domain", sizeof("domain") - 1, 1);
+	zend_declare_typed_property(class_entry, property_domain_name, &property_domain_default_value, ZEND_ACC_PROTECTED, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_STRING));
+	zend_string_release(property_domain_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkTexture(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkTexture", class_Gtk4_GdkTexture_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_NOT_SERIALIZABLE);
 
 	return class_entry;
 }
@@ -907,6 +1478,88 @@ static zend_class_entry *register_class_Gtk4_GtkLabel(zend_class_entry *class_en
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkLabel", class_Gtk4_GtkLabel_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkWidget, ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_CairoContext(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "CairoContext", class_Gtk4_CairoContext_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkDrawingArea(zend_class_entry *class_entry_Gtk4_GtkWidget)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkDrawingArea", class_Gtk4_GtkDrawingArea_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkWidget, ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkFilter(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkFilter", class_Gtk4_GtkFilter_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_ABSTRACT|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkCustomFilter(zend_class_entry *class_entry_Gtk4_GtkFilter)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkCustomFilter", class_Gtk4_GtkCustomFilter_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkFilter, ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkFilterListModel(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_GListModel)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkFilterListModel", class_Gtk4_GtkFilterListModel_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_NOT_SERIALIZABLE);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_GListModel);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkSorter(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkSorter", class_Gtk4_GtkSorter_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_ABSTRACT|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkCustomSorter(zend_class_entry *class_entry_Gtk4_GtkSorter)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkCustomSorter", class_Gtk4_GtkCustomSorter_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkSorter, ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkSortListModel(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_GListModel)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkSortListModel", class_Gtk4_GtkSortListModel_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_NOT_SERIALIZABLE);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_GListModel);
 
 	return class_entry;
 }

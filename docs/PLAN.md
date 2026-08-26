@@ -19,7 +19,7 @@ fragile, or GTK3-specific.
 
 ## 1. Architecture
 
-```
+```text
 PHP script
   │
 PHP-CPP
@@ -42,6 +42,7 @@ GTK4 / GLib C API
 ## 2. Core runtime (hand-written; status 2026-08-25: implemented natively, tested)
 
 ### 2.1 Objects (`src/core/object`)
+
 - `struct Object { GObject *obj; zend_object std; }`; `create_object` allocates it for every
   registered class (one struct serves all — per-class state lives in the GObject).
 - Handlers: `free_obj` (weak-unref, clear qdata, `g_object_unref`), `clone_obj = NULL`,
@@ -62,6 +63,7 @@ GTK4 / GLib C API
   `GParamSpec` is its own handle class. `G_TYPE_POINTER` stays unsupported on purpose.
 
 ### 2.2 Values (`src/core/marshal`)
+
 - `to_php(const GValue*, zval*)` / `to_gvalue(zval*, GType, GValue*)`: all scalar fundamentals,
   enum/flags (as int for now — PHP enums come with the generator), object/interface (via
   `wrap`/`unwrap`), `GParamSpec` (name only until a class exists). Unsupported types raise
@@ -74,6 +76,7 @@ GTK4 / GLib C API
   helpers with GIR transfer semantics.
 
 ### 2.3 Signals (`src/core/gsignal`)
+
 - `connect()`/`connect_after()` use `g_signal_parse_name` (detail support) and a `GClosure` with a
   custom marshaller receiving `GValue` arrays — no varargs. Closure data: the callable zval (kept
   alive), user args, signal name; freed by the closure finalize notifier.
@@ -87,6 +90,7 @@ GTK4 / GLib C API
   (`src/core/teardown.*`); `PhpValue` instances are drained the same way.
 
 ### 2.4 Exception boundary (`src/core/error`)
+
 - Rule unchanged from php-gtk3: a throwable never unwinds through GLib, and Zend refuses to run PHP
   while one is pending. Every trampoline ends with `report_pending_exception(origin)`: take
   `EG(exception)`, `zend_clear_exception()`, call the handler installed via
@@ -100,6 +104,7 @@ GTK4 / GLib C API
   method or from `run()`. Default stays `Log`.
 
 ### 2.5 Arguments
+
 - Arginfo is generated from the stub; bodies parse with `ZEND_PARSE_PARAMETERS_*` → PHP 8
   `ArgumentCountError`/`TypeError` semantics for free. `Z_PARAM_OBJECT_OF_CLASS_OR_NULL` + `unwrap()`
   for GObject arguments.
@@ -143,7 +148,7 @@ GTK4 / GLib C API
 
 ## 5. Build / project layout
 
-```
+```text
 php-gtk4/
   Makefile            PHP-CPP template, NAME=gtk4, -std=c++17, pkg-config gtk4 (+ optional webkitgtk-6.0)
   main.cpp / main.h   get_module(): constants, ini directives, then register_G(), register_Gio()…
@@ -157,6 +162,7 @@ php-gtk4/
   docs/
   gtk4.ini
 ```
+
 Fix php-gtk3's Makefile pain points: real source prerequisites on object rules (`.d` files via
 `-MMD`), version-tagged build dirs (`build/php8.3/`), `PHPCPP_STATIC` pairing check that fails
 early when `php-config` differs from the one PHP-CPP was built with.
@@ -179,18 +185,62 @@ sanitizer/coverage runs, all driven by `ci.sh` (stages `cpp-lint php-qa build lo
   sanitizer job (ASan+UBSan on the suite, LSan on the `php -n` stress run) and a gcov coverage job
   (gcovr HTML artifact); C++ lint on both Ubuntus, PHP QA (phplint/phpcs/php-cs-fixer/phpstan max).
 
+### Milestone 2b — generator prerequisites (2026-08-26)
+
+Core mechanisms the generator emits against, decided before it exists so its output never has to be
+rewritten: PHP enums for GEnum / constant classes for GFlags (with a GType→class registry in
+marshal), collection helpers with GIR transfer semantics, an out-parameter convention, a generic
+fundamental-type handle registry (GdkEvent, GskRenderNode, GtkExpression), a generation rule for
+typed C callbacks, and `GError`/`GBytes` mappings. All done 2026-08-26, tracked in docs/TODO.md §7.
+
+### Conventions the generator relies on (2026-08-26)
+
+- **Out parameters**: a C function's `out` arguments become the PHP return value — one out → that
+  value, several → a list in declaration order (`get_size_request(): array{int,int}`). A `gboolean`
+  return combined with outs means "success": return the outs, or `null` on failure
+  (`GtkLabel::get_selection_bounds(): ?array`). `inout` = the argument is passed, the new value
+  returned. No PHP by-reference parameters anywhere.
+- **Collections**: `GList`/`GSList`/`GPtrArray`/`char**` returns become PHP lists via
+  `src/core/collections.*`, converted by element GType (GObject → handle, string, boxed) with the
+  GIR `transfer` annotation deciding what is freed (`Transfer::None/Container/Full`). Array
+  arguments: `strv_from_php()` for `char**`; object lists as needed.
+- **Errors and bytes**: a C signature with a trailing `GError **` never returns false/null for
+  failure in PHP — it throws `Gtk4\GError` (domain + code); the stub return type drops the failure
+  branch. `GBytes`/`GByteArray` ↔ `string`.
+- **Typed C callbacks** (GIR `<callback>` parameters): every callback parameter becomes a PHP
+  `callable` (nullable where the C side accepts `NULL`); the `closure` argument carries a
+  `phpgtk::Callback` (`src/core/callback.*`) and the `destroy` argument is a per-callback
+  `*_free` notify. Trampoline shape: wrap each C argument with the type family rule (GObject →
+  `wrap()`, `cairo_t` → `CairoContext`, ints/doubles → scalars), `callback_invoke()`, convert the
+  return value (`gboolean` ← truthiness, `gint` ← sign of `zval_get_long`), dtor the zvals.
+  Scope rules: `call` — no notify, the Callback lives on the C stack of the method;
+  `async` — freed by the trampoline after the single invocation; `notified` — freed by the
+  destroy notify, and the installing method registers `teardown_track_notified(cb, owner,
+  clear)` so RSHUTDOWN can clear callables on objects that outlive the request. Destroy notifies
+  run inside GTK frames (dispose, the setter itself) so `callback_free()` parks the callable and
+  `callback_drain()` releases it at the next safe point. Reference implementations:
+  `GtkDrawingArea::set_draw_func`, `GtkCustomFilter`, `GtkCustomSorter`.
+- **Type families**: GObject → handle (`object.*`), boxed → value handle (`boxed.*`), refcounted
+  fundamentals (`GParamSpec`, `GdkEvent`, …) → `fundamental.*` registry with the type's ref/unref
+  pair, GEnum → PHP enum, GFlags → constant class, GVariant → PHP values, `G_TYPE_POINTER` → not
+  bound.
+
 ### GL / GPU rendering (verified 2026-08-26)
 
-The test infrastructure runs GTK with `GSK_RENDERER=cairo` and `GDK_DISABLE=gl` because Xvfb has
+The test infrastructure runs GTK with `GSK_RENDERER=cairo` and `GDK_DEBUG=gl-disable` because Xvfb has
 no GL and Mesa's llvmpipe leaks under valgrind/LSan on CI runners. Real applications use GTK's
 defaults; verified manually on a Wayland session with an AMD GPU (Mesa 25.2, radeonsi):
-`examples/example.php` runs with the default renderer (EGL context), with `GSK_RENDERER=gl`, and
+`examples/CairoContext.php` runs with the default renderer (EGL context), with `GSK_RENDERER=gl`, and
 with `GSK_RENDERER=vulkan` (`GskVulkanRenderer` on `GdkWaylandToplevel`). Nothing in the binding
-is renderer-specific; repeat this check before a release (`docs/TODO.md` §6).
+is renderer-specific; repeat this check before a release (`docs/TODO.md` §6). Note: the automated
+suite pins `GDK_BACKEND=x11` because GTK 4.14's Wayland backend corrupts the heap under the test
+load (verified with valgrind: write into a freed block inside libgtk, no php-gtk4 frames).
 
 ### Tooling decisions (2026-08-25)
+
 - **Leak/memory checking = ASan/UBSan/LSan via `--enable-gtk4-sanitize`, plus valgrind memcheck** on the
-  uninstrumented build (`ci.sh --only=valgrind`) for what ASan cannot see (uninitialised reads). LSan only on the `php -n`
+  uninstrumented build (`ci.sh --only=valgrind`) for what ASan cannot see (uninitialised reads).
+  LSan only on the `php -n`
   stress process (only our module loaded); in the PHPUnit process other PHP extensions leak at their
   own shutdown. Suppressions in `tests/lsan.supp` are third-party only.
 - **Coverage = gcov of the C++ (`--enable-gtk4-coverage`, gcovr)**, not pcov/xdebug: the code under test is the

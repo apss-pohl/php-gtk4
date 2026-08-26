@@ -31,6 +31,14 @@ $display->connect('notify::rgba', function (): void {
 $display->connect('closed', function (): void {
     echo "never\n";
 });
+// Notified-scope callables (draw func, filter func) on objects kept alive by C.
+$area = new Gtk4\GtkDrawingArea();
+$area->set_draw_func(function (): void {
+    echo "never\n";
+});
+$win->set_child($area);          // the window (GTK's toplevel list) keeps the area alive
+$filter = new Gtk4\GtkCustomFilter(fn(): bool => true);
+$model = new Gtk4\GtkFilterListModel(new Gtk4\GListStore(), $filter);
 GLib::timeout_add(60_000, function (): bool {
     echo "never\n";
     return false;

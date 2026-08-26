@@ -7,6 +7,7 @@
     <file>stubs</file>
     <file>gen</file>
     <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>tests/phpt/*</exclude-pattern>
     <exclude-pattern>stubs/gtk4.php</exclude-pattern>
     <exclude-pattern>gen/gen_stub.php</exclude-pattern>
     <exclude-pattern>gen/PHP-Parser-*</exclude-pattern>

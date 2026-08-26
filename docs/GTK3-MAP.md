@@ -241,7 +241,7 @@ php-gtk4 currently registers: `GObject`, `GParamSpec`, `Gtk`, `GLib`, `GMainLoop
 
 1. **Layout containers** — `GtkBox`, `GtkGrid`, `GtkPaned`, `GtkScrolledWindow`, `GtkFrame`,
    plus the missing `GtkWidget` layout methods (`set_margin_*`, `set_hexpand`, `set_halign`).
-   Without these, `examples/example.php` cannot grow past a single child.
+   Without these, an example window cannot grow past a single child.
 2. **Controls** — `GtkEntry`/`GtkEditable`, `GtkCheckButton`, `GtkToggleButton`, `GtkSpinButton`,
    `GtkScale`, `GtkProgressBar`, `GtkImage`, `GtkSpinner`.
 3. **Event controllers** — `GtkEventControllerKey`, `GtkGestureClick`,
@@ -257,4 +257,4 @@ php-gtk4 currently registers: `GObject`, `GParamSpec`, `Gtk`, `GLib`, `GMainLoop
 9. Optional/later: printing, `GdkClipboard`, WebKitGTK 6, GtkSourceView 5.
 
 Each entry follows the four-part definition of done in CLAUDE.md: implementation + registration,
-tests, stub + regenerated arginfo/IDE stub, and a use in `examples/example.php`.
+tests, stub + regenerated arginfo/IDE stub, and its own `examples/<Class>.php`.

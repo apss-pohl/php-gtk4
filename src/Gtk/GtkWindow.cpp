@@ -151,3 +151,17 @@ ZEND_METHOD(Gtk4_GtkWindow, get_child) {
   GtkWidget *child = gtk_window_get_child(w);
   wrap(child != nullptr ? G_OBJECT(child) : nullptr, return_value);
 }
+
+/**
+ * Gtk4\GtkWindow::get_default_size(): array
+ */
+ZEND_METHOD(Gtk4_GtkWindow, get_default_size) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWindow *w = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
+  int width = 0;
+  int height = 0;
+  gtk_window_get_default_size(w, &width, &height);
+  array_init_size(return_value, 2);
+  add_next_index_long(return_value, width);
+  add_next_index_long(return_value, height);
+}

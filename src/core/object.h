@@ -37,8 +37,12 @@ void attach_new(Object *self, GObject *obj);
 void object_handlers_init();
 // Install create_object on a class entry (subclasses inherit it) and add the
 // GType -> class mapping used by wrap().
-void register_class(const char *gtype_name, zend_class_entry *ce);
+// `type` is the GType (its *_get_type() is called here, which also forces GTK's
+// lazy type registration so lookups by name work from the start).
+void register_class(const char *gtype_name, zend_class_entry *ce, GType type);
 zend_class_entry *class_for_gtype_name(const char *gtype_name);
+// GType of a registered PHP class (0 if unknown).
+GType gtype_for_class(zend_class_entry *ce);
 
 // C -> PHP. Writes the handle into rv (existing object if one is registered,
 // else a new one of the nearest registered ancestor class); null for nullptr.

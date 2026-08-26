@@ -2,6 +2,10 @@
 #include "object.h"
 #include "paramspec.h"
 #include "boxed.h"
+#include "fundamental.h"
+#include "enums.h"
+#include "collections.h"
+#include "gerror.h"
 #include "variant.h"
 
 namespace phpgtk {
@@ -29,7 +33,8 @@ bool to_php_supported(GType t) {
     case G_TYPE_PARAM:
       return true;
     case G_TYPE_BOXED:
-      return t == G_TYPE_STRV || boxed_class_for_type(t) != nullptr;
+      return t == G_TYPE_STRV || t == G_TYPE_BYTES || t == G_TYPE_ERROR ||
+             boxed_class_for_type(t) != nullptr || fundamental_class_for_type(t) != nullptr;
     case G_TYPE_VARIANT:
       return true;
     default:
@@ -74,7 +79,7 @@ void to_php(const GValue *v, zval *rv) {
       ZVAL_LONG(rv, static_cast<zend_long>(g_value_get_uint64(v)));
       return;
     case G_TYPE_ENUM:
-      ZVAL_LONG(rv, g_value_get_enum(v));
+      enum_to_php(t, g_value_get_enum(v), rv);
       return;
     case G_TYPE_FLAGS:
       ZVAL_LONG(rv, g_value_get_flags(v));
@@ -102,9 +107,30 @@ void to_php(const GValue *v, zval *rv) {
       return;
     case G_TYPE_BOXED: {
       if (t == G_TYPE_STRV) {
-        auto **strv = static_cast<char **>(g_value_get_boxed(v));
-        array_init(rv);
-        for (char **s = strv; s != nullptr && *s != nullptr; s++) add_next_index_string(rv, *s);
+        strv_to_php(static_cast<char **>(g_value_get_boxed(v)), Transfer::None, rv);
+        return;
+      }
+      if (t == G_TYPE_BYTES) {
+        auto *bytes = static_cast<GBytes *>(g_value_get_boxed(v));
+        gsize size = 0;
+        const auto *data =
+            bytes != nullptr ? static_cast<const char *>(g_bytes_get_data(bytes, &size)) : nullptr;
+        if (data == nullptr)
+          ZVAL_EMPTY_STRING(rv);
+        else
+          ZVAL_STRINGL(rv, data, size);
+        return;
+      }
+      if (t == G_TYPE_ERROR) {
+        auto *error = static_cast<GError *>(g_value_get_boxed(v));
+        if (error == nullptr)
+          ZVAL_NULL(rv);
+        else
+          gerror_to_php(error, rv);
+        return;
+      }
+      if (boxed_class_for_type(t) == nullptr && fundamental_class_for_type(t) != nullptr) {
+        wrap_fundamental(t, g_value_get_boxed(v), rv);  // refcounted boxed: cairo_t, ...
         return;
       }
       wrap_boxed(t, g_value_get_boxed(v), rv);
@@ -151,9 +177,15 @@ bool to_gvalue(zval *pv, GType t, GValue *out) {
     case G_TYPE_UINT64:
       g_value_set_uint64(out, static_cast<guint64>(zval_get_long(pv)));
       return true;
-    case G_TYPE_ENUM:
-      g_value_set_enum(out, static_cast<gint>(zval_get_long(pv)));
+    case G_TYPE_ENUM: {
+      gint e = 0;
+      if (!enum_from_php(pv, t, &e)) {
+        g_value_unset(out);
+        return false;
+      }
+      g_value_set_enum(out, e);
       return true;
+    }
     case G_TYPE_FLAGS:
       g_value_set_flags(out, static_cast<guint>(zval_get_long(pv)));
       return true;
@@ -188,28 +220,37 @@ bool to_gvalue(zval *pv, GType t, GValue *out) {
       return true;
     }
     case G_TYPE_BOXED: {
-      if (t == G_TYPE_STRV) {
-        if (Z_TYPE_P(pv) != IS_ARRAY) {
+      if (t == G_TYPE_BYTES) {
+        if (Z_TYPE_P(pv) == IS_ARRAY || Z_TYPE_P(pv) == IS_OBJECT) {
           g_value_unset(out);
-          zend_type_error("expected array of strings for %s, %s given", g_type_name(t),
-                          zend_zval_value_name(pv));
+          zend_type_error("expected string for GBytes, %s given", zend_zval_value_name(pv));
           return false;
         }
-        auto *builder = g_strv_builder_new();
-        zval *item;
-        // NOLINTNEXTLINE(readability-math-missing-parentheses) Zend macro expansion
-        ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(pv), item) {
-          zend_string *s = zval_get_string(item);
-          g_strv_builder_add(builder, ZSTR_VAL(s));
-          zend_string_release(s);
+        zend_string *str = zval_get_string(pv);
+        g_value_take_boxed(out, g_bytes_new(ZSTR_VAL(str), ZSTR_LEN(str)));
+        zend_string_release(str);
+        return true;
+      }
+      if (t == G_TYPE_STRV) {
+        char **strv = strv_from_php(pv);
+        if (strv == nullptr) {
+          g_value_unset(out);
+          return false;
         }
-        ZEND_HASH_FOREACH_END();
-        g_value_take_boxed(out, static_cast<gpointer>(g_strv_builder_end(builder)));
-        g_strv_builder_unref(builder);
+        g_value_take_boxed(out, static_cast<gpointer>(strv));
         return true;
       }
       if (Z_TYPE_P(pv) == IS_NULL) {
         g_value_set_boxed(out, nullptr);
+        return true;
+      }
+      if (boxed_class_for_type(t) == nullptr && fundamental_class_for_type(t) != nullptr) {
+        gpointer instance = unwrap_fundamental(pv, t);
+        if (instance == nullptr) {
+          g_value_unset(out);
+          return false;
+        }
+        g_value_set_boxed(out, instance);  // copy = ref for refcounted boxed types
         return true;
       }
       gpointer data = unwrap_boxed(pv, t);

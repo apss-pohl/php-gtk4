@@ -2,6 +2,8 @@
 #include "php_gtk4.h"
 #include "core/object.h"
 #include "core/variant.h"
+#include "core/enums.h"
+#include "core/collections.h"
 
 using namespace phpgtk;
 
@@ -235,33 +237,20 @@ WIDGET_METHOD(queue_draw) {
 WIDGET_METHOD(get_css_classes) {
   ZEND_PARSE_PARAMETERS_NONE();
   SELF_WIDGET;
-  char **classes = gtk_widget_get_css_classes(w);
-  array_init(return_value);
-  for (char **c = classes; c != nullptr && *c != nullptr; c++)
-    add_next_index_string(return_value, *c);
-  g_strfreev(classes);
+  strv_to_php(gtk_widget_get_css_classes(w), Transfer::Full, return_value);
 }
 
 /**
  * Gtk4\GtkWidget::set_css_classes(array $classes): void
  */
 WIDGET_METHOD(set_css_classes) {
-  HashTable *classes;
+  zval *classes;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_ARRAY_HT(classes)
+  Z_PARAM_ARRAY(classes)
   ZEND_PARSE_PARAMETERS_END();
   SELF_WIDGET;
-  GStrvBuilder *builder = g_strv_builder_new();
-  zval *item;
-  // NOLINTNEXTLINE(readability-math-missing-parentheses) Zend macro expansion
-  ZEND_HASH_FOREACH_VAL(classes, item) {
-    zend_string *s = zval_get_string(item);
-    g_strv_builder_add(builder, ZSTR_VAL(s));
-    zend_string_release(s);
-  }
-  ZEND_HASH_FOREACH_END();
-  char **strv = g_strv_builder_end(builder);
-  g_strv_builder_unref(builder);
+  char **strv = strv_from_php(classes);
+  if (strv == nullptr) RETURN_THROWS();
   gtk_widget_set_css_classes(w, const_cast<const char **>(strv));
   g_strfreev(strv);
 }
@@ -291,4 +280,76 @@ WIDGET_METHOD(activate_action) {
   if (v != nullptr) g_variant_unref(v);
   if (EG(exception) != nullptr) RETURN_THROWS();
   RETURN_BOOL(found);
+}
+
+// set_halign / set_valign share the enum parsing.
+static void set_align(INTERNAL_FUNCTION_PARAMETERS, void (*setter)(GtkWidget *, GtkAlign)) {
+  zval *align;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(align, enum_class_for_type(GTK_TYPE_ALIGN))
+  ZEND_PARSE_PARAMETERS_END();
+  SELF_WIDGET;
+  gint value = 0;
+  if (!enum_from_php(align, GTK_TYPE_ALIGN, &value)) RETURN_THROWS();
+  setter(w, static_cast<GtkAlign>(value));
+}
+
+/**
+ * Gtk4\GtkWidget::set_halign(GtkAlign $align): void
+ */
+WIDGET_METHOD(set_halign) {
+  set_align(INTERNAL_FUNCTION_PARAM_PASSTHRU, gtk_widget_set_halign);
+}
+
+/**
+ * Gtk4\GtkWidget::get_halign(): GtkAlign
+ */
+WIDGET_METHOD(get_halign) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  SELF_WIDGET;
+  enum_to_php(GTK_TYPE_ALIGN, gtk_widget_get_halign(w), return_value);
+}
+
+/**
+ * Gtk4\GtkWidget::set_valign(GtkAlign $align): void
+ */
+WIDGET_METHOD(set_valign) {
+  set_align(INTERNAL_FUNCTION_PARAM_PASSTHRU, gtk_widget_set_valign);
+}
+
+/**
+ * Gtk4\GtkWidget::get_valign(): GtkAlign
+ */
+WIDGET_METHOD(get_valign) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  SELF_WIDGET;
+  enum_to_php(GTK_TYPE_ALIGN, gtk_widget_get_valign(w), return_value);
+}
+
+/**
+ * Gtk4\GtkWidget::get_size_request(): array
+ *
+ * The size request as [width, height] (out parameters become a list).
+ */
+WIDGET_METHOD(get_size_request) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  SELF_WIDGET;
+  int width = 0;
+  int height = 0;
+  gtk_widget_get_size_request(w, &width, &height);
+  array_init_size(return_value, 2);
+  add_next_index_long(return_value, width);
+  add_next_index_long(return_value, height);
+}
+
+/**
+ * Gtk4\GtkWidget::list_mnemonic_labels(): array
+ *
+ * Widgets whose mnemonic activates this widget.
+ */
+WIDGET_METHOD(list_mnemonic_labels) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  SELF_WIDGET;
+  glist_to_php(gtk_widget_list_mnemonic_labels(w), GTK_TYPE_WIDGET, Transfer::Container,
+               return_value);
 }

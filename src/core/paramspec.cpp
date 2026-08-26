@@ -1,46 +1,14 @@
 #include "paramspec.h"
 
-#include "classes.h"
+#include "fundamental.h"
 #include "marshal.h"
 
-namespace {
-
-struct ParamSpecObject {
-  GParamSpec *spec;
-  zend_object std;
-};
-
-zend_object_handlers handlers;
-
-// zend_object -> our embedding struct.
-ParamSpecObject *from_zend(zend_object *o) {
-  return reinterpret_cast<ParamSpecObject *>(reinterpret_cast<char *>(o) -
-                                             XtOffsetOf(ParamSpecObject, std));
-}
+using namespace phpgtk;
 
 // The GParamSpec behind $this.
-GParamSpec *self_spec(zend_execute_data *execute_data) {
-  return from_zend(Z_OBJ_P(ZEND_THIS))->spec;
+static GParamSpec *self_spec(zend_execute_data *execute_data) {
+  return PHPGTK_FUNDAMENTAL_SELF(GParamSpec);
 }
-
-// create_object handler; the spec is set by wrap_param_spec().
-zend_object *create_object(zend_class_entry *ce) {
-  auto *self = static_cast<ParamSpecObject *>(zend_object_alloc(sizeof(ParamSpecObject), ce));
-  self->spec = nullptr;
-  zend_object_std_init(&self->std, ce);
-  object_properties_init(&self->std, ce);
-  self->std.handlers = &handlers;
-  return &self->std;
-}
-
-// free_obj handler: drop our ref on the spec.
-void free_obj(zend_object *o) {
-  ParamSpecObject *self = from_zend(o);
-  if (self->spec != nullptr) g_param_spec_unref(self->spec);
-  zend_object_std_dtor(o);
-}
-
-}  // namespace
 
 /**
  * Gtk4\GParamSpec::get_name(): string
@@ -114,29 +82,30 @@ ZEND_METHOD(Gtk4_GParamSpec, is_writable) {
 ZEND_METHOD(Gtk4_GParamSpec, get_default_value) {
   ZEND_PARSE_PARAMETERS_NONE();
   GParamSpec *spec = self_spec(execute_data);
-  if (!phpgtk::to_php_supported(spec->value_type)) RETURN_NULL();
-  phpgtk::to_php(g_param_spec_get_default_value(spec), return_value);
+  if (!to_php_supported(spec->value_type)) RETURN_NULL();
+  to_php(g_param_spec_get_default_value(spec), return_value);
 }
 
 namespace phpgtk {
 
-// MINIT: install the object handlers on the class entry.
-void register_GParamSpec_handlers(zend_class_entry *ce) {
-  memcpy(&handlers, &std_object_handlers, sizeof(zend_object_handlers));
-  handlers.offset = XtOffsetOf(ParamSpecObject, std);
-  handlers.free_obj = free_obj;
-  handlers.clone_obj = nullptr;
-  ce->create_object = create_object;
+// g_param_spec_ref/unref with the registry's gpointer signature.
+static gpointer spec_ref(gpointer p) {
+  return g_param_spec_ref(static_cast<GParamSpec *>(p));
+}
+// Unref counterpart for the registry.
+static void spec_unref(gpointer p) {
+  g_param_spec_unref(static_cast<GParamSpec *>(p));
 }
 
-// C -> PHP: new handle holding a ref on `spec` (null for nullptr).
+// MINIT: GParamSpec is the first fundamental handle type.
+void register_GParamSpec(zend_class_entry *ce) {
+  register_fundamental(
+      FundamentalClass{.type = G_TYPE_PARAM, .ce = ce, .ref = spec_ref, .unref = spec_unref});
+}
+
+// C -> PHP through the fundamental registry.
 void wrap_param_spec(GParamSpec *spec, zval *rv) {
-  if (spec == nullptr) {
-    ZVAL_NULL(rv);
-    return;
-  }
-  object_init_ex(rv, ce_GParamSpec);
-  from_zend(Z_OBJ_P(rv))->spec = g_param_spec_ref(spec);
+  wrap_fundamental(G_TYPE_PARAM, spec, rv);
 }
 
 }  // namespace phpgtk

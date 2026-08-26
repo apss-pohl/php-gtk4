@@ -70,3 +70,9 @@ phpunit-junit.xml
 /tests/phpt/*.php
 /tests/phpt/*.sh
 /tmp-php.ini
+
+# Release workflow scratch (dist/ + generated notes)
+dist/
+NOTES.md
+.notes-body
+configure~

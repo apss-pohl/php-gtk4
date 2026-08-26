@@ -5,6 +5,8 @@ parameters:
     phpVersion: 80400
     # src/gtk4.stub.php is php-src stub syntax (empty bodies, UNKNOWN) - not analysable;
     # the derived stubs/gtk4.php is scanned for the Gtk4\ symbols instead.
+    excludePaths:
+        - tests/phpt
     paths:
         - tests
         - examples

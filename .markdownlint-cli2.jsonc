@@ -1,0 +1,39 @@
+// Markdown lint for the docs (./ci.sh --only=md-lint, --fix applies the fixable rules).
+// The prose in this repo wraps at ~100 columns by hand; tables, fenced code and long
+// reference URLs are exempt rather than reflowed.
+{
+  "config": {
+    "default": true,
+
+    // MD013: prose wraps at 100; tables (docs/GTK3-MAP.md) and code samples do not.
+    "MD013": {
+      "line_length": 110,
+      "tables": false,
+      "code_blocks": false,
+      "headings": false
+    },
+
+    // MD024: CHANGELOG.md repeats "### Added" under every version.
+    "MD024": { "siblings_only": true },
+
+    // MD060 (table pipe padding) is a formatting preference, not a defect, and the
+    // compact tables in docs/PLAN.md are deliberate.
+    "MD060": false,
+
+    // The prose here emphasises with *asterisks*, not _underscores_ (underscores
+    // are everywhere in snake_case identifiers).
+    "MD049": { "style": "asterisk" },
+    "MD050": { "style": "asterisk" }
+
+    // Bare URLs are wrapped in <> or []() everywhere; keep MD034 on.
+    // Inline HTML is not used in these docs; keep MD033 on.
+  },
+  "globs": ["**/*.md"],
+  "ignores": [
+    "vendor/**",
+    "node_modules/**",
+    "build/**",
+    "coverage/**",
+    "gen/PHP-Parser-*/**"
+  ]
+}

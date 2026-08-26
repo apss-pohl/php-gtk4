@@ -85,6 +85,20 @@ $traverser->addVisitor(new class extends NodeVisitorAbstract {
             }
             $node->stmts = $body;
         }
+        if ($node instanceof Stmt\ClassConst) {
+            $typeName = $node->type instanceof Node\Identifier ? $node->type->toLowerString() : null;
+            foreach ($node->consts as $const) {
+                $v = $const->value;
+                if ($v instanceof Node\Expr\ConstFetch && $v->name->toString() === 'UNKNOWN') {
+                    $const->value = match ($typeName) {
+                        'int' => new Node\Scalar\Int_(0),
+                        'float' => new Node\Scalar\Float_(0.0),
+                        'bool' => new Node\Expr\ConstFetch(new Node\Name('false')),
+                        default => new Node\Scalar\String_(''),
+                    };
+                }
+            }
+        }
         if ($node instanceof Stmt\Const_) {
             foreach ($node->consts as $const) {
                 $v = $const->value;

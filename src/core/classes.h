@@ -7,4 +7,6 @@ namespace phpgtk {
 extern zend_class_entry *ce_ExceptionMode;
 extern zend_class_entry *ce_GMainLoop;
 extern zend_class_entry *ce_GParamSpec;
+extern zend_class_entry *ce_GListModel;  // interface
+extern zend_class_entry *ce_CairoContext;
 }  // namespace phpgtk

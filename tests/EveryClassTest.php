@@ -54,10 +54,11 @@ final class EveryClassTest extends GtkTestCase
             if (!preg_match('/^(get|is|has|in)_/', $m->getName())) {
                 continue;
             }
-            // Return value must be a plain PHP value or a handle - never a crash.
+            // Return value must be a plain PHP value, an enum case or a Gtk4 handle - never a crash.
             $value = $m->invoke($object);
             self::assertTrue(
-                $value === null || is_scalar($value) || is_array($value) || $value instanceof \Gtk4\GObject,
+                $value === null || is_scalar($value) || is_array($value) || $value instanceof \UnitEnum
+                    || (is_object($value) && str_starts_with($value::class, 'Gtk4\\')),
                 sprintf('%s::%s() returned %s', $class, $m->getName(), get_debug_type($value)),
             );
             $called++;

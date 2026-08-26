@@ -3,6 +3,7 @@
 #include "core/mainloop.h"
 #include "core/object.h"
 #include "core/variant.h"
+#include "core/collections.h"
 
 #include <string>
 #include <vector>
@@ -223,4 +224,15 @@ ZEND_METHOD(Gtk4_GtkApplication, activate_action) {
   g_action_group_activate_action(group, ZSTR_VAL(name), v);
   if (v != nullptr) g_variant_unref(v);
   if (EG(exception) != nullptr) RETURN_THROWS();
+}
+
+/**
+ * Gtk4\GtkApplication::get_windows(): array
+ *
+ * The application's windows, most recently focused first.
+ */
+ZEND_METHOD(Gtk4_GtkApplication, get_windows) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkApplication *app = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
+  glist_to_php(gtk_application_get_windows(app), GTK_TYPE_WINDOW, Transfer::None, return_value);
 }

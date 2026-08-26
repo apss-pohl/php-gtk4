@@ -20,7 +20,8 @@ final class MarshalTest extends GtkTestCase
         yield 'bool false'      => ['resizable', false, false];
         yield 'bool from int'   => ['resizable', 0, false];
         yield 'double from int' => ['opacity', 1, 1.0];
-        yield 'enum as int'     => ['halign', 2, 2];   // GTK_ALIGN_END
+        yield 'enum from int'   => ['halign', 2, \Gtk4\GtkAlign::End];   // GTK_ALIGN_END -> PHP enum
+        yield 'enum from case'  => ['halign', \Gtk4\GtkAlign::Center, \Gtk4\GtkAlign::Center];
     }
 
     #[DataProvider('scalarProperties')]
@@ -48,7 +49,7 @@ final class MarshalTest extends GtkTestCase
         self::assertIsInt($w->get_property('default-width'));
         self::assertIsBool($w->get_property('resizable'));
         self::assertIsFloat($w->get_property('opacity'));
-        self::assertIsInt($w->get_property('halign'), 'enums are ints');
+        self::assertInstanceOf(\Gtk4\GtkAlign::class, $w->get_property('halign'), 'registered enums are PHP enums');
         self::assertIsInt($w->get_property('scale-factor'));
     }
 

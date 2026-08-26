@@ -230,5 +230,6 @@ ZEND_METHOD(Gtk4_GLib, source_remove) {
   GSource *source = g_main_context_find_source_by_id(nullptr, static_cast<guint>(id));
   if (source == nullptr) RETURN_FALSE;
   g_source_destroy(source);
+  callback_drain();
   RETURN_TRUE;
 }

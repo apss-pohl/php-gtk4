@@ -14,8 +14,14 @@ export GTK4_SO=${GTK4_SO:-./gtk4.so}
 export GSK_RENDERER=${GSK_RENDERER:-cairo}
 export LIBGL_ALWAYS_SOFTWARE=1
 # ...and keep GDK from initialising GL at all (Mesa's llvmpipe leaks thread pools under
-# valgrind/LSan on CI runners). GDK_DISABLE is the GTK >= 4.14 feature switch.
-export GDK_DISABLE=${GDK_DISABLE:-gl}
+# valgrind/LSan on CI runners, and Xvfb prints libEGL DRI3 warnings on stderr).
+# GTK 4.14 (the CI floor) honours GDK_DEBUG=gl-disable; GDK_DISABLE=gl is the 4.16+ spelling and
+# is ignored on 4.14 - and setting both makes 4.14 ignore GDK_DEBUG. Revisit when the floor moves.
+export GDK_DEBUG=${GDK_DEBUG:-gl-disable}
+# GDK prefers Wayland over the DISPLAY xvfb-run provides when WAYLAND_DISPLAY is set in the
+# developer's session - the suite would then run on the real compositor (and hit a GTK
+# Wayland-backend heap corruption on 4.14). Pin the X11 backend: Xvfb is the target.
+export GDK_BACKEND=${GDK_BACKEND:-x11}
 # Never run the suite under xdebug: its develop-mode observer segfaults at
 # request shutdown after ReflectionMethod::invoke() on PHP-CPP methods
 # (EveryClassTest), and it slows everything down. The stress/ASan runs use

@@ -61,6 +61,36 @@ longer holds for a PHP 8.4+ target, and it blocks idiomatic PHP:
 - [x] `GtkWidget` layer (+ `GtkButton`, `GtkLabel`), `GObject::emit()`
 - [x] closure/source teardown in RSHUTDOWN (`src/core/teardown.*`, `tests/scripts/shutdown.php`)
 
+## 7. Milestone 2b — foundation the generator will emit against (decided 2026-08-26)
+
+Do before milestone 3; each changes what generated code looks like.
+
+- [x] **Enums and flags as PHP types** (2026-08-26) — `src/core/enums.*`; `GtkAlign`, `GtkOrientation`
+      as PHP enums (cases literal in the stub, verified against the C enum at RINIT), `GApplicationFlags`
+      as a constant class (values literal, verified at RINIT); properties return cases and accept
+      cases or ints, typed methods
+      take the enum only; unregistered enum types stay ints.
+- [x] **Collection helpers** (2026-08-26) — `src/core/collections.*`: `GList`/`GSList`/`GPtrArray`/`char**`
+      → PHP list by element GType with `Transfer::{None,Container,Full}`; `strv_from_php`. Users:
+      `GtkApplication::get_windows()` (none), `GtkWidget::list_mnemonic_labels()` (container),
+      CSS classes (`GStrv`). `GPtrArray` helper exists but has no bound user yet.
+- [x] **Out parameters** (2026-08-26) — convention recorded in PLAN.md: outs become the return value
+      (one → value, several → list in declaration order); a `bool` C return with outs → the outs or
+      `null`. Users: `get_size_request()`, `GtkWindow::get_default_size()`, `GtkLabel::get_selection_bounds()`.
+- [x] **Fundamental handle mechanism** (2026-08-26) — `src/core/fundamental.*`: registry of
+      GType → {class, ref, unref}; `GParamSpec` migrated onto it. `GdkEvent`/`GskRenderNode`/
+      `GtkExpression` register the same way when their APIs arrive (GdkEvent with controllers).
+- [x] **Typed C callbacks from GIR** (2026-08-26) — hand-written trampolines as the generator
+      template (PLAN.md "Typed C callbacks"): `GtkDrawingArea::set_draw_func()`
+      (`GtkDrawingAreaDrawFunc`, with a minimal `CairoContext` handle on the fundamental registry),
+      `GtkCustomFilter` (`GtkCustomFilterFunc`) + `GtkFilterListModel`, `GtkCustomSorter`
+      (`GCompareDataFunc`) + `GtkSortListModel`; notified scope tracked by `teardown.*`, callable
+      release deferred to `callback_drain()` (destroy notifies run inside GTK frames).
+- [x] **`GError` → exception, `GBytes` ↔ string** (2026-08-26) — `Gtk4\GError extends RuntimeException`
+      (`getDomain()`, GLib code in `getCode()`), `throw_gerror()` for `GError **` APIs, `G_TYPE_ERROR`
+      values become exception objects; `GBytes` ↔ string in marshal and method signatures.
+      First user: `GdkTexture` (`new_from_filename/new_from_bytes/save_to_png_bytes/save_to_png`).
+
 ## 6. GTK4 feature surface (what the binding still has to expose to deliver GTK4's benefits)
 
 Inherited for free (nothing to do): GSK/GPU rendering, the flat widget hierarchy (no

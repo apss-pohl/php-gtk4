@@ -22,7 +22,7 @@ namespace Gtk4;
  * Extension version, version_compare()-friendly.
  * @var string
  */
-const VERSION = '0.1.0';
+const VERSION = '0.1.0-dev';
 
 /**
  * "built <date>, git <hash>" of the loaded binary.
@@ -128,6 +128,69 @@ final class GParamSpec
 }
 
 /**
+ * Horizontal / vertical alignment of a widget within its allocation.
+ * (Case values are verified against GTK's GEnumClass when the extension loads.)
+ *
+ * @link https://docs.gtk.org/gtk4/enum.Align.html
+ */
+enum GtkAlign: int
+{
+    case Fill = 0;
+    case Start = 1;
+    case End = 2;
+    case Center = 3;
+    case BaselineFill = 4;
+    case BaselineCenter = 5;
+}
+
+/**
+ * @link https://docs.gtk.org/gtk4/enum.Orientation.html
+ */
+enum GtkOrientation: int
+{
+    case Horizontal = 0;
+    case Vertical = 1;
+}
+
+/**
+ * GApplication flags - a bitmask, combine with `|`. Flags types are constant
+ * classes (PHP enums cannot be OR-ed); the values are verified against GLib's
+ * GFlagsClass when the extension loads.
+ *
+ * @link https://docs.gtk.org/gio/flags.ApplicationFlags.html
+ */
+final class GApplicationFlags
+{
+    public const int DEFAULT_FLAGS = 0;
+    public const int IS_SERVICE = 1;
+    public const int IS_LAUNCHER = 2;
+    public const int HANDLES_OPEN = 4;
+    public const int HANDLES_COMMAND_LINE = 8;
+    public const int SEND_ENVIRONMENT = 16;
+    public const int NON_UNIQUE = 32;
+    public const int CAN_OVERRIDE_APP_ID = 64;
+    public const int ALLOW_REPLACEMENT = 128;
+    public const int REPLACE = 256;
+}
+
+/** @link https://docs.gtk.org/gtk4/enum.FilterChange.html */
+enum GtkFilterChange: int
+{
+    case Different = 0;
+    case LessStrict = 1;
+    case MoreStrict = 2;
+}
+
+/** @link https://docs.gtk.org/gtk4/enum.SorterChange.html */
+enum GtkSorterChange: int
+{
+    case Different = 0;
+    case Inverted = 1;
+    case LessStrict = 2;
+    case MoreStrict = 3;
+}
+
+/**
  * How a Throwable thrown inside a signal handler or GLib callback is handled.
  */
 enum ExceptionMode: int
@@ -203,6 +266,51 @@ final class GMainLoop
     public function quit(): void {}
 
     public function is_running(): bool {}
+}
+
+/**
+ * A GLib error (`GError`) surfaced as an exception. Every method whose C
+ * counterpart takes a `GError **` throws this instead of returning false/null.
+ * `getCode()` is GLib's error code within {@see getDomain()}.
+ */
+class GError extends \RuntimeException
+{
+    protected string $domain = '';
+
+    /** Error domain (quark name), e.g. "g-io-error-quark", "gdk-texture-error-quark". */
+    public function getDomain(): string {}
+}
+
+/**
+ * Pixel data usable by widgets and paintables. Byte buffers (`GBytes`) are
+ * plain PHP strings on this side.
+ *
+ * @property int $width
+ * @property int $height
+ *
+ * @link https://docs.gtk.org/gdk4/class.Texture.html
+ * @not-serializable
+ */
+class GdkTexture extends GObject
+{
+    /** @throws GError If the file cannot be read or decoded */
+    public static function new_from_filename(string $path): GdkTexture {}
+
+    /**
+     * @param string $bytes Encoded image data (PNG, JPEG, ...)
+     * @throws GError If the data cannot be decoded
+     */
+    public static function new_from_bytes(string $bytes): GdkTexture {}
+
+    public function get_width(): int {}
+
+    public function get_height(): int {}
+
+    /** The texture encoded as PNG. */
+    public function save_to_png_bytes(): string {}
+
+    /** @throws GError If the file cannot be written */
+    public function save_to_png(string $path): void {}
 }
 
 /**
@@ -396,7 +504,7 @@ class GtkApplication extends GObject implements GActionMap, GActionGroup
 {
     /**
      * @param string|null $applicationId Reverse-DNS id, or null for a non-unique app
-     * @param int $flags GApplicationFlags bitmask (0 = G_APPLICATION_DEFAULT_FLAGS)
+     * @param int $flags Bitmask of {@see GApplicationFlags} constants
      */
     public function __construct(?string $applicationId = null, int $flags = 0) {}
 
@@ -416,6 +524,13 @@ class GtkApplication extends GObject implements GActionMap, GActionGroup
     public function get_active_window(): ?GtkWindow {}
 
     public function get_application_id(): ?string {}
+
+    /**
+     * The application's windows, most recently focused first.
+     *
+     * @return list<GtkWindow>
+     */
+    public function get_windows(): array {}
 
     public function add_action(GAction $action): void {}
 
@@ -502,8 +617,8 @@ final class GdkRectangle
  * @property bool $has_focus
  * @property ?string $tooltip_text
  * @property ?string $name
- * @property int $halign
- * @property int $valign
+ * @property GtkAlign $halign
+ * @property GtkAlign $valign
  * @property int $margin_start
  * @property int $margin_end
  * @property int $margin_top
@@ -536,6 +651,20 @@ abstract class GtkWidget extends GObject
 
     /** Minimum size in pixels; -1 = natural size. */
     public function set_size_request(int $width, int $height): void {}
+
+    /**
+     * The size request as [width, height] (out parameters become a list).
+     *
+     * @return array{int, int}
+     */
+    public function get_size_request(): array {}
+
+    /**
+     * Widgets whose mnemonic activates this widget.
+     *
+     * @return list<GtkWidget>
+     */
+    public function list_mnemonic_labels(): array {}
 
     public function get_parent(): ?GtkWidget {}
 
@@ -572,6 +701,14 @@ abstract class GtkWidget extends GObject
      * $parameter is converted to the action's parameter type. False if no such action.
      */
     public function activate_action(string $name, mixed $parameter = null): bool {}
+
+    public function set_halign(GtkAlign $align): void {}
+
+    public function get_halign(): GtkAlign {}
+
+    public function set_valign(GtkAlign $align): void {}
+
+    public function get_valign(): GtkAlign {}
 
     /** Queue a redraw of the widget. */
     public function queue_draw(): void {}
@@ -625,6 +762,215 @@ class GtkLabel extends GtkWidget
     public function set_selectable(bool $selectable): void {}
 
     public function get_selectable(): bool {}
+
+    /**
+     * Selected character range as [start, end], or null when nothing is selected
+     * (a boolean-returning C function with out parameters returns the outs or null).
+     *
+     * @return array{int, int}|null
+     */
+    public function get_selection_bounds(): ?array {}
+
+    public function select_region(int $start, int $end): void {}
+}
+
+/**
+ * A cairo drawing context, as handed to {@see GtkDrawingArea::set_draw_func()}
+ * callbacks. Only valid during the callback. Minimal surface for now; grows
+ * with the generator.
+ *
+ * @link https://www.cairographics.org/manual/cairo-cairo-t.html
+ * @not-serializable
+ */
+final class CairoContext
+{
+    public function set_source_rgb(float $red, float $green, float $blue): void {}
+
+    public function set_source_rgba(float $red, float $green, float $blue, float $alpha): void {}
+
+    public function set_source_color(GdkRGBA $color): void {}
+
+    public function set_line_width(float $width): void {}
+
+    public function move_to(float $x, float $y): void {}
+
+    public function line_to(float $x, float $y): void {}
+
+    public function rectangle(float $x, float $y, float $width, float $height): void {}
+
+    /** Angles in radians. */
+    public function arc(float $xc, float $yc, float $radius, float $angle1, float $angle2): void {}
+
+    public function close_path(): void {}
+
+    public function fill(): void {}
+
+    public function fill_preserve(): void {}
+
+    public function stroke(): void {}
+
+    public function stroke_preserve(): void {}
+
+    /** Paint the current source everywhere within the clip. */
+    public function paint(): void {}
+
+    public function save(): void {}
+
+    public function restore(): void {}
+
+    public function translate(float $tx, float $ty): void {}
+
+    public function scale(float $sx, float $sy): void {}
+
+    public function rotate(float $angle): void {}
+
+    public function set_font_size(float $size): void {}
+
+    public function show_text(string $text): void {}
+}
+
+/**
+ * A widget that paints with cairo through a PHP callback.
+ *
+ * ```php
+ * $area->set_draw_func(function (GtkDrawingArea $a, CairoContext $cr, int $w, int $h): void {
+ *     $cr->set_source_rgb(0.2, 0.4, 0.8);
+ *     $cr->rectangle(0, 0, $w, $h);
+ *     $cr->fill();
+ * });
+ * ```
+ *
+ * @property int $content_width
+ * @property int $content_height
+ *
+ * @link https://docs.gtk.org/gtk4/class.DrawingArea.html
+ * @not-serializable
+ */
+class GtkDrawingArea extends GtkWidget
+{
+    public function __construct() {}
+
+    /**
+     * Install (or with null, remove) the draw function: `function (GtkDrawingArea $area,
+     * CairoContext $cr, int $width, int $height): void`. Kept until replaced or the widget dies.
+     */
+    public function set_draw_func(?callable $drawFunc): void {}
+
+    public function set_content_width(int $width): void {}
+
+    public function get_content_width(): int {}
+
+    public function set_content_height(int $height): void {}
+
+    public function get_content_height(): int {}
+}
+
+/**
+ * Decides which items of a list model are visible.
+ *
+ * @link https://docs.gtk.org/gtk4/class.Filter.html
+ * @not-serializable
+ */
+abstract class GtkFilter extends GObject
+{
+    /** Tell users of the filter that its decisions changed. */
+    public function changed(GtkFilterChange $change = GtkFilterChange::Different): void {}
+}
+
+/**
+ * A GtkFilter driven by a PHP callback: `function (GObject $item): bool`.
+ *
+ * @link https://docs.gtk.org/gtk4/class.CustomFilter.html
+ * @not-serializable
+ */
+class GtkCustomFilter extends GtkFilter
+{
+    public function __construct(?callable $matchFunc = null) {}
+
+    /** Replace the callback (null = everything matches) and notify users. */
+    public function set_filter_func(?callable $matchFunc): void {}
+}
+
+/**
+ * A GListModel showing only the items of another model that pass a filter.
+ *
+ * @property ?GtkFilter $filter
+ * @property ?GListModel $model
+ *
+ * @link https://docs.gtk.org/gtk4/class.FilterListModel.html
+ * @not-serializable
+ */
+class GtkFilterListModel extends GObject implements GListModel
+{
+    public function __construct(?GListModel $model = null, ?GtkFilter $filter = null) {}
+
+    public function get_item_type(): string {}
+
+    public function get_n_items(): int {}
+
+    public function get_item(int $position): ?GObject {}
+
+    public function set_filter(?GtkFilter $filter): void {}
+
+    public function get_filter(): ?GtkFilter {}
+
+    public function set_model(?GListModel $model): void {}
+
+    public function get_model(): ?GListModel {}
+}
+
+/**
+ * Orders the items of a list model.
+ *
+ * @link https://docs.gtk.org/gtk4/class.Sorter.html
+ * @not-serializable
+ */
+abstract class GtkSorter extends GObject
+{
+    public function changed(GtkSorterChange $change = GtkSorterChange::Different): void {}
+}
+
+/**
+ * A GtkSorter driven by a PHP callback: `function (GObject $a, GObject $b): int` (negative,
+ * zero, positive - like `<=>`).
+ *
+ * @link https://docs.gtk.org/gtk4/class.CustomSorter.html
+ * @not-serializable
+ */
+class GtkCustomSorter extends GtkSorter
+{
+    public function __construct(?callable $compare = null) {}
+
+    /** Replace the callback (null = keep original order) and notify users. */
+    public function set_sort_func(?callable $compare): void {}
+}
+
+/**
+ * A GListModel presenting another model's items in sorted order.
+ *
+ * @property ?GtkSorter $sorter
+ * @property ?GListModel $model
+ *
+ * @link https://docs.gtk.org/gtk4/class.SortListModel.html
+ * @not-serializable
+ */
+class GtkSortListModel extends GObject implements GListModel
+{
+    public function __construct(?GListModel $model = null, ?GtkSorter $sorter = null) {}
+
+    public function get_item_type(): string {}
+
+    public function get_n_items(): int {}
+
+    public function get_item(int $position): ?GObject {}
+
+    public function set_sorter(?GtkSorter $sorter): void {}
+
+    public function get_sorter(): ?GtkSorter {}
+
+    public function set_model(?GListModel $model): void {}
+
+    public function get_model(): ?GListModel {}
 }
 
 /**
@@ -662,6 +1008,9 @@ class GtkWindow extends GtkWidget
 
     /** Default size in pixels; -1 to unset one dimension. */
     public function set_default_size(int $width, int $height): void {}
+
+    /** @return array{int, int} [width, height]; -1 where unset */
+    public function get_default_size(): array {}
 
     /** Set (or with null, remove) the single child widget. */
     public function set_child(?GtkWidget $child): void {}

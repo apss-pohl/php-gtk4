@@ -7,9 +7,11 @@ plus `__get/__set/__isset` on `GObject` so `@property` tags are honoured). Do no
 
 **VS Code (Intelephense)**: any `.php` in the workspace is indexed. For a project outside this
 repo add to `settings.json`:
+
 ```json
 { "intelephense.environment.includePaths": ["/mnt/share/dev/code/php-gtk4/stubs"] }
 ```
+
 **PhpStorm**: Settings → PHP → Include Path → add this directory.
 
 `tests/StubsTest.php` fails if `gtk4.php` is stale or disagrees with `ReflectionExtension('gtk4')`.

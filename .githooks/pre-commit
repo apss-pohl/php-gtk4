@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# Fast gate (~10 s): generated files current, C++ formatted, PHP QA clean.
+# Fast gate (~10 s): generated files current, C++ formatted, PHP QA clean, docs linted.
 # Enable once per clone:  git config core.hooksPath .githooks
 # Skip once:              git commit --no-verify
 set -e
 cd "$(git rev-parse --show-toplevel)"
-./ci.sh --only=stubs,php-qa --skip=stan
+./ci.sh --only=version,stubs,php-qa --skip=stan
 ./ci.sh --only=cpp-lint --skip=tidy
+./ci.sh --only=md-lint
