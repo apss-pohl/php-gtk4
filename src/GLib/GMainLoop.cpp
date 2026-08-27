@@ -3,6 +3,7 @@
 #include "php_gtk4.h"
 #include "classes.h"
 #include "core/error.h"
+#include "core/globals.h"
 #include "core/mainloop.h"
 
 namespace {
@@ -61,6 +62,7 @@ ZEND_METHOD(Gtk4_GMainLoop, __construct) {
  */
 ZEND_METHOD(Gtk4_GMainLoop, run) {
   ZEND_PARSE_PARAMETERS_NONE();
+  if (!phpgtk::assert_gui_thread("GMainLoop::run()")) RETURN_THROWS();
   GMainLoop *loop = from_zend(Z_OBJ_P(ZEND_THIS))->loop;
   if (g_main_loop_is_running(loop)) {
     zend_throw_exception(spl_ce_LogicException, "GMainLoop::run(): this loop is already running",

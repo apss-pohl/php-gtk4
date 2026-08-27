@@ -4,7 +4,7 @@
 // finalized after Zend shut down, releasing the callable would touch a dead
 // allocator. So every closure/source registers here and RSHUTDOWN disconnects
 // / removes whatever is still alive - their finalizers then run while Zend is
-// up. Everything here is NTS-only state (one request at a time).
+// up. The registries are per-request module globals (core/globals.h).
 #pragma once
 #include "php_gtk4.h"
 

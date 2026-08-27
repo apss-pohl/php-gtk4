@@ -1,6 +1,7 @@
 // Gtk4\Gtk: static entry points (init, exception handler / mode).
 #include "php_gtk4.h"
 #include "core/error.h"
+#include "core/globals.h"
 
 using namespace phpgtk;
 
@@ -11,7 +12,10 @@ using namespace phpgtk;
  */
 ZEND_METHOD(Gtk4_Gtk, init) {
   ZEND_PARSE_PARAMETERS_NONE();
-  RETURN_BOOL(gtk_init_check());
+  if (!assert_gui_thread("Gtk::init()")) RETURN_THROWS();
+  const bool ok = gtk_init_check();
+  if (ok) record_gui_thread();
+  RETURN_BOOL(ok);
 }
 
 /**
@@ -52,3 +56,29 @@ ZEND_METHOD(Gtk4_Gtk, get_exception_mode) {
   zend_object *c = zend_enum_get_case_cstr(ce_ExceptionMode, name);
   RETURN_OBJ_COPY(c);
 }
+
+#ifdef PHPGTK_TESTING
+/**
+ * static Gtk4\Gtk::testing_iterate_nested(int $iterations): void
+ *
+ * Test builds only (`--enable-gtk4-testing`, `FEATURES` has `testing=yes`): iterate the default
+ * context $iterations times from C, blocking each time, the way GTK does inside DnD or a portal
+ * call. Deliberately *not* a rethrow boundary - a Throwable parked in {@see
+ * ExceptionMode::Rethrow} surfaces from the enclosing run(), as it would then.
+ */
+ZEND_METHOD(Gtk4_Gtk, testing_iterate_nested) {
+  zend_long iterations;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_LONG(iterations)
+  ZEND_PARSE_PARAMETERS_END();
+  if (iterations < 0) {
+    zend_argument_value_error(1, "must be greater than or equal to 0");
+    RETURN_THROWS();
+  }
+  // C-driven nesting: no PHP boundary in between, so a parked Throwable stays parked and
+  // a pending one (no registered loop) simply propagates when this call returns.
+  for (zend_long i = 0; i < iterations && EG(exception) == nullptr; i++) {
+    g_main_context_iteration(nullptr, TRUE);
+  }
+}
+#endif

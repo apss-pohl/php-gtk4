@@ -342,7 +342,7 @@ stage_asan() {
     step "asan build (gtk4-asan.so)"
     local libasan; libasan=$(gcc -print-file-name=libasan.so)
     [[ -f "$libasan" ]] || fail "libasan.so not found (install libasan for your gcc)"
-    build_variant gtk4-asan.so --enable-gtk4-sanitize
+    build_variant gtk4-asan.so --enable-gtk4-sanitize --enable-gtk4-testing
 
     local -a env=(LD_PRELOAD="$libasan" USE_ZEND_ALLOC=0
                   ASAN_OPTIONS="detect_leaks=1:abort_on_error=0:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1"
@@ -372,7 +372,7 @@ stage_coverage() {
     ensure_vendor
     step "coverage build (gtk4-cov.so)"
     find src -name '*.gcda' -delete 2>/dev/null || true
-    build_variant gtk4-cov.so --enable-gtk4-coverage
+    build_variant gtk4-cov.so --enable-gtk4-coverage --enable-gtk4-testing
 
     step "coverage: phpunit suite + stress script"
     PHP="$PHP" GTK4_SO=./gtk4-cov.so ./tests/run.sh "${PHPUNIT_ARGS[@]}" || fail "coverage phpunit"

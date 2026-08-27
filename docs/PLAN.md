@@ -50,7 +50,14 @@ GTK4 / GLib C API
 - Handlers: `free_obj` (weak-unref, clear qdata, `g_object_unref`), `clone_obj = NULL`,
   `read/write/has_property` map `$obj->some_prop` (underscores → dashes) to GObject properties and
   fall back to the standard handlers, `get_debug_info` lists readable properties for `var_dump`.
-- **Ownership**: `attach()` does `g_object_ref_sink`; the handle owns one ref. **Identity**: a qdata
+- **Ownership**: `attach()` does `g_object_ref_sink`; the handle owns one ref. Constructors use
+  `attach_new()` instead, and the choice is a *rule*, not a per-class judgement (GIR's `transfer`
+  is `none` on `gtk_window_new()` and `gtk_button_new()` alike, so it cannot decide this):
+  a floating return (`GInitiallyUnowned`) is sunk; a plain `GObject` with `transfer="full"` is
+  adopted; a `GtkRoot` implementor (`GtkWindow` and subclasses) is *not* ours — GTK's toplevel
+  list holds the initial reference — so its constructor uses `attach()`; anything else is a
+  generator error that goes to the `overrides/` directory under `gen/`. `attach_new()` enforces
+  the root case at runtime (`g_critical` + `attach()` semantics). **Identity**: a qdata
   back-pointer makes `wrap()` return the existing `zend_object` (`ZVAL_OBJ_COPY`), so `===` holds and
   dynamic properties survive round trips. A `g_object_weak_ref` nulls `obj` if GTK finalizes anyway.
 - **Registry**: `register_class("GTypeName", ce)` (GType name → `zend_class_entry`, installs
@@ -220,7 +227,7 @@ examples → CI → commit):
 ```text
 php-gtk4/
   VERSION             single source of the version (mirrored into php_gtk4.h / the stub by ci.sh)
-  config.m4           phpize build: PHP >= 8.4, NTS only, gtk4 >= 4.14 + cairo-gobject, variants
+  config.m4           phpize build: PHP >= 8.4 (NTS or ZTS), gtk4 >= 4.14 + cairo-gobject, variants
                       --enable-gtk4-sanitize / -coverage / -webkit, build info baked into config.h
   ci.sh, buildall.sh  the pipeline (see CLAUDE.md) and build+install for the enabled PHP versions
   bin/php-gtk4        launcher that filters php-gtk3 out of the ini scan dir

@@ -226,6 +226,16 @@ final class Gtk
     public static function set_exception_mode(ExceptionMode $mode): void {}
 
     public static function get_exception_mode(): ExceptionMode {}
+
+#if defined(PHPGTK_TESTING)
+    /**
+     * Test builds only (`--enable-gtk4-testing`, `FEATURES` has `testing=yes`): iterate the
+     * default context $iterations times from C, blocking each time, the way GTK does inside
+     * DnD or a portal call. Deliberately *not* a rethrow boundary - a Throwable parked in
+     * {@see ExceptionMode::Rethrow} surfaces from the enclosing run(), as it would then.
+     */
+    public static function testing_iterate_nested(int $iterations): void {}
+#endif
 }
 
 /**

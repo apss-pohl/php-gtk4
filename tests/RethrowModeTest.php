@@ -165,6 +165,56 @@ final class RethrowModeTest extends GtkTestCase
         self::assertSame(['GLib::timeout_add'], $origins);
     }
 
+    public function testCDrivenNestedLoopParksAndRunRethrowsWithPreviousChained(): void
+    {
+        // Needs the test hook: a nested loop driven from C with no PHP boundary in between.
+        if (!str_contains((string) ini_get('gtk4.features'), 'testing=yes')) {
+            self::markTestSkipped('needs --enable-gtk4-testing (FEATURES testing=yes)');
+        }
+        $loop = new GMainLoop();
+        $afterNested = false;
+        $secondRan = false;
+        GLib::idle_add(function () use (&$afterNested, &$secondRan): bool {
+            GLib::timeout_add(0, static function (): bool {
+                throw new \DomainException('first');
+            });
+            GLib::timeout_add(0, static function (): bool {
+                throw new \RangeException('second');
+            });
+            GLib::timeout_add(0, function () use (&$secondRan): bool {
+                $secondRan = true;
+                return false;
+            });
+            usleep(2000);
+            Gtk::testing_iterate_nested(3);   // parks the first, chains the second
+            $afterNested = true;   // C returned into PHP with nothing pending
+            return false;
+        });
+        try {
+            $loop->run();
+            self::fail('run() must rethrow the parked Throwable');
+        } catch (\DomainException $e) {
+            self::assertSame('first', $e->getMessage());
+            self::assertInstanceOf(\RangeException::class, $e->getPrevious());
+            self::assertSame('second', $e->getPrevious()->getMessage());
+        }
+        self::assertTrue($afterNested, 'the nested loop finished normally');
+        self::assertTrue($secondRan, 'handlers keep running while parked');
+    }
+
+    public function testCDrivenNestingWithoutRegisteredLoopPropagatesDirectly(): void
+    {
+        if (!str_contains((string) ini_get('gtk4.features'), 'testing=yes')) {
+            self::markTestSkipped('needs --enable-gtk4-testing (FEATURES testing=yes)');
+        }
+        GLib::timeout_add(0, static function (): bool {
+            throw new \LengthException('top level');
+        });
+        usleep(2000);
+        $this->expectException(\LengthException::class);
+        Gtk::testing_iterate_nested(5);   // no registered loop: pending, propagates from here
+    }
+
     public function testErrorsPropagateToo(): void
     {
         $w = $this->window();

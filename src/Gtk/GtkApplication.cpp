@@ -1,6 +1,7 @@
 // Gtk4\GtkApplication - the preferred main loop.
 #include "php_gtk4.h"
 #include "core/error.h"
+#include "core/globals.h"
 #include "core/mainloop.h"
 #include "core/object.h"
 #include "core/variant.h"
@@ -49,6 +50,7 @@ ZEND_METHOD(Gtk4_GtkApplication, run) {
   Z_PARAM_OPTIONAL
   Z_PARAM_ARRAY_HT(argv_ht)
   ZEND_PARSE_PARAMETERS_END();
+  if (!assert_gui_thread("GtkApplication::run()")) RETURN_THROWS();
   GtkApplication *gtk_app = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
   GApplication *app = G_APPLICATION(gtk_app);
 

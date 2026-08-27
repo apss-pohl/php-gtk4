@@ -1,14 +1,14 @@
 #include "callback.h"
 
 #include "error.h"
+#include "globals.h"
 
 #include <vector>
 
 namespace {
 // Callables whose release was deferred by callback_free().
 std::vector<zval> &graveyard() {
-  static std::vector<zval> parked;
-  return parked;
+  return GTK4_G(callback_graveyard);
 }
 }  // namespace
 

@@ -8,7 +8,7 @@ that flow.
 
 | What | Linux (primary target) |
 | --- | --- |
-| PHP | **8.4 or newer**, NTS. `php8.4-dev` for `phpize`/`php-config`. `config.m4` refuses < 8.4 and ZTS builds. |
+| PHP | **8.4 or newer**, NTS or ZTS. `php8.4-dev` for `phpize`/`php-config`. `config.m4` refuses < 8.4. |
 | GTK | **4.14 or newer** — `libgtk-4-dev` (pulls GLib ≥ 2.76, cairo-gobject). Ubuntu 24.04 is the CI floor. |
 | Compiler | GCC 11+ or Clang 14+ (`-std=c++20`). |
 | Optional | `libwebkitgtk-6.0-dev` (`--enable-gtk4-webkit`), `xvfb`, `valgrind`, `gcovr`, clang-tidy/format 20 for the QA stages. |
@@ -88,6 +88,30 @@ enabling it. See "Coexisting with php-gtk3" in the README.
 `ci.sh --help` lists every stage and flag; the full description is the "Lint, QA, build, test"
 section of `CLAUDE.md`. Tests need a display: `tests/run.sh` wraps `xvfb-run` and pins
 `GDK_BACKEND=x11` (GTK 4.14's Wayland backend corrupts the heap under the suite's window churn).
+
+## Threads and ZTS
+
+Two separate questions hide behind "thread safe":
+
+**Building against a ZTS PHP** works. Every piece of per-request state (exception handler and mode,
+the parked Throwable, running-loop stack, tracked closures/sources/callables, live `PhpValue`
+instances) lives in the module globals struct in `src/core/globals.h`, accessed through `GTK4_G()`
+— one copy per thread under ZTS, one in total under NTS. The GType ↔ class registries are filled
+once in MINIT and read-only afterwards, so they are shared. CI builds and tests one ZTS variant
+(`tests.yml`, `phpts: ts`); the release binaries stay NTS.
+
+**Using GTK from more than one thread** does not work, and that is GTK's rule, not ours: every
+`gtk_*` call must come from the thread that owns the default `GMainContext` — the one that ran
+`Gtk::init()`. The extension records that thread and `Gtk::init()`, `GtkApplication::run()`,
+`GMainLoop::run()` and `GLib::main_context_iteration()` throw `Error` when called from another
+one. Consequences:
+
+- *Several request threads each opening windows* (FPM/Apache-worker style) — not possible. No lock
+  on our side can make it correct; the same holds for PyGObject, gtk-rs and every other binding.
+- *One GUI thread plus PHP worker threads* — the useful shape, and the standard GTK pattern: workers
+  never touch widgets and post results to the GUI thread with `GLib::idle_add()`. What is still
+  missing for that is a thread-safe way to hand a callable from one PHP thread to the GUI thread's
+  context (a `parallel`-style channel or a `GLib::invoke_on_main()`); tracked in `docs/TODO.md`.
 
 ## Windows
 

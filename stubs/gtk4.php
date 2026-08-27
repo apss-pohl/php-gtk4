@@ -267,6 +267,18 @@ final class Gtk
     {
         return null;
     }
+    #if defined(PHPGTK_TESTING)
+    /**
+     * Test builds only (`--enable-gtk4-testing`, `FEATURES` has `testing=yes`): iterate the
+     * default context $iterations times from C, blocking each time, the way GTK does inside
+     * DnD or a portal call. Deliberately *not* a rethrow boundary - a Throwable parked in
+     * {@see ExceptionMode::Rethrow} surfaces from the enclosing run(), as it would then.
+     */
+    public static function testing_iterate_nested(int $iterations): void
+    {
+        unset($iterations);
+    }
+    #endif
 }
 /**
  * GLib main-context helpers (idle and timeout sources on the default context).

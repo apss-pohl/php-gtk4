@@ -35,7 +35,7 @@ summary: `docs/CONTRIBUTING.md`. Keep all three consistent.
 ./ci.sh --only=build                   # phpize + configure + make -> ./gtk4.so (what everything else uses)
 ./buildall.sh                          # build + install for every enabled version in its table (sudo for install)
 phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(nproc)"   # by hand
-./configure ... --enable-gtk4-sanitize | --enable-gtk4-coverage | --enable-gtk4-webkit
+./configure ... --enable-gtk4-sanitize | --enable-gtk4-coverage | --enable-gtk4-webkit | --enable-gtk4-testing
 bear -- make                           # compile_commands.json for clangd / clang-tidy
 ```
 
@@ -186,6 +186,12 @@ display, and calls `Gtk::init()` once.
   `tearDown()`, `captureHandlerException()` installs a temporary `Gtk::set_exception_handler`,
   `latch()`/`latched()` for flags set from GTK callbacks, `opaque()` to pass deliberately wrong
   arguments past static analysis.
+- `--enable-gtk4-testing` (what the `asan`/`coverage` variants use, `Gtk4\FEATURES` says
+  `testing=yes`) compiles the `Gtk::testing_*` hooks: methods declared in the stub inside
+  `#if defined(PHPGTK_TESTING)` blocks, absent from the shipped `.so` (the IDE stub keeps them so
+  PHPStan can type the tests), used by tests that need C-driven behaviour PHP cannot produce
+  (`testing_iterate_nested()` = a GTK-internal nested main loop). Tests that need one check
+  `ini_get('gtk4.features')` for `testing=yes` and `markTestSkipped()` otherwise.
 - Tests are the *only* thing that exercises the C++ — a segfault shows up as PHPUnit dying
   mid-run; isolate with `--filter 'Class::method$'` per test to find it.
 - `EveryClassTest` constructs every instantiable class and calls every arg-less `get_*/is_*/has_*`
@@ -235,7 +241,10 @@ display, and calls `Gtk::init()` once.
 
 `git config core.hooksPath .githooks` once per clone: `pre-commit` runs the fast checks (stubs,
 PHP QA without phpstan, clang-format, markdownlint), `pre-push` runs `./ci.sh`. `--no-verify` skips once.
-`config.m4` refuses ZTS PHP (the runtime uses plain statics — NTS only). Coverage has a floor
+ZTS builds are supported: all per-request state is in the module globals (`src/core/globals.h`,
+`GTK4_G(x)`), never in a plain static — GType/class registries filled once in MINIT are the only
+process-wide statics allowed. GTK itself stays single-threaded (`assert_gui_thread()`); CI builds
+one ZTS variant. Coverage has a floor
 (`COVERAGE_MIN_LINES`, default 80). `RobustnessTest` calls every method with garbage arguments;
 `DocsTest` guards CLAUDE.md sections and doc-mentioned paths. `CHANGELOG.md` has the release
 checklist; Dependabot watches composer and actions.

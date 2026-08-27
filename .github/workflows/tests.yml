@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   php-tests:
-    name: PHP ${{ matrix.php }}
+    name: PHP ${{ matrix.php }}${{ matrix.ts == 'ts' && ' ZTS' || '' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
@@ -20,7 +20,14 @@ jobs:
       matrix:
         # Everything we claim to support (8.4+), on the GTK floor (24.04 = GTK 4.14).
         php: ['8.4', '8.5']
+        ts: [nts]
+        include:
+          # One thread-safe build: per-request state lives in module globals (src/core/globals.h);
+          # the suite is single-threaded, so this checks the build and the GINIT/GSHUTDOWN path.
+          - php: '8.4'
+            ts: ts
     env:
+      phpts: ${{ matrix.ts }}
       # tests/run.sh, bin/php-gtk4 and ci.sh default to the php8.4 binaries; setup-php provides plain names.
       PHP: php
       PHP_CONFIG: php-config
@@ -71,7 +78,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: phpunit-junit-php${{ matrix.php }}
+          name: phpunit-junit-php${{ matrix.php }}-${{ matrix.ts }}
           path: phpunit-junit.xml
           if-no-files-found: ignore
 

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 9f00042131fdfbbdfbd54abc18c98ac3447e18c0 */
+ * Stub hash: ca93ff02bdedf63d07c0aa536141ba051de47df9 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GObject_connect, 0, 2, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, signal, IS_STRING, 0)
@@ -59,6 +59,12 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_Gtk_get_exception_mode, 0, 0, Gtk4\\ExceptionMode, 0)
 ZEND_END_ARG_INFO()
+
+#if defined(PHPGTK_TESTING)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_Gtk_testing_iterate_nested, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, iterations, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+#endif
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GLib_idle_add, 0, 1, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 0)
@@ -678,6 +684,9 @@ ZEND_METHOD(Gtk4_Gtk, init);
 ZEND_METHOD(Gtk4_Gtk, set_exception_handler);
 ZEND_METHOD(Gtk4_Gtk, set_exception_mode);
 ZEND_METHOD(Gtk4_Gtk, get_exception_mode);
+#if defined(PHPGTK_TESTING)
+ZEND_METHOD(Gtk4_Gtk, testing_iterate_nested);
+#endif
 ZEND_METHOD(Gtk4_GLib, idle_add);
 ZEND_METHOD(Gtk4_GLib, timeout_add);
 ZEND_METHOD(Gtk4_GLib, source_remove);
@@ -874,6 +883,9 @@ static const zend_function_entry class_Gtk4_Gtk_methods[] = {
 	ZEND_ME(Gtk4_Gtk, set_exception_handler, arginfo_class_Gtk4_Gtk_set_exception_handler, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_Gtk, set_exception_mode, arginfo_class_Gtk4_Gtk_set_exception_mode, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_Gtk, get_exception_mode, arginfo_class_Gtk4_Gtk_get_exception_mode, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+#if defined(PHPGTK_TESTING)
+	ZEND_ME(Gtk4_Gtk, testing_iterate_nested, arginfo_class_Gtk4_Gtk_testing_iterate_nested, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+#endif
 	ZEND_FE_END
 };
 

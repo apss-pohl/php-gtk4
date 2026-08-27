@@ -2,37 +2,37 @@
 
 #include <array>
 
+#include "globals.h"
 #include "mainloop.h"
 
 namespace phpgtk {
 
 zend_class_entry *ce_ExceptionMode = nullptr;
 
-static zval handler;  // IS_UNDEF when none
-static zval parked;  // Rethrow mode, nested unregistered loop: the Throwable waiting for a boundary
-static ExceptionMode mode = ExceptionMode::Log;
+// Per-request state (handler zval, parked Throwable, mode) lives in the module globals
+// (core/globals.h); accessed through GTK4_G() below.
 
 // Store (ADDREF'd) or clear the handler installed via Gtk::set_exception_handler().
 void set_exception_handler(zval *h) {
-  if (!Z_ISUNDEF(handler)) zval_ptr_dtor(&handler);
+  if (!Z_ISUNDEF(GTK4_G(exception_handler))) zval_ptr_dtor(&GTK4_G(exception_handler));
   if (h == nullptr || Z_TYPE_P(h) == IS_NULL) {
-    ZVAL_UNDEF(&handler);
+    ZVAL_UNDEF(&GTK4_G(exception_handler));
   } else {
-    ZVAL_COPY(&handler, h);
+    ZVAL_COPY(&GTK4_G(exception_handler), h);
   }
 }
 
 // Whether a handler is installed (inspects the slot only - never calls into PHP).
 bool has_exception_handler() {
-  return !Z_ISUNDEF(handler);
+  return !Z_ISUNDEF(GTK4_G(exception_handler));
 }
 // Gtk::set_exception_mode().
 void set_exception_mode(ExceptionMode m) {
-  mode = m;
+  GTK4_G(exception_mode) = m;
 }
 // Current Gtk4\ExceptionMode.
 ExceptionMode exception_mode() {
-  return mode;
+  return GTK4_G(exception_mode);
 }
 
 static void log_uncaught(zval *exception, const char *origin);
@@ -41,22 +41,22 @@ static bool call_handler(zval *exception, const char *origin);
 // RSHUTDOWN: a Throwable still parked (no boundary returned to PHP) is reported, not
 // dropped; then release the handler zval and reset the mode.
 void exception_state_shutdown() {
-  if (!Z_ISUNDEF(parked)) {
-    if (!(has_exception_handler() && call_handler(&parked, "request shutdown"))) {
-      log_uncaught(&parked, "request shutdown");
+  if (!Z_ISUNDEF(GTK4_G(parked_exception))) {
+    if (!(has_exception_handler() && call_handler(&GTK4_G(parked_exception), "request shutdown"))) {
+      log_uncaught(&GTK4_G(parked_exception), "request shutdown");
     }
-    zval_ptr_dtor(&parked);
-    ZVAL_UNDEF(&parked);
+    zval_ptr_dtor(&GTK4_G(parked_exception));
+    ZVAL_UNDEF(&GTK4_G(parked_exception));
   }
   set_exception_handler(nullptr);
-  mode = ExceptionMode::Log;
+  GTK4_G(exception_mode) = ExceptionMode::Log;
 }
 
 // Rethrow mode inside an unregistered nested loop: keep the Throwable (takes the
 // reference) until a loop-driving call returns to PHP; a later one becomes `previous`.
 static void park_exception(zval *exception, const char *origin) {
-  if (Z_ISUNDEF(parked)) {
-    ZVAL_COPY_VALUE(&parked, exception);
+  if (Z_ISUNDEF(GTK4_G(parked_exception))) {
+    ZVAL_COPY_VALUE(&GTK4_G(parked_exception), exception);
     g_warning(
         "php-gtk4: %s thrown in '%s' inside a nested main loop (depth %d); rethrow is "
         "deferred until control returns to PHP",
@@ -64,14 +64,14 @@ static void park_exception(zval *exception, const char *origin) {
     return;
   }
   // Appends at the end of the parked exception's previous-chain and owns the reference.
-  zend_exception_set_previous(Z_OBJ(parked), Z_OBJ_P(exception));
+  zend_exception_set_previous(Z_OBJ(GTK4_G(parked_exception)), Z_OBJ_P(exception));
 }
 
 // Boundary back to PHP: throw the parked Throwable (if any) from the calling method.
 bool rethrow_parked_exception() {
-  if (Z_ISUNDEF(parked)) return false;
-  zval exception = parked;
-  ZVAL_UNDEF(&parked);
+  if (Z_ISUNDEF(GTK4_G(parked_exception))) return false;
+  zval exception = GTK4_G(parked_exception);
+  ZVAL_UNDEF(&GTK4_G(parked_exception));
   zend_throw_exception_object(&exception);  // takes the reference
   return true;
 }
@@ -95,7 +95,8 @@ static bool call_handler(zval *exception, const char *origin) {
   bool ok = false;
   zend_fcall_info fci;
   zend_fcall_info_cache fcc;
-  if (zend_fcall_info_init(&handler, 0, &fci, &fcc, nullptr, nullptr) == SUCCESS) {
+  if (zend_fcall_info_init(&GTK4_G(exception_handler), 0, &fci, &fcc, nullptr, nullptr) ==
+      SUCCESS) {
     fci.retval = &retval;
     fci.params = args.data();
     fci.param_count = 2;
@@ -127,7 +128,7 @@ bool report_pending_exception(const char *origin_c) {
 
   const bool reported = has_exception_handler() && call_handler(&exception, origin);
 
-  if (mode == ExceptionMode::Rethrow) {
+  if (GTK4_G(exception_mode) == ExceptionMode::Rethrow) {
     if (in_unregistered_nested_loop()) {
       park_exception(&exception, origin);  // see error.h: pending would not propagate yet
     } else {

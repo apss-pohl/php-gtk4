@@ -238,7 +238,7 @@ jobs:
           ```
 
           The prebuilt `.so` files are a convenience and are **not portable**. Each is bound to the
-          PHP version, NTS (ZTS is refused at configure time), the C++ ABI, glibc and the GTK 4
+          PHP version, NTS (ZTS builds from source), the C++ ABI, glibc and the GTK 4
           soname in its filename; built on Ubuntu 24.04 (GTK 4.14, the supported floor), so they run
           on that and newer, not older. Anything else: build from source.
 

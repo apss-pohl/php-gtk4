@@ -12,7 +12,7 @@ var_dump(ini_get('gtk4.build_info'), ini_get('gtk4.features'));
 // ...but the constants are baked in at configure time and cannot be.
 var_dump(Gtk4\BUILD_INFO === 'spoofed', Gtk4\FEATURES === 'spoofed');
 var_dump(str_contains(Gtk4\BUILD_INFO, 'git'));
-var_dump((bool) preg_match('/^webkit=(yes|no)$/', Gtk4\FEATURES));
+var_dump((bool) preg_match('/^webkit=(yes|no) testing=(yes|no)$/', Gtk4\FEATURES));
 // PHP_INI_SYSTEM is not runtime-writable.
 var_dump(@ini_set('gtk4.features', 'webkit=yes'));
 ?>

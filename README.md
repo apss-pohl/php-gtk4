@@ -35,7 +35,7 @@ scripts without windows.
 
 ## Build & install
 
-Requires **PHP 8.4+** (NTS) with `php8.4-dev` and `libgtk-4-dev` (GTK ≥ 4.14). Standard `phpize` build:
+Requires **PHP 8.4+** (NTS or ZTS) with `php8.4-dev` and `libgtk-4-dev` (GTK ≥ 4.14). Standard `phpize` build:
 
 ```sh
 phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(nproc)" && sudo make install
@@ -44,6 +44,15 @@ bin/php-gtk4 examples/demo.php            # the demo app: every class, one page 
 
 Everything else — `ci.sh`/`buildall.sh`, configure options, the sanitizer/coverage variants, and
 the **Windows** status and route — is in [docs/BUILD.md](docs/BUILD.md).
+
+## Threads
+
+The extension builds for ZTS PHP and keeps all per-request state per thread, but **GTK is
+single-threaded**: only the thread that ran `Gtk::init()` may drive the main loop (the loop-driving
+methods throw `Error` from any other thread). Worker threads must never touch widgets; hand results
+to the GUI thread via `GLib::idle_add()`. Serving GUI windows from several request threads at once
+is not possible with GTK on any language binding. Details and what is still planned:
+[docs/BUILD.md § Threads](docs/BUILD.md#threads-and-zts).
 
 ## Contributing
 

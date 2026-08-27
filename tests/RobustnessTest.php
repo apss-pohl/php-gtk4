@@ -63,7 +63,7 @@ final class RobustnessTest extends GtkTestCase
                 }
                 // Loop drivers block on purpose: run() forever, main_context_iteration(true) until
                 // a source is ready - garbage arguments would hang the suite, not throw.
-                $loopDrivers = ['init', 'main', 'run', 'main_context_iteration'];
+                $loopDrivers = ['init', 'main', 'run', 'main_context_iteration', 'testing_iterate_nested'];
                 if ($m->isStatic() && in_array($m->getName(), $loopDrivers, true)) {
                     continue;
                 }

@@ -107,7 +107,7 @@ A `.so` is not portable the way a phar or a manylinux wheel is: it is bound to t
 number, the thread-safety mode, the C++ ABI, glibc, and the GTK 4 soname it linked against. So the filename
 carries that whole identity, and the release body says out loud that these are a convenience — the tarball is
 the supported path. Built on `ubuntu-24.04`, the GTK 4.14 floor CI already targets: the binaries run there and
-newer, not older. NTS only, because `config.m4` refuses ZTS outright.
+newer, not older. NTS only — ZTS builds compile and are tested in CI, but are not shipped as binaries.
 
 Tags are created by the workflow and therefore cannot carry a maintainer's GPG signature.
 `actions/attest-build-provenance` on the `.so` files is the replacement — verifiable with

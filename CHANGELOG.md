@@ -9,6 +9,14 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- ZTS builds: per-request runtime state moved into module globals (`src/core/globals.h`);
+  `config.m4` and `php_gtk4.h` no longer refuse thread-safe PHP, CI tests one ZTS variant.
+  GTK itself stays single-threaded — `Gtk::init()`, `GtkApplication::run()`, `GMainLoop::run()`
+  and `GLib::main_context_iteration()` throw `Error` from any thread other than the one that
+  initialised GTK.
+- `docs/BUILD.md` (build process, variants, Windows status and route, threads) and
+  `docs/CONTRIBUTING.md`; README links to them.
+
 - Native Zend API runtime (`GObject` handles with property access, `GValue`/`GVariant`/boxed
   marshalling, GClosure-based signals, `emit()`, exception boundary with `ExceptionMode`).
 - `GtkBox`, the first layout container: GTK 4 has no `GtkContainer`, so this is what lets a window
@@ -22,6 +30,15 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   enums `GtkAlign`, `GtkOrientation`, `GtkFilterChange`, `GtkSorterChange`, flags `GApplicationFlags`.
 - Tooling: `ci.sh` stages, sanitizer/valgrind/coverage runs, stub-driven arginfo, IDE stub and
   method comments, git hooks, Dependabot.
+- `--enable-gtk4-testing` (`FEATURES` gains `testing=yes|no`): compiles `Gtk::testing_*` hooks
+  declared in `#if defined(PHPGTK_TESTING)` stub blocks; never in the shipped `.so`, used by the
+  `asan`/`coverage` variants. First hook: `Gtk::testing_iterate_nested(int $iterations)` — a
+  C-driven nested main loop, which lets the suite cover parked-exception `previous` chaining and
+  the enclosing `run()` rethrow (`RethrowModeTest`, `tests/scripts/stress.php`).
+- Constructor ownership rule for the generator (docs/PLAN.md "Ownership", gen/README.md):
+  floating → `attach_new()`, `GtkRoot` implementor → `attach()`, plain transfer-full GObject →
+  `attach_new()`, else a generator error; `attach_new()` now detects a `GtkRoot` at runtime
+  (`g_critical`, then `attach()` semantics).
 - `GLib::main_context_iteration(bool $may_block = false): bool` — one iteration of the default
   context without handing control to `run()`.
 - `ExceptionMode::Rethrow` inside an *unregistered* nested main loop (GTK iterating the context

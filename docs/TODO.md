@@ -135,6 +135,20 @@ draft, hand-write via overrides / promotion where the project needs more.
 - [ ] **Waves 1–8** as listed in PLAN.md; each merged only with the full pipeline green and the
       map's status column regenerated.
 
+## 9. Threads (decided 2026-08-27)
+
+- [x] ZTS build: per-request state in module globals (`src/core/globals.h`, `GTK4_G()`), GINIT/
+      GSHUTDOWN construct/destroy the C++ members per thread, `config.m4`/`php_gtk4.h` no longer
+      refuse ZTS, one `phpts: ts` job in `tests.yml`. Registries filled in MINIT stay static.
+- [x] GUI-thread guard: `record_gui_thread()` in `Gtk::init()`, `assert_gui_thread()` in the
+      loop-driving methods → `Error` from any other thread.
+- [ ] Cross-thread hand-off for the "one GUI thread + workers" shape: a thread-safe
+      `GLib::invoke_on_main(callable)` (serialise the callable or require a `parallel`-style
+      channel; `g_main_context_invoke` on the GUI context, callable released on that thread).
+      Needs a concrete consumer (`ext-parallel` or PHP-native threads) before designing the API.
+- [ ] Not doing: multiple GUI threads / one GTK per request thread. GTK is single-threaded;
+      documented in README "Threads" and docs/BUILD.md.
+
 ## 5. Keep (verified good, do not "clean up")
 
 Namespace `Gtk4\`; PHP class == GType name + registry; owned refs + qdata identity + weak ref;

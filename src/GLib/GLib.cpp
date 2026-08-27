@@ -2,6 +2,7 @@
 #include "php_gtk4.h"
 #include "core/callback.h"
 #include "core/error.h"
+#include "core/globals.h"
 #include "core/teardown.h"
 
 using namespace phpgtk;
@@ -95,6 +96,7 @@ ZEND_METHOD(Gtk4_GLib, main_context_iteration) {
   Z_PARAM_OPTIONAL
   Z_PARAM_BOOL(may_block)
   ZEND_PARSE_PARAMETERS_END();
+  if (!assert_gui_thread("GLib::main_context_iteration()")) RETURN_THROWS();
   const gboolean dispatched = g_main_context_iteration(nullptr, may_block ? TRUE : FALSE);
   callback_drain();
   // Rethrow mode: this call is a boundary back to PHP (see core/error.h).

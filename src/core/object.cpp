@@ -49,9 +49,21 @@ void attach(Object *self, GObject *obj) {
 }
 
 // Constructor variant of attach(): adopt the initial ref instead of adding one.
+// The ownership rule (docs/PLAN.md "Ownership", gen/README.md): floating -> sink, plain
+// GObject -> adopt, GtkRoot (windows) -> GTK's toplevel list owns the initial reference,
+// so those must use attach(). Enforced here rather than trusted: a root is ref'd like
+// attach() would, with a g_critical so the misuse shows up in tests.
 void attach_new(Object *self, GObject *obj) {
   if (self->obj != nullptr || obj == nullptr) {
     g_critical("php-gtk4: attach_new() misuse");
+    return;
+  }
+  if (GTK_IS_ROOT(obj)) {
+    g_critical(
+        "php-gtk4: attach_new() on a %s: GTK owns a toplevel's initial reference, use "
+        "attach()",
+        G_OBJECT_TYPE_NAME(obj));
+    attach(self, obj);
     return;
   }
   self->obj = g_object_is_floating(obj) ? G_OBJECT(g_object_ref_sink(obj)) : obj;

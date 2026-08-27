@@ -32,7 +32,8 @@ void attach(Object *self, GObject *obj);
 // Bind a handle to an object we just CREATED (constructors): a floating
 // instance is sunk, a plain GObject's initial reference is adopted as ours -
 // no extra ref, so the object really dies with the last handle/owner. NOT for
-// gtk_window_new(): that reference is owned by GTK's toplevel list (use attach()).
+// GtkRoot implementors (gtk_window_new(): GTK's toplevel list owns that
+// reference) - use attach(); attach_new() detects and corrects it with a g_critical.
 void attach_new(Object *self, GObject *obj);
 
 // Call once from MINIT before registering classes.

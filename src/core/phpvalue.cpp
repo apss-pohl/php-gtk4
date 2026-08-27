@@ -3,6 +3,7 @@
 #include <unordered_set>
 
 #include "object.h"
+#include "globals.h"
 
 struct _PhpValue {
   GObject parent_instance;
@@ -15,8 +16,7 @@ G_DEFINE_TYPE(PhpValue, php_value, G_TYPE_OBJECT)
 namespace {
 // Every live instance, so RSHUTDOWN can drop zvals GTK still references.
 std::unordered_set<PhpValue *> &live() {
-  static std::unordered_set<PhpValue *> set;
-  return set;
+  return GTK4_G(phpvalues);
 }
 }  // namespace
 

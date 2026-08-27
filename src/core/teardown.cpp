@@ -1,6 +1,7 @@
 #include "teardown.h"
 
 #include "callback.h"
+#include "globals.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -9,29 +10,19 @@
 namespace phpgtk {
 
 namespace {
-// A connected PHP signal handler: the instance it is connected to and its handler id.
-struct Handler {
-  GObject *instance;
-  gulong id;
-};
-// Live closures created by connect(), keyed by the GClosure.
+using Handler = TrackedHandler;
+using Notified = TrackedNotified;
+// Live closures created by connect(), keyed by the GClosure (module globals).
 std::unordered_map<GClosure *, Handler> &closures() {
-  static std::unordered_map<GClosure *, Handler> map;
-  return map;
+  return GTK4_G(closures);
 }
 // Ids of armed GLib sources created from PHP callables.
 std::unordered_set<guint> &sources() {
-  static std::unordered_set<guint> set;
-  return set;
+  return GTK4_G(sources);
 }
-struct Notified {
-  GObject *owner;
-  void (*clear)(GObject *);
-};
 // Notified-scope callables, keyed by their Callback pointer.
 std::unordered_map<gpointer, Notified> &notified() {
-  static std::unordered_map<gpointer, Notified> map;
-  return map;
+  return GTK4_G(notified);
 }
 }  // namespace
 

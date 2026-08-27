@@ -6,18 +6,42 @@
 #include "core/fundamental.h"
 #include "core/gerror.h"
 #include "core/error.h"
+#include "core/globals.h"
 #include "core/object.h"
 #include "core/phpvalue.h"
 #include "core/teardown.h"
 #include "Gio/GListModel.h"
 #include <Zend/zend_modules.h>
 
+#include <new>
 #include <string>
 
 // Generated from src/gtk4.stub.php by gen/gen_stub.php. Included exactly
 // once with the method tables; other TUs only need the ZEND_METHOD prototypes
 // (the header is guarded for that).
 #include "gtk4_arginfo.h"
+
+ZEND_DECLARE_MODULE_GLOBALS(gtk4)
+
+// Per-thread globals. ZTS hands us zeroed storage per thread: construct the C++ members in
+// place. NTS: the struct is a real C++ global, already constructed (and destroyed at unload).
+static PHP_GINIT_FUNCTION(gtk4) {
+#ifdef ZTS
+  new (gtk4_globals) zend_gtk4_globals{};
+#endif
+  ZVAL_UNDEF(&gtk4_globals->exception_handler);
+  ZVAL_UNDEF(&gtk4_globals->parked_exception);
+  gtk4_globals->exception_mode = phpgtk::ExceptionMode::Log;
+}
+
+// ZTS: destroy the C++ members (RSHUTDOWN has already released every zval they held).
+static PHP_GSHUTDOWN_FUNCTION(gtk4) {
+#ifdef ZTS
+  gtk4_globals->~zend_gtk4_globals();
+#else
+  (void)gtk4_globals;
+#endif
+}
 
 PHP_INI_BEGIN()
 PHP_INI_ENTRY("gtk4.build_info", PHPGTK_BUILD_INFO, PHP_INI_SYSTEM, nullptr)
@@ -155,7 +179,11 @@ zend_module_entry gtk4_module_entry = {
     PHP_RSHUTDOWN(gtk4),
     PHP_MINFO(gtk4),
     PHP_GTK4_VERSION,
-    STANDARD_MODULE_PROPERTIES,
+    PHP_MODULE_GLOBALS(gtk4),
+    PHP_GINIT(gtk4),
+    PHP_GSHUTDOWN(gtk4),
+    nullptr,  // post-deactivate
+    STANDARD_MODULE_PROPERTIES_EX,
 };
 
 ZEND_GET_MODULE(gtk4)

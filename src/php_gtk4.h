@@ -17,10 +17,8 @@
 #if PHP_VERSION_ID < 80400
 #error "php-gtk4 requires PHP >= 8.4"
 #endif
-#ifdef ZTS
-#error \
-    "php-gtk4 is NTS-only: the runtime keeps request state in plain statics (config.m4 refuses ZTS too)"
-#endif
+// ZTS is supported (per-request state is in module globals, core/globals.h);
+// GTK itself stays single-threaded - see assert_gui_thread().
 
 #define PHP_GTK4_VERSION "0.1.0-dev"
 #define PHP_GTK4_NAMESPACE "Gtk4"

@@ -17,6 +17,10 @@ PHP_ARG_ENABLE([gtk4-coverage],
   [whether to build gtk4 with gcov coverage],
   [AS_HELP_STRING([--enable-gtk4-coverage], [Build gtk4 with gcov instrumentation])],
   [no], [no])
+PHP_ARG_ENABLE([gtk4-testing],
+  [whether to compile the test-only hooks into gtk4],
+  [AS_HELP_STRING([--enable-gtk4-testing], [Compile Gtk::testing_* hooks (test builds only, never ship)])],
+  [no], [no])
 PHP_ARG_ENABLE([gtk4-webkit],
   [whether to enable WebKitGTK in gtk4],
   [AS_HELP_STRING([--enable-gtk4-webkit], [Enable WebKitGTK 6 support])],
@@ -32,12 +36,8 @@ if test "$PHP_GTK4" != "no"; then
   ])
   AC_MSG_RESULT([$gtk4_php_version])
 
-  dnl The runtime keeps request state in plain statics (exception handler,
-  dnl registries, running-loop stack) - correct for NTS, wrong for ZTS. Refuse
-  dnl a thread-safe PHP instead of producing a subtly broken module.
-  if test "$PHP_THREAD_SAFETY" = "yes"; then
-    AC_MSG_ERROR([php-gtk4 does not support thread-safe (ZTS) PHP builds; use an NTS PHP])
-  fi
+  dnl ZTS and NTS both build: per-request state is in module globals
+  dnl (src/core/globals.h). GTK itself is single-threaded either way.
 
   dnl GTK floor is 4.14 (Ubuntu 24.04); CI also compiles against 4.22.
   PKG_CHECK_MODULES([GTK4], [gtk4 >= 4.14 cairo-gobject gobject-2.0 >= 2.76 glib-2.0 >= 2.76])
@@ -51,6 +51,12 @@ if test "$PHP_GTK4" != "no"; then
     PHP_EVAL_LIBLINE([$WEBKITGTK_LIBS], [GTK4_SHARED_LIBADD])
     AC_DEFINE([PHPGTK_WITH_WEBKIT], [1], [WebKitGTK support])
     GTK4_FEATURES="webkit=yes"
+  fi
+  if test "$PHP_GTK4_TESTING" != "no"; then
+    AC_DEFINE([PHPGTK_TESTING], [1], [Test-only hooks compiled in])
+    GTK4_FEATURES="$GTK4_FEATURES testing=yes"
+  else
+    GTK4_FEATURES="$GTK4_FEATURES testing=no"
   fi
   AC_DEFINE_UNQUOTED([PHPGTK_BUILD_FEATURES], ["$GTK4_FEATURES"], [Compiled-in optional features])
 
