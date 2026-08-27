@@ -15,6 +15,10 @@ Module name is **`gtk4`** everywhere: `config.m4`, `zend_module_entry` in `src/g
 
 Hard constraints:
 
+- **CLI only.** php-gtk4 runs desktop applications from `php script.php`; web SAPIs (FPM, Apache,
+  CGI) are not a target and never a design consideration. ZTS is built and tested because it is a
+  PHP build flavour, not because of any multi-threaded server use.
+
 - **PHP 8.4+ only** — 8.4 and 8.5 in the CI matrix; **locally only 8.4 is built/tested** (`ci.sh`
   defaults, `buildall.sh` has 8.5 disabled — `ONLY=8.5 ./buildall.sh` to force). `config.m4` and
   `src/php_gtk4.h` (`#error` on `PHP_VERSION_ID < 80400`) both refuse older PHP. Don't add
@@ -24,7 +28,16 @@ Hard constraints:
 - **GTK 4.14+** (`pkg-config gtk4`); CI builds and tests on Ubuntu 24.04 (GTK 4.14, the floor) —
   guard anything newer than 4.14 with `GTK_CHECK_VERSION`. Never
   use GTK 3 APIs (`gtk_main`, `GdkEvent` unions, `GtkContainer`, …).
-- Linux is the primary target; Windows/WebKit follow later (see docs/PLAN.md milestones).
+- Linux is the primary target. **Windows builds through `config.w32`** (PHP SDK `phpize.bat` +
+  `configure --with-gtk4=<gvsbuild root>` + `nmake` → `php_gtk4.dll`, GTK 4 from gvsbuild — MSVC,
+  same CRT as PHP; `docs/BUILD.md` "Windows"). Whatever changes in `config.m4` (defines, features,
+  source dirs) changes in `config.w32` too. The only platform-specific code allowed in `src/` is
+  `pin_gtk_library()` in `src/gtk4.cpp`; everything else compiles unchanged on both. `ci.sh`,
+  `tests/phpt` and the sanitizer/coverage stages are Linux-only; `bin/php-gtk4.cmd` and
+  `tests/run.cmd` are the Windows launchers. **No header under `src/` may equal a GLib/GTK header
+  path case-insensitively** (a former src/Gio/GListModel.h shadowed `gio/glistmodel.h` on Windows — hence
+  `src/Gio/listmodel.h`; `HeaderNamesTest` enforces it). WebKit follows later (docs/PLAN.md
+  milestone 6).
 
 ## Build
 
@@ -249,27 +262,34 @@ commit gets the full run. `--no-verify` skips once.
 ZTS builds are supported: all per-request state is in the module globals (`src/core/globals.h`,
 `GTK4_G(x)`), never in a plain static — GType/class registries filled once in MINIT are the only
 process-wide statics allowed. GTK itself stays single-threaded (`assert_gui_thread()`); CI builds
-one ZTS variant. Coverage has a floor
+and tests NTS and ZTS on both platforms. Coverage has a floor
 (`COVERAGE_MIN_LINES`, default 80). `RobustnessTest` calls every method with garbage arguments;
 `DocsTest` guards CLAUDE.md sections and doc-mentioned paths. `CHANGELOG.md` has the release
 checklist; Dependabot watches composer and actions.
 
 ## CI
 
-Four workflows (three have a README badge): `.github/workflows/cpp-lint.yml`, `php-qa.yml`,
-`tests.yml`, `release.yml`. (1) static analysis — setup-php 8.4, GTK4/WebKitGTK headers, clang 20
-from apt.llvm.org, `phpize && ./configure` (for `config.h`), then `./ci.sh --only=stubs` and
+Five workflows (three have a README badge): `.github/workflows/cpp-lint.yml`, `php-qa.yml`,
+`tests.yml`, `windows.yml`, `release.yml`. (1) static analysis — setup-php 8.4, GTK4/WebKitGTK
+headers, clang 20 from apt.llvm.org, `phpize && ./configure` (for `config.h`), then `./ci.sh --only=stubs` and
 `./ci.sh --only=cpp-lint` (same clang-tidy/clang-format stage as locally, any finding fails);
 (2) `./ci.sh --only=php-qa` + `--only=md-lint`; (3) build the extension and run the
-PHPUnit suite *and* `./ci.sh --only=phpt` for PHP 8.4 and 8.5 on Ubuntu 24.04 (`fail-fast: false`;
+PHPUnit suite *and* `./ci.sh --only=phpt` for PHP 8.4 and 8.5, NTS and ZTS, on Ubuntu 24.04 (`fail-fast: false`;
 failing `.out`/`.diff` files upload as the `phpt-failures-php*` artifact), plus `sanitizers`
 (`ci.sh --only=valgrind` + `--only=asan`) and `coverage` (`--only=coverage`, gcovr HTML artifact)
 jobs on 8.4. The apt package lists must mirror `config.m4`'s pkg-config modules.
-(4) `release.yml` on every push to `main`: reads `VERSION` and either publishes an immutable
-`vX.Y.Z-dev.<run>` pre-release (suffix `-dev`; the newest 5 are kept, older ones deleted with their
+(4) `windows.yml`: `windows-2022`, the same 8.4/8.5 × NTS/ZTS matrix via setup-php + the matching devel pack from
+windows.php.net + php-sdk-binary-tools + the cached `GTK4_Gvsbuild_<ver>_x64.zip` release asset
+(`GVSBUILD_VERSION`, pinned by hand in the workflow and in `release.yml` — `WorkflowsTest` keeps
+them equal, nothing bumps them; docs/BUILD.md "The pinned GTK version"), `phpize &&
+configure --with-gtk4 && nmake`, load check, PHPUnit via `tests/run.cmd` on the runner's desktop
+(no phpt). (5) `release.yml` on every push to `main`: reads `VERSION` and either publishes an
+immutable `vX.Y.Z-dev.<run>` pre-release (suffix `-dev`; the newest 5 are kept, older ones deleted with their
 tags) or the real `vX.Y.Z` release (no suffix, once),
 after running `./ci.sh` in full itself — it does not key off `tests.yml`. Assets are one `.so` per
-supported PHP named with its whole ABI identity, plus the source tarball and `SHA256SUMS`, with
+supported PHP named with its whole ABI identity, one `php_gtk4-<ver>-php<X.Y>-nts-vs17-x64.dll`
+per supported PHP (the `build-windows` job, same recipe as `windows.yml`), plus the source tarball
+and `SHA256SUMS`, with
 build provenance attestation instead of a signed tag. **`VERSION` is the only release trigger; never
 create a tag or a release by hand.** docs/RELEASING.md is the full description.
 `.github/copilot-instructions.md` is a one-liner pointing at this file — keep project-wide
@@ -320,7 +340,7 @@ conventions here only.
   the class. Interfaces (`GAction`, `GActionMap`, `GActionGroup`, `GListModel`) come from
   `implements` in the stub (gen_stub emits `zend_class_implements`); when an interface's methods
   have one C implementation, write it **once** as `ZEND_METHOD(Gtk4_<Interface>, m)`
-  (`src/Gio/GListModel.cpp`, prototypes in its header) and tag every implementing class's method
+  (`src/Gio/GListModel.cpp`, prototypes in `src/Gio/listmodel.h`) and tag every implementing class's method
   in the stub with `/** @implementation-alias Gtk4\<Interface>::m */` — gen_stub emits a
   `ZEND_MALIAS`, no per-class C++. `G_TYPE_POINTER` is unsupported on purpose.
 - `gen/` — `gen_stub.php` (vendored), `ide-stub.php`; the GIR generator (docs/PLAN.md milestone 3) will

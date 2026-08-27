@@ -9,8 +9,13 @@
 #include <zend_exceptions.h>
 #include <zend_interfaces.h>
 #include <zend_enum.h>
+// Neither header has BEGIN_EXTERN_C guards; without this MSVC looks the spl_ce_* class
+// entries up C++-mangled and the DLL fails to link (Linux linkers get the same names
+// from the .so by accident). php-src's intl extension does the same.
+extern "C" {
 #include <ext/standard/info.h>
 #include <ext/spl/spl_exceptions.h>
+}
 
 #include <gtk/gtk.h>
 

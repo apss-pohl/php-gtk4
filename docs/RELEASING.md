@@ -26,6 +26,7 @@ manual `gh release create`, no commit-message conventions. Bumping the file *is*
 $EDITOR VERSION                      # 0.2.0-dev -> 0.2.0
 ./ci.sh --only=version,stubs --fix   # propagate into the header + stub, regenerate
 $EDITOR CHANGELOG.md                 # move Unreleased under '## [0.2.0] - YYYY-MM-DD'
+grep -n GVSBUILD_VERSION .github/workflows/*.yml   # Windows GTK pin: bump to gvsbuild's current release? (docs/BUILD.md)
 ./ci.sh --with=asan,coverage,valgrind
 ```
 

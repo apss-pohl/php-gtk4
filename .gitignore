@@ -46,6 +46,23 @@
 compile_commands.json
 .cache/
 
+# --- Windows build (phpize.bat + configure + nmake, config.w32)
+/configure.js
+/configure.bat
+/config.pickle.h
+/x64/
+/Release/
+/Release_TS/
+/Debug/
+/Debug_TS/
+/build-task.bat
+*.obj
+*.dll
+*.exp
+*.pdb
+*.res
+*.ilk
+
 # --- logs and tool caches
 *.log
 /.ci/

@@ -71,8 +71,9 @@ final class DocsTest extends TestCase
         static $cache = [];
 
         if (!isset($cache[$path])) {
+            $null = PHP_OS_FAMILY === 'Windows' ? 'NUL' : '/dev/null';
             $cmd = 'git -C ' . escapeshellarg(self::ROOT)
-                . ' check-ignore -q ' . escapeshellarg($path) . ' 2>/dev/null';
+                . ' check-ignore -q ' . escapeshellarg($path) . ' 2>' . $null;
             exec($cmd, $ignoredOutput, $status);
             $cache[$path] = $status === 0;
         }

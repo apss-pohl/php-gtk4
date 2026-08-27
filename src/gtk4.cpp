@@ -10,10 +10,12 @@
 #include "core/object.h"
 #include "core/phpvalue.h"
 #include "core/teardown.h"
-#include "Gio/GListModel.h"
+#include "Gio/listmodel.h"
 #include <Zend/zend_modules.h>
 
-#ifndef _WIN32
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <dlfcn.h>
 #endif
 
@@ -61,7 +63,14 @@ PHP_INI_END()
 // the already loaded mapping, and it (with everything it depends on) then stays mapped for
 // the life of the process. Our own gtk4.so is still unloaded normally.
 static void pin_gtk_library() {
-#ifndef _WIN32
+#ifdef _WIN32
+  // Same idea with the Win32 loader: pin the module that contains gtk_init so FreeLibrary()
+  // (which PHP calls on every extension at MSHUTDOWN) never unmaps libgtk-4 and its deps.
+  HMODULE module = nullptr;
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast) GetModuleHandleEx wants an LPCSTR
+  (void)GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
+                           reinterpret_cast<LPCSTR>(&gtk_init), &module);
+#else
   Dl_info info{};
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast) dladdr wants a data pointer
   if (dladdr(reinterpret_cast<const void *>(&gtk_init), &info) != 0 && info.dli_fname != nullptr) {
@@ -109,7 +118,7 @@ static PHP_MINIT_FUNCTION(gtk4) {
   phpgtk::register_class("PhpValue", register_class_Gtk4_PhpValue(ce_GObject), PHP_TYPE_VALUE);
   phpgtk::register_CairoContext(register_class_Gtk4_CairoContext());
   zend_class_entry *ce_GListModel = register_class_Gtk4_GListModel();
-  phpgtk::ce_GListModel = ce_GListModel;  // for ?GListModel parameters (Gio/GListModel.h)
+  phpgtk::ce_GListModel = ce_GListModel;  // for ?GListModel parameters (Gio/listmodel.h)
   phpgtk::register_class("GListStore", register_class_Gtk4_GListStore(ce_GObject, ce_GListModel),
                          G_TYPE_LIST_STORE);
   zend_class_entry *ce_GAction = register_class_Gtk4_GAction();

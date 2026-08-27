@@ -43,7 +43,7 @@ bin/php-gtk4 examples/demo.php            # the demo app: every class, one page 
 ```
 
 Everything else — `ci.sh`/`buildall.sh`, configure options, the sanitizer/coverage variants, and
-the **Windows** status and route — is in [docs/BUILD.md](docs/BUILD.md).
+the **Windows** build (PHP SDK + `config.w32`, GTK 4 from gvsbuild) — is in [docs/BUILD.md](docs/BUILD.md).
 
 ## Threads
 

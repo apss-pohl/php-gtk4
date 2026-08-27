@@ -83,5 +83,7 @@ A segfault shows up as PHPUnit dying mid-run; bisect with `--filter 'Class::meth
 - Add a line under `## [Unreleased]` in `CHANGELOG.md` for anything user-visible.
 - Don't bump `VERSION` in a feature PR — that is the release trigger (`docs/RELEASING.md`).
 - Dependabot handles composer and actions updates; don't bundle those.
-- Windows/WebKit work: see the Windows section of `docs/BUILD.md` and milestone 6 in `docs/PLAN.md`
-  first, so it lands through `config.w32`, not a separate project file.
+- Windows: the build is `config.w32` (PHP SDK + gvsbuild GTK, see the Windows section of
+  `docs/BUILD.md`). Nothing under `src/` may become platform-specific except `pin_gtk_library()`;
+  anything that touches `config.m4` (sources, defines, features) needs the same change in `config.w32`.
+  WebKit: milestone 6 in `docs/PLAN.md` first.

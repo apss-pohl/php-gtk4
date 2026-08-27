@@ -6,7 +6,7 @@ that flow.
 
 ## Requirements
 
-| What | Linux (primary target) |
+| What | Linux (primary target; Windows below) |
 | --- | --- |
 | PHP | **8.4 or newer**, NTS or ZTS. `php8.4-dev` for `phpize`/`php-config`. `config.m4` refuses < 8.4. |
 | GTK | **4.14 or newer** — `libgtk-4-dev` (pulls GLib ≥ 2.76, cairo-gobject). Ubuntu 24.04 is the CI floor. |
@@ -97,8 +97,8 @@ Two separate questions hide behind "thread safe":
 the parked Throwable, running-loop stack, tracked closures/sources/callables, live `PhpValue`
 instances) lives in the module globals struct in `src/core/globals.h`, accessed through `GTK4_G()`
 — one copy per thread under ZTS, one in total under NTS. The GType ↔ class registries are filled
-once in MINIT and read-only afterwards, so they are shared. CI builds and tests one ZTS variant
-(`tests.yml`, `phpts: ts`); the release binaries stay NTS.
+once in MINIT and read-only afterwards, so they are shared. CI builds and tests NTS and ZTS for
+every supported PHP on Linux and Windows (`tests.yml`, `windows.yml`); the release binaries stay NTS.
 
 **Using GTK from more than one thread** does not work, and that is GTK's rule, not ours: every
 `gtk_*` call must come from the thread that owns the default `GMainContext` — the one that ran
@@ -106,8 +106,9 @@ once in MINIT and read-only afterwards, so they are shared. CI builds and tests 
 `GMainLoop::run()` and `GLib::main_context_iteration()` throw `Error` when called from another
 one. Consequences:
 
-- *Several request threads each opening windows* (FPM/Apache-worker style) — not possible. No lock
-  on our side can make it correct; the same holds for PyGObject, gtk-rs and every other binding.
+- *Several threads each opening windows* — not possible. No lock on our side can make it correct;
+  the same holds for PyGObject, gtk-rs and every other binding. (php-gtk4 is a **CLI** extension:
+  desktop applications run with `php script.php`; web SAPIs are not a target.)
 - *One GUI thread plus PHP worker threads* — the useful shape, and the standard GTK pattern: workers
   never touch widgets and post results to the GUI thread with `GLib::idle_add()`. What is still
   missing for that is a thread-safe way to hand a callable from one PHP thread to the GUI thread's
@@ -115,51 +116,111 @@ one. Consequences:
 
 ## Windows
 
-**Status: not supported yet.** Windows is milestone 6 in `docs/PLAN.md`; nothing in `src/` is
-Windows-specific today and there is no `config.w32`. This section records the intended route so
-that the port lands the same way the Linux build works — through PHP's own build system — rather
-than as a hand-maintained IDE project like php-gtk3's.
+**Status: builds through PHP's own Windows build system** — `config.w32` is the counterpart of
+`config.m4`, driven by the PHP SDK (`phpize.bat` → `configure` → `nmake`), with GTK 4 from
+[gvsbuild](https://github.com/wingtk/gvsbuild). The output is `php_gtk4.dll`. There is no IDE
+project and there will be none (php-gtk3 had one; see `docs/PLAN.md` milestone 6). CI builds and
+tests it on `windows-2022` for PHP 8.4 and 8.5, NTS and ZTS (`.github/workflows/windows.yml` — the
+same matrix as Linux), and every release ships one
+`php_gtk4-<ver>-php<X.Y>-nts-vs17-x64.dll` per supported PHP — TS builds from source, as on Linux.
 
-### Intended route: php-sdk + `config.w32`
+### Why gvsbuild
 
-1. **Toolchain.** Install Visual Studio (Community is fine) with the "Desktop development with
-   C++" workload. The compiler *series* must match the PHP build you target — see
-   <https://windows.php.net/downloads/php-sdk/deps/series/> (PHP 8.4 = VS17). Install the
-   [php-sdk-binary-tools](https://github.com/php/php-sdk-binary-tools) and open a
-   `phpsdk-vs17-x64.bat` shell.
-2. **PHP source + deps.** In the SDK shell: `phpsdk_buildtree phpdev`, unpack the matching
-   php-src release into `phpdev\vs17\x64\php-8.4.x-src`, run `phpsdk_deps --update --branch master`.
-   Build PHP once (`buildconf`, `configure --disable-all --enable-cli --disable-zts`, `nmake`) —
-   php-gtk4 is NTS-only on every platform.
-3. **GTK 4.** Two options:
-   - **gvsbuild** (<https://github.com/wingtk/gvsbuild>) — MSVC-built GTK 4, the toolchain PHP
-     itself uses, so no CRT mixing: `gvsbuild build gtk4`, then point the build at its
-     `include`/`lib` directories.
-   - **MSYS2** — `pacman -S mingw-w64-x86_64-gtk4`. Faster to obtain, but MinGW-built libraries
-     linked into an MSVC-built PHP work only because GTK's ABI is plain C; keep the two CRTs in
-     mind when something crashes at a boundary.
-4. **`config.w32`.** The Windows counterpart of `config.m4`: `ARG_ENABLE("gtk4", ...)`, the include
-   and library paths from step 3, `EXTENSION("gtk4", <list of every src/**/*.cpp>)`,
-   `ADD_FLAG("CFLAGS_GTK4", "/std:c++20 /EHsc")`. Drop it into `ext\gtk4` of the php-src tree
-   (or use `--with-extra-dirs`), re-run `buildconf --force`, `configure --enable-gtk4=shared`,
-   `nmake`. The output is `php_gtk4.dll`.
-5. **Runtime.** The DLL needs every GTK DLL on `PATH` (or next to `php.exe`) plus GTK's `share\`
-   tree (schemas, icons) relative to them. WebView on Windows is planned as WebView2, following
-   php-gtk3's `_Unix.cpp` / `_Windows.cpp` split for the platform-specific half.
+Windows PHP is built with MSVC (VS17 for 8.4/8.5, see
+<https://windows.php.net/downloads/php-sdk/deps/series/>). gvsbuild builds GTK with the same
+compiler, so the extension, PHP and GTK share one CRT and one `malloc` — no MinGW/MSVC boundary to
+crash at. It also ships `pkgconf` and the `.pc` files, which is what `config.w32` reads the include
+and library lists from, so the flag list never has to be maintained by hand.
 
-### Things that will need work
+### Requirements
 
-- `config.m4`'s `PHPGTK_BUILD_INFO` (git hash/date) has no `config.w32` equivalent yet.
-- `bin/php-gtk4`, `tests/run.sh` and every `ci.sh` stage are bash + Xvfb; on Windows the suite
-  runs against the real display with `php vendor\bin\phpunit`.
-- `pin_gtk_library()` in `src/gtk4.cpp` uses `dlopen(RTLD_NODELETE)` to keep libgtk-4 mapped after
-  PHP unloads the extension; it is `#ifndef _WIN32` and needs a Windows counterpart
-  (`GetModuleHandleEx` with `GET_MODULE_HANDLE_EX_FLAG_PIN`). Nothing else in `src/` is POSIX-only —
-  keep it that way.
+| What | Windows |
+| --- | --- |
+| Visual Studio | 2022 (Community is fine), workload *Desktop development with C++*. The series must match the PHP build: VS17 for PHP 8.4 and 8.5. |
+| PHP | `php.exe` 8.4+ from <https://windows.php.net/download/> (NTS or TS) **and** the matching *Development package* (`php-devel-pack-<ver>[-nts]-Win32-vs17-x64.zip`): headers, `php8.lib`, `phpize.bat`. |
+| PHP SDK | [php-sdk-binary-tools](https://github.com/php/php-sdk-binary-tools) (`git clone`); it provides the `phpsdk-vs17-x64.bat` shell in which everything below runs. |
+| GTK 4 | A gvsbuild tree: `<root>\include\gtk-4.0`, `<root>\lib\*.lib`, `<root>\lib\pkgconfig`, `<root>\bin\*.dll`. |
+| Composer | for the test suite only. |
 
-Until the above exists, the practical way to develop on a Windows machine is WSL2 with Ubuntu
-24.04, which is exactly the CI environment: install the packages from "Requirements" and follow the
-Linux steps; WSLg provides the display.
+Getting the GTK tree, either way gives the same layout:
+
+```powershell
+# (a) prebuilt: the GTK4_Gvsbuild_<ver>_x64.zip asset of a gvsbuild release (~300 MB), unpacked to C:\gtk
+Expand-Archive GTK4_Gvsbuild_2026.8.0_x64.zip -DestinationPath C:\gtk
+
+# (b) from source (an hour or more; needs Python + the tools gvsbuild's README lists)
+py -m pip install --user gvsbuild
+gvsbuild build gtk4          # -> C:\gtk-build\gtk\x64\release
+```
+
+### Build
+
+In a `phpsdk-vs17-x64.bat` shell, with the devel pack's directory (the one containing
+`phpize.bat`) on `PATH`, from the repo root:
+
+```bat
+phpize
+configure --with-gtk4=C:\gtk        # or set GTK4_ROOT=C:\gtk; default C:\gtk-build\gtk\x64\release
+nmake                               # -> x64\Release\php_gtk4.dll (Release_TS for a TS PHP)
+```
+
+`config.w32` does what `config.m4` does: refuses PHP < 8.4, checks `src/php_gtk4.h` against
+`VERSION`, bakes git hash/date into `Gtk4\BUILD_INFO`, compiles every `src/**/*.cpp` with
+`/std:c++20 /EHsc`, and takes the include/library flags from `<root>\bin\pkgconf.exe`
+(`--define-prefix`, so the tree may live anywhere) — falling back to the known gvsbuild layout when
+`pkgconf` is missing. `--enable-gtk4-testing` compiles the `Gtk::testing_*` hooks;
+`--enable-gtk4-webkit` is refused (WebKitGTK is Linux-only; WebView2 is the plan).
+
+### Running what you built
+
+`php_gtk4.dll` links against `gtk-4-1.dll` and friends, so `<root>\bin` must be on `PATH` (or its
+DLLs next to `php.exe`); GTK finds its `share\` tree (schemas, icons) relative to them.
+
+```bat
+bin\php-gtk4 examples\demo.php           :: PATH=<GTK4_ROOT>\bin + -dextension=x64\Release\php_gtk4.dll
+set GTK4_ROOT=C:\gtk                     :: where the DLLs are (default C:\gtk-build\gtk\x64\release)
+set GTK4_DLL=x64\Release_TS\php_gtk4.dll :: which build (default: whatever is under x64\)
+tests\run --filter SignalTest            :: PHPUnit on the real desktop (no Xvfb on Windows)
+```
+
+`bin/php-gtk4.cmd` and `tests/run.cmd` are the Windows counterparts of `bin/php-gtk4` and
+`tests/run.sh`. There is no php-gtk3 to filter out and no display to fake, so they are only
+`PATH` + `-dextension`; `tests/run.cmd` sets `GSK_RENDERER=cairo`, `GTK_A11Y=none` and
+`XDEBUG_MODE=off` like the Linux runner does.
+
+### The pinned GTK version (`GVSBUILD_VERSION`)
+
+Linux CI takes GTK from apt; Windows CI has no package manager and downloads gvsbuild's prebuilt
+`GTK4_Gvsbuild_<ver>_x64.zip` instead, pinned to one gvsbuild release by `GVSBUILD_VERSION` in
+`.github/workflows/windows.yml` **and** the `build-windows` job of `.github/workflows/release.yml`
+(the pin is also the cache key, so the 300 MB zip is fetched once per version). The Windows build
+stays on that GTK until the number is bumped — nothing does it automatically: Dependabot only tracks
+package ecosystems and `uses:` lines, not an `env:` value.
+
+To move to a newer GTK on Windows: pick a release from <https://github.com/wingtk/gvsbuild/releases>,
+set the same version in both workflows (`WorkflowsTest` fails if they differ), push, and let
+`windows.yml` prove it. Do it when a newer GTK is needed or when a release is cut (it is on the
+checklist in `docs/RELEASING.md`), not on a schedule; an old pin is not a failure. Never below the
+4.14 floor — `config.w32` checks `gtk4 >= 4.14`.
+
+### What is Linux-only
+
+- `ci.sh` and all of its stages (clang-tidy, sanitizers, coverage, valgrind, `run-tests.php` over
+  `tests/phpt`). Lint on Linux/WSL, build on Windows. `tests/phpt` asserts stderr text from GLib
+  and needs Xvfb; it is not run on Windows.
+- `--enable-gtk4-webkit`.
+- `bin/php-gtk4`'s php-gtk3 filtering — not needed, there is no php-gtk3 for Windows PHP 8.
+
+### Platform-specific code
+
+Exactly one place in `src/` is platform-specific: `pin_gtk_library()` in `src/gtk4.cpp`, which
+keeps libgtk-4 mapped after PHP unloads the extension — `dlopen(RTLD_NODELETE)` on Linux,
+`GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_PIN)` on Windows. Keep it that way: GTK's API is
+identical on both, so new bindings never need an `#ifdef`. WebView on Windows will follow
+php-gtk3's `_Unix.cpp` / `_Windows.cpp` split when it arrives.
+
+WSL2 with Ubuntu 24.04 remains the way to run the full `ci.sh` on a Windows machine: it is exactly
+the CI environment, and WSLg provides the display.
 
 ## Releases
 

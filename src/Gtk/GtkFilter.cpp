@@ -2,7 +2,7 @@
 // and Gtk4\GtkFilterListModel.
 #include "php_gtk4.h"
 #include "core/callback.h"
-#include "Gio/GListModel.h"
+#include "Gio/listmodel.h"
 #include "core/enums.h"
 #include "core/object.h"
 #include "core/teardown.h"
@@ -104,7 +104,7 @@ ZEND_METHOD(Gtk4_GtkFilterListModel, __construct) {
   zval *filter = nullptr;
   ZEND_PARSE_PARAMETERS_START(0, 2)
   Z_PARAM_OPTIONAL
-  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(model, ce_GListModel)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(model, phpgtk::ce_GListModel)
   Z_PARAM_OBJECT_OF_CLASS_OR_NULL(filter, class_for_gtype(GTK_TYPE_FILTER))
   ZEND_PARSE_PARAMETERS_END();
   GObject *m = model != nullptr ? unwrap(model, G_TYPE_LIST_MODEL) : nullptr;
@@ -148,7 +148,7 @@ ZEND_METHOD(Gtk4_GtkFilterListModel, get_filter) {
 ZEND_METHOD(Gtk4_GtkFilterListModel, set_model) {
   zval *model;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(model, ce_GListModel)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(model, phpgtk::ce_GListModel)
   ZEND_PARSE_PARAMETERS_END();
   GtkFilterListModel *flm = PHPGTK_SELF(GtkFilterListModel, GTK_TYPE_FILTER_LIST_MODEL);
   GObject *m = model != nullptr ? unwrap(model, G_TYPE_LIST_MODEL) : nullptr;

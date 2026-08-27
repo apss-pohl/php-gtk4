@@ -9,6 +9,12 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- Windows build: `config.w32` (PHP SDK `phpize.bat` + `configure --with-gtk4=<root>` + `nmake`,
+  GTK 4 from [gvsbuild](https://github.com/wingtk/gvsbuild)), `pin_gtk_library()` Win32
+  counterpart (`GetModuleHandleEx` + `GET_MODULE_HANDLE_EX_FLAG_PIN`), `bin/php-gtk4.cmd`,
+  `tests/run.cmd`, the `windows.yml` workflow (build + load + PHPUnit on PHP 8.4/8.5) and a
+  `php_gtk4.dll` asset per supported PHP in every release.
+
 - ZTS builds: per-request runtime state moved into module globals (`src/core/globals.h`);
   `config.m4` and `php_gtk4.h` no longer refuse thread-safe PHP, CI tests one ZTS variant.
   GTK itself stays single-threaded — `Gtk::init()`, `GtkApplication::run()`, `GMainLoop::run()`
@@ -86,6 +92,10 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 - RSHUTDOWN teardown walks the live registries instead of a snapshot, so a disconnect that
   finalizes another tracked object can no longer leave a dangling pointer for the next iteration.
+- `ci.sh --only=cpp-lint` on a fresh checkout failed with `'config.h' file not found` (the stage
+  runs before `build`); it now runs `phpize && ./configure` itself when `config.h` is missing.
+  This is what broke every `release.yml` verify job. The job also pins clang 20 now, like
+  `cpp-lint.yml`.
 - `config.m4` lacked the `src/Cairo` build directory (out-of-tree builds failed).
 - `cpp-lint.yml` never ran clang-tidy/clang-format (it gated on a step that did not exist); it now
   installs clang 20 and runs `./ci.sh --only=cpp-lint` like the pre-commit hook.
@@ -98,9 +108,11 @@ Full details in docs/RELEASING.md. `VERSION` is the only trigger — there is no
 2. `./ci.sh --only=version,stubs --fix` — propagates into `src/php_gtk4.h` and `src/gtk4.stub.php`.
 3. Move the Unreleased entries under `## [0.2.0] - YYYY-MM-DD`. The release workflow copies that
    section into the GitHub release body and fails if it is missing.
-4. `./ci.sh --with=asan,coverage,valgrind` green.
-5. Merge as a `release: 0.2.0` PR — `.github/workflows/release.yml` tags, builds and publishes.
-6. Follow-up PR: `VERSION` → `0.3.0-dev`, `./ci.sh --only=version,stubs --fix`, fresh `## [Unreleased]`.
+4. `GVSBUILD_VERSION` in `windows.yml` and `release.yml`: still the GTK you want the `.dll` built
+   against? (nothing bumps it automatically — `docs/BUILD.md` "The pinned GTK version").
+5. `./ci.sh --with=asan,coverage,valgrind` green.
+6. Merge as a `release: 0.2.0` PR — `.github/workflows/release.yml` tags, builds and publishes.
+7. Follow-up PR: `VERSION` → `0.3.0-dev`, `./ci.sh --only=version,stubs --fix`, fresh `## [Unreleased]`.
 
 Between releases every merge into `main` publishes a `vX.Y.Z-dev.<run>` pre-release instead; the
 newest five stay downloadable.

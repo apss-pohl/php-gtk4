@@ -2,7 +2,7 @@
 // and Gtk4\GtkSortListModel.
 #include "php_gtk4.h"
 #include "core/callback.h"
-#include "Gio/GListModel.h"
+#include "Gio/listmodel.h"
 #include "core/enums.h"
 #include "core/object.h"
 #include "core/teardown.h"
@@ -111,7 +111,7 @@ ZEND_METHOD(Gtk4_GtkSortListModel, __construct) {
   zval *sorter = nullptr;
   ZEND_PARSE_PARAMETERS_START(0, 2)
   Z_PARAM_OPTIONAL
-  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(model, ce_GListModel)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(model, phpgtk::ce_GListModel)
   Z_PARAM_OBJECT_OF_CLASS_OR_NULL(sorter, class_for_gtype(GTK_TYPE_SORTER))
   ZEND_PARSE_PARAMETERS_END();
   GObject *m = model != nullptr ? unwrap(model, G_TYPE_LIST_MODEL) : nullptr;
@@ -155,7 +155,7 @@ ZEND_METHOD(Gtk4_GtkSortListModel, get_sorter) {
 ZEND_METHOD(Gtk4_GtkSortListModel, set_model) {
   zval *model;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(model, ce_GListModel)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(model, phpgtk::ce_GListModel)
   ZEND_PARSE_PARAMETERS_END();
   GtkSortListModel *slm = PHPGTK_SELF(GtkSortListModel, GTK_TYPE_SORT_LIST_MODEL);
   GObject *m = model != nullptr ? unwrap(model, G_TYPE_LIST_MODEL) : nullptr;

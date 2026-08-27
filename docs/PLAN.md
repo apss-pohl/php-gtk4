@@ -350,8 +350,10 @@ load (verified with valgrind: write into a freed block inside libgtk, no php-gtk
    Overrides directory populated.
 5. **Hardening** — refcount/identity edge cases, shutdown ordering (disconnect closures before Zend
    teardown), exception rethrow mode, deprecation coverage, docs/examples ported from php-gtk3.
-6. **Optional features** — WebKitGTK 6, Windows (MSVC + WebView2) following php-gtk3's separate
-   `_Unix.cpp` / `_Windows.cpp` pattern, AppImage packaging.
+6. **Optional features** — WebKitGTK 6, WebView2 on Windows following php-gtk3's separate
+   `_Unix.cpp` / `_Windows.cpp` pattern, AppImage packaging. The Windows *build* itself is done
+   (2026-08-27): `config.w32` through the PHP SDK against gvsbuild's MSVC GTK 4, `windows.yml`
+   builds and runs the PHPUnit suite on PHP 8.4/8.5, releases ship `php_gtk4.dll` (docs/BUILD.md).
 
 ## 8. Things explicitly *not* carried over from php-gtk3
 

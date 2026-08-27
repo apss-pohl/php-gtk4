@@ -3,7 +3,7 @@
 // (`@implementation-alias Gtk4\GListModel::x`), so a new GListModel needs no C++ for them.
 #include "php_gtk4.h"
 #include "core/object.h"
-#include "GListModel.h"
+#include "listmodel.h"
 
 using namespace phpgtk;
 

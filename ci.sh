@@ -177,8 +177,20 @@ stage_stubs() {
 }
 
 # ---------------------------------------------------------------- cpp-lint
+# src/php_gtk4.h includes config.h (build metadata, feature defines), which only
+# ./configure writes. On a fresh checkout cpp-lint runs before build, so make sure
+# it exists - phpize + configure only, no compile. (release.yml's verify job hit this.)
+ensure_config_h() {
+    [[ -f config.h ]] && return 0
+    step "configure (config.h for clang-tidy)"
+    "$PHPIZE" >/dev/null || fail "phpize"
+    mkdir -p .ci
+    ./configure --with-php-config="$PHP_CONFIG" > .ci/configure.log 2>&1 || { tail -20 .ci/configure.log; fail "configure"; }
+}
+
 stage_cpp_lint() {
     local action="checking"; [[ $FIX -eq 1 ]] && action="fixing"
+    ensure_config_h
     local -a include_flags=(--extra-arg=-std=c++20 --extra-arg=-I"$PWD" --extra-arg=-I"$PWD/src" --extra-arg=-DHAVE_CONFIG_H)
     while IFS= read -r flag; do
         [[ -n "$flag" ]] && include_flags+=("--extra-arg=$flag")
