@@ -340,15 +340,22 @@ stage_build() {
 # loaded into an uninstrumented php, so libasan is LD_PRELOADed into php only
 # (not into xvfb-run/Xvfb). USE_ZEND_ALLOC=0 makes Zend use malloc so ASan
 # sees every allocation. Suppressions: tests/lsan.supp (third-party only).
+# tests/asan-dlopen-shim.c is preloaded ahead of libasan to strip RTLD_DEEPBIND
+# from php's dlopen() (PHP builds with PHP_USE_RTLD_DEEPBIND, e.g. setup-php's):
+# the sanitizer runtime refuses DEEPBIND outright. verify_asan_link_order=0 is
+# what lets libasan be second in the preload list.
 stage_asan() {
     ensure_vendor
     step "asan build (gtk4-asan.so)"
     local libasan; libasan=$(gcc -print-file-name=libasan.so)
     [[ -f "$libasan" ]] || fail "libasan.so not found (install libasan for your gcc)"
     build_variant gtk4-asan.so --enable-gtk4-sanitize --enable-gtk4-testing
+    mkdir -p .ci
+    local shim="$PWD/.ci/asan-dlopen-shim.so"
+    gcc -shared -fPIC -O2 -o "$shim" tests/asan-dlopen-shim.c || fail "asan dlopen shim"
 
-    local -a env=(LD_PRELOAD="$libasan" USE_ZEND_ALLOC=0
-                  ASAN_OPTIONS="detect_leaks=1:abort_on_error=0:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1"
+    local -a env=(LD_PRELOAD="$shim:$libasan" USE_ZEND_ALLOC=0
+                  ASAN_OPTIONS="verify_asan_link_order=0:detect_leaks=1:abort_on_error=0:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1"
                   LSAN_OPTIONS="suppressions=$PWD/tests/lsan.supp:print_suppressions=0"
                   UBSAN_OPTIONS="print_stacktrace=1:halt_on_error=1")
 
@@ -363,7 +370,7 @@ stage_asan() {
     # here ASan/UBSan still catch memory errors across the whole suite.
     step "asan: phpunit suite (memory errors only, leaks checked by the stress run)"
     local -a env_nolsan=("${env[@]}")
-    env_nolsan[2]="ASAN_OPTIONS=detect_leaks=0:abort_on_error=0:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1"
+    env_nolsan[2]="ASAN_OPTIONS=verify_asan_link_order=0:detect_leaks=0:abort_on_error=0:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1"
     PHP="$PHP" GTK4_SO=./gtk4-asan.so PHP_GTK4_ENV="${env_nolsan[*]}" ./tests/run.sh "${PHPUNIT_ARGS[@]}" || fail "asan phpunit"
 }
 

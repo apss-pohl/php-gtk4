@@ -16,6 +16,8 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   initialised GTK.
 - `docs/BUILD.md` (build process, variants, Windows status and route, threads) and
   `docs/CONTRIBUTING.md`; README links to them.
+- CI: the asan stage preloads `tests/asan-dlopen-shim.c` so PHP builds that `dlopen()` extensions
+  with `RTLD_DEEPBIND` (setup-php) can load the sanitized module; phpt runs with `GTK_A11Y=none`.
 - libgtk-4 is pinned in the process at MINIT (`RTLD_NODELETE`): PHP unloads extensions at
   MSHUTDOWN, and unmapping GTK under its fontconfig warm-up thread crashed at exit after a failed
   `Gtk::init()` on machines with a cold fontconfig cache (CI runners).

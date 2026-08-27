@@ -80,7 +80,9 @@ bear -- make                           # compile_commands.json for clangd / clan
 One script, same stages as GitHub Actions: `version` → `stubs` → `cpp-lint` → `md-lint` → `php-qa` →
 `build` → `load` → `test` → `phpt` (php-src `run-tests.php` over `tests/phpt`), plus the opt-in `asan` (ASan+UBSan
 on the suite, LSan on `tests/scripts/stress.php`,
-`gtk4-asan.so`), `coverage` (gcov per-file C++ line coverage via gcovr, `gtk4-cov.so`, HTML in
+`gtk4-asan.so`; `tests/asan-dlopen-shim.c` is preloaded ahead of libasan to strip `RTLD_DEEPBIND`
+from php's `dlopen()`, which the sanitizer runtime otherwise refuses — setup-php's PHP builds use it),
+`coverage` (gcov per-file C++ line coverage via gcovr, `gtk4-cov.so`, HTML in
 `coverage/`) and `valgrind` (memcheck on the stress script — uninitialised reads, definite leaks;
 `tests/valgrind.supp` + GLib's `glib.supp`).
 
