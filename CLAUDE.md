@@ -28,6 +28,9 @@ Hard constraints:
 
 ## Build
 
+User-facing version of this section (plus the Windows status): `docs/BUILD.md`; contributor
+summary: `docs/CONTRIBUTING.md`. Keep all three consistent.
+
 ```sh
 ./ci.sh --only=build                   # phpize + configure + make -> ./gtk4.so (what everything else uses)
 ./buildall.sh                          # build + install for every enabled version in its table (sudo for install)

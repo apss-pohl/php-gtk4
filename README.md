@@ -35,25 +35,20 @@ scripts without windows.
 
 ## Build & install
 
-Requires **PHP 8.4+** (8.4 and 8.5 are tested) with the dev package (`php8.4-dev`: phpize,
-php-config) and `libgtk-4-dev` (GTK ≥ 4.14).
+Requires **PHP 8.4+** (NTS) with `php8.4-dev` and `libgtk-4-dev` (GTK ≥ 4.14). Standard `phpize` build:
 
 ```sh
-phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(nproc)"
-sudo make install                           # or: ./buildall.sh (builds + installs every enabled PHP version)
-./ci.sh                                     # stubs, cpp-lint, md-lint, php-qa, build, load, test, phpt
-./ci.sh --only=test --filter SignalTest    # single stage / single test class; --fix applies all auto-fixes
-./ci.sh --only=phpt                        # php-src run-tests.php over tests/phpt (stderr, fatals, RSHUTDOWN)
+phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(nproc)" && sudo make install
 bin/php-gtk4 examples/demo.php            # the demo app: every class, one page at a time
-bin/php-gtk4 examples/GtkButton.php       # the same source, just that class (examples/README.md)
 ```
 
-After cloning: `composer install` and `git config core.hooksPath .githooks` (pre-commit = fast QA,
-pre-push = full `./ci.sh`).
+Everything else — `ci.sh`/`buildall.sh`, configure options, the sanitizer/coverage variants, and
+the **Windows** status and route — is in [docs/BUILD.md](docs/BUILD.md).
 
-Configure options: `--enable-gtk4-webkit`, `--enable-gtk4-sanitize`, `--enable-gtk4-coverage`.
-The API is declared in `src/gtk4.stub.php`; `src/gtk4_arginfo.h` and the IDE stub `stubs/gtk4.php`
-are generated from it (`./ci.sh --only=stubs --fix`).
+## Contributing
+
+Setup, the git hooks, the definition of done for a new class (implementation + tests + stub +
+example) and the code rules are in [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
 
 ## Coexisting with php-gtk3
 

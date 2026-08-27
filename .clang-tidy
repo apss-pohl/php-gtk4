@@ -64,6 +64,9 @@ CheckOptions:
   readability-identifier-naming.VariableCase: lower_case
   # ce_<GTypeName>: class entries named after the GType they wrap (MINIT, registries).
   readability-identifier-naming.VariableIgnoredRegexp: '^ce_[A-Z]'
+  readability-identifier-naming.LocalPointerIgnoredRegexp: '^ce_[A-Z]'
+  readability-identifier-naming.GlobalPointerIgnoredRegexp: '^ce_[A-Z]'
+  readability-identifier-naming.StaticVariableIgnoredRegexp: '^ce_[A-Z]'
   readability-identifier-naming.ParameterCase: lower_case
   readability-identifier-naming.MemberCase: lower_case
   readability-identifier-naming.MacroDefinitionCase: UPPER_CASE

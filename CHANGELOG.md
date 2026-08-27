@@ -46,6 +46,10 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 - `ci.sh` rejects unknown `--options` and stages (exit 2) instead of forwarding them to phpunit,
   has `--help`, and falls back to the unversioned `clang-tidy`/`clang-format` when no
   `/usr/bin/clang-*-N` exists. `tests/run.sh`/`buildall.sh` run with `set -euo pipefail`.
+- `.clang-tidy` enforces naming (`readability-identifier-naming`: snake_case functions/variables,
+  CamelCase types, UPPER_CASE macros; `ce_<GTypeName>` class entries allowed). Parameter classes
+  are resolved with `class_for_gtype(G_TYPE_X)` instead of by name string. `markdownlint-cli2` is
+  pinned in `package.json` so Dependabot tracks it. `tests/TestPng.php` → `tests/PngFixture.php`.
 - CI: the PR workflows declare a read-only token; `release.yml` pins its actions by commit SHA.
 - Error vocabulary settled (CLAUDE.md): argument errors → `ValueError`/`TypeError`, wrong object
   state → `LogicException` (`GSimpleAction::set_state()` on a stateless action now throws
