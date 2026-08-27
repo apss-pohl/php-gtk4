@@ -43,6 +43,8 @@ void object_handlers_init();
 // lazy type registration so lookups by name work from the start).
 void register_class(const char *gtype_name, zend_class_entry *ce, GType type);
 zend_class_entry *class_for_gtype_name(const char *gtype_name);
+// Registered class of exactly this GType (no parent walk - for Z_PARAM_OBJECT_OF_CLASS).
+zend_class_entry *class_for_gtype(GType type);
 // GType of a registered PHP class (0 if unknown).
 GType gtype_for_class(zend_class_entry *ce);
 

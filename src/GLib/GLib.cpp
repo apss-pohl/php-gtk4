@@ -1,6 +1,7 @@
 // Gtk4\GLib: static helpers around the default main context (idle/timeout sources).
 #include "php_gtk4.h"
 #include "core/callback.h"
+#include "core/error.h"
 #include "core/teardown.h"
 
 using namespace phpgtk;
@@ -78,4 +79,25 @@ ZEND_METHOD(Gtk4_GLib, source_remove) {
   g_source_destroy(source);
   callback_drain();
   RETURN_TRUE;
+}
+
+/**
+ * static Gtk4\GLib::main_context_iteration(bool $may_block = false): bool
+ *
+ * Run one iteration of the default main context (g_main_context_iteration): dispatch what is
+ * ready, optionally blocking until something is. Returns true if any source was dispatched. Lets a
+ * script pump events without handing control to run(); in {@see ExceptionMode::Rethrow} a
+ * Throwable raised by a dispatched callback propagates from this call.
+ */
+ZEND_METHOD(Gtk4_GLib, main_context_iteration) {
+  bool may_block = false;
+  ZEND_PARSE_PARAMETERS_START(0, 1)
+  Z_PARAM_OPTIONAL
+  Z_PARAM_BOOL(may_block)
+  ZEND_PARSE_PARAMETERS_END();
+  const gboolean dispatched = g_main_context_iteration(nullptr, may_block ? TRUE : FALSE);
+  callback_drain();
+  // Rethrow mode: this call is a boundary back to PHP (see core/error.h).
+  if (rethrow_parked_exception() || EG(exception) != nullptr) RETURN_THROWS();
+  RETURN_BOOL(dispatched);
 }

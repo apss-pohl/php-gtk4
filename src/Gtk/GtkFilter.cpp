@@ -105,7 +105,7 @@ ZEND_METHOD(Gtk4_GtkFilterListModel, __construct) {
   ZEND_PARSE_PARAMETERS_START(0, 2)
   Z_PARAM_OPTIONAL
   Z_PARAM_OBJECT_OF_CLASS_OR_NULL(model, ce_GListModel)
-  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(filter, class_for_gtype_name("GtkFilter"))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(filter, class_for_gtype(GTK_TYPE_FILTER))
   ZEND_PARSE_PARAMETERS_END();
   GObject *m = model != nullptr ? unwrap(model, G_TYPE_LIST_MODEL) : nullptr;
   if (model != nullptr && m == nullptr) RETURN_THROWS();
@@ -125,7 +125,7 @@ ZEND_METHOD(Gtk4_GtkFilterListModel, __construct) {
 ZEND_METHOD(Gtk4_GtkFilterListModel, set_filter) {
   zval *filter;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(filter, class_for_gtype_name("GtkFilter"))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(filter, class_for_gtype(GTK_TYPE_FILTER))
   ZEND_PARSE_PARAMETERS_END();
   GtkFilterListModel *flm = PHPGTK_SELF(GtkFilterListModel, GTK_TYPE_FILTER_LIST_MODEL);
   GObject *f = filter != nullptr ? unwrap(filter, GTK_TYPE_FILTER) : nullptr;

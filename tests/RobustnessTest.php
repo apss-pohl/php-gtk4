@@ -61,7 +61,10 @@ final class RobustnessTest extends GtkTestCase
                 if ($m->getDeclaringClass()->getName() !== $class->getName() || $m->isConstructor()) {
                     continue;
                 }
-                if ($m->isStatic() && in_array($m->getName(), ['init', 'main', 'run'], true)) {
+                // Loop drivers block on purpose: run() forever, main_context_iteration(true) until
+                // a source is ready - garbage arguments would hang the suite, not throw.
+                $loopDrivers = ['init', 'main', 'run', 'main_context_iteration'];
+                if ($m->isStatic() && in_array($m->getName(), $loopDrivers, true)) {
                     continue;
                 }
                 yield $class->getName() . '::' . $m->getName() => [$class->getName(), $m->getName()];
@@ -77,7 +80,7 @@ final class RobustnessTest extends GtkTestCase
             \Gtk4\GtkApplication::class => new \Gtk4\GtkApplication(null, 1 << 5),
             \Gtk4\GSimpleAction::class => new \Gtk4\GSimpleAction('a', 's'),
             \Gtk4\PhpValue::class => new \Gtk4\PhpValue('v'),
-            \Gtk4\GdkTexture::class => \Gtk4\GdkTexture::new_from_bytes(TestPng::red(2, 1)),
+            \Gtk4\GdkTexture::class => \Gtk4\GdkTexture::new_from_bytes(PngFixture::red(2, 1)),
             \Gtk4\GError::class => new \Gtk4\GError('x'),
             \Gtk4\GListStore::class => new \Gtk4\GListStore(),
             \Gtk4\GtkFilter::class, \Gtk4\GtkCustomFilter::class => new \Gtk4\GtkCustomFilter(fn() => true),

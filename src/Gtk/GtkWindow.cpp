@@ -12,7 +12,7 @@ ZEND_METHOD(Gtk4_GtkWindow, __construct) {
   zval *application = nullptr;
   ZEND_PARSE_PARAMETERS_START(0, 1)
   Z_PARAM_OPTIONAL
-  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(application, class_for_gtype_name("GtkApplication"))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(application, class_for_gtype(GTK_TYPE_APPLICATION))
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *w = gtk_window_new();
   // Not attach_new(): the reference gtk_window_new() returns belongs to GTK's toplevel
@@ -31,7 +31,7 @@ ZEND_METHOD(Gtk4_GtkWindow, __construct) {
 ZEND_METHOD(Gtk4_GtkWindow, set_application) {
   zval *application = nullptr;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(application, class_for_gtype_name("GtkApplication"))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(application, class_for_gtype(GTK_TYPE_APPLICATION))
   ZEND_PARSE_PARAMETERS_END();
   GtkWindow *w = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
   GObject *app = nullptr;
@@ -96,7 +96,7 @@ ZEND_METHOD(Gtk4_GtkWindow, set_default_size) {
 ZEND_METHOD(Gtk4_GtkWindow, set_child) {
   zval *child = nullptr;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(child, class_for_gtype_name("GtkWidget"))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(child, class_for_gtype(GTK_TYPE_WIDGET))
   ZEND_PARSE_PARAMETERS_END();
   GtkWindow *w = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
   GtkWidget *c = nullptr;

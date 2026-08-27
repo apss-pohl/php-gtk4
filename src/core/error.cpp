@@ -9,6 +9,7 @@ namespace phpgtk {
 zend_class_entry *ce_ExceptionMode = nullptr;
 
 static zval handler;  // IS_UNDEF when none
+static zval parked;  // Rethrow mode, nested unregistered loop: the Throwable waiting for a boundary
 static ExceptionMode mode = ExceptionMode::Log;
 
 // Store (ADDREF'd) or clear the handler installed via Gtk::set_exception_handler().
@@ -34,10 +35,45 @@ ExceptionMode exception_mode() {
   return mode;
 }
 
-// RSHUTDOWN: release the handler zval and reset the mode.
+static void log_uncaught(zval *exception, const char *origin);
+static bool call_handler(zval *exception, const char *origin);
+
+// RSHUTDOWN: a Throwable still parked (no boundary returned to PHP) is reported, not
+// dropped; then release the handler zval and reset the mode.
 void exception_state_shutdown() {
+  if (!Z_ISUNDEF(parked)) {
+    if (!(has_exception_handler() && call_handler(&parked, "request shutdown"))) {
+      log_uncaught(&parked, "request shutdown");
+    }
+    zval_ptr_dtor(&parked);
+    ZVAL_UNDEF(&parked);
+  }
   set_exception_handler(nullptr);
   mode = ExceptionMode::Log;
+}
+
+// Rethrow mode inside an unregistered nested loop: keep the Throwable (takes the
+// reference) until a loop-driving call returns to PHP; a later one becomes `previous`.
+static void park_exception(zval *exception, const char *origin) {
+  if (Z_ISUNDEF(parked)) {
+    ZVAL_COPY_VALUE(&parked, exception);
+    g_warning(
+        "php-gtk4: %s thrown in '%s' inside a nested main loop (depth %d); rethrow is "
+        "deferred until control returns to PHP",
+        ZSTR_VAL(Z_OBJCE_P(exception)->name), origin, g_main_depth());
+    return;
+  }
+  // Appends at the end of the parked exception's previous-chain and owns the reference.
+  zend_exception_set_previous(Z_OBJ(parked), Z_OBJ_P(exception));
+}
+
+// Boundary back to PHP: throw the parked Throwable (if any) from the calling method.
+bool rethrow_parked_exception() {
+  if (Z_ISUNDEF(parked)) return false;
+  zval exception = parked;
+  ZVAL_UNDEF(&parked);
+  zend_throw_exception_object(&exception);  // takes the reference
+  return true;
 }
 
 // Fallback when no handler is installed (or it failed): g_critical() with class + message.
@@ -92,9 +128,13 @@ bool report_pending_exception(const char *origin_c) {
   const bool reported = has_exception_handler() && call_handler(&exception, origin);
 
   if (mode == ExceptionMode::Rethrow) {
-    // Hand the object back to the engine (takes our reference) and unwind the
-    // C side as far as we can: stop the loops so run() returns to PHP.
-    zend_throw_exception_object(&exception);
+    if (in_unregistered_nested_loop()) {
+      park_exception(&exception, origin);  // see error.h: pending would not propagate yet
+    } else {
+      // Hand the object back to the engine (takes our reference) and unwind the
+      // C side as far as we can: stop the loops so run() returns to PHP.
+      zend_throw_exception_object(&exception);
+    }
     quit_running_loops();
     return true;
   }

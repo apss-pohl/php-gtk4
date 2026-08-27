@@ -55,7 +55,7 @@ ZEND_METHOD(Gtk4_GtkBox, __construct) {
 ZEND_METHOD(Gtk4_GtkBox, append) {
   zval *child = nullptr;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS(child, class_for_gtype_name("GtkWidget"))
+  Z_PARAM_OBJECT_OF_CLASS(child, class_for_gtype(GTK_TYPE_WIDGET))
   ZEND_PARSE_PARAMETERS_END();
   GtkBox *box = nullptr;
   GtkWidget *widget = nullptr;
@@ -72,7 +72,7 @@ ZEND_METHOD(Gtk4_GtkBox, append) {
 ZEND_METHOD(Gtk4_GtkBox, prepend) {
   zval *child = nullptr;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS(child, class_for_gtype_name("GtkWidget"))
+  Z_PARAM_OBJECT_OF_CLASS(child, class_for_gtype(GTK_TYPE_WIDGET))
   ZEND_PARSE_PARAMETERS_END();
   GtkBox *box = nullptr;
   GtkWidget *widget = nullptr;
@@ -90,8 +90,8 @@ ZEND_METHOD(Gtk4_GtkBox, insert_child_after) {
   zval *child = nullptr;
   zval *sibling = nullptr;
   ZEND_PARSE_PARAMETERS_START(2, 2)
-  Z_PARAM_OBJECT_OF_CLASS(child, class_for_gtype_name("GtkWidget"))
-  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(sibling, class_for_gtype_name("GtkWidget"))
+  Z_PARAM_OBJECT_OF_CLASS(child, class_for_gtype(GTK_TYPE_WIDGET))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(sibling, class_for_gtype(GTK_TYPE_WIDGET))
   ZEND_PARSE_PARAMETERS_END();
   GtkBox *box = nullptr;
   GtkWidget *widget = nullptr;
@@ -115,7 +115,7 @@ ZEND_METHOD(Gtk4_GtkBox, insert_child_after) {
 ZEND_METHOD(Gtk4_GtkBox, remove) {
   zval *child = nullptr;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS(child, class_for_gtype_name("GtkWidget"))
+  Z_PARAM_OBJECT_OF_CLASS(child, class_for_gtype(GTK_TYPE_WIDGET))
   ZEND_PARSE_PARAMETERS_END();
   GtkBox *box = nullptr;
   GtkWidget *widget = nullptr;

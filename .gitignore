@@ -58,6 +58,8 @@ phpunit-junit.xml
 
 # --- dependencies
 /vendor/
+/node_modules/
+/package-lock.json
 /gen/PHP-Parser-*/
 /gen/PHP-Parser-install-lock
 

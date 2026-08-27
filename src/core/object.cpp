@@ -20,6 +20,11 @@ static std::unordered_map<zend_class_entry *, GType> &gtypes() {
   static std::unordered_map<zend_class_entry *, GType> map;
   return map;
 }
+// GType -> class (the inverse of gtypes(), for parameter parsing by *_TYPE_* macro).
+std::unordered_map<GType, zend_class_entry *> &classes() {
+  static std::unordered_map<GType, zend_class_entry *> map;
+  return map;
+}
 
 // qdata key under which a GObject stores the pointer to its PHP handle.
 static GQuark handle_quark() {
@@ -217,7 +222,14 @@ void register_class(const char *gtype_name, zend_class_entry *ce, GType type) {
   ce->create_object = create_object;
   registry()[gtype_name] = ce;
   gtypes()[ce] = type;
+  classes()[type] = ce;
   if (type == G_TYPE_OBJECT) ce_root = ce;
+}
+
+// Registry lookup by GType value.
+zend_class_entry *class_for_gtype(GType type) {
+  auto it = classes().find(type);
+  return it == classes().end() ? nullptr : it->second;
 }
 
 // GType of a registered class (walks up to a registered parent for subclasses).

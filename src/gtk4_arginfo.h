@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3baa732bbff5bfb4ee5c9787beecad2a31994c18 */
+ * Stub hash: 9f00042131fdfbbdfbd54abc18c98ac3447e18c0 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GObject_connect, 0, 2, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, signal, IS_STRING, 0)
@@ -71,6 +71,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GLib_source_remove, 0, 1, _IS_BOOL, 0)
 	ZEND_ARG_TYPE_INFO(0, source_id, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GLib_main_context_iteration, 0, 0, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, may_block, _IS_BOOL, 0, "false")
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GMainLoop___construct, 0, 0, 0)
@@ -677,6 +681,7 @@ ZEND_METHOD(Gtk4_Gtk, get_exception_mode);
 ZEND_METHOD(Gtk4_GLib, idle_add);
 ZEND_METHOD(Gtk4_GLib, timeout_add);
 ZEND_METHOD(Gtk4_GLib, source_remove);
+ZEND_METHOD(Gtk4_GLib, main_context_iteration);
 ZEND_METHOD(Gtk4_GMainLoop, __construct);
 ZEND_METHOD(Gtk4_GMainLoop, run);
 ZEND_METHOD(Gtk4_GMainLoop, quit);
@@ -876,6 +881,7 @@ static const zend_function_entry class_Gtk4_GLib_methods[] = {
 	ZEND_ME(Gtk4_GLib, idle_add, arginfo_class_Gtk4_GLib_idle_add, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GLib, timeout_add, arginfo_class_Gtk4_GLib_timeout_add, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GLib, source_remove, arginfo_class_Gtk4_GLib_source_remove, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GLib, main_context_iteration, arginfo_class_Gtk4_GLib_main_context_iteration, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_FE_END
 };
 

@@ -2,6 +2,7 @@
 // (GMainLoop is a refcounted GLib struct), so it has its own object layout.
 #include "php_gtk4.h"
 #include "classes.h"
+#include "core/error.h"
 #include "core/mainloop.h"
 
 namespace {
@@ -73,8 +74,9 @@ ZEND_METHOD(Gtk4_GMainLoop, run) {
     g_main_loop_run(loop);
   }
   g_main_loop_unref(loop);
-  // Rethrow mode: a callback left its Throwable pending; it now propagates
-  // from this run() call.
+  // Rethrow mode: a callback left its Throwable pending (it now propagates from this
+  // run() call) or parked it inside a nested loop (rethrown here).
+  if (phpgtk::rethrow_parked_exception()) RETURN_THROWS();
 }
 
 /**

@@ -293,6 +293,18 @@ final class GLib
         unset($source_id);
         return false;
     }
+    /**
+     * Run one iteration of the default main context (g_main_context_iteration):
+     * dispatch what is ready, optionally blocking until something is. Returns
+     * true if any source was dispatched. Lets a script pump events without
+     * handing control to run(); in {@see ExceptionMode::Rethrow} a Throwable
+     * raised by a dispatched callback propagates from this call.
+     */
+    public static function main_context_iteration(bool $may_block = false): bool
+    {
+        unset($may_block);
+        return false;
+    }
 }
 /**
  * A bare GLib main loop on the default context. Prefer {@see GtkApplication}

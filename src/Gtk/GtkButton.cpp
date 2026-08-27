@@ -45,7 +45,7 @@ ZEND_METHOD(Gtk4_GtkButton, get_label) {
 ZEND_METHOD(Gtk4_GtkButton, set_child) {
   zval *child = nullptr;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(child, class_for_gtype_name("GtkWidget"))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(child, class_for_gtype(GTK_TYPE_WIDGET))
   ZEND_PARSE_PARAMETERS_END();
   GtkButton *b = PHPGTK_SELF(GtkButton, GTK_TYPE_BUTTON);
   GtkWidget *c = nullptr;

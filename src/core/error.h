@@ -15,6 +15,18 @@
 //            is a no-op while an exception is pending) and the Throwable
 //            propagates from whatever PHP call triggered the C code - the
 //            emitting method, or GMainLoop::run() / GtkApplication::run().
+//
+//            Leaving it pending is only safe when that PHP call is the next
+//            thing to return. Inside an *unregistered* nested loop (GTK
+//            iterating the context itself, or GLib::main_context_iteration())
+//            the quit cannot take effect yet, and C code would keep running with
+//            an exception pending. The Throwable is then PARKED instead: taken
+//            out of the engine, GTK continues normally (handlers keep running so
+//            the inner loop can finish), and it is rethrown by the next
+//            loop-driving call that returns to PHP - run(), or
+//            main_context_iteration(). A second Throwable raised while one is
+//            parked is chained onto it as `previous`. Whatever is still parked at
+//            request shutdown goes to the handler / g_critical, never nowhere.
 #pragma once
 #include "php_gtk4.h"
 
@@ -32,5 +44,9 @@ void exception_state_shutdown();  // RSHUTDOWN
 // If EG(exception) is set: apply the policy above and return true.
 // Log mode guarantees no exception is pending afterwards.
 bool report_pending_exception(const char *origin);
+
+// Boundary of a loop-driving call (run(), main_context_iteration()): hand a parked
+// Throwable back to the engine. True if one was rethrown (caller RETURN_THROWS()).
+bool rethrow_parked_exception();
 
 }  // namespace phpgtk

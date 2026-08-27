@@ -13,7 +13,7 @@ final class TextureTest extends GtkTestCase
 {
     private static function png(): string
     {
-        return TestPng::red(2, 1);
+        return PngFixture::red(2, 1);
     }
 
     public function testFromBytesAndBack(): void

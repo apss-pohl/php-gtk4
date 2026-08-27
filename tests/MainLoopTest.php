@@ -6,6 +6,7 @@ namespace PhpGtk4\Tests;
 
 use Gtk4\GLib;
 use Gtk4\GMainLoop;
+use Gtk4\Gtk;
 
 /** Gtk4\GMainLoop + Gtk4\GLib idle/timeout sources. */
 final class MainLoopTest extends GtkTestCase
@@ -72,6 +73,36 @@ final class MainLoopTest extends GtkTestCase
         });
         $loop->run();
         self::assertSame(0, $calls);
+    }
+
+    public function testMainContextIterationDispatchesWithoutRun(): void
+    {
+        $ran = false;
+        GLib::idle_add(function () use (&$ran): bool {
+            $ran = true;
+            return false;
+        });
+        self::assertTrue(GLib::main_context_iteration(false), 'one source dispatched');
+        self::assertTrue($ran);
+        // Drain whatever else is ready, then a non-blocking iteration dispatches nothing.
+        for ($i = 0; $i < 20; $i++) {
+            GLib::main_context_iteration(false);
+        }
+        self::assertFalse(GLib::main_context_iteration(false));
+    }
+
+    public function testMainContextIterationPropagatesInLogModeAsNothing(): void
+    {
+        $seen = null;
+        Gtk::set_exception_handler(function (\Throwable $e) use (&$seen): void {
+            $seen = $e;
+        });
+        GLib::idle_add(static function (): bool {
+            throw new \LogicException('logged');
+        });
+        GLib::main_context_iteration(true);   // Log mode: handler, no propagation
+        Gtk::set_exception_handler(null);
+        self::assertInstanceOf(\LogicException::class, $seen);
     }
 
     public function testNegativeIntervalRejected(): void

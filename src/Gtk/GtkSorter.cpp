@@ -112,7 +112,7 @@ ZEND_METHOD(Gtk4_GtkSortListModel, __construct) {
   ZEND_PARSE_PARAMETERS_START(0, 2)
   Z_PARAM_OPTIONAL
   Z_PARAM_OBJECT_OF_CLASS_OR_NULL(model, ce_GListModel)
-  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(sorter, class_for_gtype_name("GtkSorter"))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(sorter, class_for_gtype(GTK_TYPE_SORTER))
   ZEND_PARSE_PARAMETERS_END();
   GObject *m = model != nullptr ? unwrap(model, G_TYPE_LIST_MODEL) : nullptr;
   if (model != nullptr && m == nullptr) RETURN_THROWS();
@@ -132,7 +132,7 @@ ZEND_METHOD(Gtk4_GtkSortListModel, __construct) {
 ZEND_METHOD(Gtk4_GtkSortListModel, set_sorter) {
   zval *sorter;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(sorter, class_for_gtype_name("GtkSorter"))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(sorter, class_for_gtype(GTK_TYPE_SORTER))
   ZEND_PARSE_PARAMETERS_END();
   GtkSortListModel *slm = PHPGTK_SELF(GtkSortListModel, GTK_TYPE_SORT_LIST_MODEL);
   GObject *s = sorter != nullptr ? unwrap(sorter, GTK_TYPE_SORTER) : nullptr;

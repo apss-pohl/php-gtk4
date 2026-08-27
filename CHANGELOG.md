@@ -22,6 +22,13 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   enums `GtkAlign`, `GtkOrientation`, `GtkFilterChange`, `GtkSorterChange`, flags `GApplicationFlags`.
 - Tooling: `ci.sh` stages, sanitizer/valgrind/coverage runs, stub-driven arginfo, IDE stub and
   method comments, git hooks, Dependabot.
+- `GLib::main_context_iteration(bool $may_block = false): bool` — one iteration of the default
+  context without handing control to `run()`.
+- `ExceptionMode::Rethrow` inside an *unregistered* nested main loop (GTK iterating the context
+  itself, or `main_context_iteration()`): the Throwable is parked instead of left pending across
+  C frames, handlers keep running so the inner loop can finish, and the next `run()` /
+  `main_context_iteration()` returning to PHP rethrows it. A second Throwable meanwhile is chained
+  as `previous`; anything still parked at request shutdown goes to the handler / `g_critical`.
 - `get_property_ptr_ptr`/`unset_property` handlers on GObject and boxed handles: `$w->width++`,
   `$w->title .= 'x'`, `$rgba->red += 0.1` now write through (they used to create a shadow dynamic
   property and drop the write); `unset($w->title)` throws `Error`. `StubsTest` gates snake_case

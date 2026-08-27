@@ -105,6 +105,66 @@ final class RethrowModeTest extends GtkTestCase
         $app->run();
     }
 
+    public function testThrowInsideNestedIterationIsParkedNotLeftPending(): void
+    {
+        // Inside a registered run(), PHP drives an unregistered nested loop with
+        // main_context_iteration(). A throw there must not stay pending in the engine (C code
+        // would keep running with it): it is parked, the *other* ready sources of that iteration
+        // still run, and it surfaces from the main_context_iteration() call - the first boundary.
+        $loop = new GMainLoop();
+        $caught = null;
+        $secondRan = false;
+        $idleReturned = false;
+        GLib::idle_add(function () use ($loop, &$caught, &$secondRan, &$idleReturned): bool {
+            GLib::timeout_add(0, static function (): bool {
+                throw new \DomainException('from nested iteration');
+            });
+            GLib::timeout_add(0, function () use (&$secondRan): bool {
+                $secondRan = true;
+                return false;
+            });
+            usleep(2000);   // both timeouts are due in the same iteration
+            try {
+                for ($i = 0; $i < 50 && $caught === null; $i++) {
+                    GLib::main_context_iteration(true);
+                }
+            } catch (\DomainException $e) {
+                $caught = $e;
+            }
+            $idleReturned = true;
+            unset($loop);
+            return false;
+        });
+        $loop->run();   // returns because report_pending_exception() quit the registered loop
+        self::assertInstanceOf(\DomainException::class, $caught);
+        self::assertSame('from nested iteration', $caught->getMessage());
+        self::assertTrue($secondRan, 'handlers keep running while a Throwable is parked');
+        self::assertTrue($idleReturned);
+    }
+
+    public function testNestedIterationHandlerObservesWithNestedOrigin(): void
+    {
+        $loop = new GMainLoop();
+        $origins = [];
+        Gtk::set_exception_handler(function (\Throwable $e, string $origin) use (&$origins): void {
+            $origins[] = $origin;
+        });
+        GLib::idle_add(static function (): bool {
+            GLib::timeout_add(0, static function (): bool {
+                throw new \RangeException('x');
+            });
+            usleep(2000);
+            try {
+                GLib::main_context_iteration(true);
+            } catch (\RangeException) {
+            }
+            return false;
+        });
+        $loop->run();
+        Gtk::set_exception_handler(null);
+        self::assertSame(['GLib::timeout_add'], $origins);
+    }
+
     public function testErrorsPropagateToo(): void
     {
         $w = $this->window();

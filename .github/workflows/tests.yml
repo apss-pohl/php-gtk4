@@ -65,7 +65,7 @@ jobs:
           pkg-config --modversion gtk4
 
       - name: Run PHPUnit
-        run: ./ci.sh --only=test --log-junit phpunit-junit.xml --display-warnings
+        run: ./ci.sh --only=test -- --log-junit phpunit-junit.xml --display-warnings
 
       - name: Upload PHPUnit report
         if: always()

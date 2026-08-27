@@ -51,5 +51,22 @@ Checks: >-
 # Everything else is enforced - CI fails on findings.
 # Every enabled check is an error, locally (ci.sh) and in CI (cpp-linter) alike.
 WarningsAsErrors: '*'
+# Naming (readability-identifier-naming): snake_case functions/variables/namespaces,
+# CamelCase types and enum cases, UPPER_CASE macros. Zend/GLib-generated names
+# (zim_*, *_get_type, _PhpValue) come from macro expansions and are not checked.
+CheckOptions:
+  readability-identifier-naming.NamespaceCase: lower_case
+  readability-identifier-naming.ClassCase: CamelCase
+  readability-identifier-naming.StructCase: CamelCase
+  readability-identifier-naming.EnumCase: CamelCase
+  readability-identifier-naming.EnumConstantCase: CamelCase
+  readability-identifier-naming.FunctionCase: lower_case
+  readability-identifier-naming.VariableCase: lower_case
+  # ce_<GTypeName>: class entries named after the GType they wrap (MINIT, registries).
+  readability-identifier-naming.VariableIgnoredRegexp: '^ce_[A-Z]'
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.MacroDefinitionCase: UPPER_CASE
+  readability-identifier-naming.TypeAliasCase: CamelCase
 HeaderFilterRegex: '^(src/|main\.h)'
 FormatStyle: file

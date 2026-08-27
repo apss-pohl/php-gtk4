@@ -321,10 +321,15 @@ conventions here only.
   typed C callbacks (`GtkDrawingAreaDrawFunc`, `GtkCustomFilterFunc`, `GCompareDataFunc`) follow
   the trampoline rule in docs/PLAN.md ("Typed C callbacks") — `src/Gtk/GtkDrawingArea.cpp`,
   `GtkFilter.cpp`, `GtkSorter.cpp` are the templates.
-- Main loop: `GtkApplication::run()` (preferred) or `GMainLoop` + `GLib::idle_add/timeout_add`.
-  There is no `Gtk::main()`. `connect()` takes exactly `(string $signal, callable $handler)` —
-  no user data, closures capture with `use`. `emit()` emits with converted arguments (use it in
-  tests instead of `activate()`, whose `clicked` needs a realized widget).
+- Main loop: `GtkApplication::run()` (preferred) or `GMainLoop` + `GLib::idle_add/timeout_add`;
+  `GLib::main_context_iteration()` pumps one iteration without handing over control. There is no
+  `Gtk::main()`. Rethrow mode leaves the Throwable pending only when the next return lands in
+  PHP; inside an *unregistered* nested loop (`g_main_depth()` deeper than the innermost
+  registered `run()`) it is **parked** (`core/error.cpp`), handlers keep running, and the next
+  `run()`/`main_context_iteration()` returning to PHP rethrows it — never drop it.
+  `connect()` takes exactly `(string $signal, callable $handler)` — no user data, closures capture
+  with `use`. `emit()` emits with converted arguments (use it in tests instead of `activate()`,
+  whose `clicked` needs a realized widget).
 - Actions: `GSimpleAction` + `GtkApplication::add_action()`; GVariant parameters/states are plain
   PHP values. `has_action/list_actions/activate_action` only work once the app is registered
   (from `startup` on); `add/remove/lookup_action` always. Errors raised *to* PHP from methods use the PHP 8

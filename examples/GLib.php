@@ -35,6 +35,7 @@ return Demo::page(
             public int $ticks = 0;
             public int $source_id = 0;
             public bool $removed = false;
+            public int $pumped = -1;
         };
 
         $area = Demo::canvas(420, 200, static function (
@@ -72,6 +73,16 @@ return Demo::page(
                 12,
             );
             Demo::text($cr, 18, 156, $state->idleNote, Demo::INK, 12);
+            if ($state->pumped >= 0) {
+                Demo::text(
+                    $cr,
+                    18,
+                    180,
+                    sprintf('main_context_iteration() pumped %d pending source(s) synchronously', $state->pumped),
+                    Demo::MUTED,
+                    12,
+                );
+            }
         });
 
         // Runs once, as soon as the loop has nothing else to do.
@@ -92,6 +103,12 @@ return Demo::page(
         GLib::timeout_add(4200, function () use ($state, $area): bool {
             $state->removed = GLib::source_remove($state->source_id);   // false if it was already gone
             $area->queue_draw();
+            // Pump whatever is ready right now without returning to run() - the redraw
+            // queued above is dispatched before this callback even returns.
+            $state->pumped = 0;
+            for ($i = 0; $i < 10 && GLib::main_context_iteration(false); $i++) {
+                $state->pumped++;
+            }
             return false;
         });
 

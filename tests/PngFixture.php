@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PhpGtk4\Tests;
 
 /** Builds tiny valid PNGs without depending on GD - for texture tests. */
-final class TestPng
+final class PngFixture
 {
     /** A width x height opaque red RGBA PNG. */
     public static function red(int $width, int $height): string

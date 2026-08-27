@@ -1,0 +1,8 @@
+{
+  "name": "php-gtk4-docs-tooling",
+  "private": true,
+  "description": "Pins markdownlint-cli2 for ./ci.sh --only=md-lint (npx fallback) so Dependabot tracks it.",
+  "devDependencies": {
+    "markdownlint-cli2": "0.23.2"
+  }
+}

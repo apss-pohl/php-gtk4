@@ -47,7 +47,7 @@ static GObject *item_for(GListStore *store, zval *item) {
 ZEND_METHOD(Gtk4_GListStore, append) {
   zval *item;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS(item, class_for_gtype_name("GObject"))
+  Z_PARAM_OBJECT_OF_CLASS(item, class_for_gtype(G_TYPE_OBJECT))
   ZEND_PARSE_PARAMETERS_END();
   GListStore *store = PHPGTK_SELF(GListStore, G_TYPE_LIST_STORE);
   GObject *o = item_for(store, item);
@@ -63,7 +63,7 @@ ZEND_METHOD(Gtk4_GListStore, insert) {
   zval *item;
   ZEND_PARSE_PARAMETERS_START(2, 2)
   Z_PARAM_LONG(position)
-  Z_PARAM_OBJECT_OF_CLASS(item, class_for_gtype_name("GObject"))
+  Z_PARAM_OBJECT_OF_CLASS(item, class_for_gtype(G_TYPE_OBJECT))
   ZEND_PARSE_PARAMETERS_END();
   GListStore *store = PHPGTK_SELF(GListStore, G_TYPE_LIST_STORE);
   const guint n = g_list_model_get_n_items(G_LIST_MODEL(store));
@@ -110,7 +110,7 @@ ZEND_METHOD(Gtk4_GListStore, remove_all) {
 ZEND_METHOD(Gtk4_GListStore, find) {
   zval *item;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS(item, class_for_gtype_name("GObject"))
+  Z_PARAM_OBJECT_OF_CLASS(item, class_for_gtype(G_TYPE_OBJECT))
   ZEND_PARSE_PARAMETERS_END();
   GListStore *store = PHPGTK_SELF(GListStore, G_TYPE_LIST_STORE);
   GObject *o = unwrap(item, G_TYPE_OBJECT);

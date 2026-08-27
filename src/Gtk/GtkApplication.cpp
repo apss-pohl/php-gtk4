@@ -1,5 +1,6 @@
 // Gtk4\GtkApplication - the preferred main loop.
 #include "php_gtk4.h"
+#include "core/error.h"
 #include "core/mainloop.h"
 #include "core/object.h"
 #include "core/variant.h"
@@ -74,7 +75,7 @@ ZEND_METHOD(Gtk4_GtkApplication, run) {
     status = g_application_run(app, static_cast<int>(strings.size()),
                                strings.empty() ? nullptr : argv.data());
   }
-  if (EG(exception) != nullptr) RETURN_THROWS();  // Rethrow mode
+  if (rethrow_parked_exception() || EG(exception) != nullptr) RETURN_THROWS();  // Rethrow mode
   RETURN_LONG(status);
 }
 
@@ -93,7 +94,7 @@ ZEND_METHOD(Gtk4_GtkApplication, quit) {
 ZEND_METHOD(Gtk4_GtkApplication, add_window) {
   zval *window;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS(window, class_for_gtype_name("GtkWindow"))
+  Z_PARAM_OBJECT_OF_CLASS(window, class_for_gtype(GTK_TYPE_WINDOW))
   ZEND_PARSE_PARAMETERS_END();
   GtkApplication *app = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
   GObject *w = unwrap(window, GTK_TYPE_WINDOW);
@@ -126,7 +127,7 @@ ZEND_METHOD(Gtk4_GtkApplication, get_application_id) {
 ZEND_METHOD(Gtk4_GtkApplication, add_action) {
   zval *action;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS(action, class_for_gtype_name("GObject"))
+  Z_PARAM_OBJECT_OF_CLASS(action, class_for_gtype(G_TYPE_OBJECT))
   ZEND_PARSE_PARAMETERS_END();
   GtkApplication *app = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
   GObject *a = unwrap(action, G_TYPE_ACTION);

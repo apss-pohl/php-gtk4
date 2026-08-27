@@ -209,7 +209,7 @@ stage_cpp_lint() {
                 fi
             ) &
             active=$((active + 1))
-            if [[ $active -ge $JOBS ]]; then wait -n 2>/dev/null || wait; active=$((active - 1)); fi
+            if [[ $active -ge $JOBS ]]; then wait -n || true; active=$((active - 1)); fi  # a failed job is recorded via err_dir
         done
         wait
     fi
@@ -226,7 +226,7 @@ stage_cpp_lint() {
                 fi
             ) &
             active=$((active + 1))
-            if [[ $active -ge $JOBS ]]; then wait -n 2>/dev/null || wait; active=$((active - 1)); fi
+            if [[ $active -ge $JOBS ]]; then wait -n || true; active=$((active - 1)); fi  # a failed job is recorded via err_dir
         done
         wait
     fi
@@ -246,7 +246,9 @@ stage_md_lint() {
     if command -v markdownlint-cli2 >/dev/null; then
         md=(markdownlint-cli2)
     elif command -v npx >/dev/null; then
-        md=(npx --yes markdownlint-cli2@0.23.2)
+        # Version pinned in package.json (Dependabot bumps it there).
+        local pin; pin=$(sed -n 's/.*"markdownlint-cli2": *"\([^"]*\)".*/\1/p' package.json)
+        md=(npx --yes "markdownlint-cli2@${pin:-latest}")
     else
         fail "markdownlint-cli2 not found (npm i -g markdownlint-cli2, or install node for npx)"
     fi
@@ -432,10 +434,16 @@ stage_valgrind() {
     local -a supp=(--suppressions="$PWD/tests/valgrind.supp")
     [[ -f "$glib_supp" ]] && supp+=(--suppressions="$glib_supp")
     # GDK_DEBUG=gl-disable: no Mesa/llvmpipe in the process (its thread pools leak on CI runners).
+    # ZEND_DONT_UNLOAD_MODULES: PHP dlclose()s extensions at MSHUTDOWN, which also unloads
+    # libgtk-4 - its static caches then lose their roots ("definitely lost" with ??? frames that
+    # no suppression can match). Same switch php-src's run-tests.php uses under valgrind;
+    # --keep-debuginfo keeps symbols for anything that still gets unloaded.
     # --show-leak-kinds=definite keeps the report readable; the exit code is what matters.
-    xvfb-run -a env USE_ZEND_ALLOC=0 GSK_RENDERER=cairo GDK_DEBUG=gl-disable GDK_BACKEND=x11 \
+    xvfb-run -a env USE_ZEND_ALLOC=0 ZEND_DONT_UNLOAD_MODULES=1 \
+        GSK_RENDERER=cairo GDK_DEBUG=gl-disable GDK_BACKEND=x11 \
         valgrind --quiet --error-exitcode=42 --leak-check=full --errors-for-leak-kinds=definite \
-                 --show-leak-kinds=definite --track-origins=yes --num-callers=16 "${supp[@]}" \
+                 --show-leak-kinds=definite --keep-debuginfo=yes --track-origins=yes \
+                 --num-callers=16 "${supp[@]}" \
         "$PHP" -n -dextension=./gtk4.so tests/scripts/stress.php 50 || fail "valgrind (see report above)"
 }
 
