@@ -5,7 +5,7 @@
 #   ./tests/run.sh --filter SignalTest      # one class
 #   ./tests/run.sh --filter 'testReturnValue'
 #   PHP=php8.4 GTK4_SO=/path/gtk4.so ./tests/run.sh
-set -u
+set -euo pipefail
 cd "$(dirname "$0")/.."
 export PHP=${PHP:-php8.4}
 export GTK4_SO=${GTK4_SO:-./gtk4.so}
@@ -13,6 +13,22 @@ export GTK4_SO=${GTK4_SO:-./gtk4.so}
 # (avoids "libEGL warning: DRI3 error" noise and any GL-driver flakiness).
 export GSK_RENDERER=${GSK_RENDERER:-cairo}
 export LIBGL_ALWAYS_SOFTWARE=1
+# ...and keep GDK from initialising GL at all (Mesa's llvmpipe leaks thread pools under
+# valgrind/LSan on CI runners, and Xvfb prints libEGL DRI3 warnings on stderr).
+# GTK 4.14 (the CI floor) honours GDK_DEBUG=gl-disable; GDK_DISABLE=gl is the 4.16+ spelling and
+# is ignored on 4.14 - and setting both makes 4.14 ignore GDK_DEBUG. Revisit when the floor moves.
+export GDK_DEBUG=${GDK_DEBUG:-gl-disable}
+# No accessibility bus under Xvfb: silences the "Unable to acquire the address of the
+# accessibility bus" warning on runners that have a session bus but no a11y service.
+export GTK_A11Y=${GTK_A11Y:-none}
+# GDK prefers Wayland over the DISPLAY xvfb-run provides when WAYLAND_DISPLAY is set in the
+# developer's session - the suite would then run on the real compositor (and hit a GTK
+# Wayland-backend heap corruption on 4.14). Pin the X11 backend: Xvfb is the target.
+# Forced, not defaulted: ${GDK_BACKEND:-x11} keeps an inherited GDK_BACKEND=wayland, which
+# is exactly the case this guards against - a desktop session exports it. Unset the socket
+# too, or GDK still finds the compositor.
+export GDK_BACKEND=x11
+unset WAYLAND_DISPLAY
 # Never run the suite under xdebug: its develop-mode observer segfaults at
 # request shutdown after ReflectionMethod::invoke() on PHP-CPP methods
 # (EveryClassTest), and it slows everything down. The stress/ASan runs use

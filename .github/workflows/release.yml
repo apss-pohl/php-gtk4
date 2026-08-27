@@ -1,0 +1,299 @@
+name: Release
+
+# ./VERSION is the gate (docs/RELEASING.md):
+#   0.2.0-dev  -> publish the dev build v0.2.0-dev.<run> as a pre-release
+#   0.2.0      -> publish the real release v0.2.0 (once; later merges are a no-op)
+# Both attach the .so built here for every supported PHP, plus a source tarball
+# and SHA256SUMS, with build provenance instead of a signed tag. Pre-releases are
+# immutable; the newest 5 are kept and older ones are deleted after each publish.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+concurrency:
+  group: release-main
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  # ci.sh, bin/php-gtk4 and tests/run.sh default to the php8.4 binaries; setup-php provides plain names.
+  PHP: php
+  PHP_CONFIG: php-config
+  PHPIZE: phpize
+  # ubuntu-24.04 is the GTK 4.14 floor: binaries built here run on newer distros, not older ones.
+  DIST: ubuntu24.04
+  # How many pre-releases stay downloadable. Older ones are deleted with their tags.
+  KEEP_PRERELEASES: '5'
+
+jobs:
+  # What the release is called and whether it is real. Runs before anything
+  # expensive so a malformed ./VERSION fails in seconds.
+  plan:
+    name: Plan
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.plan.outputs.version }}      # what the binary reports, from ./VERSION
+      relver: ${{ steps.plan.outputs.relver }}        # what this release is called (dev builds add .<run>)
+      kind: ${{ steps.plan.outputs.kind }}
+      tag: ${{ steps.plan.outputs.tag }}
+      publish: ${{ steps.plan.outputs.publish }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version=$(tr -d ' \t\r\n' < VERSION)
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-dev)?$ ]] \
+            || { echo "::error file=VERSION::must be X.Y.Z or X.Y.Z-dev, got '$version'"; exit 1; }
+
+          if [[ "$version" == *-dev ]]; then
+            # github.run_number is monotonic per workflow, so 0.2.0-dev.7 < 0.2.0-dev.11
+            # < 0.2.0 under SemVer prerelease ordering. Gaps are fine; collisions are not.
+            kind=dev; relver="$version.${{ github.run_number }}"; tag="v$relver"; publish=true
+          else
+            kind=release; relver="$version"; tag="v$version"
+            # A real release is published exactly once; every merge after it,
+            # until someone bumps ./VERSION back to -dev, has nothing to do.
+            if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+              publish=false
+              echo "::notice::$tag is already released - nothing to publish"
+            else
+              publish=true
+            fi
+          fi
+          printf '%s\n' "version=$version" "relver=$relver" "kind=$kind" "tag=$tag" "publish=$publish" \
+            >> "$GITHUB_OUTPUT"
+          echo "$kind $tag (publish=$publish)" >> "$GITHUB_STEP_SUMMARY"
+
+  # The gate. Deliberately re-runs what tests.yml ran on the PR: a release job
+  # that depends on a separate workflow's result races with it, and a broken
+  # pre-release is worse than a slow one.
+  verify:
+    name: Verify PHP ${{ matrix.php }}
+    needs: plan
+    if: needs.plan.outputs.publish == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.4', '8.5']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, mbstring, tokenizer, xml, xmlwriter
+          tools: composer
+          coverage: none
+
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libgtk-4-dev xvfb build-essential
+
+      - name: Install PHPUnit
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      # version + stubs + lint + build + load + test + phpt. The version stage and
+      # config.m4 both assert ./VERSION == src/php_gtk4.h, and the load stage
+      # asserts the built .so reports it too.
+      - name: Full CI gate
+        run: ./ci.sh
+
+  # One .so per supported PHP. Named with the whole ABI identity: a gtk4.so is
+  # bound to ZEND_MODULE_API, NTS/ZTS, the C++ ABI, glibc and the GTK soname,
+  # so an unlabelled asset only produces bug reports from mismatched installs.
+  build:
+    name: Build .so (PHP ${{ matrix.php }})
+    needs: [plan, verify]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.4', '8.5']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libgtk-4-dev build-essential
+
+      - name: Build extension
+        run: ./ci.sh --only=build
+
+      - name: Name and verify the artifact
+        run: |
+          set -euo pipefail
+          version="${{ needs.plan.outputs.version }}"   # what the binary reports
+          relver="${{ needs.plan.outputs.relver }}"     # what this release is called
+          arch=$(gcc -dumpmachine)                      # x86_64-linux-gnu
+          name="gtk4-$relver-php${{ matrix.php }}-nts-$arch-$DIST.so"
+          mkdir -p dist && cp gtk4.so "dist/$name"
+          # Last line of defence: the file we are about to publish must report the
+          # version in ./VERSION. On a dev build the filename carries a .<run> suffix
+          # the binary does not - two dev builds are different files and must not
+          # share a name in someone's downloads folder. PHPGTK_BUILD_INFO (git hash)
+          # identifies the exact commit from inside the module.
+          got=$(php -n -dextension="$PWD/dist/$name" -r 'echo phpversion("gtk4");')
+          [[ "$got" == "$version" ]] || { echo "::error::$name reports $got, expected $version"; exit 1; }
+          echo "$name -> $got" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: so-php${{ matrix.php }}
+          path: dist/*.so
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    name: Publish ${{ needs.plan.outputs.tag }}
+    needs: [plan, verify, build]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write       # create/delete the tag and the release
+      id-token: write       # provenance
+      attestations: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          pattern: so-php*
+          path: dist
+          merge-multiple: true
+
+      # The source dist is the supported install path (phpize layout); the .so
+      # files are a convenience for whoever matches the ABI above.
+      - name: Source tarball + checksums
+        run: |
+          set -euo pipefail
+          relver="${{ needs.plan.outputs.relver }}"
+          git archive --format=tar.gz --prefix="php-gtk4-$relver/" \
+            -o "dist/php-gtk4-$relver.tar.gz" HEAD
+          (cd dist && sha256sum -- * > SHA256SUMS)
+          ls -l dist
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
+        with:
+          subject-path: 'dist/*.so'
+
+      - name: Release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version="${{ needs.plan.outputs.version }}"
+          {
+            if [[ "${{ needs.plan.outputs.kind }}" == dev ]]; then
+              cat <<EOF
+          **Development build of $version, not a release.** Built from
+          [\`${GITHUB_SHA:0:7}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}).
+          The module itself reports \`$version\` - the \`.$GITHUB_RUN_NUMBER\` in the tag and the
+          filenames distinguishes builds of it. Only the newest $KEEP_PRERELEASES dev builds are
+          kept; this one is deleted once $KEEP_PRERELEASES newer merges land.
+
+          EOF
+            else
+              # The one thing that cannot be reconstructed from git: fail loudly if absent.
+              awk -v pfx="## [$version]" '
+                index($0, pfx) == 1 { p = 1; next }
+                p && /^## / { exit }
+                p { print }
+              ' CHANGELOG.md > .notes-body
+              [[ -s .notes-body ]] || { echo "::error file=CHANGELOG.md::no '## [$version]' section"; exit 1; }
+              cat .notes-body
+            fi
+
+            cat <<'EOF'
+
+          ### Install
+
+          `php-gtk4-*.tar.gz` is the supported install path - the standard phpize layout:
+
+          ```sh
+          phpize && ./configure && make && sudo make install
+          ```
+
+          The prebuilt `.so` files are a convenience and are **not portable**. Each is bound to the
+          PHP version, NTS (ZTS builds from source), the C++ ABI, glibc and the GTK 4
+          soname in its filename; built on Ubuntu 24.04 (GTK 4.14, the supported floor), so they run
+          on that and newer, not older. Anything else: build from source.
+
+          Verify with `sha256sum -c SHA256SUMS`, and `gh attestation verify <file> --repo OWNER/REPO`
+          for build provenance.
+          EOF
+          } > NOTES.md
+
+      # Pre-releases are immutable: one tag per merge, never moved. Retention is
+      # the next step's job.
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${{ needs.plan.outputs.tag }}"
+          relver="${{ needs.plan.outputs.relver }}"
+
+          if [[ "${{ needs.plan.outputs.kind }}" == dev ]]; then
+            gh release create "$tag" dist/* \
+              --title "Development build $relver" \
+              --notes-file NOTES.md \
+              --target "$GITHUB_SHA" \
+              --prerelease --latest=false
+          else
+            gh release create "$tag" dist/* \
+              --title "$relver" \
+              --notes-file NOTES.md \
+              --target "$GITHUB_SHA" \
+              --latest
+          fi
+          echo "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/tag/$tag" >> "$GITHUB_STEP_SUMMARY"
+
+      # Keep the newest KEEP_PRERELEASES pre-releases downloadable and delete the
+      # rest, tags included. Runs after both kinds of publish: a real release does
+      # not wipe the dev builds, it just becomes one more thing newer than them,
+      # so there are always KEEP_PRERELEASES dev builds to fall back to. Deleting
+      # a release does not touch anything that already downloaded it.
+      - name: Prune old pre-releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          stale=$(gh release list --limit 100 \
+                    --json tagName,isPrerelease,createdAt \
+                    --jq "[.[] | select(.isPrerelease)]
+                          | sort_by(.createdAt) | reverse
+                          | .[${KEEP_PRERELEASES}:] | .[].tagName")
+          if [[ -z "$stale" ]]; then
+            echo "nothing to prune (<= $KEEP_PRERELEASES pre-releases)" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          while IFS= read -r tag; do
+            [[ -n "$tag" ]] || continue
+            echo "pruning $tag"
+            gh release delete "$tag" --cleanup-tag --yes
+            echo "pruned \`$tag\`" >> "$GITHUB_STEP_SUMMARY"
+          done <<< "$stale"

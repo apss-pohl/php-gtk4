@@ -59,8 +59,7 @@ final class WrapTest extends GtkTestCase
 
     public function testCloneIsRefused(): void
     {
-        // PHP-CPP refuses because the wrapper's copy constructor is deleted;
-        // GObjectWrapper::__clone() is a second line of defence.
+        // clone_obj handler is NULL -> "Trying to clone an uncloneable object of class ...".
         $this->expectExceptionMessageMatches('/uncloneable|cannot be cloned/');
         $w = $this->window();
         $c = clone $w;
@@ -85,6 +84,24 @@ final class WrapTest extends GtkTestCase
         self::assertFalse($this->latched(), 'dispose must not run while a handle exists');
         unset($w);
         self::assertTrue($this->latched(), 'releasing the last handle finalizes the GObject');
+    }
+
+    public function testPlainGObjectDiesWithItsLastHandle(): void
+    {
+        // Constructors adopt the initial reference; a leaked ref here would keep
+        // every GtkApplication/GSimpleAction/GListStore/PhpValue alive forever.
+        $payload = new \stdClass();
+        $weak = \WeakReference::create($payload);
+        $item = new \Gtk4\PhpValue($payload);
+        unset($payload, $item);
+        self::assertNull($weak->get(), 'PhpValue finalized -> payload released');
+
+        $store = new \Gtk4\GListStore();
+        $destroyed = $this->latch();
+        $store->connect('notify::n-items', $destroyed);
+        $store->connect('items-changed', $this->latch());
+        unset($store);
+        self::assertFalse($this->latched(), 'no emission, and no crash finalizing with handlers attached');
     }
 
     public function testHandleObtainedFromSignalIsTheOriginal(): void

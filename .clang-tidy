@@ -30,13 +30,46 @@ Checks: >-
   -readability-named-parameter,
   -readability-magic-numbers,
   -bugprone-easily-swappable-parameters,
-  -bugprone-casting-through-void
+  -bugprone-casting-through-void,
+  -cppcoreguidelines-pro-type-union-access,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -readability-function-cognitive-complexity,
+  -readability-isolate-declaration,
+  -readability-else-after-return,
+  -modernize-use-integer-sign-comparison,
+  -modernize-type-traits,
+  -cppcoreguidelines-avoid-c-arrays,
+  -modernize-avoid-c-arrays,
+  -cppcoreguidelines-avoid-magic-numbers
 
 # Rationale for the deny-list: GLib macros expand to do/while, varargs,
-# C-style casts through void* (G_OBJECT(), GTK_WINDOW(), ...) and pointer arithmetic; PHP-CPP's Php::Object -> Php::Value
-# conversions are slicing by design; wrappers are handed to PHP-CPP as raw
-# owning pointers. Everything else is enforced - CI fails on findings.
+# C-style casts through void* (G_OBJECT(), GTK_WINDOW(), ...) and pointer
+# arithmetic; Zend macros (ZEND_PARSE_PARAMETERS_*, Z_*_P, RETURN_*) expand to
+# zval union access, multi-declarations, array decay, signed/unsigned compares
+# and huge cognitive complexity; PHP_INI_BEGIN/zend_function_entry tables are C
+# arrays by API contract; G_OBJECT_GET_CLASS() expands to type-trait-like casts.
+# Everything else is enforced - CI fails on findings.
 # Every enabled check is an error, locally (ci.sh) and in CI (cpp-linter) alike.
 WarningsAsErrors: '*'
+# Naming (readability-identifier-naming): snake_case functions/variables/namespaces,
+# CamelCase types and enum cases, UPPER_CASE macros. Zend/GLib-generated names
+# (zim_*, *_get_type, _PhpValue) come from macro expansions and are not checked.
+CheckOptions:
+  readability-identifier-naming.NamespaceCase: lower_case
+  readability-identifier-naming.ClassCase: CamelCase
+  readability-identifier-naming.StructCase: CamelCase
+  readability-identifier-naming.EnumCase: CamelCase
+  readability-identifier-naming.EnumConstantCase: CamelCase
+  readability-identifier-naming.FunctionCase: lower_case
+  readability-identifier-naming.VariableCase: lower_case
+  # ce_<GTypeName>: class entries named after the GType they wrap (MINIT, registries).
+  readability-identifier-naming.VariableIgnoredRegexp: '^ce_[A-Z]'
+  readability-identifier-naming.LocalPointerIgnoredRegexp: '^ce_[A-Z]'
+  readability-identifier-naming.GlobalPointerIgnoredRegexp: '^ce_[A-Z]'
+  readability-identifier-naming.StaticVariableIgnoredRegexp: '^ce_[A-Z]'
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.MacroDefinitionCase: UPPER_CASE
+  readability-identifier-naming.TypeAliasCase: CamelCase
 HeaderFilterRegex: '^(src/|main\.h)'
 FormatStyle: file

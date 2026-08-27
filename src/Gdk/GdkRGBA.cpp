@@ -1,0 +1,123 @@
+// Gtk4\GdkRGBA (boxed value type)
+#include "php_gtk4.h"
+#include "classes.h"
+#include "core/boxed.h"
+
+#include <cstring>
+
+using namespace phpgtk;
+
+namespace {
+
+const char *const fields[] = {"red", "green", "blue", "alpha", nullptr};
+
+// Boxed field reader: red/green/blue/alpha as float.
+bool read(gpointer data, const char *f, zval *rv) {
+  auto *c = static_cast<GdkRGBA *>(data);
+  float v;
+  if (strcmp(f, "red") == 0)
+    v = c->red;
+  else if (strcmp(f, "green") == 0)
+    v = c->green;
+  else if (strcmp(f, "blue") == 0)
+    v = c->blue;
+  else if (strcmp(f, "alpha") == 0)
+    v = c->alpha;
+  else
+    return false;
+  ZVAL_DOUBLE(rv, v);
+  return true;
+}
+
+// Boxed field writer: accepts int/float, stored as float.
+bool write(gpointer data, const char *f, zval *value) {
+  auto *c = static_cast<GdkRGBA *>(data);
+  const auto v = static_cast<float>(zval_get_double(value));
+  if (strcmp(f, "red") == 0)
+    c->red = v;
+  else if (strcmp(f, "green") == 0)
+    c->green = v;
+  else if (strcmp(f, "blue") == 0)
+    c->blue = v;
+  else if (strcmp(f, "alpha") == 0)
+    c->alpha = v;
+  else
+    return false;
+  return true;
+}
+
+}  // namespace
+
+/**
+ * Gtk4\GdkRGBA::__construct(?string $css = null)
+ */
+ZEND_METHOD(Gtk4_GdkRGBA, __construct) {
+  zend_string *css = nullptr;
+  ZEND_PARSE_PARAMETERS_START(0, 1)
+  Z_PARAM_OPTIONAL
+  Z_PARAM_STR_OR_NULL(css)
+  ZEND_PARSE_PARAMETERS_END();
+  auto *c = g_new0(GdkRGBA, 1);
+  if (css != nullptr && !gdk_rgba_parse(c, ZSTR_VAL(css))) {
+    g_free(c);
+    zend_argument_value_error(1, "is not a valid CSS colour");
+    RETURN_THROWS();
+  }
+  boxed_adopt(boxed_from_zval(ZEND_THIS), GDK_TYPE_RGBA, c);
+}
+
+/**
+ * Gtk4\GdkRGBA::parse(string $css): bool
+ *
+ * Parse a CSS colour into this value; false if it is not valid.
+ */
+ZEND_METHOD(Gtk4_GdkRGBA, parse) {
+  zend_string *css;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_STR(css)
+  ZEND_PARSE_PARAMETERS_END();
+  GdkRGBA tmp;
+  if (!gdk_rgba_parse(&tmp, ZSTR_VAL(css))) RETURN_FALSE;
+  *PHPGTK_BOXED_SELF(GdkRGBA) = tmp;
+  RETURN_TRUE;
+}
+
+/**
+ * Gtk4\GdkRGBA::to_string(): string
+ *
+ * CSS representation, e.g. `rgb(255,0,0)` or `rgba(255,0,0,0.5)`.
+ */
+ZEND_METHOD(Gtk4_GdkRGBA, to_string) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  gchar *s = gdk_rgba_to_string(PHPGTK_BOXED_SELF(GdkRGBA));
+  RETVAL_STRING(s);
+  g_free(s);
+}
+
+/**
+ * Gtk4\GdkRGBA::equal(GdkRGBA $other): bool
+ */
+ZEND_METHOD(Gtk4_GdkRGBA, equal) {
+  zval *other;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(other, boxed_class_for_type(GDK_TYPE_RGBA)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  RETURN_BOOL(gdk_rgba_equal(PHPGTK_BOXED_SELF(GdkRGBA), unwrap_boxed(other, GDK_TYPE_RGBA)));
+}
+
+/**
+ * Gtk4\GdkRGBA::is_opaque(): bool
+ */
+ZEND_METHOD(Gtk4_GdkRGBA, is_opaque) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  RETURN_BOOL(gdk_rgba_is_opaque(PHPGTK_BOXED_SELF(GdkRGBA)));
+}
+
+namespace phpgtk {
+// MINIT: bind the PHP class to GDK_TYPE_RGBA with its field table.
+void register_GdkRGBA(zend_class_entry *ce) {
+  register_boxed(
+      "GdkRGBA",
+      BoxedClass{.type = GDK_TYPE_RGBA, .ce = ce, .fields = fields, .read = read, .write = write});
+}
+}  // namespace phpgtk

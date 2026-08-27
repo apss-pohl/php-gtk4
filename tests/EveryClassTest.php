@@ -12,7 +12,7 @@ use ReflectionMethod;
  * Smoke test over the *whole* registered surface: every instantiable class is
  * constructed and every argument-less getter/predicate is called once. Catches
  * a wrapper whose GType/class mapping, factory registration or return-value
- * marshalling is broken - which the generator (PLAN.md milestone 3) makes easy
+ * marshalling is broken - which the generator (docs/PLAN.md milestone 3) makes easy
  * to get wrong at scale. Deliberately generic: it must not need editing when
  * classes are added.
  */
@@ -23,7 +23,7 @@ final class EveryClassTest extends GtkTestCase
     {
         foreach (new ReflectionExtension('gtk4')->getClasses() as $class) {
             $name = $class->getName();
-            if (str_starts_with($name, 'PhpCpp')) {
+            if ($class->isEnum()) {
                 continue;
             }
             $ctor = $class->getConstructor();
@@ -45,7 +45,6 @@ final class EveryClassTest extends GtkTestCase
     {
         $object = new $class();
         self::assertInstanceOf($class, $object);
-        self::assertInstanceOf(\Gtk4\GObject::class, $object);
 
         $called = 0;
         foreach (new ReflectionClass($class)->getMethods(ReflectionMethod::IS_PUBLIC) as $m) {
@@ -55,10 +54,11 @@ final class EveryClassTest extends GtkTestCase
             if (!preg_match('/^(get|is|has|in)_/', $m->getName())) {
                 continue;
             }
-            // Return value must be a plain PHP value or a handle - never a crash.
+            // Return value must be a plain PHP value, an enum case or a Gtk4 handle - never a crash.
             $value = $m->invoke($object);
             self::assertTrue(
-                $value === null || is_scalar($value) || is_array($value) || $value instanceof \Gtk4\GObject,
+                $value === null || is_scalar($value) || is_array($value) || $value instanceof \UnitEnum
+                    || (is_object($value) && str_starts_with($value::class, 'Gtk4\\')),
                 sprintf('%s::%s() returned %s', $class, $m->getName(), get_debug_type($value)),
             );
             $called++;

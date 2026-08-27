@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Fast gate (~10 s): version mirrors, generated files current, C++ formatted, PHP style
+# clean (no phpstan), docs linted. One ci.sh call so the setup work is paid once.
+# Enable once per clone:  git config core.hooksPath .githooks
+# Skip once:              git commit --no-verify
+set -e
+cd "$(git rev-parse --show-toplevel)"
+./ci.sh --only=version,stubs,cpp-lint,md-lint,php-qa --skip=tidy,stan
+# Remember which tree passed, so pre-push can skip exactly these steps for it.
+# (The index tree is what the commit will contain; HEAD^{tree} matches it after the commit.)
+git write-tree > "$(git rev-parse --git-dir)/gtk4-precommit-tree"

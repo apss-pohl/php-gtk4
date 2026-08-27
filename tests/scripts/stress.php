@@ -10,8 +10,12 @@ declare(strict_types=1);
  * dead objects around. ASan/LSan report use-after-free, overflows and leaks.
  */
 
+use Gtk4\ExceptionMode;
+use Gtk4\GLib;
+use Gtk4\GMainLoop;
 use Gtk4\GObject;
 use Gtk4\Gtk;
+use Gtk4\GtkApplication;
 use Gtk4\GtkWindow;
 
 if (!Gtk::init()) {
@@ -33,9 +37,9 @@ for ($i = 0; $i < $rounds; $i++) {
 
     $ids = [];
     for ($j = 0; $j < 5; $j++) {
-        $ids[] = $w->connect('notify::title', function (GObject $o, string $p, int $n) use (&$hits): void {
-            $hits = ($hits ?? 0) + $n;
-        }, $j);
+        $ids[] = $w->connect('notify::title', function (GObject $o, Gtk4\GParamSpec $p) use (&$hits, $j): void {
+            $hits = ($hits ?? 0) + $j;
+        });
     }
     $ids[] = $w->connect_after('notify::title', fn() => null);
     $w->connect('notify::title', function (): void {
@@ -79,14 +83,64 @@ for ($i = 0; $i < $rounds; $i++) {
     unset($other);
 }
 
+// main loops: bare loop with idle/timeout sources, then an application run
+$loop = new GMainLoop();
+$ticks = 0;
+GLib::timeout_add(1, function () use (&$ticks, $loop): bool {
+    if (++$ticks >= 5) {
+        $loop->quit();
+        return false;
+    }
+    return true;
+});
+$idleRan = false;
+GLib::idle_add(function () use (&$idleRan): bool {
+    $idleRan = true;
+    throw new RuntimeException('expected idle');
+});
+$loop->run();
+// With many windows alive the frame clocks outrank the idle and the timeouts may quit the loop
+// first; make sure it has fired (in Log mode) before the mode changes below.
+while (!$idleRan) {
+    GLib::main_context_iteration(true);
+}
+// C-driven nested loop (test builds): a parked Throwable + a chained one, rethrown by run().
+if (str_contains((string) ini_get('gtk4.features'), 'testing=yes')) {
+    Gtk::set_exception_mode(ExceptionMode::Rethrow);
+    $nested = new GMainLoop();
+    GLib::idle_add(function (): bool {
+        GLib::timeout_add(0, fn() => throw new RuntimeException('nested 1'));
+        GLib::timeout_add(0, fn() => throw new RuntimeException('nested 2'));
+        usleep(2000);
+        Gtk::testing_iterate_nested(2);
+        return false;
+    });
+    try {
+        $nested->run();
+        fwrite(STDERR, "nested rethrow missing\n");
+        exit(1);
+    } catch (RuntimeException $e) {
+        if ($e->getMessage() !== 'nested 1' || $e->getPrevious()?->getMessage() !== 'nested 2') {
+            fwrite(STDERR, "nested chain wrong\n");
+            exit(1);
+        }
+    }
+    Gtk::set_exception_mode(ExceptionMode::Log);
+}
+$app = new GtkApplication(null, 1 << 5);
+$app->connect('activate', function (GtkApplication $a): void {
+    $w = new GtkWindow($a);
+    $w->present();
+    $w->close();
+});
+$app->run();
+
 Gtk::set_exception_handler(null);
-if ($reported !== 2 * $rounds) {  // two set_title() emissions per round
-    fwrite(STDERR, 'expected ' . (2 * $rounds) . " reported exceptions, got $reported\n");
+// two set_title() emissions per round + the idle source (+ the two nested ones in test builds)
+$expected = 2 * $rounds + 1 + (str_contains((string) ini_get('gtk4.features'), 'testing=yes') ? 2 : 0);
+if ($reported !== $expected) {
+    fwrite(STDERR, "expected $expected reported exceptions, got $reported\n");
     exit(1);
 }
-
-// main loop enter/leave
-Gtk::main_quit();
-Gtk::main();
 
 echo "stress ok: $rounds rounds, ", count($keep), " windows alive at shutdown\n";

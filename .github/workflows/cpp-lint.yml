@@ -6,23 +6,20 @@ on:
   push:
     branches: [main]
 
+# Read-only token: these workflows only check out and build.
+permissions:
+  contents: read
+
 jobs:
   cpp-static-analysis:
-    name: C++ static analysis (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        # GTK floor (24.04 = 4.14) and current (26.04 = 4.22): every source
-        # must compile against both.
-        os: [ubuntu-24.04, ubuntu-26.04]
+    name: C++ static analysis
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      # Dev headers needed to compile (not link) every source file. `bear`
-      # records the compiler invocations into compile_commands.json.
       # ubuntu-latest ships PHP 8.3; the project is PHP 8.4+ only.
       - name: Set up PHP 8.4
         uses: shivammathur/setup-php@v2
@@ -30,54 +27,32 @@ jobs:
           php-version: '8.4'
           tools: none
 
-      - name: Install GTK4 / WebKitGTK dev headers
+      # clang 20 = what .vscode and ci.sh default to locally; the Ubuntu 24.04 image ships an
+      # older one, so take it from apt.llvm.org. WebKitGTK headers so the --enable-gtk4-webkit
+      # TU is analysed too. No bear/compile_commands.json: ci.sh derives the flags itself.
+      - name: Install GTK4 / WebKitGTK dev headers and clang 20
         run: |
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc >/dev/null
+          echo "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-20 main" | sudo tee /etc/apt/sources.list.d/llvm-20.list
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            libgtk-4-dev libwebkitgtk-6.0-dev bear
+            libgtk-4-dev libwebkitgtk-6.0-dev clang-tidy-20 clang-format-20
 
-      # Only PHP-CPP's public headers are needed (sources include <phpcpp.h>
-      # only). Replicate the installed layout (phpcpp.h + phpcpp/*.h) from a
-      # clone pinned to a commit; no PHP-CPP build or link. The apss-pohl fork
-      # is upstream v2.4.16 + the const-heap fix (upstream PR #557).
-      - name: Fetch PHP-CPP public headers
-        run: |
-          git clone https://github.com/apss-pohl/PHP-CPP.git /tmp/phpcpp-src
-          git -C /tmp/phpcpp-src checkout 4d1a856
-          mkdir -p /tmp/PHP-CPP/phpcpp
-          cp /tmp/phpcpp-src/phpcpp.h /tmp/PHP-CPP/
-          cp /tmp/phpcpp-src/include/*.h /tmp/PHP-CPP/phpcpp/
-
-      # Compile every object (no link, so no libphpcpp needed) to capture
-      # per-file flags into compile_commands.json. PHP-CPP and GTK headers are
-      # passed with -isystem so their internal warnings are not reported.
-      # The package list must mirror the Makefile's GTK_PKGS with WITH_WEBKIT=1.
-      - name: Generate compile_commands.json
-        run: |
-          make compile_commands \
-            WITH_WEBKIT=1 \
-            PHP_CONFIG="$(command -v php-config)" \
-            PHPFLAGS="-isystem /tmp/PHP-CPP $(php-config --includes | sed 's/-I/-isystem/g')" \
-            GTKFLAGS="$(pkg-config --cflags gtk4 webkitgtk-6.0 | sed 's/-I/-isystem/g')"
-
-      # Unlike php-gtk3 there is no findings backlog: this repo starts clean,
-      # so the linter FAILS the job on any finding, over the whole tree.
-      - name: C++ Linter (clang-tidy/clang-format)
-        id: linter
-        uses: cpp-linter/cpp-linter-action@v2
-        with:
-          extensions: cpp,h
-          files-changed-only: false
-          database: .
-          style: file
-          # Empty -> defer entirely to .clang-tidy at the repo root.
-          tidy-checks: ''
-          # match the local toolchain (ci.sh picks the newest installed clang-*)
-          version: '20'
-          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+      # config.h (build metadata) is what src/php_gtk4.h includes; configure generates it.
+      - name: Configure
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PHP_CONFIG: php-config
+          PHPIZE: phpize
+        run: phpize && ./configure --with-php-config="$(command -v php-config)" --enable-gtk4-webkit
 
-      - name: Fail on findings
-        if: steps.linter.outputs.checks-failed > 0
-        run: exit 1
+      - name: Generated stubs are up to date
+        run: composer install --no-interaction --no-progress --prefer-dist && ./ci.sh --only=stubs
+
+      # Same stage as the pre-commit hook and `./ci.sh --only=cpp-lint`: clang-tidy with
+      # WarningsAsErrors '*' and clang-format --dry-run over src/. Any finding fails the job.
+      - name: clang-tidy + clang-format
+        env:
+          PHP_CONFIG: php-config
+          CLANG_TIDY: clang-tidy-20
+          CLANG_FORMAT: clang-format-20
+        run: ./ci.sh --only=cpp-lint

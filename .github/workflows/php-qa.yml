@@ -6,10 +6,15 @@ on:
   push:
     branches: [main]
 
+# Read-only token: these workflows only check out and build.
+permissions:
+  contents: read
+
 jobs:
   php-qa:
-    name: PHP QA (phplint, phpcs, php-cs-fixer, phpstan)
-    runs-on: ubuntu-latest
+    name: PHP QA (phplint, phpcs, php-cs-fixer, phpstan, markdownlint)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     env:
       PHP: php
     steps:
@@ -36,3 +41,8 @@ jobs:
       # Every tool uses all cores (JOBS defaults to nproc).
       - name: Run PHP QA
         run: ./ci.sh --only=php-qa
+
+      # Docs lint shares this workflow (and its badge): no extension, no GTK, seconds to run.
+      # The runner has node, so the stage's npx fallback resolves markdownlint-cli2.
+      - name: Run markdown lint
+        run: ./ci.sh --only=md-lint

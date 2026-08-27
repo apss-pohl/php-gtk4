@@ -9,8 +9,10 @@ use ReflectionExtension;
 use ReflectionMethod;
 
 /**
- * stubs/gtk4.php must list exactly the classes, declared methods and
- * constants the loaded extension registers (names only; types are docs).
+ * The API is declared once in src/gtk4.stub.php; gen_stub.php derives the
+ * arginfo the extension registers and gen/ide-stub.php derives stubs/gtk4.php.
+ * These tests guard that chain: the IDE stub is current, and it agrees with
+ * what the loaded extension actually registers.
  */
 final class StubsTest extends TestCase
 {
@@ -20,6 +22,10 @@ final class StubsTest extends TestCase
     {
         $src = file_get_contents(self::STUB);
         self::assertIsString($src);
+        // `#if defined(PHPGTK_TESTING)` blocks exist only in --enable-gtk4-testing builds.
+        if (!str_contains(\Gtk4\FEATURES, 'testing=yes')) {
+            $src = preg_replace('/^[ \t]*#if defined\(PHPGTK_TESTING\)\n.*?^[ \t]*#endif\n/ms', '', $src) ?? $src;
+        }
         return $src;
     }
 
@@ -29,12 +35,10 @@ final class StubsTest extends TestCase
         $ext = new ReflectionExtension('gtk4');
         $classes = [];
         foreach ($ext->getClasses() as $class) {
-            if (str_starts_with($class->getName(), 'PhpCpp')) {
-                continue;
-            }
             $own = array_filter(
                 $class->getMethods(),
-                fn(ReflectionMethod $m) => $m->getDeclaringClass()->getName() === $class->getName(),
+                fn(ReflectionMethod $m) => $m->getDeclaringClass()->getName() === $class->getName()
+                    && !in_array($m->getName(), ['cases', 'from', 'tryFrom'], true),  // enum built-ins
             );
             $methods = array_map(fn(ReflectionMethod $m) => $m->getName(), $own);
             sort($methods);
@@ -54,10 +58,13 @@ final class StubsTest extends TestCase
         $ns = isset($m[1]) ? $m[1] . '\\' : '';
 
         $classes = [];
-        preg_match_all('/^(?:final\s+)?class\s+(\w+)[^{]*\{(.*?)^\}/ms', $src, $found, PREG_SET_ORDER);
+        $classPattern = '/^(?:(?:final|abstract)\s+)?(?:class|enum|interface)\s+(\w+)[^{]*\{(.*?)^\}/ms';
+        preg_match_all($classPattern, $src, $found, PREG_SET_ORDER);
         foreach ($found as [, $name, $body]) {
             preg_match_all('/function\s+(\w+)\s*\(/', $body, $mm);
-            $methods = $mm[1];
+            // __get/__set/__isset in the IDE stub model the engine-level property handlers
+            // (gen/ide-stub.php); the extension registers no such methods.
+            $methods = array_values(array_diff($mm[1], ['__get', '__set', '__isset']));
             sort($methods);
             $classes[$ns . $name] = $methods;
         }
@@ -72,6 +79,19 @@ final class StubsTest extends TestCase
     public function testStubDeclaresNamespace(): void
     {
         self::assertMatchesRegularExpression('/^namespace Gtk4;/m', self::source());
+    }
+
+    public function testIdeStubIsGeneratedFromTheStubSource(): void
+    {
+        // stubs/gtk4.php is derived from src/gtk4.stub.php by gen/ide-stub.php.
+        $out = [];
+        $cmd = sprintf(
+            '%s %s --check 2>&1',
+            escapeshellarg(PHP_BINARY),
+            escapeshellarg(__DIR__ . '/../gen/ide-stub.php'),
+        );
+        exec($cmd, $out, $rc);
+        self::assertSame(0, $rc, implode("\n", $out));
     }
 
     public function testClassesMatch(): void
@@ -90,6 +110,32 @@ final class StubsTest extends TestCase
     public function testConstantsMatch(): void
     {
         self::assertSame(self::fromExtension()['constants'], self::fromStub()['constants']);
+    }
+
+    public function testStubNamesAreSnakeCase(): void
+    {
+        // docs/PLAN.md: one spelling, snake_case, no camelCase - parameter names are API (named arguments).
+        $src = self::source();
+        preg_match_all('/function\s+(\w+)\s*\(([^)]*)\)/', $src, $m, PREG_SET_ORDER);
+        self::assertNotEmpty($m);
+        $allowed = ['getDomain'];   // GError: aligned with Exception::getCode()/getMessage()
+        foreach ($m as [, $name, $params]) {
+            if (!in_array($name, $allowed, true)) {
+                self::assertMatchesRegularExpression(
+                    '/^(__)?[a-z][a-z0-9_]*$/',
+                    $name,
+                    "method $name() is not snake_case",
+                );
+            }
+            preg_match_all('/\$(\w+)/', $params, $pm);
+            foreach ($pm[1] as $p) {
+                self::assertMatchesRegularExpression(
+                    '/^[a-z][a-z0-9_]*$/',
+                    $p,
+                    "$name(): parameter \$$p is not snake_case",
+                );
+            }
+        }
     }
 
     public function testStubMethodsHaveDummyBodies(): void

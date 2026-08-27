@@ -4,110 +4,173 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-php-gtk4 is a PHP extension written in C++ that binds GTK 4 to PHP via
-[PHP-CPP](https://github.com/apss-pohl/PHP-CPP) (the apss-pohl fork: upstream v2.4.16 + the
-const-heap fix from upstream PR #557 — string constants corrupt the heap at shutdown without it). It is the successor to
-`/mnt/share/dev/code/php-gtk3`; `PLAN.md` records the design and what is deliberately *not* carried
-over from php-gtk3. Read `PLAN.md` before changing anything under `src/core/`.
+php-gtk4 is a PHP extension written in C++20 against the **native Zend API** (no PHP-CPP — see
+docs/TODO.md §1 / docs/PLAN.md for why it was dropped), built with the standard `phpize`/`config.m4` flow.
+It is the successor to `/mnt/share/dev/code/php-gtk3`; `docs/PLAN.md` records the design and what is
+deliberately *not* carried over, `docs/TODO.md` the open review findings. Read both before changing
+anything under `src/core/`.
 
-Module name is **`gtk4`** everywhere: Makefile `NAME`, `Php::Extension("gtk4")` in `main.cpp`,
+Module name is **`gtk4`** everywhere: `config.m4`, `zend_module_entry` in `src/gtk4.cpp`,
 `extension=gtk4` in `gtk4.ini`. Keep them in sync.
 
 Hard constraints:
 
 - **PHP 8.4+ only** — 8.4 and 8.5 in the CI matrix; **locally only 8.4 is built/tested** (`ci.sh`
-  defaults, `buildall.sh` has 8.5 disabled — `ONLY=8.5 ./buildall.sh` to force). The Makefile (`php-config --vernum >= 80400`) and `main.cpp`
-  (`#error` on `PHP_VERSION_ID < 80400`) both refuse older PHP. Don't add compatibility shims for
-  older PHP; do use PHP 8.4 features in stubs/tests/examples (property hooks, `#[\Deprecated]`,
-  `new X()->m()`, typed constants).
-- **C++20** (`-std=c++20`, GCC 11+/Clang 14+). `ci.sh` (clang-tidy) and `.clang-format` use the same standard.
-- **GTK 4.14+** (`pkg-config gtk4`); CI compiles and tests on Ubuntu 24.04 (GTK 4.14, the floor) and
-  26.04 (GTK 4.22, current) — guard anything newer than 4.14 with `GTK_CHECK_VERSION`. Never use GTK 3 APIs (`gtk_main`, `GdkEvent` unions,
-  `GtkContainer`, …).
-- Linux is the primary target; Windows/WebKit follow later (see PLAN.md milestones).
+  defaults, `buildall.sh` has 8.5 disabled — `ONLY=8.5 ./buildall.sh` to force). `config.m4` and
+  `src/php_gtk4.h` (`#error` on `PHP_VERSION_ID < 80400`) both refuse older PHP. Don't add
+  compatibility shims for older PHP; do use PHP 8.4 features in stubs/tests/examples.
+- **C++20** (`-std=c++20`, GCC 11+/Clang 14+). `ci.sh` (clang-tidy) and `.clang-format` use the
+  same standard.
+- **GTK 4.14+** (`pkg-config gtk4`); CI builds and tests on Ubuntu 24.04 (GTK 4.14, the floor) —
+  guard anything newer than 4.14 with `GTK_CHECK_VERSION`. Never
+  use GTK 3 APIs (`gtk_main`, `GdkEvent` unions, `GtkContainer`, …).
+- Linux is the primary target; Windows/WebKit follow later (see docs/PLAN.md milestones).
 
 ## Build
 
+User-facing version of this section (plus the Windows status): `docs/BUILD.md`; contributor
+summary: `docs/CONTRIBUTING.md`. Keep all three consistent.
+
 ```sh
-./buildall.sh                          # build + install every enabled version in its table (sudo)
-ONLY=8.4 ./buildall.sh                 # one version
-make PHP_CONFIG=/usr/bin/php-config8.4 PHPCPP_STATIC=/path/libphpcpp.a.2.4.16 -j"$(nproc)"
-make test                              # tests/*.php under xvfb-run against ./gtk4.so
-make compile_commands                  # bear -- make objects (clangd / clang-tidy)
-make clean
+./ci.sh --only=build                   # phpize + configure + make -> ./gtk4.so (what everything else uses)
+./buildall.sh                          # build + install for every enabled version in its table (sudo for install)
+phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(nproc)"   # by hand
+./configure ... --enable-gtk4-sanitize | --enable-gtk4-coverage | --enable-gtk4-webkit | --enable-gtk4-testing
+bear -- make                           # compile_commands.json for clangd / clang-tidy
 ```
 
-- `buildall.sh` expects per-version static libphpcpp in `PHPCPP_BASE/php<ver>/`
-  (default `/mnt/share/dev/code/PHP-CPP/dist`, produced by `PHP-CPP/build-dist.sh`). **The
-  `php-config` used must be the one PHP-CPP was built against**; a mismatch builds fine and corrupts
-  the heap at shutdown.
-- Objects live in `build/php<ver>/` with real source + header dependencies (`-MMD`), so editing a
-  `.cpp`/`.h` rebuilds correctly (unlike php-gtk3). `version.o` is force-rebuilt for git hash/date.
-- Feature flags: `WITH_WEBKIT=1` (compared with `ifeq (...,1)`). `PHPFLAGS`/`GTKFLAGS` are
-  overridable (CI passes `-isystem` variants).
+- Requires `php8.4-dev` (phpize/php-config) and `libgtk-4-dev`. `config.m4` refuses PHP < 8.4 and
+  GTK < 4.14. Build metadata (git hash, date, features) is baked in at configure time
+  (`PHPGTK_BUILD_INFO` in config.h).
+- **Editing `config.m4` requires re-running `phpize`** (configure is generated from it); `ci.sh`
+  does that on every build. **Never run `phpize --clean`**: it deletes `tests/*.php` (php-src
+  assumes `.phpt` tests there). Use `make clean` — and note that phpize's `make clean` removes every
+  `*.so` under the tree, so `ci.sh` stashes the built variants around it. Variants
+  (sanitize/coverage) rebuild in place and copy `modules/gtk4.so` to `gtk4-asan.so` / `gtk4-cov.so`.
+- **Version source of truth = `VERSION`** (repo root, one line, `X.Y.Z` or `X.Y.Z-dev`). Never edit
+  `PHP_GTK4_VERSION` (`src/php_gtk4.h`) or `const VERSION` (`src/gtk4.stub.php`) by hand — they are
+  mirrors written by `./ci.sh --only=version --fix`, checked by the `version` stage, again by
+  `config.m4` at configure time, again by the `load` stage against the built `.so`, and again by
+  `ExtensionTest`. Bumping the file is what triggers a release (docs/RELEASING.md).
+- **API declaration = `src/gtk4.stub.php`.** `gen/gen_stub.php` (vendored from php-src) generates
+  `src/gtk4_arginfo.h` (class entries, method tables, typed arginfo); `gen/ide-stub.php` generates
+  `stubs/gtk4.php` for IDEs. Both generated files are committed; `./ci.sh --only=stubs` (and CI)
+  fail if they are stale (`--fix` regenerates). **Never edit the generated files.** Adding a
+  method = declare it in the stub, regenerate, implement the `ZEND_METHOD(Gtk4_Class, name)`.
+- GObject properties exposed as PHP properties are declared with `@property` tags on the class in
+  the stub (the generator will emit them from GIR); the IDE stub adds `__get/__set/__isset` to
+  `GObject` so PHPStan/IDEs honour them (`StubsTest` ignores those three).
+- **Every C++ function has a comment block directly above it.** For `ZEND_METHOD`s the block is
+  generated from the stub (`php gen/method-comments.php`, run by `./ci.sh --only=stubs --fix`):
+  PHP signature + first docblock paragraph — never edit those by hand, edit the stub. Helpers,
+  handlers and trampolines get a hand-written `//` line (what it is for / which handler slot).
+  `./ci.sh --only=stubs` fails on a missing or stale block.
+- `src/gtk4_arginfo.h` is included by exactly one TU (`src/gtk4.cpp`, which owns MINIT and class
+  registration); method files only define `ZEND_METHOD`s.
 - **php-gtk3 and gtk4 must not be loaded in the same process.** PHP names are safe (everything is
   in the `Gtk4\` namespace) but libgtk-3/libgtk-4 export identical C symbols and the first loaded
-  library wins, so gtk4 calls misbehave when gtk3 is loaded (gtk4 warns at startup). `buildall.sh`
+  library wins, so gtk4 calls misbehave when gtk3 is loaded (gtk4 warns at MINIT). `buildall.sh`
   installs but does not enable `gtk4.ini`; run scripts with `bin/php-gtk4 script.php` (filters gtk3
-  out via `PHP_INI_SCAN_DIR`) or `php8.4 -n -dextension=gtk4`. This machine has gtk3 enabled globally.
+  out via `PHP_INI_SCAN_DIR`; prefers the repo's freshly built `./gtk4.so` over the installed copy,
+  `GTK4_SO=gtk4` forces the installed one) or `php8.4 -n -dextension=gtk4`. This machine has gtk3
+  enabled globally.
 
 ## Lint, QA, build, test — `./ci.sh`
 
-One script, same stages as GitHub Actions: `cpp-lint` → `php-qa` → `build` → `load` → `test`, plus
-the opt-in `asan` (ASan+UBSan on the suite, LSan on `tests/scripts/stress.php`, `gtk4-asan.so`) and
-`coverage` (gcov per-file C++ line coverage, `gtk4-cov.so`, gcovr HTML in `coverage/`) and `valgrind`
-(memcheck on the stress script — uninitialised reads, definite leaks; `tests/valgrind.supp` +
-GLib's `glib.supp`).
+One script, same stages as GitHub Actions: `version` → `stubs` → `cpp-lint` → `md-lint` → `php-qa` →
+`build` → `load` → `test` → `phpt` (php-src `run-tests.php` over `tests/phpt`), plus the opt-in `asan` (ASan+UBSan
+on the suite, LSan on `tests/scripts/stress.php`,
+`gtk4-asan.so`; `tests/asan-dlopen-shim.c` is preloaded ahead of libasan to strip `RTLD_DEEPBIND`
+from php's `dlopen()`, which the sanitizer runtime otherwise refuses — setup-php's PHP builds use it),
+`coverage` (gcov per-file C++ line coverage via gcovr, `gtk4-cov.so`, HTML in
+`coverage/`) and `valgrind` (memcheck on the stress script — uninitialised reads, definite leaks;
+`tests/valgrind.supp` + GLib's `glib.supp`).
 
 ```sh
-./ci.sh                          # everything (tests included)
-./ci.sh --fix                    # clang-tidy/clang-format/phpcbf/php-cs-fixer fixes, then check
-./ci.sh --only=test              # one stage; --only=cpp-lint,php-qa for several
-./ci.sh --skip=cpp-lint,php-qa   # fast edit-build-test loop
-./ci.sh --filter SignalTest      # unknown args go to phpunit
-./ci.sh --no-stan                # php-qa without phpstan
+./ci.sh                                 # default stages (tests included)
+./ci.sh --fix                           # clang-tidy/clang-format/phpcbf/php-cs-fixer fixes + stub regeneration
+./ci.sh --only=test                     # one stage; --only=cpp-lint,php-qa for several
+./ci.sh --skip=cpp-lint,php-qa          # fast edit-build-test loop
+./ci.sh --filter SignalTest             # unknown args go to phpunit
+./ci.sh --no-stan                       # php-qa without phpstan
 ./ci.sh --with=asan,coverage,valgrind   # default stages + all extra ones (what CI runs in total)
-./ci.sh --only=asan --filter X   # sanitizer run of one test class
+./ci.sh --only=asan --filter X          # sanitizer run of one test class
+./ci.sh --skip=tidy | --skip=format     # sub-steps of cpp-lint; --skip=stan | --skip=style for php-qa
+./ci.sh --only=phpt                     # run-tests.php only (PHPT_TESTS=tests/phpt/x.phpt for one)
+./ci.sh --only=md-lint --fix            # markdownlint over **/*.md, applying the fixable rules
+./ci.sh --only=version --fix            # rewrite the version mirrors from ./VERSION (then --only=stubs --fix)
 ```
 
-Env:
-`PHP`, `PHP_CONFIG`, `PHPCPP_STATIC`/`PHPCPP_BASE`, `BUILD_DIR`, `JOBS` (default nproc, used by every
-tool), `CLANG_TIDY`, `CLANG_FORMAT` (default: newest installed `clang-*-N`; CI and `.vscode` use 20).
+Env: `PHP`, `PHP_CONFIG`, `PHPIZE`, `JOBS` (default nproc, used by every tool), `CLANG_TIDY`,
+`CLANG_FORMAT` (default: newest installed `clang-*-N`; CI and `.vscode` use 20), `COMPOSER`,
+`PHPT_TESTS` (default `tests/phpt`).
 
+C++: `.clang-tidy` has a documented deny-list (GLib and Zend macro expansions: do/while, varargs,
+void* casts, zval union access, ZPP cognitive complexity, C-array tables); everything else is
+enforced with `WarningsAsErrors: '*'` and **CI fails on any finding** — there is no backlog, keep
+it that way. `SortIncludes` is off; don't reorder includes. Use `// NOLINTNEXTLINE(check) reason`
+(not trailing `// NOLINT`, which clang-format wraps onto its own line and thereby disables) only
+for findings inside GLib/Zend macro expansions. The generated `src/gtk4_arginfo.h` is not linted.
 
-C++: `.clang-tidy` has a documented deny-list (GLib macros, PHP-CPP slicing); everything else is
-enforced and **CI fails on any finding** — there is no backlog, keep it that way. `SortIncludes` is
-off; don't reorder includes. Use `// NOLINT(check)` only for findings inside GLib macro expansions.
+Markdown: `markdownlint-cli2` over every `*.md`, configured in `.markdownlint-cli2.jsonc`. Prose
+wraps at 110 columns (tables, fenced code and headings exempt), emphasis is `*asterisks*` (MD049/
+MD050) because underscores are everywhere in snake_case identifiers, and MD060 table padding is
+off. `--fix` applies the structural rules (blank lines around headings/lists/fences); line length
+is rewrapped by hand. The stage prefers a global `markdownlint-cli2` and falls back to `npx`.
+
+## PHP QA
+
+`php-qa` = phplint → phpcs (PSR-12) → php-cs-fixer (PER-CS 2.0) → phpstan (level max) over
+`tests/`, `examples/`, `gen/ide-stub.php`. Like `cpp-lint`, each formatter is **one** step that either
+checks or fixes: without `--fix` phpcs reports and php-cs-fixer prints a diff; with `--fix` phpcbf and
+`php-cs-fixer fix` apply the changes and no diff is printed. phpcs still gates in `--fix` mode, because
+it is the only one that reports what no fixer can repair (line length above 120). Every tool runs on
+all cores. The tools run with
+gtk3/gtk4 filtered out of the ini scan dir, so PHPStan resolves `Gtk4\*` from the generated
+`stubs/gtk4.php` only — a stub with wrong types fails PHPStan on the tests that use it. Generated
+`stubs/gtk4.php`, the php-src-syntax `src/gtk4.stub.php` and vendored `gen/gen_stub.php` are
+excluded from the style tools. Configs: `phpstan.neon`, `.php-cs-fixer.dist.php`, `phpcs.xml.dist`,
+`.phplint.yml`.
 
 ## Definition of done for a new element
 
 Every new class, method or constant ships with **all four** in the same change:
 
-1. the C++ wrapper + registration (`register_*()`),
+1. the `ZEND_METHOD` implementation + registration in `src/gtk4.cpp` MINIT,
 2. **tests** in `tests/` — a test class per new GTK class (extend `GtkTestCase`), every method
    exercised at least once, including its error path,
-3. an entry in **`stubs/gtk4.php`** (typed signature, docblock, dummy body — `StubsTest` enforces),
-4. a realistic use in **`examples/example.php`**, the canonical showcase — `ExampleTest` fails if a
-   registered class is not used there.
-
-## PHP QA
-
-Covers `tests/`, `examples/`, `stubs/`, `gen/`. Every tool runs on all cores (`JOBS`, default
-`nproc`: `phplint -j`, `phpcs --parallel`, `phpstan --threads`, php-cs-fixer auto-detects).
-The tools run with gtk3/gtk4 filtered out of the ini scan dir, so PHPStan resolves `Gtk4\*` from
-`stubs/gtk4.php` only — a stub with wrong types fails PHPStan on the tests that use it. Configs:
-`phpstan.neon`, `.php-cs-fixer.dist.php`, `phpcs.xml.dist`, `.phplint.yml`. CI job `php-qa` runs
-the same script and fails on any finding.
+3. its declaration in **`src/gtk4.stub.php`** (typed signature, docblock, `@property` tags) +
+   regenerated `src/gtk4_arginfo.h` and `stubs/gtk4.php` (`./ci.sh --only=stubs --fix`;
+   `StubsTest`/CI enforce),
+4. **`examples/<Class>.php`** — one source file per registered class, named after it, ending in
+   `return Demo::page('<Class>', '<summary>', function (GtkWindow $win, GtkApplication $app) {...})`
+   and requiring `examples/bootstrap.php` (with `require_once`). The file *describes* a demo and runs
+   nothing — `examples/demo.php` requires them all, so anything that ran itself would fire on import.
+   That one application mounts every page (header, sidebar, content — all `GtkBox`); `demo.php
+   <Class>` shows one on its own. Also add the class to `Demo::SECTIONS` in `examples/bootstrap.php`
+   or it is unreachable in the sidebar. Make it *visual*: open a window that shows what the class does
+   (a markup `GtkLabel` or a cairo `GtkDrawingArea`, often inside a `GtkButton` so clicking advances
+   the demo) rather than printing about it, and use `Demo::status()` rather than `set_title()` for
+   incidental state. **The `$win` a page is handed is the application's own window** when `demo.php`
+   mounts it: read it, but never veto its `close-request`, make it modal, or destroy it — a page that
+   did made the application unclosable. A page that needs a window to play with creates one
+   (`GtkWindow.php`, `GParamSpec.php`). `ExampleTest` enforces all of this; `examples/README.md`
+   indexes them.
 
 ## Tests
 
-PHPUnit 11 (`composer install` once; `vendor/` is gitignored).
+Two harnesses. **PHPUnit 12** (`tests/*.php`, `composer install` once; `vendor/` is gitignored) is
+the primary one and where every new class/method is tested. **`tests/phpt/`** is php-src's
+`run-tests.php`, run by `./ci.sh --only=phpt`, and only carries assertions PHPUnit structurally
+cannot make (see the end of this section).
 
 ```sh
-./tests/run.sh                                  # whole suite  (= make test)
-./tests/run.sh --filter SignalTest              # one class
+./ci.sh --only=test                             # whole suite
+./ci.sh --only=test --filter SignalTest         # one class
 ./tests/run.sh --filter 'ErrorTest::testNullRemovesHandler$'
 GTK4_SO=/path/gtk4.so ./tests/run.sh            # against another build (default ./gtk4.so)
+./ci.sh --only=phpt                             # run-tests.php over tests/phpt
+PHPT_TESTS=tests/phpt/error-log-signal.phpt ./ci.sh --only=phpt   # one .phpt
 ```
 
 `tests/run.sh` = `xvfb-run -a bin/php-gtk4 vendor/bin/phpunit`: Xvfb for the display, `bin/php-gtk4`
@@ -115,69 +178,187 @@ so gtk3 is filtered out while dom/mbstring/tokenizer (needed by PHPUnit) stay lo
 does not work here. `tests/bootstrap.php` refuses to run without gtk4, with gtk3, or without a
 display, and calls `Gtk::init()` once.
 
-- One test class per `src/core` module: `WrapTest`, `MarshalTest`, `SignalTest`, `ErrorTest`, plus
-  `ExtensionTest`, `MainLoopTest`, `StubsTest`. Extend `GtkTestCase` — `$this->window()` gives a
-  `GtkWindow` that is destroyed in `tearDown()`, `captureHandlerException()` installs a temporary
-  `Gtk::set_exception_handler`.
+- One test class per `src/core` module: `WrapTest`, `MarshalTest`, `SignalTest`, `ErrorTest`,
+  `PropertyAccessTest`, `RethrowModeTest`, `BoxedTest`, `ParamSpecTest`, `WidgetTest`, `ActionTest`
+  (variants + interfaces), `ShutdownTest`, `EnumTest`, `FoundationTest` (collections/fundamental/
+  out-params), `TextureTest` (+ `GError`), `ListStoreTest`, `FilterSortTest`, `DrawingAreaTest`
+  (+ `CairoContext`), `BoxTest`, plus `ExtensionTest`, `MainLoopTest` (GMainLoop + GLib sources),
+  `ApplicationTest`, `StubsTest`, `ExampleTest`, `EveryClassTest`, `RobustnessTest`, `DocsTest`. Extend `GtkTestCase`
+  — `$this->window()` gives a `GtkWindow` destroyed in
+  `tearDown()`, `captureHandlerException()` installs a temporary `Gtk::set_exception_handler`,
+  `latch()`/`latched()` for flags set from GTK callbacks, `opaque()` to pass deliberately wrong
+  arguments past static analysis.
+- `--enable-gtk4-testing` (what the `asan`/`coverage` variants use, `Gtk4\FEATURES` says
+  `testing=yes`) compiles the `Gtk::testing_*` hooks: methods declared in the stub inside
+  `#if defined(PHPGTK_TESTING)` blocks, absent from the shipped `.so` (the IDE stub keeps them so
+  PHPStan can type the tests), used by tests that need C-driven behaviour PHP cannot produce
+  (`testing_iterate_nested()` = a GTK-internal nested main loop). Tests that need one check
+  `ini_get('gtk4.features')` for `testing=yes` and `markTestSkipped()` otherwise.
 - Tests are the *only* thing that exercises the C++ — a segfault shows up as PHPUnit dying
   mid-run; isolate with `--filter 'Class::method$'` per test to find it.
-- `ExampleTest` checks `examples/example.php` uses every registered class and lints it.
 - `EveryClassTest` constructs every instantiable class and calls every arg-less `get_*/is_*/has_*`
-  — generic on purpose, never edit it for a new class; it found the arginfo/segfault bug on day one.
-- `tests/scripts/stress.php` (not PHPUnit) churns handles/signals/exceptions/lifetimes N rounds and
-  exits normally; used by the `asan` (with LSan) and `coverage` stages. Extend it when adding runtime
-  paths. `tests/lsan.supp` and `tests/valgrind.supp` may only contain third-party symbols.
+  — generic on purpose, never edit it for a new class.
+- `ExampleTest` checks that every registered class has its own `examples/<Class>.php`, that the file
+  mentions the class outside its imports, requires the shared harness, returns a page and never runs
+  itself, that the page set and the registered-class set are identical, that `Demo::SECTIONS` lists
+  every class exactly once, and lints every file in `examples/`.
 - `MarshalTest` uses real `GtkWindow` properties per fundamental type (`title` string,
   `default-width` int, `resizable` bool, `opacity` double, `halign` enum, `display` object,
   `css-classes` = unsupported GStrv). Add a row when the marshaller learns a type.
+- `tests/scripts/stress.php` (not PHPUnit) churns handles/signals/exceptions/lifetimes N rounds and
+  exits normally; used by the `asan` (with LSan), `coverage` and `valgrind` stages. Extend it when
+  adding runtime paths. `tests/lsan.supp` and `tests/valgrind.supp` may only contain third-party
+  symbols.
+- `tests/run.sh` pins **`GDK_BACKEND=x11`** (and `GSK_RENDERER=cairo`, `GDK_DEBUG=gl-disable`): with
+  `WAYLAND_DISPLAY` set in a developer session GDK would ignore the Xvfb `DISPLAY` and run the suite
+  on the real compositor — GTK 4.14's Wayland backend then corrupts the heap after enough windows
+  are presented/destroyed (`malloc(): unaligned fastbin chunk`, write into a freed block inside
+  libgtk, zero frames of ours). Xvfb/X11 is the test target; Wayland is exercised manually.
 - `tests/run.sh` forces `XDEBUG_MODE=off`: xdebug's develop-mode observer segfaults at request
-  shutdown after `ReflectionMethod::invoke()` on PHP-CPP methods. Not our bug; don't debug it.
-- Methods are registered **with arginfo** (`Php::ByVal(...)`) so reflection/stubs/PHP arity checks
-  agree; PHP-CPP answers an arity violation with `E_WARNING` + no call, the C++ validates again.
+  shutdown after `ReflectionMethod::invoke()` on internal methods. Not our bug; don't debug it.
+- It also forces `GDK_BACKEND=x11` and unsets `WAYLAND_DISPLAY` — **forced, not defaulted**. A
+  desktop session exports `GDK_BACKEND=wayland`, GDK then prefers the real compositor over the
+  display Xvfb provides, and GTK 4.14's Wayland backend corrupts the heap partway through the suite
+  (`gtk_widget_queue_draw: assertion 'GTK_IS_WIDGET (widget)' failed`, then a `malloc()` abort around
+  test 252). CI never saw it because runners have no compositor. `GSK_RENDERER` and `GDK_DEBUG` stay
+  overridable on purpose (docs/PLAN.md wants a `GSK_RENDERER=gl` run); the backend must not be.
+- Arginfo comes from the stub, argument parsing from `ZEND_PARSE_PARAMETERS_*` — arity/type
+  violations are `ArgumentCountError`/`TypeError` (PHP 8 semantics).
 - GLib `CRITICAL` lines on stderr from `ErrorTest` are expected (the g_critical fallback path for
   the no-handler case). They cannot be captured from PHP and must not be turned into PHP warnings
-  (PHPUnit would throw inside the C++ callback). `tests/run.sh` sets `GSK_RENDERER=cairo` so GTK
-  does not try EGL under Xvfb (silences `libEGL warning: DRI3`).
+  (PHPUnit would throw inside the C callback). `tests/run.sh` sets `GSK_RENDERER=cairo` so GTK
+  does not try EGL under Xvfb. **Their text is asserted in `tests/phpt/` instead**, where
+  run-tests.php compares the process's stderr.
+- `tests/phpt/` (`make test` / `./ci.sh --only=phpt`, see `tests/phpt/README.md`): one process per
+  test, expected output covers stdout **and** stderr. Put a test here only for what PHPUnit cannot
+  reach — `g_critical`/GLib warning text, uncaught fatals and exit codes, RSHUTDOWN teardown
+  output, `--INI--`/`--ENV--` dependent startup, and crash isolation (run-tests names the crashing
+  test and continues, PHPUnit just dies). Everything else belongs in `tests/*.php`.
+  `make test` strips every `extension=` line from the scanned ini into `tmp-php.ini` and re-adds
+  only `modules/gtk4.so`, so gtk3 is filtered out here without `bin/php-gtk4`
+  (`extension-isolation.phpt` guards that). Failures leave `.out`/`.diff` next to the `.phpt`
+  (gitignored). Display-dependent tests guard with `--SKIPIF--` on `tests/phpt/skipif-display.inc`.
 
-- `stubs/gtk4.php` is the IDE stub file (classes, typed signatures, docblocks). Every new class,
-  method or constant must be added there; `tests/StubsTest.php` diffs it against
-  `ReflectionExtension('gtk4')` and fails otherwise. **Stub methods must have dummy bodies**, not
-  `{}`: `unset()` every parameter and end non-void methods with a placeholder `return` matching the
-  declared type (`return 0;`, `return false;`, `return null;`, `return '';`) — otherwise VS Code /
-  Intelephense reports "Not all paths return a value" and unused-parameter warnings.
+## Local gates
 
-- `.github/copilot-instructions.md` is a one-liner pointing at this file — keep project-wide
-  conventions here only, never in both.
+`git config core.hooksPath .githooks` once per clone: `pre-commit` runs the fast checks (version, stubs,
+PHP style without phpstan, clang-format, markdownlint) in one `ci.sh` call and stamps the tree hash in
+`.git/gtk4-precommit-tree`; `pre-push` runs `./ci.sh` and, when the stamp matches `HEAD^{tree}` and the
+tree is clean, skips exactly those steps (`--skip=version,stubs,md-lint,format,style`) — a `--no-verify`
+commit gets the full run. `--no-verify` skips once.
+ZTS builds are supported: all per-request state is in the module globals (`src/core/globals.h`,
+`GTK4_G(x)`), never in a plain static — GType/class registries filled once in MINIT are the only
+process-wide statics allowed. GTK itself stays single-threaded (`assert_gui_thread()`); CI builds
+one ZTS variant. Coverage has a floor
+(`COVERAGE_MIN_LINES`, default 80). `RobustnessTest` calls every method with garbage arguments;
+`DocsTest` guards CLAUDE.md sections and doc-mentioned paths. `CHANGELOG.md` has the release
+checklist; Dependabot watches composer and actions.
 
 ## CI
 
-PHP-CPP in CI is `apss-pohl/PHP-CPP@4d1a856`; bump that SHA in both `cpp-lint.yml` and `tests.yml`
-together. Three workflows (one per README badge): `.github/workflows/cpp-lint.yml`, `php-qa.yml`,
-`tests.yml`. (1) static analysis — setup-php 8.4, GTK4 headers, PHP-CPP
-*headers only*, `make compile_commands`, cpp-linter over the whole tree, fails on findings;
-(2) build PHP-CPP + extension and run `tests/run.sh` over a PHP {8.4, 8.5} × Ubuntu {24.04, 26.04}
-matrix (four jobs; `fail-fast: false`), plus `sanitizers` (`ci.sh --only=valgrind` + `--only=asan`) and `coverage`
-(`ci.sh --only=coverage`, gcovr HTML artifact) jobs on 24.04/8.4. The apt package list must mirror the
-Makefile's `GTK_PKGS`.
+Four workflows (three have a README badge): `.github/workflows/cpp-lint.yml`, `php-qa.yml`,
+`tests.yml`, `release.yml`. (1) static analysis — setup-php 8.4, GTK4/WebKitGTK headers, clang 20
+from apt.llvm.org, `phpize && ./configure` (for `config.h`), then `./ci.sh --only=stubs` and
+`./ci.sh --only=cpp-lint` (same clang-tidy/clang-format stage as locally, any finding fails);
+(2) `./ci.sh --only=php-qa` + `--only=md-lint`; (3) build the extension and run the
+PHPUnit suite *and* `./ci.sh --only=phpt` for PHP 8.4 and 8.5 on Ubuntu 24.04 (`fail-fast: false`;
+failing `.out`/`.diff` files upload as the `phpt-failures-php*` artifact), plus `sanitizers`
+(`ci.sh --only=valgrind` + `--only=asan`) and `coverage` (`--only=coverage`, gcovr HTML artifact)
+jobs on 8.4. The apt package lists must mirror `config.m4`'s pkg-config modules.
+(4) `release.yml` on every push to `main`: reads `VERSION` and either publishes an immutable
+`vX.Y.Z-dev.<run>` pre-release (suffix `-dev`; the newest 5 are kept, older ones deleted with their
+tags) or the real `vX.Y.Z` release (no suffix, once),
+after running `./ci.sh` in full itself — it does not key off `tests.yml`. Assets are one `.so` per
+supported PHP named with its whole ABI identity, plus the source tarball and `SHA256SUMS`, with
+build provenance attestation instead of a signed tag. **`VERSION` is the only release trigger; never
+create a tag or a release by hand.** docs/RELEASING.md is the full description.
+`.github/copilot-instructions.md` is a one-liner pointing at this file — keep project-wide
+conventions here only.
 
 ## Architecture
 
-- `src/core/` — hand-written runtime. `wrap` (GObject handle: owns a ref, qdata back-pointer for
-  identity, nearest-registered-class lookup), `marshal` (the single `GValue` ↔ `Php::Value`
-  bridge), `gsignal` (`connect()` via a `GClosure` with a GValue-array marshaller — no varargs),
-  `error` (the exception boundary + `Gtk::set_exception_handler`), `params` (typed arg helpers).
-- `src/Gtk/` — hand-written classes until the generator exists; `register_Gtk()` is called from
-  `main.cpp`. PHP-CPP initialises classes in `ext.add()` order: **add the parent first** (copy overload),
-  then pass it to children for `extends()` — a derived class added before its base silently loses it.
-- `src/gen/` — generator output (milestone 3, GIR-driven; never hand-edit). `gen/overrides/`
-  replaces individual generated method bodies.
-- **Everything PHP-visible is in the `Gtk4\` namespace** (`Php::Namespace` in `main.cpp`;
-  `register_*()` take a `Php::Namespace&`). Class name = `Gtk4\<GTypeName>` via
-  `phpgtk::php_class_name()`. Constants too (`Gtk4\PHPGTK_VERSION`). Every registered class also
-  calls `register_wrapper<T_>("GTypeName")` so `wrap()` constructs the exact C++ type for that PHP
-  class (PHP-CPP casts `Php::Base*` to `T*`; allocating only the base is UB — UBSan catches it in
-  `ci.sh --only=asan`).
-  Stubs declare `namespace Gtk4;`, scripts `use Gtk4\{Gtk, GtkWindow};`.
-- Exception rule (from php-gtk3, keep it): a PHP throwable must never unwind through GLib frames.
-  Trampolines catch `Php::Throwable` around their whole body, copy message/code, leave the catch
-  scope, then call `phpgtk::report_callback_exception()`.
+- `src/core/` — the runtime. `object` (`struct Object { GObject *obj; zend_object std; }`, the
+  object handlers: `free_obj`, no clone, `read/write/has_property` mapping `$obj->prop`
+  (underscores → dashes) to GObject properties, `get_debug_info` for `var_dump`; owned ref + qdata
+  identity + weak ref; the GType-name → `zend_class_entry` registry; `wrap()`/`unwrap()`/
+  `PHPGTK_SELF`), `marshal` (the single `GValue` ↔ `zval` bridge), `gsignal` (`connect()` via a
+  `GClosure` with a GValue-array marshaller, callable resolved with `zend_fcall_info_init` and
+  invoked with `zend_call_function`), `error` (the exception boundary:
+  `report_pending_exception()` takes `EG(exception)`, hands the real `Throwable` to
+  `Gtk::set_exception_handler`, else `g_critical`), `boxed` (value-type handles: owned
+  `g_boxed_copy`, clone/compare by value, fields as properties via per-class reader/writer;
+  `GdkRGBA`, `GdkRectangle`; `GStrv` ↔ `list<string>` is a value mapping), `variant` (`GVariant` ↔
+  PHP values, type-directed or inferred), `paramspec` (`GParamSpec` handle), `gerror`
+  (`throw_gerror()` for `GError **` APIs,
+  `GError` values → `Gtk4\GError` exceptions), `cairo` (`CairoContext` registration),
+  `phpvalue` (GType `PhpValue`: a GObject subclass carrying a zval so PHP data can sit in
+  `GListStore`; instances drained in RSHUTDOWN), `collections` (`GList`/`GSList`/`GPtrArray`/`char**`
+  → PHP lists with GIR transfer semantics),
+  `fundamental` (registry-driven handles for refcounted non-GObject types: `GParamSpec`,
+  `CairoContext` (cairo_t via cairo-gobject; marshal's boxed arm falls back to this registry),
+  `GdkEvent` etc. later; `new X()` on them throws), `enums` (GEnum ↔ int-backed PHP enum via a GType
+  registry; cases declared literally in the stub
+  and verified against the `GEnumClass` at RINIT — a mismatch is fatal; GFlags stay ints with
+  constant classes (values literal in the stub, verified against the `GFlagsClass` at RINIT);
+  unregistered enum types stay ints), `callback` (non-signal
+  callables; `callback_free()` only parks the callable, `callback_drain()` releases it at a safe
+  point because destroy notifies run inside GTK frames), `teardown` (RSHUTDOWN disconnects every
+  tracked closure/source and clears every notified-scope callable so nothing finalizes
+  after Zend is gone — `tests/scripts/shutdown.php` guards it), `mainloop` (running-loop registry
+  for `ExceptionMode::Rethrow`).
+- `src/GLib/`, `src/GObject/`, `src/Gio/`, `src/Gdk/`, `src/Gtk/`, `src/Cairo/` — `ZEND_METHOD`
+  implementations, one directory per GIR namespace, one file per class (`GtkFilter.cpp` and
+  `GtkSorter.cpp` also hold their `GtkCustom*`/`*ListModel` siblings because they share the
+  trampoline; `PhpValue`, our own GObject subclass, sits in `src/GObject/`). `src/core/` holds no
+  `ZEND_METHOD`s. Registration lives in `src/gtk4.cpp` MINIT in exactly three shapes:
+  `register_class("GTypeName", register_class_Gtk4_X(parent_ce), G_TYPE_X)` for GObject handles,
+  parents first — `register_class()` installs `create_object` (inherited by subclasses registered
+  afterwards) and records the GType → class mapping `wrap()` uses — pass the `*_TYPE_*` macro, never
+  look types up by name at MINIT (GTK registers GTypes lazily); `register_enum/flags(GTK_TYPE_X,
+  register_class_Gtk4_X())` for enums; and `register_X(register_class_Gtk4_X())` for everything
+  else (boxed, fundamental, own object layout), declared in `src/classes.h` and defined next to
+  the class. Interfaces (`GAction`, `GActionMap`, `GActionGroup`, `GListModel`) come from
+  `implements` in the stub (gen_stub emits `zend_class_implements`); when an interface's methods
+  have one C implementation, write it **once** as `ZEND_METHOD(Gtk4_<Interface>, m)`
+  (`src/Gio/GListModel.cpp`, prototypes in its header) and tag every implementing class's method
+  in the stub with `/** @implementation-alias Gtk4\<Interface>::m */` — gen_stub emits a
+  `ZEND_MALIAS`, no per-class C++. `G_TYPE_POINTER` is unsupported on purpose.
+- `gen/` — `gen_stub.php` (vendored), `ide-stub.php`; the GIR generator (docs/PLAN.md milestone 3) will
+  live here and emit stub sections, `ZEND_METHOD` skeletons and the MINIT block.
+- **Everything PHP-visible is in the `Gtk4\` namespace**; PHP class name = `Gtk4\<GTypeName>`, and
+  `wrap()` walks the GType parent chain to the nearest registered class. Constants:
+  `Gtk4\VERSION`, `BUILD_INFO`, `FEATURES`. One `Object` struct serves every class (all per-class
+  state lives in the GObject).
+- Exception rule (from php-gtk3, keep it): a PHP throwable must never unwind through GLib frames,
+  and Zend refuses to run PHP while one is pending. Every trampoline ends with
+  `phpgtk::report_pending_exception(origin)`, which implements `Gtk4\ExceptionMode`: `Log`
+  (handler/g_critical, GTK continues) or `Rethrow` (handler, then the Throwable stays pending,
+  `quit_running_loops()` stops `GMainLoop::run`/`GtkApplication::run`, and it propagates to PHP).
+  Non-signal callbacks go through `src/core/callback.*` with the installing method as origin;
+  typed C callbacks (`GtkDrawingAreaDrawFunc`, `GtkCustomFilterFunc`, `GCompareDataFunc`) follow
+  the trampoline rule in docs/PLAN.md ("Typed C callbacks") — `src/Gtk/GtkDrawingArea.cpp`,
+  `GtkFilter.cpp`, `GtkSorter.cpp` are the templates.
+- Main loop: `GtkApplication::run()` (preferred) or `GMainLoop` + `GLib::idle_add/timeout_add`;
+  `GLib::main_context_iteration()` pumps one iteration without handing over control. There is no
+  `Gtk::main()`. Rethrow mode leaves the Throwable pending only when the next return lands in
+  PHP; inside an *unregistered* nested loop (`g_main_depth()` deeper than the innermost
+  registered `run()`) it is **parked** (`core/error.cpp`), handlers keep running, and the next
+  `run()`/`main_context_iteration()` returning to PHP rethrows it — never drop it.
+  `connect()` takes exactly `(string $signal, callable $handler)` — no user data, closures capture
+  with `use`. `emit()` emits with converted arguments (use it in tests instead of `activate()`,
+  whose `clicked` needs a realized widget).
+- Actions: `GSimpleAction` + `GtkApplication::add_action()`; GVariant parameters/states are plain
+  PHP values. `has_action/list_actions/activate_action` only work once the app is registered
+  (from `startup` on); `add/remove/lookup_action` always. Errors raised *to* PHP from methods use the PHP 8
+  vocabulary, by what went wrong: bad *argument* → `zend_argument_value_error`/`zend_type_error`/
+  `zend_value_error` (`ValueError`/`TypeError`); the wrapped object is in the wrong *state* for the
+  call (running loop, stateless action) → `spl_ce_LogicException`; the *handle itself* cannot do
+  it — dead GObject, `new`/`clone` of a C-created handle, `unset()` of a GObject property → plain
+  `\Error` via `zend_throw_error(nullptr, …)`, as the engine does for readonly/uncloneable. Shared
+  helpers: `PHPGTK_RETURN_STRING_OR_NULL(expr)` for nullable C strings (`php_gtk4.h`),
+  `src/Gtk/children.h` for `?GtkWidget` arguments and the unparented/child-of checks every
+  container needs.
+- **Naming is snake_case, final** (decided 2026-08-25, docs/PLAN.md): methods mirror the GTK C API
+  with the type prefix stripped (`gtk_window_set_title` → `set_title`), properties keep GTK's names
+  with underscores (`$win->default_width`). Never add camelCase aliases; the phpcs camelCaps
+  exclusion for the stub is intentional.

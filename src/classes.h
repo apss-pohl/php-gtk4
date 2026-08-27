@@ -1,0 +1,14 @@
+// MINIT hooks of the classes that are not plain GObject handles: boxed values,
+// fundamental handles and classes with their own object layout. Each one gets the
+// class entry gen_stub created and installs handlers / registry entries. Called
+// from src/gtk4.cpp only (the generator will emit both this list and that block).
+#pragma once
+#include "php_gtk4.h"
+
+namespace phpgtk {
+void register_GMainLoop(zend_class_entry *ce);     // own object layout (GLib/GMainLoop.cpp)
+void register_GParamSpec(zend_class_entry *ce);    // fundamental (core/paramspec.cpp)
+void register_CairoContext(zend_class_entry *ce);  // fundamental (Cairo/CairoContext.cpp)
+void register_GdkRGBA(zend_class_entry *ce);       // boxed (Gdk/GdkRGBA.cpp)
+void register_GdkRectangle(zend_class_entry *ce);  // boxed (Gdk/GdkRectangle.cpp)
+}  // namespace phpgtk

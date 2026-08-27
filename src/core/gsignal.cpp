@@ -1,84 +1,160 @@
 #include "gsignal.h"
-#include "wrap.h"
-#include "marshal.h"
 #include "error.h"
-#include <string>
+#include "marshal.h"
+#include "object.h"
+#include "teardown.h"
 
 namespace phpgtk {
 
 struct PhpClosure {
   GClosure closure;  // must be first
-  Php::Value callable;
-  Php::Array user_args;
-  std::string signal_name;
+  zval callable;     // keeps the handler alive
+  zend_string *signal_name;
 };
 
+// GClosure finalize notifier: untrack, release the callable and the signal name.
 static void closure_finalize(gpointer, GClosure *c) {
   auto *pc = reinterpret_cast<PhpClosure *>(c);
-  // Runs when the handler is disconnected or the instance dies - while PHP is
-  // still up as long as shutdown disconnects handlers before Zend teardown.
-  pc->callable.~Value();
-  pc->user_args.~Array();
-  pc->signal_name.~basic_string();
+  teardown_untrack_closure(c);
+  zval_ptr_dtor(&pc->callable);
+  zend_string_release(pc->signal_name);
 }
 
+// GClosure marshaller: GValue params -> zvals, call the handler, convert its return value.
 static void closure_marshal(GClosure *c, GValue *return_value, guint n_params, const GValue *params,
                             gpointer, gpointer) {
   auto *pc = reinterpret_cast<PhpClosure *>(c);
+  const char *origin = ZSTR_VAL(pc->signal_name);
 
-  std::string err;
-  long code = 0;
-  bool failed = false;
+  // Rethrow mode: an earlier callback of this emission already threw; Zend
+  // would not run this one anyway, and we must not touch the pending state.
+  if (EG(exception) != nullptr) return;
 
-  try {
-    Php::Value args;
-    for (guint i = 0; i < n_params; i++) args[(int)i] = to_php(&params[i]);
-    int n = (int)n_params;
-    for (const auto &kv : pc->user_args) args[n++] = kv.second;
-
-    Php::Value ret = Php::call("call_user_func_array", pc->callable, args);
-
-    if (return_value != nullptr && G_VALUE_TYPE(return_value) != G_TYPE_INVALID) {
-      GValue tmp = G_VALUE_INIT;
-      to_gvalue(ret, G_VALUE_TYPE(return_value), &tmp);
-      g_value_copy(&tmp, return_value);
-      g_value_unset(&tmp);
-    }
-  } catch (Php::Throwable &t) {
-    err = t.what();
-    code = t.code();
-    failed = true;
+  zend_fcall_info fci;
+  zend_fcall_info_cache fcc;
+  if (zend_fcall_info_init(&pc->callable, 0, &fci, &fcc, nullptr, nullptr) != SUCCESS) {
+    g_critical("php-gtk4: handler for '%s' is no longer callable", origin);
+    return;
   }
-  // Report only after the catch scope has been left (see error.h).
-  if (failed) report_callback_exception(err, code, pc->signal_name.c_str());
+
+  auto *args = static_cast<zval *>(safe_emalloc(n_params, sizeof(zval), 0));
+  uint32_t filled = 0;
+  for (guint i = 0; i < n_params; i++) {
+    to_php(&params[i], &args[i]);
+    filled++;
+    if (EG(exception) != nullptr) break;  // unsupported type: reported below
+  }
+  if (EG(exception) == nullptr) {
+    zval retval;
+    ZVAL_UNDEF(&retval);
+    fci.retval = &retval;
+    fci.params = args;
+    fci.param_count = n_params;
+    zend_call_function(&fci, &fcc);
+
+    if (EG(exception) == nullptr && return_value != nullptr && !Z_ISUNDEF(retval) &&
+        G_VALUE_TYPE(return_value) != G_TYPE_INVALID) {
+      GValue tmp = G_VALUE_INIT;
+      if (to_gvalue(&retval, G_VALUE_TYPE(return_value), &tmp)) {
+        g_value_copy(&tmp, return_value);
+        g_value_unset(&tmp);
+      }
+    }
+    zval_ptr_dtor(&retval);
+  }
+  for (uint32_t i = 0; i < filled; i++) zval_ptr_dtor(&args[i]);
+  efree(args);
+
+  // Whatever happened above - marshalling, the handler, the return conversion -
+  // goes through the exception policy; nothing unwinds into GLib.
+  report_pending_exception(origin);
 }
 
-Php::Value signal_connect(GObjectWrapper *self, Php::Parameters &params, bool after) {
-  if (self->obj() == nullptr) throw Php::Exception("connect() on a dead GObject");
-  if (params.size() < 2)
-    throw Php::Exception("connect() expects (string $signal, callable $handler, ...)");
-  std::string name = params[0];
-  if (!Php::call("is_callable", params[1]).boolValue()) {
-    throw Php::Exception("connect(): handler for '" + name + "' is not callable");
-  }
+// Shared body of GObject::connect() / connect_after().
+void signal_connect_method(INTERNAL_FUNCTION_PARAMETERS, bool after) {
+  zend_string *signal;
+  zend_fcall_info fci;
+  zend_fcall_info_cache fcc;
+
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_STR(signal)
+  Z_PARAM_FUNC(fci, fcc)
+  ZEND_PARSE_PARAMETERS_END();
+
+  GObject *obj = self_object(execute_data, G_TYPE_OBJECT, after ? "connect_after" : "connect");
+  if (obj == nullptr) RETURN_THROWS();
 
   guint signal_id = 0;
   GQuark detail = 0;
-  if (!g_signal_parse_name(name.c_str(), G_OBJECT_TYPE(self->obj()), &signal_id, &detail, TRUE)) {
-    throw Php::Exception("unknown signal '" + name + "' on " + G_OBJECT_TYPE_NAME(self->obj()));
+  if (!g_signal_parse_name(ZSTR_VAL(signal), G_OBJECT_TYPE(obj), &signal_id, &detail, TRUE)) {
+    zend_value_error("unknown signal '%s' on %s", ZSTR_VAL(signal), G_OBJECT_TYPE_NAME(obj));
+    RETURN_THROWS();
   }
 
   auto *pc = reinterpret_cast<PhpClosure *>(g_closure_new_simple(sizeof(PhpClosure), nullptr));
-  new (&pc->callable) Php::Value(params[1]);
-  new (&pc->user_args) Php::Array();
-  new (&pc->signal_name) std::string(name);
-  for (size_t i = 2; i < params.size(); i++) pc->user_args[(int)(i - 2)] = params[i];
+  ZVAL_COPY(&pc->callable, &fci.function_name);
+  pc->signal_name = zend_string_copy(signal);
 
   g_closure_add_finalize_notifier(&pc->closure, nullptr, closure_finalize);
   g_closure_set_marshal(&pc->closure, closure_marshal);
+  gulong id = g_signal_connect_closure_by_id(obj, signal_id, detail, &pc->closure, after);
+  teardown_track_closure(&pc->closure, obj, id);
+  RETURN_LONG(static_cast<zend_long>(id));
+}
 
-  gulong id = g_signal_connect_closure_by_id(self->obj(), signal_id, detail, &pc->closure, after);
-  return (int64_t)id;
+// Body of GObject::emit(): validates the signal, converts the arguments, g_signal_emitv().
+void signal_emit_method(INTERNAL_FUNCTION_PARAMETERS) {
+  zend_string *signal;
+  zval *args = nullptr;
+  uint32_t argc = 0;
+  ZEND_PARSE_PARAMETERS_START(1, -1)
+  Z_PARAM_STR(signal)
+  Z_PARAM_VARIADIC('*', args, argc)
+  ZEND_PARSE_PARAMETERS_END();
+
+  GObject *obj = phpgtk::self_object(execute_data, G_TYPE_OBJECT, "emit");
+  if (obj == nullptr) RETURN_THROWS();
+
+  guint signal_id = 0;
+  GQuark detail = 0;
+  if (!g_signal_parse_name(ZSTR_VAL(signal), G_OBJECT_TYPE(obj), &signal_id, &detail, TRUE)) {
+    zend_value_error("unknown signal '%s' on %s", ZSTR_VAL(signal), G_OBJECT_TYPE_NAME(obj));
+    RETURN_THROWS();
+  }
+  GSignalQuery query;
+  g_signal_query(signal_id, &query);
+  if (query.n_params != argc) {
+    zend_value_error("signal '%s' takes %u argument(s), %u given", ZSTR_VAL(signal), query.n_params,
+                     argc);
+    RETURN_THROWS();
+  }
+
+  // instance + params
+  auto *values = static_cast<GValue *>(safe_emalloc(argc + 1, sizeof(GValue), 0));
+  // NOLINTNEXTLINE(readability-math-missing-parentheses) G_VALUE_INIT expands to a brace list
+  for (uint32_t i = 0; i <= argc; i++) values[i] = G_VALUE_INIT;
+  g_value_init(&values[0], G_OBJECT_TYPE(obj));
+  g_value_set_object(&values[0], obj);
+  bool ok = true;
+  for (uint32_t i = 0; i < argc && ok; i++) {
+    ok = phpgtk::to_gvalue(&args[i], query.param_types[i] & ~G_SIGNAL_TYPE_STATIC_SCOPE,
+                           &values[i + 1]);
+  }
+  if (ok) {
+    GValue ret = G_VALUE_INIT;
+    const GType rtype = query.return_type & ~G_SIGNAL_TYPE_STATIC_SCOPE;
+    if (rtype != G_TYPE_NONE) g_value_init(&ret, rtype);
+    g_signal_emitv(values, signal_id, detail, rtype != G_TYPE_NONE ? &ret : nullptr);
+    if (rtype != G_TYPE_NONE) {
+      if (EG(exception) == nullptr) phpgtk::to_php(&ret, return_value);
+      g_value_unset(&ret);
+    }
+  }
+  for (uint32_t i = 0; i <= argc; i++) {
+    if (G_IS_VALUE(&values[i])) g_value_unset(&values[i]);
+  }
+  efree(values);
+  if (EG(exception) != nullptr) RETURN_THROWS();  // Rethrow mode, or a conversion error
 }
 
 }  // namespace phpgtk

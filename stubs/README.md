@@ -1,15 +1,17 @@
 # stubs/
 
-`gtk4.php` declares every class, method, parameter/return type and constant the extension
-provides, for IDE completion and diagnostics. It is never executed.
+`gtk4.php` — IDE stub, **generated** from the API declaration `src/gtk4.stub.php` by
+`gen/ide-stub.php` (same declarations with dummy bodies so Intelephense/PhpStorm stay quiet,
+plus `__get/__set/__isset` on `GObject` so `@property` tags are honoured). Do not edit;
+`./ci.sh --only=stubs --fix` regenerates it together with `src/gtk4_arginfo.h`.
 
-- **VS Code (Intelephense)**: any `.php` in the workspace is indexed, so a project that vendors or
-  symlinks this directory needs nothing else. For a project outside this repo add it to
-  `intelephense.environment.includePaths` in `settings.json`:
-  ```json
-  { "intelephense.environment.includePaths": ["/mnt/share/dev/code/php-gtk4/stubs"] }
-  ```
-- **PhpStorm**: Settings → PHP → Include Path → add this directory.
+**VS Code (Intelephense)**: any `.php` in the workspace is indexed. For a project outside this
+repo add to `settings.json`:
 
-`tests/StubsTest.php` compares the stub's classes and methods against `ReflectionExtension('gtk4')` of
-the built extension, so drift fails `make test`.
+```json
+{ "intelephense.environment.includePaths": ["/mnt/share/dev/code/php-gtk4/stubs"] }
+```
+
+**PhpStorm**: Settings → PHP → Include Path → add this directory.
+
+`tests/StubsTest.php` fails if `gtk4.php` is stale or disagrees with `ReflectionExtension('gtk4')`.

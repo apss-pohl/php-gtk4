@@ -9,6 +9,22 @@ use Gtk4\Gtk;
 /** src/core/error: the C++/PHP exception boundary. */
 final class ErrorTest extends GtkTestCase
 {
+    public function testHandlerReceivesTheThrowableObject(): void
+    {
+        $w = $this->window();
+        $w->connect('notify::title', function (): void {
+            throw new \DomainException('typed', 7);
+        });
+        $got = null;
+        Gtk::set_exception_handler(function (\Throwable $e, string $origin) use (&$got): void {
+            $got = $e;
+        });
+        $w->set_title('x');
+        self::assertInstanceOf(\DomainException::class, $got);
+        self::assertSame(7, $got->getCode());
+        self::assertSame(__FILE__, $got->getFile(), 'file/line/trace survive the boundary');
+    }
+
     public function testExceptionInHandlerIsRoutedToExceptionHandler(): void
     {
         $w = $this->window();
@@ -96,7 +112,8 @@ final class ErrorTest extends GtkTestCase
 
     public function testNonCallableExceptionHandlerIsRejected(): void
     {
-        $this->expectExceptionMessage('expects a callable or null');
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessageMatches('/must be a valid callback or null/');
         self::opaque([Gtk::class, 'set_exception_handler'])('not_a_function_at_all');
     }
 

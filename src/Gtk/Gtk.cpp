@@ -1,81 +1,84 @@
-#include "Gtk.h"
-#include "GtkWindow.h"
-#include "../core/error.h"
-#include "../core/wrap.h"
-#include <gtk/gtk.h>
+// Gtk4\Gtk: static entry points (init, exception handler / mode).
+#include "php_gtk4.h"
+#include "core/error.h"
+#include "core/globals.h"
 
-namespace phpgtk {
+using namespace phpgtk;
 
-static GMainLoop *main_loop = nullptr;
-static bool quit_pending = false;  // main_quit() called before main()
-
-Php::Value Gtk_::init() {
-  return (bool)gtk_init_check();
+/**
+ * static Gtk4\Gtk::init(): bool
+ *
+ * Initialise GTK (gtk_init_check). Returns false if no display is available.
+ */
+ZEND_METHOD(Gtk4_Gtk, init) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  if (!assert_gui_thread("Gtk::init()")) RETURN_THROWS();
+  const bool ok = gtk_init_check();
+  if (ok) record_gui_thread();
+  RETURN_BOOL(ok);
 }
 
-// GTK4 has no gtk_main(); run a GMainLoop on the default context.
-void Gtk_::main() {
-  if (main_loop != nullptr) throw Php::Exception("Gtk::main() is already running");
-  if (quit_pending) {
-    quit_pending = false;
-    return;
+/**
+ * static Gtk4\Gtk::set_exception_handler(?callable $handler): void
+ *
+ * Install (or with null, remove) the callable that receives exceptions thrown inside signal
+ * handlers and other callbacks. Signature: `function (\Throwable $exception, string $origin):
+ * void`; $origin is the signal name, or the installing method for non-signal callbacks. Called in
+ * both exception modes, before a rethrow.
+ */
+ZEND_METHOD(Gtk4_Gtk, set_exception_handler) {
+  zend_fcall_info fci;
+  zend_fcall_info_cache fcc;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_FUNC_OR_NULL(fci, fcc)
+  ZEND_PARSE_PARAMETERS_END();
+  set_exception_handler(ZEND_FCI_INITIALIZED(fci) ? &fci.function_name : nullptr);
+}
+
+/**
+ * static Gtk4\Gtk::set_exception_mode(ExceptionMode $mode): void
+ */
+ZEND_METHOD(Gtk4_Gtk, set_exception_mode) {
+  zval *mode;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(mode, ce_ExceptionMode)
+  ZEND_PARSE_PARAMETERS_END();
+  const zval *value = zend_enum_fetch_case_value(Z_OBJ_P(mode));
+  set_exception_mode(static_cast<ExceptionMode>(Z_LVAL_P(value)));
+}
+
+/**
+ * static Gtk4\Gtk::get_exception_mode(): ExceptionMode
+ */
+ZEND_METHOD(Gtk4_Gtk, get_exception_mode) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  const char *name = exception_mode() == ExceptionMode::Rethrow ? "Rethrow" : "Log";
+  zend_object *c = zend_enum_get_case_cstr(ce_ExceptionMode, name);
+  RETURN_OBJ_COPY(c);
+}
+
+#ifdef PHPGTK_TESTING
+/**
+ * static Gtk4\Gtk::testing_iterate_nested(int $iterations): void
+ *
+ * Test builds only (`--enable-gtk4-testing`, `FEATURES` has `testing=yes`): iterate the default
+ * context $iterations times from C, blocking each time, the way GTK does inside DnD or a portal
+ * call. Deliberately *not* a rethrow boundary - a Throwable parked in {@see
+ * ExceptionMode::Rethrow} surfaces from the enclosing run(), as it would then.
+ */
+ZEND_METHOD(Gtk4_Gtk, testing_iterate_nested) {
+  zend_long iterations;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_LONG(iterations)
+  ZEND_PARSE_PARAMETERS_END();
+  if (iterations < 0) {
+    zend_argument_value_error(1, "must be greater than or equal to 0");
+    RETURN_THROWS();
   }
-  main_loop = g_main_loop_new(nullptr, FALSE);
-  g_main_loop_run(main_loop);
-  g_main_loop_unref(main_loop);
-  main_loop = nullptr;
-}
-
-void Gtk_::main_quit() {
-  if (main_loop != nullptr) {
-    g_main_loop_quit(main_loop);
-  } else {
-    quit_pending = true;
+  // C-driven nesting: no PHP boundary in between, so a parked Throwable stays parked and
+  // a pending one (no registered loop) simply propagates when this call returns.
+  for (zend_long i = 0; i < iterations && EG(exception) == nullptr; i++) {
+    g_main_context_iteration(nullptr, TRUE);
   }
 }
-
-void Gtk_::set_exception_handler(Php::Parameters &params) {
-  if (params.empty() || params[0].isNull()) {
-    phpgtk::set_exception_handler(nullptr);
-    return;
-  }
-  if (!Php::call("is_callable", params[0]).boolValue()) {
-    throw Php::Exception("Gtk::set_exception_handler() expects a callable or null");
-  }
-  phpgtk::set_exception_handler(params[0]);
-}
-
-void register_Gtk(Php::Namespace &ns) {
-  // Root handle class - PHP name matches the GType name.
-  Php::Class<GObjectWrapper> gobject("GObject");
-  // Declare parameters (arginfo): reflection, stubs and PHP's own arity
-  // checks then agree with the C++ side, which additionally validates.
-  gobject.method<&GObjectWrapper::connect>("connect", {Php::ByVal("signal", Php::Type::String),
-                                                       Php::ByVal("handler", Php::Type::Callable)});
-  gobject.method<&GObjectWrapper::connect_after>(
-      "connect_after",
-      {Php::ByVal("signal", Php::Type::String), Php::ByVal("handler", Php::Type::Callable)});
-  gobject.method<&GObjectWrapper::handler_disconnect>(
-      "handler_disconnect", {Php::ByVal("handlerId", Php::Type::Numeric)});
-  gobject.method<&GObjectWrapper::get_property>("get_property",
-                                                {Php::ByVal("name", Php::Type::String)});
-  gobject.method<&GObjectWrapper::set_property>(
-      "set_property", {Php::ByVal("name", Php::Type::String), Php::ByVal("value")});
-
-  Php::Class<Gtk_> gtk("Gtk");
-  gtk.method<&Gtk_::init>("init");
-  gtk.method<&Gtk_::main>("main");
-  gtk.method<&Gtk_::main_quit>("main_quit");
-  gtk.method<&Gtk_::set_exception_handler>("set_exception_handler",
-                                           {Php::ByVal("handler", Php::Type::Null, false)});
-  ns.add(std::move(gtk));
-
-  // PHP-CPP initialises classes in add() order and a derived class added
-  // before its base silently loses the base. So add the parent first (copy
-  // overload), then pass it to children for extends().
-  ns.add(gobject);
-  register_wrapper<GObjectWrapper>("GObject");
-  register_GtkWindow(ns, gobject);
-}
-
-}  // namespace phpgtk
+#endif
