@@ -13,6 +13,10 @@
 #include "Gio/GListModel.h"
 #include <Zend/zend_modules.h>
 
+#ifndef _WIN32
+#include <dlfcn.h>
+#endif
+
 #include <new>
 #include <string>
 
@@ -48,9 +52,30 @@ PHP_INI_ENTRY("gtk4.build_info", PHPGTK_BUILD_INFO, PHP_INI_SYSTEM, nullptr)
 PHP_INI_ENTRY("gtk4.features", PHPGTK_BUILD_FEATURES, PHP_INI_SYSTEM, nullptr)
 PHP_INI_END()
 
+// GTK, like GLib, cannot be unloaded from a process: it registers GTypes, atexit handlers
+// and starts helper threads - gtk_init() spawns a fontconfig warm-up thread that outlives a
+// *failed* init (no display). PHP dlclose()s every extension at MSHUTDOWN, and gtk4.so is
+// normally the only thing holding libgtk-4, so the whole stack would be unmapped under that
+// thread (SIGSEGV in FcInit on machines with a cold fontconfig cache, i.e. CI runners).
+// Re-open the library that defines gtk_init with RTLD_NODELETE: glibc applies the flag to
+// the already loaded mapping, and it (with everything it depends on) then stays mapped for
+// the life of the process. Our own gtk4.so is still unloaded normally.
+static void pin_gtk_library() {
+#ifndef _WIN32
+  Dl_info info{};
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast) dladdr wants a data pointer
+  if (dladdr(reinterpret_cast<const void *>(&gtk_init), &info) != 0 && info.dli_fname != nullptr) {
+    // NOLINTNEXTLINE(hicpp-signed-bitwise) glibc flag macros
+    void *handle = dlopen(info.dli_fname, RTLD_NOW | RTLD_NOLOAD | RTLD_NODELETE);
+    (void)handle;  // deliberately leaked: the reference is the point
+  }
+#endif
+}
+
 // Module init: ini entries, constants, handlers, class registration (parents first).
 static PHP_MINIT_FUNCTION(gtk4) {
   REGISTER_INI_ENTRIES();
+  pin_gtk_library();
   register_gtk4_symbols(module_number);  // Gtk4\VERSION, BUILD_INFO, FEATURES
   phpgtk::object_handlers_init();
   phpgtk::boxed_handlers_init();

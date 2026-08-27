@@ -16,6 +16,9 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   initialised GTK.
 - `docs/BUILD.md` (build process, variants, Windows status and route, threads) and
   `docs/CONTRIBUTING.md`; README links to them.
+- libgtk-4 is pinned in the process at MINIT (`RTLD_NODELETE`): PHP unloads extensions at
+  MSHUTDOWN, and unmapping GTK under its fontconfig warm-up thread crashed at exit after a failed
+  `Gtk::init()` on machines with a cold fontconfig cache (CI runners).
 
 - Native Zend API runtime (`GObject` handles with property access, `GValue`/`GVariant`/boxed
   marshalling, GClosure-based signals, `emit()`, exception boundary with `ExceptionMode`).

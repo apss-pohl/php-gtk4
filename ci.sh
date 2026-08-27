@@ -31,7 +31,8 @@
 #   ./ci.sh --fail-fast              clang-tidy stops at the first failing file
 #   ./ci.sh --with=asan,coverage,valgrind   default stages plus the extra ones
 #   ./ci.sh --only=asan              just the sanitizer run
-#   ./ci.sh --skip=tidy | --skip=format | --skip=stan   sub-steps of cpp-lint / php-qa
+#   ./ci.sh --skip=tidy | --skip=format | --skip=stan | --skip=style   sub-steps of cpp-lint / php-qa
+#                                    (style = phplint + phpcs + php-cs-fixer, what the pre-commit hook already ran)
 #   ./ci.sh --only=md-lint --fix     markdownlint over the docs, applying the fixable rules
 #   ./ci.sh --only=version --fix     rewrite the version mirrors from ./VERSION (then --only=stubs --fix)
 #   COVERAGE_MIN_LINES=80 ./ci.sh --only=coverage   fail below this line coverage (default 80)
@@ -82,12 +83,12 @@ for arg in "$@"; do
     esac
 done
 for stage in ${ONLY//,/ } ${SKIP//,/ } ${WITH//,/ }; do
-    case "$stage" in tidy|format|stan) ;; *)
+    case "$stage" in tidy|format|stan|style) ;; *)
         [[ " $ALL_STAGES " == *" $stage "* ]] || { echo "ci.sh: unknown stage '$stage' (stages: $ALL_STAGES)" >&2; exit 2; } ;;
     esac
 done
 
-substep() {  # substep <name>: sub-steps (tidy, format) only honour --skip
+substep() {  # substep <name>: sub-steps (tidy, format, stan, style) only honour --skip
     [[ ",$SKIP," != *",$1,"* ]]
 }
 
@@ -274,22 +275,24 @@ stage_php_qa() {
     # both, so --fix applies the fixes instead of printing a diff of them.
     local action="checking"; [[ $FIX -eq 1 ]] && action="fixing"
 
-    step "phplint (-j $JOBS)"
-    "${run[@]}" vendor/bin/phplint -j "$JOBS" --no-progress || status=1
+    if substep style; then
+        step "phplint (-j $JOBS)"
+        "${run[@]}" vendor/bin/phplint -j "$JOBS" --no-progress || status=1
 
-    # phpcbf exits 1 when it fixed something, so phpcs is what gates either way -
-    # and it is the only one that reports what no fixer can repair (line length).
-    step "phpcs (--parallel=$JOBS, $action)"
-    if [[ $FIX -eq 1 ]]; then
-        "${run[@]}" vendor/bin/phpcbf --parallel="$JOBS" || true
-    fi
-    "${run[@]}" vendor/bin/phpcs --parallel="$JOBS" || status=1
+        # phpcbf exits 1 when it fixed something, so phpcs is what gates either way -
+        # and it is the only one that reports what no fixer can repair (line length).
+        step "phpcs (--parallel=$JOBS, $action)"
+        if [[ $FIX -eq 1 ]]; then
+            "${run[@]}" vendor/bin/phpcbf --parallel="$JOBS" || true
+        fi
+        "${run[@]}" vendor/bin/phpcs --parallel="$JOBS" || status=1
 
-    step "php-cs-fixer (all cores, $action)"
-    if [[ $FIX -eq 1 ]]; then
-        "${run[@]}" vendor/bin/php-cs-fixer fix --show-progress=none || status=1
-    else
-        "${run[@]}" vendor/bin/php-cs-fixer check --diff --show-progress=none || status=1
+        step "php-cs-fixer (all cores, $action)"
+        if [[ $FIX -eq 1 ]]; then
+            "${run[@]}" vendor/bin/php-cs-fixer fix --show-progress=none || status=1
+        else
+            "${run[@]}" vendor/bin/php-cs-fixer check --diff --show-progress=none || status=1
+        fi
     fi
 
     if [[ $STAN -eq 1 ]] && substep stan; then
@@ -418,7 +421,9 @@ stage_test() {
 stage_phpt() {
     step "run-tests.php (xvfb-run + make test TESTS=$PHPT_TESTS)"
     [[ -f Makefile ]] || fail "no Makefile (run the build stage first)"
-    GSK_RENDERER=cairo GDK_DEBUG=gl-disable GDK_BACKEND=x11 xvfb-run -a make --no-print-directory test TESTS="$PHPT_TESTS" \
+    # GTK_A11Y=none: these tests compare stderr, and a session bus without an a11y service (CI
+    # runners) makes GTK print "Unable to acquire the address of the accessibility bus".
+    GTK_A11Y=none GSK_RENDERER=cairo GDK_DEBUG=gl-disable GDK_BACKEND=x11 xvfb-run -a make --no-print-directory test TESTS="$PHPT_TESTS" \
         || fail "phpt (see the FAILED TEST SUMMARY above; .out/.diff files sit next to each .phpt)"
 }
 

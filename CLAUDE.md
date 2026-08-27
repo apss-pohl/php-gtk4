@@ -93,7 +93,7 @@ on the suite, LSan on `tests/scripts/stress.php`,
 ./ci.sh --no-stan                       # php-qa without phpstan
 ./ci.sh --with=asan,coverage,valgrind   # default stages + all extra ones (what CI runs in total)
 ./ci.sh --only=asan --filter X          # sanitizer run of one test class
-./ci.sh --skip=tidy | --skip=format     # sub-steps of cpp-lint
+./ci.sh --skip=tidy | --skip=format     # sub-steps of cpp-lint; --skip=stan | --skip=style for php-qa
 ./ci.sh --only=phpt                     # run-tests.php only (PHPT_TESTS=tests/phpt/x.phpt for one)
 ./ci.sh --only=md-lint --fix            # markdownlint over **/*.md, applying the fixable rules
 ./ci.sh --only=version --fix            # rewrite the version mirrors from ./VERSION (then --only=stubs --fix)
@@ -239,8 +239,11 @@ display, and calls `Gtk::init()` once.
 
 ## Local gates
 
-`git config core.hooksPath .githooks` once per clone: `pre-commit` runs the fast checks (stubs,
-PHP QA without phpstan, clang-format, markdownlint), `pre-push` runs `./ci.sh`. `--no-verify` skips once.
+`git config core.hooksPath .githooks` once per clone: `pre-commit` runs the fast checks (version, stubs,
+PHP style without phpstan, clang-format, markdownlint) in one `ci.sh` call and stamps the tree hash in
+`.git/gtk4-precommit-tree`; `pre-push` runs `./ci.sh` and, when the stamp matches `HEAD^{tree}` and the
+tree is clean, skips exactly those steps (`--skip=version,stubs,md-lint,format,style`) — a `--no-verify`
+commit gets the full run. `--no-verify` skips once.
 ZTS builds are supported: all per-request state is in the module globals (`src/core/globals.h`,
 `GTK4_G(x)`), never in a plain static — GType/class registries filled once in MINIT are the only
 process-wide statics allowed. GTK itself stays single-threaded (`assert_gui_thread()`); CI builds

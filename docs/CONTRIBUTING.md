@@ -14,9 +14,11 @@ git config core.hooksPath .githooks         # pre-commit = fast QA, pre-push = f
 ./ci.sh                                     # everything green before you start
 ```
 
-The hooks are the local gate: `pre-commit` runs version/stub checks, PHP QA (without phpstan),
-clang-format and markdownlint in about ten seconds; `pre-push` runs the whole `ci.sh`. Skip once
-with `--no-verify` when you know why.
+The hooks are the local gate: `pre-commit` runs version/stub checks, PHP style (without phpstan),
+clang-format and markdownlint in about ten seconds and remembers which tree passed; `pre-push` runs
+the rest of `ci.sh` (clang-tidy, phpstan, build, load, tests, phpt) and only repeats the pre-commit
+steps if the tree being pushed was never checked (a `--no-verify` commit). Skip once with
+`--no-verify` when you know why.
 
 ## Hard constraints
 

@@ -152,7 +152,10 @@ than as a hand-maintained IDE project like php-gtk3's.
 - `config.m4`'s `PHPGTK_BUILD_INFO` (git hash/date) has no `config.w32` equivalent yet.
 - `bin/php-gtk4`, `tests/run.sh` and every `ci.sh` stage are bash + Xvfb; on Windows the suite
   runs against the real display with `php vendor\bin\phpunit`.
-- Anything using `dlopen`/POSIX in `src/core/` (none today — keep it that way).
+- `pin_gtk_library()` in `src/gtk4.cpp` uses `dlopen(RTLD_NODELETE)` to keep libgtk-4 mapped after
+  PHP unloads the extension; it is `#ifndef _WIN32` and needs a Windows counterpart
+  (`GetModuleHandleEx` with `GET_MODULE_HANDLE_EX_FLAG_PIN`). Nothing else in `src/` is POSIX-only —
+  keep it that way.
 
 Until the above exists, the practical way to develop on a Windows machine is WSL2 with Ubuntu
 24.04, which is exactly the CI environment: install the packages from "Requirements" and follow the

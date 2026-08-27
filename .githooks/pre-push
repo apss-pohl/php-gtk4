@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 # Full gate before anything leaves the machine: what CI runs (minus sanitizers).
+# The steps pre-commit already ran on this exact tree (version, stubs, clang-format,
+# markdownlint, phplint/phpcs/php-cs-fixer) are skipped when its stamp matches HEAD;
+# a --no-verify commit or a dirty tree gets the whole thing.
 # Enable once per clone:  git config core.hooksPath .githooks
 # Skip once:              git push --no-verify
 set -e
 cd "$(git rev-parse --show-toplevel)"
-./ci.sh
+stamp="$(git rev-parse --git-dir)/gtk4-precommit-tree"
+if [[ -f "$stamp" && "$(cat "$stamp")" == "$(git rev-parse HEAD^{tree})" && -z "$(git status --porcelain --untracked-files=no)" ]]; then
+    echo "pre-push: pre-commit already verified tree $(git rev-parse --short HEAD^{tree}) - skipping version, stubs, clang-format, markdownlint, PHP style"
+    ./ci.sh --skip=version,stubs,md-lint,format,style
+else
+    ./ci.sh
+fi

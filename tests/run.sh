@@ -18,6 +18,9 @@ export LIBGL_ALWAYS_SOFTWARE=1
 # GTK 4.14 (the CI floor) honours GDK_DEBUG=gl-disable; GDK_DISABLE=gl is the 4.16+ spelling and
 # is ignored on 4.14 - and setting both makes 4.14 ignore GDK_DEBUG. Revisit when the floor moves.
 export GDK_DEBUG=${GDK_DEBUG:-gl-disable}
+# No accessibility bus under Xvfb: silences the "Unable to acquire the address of the
+# accessibility bus" warning on runners that have a session bus but no a11y service.
+export GTK_A11Y=${GTK_A11Y:-none}
 # GDK prefers Wayland over the DISPLAY xvfb-run provides when WAYLAND_DISPLAY is set in the
 # developer's session - the suite would then run on the real compositor (and hit a GTK
 # Wayland-backend heap corruption on 4.14). Pin the X11 backend: Xvfb is the target.
