@@ -59,13 +59,16 @@ final class EnumTest extends GtkTestCase
         self::opaque([new GtkButton(), 'set_halign'])(2);
     }
 
-    public function testUnregisteredEnumTypesStayInts(): void
+    public function testGeneratedEnumPropertiesUseTheEnum(): void
     {
-        // GtkLabel:justify is GtkJustification, which has no PHP enum yet.
+        // GtkLabel:justify is GtkJustification - a generated PHP enum since wave 0; a property
+        // read yields the case, a write accepts the case or the plain int.
         $l = new GtkLabel();
-        self::assertSame(0, $l->get_property('justify'));
+        self::assertSame(\Gtk4\GtkJustification::Left, $l->get_property('justify'));
         $l->set_property('justify', 1);
-        self::assertSame(1, $l->get_property('justify'));
+        self::assertSame(\Gtk4\GtkJustification::Right, $l->get_property('justify'));
+        $l->set_property('justify', \Gtk4\GtkJustification::Center);
+        self::assertSame(\Gtk4\GtkJustification::Center, $l->get_property('justify'));
     }
 
     public function testFlagsAreConstantsFromTheHeaders(): void

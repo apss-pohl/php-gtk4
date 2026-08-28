@@ -7,7 +7,8 @@ implements it.
 Source of truth: php-gtk3 class headers (158 headers, ~2400 exported methods) vs.
 `src/gtk4.stub.php` + the MINIT registration block in `src/gtk4.cpp`.
 
-Generated 2026-08-26. Regenerate the *status* column from `src/gtk4.stub.php` whenever classes land.
+Status column regenerated 2026-08-28 by `gen/map-status.php` (run by `gen/gir.php --install`);
+the notes are hand-written and may lag.
 
 ## Legend
 
@@ -23,19 +24,22 @@ Generated 2026-08-26. Regenerate the *status* column from `src/gtk4.stub.php` wh
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 9 | — |
-| 🟡 partial | 9 | — |
-| ❌ to port (GTK 4 equivalent exists) | ~95 | ~1750 |
-| ⛔ removed in GTK 4 | ~35 | ~520 |
-| 🧩 out of scope / later milestone | ~14 | ~130 |
+| ✅ implemented | 18 | — |
+| 🟡 partial | 2 | — |
+| ❌ to port (GTK 4 equivalent exists) | 74 | ~1750 |
+| ⛔ removed in GTK 4 | 41 | ~520 |
+| 🧩 out of scope / later milestone | 5 | ~130 |
 
-php-gtk4 currently registers (2026-08-26): `GObject`, `GParamSpec`, `Gtk`, `GLib`, `GMainLoop`,
-`GError`, `GdkRGBA`, `GdkRectangle`, `GdkTexture`, `GAction`, `GActionMap`, `GActionGroup`,
-`GSimpleAction`, `GListModel`, `GListStore`, `PhpValue`, `GtkApplication`, `GtkWidget`, `GtkBox`,
-`GtkButton`, `GtkLabel`, `GtkWindow`, `GtkDrawingArea`, `CairoContext`, `GtkFilter`,
-`GtkCustomFilter`, `GtkFilterListModel`, `GtkSorter`, `GtkCustomSorter`, `GtkSortListModel`, enums
-`GtkAlign`, `GtkOrientation`, `GtkFilterChange`, `GtkSorterChange`, `ExceptionMode`, flags
-`GApplicationFlags`. Everything else in this document is open work.
+php-gtk4 currently declares (2026-08-28, 55 names): `CairoContext`, `ExceptionMode`, `GAction`,
+`GActionGroup`, `GActionMap`, `GApplication`, `GApplicationFlags`, `GError`, `GLib`, `GListModel`,
+`GListStore`, `GMainLoop`, `GObject`, `GParamSpec`, `GSimpleAction`, `GdkMemoryFormat`, `GdkRGBA`,
+`GdkRectangle`, `GdkTexture`, `Gtk`, `GtkAlign`, `GtkApplication`, `GtkApplicationInhibitFlags`,
+`GtkBaselinePosition`, `GtkBox`, `GtkButton`, `GtkCustomFilter`, `GtkCustomSorter`, `GtkDirectionType`,
+`GtkDrawingArea`, `GtkFilter`, `GtkFilterChange`, `GtkFilterListModel`, `GtkFilterMatch`, `GtkJustification`,
+`GtkLabel`, `GtkNaturalWrapMode`, `GtkOrdering`, `GtkOrientable`, `GtkOrientation`, `GtkOverflow`,
+`GtkPickFlags`, `GtkRoot`, `GtkSizeRequestMode`, `GtkSortListModel`, `GtkSorter`, `GtkSorterChange`,
+`GtkSorterOrder`, `GtkStateFlags`, `GtkTextDirection`, `GtkWidget`, `GtkWindow`, `PangoEllipsizeMode`,
+`PangoWrapMode`, `PhpValue`. Everything else in this document is open work.
 
 ---
 
@@ -43,8 +47,8 @@ php-gtk4 currently registers (2026-08-26): `GObject`, `GParamSpec`, `Gtk`, `GLib
 
 | php-gtk3 class | gtk3 methods | GTK 4 replacement | php-gtk4 | Notes |
 | --- | ---: | --- | :---: | --- |
-| `GObject` | 13 | `GObject` (unchanged) | 🟡 | `connect`, `connect_after`, `emit`, `handler_disconnect`, `get_property`, `set_property` + `$obj->prop` accessors done. **Missing:** `signal_handler_block/unblock`, `get_data`/`set_data`, `is_connected`, `__clone` (clone is deliberately refused). `set_instance`/`connect_internal` were php-gtk3 plumbing and have no gtk4 equivalent. |
-| `GApplication` | 37 | `GApplication` | ❌ | php-gtk4 only exposes `GtkApplication`; the `GApplication` base (hold/release, `open`, `send_notification`, option entries, D-Bus accessors) is not bound yet. |
+| `GObject` | 13 | `GObject` (unchanged) | ✅ | `connect`, `connect_after`, `emit`, `handler_disconnect`, `get_property`, `set_property` + `$obj->prop` access (hand-written, `src/core/object`). |
+| `GApplication` | 37 | `GApplication` | ✅ | Generated (wave 0): the whole GTK 4 method set (hold/release, `run` with argv, registration, actions via `GActionMap`/`GActionGroup`). `open`, `send_notification`, option groups wait for `GFile`/`GNotification`/`GOptionGroup` (gen/report.md). |
 | `GIcon` | 4 | `GIcon` / `GThemedIcon` / `GFileIcon` | ❌ | Needed once `GtkImage`/`GtkButton::set_icon_name` land. |
 | — | — | `GParamSpec` | ✅ | New in php-gtk4, no php-gtk3 counterpart. |
 | — | — | `GVariant` (as plain PHP values) | ✅ | New: `src/core/variant.cpp`, used by `GSimpleAction`. |
@@ -66,7 +70,7 @@ php-gtk4 currently registers (2026-08-26): `GObject`, `GParamSpec`, `Gtk`, `GLib
 
 | php-gtk3 class | gtk3 methods | GTK 4 replacement | php-gtk4 | Notes |
 | --- | ---: | --- | :---: | --- |
-| `GtkWidget` | 257 | `GtkWidget` | 🟡 | 26 methods bound (show/hide, visible, sensitive, size request, parent/root, focus, tooltip, name, CSS classes, `activate_action`, `queue_draw`). The other ~230 are GTK 3-only (`GdkEvent` unions, `size_allocate` w/ `GtkAllocation`, style properties, `gtk_widget_destroy`, DnD, `set_state_flags`, accel closures) or still to port (layout manager, `set_hexpand`/`vexpand`, `set_margin_*`, `set_halign`/`valign`, `insert_action_group`, `set_layout_manager`, `observe_children`). |
+| `GtkWidget` | 257 | `GtkWidget` | ✅ | Generated (wave 0): the whole GTK 4 method set (125 methods — layout, margins, align/expand, focus, tree navigation, state flags, tooltips, CSS classes, actions). The ~230 remaining php-gtk3 methods are GTK 3-only (`GdkEvent` unions, `size_allocate` w/ `GtkAllocation`, style properties, `gtk_widget_destroy`, DnD, accel closures) or need types outside the closure (`GtkLayoutManager`, `GdkDisplay`, controllers — later waves). |
 | `GtkContainer` | 38 | — | ⛔ | **Removed in GTK 4.** Children are set per-widget (`set_child`) or via container-specific API (`GtkBox::append`, `GtkGrid::attach`). `set_child()` is already on `GtkWindow`/`GtkButton`. |
 | `GtkBin` | 2 | — | ⛔ | Removed; folded into `set_child`/`get_child`. |
 | `GtkBox` | 14 | `GtkBox` | ✅ | `append`, `prepend`, `insert_child_after`, `remove`, `set_spacing`, `set_homogeneous`, `set_orientation`, `get_children`. `pack_start`/`pack_end` are gone, and GTK inserts rather than reparents — move = `remove()` then insert. |
@@ -105,9 +109,9 @@ php-gtk4 currently registers (2026-08-26): `GObject`, `GParamSpec`, `Gtk`, `GLib
 
 | php-gtk3 class | gtk3 methods | GTK 4 replacement | php-gtk4 | Notes |
 | --- | ---: | --- | :---: | --- |
-| `GtkWindow` | 85 | `GtkWindow` | 🟡 | 11 methods bound (title, default size, application, child, present, close, destroy). **Removed in GTK 4:** `move`/`resize`/`get_position`/`get_size`, `set_position`, `set_type_hint`, `iconify`/`stick`/`set_keep_above`, `set_icon*`, `get_screen`, `add_accel_group`, `set_titlebar` is now `set_titlebar` (kept). **Still to port:** `set_modal`, `set_resizable`, `set_decorated`, `set_deletable`, `fullscreen`/`unfullscreen`, `maximize`/`unmaximize`, `set_transient_for`, `set_default_widget`, `is_active`, `set_hide_on_close`. |
+| `GtkWindow` | 85 | `GtkWindow` | ✅ | Generated (wave 0): 58 methods (title, sizes, modal/resizable/decorated/deletable, fullscreen/maximize, transient-for, default widget, focus, hide-on-close, …). **Removed in GTK 4:** `move`/`resize`/`get_position`/`get_size`, `set_position`, `set_type_hint`, `iconify`/`stick`/`set_keep_above`, `set_icon*`, `get_screen`, `add_accel_group`. |
 | `GtkApplicationWindow` | 2 | `GtkApplicationWindow` | ❌ | Not registered yet; `GtkWindow` takes the application in its constructor instead. |
-| `GtkButton` | 29 | `GtkButton` | 🟡 | 5 methods bound (label, child). **Removed:** `set_image`/`set_always_show_image`/`set_relief`/`set_alignment`/`set_use_stock`/`get_event_window`, `enter`/`leave`/`pressed`/`released` signals. **To port:** `set_icon_name`/`get_icon_name`, `set_has_frame`, `set_use_underline`, static `new_with_mnemonic`. |
+| `GtkButton` | 29 | `GtkButton` | ✅ | Generated (wave 0): 16 methods (label, child, icon name, has-frame, use-underline, static `new_with_label`/`new_with_mnemonic`/`new_from_icon_name`). **Removed:** `set_image`/`set_always_show_image`/`set_relief`/`set_alignment`/`set_use_stock`/`get_event_window`, `enter`/`leave`/`pressed`/`released` signals. |
 | `GtkToggleButton` | 10 | `GtkToggleButton` | ❌ | `set_inconsistent` kept; `set_mode` removed → use `GtkCheckButton`. |
 | `GtkCheckButton` | 6 | `GtkCheckButton` | ❌ | GTK 4 merges `GtkRadioButton` in via `set_group`. |
 | `GtkRadioButton` | 9 | `GtkCheckButton::set_group` | ⛔ | Class removed in GTK 4. |
@@ -115,7 +119,7 @@ php-gtk4 currently registers (2026-08-26): `GObject`, `GParamSpec`, `Gtk`, `GLib
 | `GtkFontButton` | 16 | `GtkFontButton` (dep. 4.10 → `GtkFontDialogButton`) | ❌ | Same caveat. |
 | `GtkAppChooserButton` | 11 | `GtkAppChooserButton` (dep. 4.10) | ❌ | |
 | `GtkMenuButton` | 2 | `GtkMenuButton` | ❌ | Takes a `GMenuModel` popover, not a `GtkMenu`. |
-| `GtkLabel` | 43 | `GtkLabel` | 🟡 | 5 methods bound (text, markup, selectable). **To port:** `set_use_markup`, `set_ellipsize`, `set_justify`, `set_wrap`(`set_line_wrap` renamed), `set_lines`, `set_width_chars`, `set_max_width_chars`, `set_xalign`/`set_yalign`, `set_mnemonic_widget`, `get_current_uri`. `set_angle`/`set_pattern`/`get_layout` are GTK 3-only or Pango-dependent. |
+| `GtkLabel` | 43 | `GtkLabel` | ✅ | Generated (wave 0): 44 methods (text/markup/mnemonic, `set_use_markup`, ellipsize, justify, wrap (`set_line_wrap` renamed), lines, width chars, xalign/yalign, mnemonic widget, selection, `get_current_uri`). `set_angle`/`set_pattern`/`get_layout` are GTK 3-only or Pango-dependent. |
 | `GtkEntry` | 41 | `GtkEntry` (+ `GtkText`) | ❌ | Text handling moved into `GtkEditable`/`GtkText`; `set_icon_from_pixbuf` etc. use `GdkPaintable` now. |
 | `GtkEntryBuffer` | 9 | `GtkEntryBuffer` | ❌ | Unchanged. |
 | `GtkEntryCompletion` | 27 | `GtkEntryCompletion` (dep. 4.10) | ❌ | Deprecated in GTK 4.10; consider not porting. |
@@ -220,7 +224,7 @@ php-gtk4 currently registers (2026-08-26): `GObject`, `GParamSpec`, `Gtk`, `GLib
 | `GdkWindow` | 10 | `GdkSurface` | ❌ | Much smaller API; most methods (`maximize`, `get_children`, `get_default_root_window`) are gone. |
 | `GdkDrawable` | 0 | — | ⛔ | Removed long ago. |
 | `GdkCursor` | 7 | `GdkCursor` | ❌ | `new_from_name`, `new_from_texture`; `get_cursor_type` removed. |
-| `GdkPixbuf` | 21 | `GdkTexture` / `GdkPaintable` | ❌ | GdkPixbuf still exists as a library but GTK 4 widgets want `GdkPaintable`. |
+| `GdkPixbuf` | 21 | `GdkTexture` / `GdkPaintable` | 🟡 | GdkPixbuf still exists as a library but GTK 4 widgets want `GdkPaintable`. |
 | `GdkPixbufFormat` | 1 | `GdkPixbufFormat` | ❌ | |
 | `GdkEvent` + `GdkEventButton/Key/Motion/Scroll/Crossing/Focus/Configure/Touch/Any` | 3 + 8×2 | `GdkEvent` (opaque) + event controllers | ⛔ | **The event unions are gone.** GTK 4 uses `GtkEventControllerKey`, `GtkGestureClick`, `GtkEventControllerMotion`, `GtkEventControllerScroll`, `GtkEventControllerFocus`. Binding these controllers is the port target. |
 | `GdkThreads` | 1 | `g_idle_add` | ⛔ | `GLib::idle_add()` ✅ covers it. |

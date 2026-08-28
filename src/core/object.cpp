@@ -1,6 +1,8 @@
 #include "object.h"
 #include "callback.h"
+#include "globals.h"
 #include "marshal.h"
+#include "subtype.h"
 #include <string>
 #include <unordered_map>
 
@@ -32,20 +34,85 @@ static GQuark handle_quark() {
   return q;
 }
 
-// GWeakNotify: GTK finalized the object behind our back - null the handle instead of dangling.
-static void on_finalized(gpointer data, GObject *) {
-  static_cast<Object *>(data)->obj = nullptr;
+// The handle registered on a GObject (qdata), nullptr if none.
+Object *object_handle(GObject *obj) {
+  return static_cast<Object *>(g_object_get_qdata(obj, handle_quark()));
 }
 
-// Take ownership: ref_sink, register the back-pointer, arm the weak notify.
+// subtype.cpp instance_init: bind a handle under construction (no reference yet).
+void object_prebind(Object *self, GObject *obj) {
+  if (self->obj != nullptr) return;  // a deeper PHP level's instance_init already did it
+  self->obj = obj;
+  g_object_set_qdata(obj, handle_quark(), self);
+}
+
+// True while `self` is only pre-bound to this very object (subtype construction: obj set
+// by instance_init, no reference yet). A second attach of the same object is nothing else.
+static bool prebound(const Object *self, const GObject *obj) {
+  return self->obj == obj;
+}
+
+// The GObject takes a reference on the zend_object: PHP-side state survives while GTK
+// holds the C object.
+static void hold(Object *self) {
+  if (self->held || GTK4_G(shutting_down)) return;
+  self->held = true;
+  GTK4_G(held).insert(self);
+  GC_ADDREF(&self->std);
+}
+
+// Drop that reference. Runs inside the g_object_unref() that made ours the last ref; when
+// it was also the last PHP reference the handle is freed right here (free_obj -> detach ->
+// remove_toggle_ref -> finalize). GLib does not touch the object after calling the
+// toggle notify, so the nested finalize is fine - it is how every toggle-ref binding
+// (PyGObject, gjs) releases wrappers, and it keeps release deterministic ("the store
+// dropped the item, the payload is gone").
+static void release_hold(Object *self) {
+  if (!self->held) return;
+  self->held = false;
+  GTK4_G(held).erase(self);
+  OBJ_RELEASE(&self->std);
+}
+
+// RSHUTDOWN: drop every hold (freeing handles only GTK still referenced) and refuse new ones.
+void object_release_holds() {
+  GTK4_G(shutting_down) = true;
+  while (!GTK4_G(held).empty()) release_hold(*GTK4_G(held).begin());
+}
+
+// RINIT: holding is allowed again for the new request.
+void object_request_init() {
+  GTK4_G(shutting_down) = false;
+}
+
+// GToggleNotify: our reference became the last one (release the hold) or stopped being
+// it (take it).
+static void on_toggle(gpointer data, GObject *, gboolean is_last_ref) {
+  auto *self = static_cast<Object *>(data);
+  if (is_last_ref == TRUE) {
+    release_hold(self);
+  } else {
+    hold(self);
+  }
+}
+
+// self->obj holds one plain reference of ours: convert it into the toggle reference,
+// register the back-pointer and take the hold if GTK already holds the object.
+static void arm(Object *self) {
+  g_object_set_qdata(self->obj, handle_quark(), self);
+  g_object_add_toggle_ref(self->obj, on_toggle, self);
+  g_object_unref(self->obj);  // 2 -> 1 notifies is_last_ref, a no-op while nothing is held
+  if (g_atomic_int_get(&self->obj->ref_count) > 1) hold(self);
+}
+
+// Take ownership: ref_sink, then the toggle-ref dance.
 void attach(Object *self, GObject *obj) {
-  if (self->obj != nullptr || obj == nullptr) {
+  if ((self->obj != nullptr && !prebound(self, obj)) || obj == nullptr) {
     g_critical("php-gtk4: attach() misuse");
     return;
   }
   self->obj = G_OBJECT(g_object_ref_sink(obj));
-  g_object_set_qdata(self->obj, handle_quark(), self);
-  g_object_weak_ref(self->obj, on_finalized, self);
+  arm(self);
 }
 
 // Constructor variant of attach(): adopt the initial ref instead of adding one.
@@ -54,7 +121,7 @@ void attach(Object *self, GObject *obj) {
 // so those must use attach(). Enforced here rather than trusted: a root is ref'd like
 // attach() would, with a g_critical so the misuse shows up in tests.
 void attach_new(Object *self, GObject *obj) {
-  if (self->obj != nullptr || obj == nullptr) {
+  if ((self->obj != nullptr && !prebound(self, obj)) || obj == nullptr) {
     g_critical("php-gtk4: attach_new() misuse");
     return;
   }
@@ -67,17 +134,22 @@ void attach_new(Object *self, GObject *obj) {
     return;
   }
   self->obj = g_object_is_floating(obj) ? G_OBJECT(g_object_ref_sink(obj)) : obj;
-  g_object_set_qdata(self->obj, handle_quark(), self);
-  g_object_weak_ref(self->obj, on_finalized, self);
+  arm(self);
 }
 
-// Release ownership (free_obj): drop weak notify and back-pointer, unref.
+// Release ownership (free_obj): drop the back-pointer and the toggle reference. A hold
+// cannot be set here (it owns a reference, so the refcount was not zero) except when the
+// object store frees everything at shutdown regardless of refcount.
 static void detach(Object *self) {
   if (self->obj == nullptr) return;
-  g_object_weak_unref(self->obj, on_finalized, self);
-  g_object_set_qdata(self->obj, handle_quark(), nullptr);
-  g_object_unref(self->obj);
+  GObject *obj = self->obj;
   self->obj = nullptr;
+  if (self->held) {
+    self->held = false;
+    GTK4_G(held).erase(self);
+  }
+  g_object_set_qdata(obj, handle_quark(), nullptr);
+  g_object_remove_toggle_ref(obj, on_toggle, self);
 }
 
 // ---------------------------------------------------------------- handlers
@@ -85,6 +157,7 @@ static void detach(Object *self) {
 static zend_object *create_object(zend_class_entry *ce) {
   auto *self = static_cast<Object *>(zend_object_alloc(sizeof(Object), ce));
   self->obj = nullptr;
+  self->held = false;
   zend_object_std_init(&self->std, ce);
   object_properties_init(&self->std, ce);
   self->std.handlers = &handlers;
@@ -238,6 +311,13 @@ void register_class(const char *gtype_name, zend_class_entry *ce, GType type) {
   if (type == G_TYPE_OBJECT) ce_root = ce;
 }
 
+// MINIT: interfaces take part in both lookups but never get create_object.
+void register_interface(const char *gtype_name, zend_class_entry *ce, GType type) {
+  registry()[gtype_name] = ce;
+  gtypes()[ce] = type;
+  classes()[type] = ce;
+}
+
 // Registry lookup by GType value.
 zend_class_entry *class_for_gtype(GType type) {
   auto it = classes().find(type);
@@ -271,8 +351,13 @@ void wrap(GObject *obj, zval *rv) {
     return;
   }
   for (GType t = G_OBJECT_TYPE(obj); t != 0; t = g_type_parent(t)) {
-    if (zend_class_entry *ce = class_for_gtype_name(g_type_name(t))) {
-      object_init_ex(rv, ce);
+    zend_class_entry *ce =
+        is_php_type(t) ? subtype_class_for_gtype(t) : class_for_gtype_name(g_type_name(t));
+    if (ce != nullptr) {
+      if (object_init_ex(rv, ce) == FAILURE) {  // abstract/uninstantiable class: Error is pending
+        ZVAL_NULL(rv);
+        return;
+      }
       attach(object_from_zval(rv), obj);
       return;
     }

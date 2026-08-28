@@ -52,7 +52,7 @@ classes automatically and must not be edited for one.
 
 - A PHP `Throwable` must never unwind through GLib frames. Every trampoline ends with
   `phpgtk::report_pending_exception(origin)`; non-signal callbacks go through `src/core/callback.*`.
-  `src/Gtk/GtkDrawingArea.cpp`, `GtkFilter.cpp`, `GtkSorter.cpp` are the templates.
+  `gen/overrides/Gtk.DrawingArea.cpp`, `Gtk.CustomFilter.cpp`, `Gtk.CustomSorter.cpp` are the templates.
 - Errors raised to PHP use the PHP 8 vocabulary: bad argument → `ValueError`/`TypeError`; wrong
   object state → `LogicException`; the handle itself cannot do it → plain `Error`.
 - Every C++ function has a comment block above it. For `ZEND_METHOD`s it is generated from the

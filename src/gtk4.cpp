@@ -10,7 +10,6 @@
 #include "core/object.h"
 #include "core/phpvalue.h"
 #include "core/teardown.h"
-#include "Gio/listmodel.h"
 #include <Zend/zend_modules.h>
 
 #ifdef _WIN32
@@ -26,6 +25,10 @@
 // once with the method tables; other TUs only need the ZEND_METHOD prototypes
 // (the header is guarded for that).
 #include "gtk4_arginfo.h"
+// Generated classes: interface-method prototypes first (the MALIAS entries need them), then
+// the per-namespace arginfo of src/<Ns>/<Ns>.stub.php.
+#include "gen_prototypes.h"
+#include "gen_arginfo.h"
 
 ZEND_DECLARE_MODULE_GLOBALS(gtk4)
 
@@ -90,8 +93,7 @@ static PHP_MINIT_FUNCTION(gtk4) {
   phpgtk::boxed_handlers_init();
   phpgtk::fundamental_handlers_init();
 
-  // Class registration, parents first (the generator will emit this block).
-  // Three shapes, nothing else:
+  // Hand-written classes first (src/gtk4.stub.php), three registration shapes only:
   //   register_class("GType", register_class_Gtk4_X(parent...), G_TYPE_X)  GObject handles
   //   register_X(register_class_Gtk4_X())                                    classes.h hooks
   //   register_enum/flags(G_TYPE_X, register_class_Gtk4_X())                 enums
@@ -100,12 +102,6 @@ static PHP_MINIT_FUNCTION(gtk4) {
   zend_class_entry *ce_GObject = register_class_Gtk4_GObject();
   phpgtk::register_class("GObject", ce_GObject, G_TYPE_OBJECT);
   phpgtk::ce_ExceptionMode = register_class_Gtk4_ExceptionMode();
-  // Enums/flags: registered before any class that mentions them in arginfo.
-  phpgtk::register_enum(GTK_TYPE_ALIGN, register_class_Gtk4_GtkAlign());
-  phpgtk::register_enum(GTK_TYPE_ORIENTATION, register_class_Gtk4_GtkOrientation());
-  phpgtk::register_flags(G_TYPE_APPLICATION_FLAGS, register_class_Gtk4_GApplicationFlags());
-  phpgtk::register_enum(GTK_TYPE_FILTER_CHANGE, register_class_Gtk4_GtkFilterChange());
-  phpgtk::register_enum(GTK_TYPE_SORTER_CHANGE, register_class_Gtk4_GtkSorterChange());
   register_class_Gtk4_Gtk();
   register_class_Gtk4_GLib();
   phpgtk::register_GMainLoop(register_class_Gtk4_GMainLoop());
@@ -113,45 +109,10 @@ static PHP_MINIT_FUNCTION(gtk4) {
   phpgtk::register_GdkRectangle(register_class_Gtk4_GdkRectangle());
   phpgtk::register_GParamSpec(register_class_Gtk4_GParamSpec());
   phpgtk::ce_GError = register_class_Gtk4_GError(spl_ce_RuntimeException);
-  phpgtk::register_class("GdkTexture", register_class_Gtk4_GdkTexture(ce_GObject),
-                         GDK_TYPE_TEXTURE);
   phpgtk::register_class("PhpValue", register_class_Gtk4_PhpValue(ce_GObject), PHP_TYPE_VALUE);
   phpgtk::register_CairoContext(register_class_Gtk4_CairoContext());
-  zend_class_entry *ce_GListModel = register_class_Gtk4_GListModel();
-  phpgtk::ce_GListModel = ce_GListModel;  // for ?GListModel parameters (Gio/listmodel.h)
-  phpgtk::register_class("GListStore", register_class_Gtk4_GListStore(ce_GObject, ce_GListModel),
-                         G_TYPE_LIST_STORE);
-  zend_class_entry *ce_GAction = register_class_Gtk4_GAction();
-  zend_class_entry *ce_GActionMap = register_class_Gtk4_GActionMap();
-  zend_class_entry *ce_GActionGroup = register_class_Gtk4_GActionGroup();
-  phpgtk::register_class("GSimpleAction", register_class_Gtk4_GSimpleAction(ce_GObject, ce_GAction),
-                         G_TYPE_SIMPLE_ACTION);
-  phpgtk::register_class(
-      "GtkApplication",
-      register_class_Gtk4_GtkApplication(ce_GObject, ce_GActionMap, ce_GActionGroup),
-      GTK_TYPE_APPLICATION);
-  zend_class_entry *ce_GtkWidget = register_class_Gtk4_GtkWidget(ce_GObject);
-  phpgtk::register_class("GtkWidget", ce_GtkWidget, GTK_TYPE_WIDGET);
-  phpgtk::register_class("GtkButton", register_class_Gtk4_GtkButton(ce_GtkWidget), GTK_TYPE_BUTTON);
-  phpgtk::register_class("GtkBox", register_class_Gtk4_GtkBox(ce_GtkWidget), GTK_TYPE_BOX);
-  phpgtk::register_class("GtkLabel", register_class_Gtk4_GtkLabel(ce_GtkWidget), GTK_TYPE_LABEL);
-  phpgtk::register_class("GtkWindow", register_class_Gtk4_GtkWindow(ce_GtkWidget), GTK_TYPE_WINDOW);
-  phpgtk::register_class("GtkDrawingArea", register_class_Gtk4_GtkDrawingArea(ce_GtkWidget),
-                         GTK_TYPE_DRAWING_AREA);
-  zend_class_entry *ce_GtkFilter = register_class_Gtk4_GtkFilter(ce_GObject);
-  phpgtk::register_class("GtkFilter", ce_GtkFilter, GTK_TYPE_FILTER);
-  phpgtk::register_class("GtkCustomFilter", register_class_Gtk4_GtkCustomFilter(ce_GtkFilter),
-                         GTK_TYPE_CUSTOM_FILTER);
-  phpgtk::register_class("GtkFilterListModel",
-                         register_class_Gtk4_GtkFilterListModel(ce_GObject, ce_GListModel),
-                         GTK_TYPE_FILTER_LIST_MODEL);
-  zend_class_entry *ce_GtkSorter = register_class_Gtk4_GtkSorter(ce_GObject);
-  phpgtk::register_class("GtkSorter", ce_GtkSorter, GTK_TYPE_SORTER);
-  phpgtk::register_class("GtkCustomSorter", register_class_Gtk4_GtkCustomSorter(ce_GtkSorter),
-                         GTK_TYPE_CUSTOM_SORTER);
-  phpgtk::register_class("GtkSortListModel",
-                         register_class_Gtk4_GtkSortListModel(ce_GObject, ce_GListModel),
-                         GTK_TYPE_SORT_LIST_MODEL);
+  // Generated classes (gen/gir.php): enums first, then interfaces and classes parents first.
+#include "gen_minit.inc"
 
   // libgtk-3 and libgtk-4 export the same C symbols; whichever loaded first
   // wins symbol resolution, so with php-gtk3 present every gtk4 call silently
@@ -173,6 +134,7 @@ static PHP_MSHUTDOWN_FUNCTION(gtk4) {
 
 // Request init: one-time verification of the PHP enums against the C enums.
 static PHP_RINIT_FUNCTION(gtk4) {
+  phpgtk::object_request_init();
   phpgtk::enums_verify();
   return SUCCESS;
 }

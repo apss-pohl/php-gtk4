@@ -2,6 +2,7 @@
 
 #include "callback.h"
 #include "globals.h"
+#include "object.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -56,11 +57,11 @@ void teardown_untrack_notified(gpointer key) {
   notified().erase(key);
 }
 
-// RSHUTDOWN: disconnect every live handler, destroy every armed source and clear every
-// notified callable while Zend is up. Every entry's pointer is valid as long as the entry
-// exists (finalizing the instance/owner runs the finalize/destroy notify, which untracks),
-// so each step takes the *current* first entry rather than iterating a snapshot: one
-// disconnect/clear may finalize other tracked objects and remove their entries too.
+// RSHUTDOWN: disconnect every live handler, destroy every armed source, clear every
+// notified callable and release every toggle hold while Zend is up. Every entry's pointer is valid
+// as long as the entry exists (finalizing the instance/owner runs the finalize/destroy notify,
+// which untracks), so each step takes the *current* first entry rather than iterating a snapshot:
+// one disconnect/clear may finalize other tracked objects and remove their entries too.
 void teardown_request() {
   while (!closures().empty()) {
     const auto [closure, h] = *closures().begin();
@@ -80,6 +81,7 @@ void teardown_request() {
     notified().erase(key);
     n.clear(n.owner);  // runs the destroy notify
   }
+  object_release_holds();  // may free handles -> finalize GObjects -> more destroy notifies
   callback_drain();
 }
 

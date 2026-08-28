@@ -42,7 +42,8 @@ return Demo::page(
 
         // A window of this page's own: adopting $app keeps it alive, and vetoing
         // *its* close-request cannot trap the application.
-        $demo = new GtkWindow($app);
+        $demo = new GtkWindow();
+        $demo->set_application($app);
         $demo->set_title('GtkWindow demo — try to close me');
         $demo->set_default_size(360, 220);
         $demo->set_child(Demo::label(

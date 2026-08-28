@@ -29,7 +29,7 @@ src/gtk4.cpp       MINIT: register_class()/register_enum()/register_boxed()/regi
 src/Gtk|Gdk|Gio|Cairo/   one .cpp per class: ZEND_METHODs (hand-written today, generated in milestone 3)
   │
 src/core/          hand-written runtime (the real work):
-                     object       PHP handle <-> GObject* (owned ref, qdata identity, weak ref,
+                     object       PHP handle <-> GObject* (toggle ref + hold, qdata identity,
                                   property handlers, GType -> class registry, wrap()/unwrap())
                      marshal      GValue <-> zval (all fundamentals, enums/flags, boxed, variant)
                      gsignal      GClosure-based connect()/emit(), PHP callable invocation
@@ -50,7 +50,16 @@ GTK4 / GLib C API
 - Handlers: `free_obj` (weak-unref, clear qdata, `g_object_unref`), `clone_obj = NULL`,
   `read/write/has_property` map `$obj->some_prop` (underscores → dashes) to GObject properties and
   fall back to the standard handlers, `get_debug_info` lists readable properties for `var_dump`.
-- **Ownership**: `attach()` does `g_object_ref_sink`; the handle owns one ref. Constructors use
+- **Ownership**: `attach()` does `g_object_ref_sink` and turns that reference into a *toggle*
+  reference (`g_object_add_toggle_ref`, decided 2026-08-28): while it is the only reference the
+  handle behaves like an owner (last PHP ref → free → finalize); as soon as GTK holds another
+  one (parented widget, store item, toplevel list) the GObject takes a `GC_ADDREF` on the
+  `zend_object` (`Object::held`), so `$box->append(new MyButton())` keeps the PHP subclass with
+  its state and `get_first_child()` returns that very object. The toggle notify releases the
+  hold when GTK lets go (freeing the handle right there if PHP had let go too — GLib does not
+  touch the object after the notify, the pattern of every toggle-ref binding); RSHUTDOWN releases
+  every hold first (`object_release_holds()`, tracked in module globals), because Zend reports
+  objects still referenced at shutdown as leaks instead of freeing them. Constructors use
   `attach_new()` instead, and the choice is a *rule*, not a per-class judgement (GIR's `transfer`
   is `none` on `gtk_window_new()` and `gtk_button_new()` alike, so it cannot decide this):
   a floating return (`GInitiallyUnowned`) is sunk; a plain `GObject` with `transfer="full"` is
@@ -59,7 +68,8 @@ GTK4 / GLib C API
   generator error that goes to the `overrides/` directory under `gen/`. `attach_new()` enforces
   the root case at runtime (`g_critical` + `attach()` semantics). **Identity**: a qdata
   back-pointer makes `wrap()` return the existing `zend_object` (`ZVAL_OBJ_COPY`), so `===` holds and
-  dynamic properties survive round trips. A `g_object_weak_ref` nulls `obj` if GTK finalizes anyway.
+  subclass state survives round trips; the toggle ref guarantees the object cannot be finalized
+  while a handle exists, so `obj` is only `nullptr` before `attach()`.
 - **Registry**: `register_class("GTypeName", ce)` (GType name → `zend_class_entry`, installs
   `create_object`). `wrap()` walks `g_type_parent()` to the nearest registered class, so an
   unregistered subclass still yields e.g. `Gtk4\GObject` instead of failing.
@@ -118,26 +128,68 @@ GTK4 / GLib C API
   `ArgumentCountError`/`TypeError` semantics for free. `Z_PARAM_OBJECT_OF_CLASS_OR_NULL` + `unwrap()`
   for GObject arguments.
 
+### 2.6 PHP subclasses as GTypes (`src/core/subtype`, decided 2026-08-28)
+
+- **Every PHP user class extending a registered GObject class is a real GType**, registered
+  lazily at its first `new` (`g_type_register_static`, name `Php__<Ns>__<Class>`, parent = the
+  GType of the nearest registered ancestor, PHP ancestors first). Instances are created with
+  `g_object_new()` of that type; the constructor's arguments become construct properties
+  (matched by name, `gen/ctor-props.txt` for renames such as `gtk_label_new(str)` → `label`).
+  A class whose constructor arguments are not properties (`GtkCustomFilter`'s callback) keeps
+  the old behaviour: `new` builds the native class, the PHP object is a plain wrapper subclass
+  (listed in `gen/report.md`). Final GTK classes cannot be subtyped either.
+- **Abstract GTK classes** (`GtkWidget`, `GtkFilter`, `GtkSorter`, …) have a *public*
+  constructor that refuses the native class (`Error: GtkWidget is abstract in GTK: subclass it
+  in PHP`) and works on a PHP subclass — that is how a widget is written in PHP. Never
+  `abstract` in PHP: `wrap()` must instantiate them for whatever GTK hands back.
+- **vfuncs**: a PHP method `vfunc_<name>()` overrides the class-struct slot of the same name.
+  The generator emits, per GIR `<virtual-method>` whose types are in the closure, a C thunk (C
+  arguments → zvals, `zend_call_known_instance_method`, result → C, out parameters from the
+  returned list as for methods, exceptions through `report_pending_exception`), an installer,
+  and a native `vfunc_<name>()` method on the owning class that calls the implementation of the
+  nearest non-PHP ancestor — so `parent::vfunc_<name>()` chains correctly through any number of
+  PHP levels. The GType's `class_init` installs a thunk only for the slots the PHP class
+  defines (`vfunc_*` in its function table, user functions only), so undefined vfuncs cost
+  nothing. PHP enforces the stub's signature on overrides (`vfunc_match(?GObject $item): bool`).
+- **Construction and handles**: `subtype_new()` parks the handle in `GTK4_G(constructing)`;
+  the type's `instance_init` pre-binds it (`object_prebind`: `obj` + qdata, no reference yet) so
+  vfuncs and `wrap()` during the rest of `g_object_new()` find the PHP object; `attach*()` then
+  settles the reference under the normal ownership rule (a `GtkWindow` subtype still uses
+  `attach()`). A thunk on an instance without a handle (mid-construction before our
+  `instance_init`, after RSHUTDOWN released the holds, an instance GTK created itself) chains to
+  the native implementation instead of creating one.
+- **Process-wide, per-request**: GTypes cannot be unregistered, so the GType → PHP class *name*
+  map is a process-wide static behind a mutex (ZTS); `wrap()` resolves the class per request by
+  name (no autoload) and falls back to the native parent when it does not exist there. Which
+  vfuncs a GType has is decided by the first request that instantiates the class.
+- **Not covered (yet)**: implementing GTK *interfaces* from PHP (`g_type_add_interface_static`
+  and iface_init — `GListModel` in PHP would be the first consumer), declaring GObject properties
+  or signals in PHP, `snapshot()` (needs `GtkSnapshot`, wave 4/milestone 4), vfuncs whose
+  arguments are pointers to scalars without a GIR direction (`compute_expand`), interface
+  vfuncs. `GObject`'s own vfuncs (`dispose`, `set_property`, …) are hand-written territory and
+  not exposed.
+
 ## 3. Code generation (`gen/`)
 
 - Input: `/usr/share/gir-1.0/{GLib,GObject,Gio,Gdk-4.0,Gsk-4.0,Gtk-4.0,Pango,GdkPixbuf}.gir` (XML).
 - Generator: PHP script (like php-gtk3's php-gtk3's generator script (run.php) but reading GIR instead of `defs.txt`).
-- Emits per namespace: a section of `src/gtk4.stub.php` (classes, typed signatures, enums,
-  `#[\Deprecated]`, docblocks with docs.gtk.org links) and per class a `.cpp` with `ZEND_METHOD`
+- Emits per namespace: `src/<Ns>/<Ns>.stub.php` (classes, typed signatures, enums, `@property`
+  tags, docblocks from GIR) and per class a `.cpp` with `ZEND_METHOD`
   bodies calling `marshal`/`wrap`/`unwrap`; plus the MINIT registration block in **dependency
   order** (topologically sorted by parent type). `gen_stub.php` then produces the arginfo, so
   types are declared exactly once.
-- Honour GIR annotations: `transfer`, `nullable`, `optional`, `out`/`inout` (returned as array or
-  by-ref), `array length=`, `deprecated` (`#[\Deprecated]` in the stub + `E_DEPRECATED` in the body).
+- Honour GIR annotations: `transfer`, `nullable`, `optional`, `out`/`inout` (returned, never
+  by-ref), `array length=`, `deprecated` (**skipped** — decided 2026-08-27: the binding exposes the
+  modern API only; `#[\Deprecated]` emission stays possible if ever wanted).
 - Skip-list / override mechanism: `gen/overrides/<Type>.<method>.cpp` replaces a generated body
   (for the handful of APIs needing hand code: `GtkDrawingArea::set_draw_func`, `GtkListItemFactory`,
   `Gio::Application::run` with argv). Generated code is **regenerable**; never hand-edit it.
 - Also generate a reference-objects coverage doc coverage map and PHP stub files (`stubs/*.php`) for IDE
   autocompletion — the VS Code experience was a third-party afterthought in php-gtk3.
-- Stubs target PHP 8.4: typed class constants for enums, `#[\Deprecated(since:, message:)]` on
-  deprecated GTK APIs (so IDEs and `E_USER_DEPRECATED` agree), property hooks declaring GObject
-  properties as virtual PHP properties (`$win->title` ↔ `get/set_property('title')`), `never`/union
-  return types from GIR nullability.
+- Stubs target PHP 8.4: backed enums for GEnum, constant classes for GFlags, GObject properties
+  declared as `@property` tags (`$win->title` ↔ `get/set_property('title')` through the object
+  handlers — not PHP property hooks, which would need per-property engine code), nullable return
+  types from GIR nullability.
 
 ### Rollout: map-driven generation, drafts, hand-finishing (decided 2026-08-26)
 
@@ -174,21 +226,22 @@ Rules that make "draft then hand-write" work without losing regenerability:
      than overrides can express (`GtkListItemFactory`, `GtkBuilder` scope, future PHP subclassing).
      Promotion is one-way and rare; a promoted class is no longer updated on GTK upgrades.
 3. **Stub sections per namespace, one MINIT block.** Generated stub text lives in
-   `src/gen/<Ns>.stub.php`, hand-written classes stay in `src/gtk4.stub.php`; `gen_stub.php` gets
-   the concatenation. The MINIT block is generated for *all* registered classes (generated and
-   promoted) so parent-first order is never maintained by hand again.
+   `src/<Ns>/<Ns>.stub.php` with its own `<Ns>_arginfo.h` (gen_stub.php runs once per stub file;
+   `src/gen_arginfo.h` includes them all), hand-written classes stay in `src/gtk4.stub.php`. The
+   MINIT block for generated classes is `src/gen_minit.inc` (parents first, never maintained by
+   hand); the hand-written classes register before it in `src/gtk4.cpp`.
 4. **Version policy.** Emit API with GIR `version ≤ 4.14` (the CI floor) unconditionally; anything
    newer is wrapped in `GTK_CHECK_VERSION` *and* marked `@since 4.16` in the stub, or skipped if
-   the wave does not need it. `deprecated` → `#[\Deprecated(since:, message:)]` in the stub and
-   `E_DEPRECATED` in the body; classes deprecated in 4.10 that the map marks "(dep. 4.10 →
-   X)" are skipped in favour of X.
+   the wave does not need it (wave 0: skipped and reported). Deprecated members are skipped
+   (see §3 above); classes deprecated in 4.10 that the map marks "(dep. 4.10 → X)" are skipped in
+   favour of X.
 5. **Definition of done per wave** (CLAUDE.md, adapted for generated code): generated methods are
    covered by the generic suites (`EveryClassTest`, `RobustnessTest`, `StubsTest`, `ExampleTest`)
    plus one generated smoke test per class (constructor + every arg-less getter, property
    round-trips); every **override** and every **promoted** class gets hand-written tests like
    today; every class gets its `examples/<Class>.php`; `docs/GTK3-MAP.md`'s status column is
-   regenerated from the stub. A wave is merged only with `./ci.sh --with=asan,coverage,valgrind`
-   green.
+   regenerated from the stubs (`gen/map-status.php`, run by `gir.php --install`). A wave is merged
+   only with `./ci.sh --with=asan,coverage,valgrind` green.
 
 Waves (from the map's port order; each = allow-list → generate → review → overrides/tests/
 examples → CI → commit):
@@ -199,6 +252,7 @@ examples → CI → commit):
 | 1 | layout: `GtkScrolledWindow`, `GtkGrid`, `GtkPaned`, `GtkFrame`, `GtkStack`(+Switcher/Sidebar), `GtkNotebook`, `GtkOverlay`, `GtkRevealer`, `GtkFixed`, `GtkSeparator`, `GtkSizeGroup`, `GtkWidget` margins | — |
 | 2 | controls: `GtkEntry`/`GtkEditable`/`GtkEntryBuffer`, `GtkCheckButton`, `GtkToggleButton`, `GtkSpinButton`, `GtkScale`, `GtkAdjustment`, `GtkProgressBar`, `GtkImage`, `GtkSpinner`, `GtkCalendar` | `GtkEditable` interface methods once per interface |
 | 3 | event controllers: `GtkEventController*`, `GtkGestureClick/Drag`, `GdkEvent` family | `GdkEvent` on the fundamental registry; `GdkModifierType` flags |
+| 3b | drag and drop: `GtkDragSource`, `GtkDropTarget`, `GdkContentProvider`, `GdkDrop`/`GdkDrag` | GValue payloads (boxed/variant exist); `GdkContentFormats` boxed |
 | 4 | menus/actions: `GMenu`, `GMenuItem`, `GtkPopoverMenu(Bar)`, `GtkMenuButton`, `GtkHeaderBar`, `GtkApplicationWindow`, accels | `GMenuModel` |
 | 5 | dialogs (4.10 async API): `GtkAlertDialog`, `GtkFileDialog`, `GtkColorDialog`, `GtkFontDialog`, `GtkAboutDialog`, `GtkFileFilter` | `GAsyncReadyCallback` scope (async) + `*_finish` → `GError` throws |
 | 6 | text: `GtkTextView`, `GtkTextBuffer`, `GtkTextIter` (boxed), `GtkTextMark/Tag/TagTable` | boxed with many methods (`GtkTextIter`) |
@@ -234,7 +288,7 @@ php-gtk4/
   src/gtk4.cpp        module entry, MINIT registration block, RINIT/RSHUTDOWN
   src/gtk4.stub.php   the API declaration -> src/gtk4_arginfo.h (generated, committed)
   src/core/           hand-written runtime (§2)
-  src/Gtk|Gdk|Gio|Cairo/  one .cpp per class (generated ones move under src/gen/ in milestone 3)
+  src/<Ns>/               one .cpp per class, generated in place (GENERATED header) or hand-written
   gen/                gen_stub.php (vendored), ide-stub.php, method-comments.php; the GIR generator + overrides
   stubs/gtk4.php      generated IDE stub
   tests/              PHPUnit 12 suite, tests/phpt (run-tests.php), tests/scripts (stress, shutdown)
@@ -269,7 +323,7 @@ Core mechanisms the generator emits against, decided before it exists so its out
 rewritten: PHP enums for GEnum / constant classes for GFlags (with a GType→class registry in
 marshal), collection helpers with GIR transfer semantics, an out-parameter convention, a generic
 fundamental-type handle registry (GdkEvent, GskRenderNode, GtkExpression), a generation rule for
-typed C callbacks, and `GError`/`GBytes` mappings. All done 2026-08-26, tracked in docs/TODO.md §7.
+typed C callbacks, and `GError`/`GBytes` mappings. All done 2026-08-26, tracked in docs/TODO.md §5.
 
 ### Conventions the generator relies on (2026-08-26)
 
@@ -338,7 +392,7 @@ load (verified with valgrind: write into a freed block inside libgtk, no php-gtk
    the complete CI/QA/test infrastructure: `ci.sh`, three workflows with matrices, sanitizer and
    coverage jobs, stubs, badges). `GtkApplication`/`GtkButton` moved to milestone 2/3.
 2. ✅ **Core runtime** — done and tested (2026-08-26): objects (owned ref with `attach`/`attach_new`
-   ownership rules, qdata identity, weak ref, GType→class registry, property handlers), marshal
+   ownership rules, qdata identity, toggle-ref hold, GType→class registry, property handlers), marshal
    (all fundamentals, enum/flags as int, object/interface, `GParamSpec`, boxed + `GStrv`,
    `GVariant`), signals (GClosure marshaller, `emit()`), callbacks (`GLib` sources), exception
    boundary with `ExceptionMode`, RSHUTDOWN teardown, `GtkWidget` layer with `GtkButton`/`GtkLabel`,

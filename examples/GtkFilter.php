@@ -8,6 +8,7 @@ use Gtk4\GObject;
 use Gtk4\GtkButton;
 use Gtk4\GtkCustomFilter;
 use Gtk4\GtkFilter;
+use Gtk4\GtkFilterChange;
 use Gtk4\GtkFilterListModel;
 use Gtk4\GtkWidget;
 use Gtk4\GtkWindow;
@@ -53,7 +54,7 @@ return Demo::page(
                 $threshold += 40;
                 $note = sprintf('threshold raised to %d — nothing told the model, so the list is stale', $threshold);
             } else {
-                $filter->changed();                 // GtkFilter::changed() re-evaluates
+                $filter->changed(GtkFilterChange::Different);   // re-evaluate every item
                 $note = 'changed() called — the same predicate, re-run';
             }
             $canvas->queue_draw();

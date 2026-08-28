@@ -131,7 +131,7 @@ final class ExampleTest extends TestCase
         require_once __DIR__ . '/../examples/bootstrap.php';
 
         $placed = [];
-        foreach (\PhpGtk4\Examples\Demo::SECTIONS as $section => $members) {
+        foreach (\PhpGtk4\Examples\Demo::sections() as $section => $members) {
             foreach ($members as $member) {
                 self::assertArrayNotHasKey($member, $placed, "$member is in two sections");
                 $placed[$member] = $section;
@@ -145,7 +145,7 @@ final class ExampleTest extends TestCase
         sort($registered);
         $mapped = array_keys($placed);
         sort($mapped);
-        self::assertSame($registered, $mapped, 'Demo::SECTIONS must list every registered class once');
+        self::assertSame($registered, $mapped, 'Demo::sections() must list every registered class once');
     }
 
     public function testTheCombinedDemoMountsEveryClass(): void

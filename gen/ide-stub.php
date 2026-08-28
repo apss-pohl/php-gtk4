@@ -26,17 +26,40 @@ use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 
-$source = __DIR__ . '/../src/gtk4.stub.php';
-$target = __DIR__ . '/../stubs/gtk4.php';
-
-$code = file_get_contents($source);
-if ($code === false) {
-    fwrite(STDERR, "cannot read $source\n");
-    exit(1);
+$root = dirname(__DIR__);
+$target = "$root/stubs/gtk4.php";
+// The hand-written stub first, then every generated per-namespace stub (src/<Ns>/<Ns>.stub.php);
+// all declare `namespace Gtk4;`, so their statements are merged into the first namespace node.
+$sources = array_merge(["$root/src/gtk4.stub.php"], glob("$root/src/*/*.stub.php") ?: []);
+$parser = new ParserFactory()->createForNewestSupportedVersion();
+$ast = null;
+/** @var Stmt\Namespace_|null $ns */
+$ns = null;
+foreach ($sources as $source) {
+    $code = file_get_contents($source);
+    if ($code === false) {
+        fwrite(STDERR, "cannot read $source\n");
+        exit(1);
+    }
+    $part = $parser->parse($code);
+    if ($part === null) {
+        fwrite(STDERR, "cannot parse $source\n");
+        exit(1);
+    }
+    foreach ($part as $stmt) {
+        if (!$stmt instanceof Stmt\Namespace_) {
+            continue;
+        }
+        if ($ns === null) {
+            $ns = $stmt;
+            $ast = $part;
+        } else {
+            $ns->stmts = array_merge($ns->stmts, $stmt->stmts);
+        }
+    }
 }
-$ast = new ParserFactory()->createForNewestSupportedVersion()->parse($code);
 if ($ast === null) {
-    fwrite(STDERR, "cannot parse $source\n");
+    fwrite(STDERR, "no namespace found in the stubs\n");
     exit(1);
 }
 

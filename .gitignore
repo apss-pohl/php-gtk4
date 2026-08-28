@@ -96,3 +96,6 @@ NOTES.md
 
 # Claude Code session state (per clone)
 /.claude/RESUME.md
+
+# generator preview output (php gen/gir.php --out=gen/out)
+/gen/out/

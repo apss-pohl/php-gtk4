@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace PhpGtk4\Tests;
 
 use Gtk4\GObject;
+use Gtk4\GtkBox;
+use Gtk4\GtkButton;
+use Gtk4\GtkOrientation;
 use Gtk4\GtkWindow;
 
 /** src/core/wrap: object handles, identity, ownership. */
@@ -113,5 +116,62 @@ final class WrapTest extends GtkTestCase
         });
         $w->set_title('t');
         self::assertSame($w, $seen);
+    }
+
+    // ---- toggle reference: GTK holding the C object keeps the PHP handle (and its state)
+
+    public function testHandleSurvivesWhileGtkHoldsTheObject(): void
+    {
+        $box = new GtkBox(GtkOrientation::Horizontal, 0);
+        $box->append(new StatefulButton());  // no PHP reference kept
+        $child = $box->get_first_child();
+        self::assertInstanceOf(StatefulButton::class, $child, 'the PHP subclass, not a fresh base wrapper');
+        self::assertSame(42, $child->state, 'subclass state survived the script dropping its reference');
+    }
+
+    public function testHandleIsReleasedWhenGtkLetsGo(): void
+    {
+        $box = new GtkBox(GtkOrientation::Horizontal, 0);
+        $b = new DestructCountingButton();
+        DestructCountingButton::$destructed = 0;
+        $box->append($b);
+        unset($b);
+        self::assertSame(0, DestructCountingButton::$destructed, 'held by the box');
+        $child = $box->get_first_child();
+        self::assertInstanceOf(GtkButton::class, $child);
+        $box->remove($child);
+        unset($child);
+        self::assertSame(1, DestructCountingButton::$destructed, 'removed from the box = last reference gone = freed');
+        self::assertNull($box->get_first_child());
+    }
+
+    public function testHoldIsTakenAndReleasedRepeatedly(): void
+    {
+        $box = new GtkBox(GtkOrientation::Horizontal, 0);
+        $b = new StatefulButton();
+        $b->state = 0;
+        for ($i = 0; $i < 3; $i++) {
+            $box->append($b);
+            $box->remove($b);
+            $b->state++;
+        }
+        self::assertSame(3, $b->state);
+        $weak = \WeakReference::create($b);
+        unset($b);
+        self::assertNull($weak->get(), 'nothing holds it once GTK and the script let go');
+    }
+
+    public function testWindowHandleHeldByToplevelListUntilDestroy(): void
+    {
+        $w = new GtkWindow();
+        $w->set_title('m');
+        $weak = \WeakReference::create($w);
+        unset($w);
+        $again = $weak->get();
+        self::assertInstanceOf(GtkWindow::class, $again, "GTK's toplevel list holds the window, so the handle stays");
+        self::assertSame('m', $again->get_title());
+        $again->destroy();
+        unset($again);
+        self::assertNull($weak->get(), 'destroy() dropped the toplevel ref; last PHP ref frees it');
     }
 }

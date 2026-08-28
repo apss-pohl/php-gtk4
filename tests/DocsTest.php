@@ -32,7 +32,7 @@ final class DocsTest extends TestCase
     public static function docs(): iterable
     {
         $docs = ['CLAUDE.md', 'README.md', 'docs/PLAN.md', 'docs/TODO.md', 'docs/RELEASING.md', 'docs/BUILD.md',
-            'docs/CONTRIBUTING.md', 'gen/README.md',
+            'docs/INSTALL.md', 'docs/CONTRIBUTING.md', 'gen/README.md',
             'stubs/README.md', 'tests/phpt/README.md'];
         foreach ($docs as $f) {
             yield $f => [$f];

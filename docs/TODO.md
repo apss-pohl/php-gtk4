@@ -1,7 +1,8 @@
 # TODO
 
 Findings of the 2026-08-25 review ("best practice or php-gtk3 ballast?"). Ordered by impact.
-Tick items off here; design rationale lives in docs/PLAN.md.
+Tick items off here; design rationale lives in docs/PLAN.md. §1–§5 are history, §6–§7 the
+generator backlog, §9 the open design questions.
 
 ## 1. Runtime foundation — replace PHP-CPP with the native Zend API  ✅ done 2026-08-25
 
@@ -40,11 +41,7 @@ longer holds for a PHP 8.4+ target, and it blocks idiomatic PHP:
       camelCase aliases; phpcs exclusion for the stub is intentional
 - [x] property access: `get_property()/set_property()` *and* `$obj->prop` via handlers
 
-- [ ] **Branch protection for `main`** — blocked: private repo on a Free plan (GitHub API returns
-      403 "Upgrade to GitHub Pro or make this repository public"). Ruleset is ready in
-      `.github/ruleset-main.json`; once public/Pro:
-      `gh api -X POST repos/apss-pohl/php-gtk4/rulesets --input .github/ruleset-main.json`
-      (drop `required_approving_review_count` to 0 while there is a single maintainer)
+- [ ] **Branch protection for `main`** — blocked (private repo, Free plan); details in §9.
 - [x] **License file** — MIT, `LICENSE` added 2026-08-25 (matches composer.json);
       keep php-src header on `gen/gen_stub.php` (PHP License 3.01, MIT-compatible)
 
@@ -61,7 +58,7 @@ longer holds for a PHP 8.4+ target, and it blocks idiomatic PHP:
 - [x] `GtkWidget` layer (+ `GtkButton`, `GtkLabel`), `GObject::emit()`
 - [x] closure/source teardown in RSHUTDOWN (`src/core/teardown.*`, `tests/scripts/shutdown.php`)
 
-## 7. Milestone 2b — foundation the generator will emit against (decided 2026-08-26)
+## 5. Milestone 2b — foundation the generator will emit against (decided 2026-08-26)
 
 Do before milestone 3; each changes what generated code looks like.
 
@@ -91,67 +88,103 @@ Do before milestone 3; each changes what generated code looks like.
       values become exception objects; `GBytes` ↔ string in marshal and method signatures.
       First user: `GdkTexture` (`new_from_filename/new_from_bytes/save_to_png_bytes/save_to_png`).
 
-## 6. GTK4 feature surface (what the binding still has to expose to deliver GTK4's benefits)
-
-Inherited for free (nothing to do): GSK/GPU rendering, the flat widget hierarchy (no
-GtkContainer), Wayland/HiDPI/platform backends, the cleaned-up API (the stub is generated from
-GTK4 GIR only).
-
-- [ ] **Event controllers** — `GtkGestureClick`, `GtkEventControllerKey/Motion/Scroll/Focus`,
-      `GtkWidget::add_controller()/remove_controller()`; signals already marshal (ints/doubles/flags).
-      Pure generator output (milestone 3).
-- [ ] **List models** — `GListModel` interface, `GtkStringList`, `GListStore`, selection models,
-      `GtkListView`/`GtkColumnView`/`GtkGridView`, `GtkSignalListItemFactory` (`setup`/`bind`),
-      `GtkListItem`. Done 2026-08-26: `Gtk4\PhpValue` (GType `PhpValue`, a GObject carrying a zval),
-      `GListModel` interface, `GListStore`, `GtkFilterListModel`/`GtkCustomFilter`,
-      `GtkSortListModel`/`GtkCustomSorter`. Selection models and the views are generator wave 7.
-- [ ] **Drag and drop** — `GtkDragSource`, `GtkDropTarget`, `GdkContentProvider` (GValue payloads:
-      boxed/variant support exists). Generator output.
-- [ ] **CSS** — `GtkCssProvider` + `gtk_style_context_add_provider_for_display`; custom properties.
-      Two small classes.
-- [ ] **Concrete layouts** — `GtkBox` ✅ (2026-08-26); `GtkGrid`, `GtkCenterBox`, `GtkStack`, `GtkPaned`,
-      `GtkScrolledWindow` (+ `GtkOrientable` interface) are generator wave 1.
-- [ ] **Custom `GtkLayoutManager` / GObject subclassing from PHP** — vfunc overriding; separate
-      design, after milestone 4.
-- [ ] **Rendering from PHP** — `GdkTexture` ✅ and `GtkDrawingArea::set_draw_func` + `CairoContext` ✅
-      (2026-08-26); `GtkSnapshot`, `GdkPaintable` open. Milestone 4.
-- [x] **GL renderer smoke test** — the test infrastructure forces `GSK_RENDERER=cairo` +
-      `GDK_DEBUG=gl-disable` (Xvfb). Verified manually on a real Wayland session with an AMD GPU on
-      2026-08-26 (see PLAN.md §6 "GL"); repeat before a release, no automation possible on CI runners.
-
-## 8. Milestone 3 — generator rollout (decided 2026-08-26, see PLAN.md §3 "Rollout")
+## 6. Milestone 3 — generator rollout (decided 2026-08-26, see PLAN.md §3 "Rollout")
 
 Map-driven: generate only the classes in `docs/GTK3-MAP.md`, wave by wave, review each wave as a
 draft, hand-write via overrides / promotion where the project needs more.
 
-- [ ] **Prep** — commit milestone 2/2b; generic `tests/scripts/stress.php`; interface methods
-      emitted once per interface (refactor the three `GListModel` copies to that shape).
-- [ ] **`gir.php` in `gen/`** — GIR parser (Gtk/Gdk/Gio/GObject/GLib/Pango/Gsk), allow-list + transitive
-      closure, emitters (stub section, `.cpp` per class, MINIT block, `config.m4` list, smoke tests,
-      `report.md` (in `gen/`)), `overrides/` (under `gen/`), `skip.txt`, `handwritten.txt`, `GENERATED` header
-      + staleness check in `ci.sh`, version policy (≤ 4.14 unconditional, newer guarded).
-- [ ] **Wave 0** — regenerate the 27 existing classes; the current suite passes unchanged; the
-      hand-written trampolines become the first overrides.
-- [ ] **Waves 1–8** as listed in PLAN.md; each merged only with the full pipeline green and the
-      map's status column regenerated.
+- [x] **Prep** (2026-08-27) — interface methods emitted once per interface (`@implementation-alias`),
+      per-namespace stubs, constructor ownership rule, `gen/` inputs.
+- [x] **`gir.php` in `gen/`** (2026-08-27) — GIR parser (Gtk/Gdk/Gio/GObject/GLib/Pango/Gsk/cairo),
+      allow-list + transitive closure, emitters (per-namespace stub, `.cpp` per class, MINIT block,
+      prototypes, smoke tests, example skeletons, `gen/report.md`, the status column of
+      docs/GTK3-MAP.md via `gen/map-status.php`), `gen/overrides/`, `skip.txt`, `handwritten.txt`,
+      `GENERATED` header + `./ci.sh --only=gen` staleness check, version policy (≤ 4.14 emitted,
+      newer skipped and reported; the `GTK_CHECK_VERSION` + `@since` branch is unexercised until a
+      wave needs it). `config.m4`/`config.w32` glob `src/**/*.cpp`, so no source list is emitted.
+- [x] **Wave 0** (2026-08-27) — the existing GObject classes are generated (`gen/report.md` lists
+      the skips); API follows GTK's shape (static `new_*` factories, no PHP-side defaults, no
+      deprecated 4.10 API), the suite was adapted accordingly.
+- [x] **Wave 0 follow-up** (2026-08-27) — generated smoke tests (`tests/Generated/`, PLAN §3.5),
+      visual pages for every generated class/enum, hand-written tests for the new API
+      (`LabelTest`, `ButtonTest`, additions to the widget/box/application/list/texture/action
+      tests). Deviations from PLAN §3 decided 2026-08-27: deprecated members are *skipped* (no
+      `#[\Deprecated]` emission — modern API only), GObject properties are `@property` tags mapped
+      by the runtime handlers (not PHP 8.4 property hooks), docblocks carry GIR's first paragraph
+      (no docs.gtk.org links yet). Not done: a coverage doc beyond `gen/report.md` + the map.
+- [ ] **Waves 1–8** as listed in PLAN.md §3 (the feature items in §7 below point at their wave);
+      each merged only with the full pipeline green and the map's status column regenerated.
+      Next: wave 1 (layout containers — `GtkScrolledWindow` is what `examples/demo.php`'s sidebar
+      needs).
 
-## 9. Threads (decided 2026-08-27)
+## 7. GTK4 feature surface (what the binding still has to expose to deliver GTK4's benefits)
+
+Inherited for free (nothing to do): GSK/GPU rendering, the flat widget hierarchy (no
+GtkContainer), Wayland/HiDPI/platform backends, the cleaned-up API (the stub is generated from
+GTK4 GIR only). Every open item here is generator output and is ticked when its wave (§6, PLAN.md
+§3) lands; design questions live in §9.
+
+- [ ] **Concrete layouts** → wave 1: `GtkGrid`, `GtkCenterBox`, `GtkStack`, `GtkPaned`,
+      `GtkScrolledWindow`, … (`GtkBox` and `GtkOrientable` done 2026-08-26/27).
+- [ ] **Event controllers** → wave 3: `GtkGestureClick`, `GtkEventControllerKey/Motion/Scroll/Focus`,
+      `GtkWidget::add_controller()/remove_controller()`; signals already marshal (ints/doubles/flags);
+      `GdkEvent` goes on the fundamental registry, `GdkModifierType` is a flags class.
+- [ ] **Drag and drop** → wave 3b (added to the PLAN table 2026-08-28): `GtkDragSource`,
+      `GtkDropTarget`, `GdkContentProvider` (GValue payloads: boxed/variant support exists).
+- [ ] **List views** → wave 7: `GtkStringList`, selection models, `GtkListView`/`GtkColumnView`/
+      `GtkGridView`, `GtkSignalListItemFactory` (`setup`/`bind`), `GtkListItem`. Done 2026-08-26:
+      `Gtk4\PhpValue` (GType `PhpValue`, a GObject carrying a zval), `GListModel`, `GListStore`,
+      `GtkFilterListModel`/`GtkCustomFilter`, `GtkSortListModel`/`GtkCustomSorter`.
+- [ ] **CSS** → wave 8: `GtkCssProvider` + `gtk_style_context_add_provider_for_display`; custom
+      properties. Two small classes.
+- [ ] **Rendering from PHP** → milestone 4: `GtkSnapshot`, `GdkPaintable` (`GdkTexture`,
+      `GtkDrawingArea::set_draw_func` + `CairoContext` done 2026-08-26).
+- [x] **GL renderer smoke test** — the test infrastructure forces `GSK_RENDERER=cairo` +
+      `GDK_DEBUG=gl-disable` (Xvfb). Verified manually on a real Wayland session with an AMD GPU on
+      2026-08-26 (see PLAN.md §6 "GL"); repeat before a release, no automation possible on CI runners.
+
+## 8. Threads (decided 2026-08-27)
 
 - [x] ZTS build: per-request state in module globals (`src/core/globals.h`, `GTK4_G()`), GINIT/
       GSHUTDOWN construct/destroy the C++ members per thread, `config.m4`/`php_gtk4.h` no longer
       refuse ZTS, one `phpts: ts` job in `tests.yml`. Registries filled in MINIT stay static.
 - [x] GUI-thread guard: `record_gui_thread()` in `Gtk::init()`, `assert_gui_thread()` in the
       loop-driving methods → `Error` from any other thread.
-- [ ] Cross-thread hand-off for the "one GUI thread + workers" shape: a thread-safe
+- [x] Not doing: multiple GUI threads / one GTK per request thread. GTK is single-threaded;
+      documented in README "Threads" and docs/BUILD.md.
+- Cross-thread hand-off (`GLib::invoke_on_main`) is design work → §9.
+
+## 9. Design work (open questions, not generator output)
+
+Each needs a written design in PLAN.md before code; none blocks the waves.
+
+- [x] **Identity across GTK ownership** (2026-08-28) — the handle's reference is a toggle ref;
+      while GTK holds the object the GObject holds the `zend_object`, so a PHP subclass (state,
+      overridden methods) survives `$box->append(new MyButton())` without a PHP reference and
+      comes back from `get_first_child()` as itself. Released in the toggle notify and at
+      RSHUTDOWN (`WrapTest`, stress script, ASan/valgrind clean). What subclassing still needs:
+- [x] **GObject subclassing from PHP** (2026-08-28, PLAN §2.6) — `class MyWidget extends GtkWidget`
+      is a real GType (registered at first `new`, constructor arguments as construct properties,
+      `gen/ctor-props.txt` for renames), `vfunc_<name>()` overrides class-struct slots through
+      generated thunks with `parent::` chaining down to GTK, abstract classes constructible
+      through a subclass only. `SubclassTest`, `EveryClassTest` (every abstract class through an
+      eval'd subclass), smoke tests of abstract classes use an anonymous subclass, stress
+      script. Open follow-ups: GTK *interfaces* implemented in PHP (`GListModel` from PHP would
+      be the first consumer), GObject properties/signals declared in PHP, `snapshot()` once
+      `GtkSnapshot` lands, widget templates.
+- [ ] **Cross-thread hand-off** for the "one GUI thread + workers" shape: a thread-safe
       `GLib::invoke_on_main(callable)` (serialise the callable or require a `parallel`-style
       channel; `g_main_context_invoke` on the GUI context, callable released on that thread).
       Needs a concrete consumer (`ext-parallel` or PHP-native threads) before designing the API.
-- [ ] Not doing: multiple GUI threads / one GTK per request thread. GTK is single-threaded;
-      documented in README "Threads" and docs/BUILD.md.
+- [ ] **Branch protection for `main`** (not design, just blocked) — private repo on a Free plan
+      (GitHub API returns 403 "Upgrade to GitHub Pro or make this repository public"). Ruleset is
+      ready in `.github/ruleset-main.json`; once public/Pro:
+      `gh api -X POST repos/apss-pohl/php-gtk4/rulesets --input .github/ruleset-main.json`
+      (drop `required_approving_review_count` to 0 while there is a single maintainer).
 
-## 5. Keep (verified good, do not "clean up")
+## 10. Keep (verified good, do not "clean up")
 
-Namespace `Gtk4\`; PHP class == GType name + registry; owned refs + qdata identity + weak ref;
+Namespace `Gtk4\`; PHP class == GType name + registry; toggle-ref hold + qdata identity;
 GValue-array GClosure marshaller; single GValue bridge; catch → leave scope → report; `ci.sh`
 stages; ASan/UBSan/LSan + valgrind + gcov; `EveryClassTest`/`ExampleTest`; PHP 8.4/8.5 ×
 GTK 4.14/4.22 matrix; C++20.

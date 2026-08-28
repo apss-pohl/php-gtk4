@@ -16,7 +16,11 @@ use Gtk4\GMainLoop;
 use Gtk4\GObject;
 use Gtk4\Gtk;
 use Gtk4\GtkApplication;
+use Gtk4\GtkBox;
+use Gtk4\GtkButton;
+use Gtk4\GtkOrientation;
 use Gtk4\GtkWindow;
+use PhpGtk4\Tests\Scripts\StressSquare;
 
 if (!Gtk::init()) {
     fwrite(STDERR, "no display\n");
@@ -24,6 +28,8 @@ if (!Gtk::init()) {
 }
 
 $rounds = (int) ($argv[1] ?? 200);
+
+require_once __DIR__ . '/StressSquare.php';
 $reported = 0;
 Gtk::set_exception_handler(function () use (&$reported): void {
     $reported++;
@@ -46,6 +52,44 @@ for ($i = 0; $i < $rounds; $i++) {
         throw new RuntimeException('expected');
     });
     $w->set_title("x$i");
+
+    // toggle ref: a child kept alive by its parent only, PHP state intact, freed on remove
+    $box = new GtkBox(GtkOrientation::Horizontal, 0);
+    StressSquare::$round = $i;
+    $box->append(new GtkButton());
+    $child = $box->get_first_child();
+    if (!$child instanceof GtkButton) {
+        fwrite(STDERR, "no child\n");
+        exit(1);
+    }
+    $child->set_name("b$i");
+    unset($child);
+    $child = $box->get_first_child();
+    if (!$child instanceof GtkButton || $child->get_name() !== "b$i") {
+        fwrite(STDERR, "toggle hold broken\n");
+        exit(1);
+    }
+    $box->remove($child);
+    unset($child);
+
+    // PHP subtype: vfunc dispatch, exception in a vfunc (Log mode: reported), construction churn
+    $sq = new StressSquare();
+    $want = $i % 3 === 2 ? 0 : 40 + $i % 3;  // a throwing vfunc leaves GTK the zero fallback
+    if ($sq->measure(GtkOrientation::Horizontal, -1)[0] !== $want) {
+        fwrite(STDERR, "vfunc dispatch broken\n");
+        exit(1);
+    }
+    $box->append($sq);
+    unset($sq);
+    $sq = $box->get_first_child();
+    if (!$sq instanceof StressSquare) {
+        fwrite(STDERR, "subtype identity broken\n");
+        exit(1);
+    }
+    $box->remove($sq);
+    unset($sq);
+    $w->set_child($box);
+    unset($box);
 
     // identity + object property round trip
     $other = new GtkWindow();
@@ -129,15 +173,18 @@ if (str_contains((string) ini_get('gtk4.features'), 'testing=yes')) {
 }
 $app = new GtkApplication(null, 1 << 5);
 $app->connect('activate', function (GtkApplication $a): void {
-    $w = new GtkWindow($a);
+    $w = new GtkWindow();
+    $w->set_application($a);
     $w->present();
     $w->close();
 });
 $app->run();
 
 Gtk::set_exception_handler(null);
-// two set_title() emissions per round + the idle source (+ the two nested ones in test builds)
-$expected = 2 * $rounds + 1 + (str_contains((string) ini_get('gtk4.features'), 'testing=yes') ? 2 : 0);
+// per round: two set_title() emissions (+ the throwing vfunc every third round), plus the idle
+// source (+ the two nested ones in test builds) (+ the two nested ones in test builds)
+$testing = str_contains((string) ini_get('gtk4.features'), 'testing=yes');
+$expected = 2 * $rounds + intdiv($rounds, 3) + 1 + ($testing ? 2 : 0);
 if ($reported !== $expected) {
     fwrite(STDERR, "expected $expected reported exceptions, got $reported\n");
     exit(1);

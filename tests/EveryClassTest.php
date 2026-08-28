@@ -37,13 +37,32 @@ final class EveryClassTest extends GtkTestCase
         }
     }
 
+    /** @param class-string $class */
+    private static function phpSubclassOf(string $class): object
+    {
+        $sub = 'PhpGtk4\\Tests\\Every\\' . str_replace('\\', '_', $class);
+        if (!class_exists($sub, false)) {
+            eval('namespace PhpGtk4\\Tests\\Every; final class ' . str_replace('\\', '_', $class)
+                . ' extends \\' . $class . ' {}');
+        }
+        return new $sub();
+    }
+
     /**
      * @param class-string $class
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('instantiableClasses')]
     public function testConstructAndCallEveryGetter(string $class): void
     {
-        $object = new $class();
+        try {
+            $object = new $class();
+        } catch (\Error $e) {
+            if (!str_contains($e->getMessage(), 'subclass it in PHP')) {
+                throw $e;
+            }
+            // Abstract in GTK: `new` works on a PHP subclass only (its own GType, core/subtype.h).
+            $object = self::phpSubclassOf($class);
+        }
         self::assertInstanceOf($class, $object);
 
         $called = 0;

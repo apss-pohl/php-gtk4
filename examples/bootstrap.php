@@ -62,24 +62,47 @@ final class Demo
      */
     public const array SECTIONS = [
         'Widgets' => [
-            'GtkWidget', 'GtkWindow', 'GtkBox', 'GtkButton', 'GtkLabel',
-            'GtkDrawingArea', 'CairoContext',
+            'GtkWidget', 'GtkWindow', 'GtkRoot', 'GtkBox', 'GtkOrientable', 'GtkButton',
+            'GtkLabel', 'GtkDrawingArea', 'CairoContext',
+        ],
+        'Widget enums' => [
+            'GtkAlign', 'GtkOrientation', 'GtkBaselinePosition', 'GtkOverflow',
+            'GtkTextDirection', 'GtkDirectionType', 'GtkSizeRequestMode', 'GtkStateFlags',
+            'GtkPickFlags',
+        ],
+        'Label text' => [
+            'GtkJustification', 'PangoEllipsizeMode', 'PangoWrapMode', 'GtkNaturalWrapMode',
         ],
         'Application' => [
-            'Gtk', 'GtkApplication', 'GSimpleAction', 'GAction', 'GActionMap',
-            'GActionGroup', 'GApplicationFlags',
+            'Gtk', 'GApplication', 'GtkApplication', 'GSimpleAction', 'GAction', 'GActionMap',
+            'GActionGroup', 'GApplicationFlags', 'GtkApplicationInhibitFlags',
         ],
         'Objects & values' => [
             'GObject', 'GParamSpec', 'PhpValue', 'GdkRGBA', 'GdkRectangle',
-            'GdkTexture', 'GError', 'ExceptionMode',
+            'GdkTexture', 'GdkMemoryFormat', 'GError', 'ExceptionMode',
         ],
         'Lists' => [
             'GListModel', 'GListStore', 'GtkFilter', 'GtkCustomFilter',
-            'GtkFilterListModel', 'GtkFilterChange', 'GtkSorter', 'GtkCustomSorter',
-            'GtkSortListModel', 'GtkSorterChange',
+            'GtkFilterListModel', 'GtkFilterChange', 'GtkFilterMatch', 'GtkSorter',
+            'GtkCustomSorter', 'GtkSortListModel', 'GtkSorterChange', 'GtkSorterOrder',
+            'GtkOrdering',
         ],
-        'Loop & enums' => ['GLib', 'GMainLoop', 'GtkAlign', 'GtkOrientation'],
+        'Loop' => ['GLib', 'GMainLoop'],
     ];
+
+    /**
+     * SECTIONS plus the classes the generator added but nobody placed yet
+     * (examples/generated-sections.php, written by gen/gir.php --install).
+     *
+     * @return array<string, list<string>>
+     */
+    public static function sections(): array
+    {
+        $file = __DIR__ . '/generated-sections.inc';
+        /** @var array<string, list<string>> $generated */
+        $generated = is_file($file) ? require $file : [];
+        return array_filter(self::SECTIONS + $generated, static fn(array $members): bool => $members !== []);
+    }
 
     private static bool $ready = false;
     private static string $prefix = 'php-gtk4';
@@ -119,7 +142,8 @@ final class Demo
         self::init();
         $app = new GtkApplication('org.phpgtk4.examples', GApplicationFlags::NON_UNIQUE);
         $app->connect('activate', static function (GtkApplication $app) use ($title, $build, $width, $height): void {
-            $win = new GtkWindow($app);
+            $win = new GtkWindow();
+            $win->set_application($app);
             $win->set_default_size($width, $height);
             self::$window = $win;
             self::$prefix = 'php-gtk4 · ' . $title;
@@ -226,16 +250,17 @@ final class Demo
 
         $app = new GtkApplication('org.phpgtk4.examples.demo', GApplicationFlags::NON_UNIQUE);
         $app->connect('activate', static function (GtkApplication $app) use ($pages, $byClass): void {
-            $win = new GtkWindow($app);
+            $win = new GtkWindow();
+            $win->set_application($app);
             $win->set_default_size(940, 660);
             self::$window = $win;
 
             /** @var array<string, GtkWidget> $built */
             $built = [];
-            $section = (string) array_key_first(self::SECTIONS);
+            $section = (string) array_key_first(self::sections());
             $class = $pages[0]['class'];
 
-            $content = new GtkBox(GtkOrientation::Vertical);
+            $content = new GtkBox(GtkOrientation::Vertical, 0);
             $content->set_hexpand(true);
             $content->set_vexpand(true);
 
@@ -260,11 +285,11 @@ final class Demo
                 foreach ($list->get_children() as $old) {
                     $list->remove($old);
                 }
-                foreach (self::SECTIONS[$section] as $member) {
+                foreach (self::sections()[$section] as $member) {
                     if (!isset($byClass[$member])) {
                         continue;
                     }
-                    $button = new GtkButton($member);
+                    $button = GtkButton::new_with_label($member);
                     $button->add_css_class($member === $class ? 'suggested-action' : 'flat');
                     $button->connect('clicked', static function () use ($jump, $member): void {
                         $jump($member);
@@ -289,7 +314,7 @@ final class Demo
                 }
                 $page = $byClass[$wanted];
                 $class = $wanted;
-                foreach (self::SECTIONS as $name => $members) {
+                foreach (self::sections() as $name => $members) {
                     if (in_array($wanted, $members, true)) {
                         $section = $name;
                     }
@@ -324,11 +349,11 @@ final class Demo
                 }
             });
 
-            foreach (array_keys(self::SECTIONS) as $name) {
-                $button = new GtkButton($name);
+            foreach (array_keys(self::sections()) as $name) {
+                $button = GtkButton::new_with_label($name);
                 $button->add_css_class('flat');
                 $button->connect('clicked', static function () use ($jump, $name): void {
-                    $jump(self::SECTIONS[$name][0]);
+                    $jump(self::sections()[$name][0]);
                 });
                 $sections->append($button);
             }
@@ -354,7 +379,7 @@ final class Demo
                 $app->add_action($action);
             }
             $nav = static function (string $label, string $action) use ($app): GtkButton {
-                $button = new GtkButton($label);
+                $button = GtkButton::new_with_label($label);
                 $button->connect('clicked', static function () use ($app, $action): void {
                     $app->activate_action($action);
                 });

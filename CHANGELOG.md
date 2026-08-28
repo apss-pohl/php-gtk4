@@ -9,6 +9,14 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- PHP subclasses of GObject classes are real GTypes (`src/core/subtype`, docs/PLAN.md §2.6):
+  `class MyWidget extends GtkWidget` gets its own GType at the first `new`, constructor arguments
+  become construct properties, and `vfunc_<name>()` methods override the GTK class-struct slots
+  (`measure`, `size_allocate`, `get_request_mode`, `match`/`get_strictness` on `GtkFilter`,
+  `compare`/`get_order` on `GtkSorter`, `clicked`, `activate`/`startup`/`shutdown` on
+  applications, …) with `parent::vfunc_<name>()` chaining down to GTK's implementation. Abstract
+  GTK classes (`GtkWidget`, `GtkFilter`, `GtkSorter`, …) now have a public constructor that
+  refuses the native class and works on a subclass.
 - Windows build: `config.w32` (PHP SDK `phpize.bat` + `configure --with-gtk4=<root>` + `nmake`,
   GTK 4 from [gvsbuild](https://github.com/wingtk/gvsbuild)), `pin_gtk_library()` Win32
   counterpart (`GetModuleHandleEx` + `GET_MODULE_HANDLE_EX_FLAG_PIN`), `bin/php-gtk4.cmd`,
@@ -41,6 +49,37 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   enums `GtkAlign`, `GtkOrientation`, `GtkFilterChange`, `GtkSorterChange`, flags `GApplicationFlags`.
 - Tooling: `ci.sh` stages, sanitizer/valgrind/coverage runs, stub-driven arginfo, IDE stub and
   method comments, git hooks, Dependabot.
+- `gen/gir.php`, the GIR generator (milestone 3): `--install` writes per-namespace stubs
+  (`src/<Ns>/<Ns>.stub.php` + arginfo), one `.cpp` per class, `src/gen_minit.inc`, example
+  skeletons and `gen/report.md`; inputs `allowlist.txt`, `handwritten.txt`, `skip.txt`,
+  `overrides/` (method bodies and class preludes). `./ci.sh --only=gen` fails on a stale tree.
+  Wave 0: `GtkWidget`, `GtkWindow`, `GtkButton`, `GtkLabel`, `GtkBox`, `GtkDrawingArea`, the
+  filter/sorter/list-model classes, `GtkApplication` (+ its real parent `GApplication`),
+  `GdkTexture`, `GListStore`/`GListModel`, the `GAction*` interfaces and `GSimpleAction` are now
+  generated with GTK's full 4.14 API (e.g. +93 methods on `GtkWidget`), plus every enum/flags type
+  their signatures use.
+
+- Generated smoke tests: `tests/Generated/<Class>SmokeTest.php` per generated class (construction,
+  every setter/getter pair and writable property round trip; `gen/smoke-skip.txt` excludes what
+  GTK legitimately does not honour). Hand-written `LabelTest`, `ButtonTest` and new cases in
+  `WidgetTest`, `BoxTest`, `ApplicationTest`, `FilterSortTest`, `TextureTest`, `ActionTest`
+  cover the semantically interesting new API; every generated class and enum has a visual
+  `examples/` page.
+- Constructors that GTK refuses (`g_return_val_if_fail`, e.g. an invalid application id) throw
+  `Error` instead of leaving a dead handle.
+
+### Changed (wave 0 - the API follows GTK's shape)
+
+- Constructors mirror GTK: `new GtkWindow()` + `set_application()` (was `new GtkWindow($app)`),
+  `GtkButton::new_with_label()` (was `new GtkButton($label)`), `GSimpleAction::new_stateful()`
+  (was a third constructor argument), `new GtkBox($orientation, $spacing)` with no defaults,
+  `GtkFilter/GtkSorter::changed($change)` requires the enum, `GtkApplication::__construct($id, $flags)`.
+- `GtkWidget::show()/hide()` (deprecated in GTK 4.10) are not exposed; use `set_visible()`.
+- `GdkTexture::save_to_png()` returns `bool` like GTK instead of throwing.
+- PHP-side validations GTK does not make were dropped (`GtkBox` spacing/child checks, `GListStore`
+  bounds and item type, application-id and action-name validity): GTK reports them as criticals.
+- `GtkWidget` and other GIR-abstract classes are no longer `abstract` in PHP (`wrap()` needs to
+  instantiate them for GTK-created objects); `new` is refused by a private constructor.
 - `--enable-gtk4-testing` (`FEATURES` gains `testing=yes|no`): compiles `Gtk::testing_*` hooks
   declared in `#if defined(PHPGTK_TESTING)` stub blocks; never in the shipped `.so`, used by the
   `asan`/`coverage` variants. First hook: `Gtk::testing_iterate_nested(int $iterations)` — a
@@ -64,6 +103,11 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Changed
 
+- Handles keep a *toggle* reference on their GObject: while GTK holds the object (a parented
+  widget, a `GListStore` item, a window in the toplevel list) the PHP object stays alive with it,
+  so a PHP subclass appended without keeping a reference is returned from `get_first_child()` as
+  that subclass with its state, not as a fresh base-class wrapper. Released when GTK lets go and
+  at request shutdown.
 - Source layout follows the GIR namespaces: `src/GLib/` (`GLib`, `GMainLoop`, `GError`),
   `src/GObject/` (`GObject`, `GParamSpec`, `PhpValue`), `src/Gio/`, `src/Gdk/`, `src/Gtk/`,
   `src/Cairo/`; `src/core/` contains no `ZEND_METHOD` any more. The `GListModel` interface methods

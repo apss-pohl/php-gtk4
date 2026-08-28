@@ -6,13 +6,17 @@ namespace PhpGtk4\Tests;
 
 use Gtk4\GListModel;
 use Gtk4\GListStore;
+use Gtk4\GObject;
 use Gtk4\GtkCustomFilter;
 use Gtk4\GtkCustomSorter;
 use Gtk4\GtkFilter;
 use Gtk4\GtkFilterChange;
 use Gtk4\GtkFilterListModel;
+use Gtk4\GtkFilterMatch;
+use Gtk4\GtkOrdering;
 use Gtk4\GtkSorter;
 use Gtk4\GtkSorterChange;
+use Gtk4\GtkSorterOrder;
 use Gtk4\GtkSortListModel;
 use Gtk4\PhpValue;
 
@@ -77,7 +81,7 @@ final class FilterSortTest extends GtkTestCase
         $filter->changed(GtkFilterChange::MoreStrict);
         self::assertSame([5, 8], self::values($model));
         $limit = 0;
-        $filter->changed();
+        $filter->changed(GtkFilterChange::Different);
         self::assertSame([5, 3, 8, 1], self::values($model));
     }
 
@@ -137,7 +141,7 @@ final class FilterSortTest extends GtkTestCase
         $sorter->set_sort_func(fn(PhpValue $a, PhpValue $b): int => (self::int($a) - self::int($b)) * 1_000_000);
         self::assertSame([1, 3, 5, 8], self::values($model));
         $sorter->set_sort_func(null);
-        $sorter->changed();
+        $sorter->changed(GtkSorterChange::Different);
         self::assertSame([5, 3, 8, 1], self::values($model));
     }
 
@@ -214,5 +218,52 @@ final class FilterSortTest extends GtkTestCase
         $this->expectException(\TypeError::class);
         // @phpstan-ignore argument.type
         new GtkFilterListModel(new PhpValue(1));
+    }
+
+    public function testFilterStrictnessAndMatch(): void
+    {
+        $filter = new GtkCustomFilter(static fn(GObject $item): bool => self::value($item) > 1);
+        self::assertSame(GtkFilterMatch::Some, $filter->get_strictness());
+        self::assertTrue($filter->match(new PhpValue(2)));
+        self::assertFalse($filter->match(new PhpValue(1)));
+        $filter->set_filter_func(null);
+        self::assertSame(GtkFilterMatch::All, $filter->get_strictness(), 'no callback: everything matches');
+        self::assertTrue($filter->match(new PhpValue(1)));
+    }
+
+    public function testSorterOrderAndCompare(): void
+    {
+        $sorter = new GtkCustomSorter(static fn(GObject $a, GObject $b): int => self::value($a) <=> self::value($b));
+        self::assertSame(GtkSorterOrder::Partial, $sorter->get_order());
+        self::assertSame(GtkOrdering::Smaller, $sorter->compare(new PhpValue(1), new PhpValue(2)));
+        self::assertSame(GtkOrdering::Larger, $sorter->compare(new PhpValue(3), new PhpValue(2)));
+        self::assertSame(GtkOrdering::Equal, $sorter->compare(new PhpValue(2), new PhpValue(2)));
+        $sorter->set_sort_func(null);
+        self::assertSame(GtkSorterOrder::None, $sorter->get_order());
+    }
+
+    public function testIncrementalModelsReportPendingWork(): void
+    {
+        $store = new GListStore(PhpValue::class);
+        foreach (range(1, 20) as $i) {
+            $store->append(new PhpValue($i));
+        }
+        $filtered = new GtkFilterListModel($store, new GtkCustomFilter(static fn(GObject $i): bool => true));
+        self::assertFalse($filtered->get_incremental());
+        self::assertSame(0, $filtered->get_pending(), 'non-incremental: everything is filtered at once');
+        $filtered->set_incremental(true);
+        self::assertTrue($filtered->get_incremental());
+        self::assertGreaterThanOrEqual(0, $filtered->get_pending());
+
+        $sorted = new GtkSortListModel($store, new GtkCustomSorter(static fn(GObject $a, GObject $b): int => 0));
+        $sorted->set_incremental(true);
+        self::assertTrue($sorted->get_incremental());
+        self::assertGreaterThanOrEqual(0, $sorted->get_pending());
+    }
+
+    private static function value(GObject $item): int
+    {
+        $v = $item instanceof PhpValue ? $item->get_value() : 0;
+        return is_int($v) ? $v : 0;
     }
 }

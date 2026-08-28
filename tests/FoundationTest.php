@@ -18,8 +18,10 @@ final class FoundationTest extends GtkTestCase
         $app = new GtkApplication(null, 1 << 5);
         $seen = null;
         $app->connect('activate', function (GtkApplication $a) use (&$seen): void {
-            $w1 = new GtkWindow($a);
-            $w2 = new GtkWindow($a);
+            $w1 = new GtkWindow();
+            $w1->set_application($a);
+            $w2 = new GtkWindow();
+            $w2->set_application($a);
             $windows = $a->get_windows();
             self::assertCount(2, $windows);
             self::assertContains($w1, $windows, 'transfer none: the same handles come back');

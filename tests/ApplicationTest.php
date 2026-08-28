@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use Gtk4\GApplication;
 use Gtk4\GObject;
 use Gtk4\GtkApplication;
 use Gtk4\GtkWindow;
@@ -34,11 +35,6 @@ final class ApplicationTest extends GtkTestCase
         self::assertNull($app->get_application_id());
     }
 
-    public function testInvalidIdRejected(): void
-    {
-        $this->expectException(\ValueError::class);
-        new GtkApplication('not a valid id!');
-    }
 
     public function testRunEmitsActivateAndReturnsStatus(): void
     {
@@ -64,7 +60,8 @@ final class ApplicationTest extends GtkTestCase
         $app = self::app();
         $seen = null;
         $app->connect('activate', function (GtkApplication $a) use (&$seen): void {
-            $win = new GtkWindow($a);
+            $win = new GtkWindow();
+            $win->set_application($a);
             $win->set_title('app window');
             $win->present();
             $seen = $a->get_active_window();
@@ -101,5 +98,32 @@ final class ApplicationTest extends GtkTestCase
         });
         $got = $this->captureHandlerException(fn() => $app->run());
         self::assertSame(['activate failed', 'activate', 0], $got);
+    }
+
+    public function testGApplicationBaseApi(): void
+    {
+        $app = new GtkApplication(null, 0);
+        self::assertInstanceOf(GApplication::class, $app);
+        self::assertSame(0, $app->get_flags());
+        $app->set_flags(1 << 5);
+        self::assertSame(1 << 5, $app->get_flags());
+        $app->set_inactivity_timeout(250);
+        self::assertSame(250, $app->get_inactivity_timeout());
+        self::assertFalse($app->get_is_registered(), 'registration happens in run()');
+        $app->hold();
+        $app->release();                        // balanced: no use count left behind
+        self::assertNull($app->get_window_by_id(0));
+    }
+
+    public function testAcceleratorsForActions(): void
+    {
+        $app = self::app();
+        self::assertSame([], $app->list_action_descriptions());
+        $app->set_accels_for_action('app.quit', ['<Control>q', '<Control>w']);
+        self::assertSame(['<Control>q', '<Control>w'], $app->get_accels_for_action('app.quit'));
+        self::assertSame(['app.quit'], $app->get_actions_for_accel('<Control>q'));
+        self::assertSame(['app.quit'], $app->list_action_descriptions());
+        $app->set_accels_for_action('app.quit', []);
+        self::assertSame([], $app->get_accels_for_action('app.quit'));
     }
 }

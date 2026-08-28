@@ -42,6 +42,9 @@ phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(n
 bin/php-gtk4 examples/demo.php            # the demo app: every class, one page at a time
 ```
 
+Step-by-step installation for **Linux and Windows** — dependencies, prebuilt release binaries,
+enabling the extension, troubleshooting — is in [docs/INSTALL.md](docs/INSTALL.md).
+
 Everything else — `ci.sh`/`buildall.sh`, configure options, the sanitizer/coverage variants, and
 the **Windows** build (PHP SDK + `config.w32`, GTK 4 from gvsbuild) — is in [docs/BUILD.md](docs/BUILD.md).
 

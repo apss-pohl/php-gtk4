@@ -18,6 +18,8 @@
 
 namespace phpgtk {
 
+struct Object;  // object.h
+
 // mainloop.cpp: a run() in progress.
 struct RunningLoopEntry {
   void (*quit)(gpointer data);
@@ -48,6 +50,9 @@ std::unordered_map<GClosure *, phpgtk::TrackedHandler> closures;
 std::unordered_set<guint> sources;
 std::unordered_map<gpointer, phpgtk::TrackedNotified> notified;
 std::unordered_set<struct _PhpValue *> phpvalues;  // live PhpValue instances
+std::unordered_set<phpgtk::Object *> held;         // handles their GObject holds a ref on (toggle)
+bool shutting_down;                                // RSHUTDOWN: no new holds, Zend is going away
+phpgtk::Object *constructing;                      // subtype.cpp: handle a g_object_new() is for
 ZEND_END_MODULE_GLOBALS(gtk4)
 
 ZEND_EXTERN_MODULE_GLOBALS(gtk4)

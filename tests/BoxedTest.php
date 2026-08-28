@@ -120,7 +120,7 @@ final class BoxedTest extends GtkTestCase
 
     public function testStrvPropertyRoundTrip(): void
     {
-        $b = new GtkButton('labelled');
+        $b = GtkButton::new_with_label('labelled');
         self::assertContains('text-button', $b->get_css_classes(), 'GTK sets its own classes');
         $b->set_css_classes(['a', 'b']);
         self::assertSame(['a', 'b'], $b->get_css_classes());

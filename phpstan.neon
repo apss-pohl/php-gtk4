@@ -12,6 +12,7 @@ parameters:
         - examples
         - gen/ide-stub.php
         - gen/method-comments.php
+        - gen/map-status.php
     scanFiles:
         - stubs/gtk4.php
     tmpDir: .phpstan.cache

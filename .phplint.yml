@@ -10,6 +10,7 @@ exclude:
   - vendor
   - tests/phpt
   - gen/PHP-Parser-5.0.0
+  - gen/out
 extensions:
   - php
 warning: true

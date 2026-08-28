@@ -61,6 +61,9 @@ CheckOptions:
   readability-identifier-naming.EnumCase: CamelCase
   readability-identifier-naming.EnumConstantCase: CamelCase
   readability-identifier-naming.FunctionCase: lower_case
+  # register_vfuncs_<GTypeName>: generated per class, named like gen_stub's register_class_Gtk4_X
+  readability-identifier-naming.FunctionIgnoredRegexp: '^register_vfuncs_[A-Z]'
+  readability-identifier-naming.GlobalFunctionIgnoredRegexp: '^register_vfuncs_[A-Z]'
   readability-identifier-naming.VariableCase: lower_case
   # ce_<GTypeName>: class entries named after the GType they wrap (MINIT, registries).
   readability-identifier-naming.VariableIgnoredRegexp: '^ce_[A-Z]'

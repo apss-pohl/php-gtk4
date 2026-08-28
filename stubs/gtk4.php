@@ -166,64 +166,6 @@ final class GParamSpec
     }
 }
 /**
- * Horizontal / vertical alignment of a widget within its allocation.
- * (Case values are verified against GTK's GEnumClass when the extension loads.)
- *
- * @link https://docs.gtk.org/gtk4/enum.Align.html
- */
-enum GtkAlign : int
-{
-    case Fill = 0;
-    case Start = 1;
-    case End = 2;
-    case Center = 3;
-    case BaselineFill = 4;
-    case BaselineCenter = 5;
-}
-/**
- * @link https://docs.gtk.org/gtk4/enum.Orientation.html
- */
-enum GtkOrientation : int
-{
-    case Horizontal = 0;
-    case Vertical = 1;
-}
-/**
- * GApplication flags - a bitmask, combine with `|`. Flags types are constant
- * classes (PHP enums cannot be OR-ed); the values are verified against GLib's
- * GFlagsClass when the extension loads.
- *
- * @link https://docs.gtk.org/gio/flags.ApplicationFlags.html
- */
-final class GApplicationFlags
-{
-    public const int DEFAULT_FLAGS = 0;
-    public const int IS_SERVICE = 1;
-    public const int IS_LAUNCHER = 2;
-    public const int HANDLES_OPEN = 4;
-    public const int HANDLES_COMMAND_LINE = 8;
-    public const int SEND_ENVIRONMENT = 16;
-    public const int NON_UNIQUE = 32;
-    public const int CAN_OVERRIDE_APP_ID = 64;
-    public const int ALLOW_REPLACEMENT = 128;
-    public const int REPLACE = 256;
-}
-/** @link https://docs.gtk.org/gtk4/enum.FilterChange.html */
-enum GtkFilterChange : int
-{
-    case Different = 0;
-    case LessStrict = 1;
-    case MoreStrict = 2;
-}
-/** @link https://docs.gtk.org/gtk4/enum.SorterChange.html */
-enum GtkSorterChange : int
-{
-    case Different = 0;
-    case Inverted = 1;
-    case LessStrict = 2;
-    case MoreStrict = 3;
-}
-/**
  * How a Throwable thrown inside a signal handler or GLib callback is handled.
  */
 enum ExceptionMode : int
@@ -364,51 +306,6 @@ class GError extends \RuntimeException
     }
 }
 /**
- * Pixel data usable by widgets and paintables. Byte buffers (`GBytes`) are
- * plain PHP strings on this side.
- *
- * @property int $width
- * @property int $height
- *
- * @link https://docs.gtk.org/gdk4/class.Texture.html
- */
-class GdkTexture extends GObject
-{
-    /** @throws GError If the file cannot be read or decoded */
-    public static function new_from_filename(string $path): GdkTexture
-    {
-        unset($path);
-        return null;
-    }
-    /**
-     * @param string $bytes Encoded image data (PNG, JPEG, ...)
-     * @throws GError If the data cannot be decoded
-     */
-    public static function new_from_bytes(string $bytes): GdkTexture
-    {
-        unset($bytes);
-        return null;
-    }
-    public function get_width(): int
-    {
-        return 0;
-    }
-    public function get_height(): int
-    {
-        return 0;
-    }
-    /** The texture encoded as PNG. */
-    public function save_to_png_bytes(): string
-    {
-        return '';
-    }
-    /** @throws GError If the file cannot be written */
-    public function save_to_png(string $path): void
-    {
-        unset($path);
-    }
-}
-/**
  * A GObject that carries an arbitrary PHP value, so PHP data can live where
  * GTK expects GObjects - above all in a {@see GListStore} feeding list views.
  * The value is held by reference (objects and arrays keep their identity);
@@ -434,271 +331,6 @@ final class PhpValue extends GObject
     public function set_value(mixed $value): void
     {
         unset($value);
-    }
-}
-/**
- * A list of GObjects with change notification (`items-changed`).
- *
- * @link https://docs.gtk.org/gio/iface.ListModel.html
- */
-interface GListModel
-{
-    /** GType name of the items, e.g. "PhpValue" or "GObject". */
-    public function get_item_type(): string;
-    public function get_n_items(): int;
-    /** The item at $position, or null past the end. */
-    public function get_item(int $position): ?GObject;
-}
-/**
- * A GListModel backed by an array; items must be instances of the item type.
- *
- * @property int $n_items
- *
- * @link https://docs.gtk.org/gio/class.ListStore.html
- */
-class GListStore extends GObject implements GListModel
-{
-    /**
-     * @param string $item_type PHP class (e.g. PhpValue::class) or GType name of the items
-     * @throws \ValueError If the type is unknown or not a GObject type
-     */
-    public function __construct(string $item_type = GObject::class)
-    {
-        unset($item_type);
-    }
-    public function get_item_type(): string
-    {
-        return '';
-    }
-    public function get_n_items(): int
-    {
-        return 0;
-    }
-    public function get_item(int $position): ?GObject
-    {
-        unset($position);
-        return null;
-    }
-    /** @throws \TypeError If $item is not of the item type */
-    public function append(GObject $item): void
-    {
-        unset($item);
-    }
-    /** @throws \TypeError If $item is not of the item type */
-    public function insert(int $position, GObject $item): void
-    {
-        unset($position);
-        unset($item);
-    }
-    public function remove(int $position): void
-    {
-        unset($position);
-    }
-    public function remove_all(): void
-    {
-    }
-    /** Position of $item, or null if it is not in the store. */
-    public function find(GObject $item): ?int
-    {
-        unset($item);
-        return null;
-    }
-}
-/**
- * An action: a named, optionally parameterised and stateful operation.
- * GVariant parameters and states are mapped to plain PHP values (bool, int,
- * float, string, list, associative array, null for "maybe" types).
- *
- * @link https://docs.gtk.org/gio/iface.Action.html
- */
-interface GAction
-{
-    public function get_name(): string;
-    public function get_enabled(): bool;
-    /** GVariant type string of the activation parameter (e.g. "s", "i"), or null. */
-    public function get_parameter_type(): ?string;
-    /** Current state as a PHP value, or null for a stateless action. */
-    public function get_state(): mixed;
-}
-/**
- * A container of actions, keyed by name.
- *
- * @link https://docs.gtk.org/gio/iface.ActionMap.html
- */
-interface GActionMap
-{
-    public function add_action(GAction $action): void;
-    public function remove_action(string $name): void;
-    public function lookup_action(string $name): ?GAction;
-}
-/**
- * Something that can activate its actions by name.
- *
- * @link https://docs.gtk.org/gio/iface.ActionGroup.html
- */
-interface GActionGroup
-{
-    public function has_action(string $name): bool;
-    /** @return list<string> */
-    public function list_actions(): array;
-    /** Activate by name; $parameter is converted to the action's parameter type. */
-    public function activate_action(string $name, mixed $parameter = null): void;
-}
-/**
- * The plain GAction implementation: emits `activate` (with the parameter as a
- * PHP value) and, if stateful, `change-state`.
- *
- * ```php
- * $quit = new GSimpleAction('quit');
- * $quit->connect('activate', fn() => $app->quit());
- * $app->add_action($quit);            // reachable as "app.quit"
- * ```
- *
- * @property string $name
- * @property bool $enabled
- * @property ?string $parameter_type
- * @property mixed $state
- *
- * @link https://docs.gtk.org/gio/class.SimpleAction.html
- */
-class GSimpleAction extends GObject implements GAction
-{
-    /**
-     * @param string $name Action name (letters, digits, `-` and `.`)
-     * @param string|null $parameter_type GVariant type string the `activate` parameter must have, or null for none
-     * @param mixed $state Initial state for a stateful action (its GVariant type is inferred), or null for stateless
-     */
-    public function __construct(string $name, ?string $parameter_type = null, mixed $state = null)
-    {
-        unset($name);
-        unset($parameter_type);
-        unset($state);
-    }
-    public function get_name(): string
-    {
-        return '';
-    }
-    public function get_enabled(): bool
-    {
-        return false;
-    }
-    public function set_enabled(bool $enabled): void
-    {
-        unset($enabled);
-    }
-    public function get_parameter_type(): ?string
-    {
-        return null;
-    }
-    public function get_state(): mixed
-    {
-        return null;
-    }
-    /** Set the state directly (emits `notify::state`, not `change-state`). */
-    public function set_state(mixed $state): void
-    {
-        unset($state);
-    }
-    /** Activate as if through an action group; emits `activate`. */
-    public function activate(mixed $parameter = null): void
-    {
-        unset($parameter);
-    }
-}
-/**
- * The application object: owns the main loop and the windows.
- *
- * ```php
- * $app = new GtkApplication('org.example.Hello');
- * $app->connect('activate', function (GtkApplication $app): void {
- *     $win = new GtkWindow($app);
- *     $win->present();
- * });
- * exit($app->run($argv));
- * ```
- *
- * @property ?string $application_id
- * @property ?GtkWindow $active_window
- *
- * @link https://docs.gtk.org/gtk4/class.Application.html
- */
-class GtkApplication extends GObject implements GActionMap, GActionGroup
-{
-    /**
-     * @param string|null $application_id Reverse-DNS id, or null for a non-unique app
-     * @param int $flags Bitmask of {@see GApplicationFlags} constants
-     */
-    public function __construct(?string $application_id = null, int $flags = 0)
-    {
-        unset($application_id);
-        unset($flags);
-    }
-    /**
-     * Run the application (emits `startup`, `activate`, ...) until the last
-     * window closes or {@see quit()} is called.
-     *
-     * @param array $argv Command line as passed to the script (list of strings)
-     * @return int Exit status
-     */
-    public function run(array $argv = []): int
-    {
-        unset($argv);
-        return 0;
-    }
-    public function quit(): void
-    {
-    }
-    public function add_window(GtkWindow $window): void
-    {
-        unset($window);
-    }
-    public function get_active_window(): ?GtkWindow
-    {
-        return null;
-    }
-    public function get_application_id(): ?string
-    {
-        return null;
-    }
-    /**
-     * The application's windows, most recently focused first.
-     *
-     * @return list<GtkWindow>
-     */
-    public function get_windows(): array
-    {
-        return [];
-    }
-    public function add_action(GAction $action): void
-    {
-        unset($action);
-    }
-    public function remove_action(string $name): void
-    {
-        unset($name);
-    }
-    public function lookup_action(string $name): ?GAction
-    {
-        unset($name);
-        return null;
-    }
-    /**
-     * GActionGroup methods (has_action, list_actions, activate_action) work once the
-     * application is registered, i.e. from `startup` on; add/remove/lookup_action work any time.
-     */
-    public function has_action(string $name): bool
-    {
-        unset($name);
-        return false;
-    }
-    public function list_actions(): array
-    {
-        return [];
-    }
-    public function activate_action(string $name, mixed $parameter = null): void
-    {
-        unset($name);
-        unset($parameter);
     }
 }
 /**
@@ -822,380 +454,6 @@ final class GdkRectangle
     }
 }
 /**
- * Base class of all widgets. Not instantiable from PHP.
- *
- * GObject properties are also available as PHP properties (dashes become
- * underscores).
- *
- * @property bool $visible
- * @property bool $sensitive
- * @property bool $can_focus
- * @property bool $has_focus
- * @property ?string $tooltip_text
- * @property ?string $name
- * @property GtkAlign $halign
- * @property GtkAlign $valign
- * @property bool $hexpand
- * @property bool $vexpand
- * @property int $margin_start
- * @property int $margin_end
- * @property int $margin_top
- * @property int $margin_bottom
- * @property float $opacity
- * @property array $css_classes
- * @property int $width_request
- * @property int $height_request
- * @property ?GtkWidget $parent
- *
- * @link https://docs.gtk.org/gtk4/class.Widget.html
- */
-abstract class GtkWidget extends GObject
-{
-    public function show(): void
-    {
-    }
-    public function hide(): void
-    {
-    }
-    public function set_visible(bool $visible): void
-    {
-        unset($visible);
-    }
-    public function get_visible(): bool
-    {
-        return false;
-    }
-    /** Whether the widget and all its ancestors are visible. */
-    public function is_visible(): bool
-    {
-        return false;
-    }
-    public function set_sensitive(bool $sensitive): void
-    {
-        unset($sensitive);
-    }
-    public function get_sensitive(): bool
-    {
-        return false;
-    }
-    /** Minimum size in pixels; -1 = natural size. */
-    public function set_size_request(int $width, int $height): void
-    {
-        unset($width);
-        unset($height);
-    }
-    /**
-     * The size request as [width, height] (out parameters become a list).
-     *
-     * @return array{int, int}
-     */
-    public function get_size_request(): array
-    {
-        return [];
-    }
-    /**
-     * Widgets whose mnemonic activates this widget.
-     *
-     * @return list<GtkWidget>
-     */
-    public function list_mnemonic_labels(): array
-    {
-        return [];
-    }
-    public function get_parent(): ?GtkWidget
-    {
-        return null;
-    }
-    /** The toplevel GtkWindow (or other root) this widget is in, if any. */
-    public function get_root(): ?GtkWidget
-    {
-        return null;
-    }
-    public function grab_focus(): bool
-    {
-        return false;
-    }
-    /** Activate the widget (a button emits `clicked`); false if it is not activatable. */
-    public function activate(): bool
-    {
-        return false;
-    }
-    public function set_tooltip_text(?string $text): void
-    {
-        unset($text);
-    }
-    public function get_tooltip_text(): ?string
-    {
-        return null;
-    }
-    public function set_name(?string $name): void
-    {
-        unset($name);
-    }
-    public function get_name(): ?string
-    {
-        return null;
-    }
-    public function add_css_class(string $css_class): void
-    {
-        unset($css_class);
-    }
-    public function remove_css_class(string $css_class): void
-    {
-        unset($css_class);
-    }
-    public function has_css_class(string $css_class): bool
-    {
-        unset($css_class);
-        return false;
-    }
-    /** @return list<string> */
-    public function get_css_classes(): array
-    {
-        return [];
-    }
-    /** @param array $classes list of class names (replaces all current ones) */
-    public function set_css_classes(array $classes): void
-    {
-        unset($classes);
-    }
-    /**
-     * Activate a named action ("app.quit", "win.close") found on this widget's ancestry.
-     * $parameter is converted to the action's parameter type. False if no such action.
-     */
-    public function activate_action(string $name, mixed $parameter = null): bool
-    {
-        unset($name);
-        unset($parameter);
-        return false;
-    }
-    public function set_halign(GtkAlign $align): void
-    {
-        unset($align);
-    }
-    public function get_halign(): GtkAlign
-    {
-        return null;
-    }
-    public function set_valign(GtkAlign $align): void
-    {
-        unset($align);
-    }
-    public function get_valign(): GtkAlign
-    {
-        return null;
-    }
-    /** Whether the widget takes the horizontal space its parent has spare. */
-    public function set_hexpand(bool $expand): void
-    {
-        unset($expand);
-    }
-    public function get_hexpand(): bool
-    {
-        return false;
-    }
-    public function set_vexpand(bool $expand): void
-    {
-        unset($expand);
-    }
-    public function get_vexpand(): bool
-    {
-        return false;
-    }
-    /** Queue a redraw of the widget. */
-    public function queue_draw(): void
-    {
-    }
-}
-/**
- * A widget that emits `clicked` when activated.
- *
- * @property ?string $label
- * @property ?GtkWidget $child
- *
- * @link https://docs.gtk.org/gtk4/class.Button.html
- */
-class GtkButton extends GtkWidget
-{
-    /** @param string|null $label Text label; null for an empty button */
-    public function __construct(?string $label = null)
-    {
-        unset($label);
-    }
-    public function set_label(?string $label): void
-    {
-        unset($label);
-    }
-    public function get_label(): ?string
-    {
-        return null;
-    }
-    public function set_child(?GtkWidget $child): void
-    {
-        unset($child);
-    }
-    public function get_child(): ?GtkWidget
-    {
-        return null;
-    }
-}
-/**
- * The layout container: children in a row or a column.
- *
- * GTK 4 has no GtkContainer - a window or a button holds exactly one child, and
- * this is what holds several. `pack_start`/`pack_end` are gone; children are
- * appended, prepended or inserted after a sibling, and where the spare space goes
- * is the child's own {@see GtkWidget::set_hexpand()} / `set_vexpand()`.
- *
- * ```php
- * $row = new GtkBox(GtkOrientation::Horizontal, 6);
- * $row->append(new GtkLabel('left'));
- * $row->append(new GtkButton('right'));
- * $window->set_child($row);
- * ```
- *
- * @property int $spacing
- * @property bool $homogeneous
- * @property GtkOrientation $orientation
- *
- * @link https://docs.gtk.org/gtk4/class.Box.html
- */
-class GtkBox extends GtkWidget
-{
-    public function __construct(GtkOrientation $orientation = GtkOrientation::Horizontal, int $spacing = 0)
-    {
-        unset($orientation);
-        unset($spacing);
-    }
-    /**
-     * Add $child at the end.
-     *
-     * @throws \ValueError If $child already has a parent - GTK inserts, it never reparents
-     */
-    public function append(GtkWidget $child): void
-    {
-        unset($child);
-    }
-    /**
-     * Add $child at the start.
-     *
-     * @throws \ValueError If $child already has a parent
-     */
-    public function prepend(GtkWidget $child): void
-    {
-        unset($child);
-    }
-    /**
-     * Insert $child directly after $sibling, or at the start when $sibling is null.
-     *
-     * To move a child that is already in this box, {@see remove()} it first.
-     *
-     * @throws \ValueError If $child already has a parent, or $sibling is not a child of this box
-     */
-    public function insert_child_after(GtkWidget $child, ?GtkWidget $sibling): void
-    {
-        unset($child);
-        unset($sibling);
-    }
-    /**
-     * Remove a child.
-     *
-     * @throws \ValueError If $child is not a child of this box
-     */
-    public function remove(GtkWidget $child): void
-    {
-        unset($child);
-    }
-    /** Pixels between children. */
-    public function set_spacing(int $spacing): void
-    {
-        unset($spacing);
-    }
-    public function get_spacing(): int
-    {
-        return 0;
-    }
-    /** Whether every child gets the same amount of space. */
-    public function set_homogeneous(bool $homogeneous): void
-    {
-        unset($homogeneous);
-    }
-    public function get_homogeneous(): bool
-    {
-        return false;
-    }
-    public function set_orientation(GtkOrientation $orientation): void
-    {
-        unset($orientation);
-    }
-    public function get_orientation(): GtkOrientation
-    {
-        return null;
-    }
-    /**
-     * This box's children, in order.
-     *
-     * @return list<GtkWidget>
-     */
-    public function get_children(): array
-    {
-        return [];
-    }
-}
-/**
- * A widget that displays a small amount of text.
- *
- * @property string $label
- * @property bool $use_markup
- * @property bool $selectable
- * @property bool $wrap
- *
- * @link https://docs.gtk.org/gtk4/class.Label.html
- */
-class GtkLabel extends GtkWidget
-{
-    public function __construct(?string $text = null)
-    {
-        unset($text);
-    }
-    public function set_text(string $text): void
-    {
-        unset($text);
-    }
-    public function get_text(): string
-    {
-        return '';
-    }
-    /** Set Pango markup, e.g. `<b>bold</b>`. */
-    public function set_markup(string $markup): void
-    {
-        unset($markup);
-    }
-    public function set_selectable(bool $selectable): void
-    {
-        unset($selectable);
-    }
-    public function get_selectable(): bool
-    {
-        return false;
-    }
-    /**
-     * Selected character range as [start, end], or null when nothing is selected
-     * (a boolean-returning C function with out parameters returns the outs or null).
-     *
-     * @return array{int, int}|null
-     */
-    public function get_selection_bounds(): ?array
-    {
-        return null;
-    }
-    public function select_region(int $start, int $end): void
-    {
-        unset($start);
-        unset($end);
-    }
-}
-/**
  * A cairo drawing context, as handed to {@see GtkDrawingArea::set_draw_func()}
  * callbacks. Only valid during the callback. Minimal surface for now; grows
  * with the generator.
@@ -1300,25 +558,1204 @@ final class CairoContext
     }
 }
 /**
- * A widget that paints with cairo through a PHP callback.
+ * `GdkMemoryFormat` describes formats that image data can have in memory.
+ */
+enum GdkMemoryFormat : int
+{
+    case B8g8r8a8Premultiplied = 0;
+    case A8r8g8b8Premultiplied = 1;
+    case R8g8b8a8Premultiplied = 2;
+    case B8g8r8a8 = 3;
+    case A8r8g8b8 = 4;
+    case R8g8b8a8 = 5;
+    case A8b8g8r8 = 6;
+    case R8g8b8 = 7;
+    case B8g8r8 = 8;
+    case R16g16b16 = 9;
+    case R16g16b16a16Premultiplied = 10;
+    case R16g16b16a16 = 11;
+    case R16g16b16Float = 12;
+    case R16g16b16a16FloatPremultiplied = 13;
+    case R16g16b16a16Float = 14;
+    case R32g32b32Float = 15;
+    case R32g32b32a32FloatPremultiplied = 16;
+    case R32g32b32a32Float = 17;
+    case G8a8Premultiplied = 18;
+    case G8a8 = 19;
+    case G8 = 20;
+    case G16a16Premultiplied = 21;
+    case G16a16 = 22;
+    case G16 = 23;
+    case A8 = 24;
+    case A16 = 25;
+    case A16Float = 26;
+    case A32Float = 27;
+    case A8b8g8r8Premultiplied = 28;
+    case B8g8r8x8 = 29;
+    case X8r8g8b8 = 30;
+    case R8g8b8x8 = 31;
+    case X8b8g8r8 = 32;
+    case NFormats = 33;
+}
+/**
+ * `GdkTexture` is the basic element used to refer to pixel data.
  *
- * ```php
- * $area->set_draw_func(function (GtkDrawingArea $a, CairoContext $cr, int $w, int $h): void {
- *     $cr->set_source_rgb(0.2, 0.4, 0.8);
- *     $cr->rectangle(0, 0, $w, $h);
- *     $cr->fill();
- * });
- * ```
+ * @property ?int $height
+ * @property ?int $width
+ */
+class GdkTexture extends GObject
+{
+    /** GdkTexture is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    public function __construct()
+    {
+    }
+    /** Creates a new texture by loading an image from memory, */
+    public static function new_from_bytes(string $bytes): GdkTexture
+    {
+        unset($bytes);
+        return null;
+    }
+    /** Creates a new texture by loading an image from a file. */
+    public static function new_from_filename(string $path): GdkTexture
+    {
+        unset($path);
+        return null;
+    }
+    /** Gets the memory format most closely associated with the data of the texture. */
+    public function get_format(): GdkMemoryFormat
+    {
+        return null;
+    }
+    /** Returns the height of the $texture, in pixels. */
+    public function get_height(): int
+    {
+        return 0;
+    }
+    /** Returns the width of $texture, in pixels. */
+    public function get_width(): int
+    {
+        return 0;
+    }
+    /** Store the given $texture to the $filename as a PNG file. */
+    public function save_to_png(string $filename): bool
+    {
+        unset($filename);
+        return false;
+    }
+    /** Store the given $texture in memory as a PNG file. */
+    public function save_to_png_bytes(): string
+    {
+        return '';
+    }
+    /** Store the given $texture to the $filename as a TIFF file. */
+    public function save_to_tiff(string $filename): bool
+    {
+        unset($filename);
+        return false;
+    }
+    /** Store the given $texture in memory as a TIFF file. */
+    public function save_to_tiff_bytes(): string
+    {
+        return '';
+    }
+}
+/**
+ * `GAction` represents a single named action.
  *
- * @property int $content_width
- * @property int $content_height
+ * @property-read ?bool $enabled
+ * @property-read ?string $name
+ * @property-read ?string $parameter_type
+ * @property-read mixed $state
+ * @property-read ?string $state_type
+ */
+interface GAction
+{
+    /** Request for the state of $action to be changed to $value. */
+    public function change_state(mixed $value = null): void;
+    /** Checks if $action is currently enabled. */
+    public function get_enabled(): bool;
+    /** Queries the name of $action. */
+    public function get_name(): string;
+    /** Queries the type of the parameter that must be given when activating $action. */
+    public function get_parameter_type(): ?string;
+    /** Queries the current state of $action. */
+    public function get_state(): mixed;
+    /** Requests a hint about the valid range of values for the state of $action. */
+    public function get_state_hint(): mixed;
+    /** Queries the type of the state of $action. */
+    public function get_state_type(): ?string;
+    /**
+     * Activate the action; $parameter is converted to the declared parameter type (ValueError when
+     * a required parameter is missing or one is given to a parameterless action, TypeError when the
+     * value does not fit the type). Emits `activate`.
+     */
+    public function activate(mixed $parameter = null): void;
+}
+/**
+ * `GActionGroup` represents a group of actions.
+ */
+interface GActionGroup
+{
+    /** Emits the #GActionGroup::action-added signal on $action_group. */
+    public function action_added(string $action_name): void;
+    /** Emits the #GActionGroup::action-enabled-changed signal on $action_group. */
+    public function action_enabled_changed(string $action_name, bool $enabled): void;
+    /** Emits the #GActionGroup::action-removed signal on $action_group. */
+    public function action_removed(string $action_name): void;
+    /** Emits the #GActionGroup::action-state-changed signal on $action_group. */
+    public function action_state_changed(string $action_name, mixed $state = null): void;
+    /** Request for the state of the named action within $action_group to be changed to $value. */
+    public function change_action_state(string $action_name, mixed $value = null): void;
+    /** Checks if the named action within $action_group is currently enabled. */
+    public function get_action_enabled(string $action_name): bool;
+    /**
+     * Queries the type of the parameter that must be given when activating the named action within
+     * $action_group.
+     */
+    public function get_action_parameter_type(string $action_name): ?string;
+    /** Queries the current state of the named action within $action_group. */
+    public function get_action_state(string $action_name): mixed;
+    /**
+     * Requests a hint about the valid range of values for the state of the named action within
+     * $action_group.
+     */
+    public function get_action_state_hint(string $action_name): mixed;
+    /** Queries the type of the state of the named action within $action_group. */
+    public function get_action_state_type(string $action_name): ?string;
+    /** Checks if the named action exists within $action_group. */
+    public function has_action(string $action_name): bool;
+    /**
+     * Lists the actions contained within $action_group.
+     *
+     * @return list<string>
+     */
+    public function list_actions(): array;
+    /**
+     * Activate an action by name. $parameter is converted to the action's declared parameter type
+     * (ValueError when the action is unknown or a required parameter is missing, TypeError when the
+     * value does not fit the type).
+     */
+    public function activate_action(string $action_name, mixed $parameter = null): void;
+}
+/**
+ * `GActionMap` is an interface for action containers.
+ */
+interface GActionMap
+{
+    /** Adds an action to the $action_map. */
+    public function add_action(GAction $action): void;
+    /** Looks up the action with the name $action_name in $action_map. */
+    public function lookup_action(string $action_name): ?GAction;
+    /** Removes the named action from the action map. */
+    public function remove_action(string $action_name): void;
+}
+/**
+ * `GApplication` is the core class for application support.
  *
- * @link https://docs.gtk.org/gtk4/class.DrawingArea.html
+ * @property ?GActionGroup $action_group
+ * @property ?string $application_id
+ * @property ?int $flags
+ * @property ?int $inactivity_timeout
+ * @property-read ?bool $is_busy
+ * @property-read ?bool $is_registered
+ * @property-read ?bool $is_remote
+ * @property ?string $resource_base_path
+ * @property ?string $version
+ */
+class GApplication extends GObject implements GActionGroup, GActionMap
+{
+    /** Creates a new #GApplication instance. */
+    public function __construct(?string $application_id, int $flags)
+    {
+        unset($application_id);
+        unset($flags);
+    }
+    /** Returns the default #GApplication instance for this process. */
+    public static function get_default(): ?GApplication
+    {
+        return null;
+    }
+    /** Checks if $application_id is a valid application identifier. */
+    public static function id_is_valid(string $application_id): bool
+    {
+        unset($application_id);
+        return false;
+    }
+    /** Activates the application. */
+    public function activate(): void
+    {
+    }
+    /** Add an option to be handled by $application. */
+    public function add_main_option(string $long_name, int $short_name, int $flags, int $arg, string $description, ?string $arg_description): void
+    {
+        unset($long_name);
+        unset($short_name);
+        unset($flags);
+        unset($arg);
+        unset($description);
+        unset($arg_description);
+    }
+    /**
+     * Marks $application as busy (see g_application_mark_busy()) while $property on $object is
+     * `true`.
+     */
+    public function bind_busy_property(GObject $object, string $property): void
+    {
+        unset($object);
+        unset($property);
+    }
+    /** Gets the unique identifier for $application. */
+    public function get_application_id(): ?string
+    {
+        return null;
+    }
+    /** Gets the D-Bus object path being used by the application, or `null`. */
+    public function get_dbus_object_path(): ?string
+    {
+        return null;
+    }
+    /** Gets the flags for $application. */
+    public function get_flags(): int
+    {
+        return 0;
+    }
+    /** Gets the current inactivity timeout for the application. */
+    public function get_inactivity_timeout(): int
+    {
+        return 0;
+    }
+    /**
+     * Gets the application's current busy state, as set through g_application_mark_busy() or
+     * g_application_bind_busy_property().
+     */
+    public function get_is_busy(): bool
+    {
+        return false;
+    }
+    /** Checks if $application is registered. */
+    public function get_is_registered(): bool
+    {
+        return false;
+    }
+    /** Checks if $application is remote. */
+    public function get_is_remote(): bool
+    {
+        return false;
+    }
+    /** Gets the resource base path of $application. */
+    public function get_resource_base_path(): ?string
+    {
+        return null;
+    }
+    /** Gets the version of $application. */
+    public function get_version(): ?string
+    {
+        return null;
+    }
+    /** Increases the use count of $application. */
+    public function hold(): void
+    {
+    }
+    /** Increases the busy count of $application. */
+    public function mark_busy(): void
+    {
+    }
+    /** Immediately quits the application. */
+    public function quit(): void
+    {
+    }
+    /** Decrease the use count of $application. */
+    public function release(): void
+    {
+    }
+    /** Sets the unique identifier for $application. */
+    public function set_application_id(?string $application_id): void
+    {
+        unset($application_id);
+    }
+    /**
+     * Sets or unsets the default application for the process, as returned by
+     * g_application_get_default().
+     */
+    public function set_default(): void
+    {
+    }
+    /** Sets the flags for $application. */
+    public function set_flags(int $flags): void
+    {
+        unset($flags);
+    }
+    /** Sets the current inactivity timeout for the application. */
+    public function set_inactivity_timeout(int $inactivity_timeout): void
+    {
+        unset($inactivity_timeout);
+    }
+    /** Adds a description to the $application option context. */
+    public function set_option_context_description(?string $description): void
+    {
+        unset($description);
+    }
+    /** Sets the parameter string to be used by the commandline handling of $application. */
+    public function set_option_context_parameter_string(?string $parameter_string): void
+    {
+        unset($parameter_string);
+    }
+    /** Adds a summary to the $application option context. */
+    public function set_option_context_summary(?string $summary): void
+    {
+        unset($summary);
+    }
+    /** Sets (or unsets) the base resource path of $application. */
+    public function set_resource_base_path(?string $resource_path): void
+    {
+        unset($resource_path);
+    }
+    /**
+     * Sets the version number of $application. This will be used to implement a `--version`
+     * command line argument
+     */
+    public function set_version(string $version): void
+    {
+        unset($version);
+    }
+    /**
+     * Destroys a binding between $property and the busy state of $application that was previously
+     * created with g_application_bind_busy_property().
+     */
+    public function unbind_busy_property(GObject $object, string $property): void
+    {
+        unset($object);
+        unset($property);
+    }
+    /** Decreases the busy count of $application. */
+    public function unmark_busy(): void
+    {
+    }
+    /** Withdraws a notification that was sent with g_application_send_notification(). */
+    public function withdraw_notification(string $id): void
+    {
+        unset($id);
+    }
+    /**
+     * Run the application (emits `startup`, `activate`, ...) until the last window closes or
+     * {@see quit()} is called. $argv is what GApplication parses for command-line handling.
+     */
+    public function run(array $argv = []): int
+    {
+        unset($argv);
+        return 0;
+    }
+    public function action_added(string $action_name): void
+    {
+        unset($action_name);
+    }
+    public function action_enabled_changed(string $action_name, bool $enabled): void
+    {
+        unset($action_name);
+        unset($enabled);
+    }
+    public function action_removed(string $action_name): void
+    {
+        unset($action_name);
+    }
+    public function action_state_changed(string $action_name, mixed $state = null): void
+    {
+        unset($action_name);
+        unset($state);
+    }
+    public function activate_action(string $action_name, mixed $parameter = null): void
+    {
+        unset($action_name);
+        unset($parameter);
+    }
+    public function change_action_state(string $action_name, mixed $value = null): void
+    {
+        unset($action_name);
+        unset($value);
+    }
+    public function get_action_enabled(string $action_name): bool
+    {
+        unset($action_name);
+        return false;
+    }
+    public function get_action_parameter_type(string $action_name): ?string
+    {
+        unset($action_name);
+        return null;
+    }
+    public function get_action_state(string $action_name): mixed
+    {
+        unset($action_name);
+        return null;
+    }
+    public function get_action_state_hint(string $action_name): mixed
+    {
+        unset($action_name);
+        return null;
+    }
+    public function get_action_state_type(string $action_name): ?string
+    {
+        unset($action_name);
+        return null;
+    }
+    public function has_action(string $action_name): bool
+    {
+        unset($action_name);
+        return false;
+    }
+    public function list_actions(): array
+    {
+        return [];
+    }
+    public function add_action(GAction $action): void
+    {
+        unset($action);
+    }
+    public function lookup_action(string $action_name): ?GAction
+    {
+        unset($action_name);
+        return null;
+    }
+    public function remove_action(string $action_name): void
+    {
+        unset($action_name);
+    }
+    /**
+     * Native `activate` (ApplicationClass.activate): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_activate()` from an override. Activates the application.
+     */
+    public function vfunc_activate(): void
+    {
+    }
+    /**
+     * Native `name_lost` (ApplicationClass.name_lost): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_name_lost()` from an override. invoked when another instance is
+     * taking over the name. Since: 2.60
+     */
+    public function vfunc_name_lost(): bool
+    {
+        return false;
+    }
+    /**
+     * Native `quit_mainloop` (ApplicationClass.quit_mainloop): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_quit_mainloop()` from an override. Used to be invoked on
+     * the primary instance when the use count of the application drops to zero (and after any
+     * inactivity timeout, if requested). Not used anymore since 2.32
+     */
+    public function vfunc_quit_mainloop(): void
+    {
+    }
+    /**
+     * Native `run_mainloop` (ApplicationClass.run_mainloop): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_run_mainloop()` from an override. Used to be invoked on the
+     * primary instance from g_application_run() if the use-count is non-zero. Since 2.32,
+     * GApplication is iterating the main context directly and is not using $run_mainloop anymore
+     */
+    public function vfunc_run_mainloop(): void
+    {
+    }
+    /**
+     * Native `shutdown` (ApplicationClass.shutdown): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_shutdown()` from an override. invoked only on the registered
+     * primary instance immediately after the main loop terminates
+     */
+    public function vfunc_shutdown(): void
+    {
+    }
+    /**
+     * Native `startup` (ApplicationClass.startup): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_startup()` from an override. invoked on the primary instance immediately
+     * after registration
+     */
+    public function vfunc_startup(): void
+    {
+    }
+}
+/**
+ * Flags used to define the behaviour of a #GApplication.
+ */
+final class GApplicationFlags
+{
+    public const int DEFAULT_FLAGS = 0;
+    public const int IS_SERVICE = 1;
+    public const int IS_LAUNCHER = 2;
+    public const int HANDLES_OPEN = 4;
+    public const int HANDLES_COMMAND_LINE = 8;
+    public const int SEND_ENVIRONMENT = 16;
+    public const int NON_UNIQUE = 32;
+    public const int CAN_OVERRIDE_APP_ID = 64;
+    public const int ALLOW_REPLACEMENT = 128;
+    public const int REPLACE = 256;
+}
+/**
+ * `GListModel` is an interface that represents a mutable list of `Object`. Its main intention is
+ * as a model for various widgets in user interfaces, such as list views, but it can also be used
+ * as a convenient method of returning lists of data, with support for updates.
+ */
+interface GListModel
+{
+    /** Gets the type of the items in $list. */
+    public function get_item_type(): string;
+    /** Gets the number of items in $list. */
+    public function get_n_items(): int;
+    /** Get the item at $position. */
+    public function get_item(int $position): ?GObject;
+    /** Emits the #GListModel::items-changed signal on $list. */
+    public function items_changed(int $position, int $removed, int $added): void;
+}
+/**
+ * `GListStore` is a simple implementation of `ListModel` that stores all items in memory.
+ *
+ * @property ?string $item_type
+ * @property-read ?int $n_items
+ */
+class GListStore extends GObject implements GListModel
+{
+    /** Appends $item to $store. $item must be of type #GListStore:item-type. */
+    public function append(GObject $item): void
+    {
+        unset($item);
+    }
+    /**
+     * Looks up the given $item in the list store by looping over the items until the first
+     * occurrence of $item. If $item was not found, then $position will not be set, and this method
+     * will return `false`.
+     */
+    public function find(GObject $item): ?int
+    {
+        unset($item);
+        return null;
+    }
+    /**
+     * Inserts $item into $store at $position. $item must be of type #GListStore:item-type or
+     * derived from it. $position must be smaller than the length of the list, or equal to it to
+     * append.
+     */
+    public function insert(int $position, GObject $item): void
+    {
+        unset($position);
+        unset($item);
+    }
+    /**
+     * Removes the item from $store that is at $position. $position must be smaller than the
+     * current length of the list.
+     */
+    public function remove(int $position): void
+    {
+        unset($position);
+    }
+    /** Removes all items from $store. */
+    public function remove_all(): void
+    {
+    }
+    /**
+     * A GListModel backed by an array; items must be instances of $item_type (a PHP class name of
+     * a registered GObject class, e.g. PhpValue::class).
+     */
+    public function __construct(string $item_type = GObject::class)
+    {
+        unset($item_type);
+    }
+    public function get_item_type(): string
+    {
+        return '';
+    }
+    public function get_n_items(): int
+    {
+        return 0;
+    }
+    public function get_item(int $position): ?GObject
+    {
+        unset($position);
+        return null;
+    }
+    public function items_changed(int $position, int $removed, int $added): void
+    {
+        unset($position);
+        unset($removed);
+        unset($added);
+    }
+}
+/**
+ * A `GSimpleAction` is the obvious simple implementation of the `Action` interface. This is the
+ * easiest way to create an action for purposes of adding it to a `SimpleActionGroup`.
+ *
+ * @property ?bool $enabled
+ * @property ?string $name
+ * @property ?string $parameter_type
+ * @property mixed $state
+ * @property-read ?string $state_type
+ */
+class GSimpleAction extends GObject implements GAction
+{
+    /** Creates a new action. */
+    public function __construct(string $name, ?string $parameter_type = null)
+    {
+        unset($name);
+        unset($parameter_type);
+    }
+    /** Creates a new stateful action. */
+    public static function new_stateful(string $name, ?string $parameter_type, mixed $state = null): GSimpleAction
+    {
+        unset($name);
+        unset($parameter_type);
+        unset($state);
+        return null;
+    }
+    /** Sets the action as enabled or not. */
+    public function set_enabled(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Sets the state hint for the action. */
+    public function set_state_hint(mixed $state_hint = null): void
+    {
+        unset($state_hint);
+    }
+    /**
+     * Set the state directly (emits `notify::state`, not `change-state`). The value is converted
+     * to the action's state type; a stateless action throws LogicException.
+     */
+    public function set_state(mixed $value): void
+    {
+        unset($value);
+    }
+    public function activate(mixed $parameter = null): void
+    {
+        unset($parameter);
+    }
+    public function change_state(mixed $value = null): void
+    {
+        unset($value);
+    }
+    public function get_enabled(): bool
+    {
+        return false;
+    }
+    public function get_name(): string
+    {
+        return '';
+    }
+    public function get_parameter_type(): ?string
+    {
+        return null;
+    }
+    public function get_state(): mixed
+    {
+        return null;
+    }
+    public function get_state_hint(): mixed
+    {
+        return null;
+    }
+    public function get_state_type(): ?string
+    {
+        return null;
+    }
+}
+/**
+ * Controls how a widget deals with extra space in a single dimension.
+ */
+enum GtkAlign : int
+{
+    case Fill = 0;
+    case Start = 1;
+    case End = 2;
+    case Center = 3;
+    case BaselineFill = 4;
+    case BaselineCenter = 5;
+}
+/**
+ * `GtkApplication` is a high-level API for writing applications.
+ *
+ * @property-read ?GtkWindow $active_window
+ * @property ?bool $register_session
+ * @property-read ?bool $screensaver_active
+ */
+class GtkApplication extends GApplication implements GActionGroup, GActionMap
+{
+    /** Creates a new `GtkApplication` instance. */
+    public function __construct(?string $application_id, int $flags)
+    {
+        unset($application_id);
+        unset($flags);
+    }
+    /** Adds a window to `application`. */
+    public function add_window(GtkWindow $window): void
+    {
+        unset($window);
+    }
+    /**
+     * Gets the accelerators that are currently associated with the given action.
+     *
+     * @return list<string>
+     */
+    public function get_accels_for_action(string $detailed_action_name): array
+    {
+        unset($detailed_action_name);
+        return [];
+    }
+    /**
+     * Returns the list of actions (possibly empty) that `accel` maps to.
+     *
+     * @return list<string>
+     */
+    public function get_actions_for_accel(string $accel): array
+    {
+        unset($accel);
+        return [];
+    }
+    /** Gets the “active” window for the application. */
+    public function get_active_window(): ?GtkWindow
+    {
+        return null;
+    }
+    /** Returns the `ApplicationWindow` with the given ID. */
+    public function get_window_by_id(int $id): ?GtkWindow
+    {
+        unset($id);
+        return null;
+    }
+    /**
+     * Gets a list of the `Window` instances associated with `application`.
+     *
+     * @return list<GtkWindow>
+     */
+    public function get_windows(): array
+    {
+        return [];
+    }
+    /**
+     * Lists the detailed action names which have associated accelerators.
+     *
+     * @return list<string>
+     */
+    public function list_action_descriptions(): array
+    {
+        return [];
+    }
+    /** Remove a window from `application`. */
+    public function remove_window(GtkWindow $window): void
+    {
+        unset($window);
+    }
+    /** Sets zero or more keyboard accelerators that will trigger the given action. */
+    public function set_accels_for_action(string $detailed_action_name, array $accels): void
+    {
+        unset($detailed_action_name);
+        unset($accels);
+    }
+    public function action_added(string $action_name): void
+    {
+        unset($action_name);
+    }
+    public function action_enabled_changed(string $action_name, bool $enabled): void
+    {
+        unset($action_name);
+        unset($enabled);
+    }
+    public function action_removed(string $action_name): void
+    {
+        unset($action_name);
+    }
+    public function action_state_changed(string $action_name, mixed $state = null): void
+    {
+        unset($action_name);
+        unset($state);
+    }
+    public function activate_action(string $action_name, mixed $parameter = null): void
+    {
+        unset($action_name);
+        unset($parameter);
+    }
+    public function change_action_state(string $action_name, mixed $value = null): void
+    {
+        unset($action_name);
+        unset($value);
+    }
+    public function get_action_enabled(string $action_name): bool
+    {
+        unset($action_name);
+        return false;
+    }
+    public function get_action_parameter_type(string $action_name): ?string
+    {
+        unset($action_name);
+        return null;
+    }
+    public function get_action_state(string $action_name): mixed
+    {
+        unset($action_name);
+        return null;
+    }
+    public function get_action_state_hint(string $action_name): mixed
+    {
+        unset($action_name);
+        return null;
+    }
+    public function get_action_state_type(string $action_name): ?string
+    {
+        unset($action_name);
+        return null;
+    }
+    public function has_action(string $action_name): bool
+    {
+        unset($action_name);
+        return false;
+    }
+    public function list_actions(): array
+    {
+        return [];
+    }
+    public function add_action(GAction $action): void
+    {
+        unset($action);
+    }
+    public function lookup_action(string $action_name): ?GAction
+    {
+        unset($action_name);
+        return null;
+    }
+    public function remove_action(string $action_name): void
+    {
+        unset($action_name);
+    }
+    /**
+     * Native `window_added` (ApplicationClass.window_added): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_window_added()` from an override. Signal emitted when a
+     * `GtkWindow` is added to application through gtk_application_add_window().
+     */
+    public function vfunc_window_added(GtkWindow $window): void
+    {
+        unset($window);
+    }
+    /**
+     * Native `window_removed` (ApplicationClass.window_removed): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_window_removed()` from an override. Signal emitted when a
+     * `GtkWindow` is removed from application, either as a side-effect of being destroyed or
+     * explicitly through gtk_application_remove_window().
+     */
+    public function vfunc_window_removed(GtkWindow $window): void
+    {
+        unset($window);
+    }
+}
+/**
+ * Types of user actions that may be blocked by `GtkApplication`.
+ */
+final class GtkApplicationInhibitFlags
+{
+    public const int LOGOUT = 1;
+    public const int SWITCH = 2;
+    public const int SUSPEND = 4;
+    public const int IDLE = 8;
+}
+/**
+ * Baseline position in a row of widgets.
+ */
+enum GtkBaselinePosition : int
+{
+    case Top = 0;
+    case Center = 1;
+    case Bottom = 2;
+}
+/**
+ * The `GtkBox` widget arranges child widgets into a single row or column.
+ *
+ * @property ?int $baseline_child
+ * @property ?GtkBaselinePosition $baseline_position
+ * @property ?bool $homogeneous
+ * @property ?int $spacing
+ */
+class GtkBox extends GtkWidget implements GtkOrientable
+{
+    /** Creates a new `GtkBox`. */
+    public function __construct(GtkOrientation $orientation, int $spacing)
+    {
+        unset($orientation);
+        unset($spacing);
+    }
+    /** Adds $child as the last child to $box. */
+    public function append(GtkWidget $child): void
+    {
+        unset($child);
+    }
+    /** Gets the value set by gtk_box_set_baseline_child(). */
+    public function get_baseline_child(): int
+    {
+        return 0;
+    }
+    /** Gets the value set by gtk_box_set_baseline_position(). */
+    public function get_baseline_position(): GtkBaselinePosition
+    {
+        return null;
+    }
+    /** Returns whether the box is homogeneous (all children are the same size). */
+    public function get_homogeneous(): bool
+    {
+        return false;
+    }
+    /** Gets the value set by gtk_box_set_spacing(). */
+    public function get_spacing(): int
+    {
+        return 0;
+    }
+    /** Inserts $child in the position after $sibling in the list of $box children. */
+    public function insert_child_after(GtkWidget $child, ?GtkWidget $sibling): void
+    {
+        unset($child);
+        unset($sibling);
+    }
+    /** Adds $child as the first child to $box. */
+    public function prepend(GtkWidget $child): void
+    {
+        unset($child);
+    }
+    /** Removes a child widget from $box. */
+    public function remove(GtkWidget $child): void
+    {
+        unset($child);
+    }
+    /** Moves $child to the position after $sibling in the list of $box children. */
+    public function reorder_child_after(GtkWidget $child, ?GtkWidget $sibling): void
+    {
+        unset($child);
+        unset($sibling);
+    }
+    /** Sets the baseline child of a box. */
+    public function set_baseline_child(int $child): void
+    {
+        unset($child);
+    }
+    /** Sets the baseline position of a box. */
+    public function set_baseline_position(GtkBaselinePosition $position): void
+    {
+        unset($position);
+    }
+    /** Sets whether or not all children of $box are given equal space in the box. */
+    public function set_homogeneous(bool $homogeneous): void
+    {
+        unset($homogeneous);
+    }
+    /** Sets the number of pixels to place between children of $box. */
+    public function set_spacing(int $spacing): void
+    {
+        unset($spacing);
+    }
+    /**
+     * This box's children, in order (GTK has no such call: it walks first-child/next-sibling).
+     *
+     * @return list<GtkWidget>
+     */
+    public function get_children(): array
+    {
+        return [];
+    }
+    public function get_orientation(): GtkOrientation
+    {
+        return null;
+    }
+    public function set_orientation(GtkOrientation $orientation): void
+    {
+        unset($orientation);
+    }
+}
+/**
+ * The `GtkButton` widget is generally used to trigger a callback function that is called when the
+ * button is pressed.
+ *
+ * @property ?bool $can_shrink
+ * @property ?GtkWidget $child
+ * @property ?bool $has_frame
+ * @property ?string $icon_name
+ * @property ?string $label
+ * @property ?bool $use_underline
+ */
+class GtkButton extends GtkWidget
+{
+    /** Creates a new `GtkButton` widget. */
+    public function __construct()
+    {
+    }
+    /** Creates a new button containing an icon from the current icon theme. */
+    public static function new_from_icon_name(string $icon_name): GtkButton
+    {
+        unset($icon_name);
+        return null;
+    }
+    /** Creates a `GtkButton` widget with a `GtkLabel` child. */
+    public static function new_with_label(string $label): GtkButton
+    {
+        unset($label);
+        return null;
+    }
+    /** Creates a new `GtkButton` containing a label. */
+    public static function new_with_mnemonic(string $label): GtkButton
+    {
+        unset($label);
+        return null;
+    }
+    /** Retrieves whether the button can be smaller than the natural size of its contents. */
+    public function get_can_shrink(): bool
+    {
+        return false;
+    }
+    /** Gets the child widget of $button. */
+    public function get_child(): ?GtkWidget
+    {
+        return null;
+    }
+    /** Returns whether the button has a frame. */
+    public function get_has_frame(): bool
+    {
+        return false;
+    }
+    /** Returns the icon name of the button. */
+    public function get_icon_name(): ?string
+    {
+        return null;
+    }
+    /** Fetches the text from the label of the button. */
+    public function get_label(): ?string
+    {
+        return null;
+    }
+    /** gets whether underlines are interpreted as mnemonics. */
+    public function get_use_underline(): bool
+    {
+        return false;
+    }
+    /** Sets whether the button size can be smaller than the natural size of its contents. */
+    public function set_can_shrink(bool $can_shrink): void
+    {
+        unset($can_shrink);
+    }
+    /** Sets the child widget of $button. */
+    public function set_child(?GtkWidget $child): void
+    {
+        unset($child);
+    }
+    /** Sets the style of the button. */
+    public function set_has_frame(bool $has_frame): void
+    {
+        unset($has_frame);
+    }
+    /** Adds a `GtkImage` with the given icon name as a child. */
+    public function set_icon_name(string $icon_name): void
+    {
+        unset($icon_name);
+    }
+    /** Sets the text of the label of the button to $label. */
+    public function set_label(string $label): void
+    {
+        unset($label);
+    }
+    /** Sets whether to use underlines as mnemonics. */
+    public function set_use_underline(bool $use_underline): void
+    {
+        unset($use_underline);
+    }
+    /**
+     * Native `activate` (ButtonClass.activate): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_activate()` from an override. Signal that causes the button to animate press
+     * then release. Applications should never connect to this signal, but use the $clicked signal.
+     */
+    public function vfunc_activate(): void
+    {
+    }
+    /**
+     * Native `clicked` (ButtonClass.clicked): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_clicked()` from an override. Signal emitted when the button has been
+     * activated (pressed and released).
+     */
+    public function vfunc_clicked(): void
+    {
+    }
+}
+/**
+ * `GtkCustomFilter` determines whether to include items with a callback.
+ */
+class GtkCustomFilter extends GtkFilter
+{
+    /**
+     * A filter driven by a PHP callable: `function (GObject $item): bool`; null matches everything.
+     */
+    public function __construct(?callable $match_func = null)
+    {
+        unset($match_func);
+    }
+    /**
+     * Replace the callback (null = everything matches) and notify users.
+     */
+    public function set_filter_func(?callable $match_func): void
+    {
+        unset($match_func);
+    }
+}
+/**
+ * `GtkCustomSorter` is a `GtkSorter` implementation that sorts via a callback function.
+ */
+class GtkCustomSorter extends GtkSorter
+{
+    /**
+     * A sorter driven by a PHP callable: `function (GObject $a, GObject $b): int`; null keeps the
+     * original order.
+     */
+    public function __construct(?callable $compare = null)
+    {
+        unset($compare);
+    }
+    /**
+     * Replace the callback (null = keep original order) and notify users.
+     */
+    public function set_sort_func(?callable $compare): void
+    {
+        unset($compare);
+    }
+}
+/**
+ * Focus movement types.
+ */
+enum GtkDirectionType : int
+{
+    case TabForward = 0;
+    case TabBackward = 1;
+    case Up = 2;
+    case Down = 3;
+    case Left = 4;
+    case Right = 5;
+}
+/**
+ * `GtkDrawingArea` is a widget that allows drawing with cairo.
+ *
+ * @property ?int $content_height
+ * @property ?int $content_width
  */
 class GtkDrawingArea extends GtkWidget
 {
+    /** Creates a new drawing area. */
     public function __construct()
     {
+    }
+    /** Retrieves the content height of the `GtkDrawingArea`. */
+    public function get_content_height(): int
+    {
+        return 0;
+    }
+    /** Retrieves the content width of the `GtkDrawingArea`. */
+    public function get_content_width(): int
+    {
+        return 0;
+    }
+    /** Sets the desired height of the contents of the drawing area. */
+    public function set_content_height(int $height): void
+    {
+        unset($height);
+    }
+    /** Sets the desired width of the contents of the drawing area. */
+    public function set_content_width(int $width): void
+    {
+        unset($width);
     }
     /**
      * Install (or with null, remove) the draw function: `function (GtkDrawingArea $area,
@@ -1328,68 +1765,124 @@ class GtkDrawingArea extends GtkWidget
     {
         unset($draw_func);
     }
-    public function set_content_width(int $width): void
+    /**
+     * Native `resize` (DrawingAreaClass.resize): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_resize()` from an override.
+     */
+    public function vfunc_resize(int $width, int $height): void
     {
         unset($width);
-    }
-    public function get_content_width(): int
-    {
-        return 0;
-    }
-    public function set_content_height(int $height): void
-    {
         unset($height);
-    }
-    public function get_content_height(): int
-    {
-        return 0;
     }
 }
 /**
- * Decides which items of a list model are visible.
- *
- * @link https://docs.gtk.org/gtk4/class.Filter.html
+ * A `GtkFilter` object describes the filtering to be performed by a `FilterListModel`.
  */
-abstract class GtkFilter extends GObject
+class GtkFilter extends GObject
 {
-    /** Tell users of the filter that its decisions changed. */
-    public function changed(GtkFilterChange $change = GtkFilterChange::Different): void
+    /** GtkFilter is has no constructor in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    public function __construct()
+    {
+    }
+    /** Notifies all users of the filter that it has changed. */
+    public function changed(GtkFilterChange $change): void
     {
         unset($change);
     }
+    /** Gets the known strictness of $filters. */
+    public function get_strictness(): GtkFilterMatch
+    {
+        return null;
+    }
+    /** Checks if the given $item is matched by the filter or not. */
+    public function match(GObject $item): bool
+    {
+        unset($item);
+        return false;
+    }
+    /**
+     * Native `get_strictness` (FilterClass.get_strictness): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_get_strictness()` from an override. Gets the known strictness
+     * of $filters.
+     */
+    public function vfunc_get_strictness(): GtkFilterMatch
+    {
+        return null;
+    }
+    /**
+     * Native `match` (FilterClass.match): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_match()` from an override. Checks if the given $item is matched by the filter
+     * or not.
+     */
+    public function vfunc_match(?GObject $item): bool
+    {
+        unset($item);
+        return false;
+    }
 }
 /**
- * A GtkFilter driven by a PHP callback: `function (GObject $item): bool`.
- *
- * @link https://docs.gtk.org/gtk4/class.CustomFilter.html
+ * Describes changes in a filter in more detail and allows objects using the filter to optimize
+ * refiltering items.
  */
-class GtkCustomFilter extends GtkFilter
+enum GtkFilterChange : int
 {
-    public function __construct(?callable $match_func = null)
-    {
-        unset($match_func);
-    }
-    /** Replace the callback (null = everything matches) and notify users. */
-    public function set_filter_func(?callable $match_func): void
-    {
-        unset($match_func);
-    }
+    case Different = 0;
+    case LessStrict = 1;
+    case MoreStrict = 2;
 }
 /**
- * A GListModel showing only the items of another model that pass a filter.
+ * `GtkFilterListModel` is a list model that filters the elements of the underlying model according
+ * to a `GtkFilter`.
  *
  * @property ?GtkFilter $filter
+ * @property ?bool $incremental
  * @property ?GListModel $model
- *
- * @link https://docs.gtk.org/gtk4/class.FilterListModel.html
+ * @property-read ?int $n_items
+ * @property-read ?int $pending
  */
 class GtkFilterListModel extends GObject implements GListModel
 {
+    /** Creates a new `GtkFilterListModel` that will filter $model using the given $filter. */
     public function __construct(?GListModel $model = null, ?GtkFilter $filter = null)
     {
         unset($model);
         unset($filter);
     }
+    /** Gets the `GtkFilter` currently set on $self. */
+    public function get_filter(): ?GtkFilter
+    {
+        return null;
+    }
+    /** Returns whether incremental filtering is enabled. */
+    public function get_incremental(): bool
+    {
+        return false;
+    }
+    /** Gets the model currently filtered or `null` if none. */
+    public function get_model(): ?GListModel
+    {
+        return null;
+    }
+    /** Returns the number of items that have not been filtered yet. */
+    public function get_pending(): int
+    {
+        return 0;
+    }
+    /** Sets the filter used to filter items. */
+    public function set_filter(?GtkFilter $filter): void
+    {
+        unset($filter);
+    }
+    /** Sets the filter model to do an incremental sort. */
+    public function set_incremental(bool $incremental): void
+    {
+        unset($incremental);
+    }
+    /** Sets the model to be filtered. */
+    public function set_model(?GListModel $model): void
+    {
+        unset($model);
+    }
     public function get_item_type(): string
     {
         return '';
@@ -1403,68 +1896,427 @@ class GtkFilterListModel extends GObject implements GListModel
         unset($position);
         return null;
     }
-    public function set_filter(?GtkFilter $filter): void
+    public function items_changed(int $position, int $removed, int $added): void
     {
-        unset($filter);
+        unset($position);
+        unset($removed);
+        unset($added);
     }
-    public function get_filter(): ?GtkFilter
+}
+/**
+ * Describes the known strictness of a filter.
+ */
+enum GtkFilterMatch : int
+{
+    case Some = 0;
+    case None = 1;
+    case All = 2;
+}
+/**
+ * Used for justifying the text inside a `Label` widget.
+ */
+enum GtkJustification : int
+{
+    case Left = 0;
+    case Right = 1;
+    case Center = 2;
+    case Fill = 3;
+}
+/**
+ * The `GtkLabel` widget displays a small amount of text.
+ *
+ * @property ?PangoEllipsizeMode $ellipsize
+ * @property ?GtkJustification $justify
+ * @property ?string $label
+ * @property ?int $lines
+ * @property ?int $max_width_chars
+ * @property-read ?int $mnemonic_keyval
+ * @property ?GtkWidget $mnemonic_widget
+ * @property ?GtkNaturalWrapMode $natural_wrap_mode
+ * @property ?bool $selectable
+ * @property ?bool $single_line_mode
+ * @property ?bool $use_markup
+ * @property ?bool $use_underline
+ * @property ?int $width_chars
+ * @property ?bool $wrap
+ * @property ?PangoWrapMode $wrap_mode
+ * @property ?float $xalign
+ * @property ?float $yalign
+ */
+class GtkLabel extends GtkWidget
+{
+    /** Creates a new label with the given text inside it. */
+    public function __construct(?string $str = null)
+    {
+        unset($str);
+    }
+    /** Creates a new `GtkLabel`, containing the text in $str. */
+    public static function new_with_mnemonic(?string $str = null): GtkLabel
+    {
+        unset($str);
+        return null;
+    }
+    /** Returns the URI for the currently active link in the label. */
+    public function get_current_uri(): ?string
     {
         return null;
     }
-    public function set_model(?GListModel $model): void
-    {
-        unset($model);
-    }
-    public function get_model(): ?GListModel
+    /** Returns the ellipsizing position of the label. */
+    public function get_ellipsize(): PangoEllipsizeMode
     {
         return null;
     }
+    /** Returns the justification of the label. */
+    public function get_justify(): GtkJustification
+    {
+        return null;
+    }
+    /** Fetches the text from a label. */
+    public function get_label(): string
+    {
+        return '';
+    }
+    /**
+     * Obtains the coordinates where the label will draw its `PangoLayout`.
+     *
+     * @return array{int, int}
+     */
+    public function get_layout_offsets(): array
+    {
+        return [];
+    }
+    /** Gets the number of lines to which an ellipsized, wrapping label should be limited. */
+    public function get_lines(): int
+    {
+        return 0;
+    }
+    /** Retrieves the desired maximum width of $label, in characters. */
+    public function get_max_width_chars(): int
+    {
+        return 0;
+    }
+    /** Return the mnemonic accelerator. */
+    public function get_mnemonic_keyval(): int
+    {
+        return 0;
+    }
+    /** Retrieves the target of the mnemonic (keyboard shortcut) of this label. */
+    public function get_mnemonic_widget(): ?GtkWidget
+    {
+        return null;
+    }
+    /** Returns line wrap mode used by the label. */
+    public function get_natural_wrap_mode(): GtkNaturalWrapMode
+    {
+        return null;
+    }
+    /** Returns whether the label is selectable. */
+    public function get_selectable(): bool
+    {
+        return false;
+    }
+    /**
+     * Gets the selected range of characters in the label.
+     *
+     * @return array{int, int}|null
+     */
+    public function get_selection_bounds(): ?array
+    {
+        return null;
+    }
+    /** Returns whether the label is in single line mode. */
+    public function get_single_line_mode(): bool
+    {
+        return false;
+    }
+    /** Fetches the text from a label. */
+    public function get_text(): string
+    {
+        return '';
+    }
+    /** Returns whether the label’s text is interpreted as Pango markup. */
+    public function get_use_markup(): bool
+    {
+        return false;
+    }
+    /** Returns whether an embedded underlines in the label indicate mnemonics. */
+    public function get_use_underline(): bool
+    {
+        return false;
+    }
+    /** Retrieves the desired width of $label, in characters. */
+    public function get_width_chars(): int
+    {
+        return 0;
+    }
+    /** Returns whether lines in the label are automatically wrapped. */
+    public function get_wrap(): bool
+    {
+        return false;
+    }
+    /** Returns line wrap mode used by the label. */
+    public function get_wrap_mode(): PangoWrapMode
+    {
+        return null;
+    }
+    /** Gets the `xalign` of the label. */
+    public function get_xalign(): float
+    {
+        return 0.0;
+    }
+    /** Gets the `yalign` of the label. */
+    public function get_yalign(): float
+    {
+        return 0.0;
+    }
+    /** Selects a range of characters in the label, if the label is selectable. */
+    public function select_region(int $start_offset, int $end_offset): void
+    {
+        unset($start_offset);
+        unset($end_offset);
+    }
+    /** Sets the mode used to ellipsize the text. */
+    public function set_ellipsize(PangoEllipsizeMode $mode): void
+    {
+        unset($mode);
+    }
+    /** Sets the alignment of the lines in the text of the label relative to each other. */
+    public function set_justify(GtkJustification $jtype): void
+    {
+        unset($jtype);
+    }
+    /** Sets the text of the label. */
+    public function set_label(string $str): void
+    {
+        unset($str);
+    }
+    /** Sets the number of lines to which an ellipsized, wrapping label should be limited. */
+    public function set_lines(int $lines): void
+    {
+        unset($lines);
+    }
+    /** Sets the labels text and attributes from markup. */
+    public function set_markup(string $str): void
+    {
+        unset($str);
+    }
+    /** Sets the labels text, attributes and mnemonic from markup. */
+    public function set_markup_with_mnemonic(string $str): void
+    {
+        unset($str);
+    }
+    /** Sets the desired maximum width in characters of $label to $n_chars. */
+    public function set_max_width_chars(int $n_chars): void
+    {
+        unset($n_chars);
+    }
+    /** Associate the label with its mnemonic target. */
+    public function set_mnemonic_widget(?GtkWidget $widget): void
+    {
+        unset($widget);
+    }
+    /** Select the line wrapping for the natural size request. */
+    public function set_natural_wrap_mode(GtkNaturalWrapMode $wrap_mode): void
+    {
+        unset($wrap_mode);
+    }
+    /** Makes text in the label selectable. */
+    public function set_selectable(bool $setting): void
+    {
+        unset($setting);
+    }
+    /** Sets whether the label is in single line mode. */
+    public function set_single_line_mode(bool $single_line_mode): void
+    {
+        unset($single_line_mode);
+    }
+    /** Sets the text within the `GtkLabel` widget. */
+    public function set_text(string $str): void
+    {
+        unset($str);
+    }
+    /** Sets the label’s text from the string $str. */
+    public function set_text_with_mnemonic(string $str): void
+    {
+        unset($str);
+    }
+    /** Sets whether the text of the label contains markup. */
+    public function set_use_markup(bool $setting): void
+    {
+        unset($setting);
+    }
+    /** Sets whether underlines in the text indicate mnemonics. */
+    public function set_use_underline(bool $setting): void
+    {
+        unset($setting);
+    }
+    /** Sets the desired width in characters of $label to $n_chars. */
+    public function set_width_chars(int $n_chars): void
+    {
+        unset($n_chars);
+    }
+    /** Toggles line wrapping within the `GtkLabel` widget. */
+    public function set_wrap(bool $wrap): void
+    {
+        unset($wrap);
+    }
+    /** Controls how line wrapping is done. */
+    public function set_wrap_mode(PangoWrapMode $wrap_mode): void
+    {
+        unset($wrap_mode);
+    }
+    /** Sets the `xalign` of the label. */
+    public function set_xalign(float $xalign): void
+    {
+        unset($xalign);
+    }
+    /** Sets the `yalign` of the label. */
+    public function set_yalign(float $yalign): void
+    {
+        unset($yalign);
+    }
 }
 /**
- * Orders the items of a list model.
- *
- * @link https://docs.gtk.org/gtk4/class.Sorter.html
+ * Options for selecting a different wrap mode for natural size requests.
  */
-abstract class GtkSorter extends GObject
+enum GtkNaturalWrapMode : int
 {
-    public function changed(GtkSorterChange $change = GtkSorterChange::Different): void
-    {
-        unset($change);
-    }
+    case Inherit = 0;
+    case None = 1;
+    case Word = 2;
 }
 /**
- * A GtkSorter driven by a PHP callback: `function (GObject $a, GObject $b): int` (negative,
- * zero, positive - like `<=>`).
- *
- * @link https://docs.gtk.org/gtk4/class.CustomSorter.html
+ * Describes the way two values can be compared.
  */
-class GtkCustomSorter extends GtkSorter
+enum GtkOrdering : int
 {
-    public function __construct(?callable $compare = null)
-    {
-        unset($compare);
-    }
-    /** Replace the callback (null = keep original order) and notify users. */
-    public function set_sort_func(?callable $compare): void
-    {
-        unset($compare);
-    }
+    case Smaller = -1;
+    case Equal = 0;
+    case Larger = 1;
 }
 /**
- * A GListModel presenting another model's items in sorted order.
+ * The `GtkOrientable` interface is implemented by all widgets that can be oriented horizontally or
+ * vertically.
  *
- * @property ?GtkSorter $sorter
+ * @property ?GtkOrientation $orientation
+ */
+interface GtkOrientable
+{
+    /** Retrieves the orientation of the $orientable. */
+    public function get_orientation(): GtkOrientation;
+    /** Sets the orientation of the $orientable. */
+    public function set_orientation(GtkOrientation $orientation): void;
+}
+/**
+ * Represents the orientation of widgets and other objects.
+ */
+enum GtkOrientation : int
+{
+    case Horizontal = 0;
+    case Vertical = 1;
+}
+/**
+ * Defines how content overflowing a given area should be handled.
+ */
+enum GtkOverflow : int
+{
+    case Visible = 0;
+    case Hidden = 1;
+}
+/**
+ * Flags that influence the behavior of `pick`.
+ */
+final class GtkPickFlags
+{
+    public const int DEFAULT = 0;
+    public const int INSENSITIVE = 1;
+    public const int NON_TARGETABLE = 2;
+}
+/**
+ * `GtkRoot` is the interface implemented by all widgets that can act as a toplevel widget.
+ */
+interface GtkRoot
+{
+    /** Retrieves the current focused widget within the root. */
+    public function get_focus(): ?GtkWidget;
+    /**
+     * If $focus is not the current focus widget, and is focusable, sets it as the focus widget for
+     * the root.
+     */
+    public function set_focus(?GtkWidget $focus): void;
+}
+/**
+ * Specifies a preference for height-for-width or width-for-height geometry management.
+ */
+enum GtkSizeRequestMode : int
+{
+    case HeightForWidth = 0;
+    case WidthForHeight = 1;
+    case ConstantSize = 2;
+}
+/**
+ * A `GListModel` that sorts the elements of an underlying model according to a `GtkSorter`.
+ *
+ * @property ?bool $incremental
  * @property ?GListModel $model
- *
- * @link https://docs.gtk.org/gtk4/class.SortListModel.html
+ * @property-read ?int $n_items
+ * @property-read ?int $pending
+ * @property ?GtkSorter $section_sorter
+ * @property ?GtkSorter $sorter
  */
 class GtkSortListModel extends GObject implements GListModel
 {
+    /** Creates a new sort list model that uses the $sorter to sort $model. */
     public function __construct(?GListModel $model = null, ?GtkSorter $sorter = null)
     {
         unset($model);
         unset($sorter);
     }
+    /** Returns whether incremental sorting is enabled. */
+    public function get_incremental(): bool
+    {
+        return false;
+    }
+    /** Gets the model currently sorted or `null` if none. */
+    public function get_model(): ?GListModel
+    {
+        return null;
+    }
+    /** Estimates progress of an ongoing sorting operation. */
+    public function get_pending(): int
+    {
+        return 0;
+    }
+    /** Gets the section sorter that is used to sort items of $self into sections. */
+    public function get_section_sorter(): ?GtkSorter
+    {
+        return null;
+    }
+    /** Gets the sorter that is used to sort $self. */
+    public function get_sorter(): ?GtkSorter
+    {
+        return null;
+    }
+    /** Sets the sort model to do an incremental sort. */
+    public function set_incremental(bool $incremental): void
+    {
+        unset($incremental);
+    }
+    /** Sets the model to be sorted. */
+    public function set_model(?GListModel $model): void
+    {
+        unset($model);
+    }
+    /** Sets a new section sorter on $self. */
+    public function set_section_sorter(?GtkSorter $sorter): void
+    {
+        unset($sorter);
+    }
+    /** Sets a new sorter on $self. */
+    public function set_sorter(?GtkSorter $sorter): void
+    {
+        unset($sorter);
+    }
     public function get_item_type(): string
     {
         return '';
@@ -1478,98 +2330,1397 @@ class GtkSortListModel extends GObject implements GListModel
         unset($position);
         return null;
     }
-    public function set_sorter(?GtkSorter $sorter): void
+    public function items_changed(int $position, int $removed, int $added): void
     {
-        unset($sorter);
+        unset($position);
+        unset($removed);
+        unset($added);
     }
-    public function get_sorter(): ?GtkSorter
+}
+/**
+ * `GtkSorter` is an object to describe sorting criteria.
+ */
+class GtkSorter extends GObject
+{
+    /** GtkSorter is has no constructor in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    public function __construct()
+    {
+    }
+    /** Notifies all users of the sorter that it has changed. */
+    public function changed(GtkSorterChange $change): void
+    {
+        unset($change);
+    }
+    /** Compares two given items according to the sort order implemented by the sorter. */
+    public function compare(GObject $item1, GObject $item2): GtkOrdering
+    {
+        unset($item1);
+        unset($item2);
+        return null;
+    }
+    /** Gets the order that $self conforms to. */
+    public function get_order(): GtkSorterOrder
     {
         return null;
     }
-    public function set_model(?GListModel $model): void
+    /**
+     * Native `compare` (SorterClass.compare): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_compare()` from an override. Compares two given items according to the sort
+     * order implemented by the sorter.
+     */
+    public function vfunc_compare(?GObject $item1, ?GObject $item2): GtkOrdering
     {
-        unset($model);
+        unset($item1);
+        unset($item2);
+        return null;
     }
-    public function get_model(): ?GListModel
+    /**
+     * Native `get_order` (SorterClass.get_order): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_get_order()` from an override. Gets the order that $self conforms to.
+     */
+    public function vfunc_get_order(): GtkSorterOrder
     {
         return null;
     }
 }
 /**
- * A toplevel window.
- *
- * GObject properties are also available as PHP properties (dashes become
- * underscores). The generator will list every property here from the GIR;
- * until then only the ones the tests and the example use are declared.
- *
- * @property ?string $title
- * @property int $default_width
- * @property int $default_height
- * @property bool $resizable
- * @property bool $modal
- * @property bool $visible
- * @property ?GtkWindow $transient_for
- * @property ?GtkWidget $child
- * @property ?GtkApplication $application
- *
- * @link https://docs.gtk.org/gtk4/class.Window.html
+ * Describes changes in a sorter in more detail and allows users to optimize resorting.
  */
-class GtkWindow extends GtkWidget
+enum GtkSorterChange : int
 {
-    /** @param GtkApplication|null $application Owning application (keeps its main loop alive) */
-    public function __construct(?GtkApplication $application = null)
+    case Different = 0;
+    case Inverted = 1;
+    case LessStrict = 2;
+    case MoreStrict = 3;
+}
+/**
+ * Describes the type of order that a `GtkSorter` may produce.
+ */
+enum GtkSorterOrder : int
+{
+    case Partial = 0;
+    case None = 1;
+    case Total = 2;
+}
+/**
+ * Describes a widget state.
+ */
+final class GtkStateFlags
+{
+    public const int NORMAL = 0;
+    public const int ACTIVE = 1;
+    public const int PRELIGHT = 2;
+    public const int SELECTED = 4;
+    public const int INSENSITIVE = 8;
+    public const int INCONSISTENT = 16;
+    public const int FOCUSED = 32;
+    public const int BACKDROP = 64;
+    public const int DIR_LTR = 128;
+    public const int DIR_RTL = 256;
+    public const int LINK = 512;
+    public const int VISITED = 1024;
+    public const int CHECKED = 2048;
+    public const int DROP_ACTIVE = 4096;
+    public const int FOCUS_VISIBLE = 8192;
+    public const int FOCUS_WITHIN = 16384;
+}
+/**
+ * Reading directions for text.
+ */
+enum GtkTextDirection : int
+{
+    case None = 0;
+    case Ltr = 1;
+    case Rtl = 2;
+}
+/**
+ * The base class for all widgets.
+ *
+ * @property ?bool $can_focus
+ * @property ?bool $can_target
+ * @property ?array $css_classes
+ * @property ?string $css_name
+ * @property ?bool $focus_on_click
+ * @property ?bool $focusable
+ * @property ?GtkAlign $halign
+ * @property-read ?bool $has_default
+ * @property-read ?bool $has_focus
+ * @property ?bool $has_tooltip
+ * @property ?int $height_request
+ * @property ?bool $hexpand
+ * @property ?bool $hexpand_set
+ * @property ?int $margin_bottom
+ * @property ?int $margin_end
+ * @property ?int $margin_start
+ * @property ?int $margin_top
+ * @property ?string $name
+ * @property ?float $opacity
+ * @property ?GtkOverflow $overflow
+ * @property-read ?GtkWidget $parent
+ * @property ?bool $receives_default
+ * @property-read ?GtkRoot $root
+ * @property-read ?int $scale_factor
+ * @property ?bool $sensitive
+ * @property ?string $tooltip_markup
+ * @property ?string $tooltip_text
+ * @property ?GtkAlign $valign
+ * @property ?bool $vexpand
+ * @property ?bool $vexpand_set
+ * @property ?bool $visible
+ * @property ?int $width_request
+ */
+class GtkWidget extends GObject
+{
+    /** GtkWidget is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    public function __construct()
     {
-        unset($application);
     }
-    public function set_application(?GtkApplication $application): void
+    /** Obtains the current default reading direction. */
+    public static function get_default_direction(): GtkTextDirection
     {
-        unset($application);
+        return null;
     }
+    /** Sets the default reading direction for widgets. */
+    public static function set_default_direction(GtkTextDirection $dir): void
+    {
+        unset($dir);
+    }
+    /** Enable or disable an action installed with gtk_widget_class_install_action(). */
+    public function action_set_enabled(string $action_name, bool $enabled): void
+    {
+        unset($action_name);
+        unset($enabled);
+    }
+    /**
+     * For widgets that can be “activated” (buttons, menu items, etc.), this function activates
+     * them.
+     */
+    public function activate(): bool
+    {
+        return false;
+    }
+    /**
+     * Looks up the action in the action groups associated with $widget and its ancestors, and
+     * activates it.
+     */
+    public function activate_action(string $name, mixed $args = null): bool
+    {
+        unset($name);
+        unset($args);
+        return false;
+    }
+    /** Activates the `default.activate` action from $widget. */
+    public function activate_default(): void
+    {
+    }
+    /** Adds a style class to $widget. */
+    public function add_css_class(string $css_class): void
+    {
+        unset($css_class);
+    }
+    /** Adds a widget to the list of mnemonic labels for this widget. */
+    public function add_mnemonic_label(GtkWidget $label): void
+    {
+        unset($label);
+    }
+    /** Called by widgets as the user moves around the window using keyboard shortcuts. */
+    public function child_focus(GtkDirectionType $direction): bool
+    {
+        unset($direction);
+        return false;
+    }
+    /** Computes whether a container should give this widget extra space when possible. */
+    public function compute_expand(GtkOrientation $orientation): bool
+    {
+        unset($orientation);
+        return false;
+    }
+    /** Tests if the point at ($x, $y) is contained in $widget. */
+    public function contains(float $x, float $y): bool
+    {
+        unset($x);
+        unset($y);
+        return false;
+    }
+    /** Checks to see if a drag movement has passed the GTK drag threshold. */
+    public function drag_check_threshold(int $start_x, int $start_y, int $current_x, int $current_y): bool
+    {
+        unset($start_x);
+        unset($start_y);
+        unset($current_x);
+        unset($current_y);
+        return false;
+    }
+    /** Notifies the user about an input-related error on this widget. */
+    public function error_bell(): void
+    {
+    }
+    /** Returns the baseline that has currently been allocated to $widget. */
+    public function get_baseline(): int
+    {
+        return 0;
+    }
+    /** Determines whether the input focus can enter $widget or any of its children. */
+    public function get_can_focus(): bool
+    {
+        return false;
+    }
+    /** Queries whether $widget can be the target of pointer events. */
+    public function get_can_target(): bool
+    {
+        return false;
+    }
+    /** Gets the value set with gtk_widget_set_child_visible(). */
+    public function get_child_visible(): bool
+    {
+        return false;
+    }
+    /**
+     * Returns the list of style classes applied to $widget.
+     *
+     * @return list<string>
+     */
+    public function get_css_classes(): array
+    {
+        return [];
+    }
+    /** Returns the CSS name that is used for $self. */
+    public function get_css_name(): string
+    {
+        return '';
+    }
+    /** Gets the reading direction for a particular widget. */
+    public function get_direction(): GtkTextDirection
+    {
+        return null;
+    }
+    /** Returns the widget’s first child. */
+    public function get_first_child(): ?GtkWidget
+    {
+        return null;
+    }
+    /** Returns the current focus child of $widget. */
+    public function get_focus_child(): ?GtkWidget
+    {
+        return null;
+    }
+    /** Returns whether the widget should grab focus when it is clicked with the mouse. */
+    public function get_focus_on_click(): bool
+    {
+        return false;
+    }
+    /** Determines whether $widget can own the input focus. */
+    public function get_focusable(): bool
+    {
+        return false;
+    }
+    /** Gets the horizontal alignment of $widget. */
+    public function get_halign(): GtkAlign
+    {
+        return null;
+    }
+    /** Returns the current value of the `has-tooltip` property. */
+    public function get_has_tooltip(): bool
+    {
+        return false;
+    }
+    /** Returns the content height of the widget. */
+    public function get_height(): int
+    {
+        return 0;
+    }
+    /** Gets whether the widget would like any available extra horizontal space. */
+    public function get_hexpand(): bool
+    {
+        return false;
+    }
+    /**
+     * Gets whether gtk_widget_set_hexpand() has been used to explicitly set the expand flag on
+     * this widget.
+     */
+    public function get_hexpand_set(): bool
+    {
+        return false;
+    }
+    /** Returns the widget’s last child. */
+    public function get_last_child(): ?GtkWidget
+    {
+        return null;
+    }
+    /** Whether the widget is mapped. */
+    public function get_mapped(): bool
+    {
+        return false;
+    }
+    /** Gets the bottom margin of $widget. */
+    public function get_margin_bottom(): int
+    {
+        return 0;
+    }
+    /** Gets the end margin of $widget. */
+    public function get_margin_end(): int
+    {
+        return 0;
+    }
+    /** Gets the start margin of $widget. */
+    public function get_margin_start(): int
+    {
+        return 0;
+    }
+    /** Gets the top margin of $widget. */
+    public function get_margin_top(): int
+    {
+        return 0;
+    }
+    /** Retrieves the name of a widget. */
+    public function get_name(): string
+    {
+        return '';
+    }
+    /** Returns the widget’s next sibling. */
+    public function get_next_sibling(): ?GtkWidget
+    {
+        return null;
+    }
+    /** #Fetches the requested opacity for this widget. */
+    public function get_opacity(): float
+    {
+        return 0.0;
+    }
+    /** Returns the widget’s overflow value. */
+    public function get_overflow(): GtkOverflow
+    {
+        return null;
+    }
+    /** Returns the parent widget of $widget. */
+    public function get_parent(): ?GtkWidget
+    {
+        return null;
+    }
+    /** Returns the widget’s previous sibling. */
+    public function get_prev_sibling(): ?GtkWidget
+    {
+        return null;
+    }
+    /** Determines whether $widget is realized. */
+    public function get_realized(): bool
+    {
+        return false;
+    }
+    /**
+     * Determines whether $widget is always treated as the default widget within its toplevel when
+     * it has the focus, even if another widget is the default.
+     */
+    public function get_receives_default(): bool
+    {
+        return false;
+    }
+    /** Gets whether the widget prefers a height-for-width layout or a width-for-height layout. */
+    public function get_request_mode(): GtkSizeRequestMode
+    {
+        return null;
+    }
+    /** Returns the `GtkRoot` widget of $widget. */
+    public function get_root(): ?GtkRoot
+    {
+        return null;
+    }
+    /**
+     * Retrieves the internal scale factor that maps from window coordinates to the actual device
+     * pixels.
+     */
+    public function get_scale_factor(): int
+    {
+        return 0;
+    }
+    /** Returns the widget’s sensitivity. */
+    public function get_sensitive(): bool
+    {
+        return false;
+    }
+    /** Returns the content width or height of the widget. */
+    public function get_size(GtkOrientation $orientation): int
+    {
+        unset($orientation);
+        return 0;
+    }
+    /**
+     * Gets the size request that was explicitly set for the widget using
+     * gtk_widget_set_size_request().
+     *
+     * @return array{int, int}
+     */
+    public function get_size_request(): array
+    {
+        return [];
+    }
+    /** Returns the widget state as a flag set. */
+    public function get_state_flags(): int
+    {
+        return 0;
+    }
+    /** Gets the contents of the tooltip for $widget. */
+    public function get_tooltip_markup(): ?string
+    {
+        return null;
+    }
+    /** Gets the contents of the tooltip for $widget. */
+    public function get_tooltip_text(): ?string
+    {
+        return null;
+    }
+    /** Gets the vertical alignment of $widget. */
+    public function get_valign(): GtkAlign
+    {
+        return null;
+    }
+    /** Gets whether the widget would like any available extra vertical space. */
+    public function get_vexpand(): bool
+    {
+        return false;
+    }
+    /**
+     * Gets whether gtk_widget_set_vexpand() has been used to explicitly set the expand flag on
+     * this widget.
+     */
+    public function get_vexpand_set(): bool
+    {
+        return false;
+    }
+    /** Determines whether the widget is visible. */
+    public function get_visible(): bool
+    {
+        return false;
+    }
+    /** Returns the content width of the widget. */
+    public function get_width(): int
+    {
+        return 0;
+    }
+    /** Causes $widget to have the keyboard focus for the `GtkWindow` it's inside. */
+    public function grab_focus(): bool
+    {
+        return false;
+    }
+    /** Returns whether $css_class is currently applied to $widget. */
+    public function has_css_class(string $css_class): bool
+    {
+        unset($css_class);
+        return false;
+    }
+    /** Determines whether $widget is the current default widget within its toplevel. */
+    public function has_default(): bool
+    {
+        return false;
+    }
+    /** Determines if the widget has the global input focus. */
+    public function has_focus(): bool
+    {
+        return false;
+    }
+    /**
+     * Determines if the widget should show a visible indication that it has the global input
+     * focus.
+     */
+    public function has_visible_focus(): bool
+    {
+        return false;
+    }
+    /** Returns whether the widget is currently being destroyed. */
+    public function in_destruction(): bool
+    {
+        return false;
+    }
+    /** Creates and initializes child widgets defined in templates. */
+    public function init_template(): void
+    {
+    }
+    /** Inserts $group into $widget. */
+    public function insert_action_group(string $name, ?GActionGroup $group): void
+    {
+        unset($name);
+        unset($group);
+    }
+    /** Inserts $widget into the child widget list of $parent. */
+    public function insert_after(GtkWidget $parent, ?GtkWidget $previous_sibling): void
+    {
+        unset($parent);
+        unset($previous_sibling);
+    }
+    /** Inserts $widget into the child widget list of $parent. */
+    public function insert_before(GtkWidget $parent, ?GtkWidget $next_sibling): void
+    {
+        unset($parent);
+        unset($next_sibling);
+    }
+    /**
+     * Determines whether $widget is somewhere inside $ancestor, possibly with intermediate
+     * containers.
+     */
+    public function is_ancestor(GtkWidget $ancestor): bool
+    {
+        unset($ancestor);
+        return false;
+    }
+    /** Determines whether $widget can be drawn to. */
+    public function is_drawable(): bool
+    {
+        return false;
+    }
+    /** Determines if the widget is the focus widget within its toplevel. */
+    public function is_focus(): bool
+    {
+        return false;
+    }
+    /** Returns the widget’s effective sensitivity. */
+    public function is_sensitive(): bool
+    {
+        return false;
+    }
+    /** Determines whether the widget and all its parents are marked as visible. */
+    public function is_visible(): bool
+    {
+        return false;
+    }
+    /** Emits the `::keynav-failed` signal on the widget. */
+    public function keynav_failed(GtkDirectionType $direction): bool
+    {
+        unset($direction);
+        return false;
+    }
+    /**
+     * Returns the widgets for which this widget is the target of a mnemonic.
+     *
+     * @return list<GtkWidget>
+     */
+    public function list_mnemonic_labels(): array
+    {
+        return [];
+    }
+    /** Causes a widget to be mapped if it isn’t already. */
+    public function map(): void
+    {
+    }
+    /**
+     * Measures $widget in the orientation $orientation and for the given $for_size.
+     *
+     * @return array{int, int, int, int}
+     */
+    public function measure(GtkOrientation $orientation, int $for_size): array
+    {
+        unset($orientation);
+        unset($for_size);
+        return [];
+    }
+    /** Emits the ::mnemonic-activate signal. */
+    public function mnemonic_activate(bool $group_cycling): bool
+    {
+        unset($group_cycling);
+        return false;
+    }
+    /** Returns a `GListModel` to track the children of $widget. */
+    public function observe_children(): GListModel
+    {
+        return null;
+    }
+    /** Returns a `GListModel` to track the `EventController`s of $widget. */
+    public function observe_controllers(): GListModel
+    {
+        return null;
+    }
+    /** Finds the descendant of $widget closest to the point ($x, $y). */
+    public function pick(float $x, float $y, int $flags): ?GtkWidget
+    {
+        unset($x);
+        unset($y);
+        unset($flags);
+        return null;
+    }
+    /** Flags the widget for a rerun of the `size_allocate` function. */
+    public function queue_allocate(): void
+    {
+    }
+    /** Schedules this widget to be redrawn in the paint phase of the current or the next frame. */
+    public function queue_draw(): void
+    {
+    }
+    /** Flags a widget to have its size renegotiated. */
+    public function queue_resize(): void
+    {
+    }
+    /** Creates the GDK resources associated with a widget. */
+    public function realize(): void
+    {
+    }
+    /** Removes a style from $widget. */
+    public function remove_css_class(string $css_class): void
+    {
+        unset($css_class);
+    }
+    /** Removes a widget from the list of mnemonic labels for this widget. */
+    public function remove_mnemonic_label(GtkWidget $label): void
+    {
+        unset($label);
+    }
+    /** Removes a tick callback previously registered with gtk_widget_add_tick_callback(). */
+    public function remove_tick_callback(int $id): void
+    {
+        unset($id);
+    }
+    /** Specifies whether the input focus can enter the widget or any of its children. */
+    public function set_can_focus(bool $can_focus): void
+    {
+        unset($can_focus);
+    }
+    /** Sets whether $widget can be the target of pointer events. */
+    public function set_can_target(bool $can_target): void
+    {
+        unset($can_target);
+    }
+    /** Sets whether $widget should be mapped along with its parent. */
+    public function set_child_visible(bool $child_visible): void
+    {
+        unset($child_visible);
+    }
+    /** Clear all style classes applied to $widget and replace them with $classes. */
+    public function set_css_classes(array $classes): void
+    {
+        unset($classes);
+    }
+    /** Sets a named cursor to be shown when pointer devices point towards $widget. */
+    public function set_cursor_from_name(?string $name): void
+    {
+        unset($name);
+    }
+    /** Sets the reading direction on a particular widget. */
+    public function set_direction(GtkTextDirection $dir): void
+    {
+        unset($dir);
+    }
+    /** Set $child as the current focus child of $widget. */
+    public function set_focus_child(?GtkWidget $child): void
+    {
+        unset($child);
+    }
+    /** Sets whether the widget should grab focus when it is clicked with the mouse. */
+    public function set_focus_on_click(bool $focus_on_click): void
+    {
+        unset($focus_on_click);
+    }
+    /** Specifies whether $widget can own the input focus. */
+    public function set_focusable(bool $focusable): void
+    {
+        unset($focusable);
+    }
+    /** Sets the horizontal alignment of $widget. */
+    public function set_halign(GtkAlign $align): void
+    {
+        unset($align);
+    }
+    /** Sets the `has-tooltip` property on $widget to $has_tooltip. */
+    public function set_has_tooltip(bool $has_tooltip): void
+    {
+        unset($has_tooltip);
+    }
+    /** Sets whether the widget would like any available extra horizontal space. */
+    public function set_hexpand(bool $expand): void
+    {
+        unset($expand);
+    }
+    /** Sets whether the hexpand flag will be used. */
+    public function set_hexpand_set(bool $set): void
+    {
+        unset($set);
+    }
+    /** Sets the bottom margin of $widget. */
+    public function set_margin_bottom(int $margin): void
+    {
+        unset($margin);
+    }
+    /** Sets the end margin of $widget. */
+    public function set_margin_end(int $margin): void
+    {
+        unset($margin);
+    }
+    /** Sets the start margin of $widget. */
+    public function set_margin_start(int $margin): void
+    {
+        unset($margin);
+    }
+    /** Sets the top margin of $widget. */
+    public function set_margin_top(int $margin): void
+    {
+        unset($margin);
+    }
+    /** Sets a widgets name. */
+    public function set_name(string $name): void
+    {
+        unset($name);
+    }
+    /** Request the $widget to be rendered partially transparent. */
+    public function set_opacity(float $opacity): void
+    {
+        unset($opacity);
+    }
+    /** Sets how $widget treats content that is drawn outside the widget's content area. */
+    public function set_overflow(GtkOverflow $overflow): void
+    {
+        unset($overflow);
+    }
+    /** Sets $parent as the parent widget of $widget. */
+    public function set_parent(GtkWidget $parent): void
+    {
+        unset($parent);
+    }
+    /**
+     * Specifies whether $widget will be treated as the default widget within its toplevel when it
+     * has the focus, even if another widget is the default.
+     */
+    public function set_receives_default(bool $receives_default): void
+    {
+        unset($receives_default);
+    }
+    /** Sets the sensitivity of a widget. */
+    public function set_sensitive(bool $sensitive): void
+    {
+        unset($sensitive);
+    }
+    /** Sets the minimum size of a widget. */
+    public function set_size_request(int $width, int $height): void
+    {
+        unset($width);
+        unset($height);
+    }
+    /** Turns on flag values in the current widget state. */
+    public function set_state_flags(int $flags, bool $clear): void
+    {
+        unset($flags);
+        unset($clear);
+    }
+    /** Sets $markup as the contents of the tooltip, which is marked up with Pango markup. */
+    public function set_tooltip_markup(?string $markup): void
+    {
+        unset($markup);
+    }
+    /** Sets $text as the contents of the tooltip. */
+    public function set_tooltip_text(?string $text): void
+    {
+        unset($text);
+    }
+    /** Sets the vertical alignment of $widget. */
+    public function set_valign(GtkAlign $align): void
+    {
+        unset($align);
+    }
+    /** Sets whether the widget would like any available extra vertical space. */
+    public function set_vexpand(bool $expand): void
+    {
+        unset($expand);
+    }
+    /** Sets whether the vexpand flag will be used. */
+    public function set_vexpand_set(bool $set): void
+    {
+        unset($set);
+    }
+    /** Sets the visibility state of $widget. */
+    public function set_visible(bool $visible): void
+    {
+        unset($visible);
+    }
+    /** Returns whether $widget should contribute to the measuring and allocation of its parent. */
+    public function should_layout(): bool
+    {
+        return false;
+    }
+    /** Triggers a tooltip query on the display where the toplevel of $widget is located. */
+    public function trigger_tooltip_query(): void
+    {
+    }
+    /** Causes a widget to be unmapped if it’s currently mapped. */
+    public function unmap(): void
+    {
+    }
+    /** Dissociate $widget from its parent. */
+    public function unparent(): void
+    {
+    }
+    /** Causes a widget to be unrealized (frees all GDK resources associated with the widget). */
+    public function unrealize(): void
+    {
+    }
+    /** Turns off flag values for the current widget state. */
+    public function unset_state_flags(int $flags): void
+    {
+        unset($flags);
+    }
+    /**
+     * Native `contains` (WidgetClass.contains): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_contains()` from an override. Tests if the point at ($x, $y) is contained in
+     * $widget.
+     */
+    public function vfunc_contains(float $x, float $y): bool
+    {
+        unset($x);
+        unset($y);
+        return false;
+    }
+    /**
+     * Native `direction_changed` (WidgetClass.direction_changed): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_direction_changed()` from an override. Signal emitted when
+     * the text direction of a widget changes.
+     */
+    public function vfunc_direction_changed(GtkTextDirection $previous_direction): void
+    {
+        unset($previous_direction);
+    }
+    /**
+     * Native `focus` (WidgetClass.focus): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_focus()` from an override. Vfunc for gtk_widget_child_focus()
+     */
+    public function vfunc_focus(GtkDirectionType $direction): bool
+    {
+        unset($direction);
+        return false;
+    }
+    /**
+     * Native `get_request_mode` (WidgetClass.get_request_mode): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_get_request_mode()` from an override. Gets whether the
+     * widget prefers a height-for-width layout or a width-for-height layout.
+     */
+    public function vfunc_get_request_mode(): GtkSizeRequestMode
+    {
+        return null;
+    }
+    /**
+     * Native `grab_focus` (WidgetClass.grab_focus): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_grab_focus()` from an override. Causes $widget to have the keyboard focus
+     * for the `GtkWindow` it's inside.
+     */
+    public function vfunc_grab_focus(): bool
+    {
+        return false;
+    }
+    /**
+     * Native `keynav_failed` (WidgetClass.keynav_failed): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_keynav_failed()` from an override. Emits the `::keynav-failed`
+     * signal on the widget.
+     */
+    public function vfunc_keynav_failed(GtkDirectionType $direction): bool
+    {
+        unset($direction);
+        return false;
+    }
+    /**
+     * Native `map` (WidgetClass.map): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_map()` from an override. Causes a widget to be mapped if it isn’t already.
+     */
+    public function vfunc_map(): void
+    {
+    }
+    /**
+     * Native `measure` (WidgetClass.measure): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_measure()` from an override. Measures $widget in the orientation $orientation
+     * and for the given $for_size.
+     *
+     * @return array{int, int, int, int}
+     */
+    public function vfunc_measure(GtkOrientation $orientation, int $for_size): array
+    {
+        unset($orientation);
+        unset($for_size);
+        return [];
+    }
+    /**
+     * Native `mnemonic_activate` (WidgetClass.mnemonic_activate): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_mnemonic_activate()` from an override. Emits the
+     * ::mnemonic-activate signal.
+     */
+    public function vfunc_mnemonic_activate(bool $group_cycling): bool
+    {
+        unset($group_cycling);
+        return false;
+    }
+    /**
+     * Native `move_focus` (WidgetClass.move_focus): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_move_focus()` from an override. Signal emitted when a change of focus is
+     * requested
+     */
+    public function vfunc_move_focus(GtkDirectionType $direction): void
+    {
+        unset($direction);
+    }
+    /**
+     * Native `realize` (WidgetClass.realize): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_realize()` from an override. Creates the GDK resources associated with a
+     * widget.
+     */
+    public function vfunc_realize(): void
+    {
+    }
+    /**
+     * Native `root` (WidgetClass.root): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_root()` from an override. Called when the widget gets added to a `GtkRoot`
+     * widget. Must chain up
+     */
+    public function vfunc_root(): void
+    {
+    }
+    /**
+     * Native `set_focus_child` (WidgetClass.set_focus_child): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_set_focus_child()` from an override. Set $child as the current
+     * focus child of $widget.
+     */
+    public function vfunc_set_focus_child(?GtkWidget $child): void
+    {
+        unset($child);
+    }
+    /**
+     * Native `size_allocate` (WidgetClass.size_allocate): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_size_allocate()` from an override. Called to set the
+     * allocation, if the widget does not have a layout manager.
+     */
+    public function vfunc_size_allocate(int $width, int $height, int $baseline): void
+    {
+        unset($width);
+        unset($height);
+        unset($baseline);
+    }
+    /**
+     * Native `state_flags_changed` (WidgetClass.state_flags_changed): the GTK implementation below
+     * any PHP subclass, for `parent::vfunc_state_flags_changed()` from an override. Signal emitted
+     * when the widget state changes, see gtk_widget_get_state_flags().
+     */
+    public function vfunc_state_flags_changed(int $previous_state_flags): void
+    {
+        unset($previous_state_flags);
+    }
+    /**
+     * Native `system_setting_changed` (WidgetClass.system_setting_changed): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_system_setting_changed()` from an override.
+     * Emitted when a system setting was changed. Must chain up.
+     */
+    public function vfunc_system_setting_changed(int $settings): void
+    {
+        unset($settings);
+    }
+    /**
+     * Native `unmap` (WidgetClass.unmap): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_unmap()` from an override. Causes a widget to be unmapped if it’s currently
+     * mapped.
+     */
+    public function vfunc_unmap(): void
+    {
+    }
+    /**
+     * Native `unrealize` (WidgetClass.unrealize): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_unrealize()` from an override. Causes a widget to be unrealized (frees
+     * all GDK resources associated with the widget).
+     */
+    public function vfunc_unrealize(): void
+    {
+    }
+    /**
+     * Native `unroot` (WidgetClass.unroot): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_unroot()` from an override. Called when the widget is about to be removed
+     * from its `GtkRoot` widget. Must chain up
+     */
+    public function vfunc_unroot(): void
+    {
+    }
+}
+/**
+ * A `GtkWindow` is a toplevel window which can contain other widgets.
+ *
+ * @property ?GtkApplication $application
+ * @property ?GtkWidget $child
+ * @property ?bool $decorated
+ * @property ?int $default_height
+ * @property ?GtkWidget $default_widget
+ * @property ?int $default_width
+ * @property ?bool $deletable
+ * @property ?bool $destroy_with_parent
+ * @property ?bool $focus_visible
+ * @property ?GtkWidget $focus_widget
+ * @property ?bool $fullscreened
+ * @property ?bool $handle_menubar_accel
+ * @property ?bool $hide_on_close
+ * @property ?string $icon_name
+ * @property-read ?bool $is_active
+ * @property ?bool $maximized
+ * @property ?bool $mnemonics_visible
+ * @property ?bool $modal
+ * @property ?bool $resizable
+ * @property ?string $startup_id
+ * @property-read ?bool $suspended
+ * @property ?string $title
+ * @property ?GtkWidget $titlebar
+ * @property ?GtkWindow $transient_for
+ */
+class GtkWindow extends GtkWidget implements GtkRoot
+{
+    /** Creates a new `GtkWindow`. */
+    public function __construct()
+    {
+    }
+    /** Returns the fallback icon name for windows. */
+    public static function get_default_icon_name(): ?string
+    {
+        return null;
+    }
+    /** Returns a list of all existing toplevel windows. */
+    public static function get_toplevels(): GListModel
+    {
+        return null;
+    }
+    /**
+     * Returns a list of all existing toplevel windows.
+     *
+     * @return list<GtkWidget>
+     */
+    public static function list_toplevels(): array
+    {
+        return [];
+    }
+    /** Sets whether the window should request startup notification. */
+    public static function set_auto_startup_notification(bool $setting): void
+    {
+        unset($setting);
+    }
+    /** Sets an icon to be used as fallback. */
+    public static function set_default_icon_name(string $name): void
+    {
+        unset($name);
+    }
+    /** Opens or closes the [interactive debugger](running.html#interactive-debugging). */
+    public static function set_interactive_debugging(bool $enable): void
+    {
+        unset($enable);
+    }
+    /** Requests that the window is closed. */
+    public function close(): void
+    {
+    }
+    /** Drop the internal reference GTK holds on toplevel windows. */
+    public function destroy(): void
+    {
+    }
+    /** Asks to place $window in the fullscreen state. */
+    public function fullscreen(): void
+    {
+    }
+    /** Gets the `GtkApplication` associated with the window. */
     public function get_application(): ?GtkApplication
     {
         return null;
     }
-    public function set_title(?string $title): void
+    /** Gets the child widget of $window. */
+    public function get_child(): ?GtkWidget
     {
-        unset($title);
+        return null;
     }
+    /** Returns whether the window has been set to have decorations. */
+    public function get_decorated(): bool
+    {
+        return false;
+    }
+    /**
+     * Gets the default size of the window.
+     *
+     * @return array{int, int}
+     */
+    public function get_default_size(): array
+    {
+        return [];
+    }
+    /** Returns the default widget for $window. */
+    public function get_default_widget(): ?GtkWidget
+    {
+        return null;
+    }
+    /** Returns whether the window has been set to have a close button. */
+    public function get_deletable(): bool
+    {
+        return false;
+    }
+    /** Returns whether the window will be destroyed with its transient parent. */
+    public function get_destroy_with_parent(): bool
+    {
+        return false;
+    }
+    /** Retrieves the current focused widget within the window. */
+    public function get_focus(): ?GtkWidget
+    {
+        return null;
+    }
+    /** Gets whether “focus rectangles” are supposed to be visible. */
+    public function get_focus_visible(): bool
+    {
+        return false;
+    }
+    /** Returns whether this window reacts to F10 key presses by activating a menubar it contains. */
+    public function get_handle_menubar_accel(): bool
+    {
+        return false;
+    }
+    /** Returns whether the window will be hidden when the close button is clicked. */
+    public function get_hide_on_close(): bool
+    {
+        return false;
+    }
+    /** Returns the name of the themed icon for the window. */
+    public function get_icon_name(): ?string
+    {
+        return null;
+    }
+    /** Gets whether mnemonics are supposed to be visible. */
+    public function get_mnemonics_visible(): bool
+    {
+        return false;
+    }
+    /** Returns whether the window is modal. */
+    public function get_modal(): bool
+    {
+        return false;
+    }
+    /** Gets the value set by gtk_window_set_resizable(). */
+    public function get_resizable(): bool
+    {
+        return false;
+    }
+    /** Retrieves the title of the window. */
     public function get_title(): ?string
     {
         return null;
     }
-    /** Default size in pixels; -1 to unset one dimension. */
+    /** Returns the custom titlebar that has been set with gtk_window_set_titlebar(). */
+    public function get_titlebar(): ?GtkWidget
+    {
+        return null;
+    }
+    /** Fetches the transient parent for this window. */
+    public function get_transient_for(): ?GtkWindow
+    {
+        return null;
+    }
+    /** Returns whether $window has an explicit window group. */
+    public function has_group(): bool
+    {
+        return false;
+    }
+    /** Returns whether the window is part of the current active toplevel. */
+    public function is_active(): bool
+    {
+        return false;
+    }
+    /** Retrieves the current fullscreen state of $window. */
+    public function is_fullscreen(): bool
+    {
+        return false;
+    }
+    /** Retrieves the current maximized state of $window. */
+    public function is_maximized(): bool
+    {
+        return false;
+    }
+    /** Retrieves the current suspended state of $window. */
+    public function is_suspended(): bool
+    {
+        return false;
+    }
+    /** Asks to maximize $window, so that it fills the screen. */
+    public function maximize(): void
+    {
+    }
+    /** Asks to minimize the specified $window. */
+    public function minimize(): void
+    {
+    }
+    /** Presents a window to the user. */
+    public function present(): void
+    {
+    }
+    /** Sets or unsets the `GtkApplication` associated with the window. */
+    public function set_application(?GtkApplication $application): void
+    {
+        unset($application);
+    }
+    /** Sets the child widget of $window. */
+    public function set_child(?GtkWidget $child): void
+    {
+        unset($child);
+    }
+    /** Sets whether the window should be decorated. */
+    public function set_decorated(bool $setting): void
+    {
+        unset($setting);
+    }
+    /** Sets the default size of a window. */
     public function set_default_size(int $width, int $height): void
     {
         unset($width);
         unset($height);
     }
-    /** @return array{int, int} [width, height]; -1 where unset */
-    public function get_default_size(): array
+    /** Sets the default widget. */
+    public function set_default_widget(?GtkWidget $default_widget): void
     {
-        return [];
+        unset($default_widget);
     }
-    /** Set (or with null, remove) the single child widget. */
-    public function set_child(?GtkWidget $child): void
+    /** Sets whether the window should be deletable. */
+    public function set_deletable(bool $setting): void
     {
-        unset($child);
+        unset($setting);
     }
-    public function get_child(): ?GtkWidget
+    /**
+     * If $setting is `true`, then destroying the transient parent of $window will also destroy
+     * $window itself.
+     */
+    public function set_destroy_with_parent(bool $setting): void
     {
-        return null;
+        unset($setting);
     }
-    /** Show the window and bring it to the front. */
-    public function present(): void
+    /** Sets the focus widget. */
+    public function set_focus(?GtkWidget $focus): void
+    {
+        unset($focus);
+    }
+    /** Sets whether “focus rectangles” are supposed to be visible. */
+    public function set_focus_visible(bool $setting): void
+    {
+        unset($setting);
+    }
+    /**
+     * Sets whether this window should react to F10 key presses by activating a menubar it
+     * contains.
+     */
+    public function set_handle_menubar_accel(bool $handle_menubar_accel): void
+    {
+        unset($handle_menubar_accel);
+    }
+    /**
+     * If $setting is `true`, then clicking the close button on the window will not destroy it, but
+     * only hide it.
+     */
+    public function set_hide_on_close(bool $setting): void
+    {
+        unset($setting);
+    }
+    /** Sets the icon for the window from a named themed icon. */
+    public function set_icon_name(?string $name): void
+    {
+        unset($name);
+    }
+    /** Sets whether mnemonics are supposed to be visible. */
+    public function set_mnemonics_visible(bool $setting): void
+    {
+        unset($setting);
+    }
+    /** Sets a window modal or non-modal. */
+    public function set_modal(bool $modal): void
+    {
+        unset($modal);
+    }
+    /** Sets whether the user can resize a window. */
+    public function set_resizable(bool $resizable): void
+    {
+        unset($resizable);
+    }
+    /** Sets the startup notification ID. */
+    public function set_startup_id(string $startup_id): void
+    {
+        unset($startup_id);
+    }
+    /** Sets the title of the `GtkWindow`. */
+    public function set_title(?string $title): void
+    {
+        unset($title);
+    }
+    /** Sets a custom titlebar for $window. */
+    public function set_titlebar(?GtkWidget $titlebar): void
+    {
+        unset($titlebar);
+    }
+    /**
+     * Dialog windows should be set transient for the main application window they were spawned
+     * from. This allows window managers to e.g. keep the dialog on top of the main window, or
+     * center the dialog over the main window. `new_with_buttons` and other convenience functions
+     * in GTK will sometimes call gtk_window_set_transient_for() on your behalf.
+     */
+    public function set_transient_for(?GtkWindow $parent): void
+    {
+        unset($parent);
+    }
+    /** Asks to remove the fullscreen state for $window, and return to its previous state. */
+    public function unfullscreen(): void
     {
     }
-    /** Request the window to close (emits close-request; a handler returning true cancels). */
-    public function close(): void
+    /** Asks to unmaximize $window. */
+    public function unmaximize(): void
+    {
+    }
+    /** Asks to unminimize the specified $window. */
+    public function unminimize(): void
     {
     }
     /**
-     * Drop GTK's reference to the toplevel and unrealize it. The PHP handle
-     * stays valid; `destroy` is emitted when the last handle is released.
+     * Native `activate_default` (WindowClass.activate_default): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_activate_default()` from an override. Activates the default
+     * widget for the window.
      */
-    public function destroy(): void
+    public function vfunc_activate_default(): void
     {
     }
+    /**
+     * Native `activate_focus` (WindowClass.activate_focus): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_activate_focus()` from an override. Activates the current
+     * focused widget within the window.
+     */
+    public function vfunc_activate_focus(): void
+    {
+    }
+    /**
+     * Native `close_request` (WindowClass.close_request): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_close_request()` from an override. Class handler for the
+     * `GtkWindow::close-request` signal.
+     */
+    public function vfunc_close_request(): bool
+    {
+        return false;
+    }
+    /**
+     * Native `enable_debugging` (WindowClass.enable_debugging): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_enable_debugging()` from an override. Class handler for the
+     * `GtkWindow::enable-debugging` keybinding signal.
+     */
+    public function vfunc_enable_debugging(bool $toggle): bool
+    {
+        unset($toggle);
+        return false;
+    }
+    /**
+     * Native `keys_changed` (WindowClass.keys_changed): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_keys_changed()` from an override. Signal gets emitted when the
+     * set of accelerators or mnemonics that are associated with window changes.
+     */
+    public function vfunc_keys_changed(): void
+    {
+    }
+}
+/**
+ * `PangoEllipsizeMode` describes what sort of ellipsization should be applied to text.
+ */
+enum PangoEllipsizeMode : int
+{
+    case None = 0;
+    case Start = 1;
+    case Middle = 2;
+    case End = 3;
+}
+/**
+ * `PangoWrapMode` describes how to wrap the lines of a `PangoLayout` to the desired width.
+ */
+enum PangoWrapMode : int
+{
+    case Word = 0;
+    case Char = 1;
+    case WordChar = 2;
 }

@@ -107,7 +107,9 @@ return Demo::page(
 
             $render('click three times: throw and survive, switch mode, throw and exit');
 
-            $own = new GtkWindow($app);
+            $own = new GtkWindow();
+
+            $own->set_application($app);
             $own->set_title('php-gtk4 · ExceptionMode');
             $own->set_default_size(520, 300);
             $own->set_child($button);
