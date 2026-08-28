@@ -3,6 +3,7 @@
 #include "core/callback.h"
 #include "core/error.h"
 #include "core/globals.h"
+#include "core/mainloop.h"
 #include "core/teardown.h"
 
 using namespace phpgtk;

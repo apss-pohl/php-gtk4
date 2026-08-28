@@ -13,8 +13,10 @@ use Gtk4\GtkFilterMatch;
 use Gtk4\GtkLabel;
 use Gtk4\GtkOrientation;
 use Gtk4\GtkSizeRequestMode;
+use Gtk4\GtkSortListModel;
 use Gtk4\GtkWidget;
 use Gtk4\PhpValue;
+use PhpGtk4\Tests\Subclass\ArrayModel;
 use PhpGtk4\Tests\Subclass\BigSquare;
 use PhpGtk4\Tests\Subclass\EvenFilter;
 use PhpGtk4\Tests\Subclass\HelloLabel;
@@ -165,6 +167,25 @@ final class SubclassTest extends GtkTestCase
         };
         $b->emit('clicked');
         self::assertSame('clicked from vfunc', $b->get_label(), 'the clicked class handler is the PHP method');
+    }
+
+    public function testGListModelImplementedInPhp(): void
+    {
+        // `implements GListModel` adds the GTK interface to the class' GType: GTK calls the PHP
+        // get_item_type/get_n_items/get_item through generated thunks.
+        $model = new ArrayModel();
+        $model->push('a');
+        $model->push('b');
+        $sorted = new GtkSortListModel($model, null);
+        self::assertSame(2, $sorted->get_n_items());
+        self::assertGreaterThan(0, $model->calls, 'GTK asked the PHP model for its size');
+        $item = $sorted->get_item(1);
+        self::assertInstanceOf(PhpValue::class, $item);
+        self::assertSame('b', $item->get_value());
+        $model->push('c');
+        self::assertSame(3, $sorted->get_n_items(), 'items-changed emitted from PHP reaches the wrapper');
+        self::assertSame('GObject', $sorted->get_item_type(), 'a sort model reports GObject items');
+        self::assertSame('PhpValue', $model->get_item_type());
     }
 
     public function testGTypeNameCollisionIsRefused(): void

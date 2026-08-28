@@ -52,6 +52,13 @@ const FEATURES = UNKNOWN;
 class GObject
 {
     /**
+     * A plain GObject - or, on a PHP subclass, an instance of that class' own GType (the way to
+     * implement a GTK interface such as {@see GListModel} in PHP: `class M extends GObject
+     * implements GListModel`).
+     */
+    public function __construct() {}
+
+    /**
      * Connect a handler to a signal (optionally detailed, e.g. "notify::title").
      *
      * The handler receives the emitting object first, then the signal's own

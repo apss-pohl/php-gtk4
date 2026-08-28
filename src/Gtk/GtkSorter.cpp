@@ -12,18 +12,15 @@ using namespace phpgtk;
 /**
  * Gtk4\GtkSorter::__construct()
  *
- * GtkSorter has no constructor in GTK: `new` only works on a PHP subclass (which gets its own
- * GType).
+ * A GtkSorter with default properties (GTK's own constructor is varargs-only; set the
+ * properties afterwards).
  */
 ZEND_METHOD(Gtk4_GtkSorter, __construct) {
   ZEND_PARSE_PARAMETERS_NONE();
   GObject *obj = subtype_new(ZEND_THIS, nullptr);
   if (obj == nullptr) {
-    if (EG(exception) == nullptr) {
-      zend_throw_error(nullptr,
-                       "GtkSorter has no constructor in GTK: subclass it in PHP (new MyClass())");
-    }
-    RETURN_THROWS();
+    if (EG(exception) != nullptr) RETURN_THROWS();
+    obj = static_cast<GObject *>(g_object_new(GTK_TYPE_SORTER, nullptr));
   }
   attach_new(object_from_zval(ZEND_THIS), obj);
 }
@@ -108,7 +105,7 @@ GtkOrdering vfunc_thunk_compare(GtkSorter *self, gpointer item1, gpointer item2)
   return result;
 }
 
-// vfunc installer: GTK_SORTER_CLASS->compare (called from class_init of a PHP subtype)
+// vfunc installer: GTK_SORTER_CLASS->compare (called from class_init / iface_init of a PHP subtype)
 void vfunc_install_compare(gpointer klass) {
   GTK_SORTER_CLASS(klass)->compare = vfunc_thunk_compare;
 }
@@ -136,7 +133,8 @@ GtkSorterOrder vfunc_thunk_get_order(GtkSorter *self) {
   return result;
 }
 
-// vfunc installer: GTK_SORTER_CLASS->get_order (called from class_init of a PHP subtype)
+// vfunc installer: GTK_SORTER_CLASS->get_order (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_get_order(gpointer klass) {
   GTK_SORTER_CLASS(klass)->get_order = vfunc_thunk_get_order;
 }

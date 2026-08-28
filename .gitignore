@@ -93,6 +93,7 @@ phpunit-junit.xml
 /.notes-body
 
 # Claude Code session state (per clone)
+/phpunit.xml
 /.claude/RESUME.md
 /.claude/settings.local.json
 

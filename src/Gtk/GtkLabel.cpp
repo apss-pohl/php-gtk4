@@ -89,7 +89,9 @@ ZEND_METHOD(Gtk4_GtkLabel, get_justify) {
 ZEND_METHOD(Gtk4_GtkLabel, get_label) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
-  RETURN_STRING(gtk_label_get_label(self));
+  const char *result = gtk_label_get_label(self);
+  if (result == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(result);
 }
 
 /**
@@ -104,8 +106,16 @@ ZEND_METHOD(Gtk4_GtkLabel, get_layout_offsets) {
   int y = 0;
   gtk_label_get_layout_offsets(self, &x, &y);
   array_init_size(return_value, 2);
-  add_next_index_long(return_value, x);
-  add_next_index_long(return_value, y);
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(x));
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(y));
+    add_next_index_zval(return_value, &item);
+  }
 }
 
 /**
@@ -187,8 +197,16 @@ ZEND_METHOD(Gtk4_GtkLabel, get_selection_bounds) {
   int end = 0;
   if (!gtk_label_get_selection_bounds(self, &start, &end)) RETURN_NULL();
   array_init_size(return_value, 2);
-  add_next_index_long(return_value, start);
-  add_next_index_long(return_value, end);
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(start));
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(end));
+    add_next_index_zval(return_value, &item);
+  }
 }
 
 /**
@@ -210,7 +228,9 @@ ZEND_METHOD(Gtk4_GtkLabel, get_single_line_mode) {
 ZEND_METHOD(Gtk4_GtkLabel, get_text) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
-  RETURN_STRING(gtk_label_get_text(self));
+  const char *result = gtk_label_get_text(self);
+  if (result == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(result);
 }
 
 /**

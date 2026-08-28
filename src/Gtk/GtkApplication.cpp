@@ -197,7 +197,8 @@ void vfunc_thunk_window_added(GtkApplication *self, GtkWindow *window) {
   report_pending_exception("GtkApplication::vfunc_window_added");
 }
 
-// vfunc installer: GTK_APPLICATION_CLASS->window_added (called from class_init of a PHP subtype)
+// vfunc installer: GTK_APPLICATION_CLASS->window_added (called from class_init / iface_init of a
+// PHP subtype)
 void vfunc_install_window_added(gpointer klass) {
   GTK_APPLICATION_CLASS(klass)->window_added = vfunc_thunk_window_added;
 }
@@ -226,7 +227,8 @@ void vfunc_thunk_window_removed(GtkApplication *self, GtkWindow *window) {
   report_pending_exception("GtkApplication::vfunc_window_removed");
 }
 
-// vfunc installer: GTK_APPLICATION_CLASS->window_removed (called from class_init of a PHP subtype)
+// vfunc installer: GTK_APPLICATION_CLASS->window_removed (called from class_init / iface_init of a
+// PHP subtype)
 void vfunc_install_window_removed(gpointer klass) {
   GTK_APPLICATION_CLASS(klass)->window_removed = vfunc_thunk_window_removed;
 }

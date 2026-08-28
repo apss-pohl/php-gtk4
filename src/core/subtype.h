@@ -19,6 +19,11 @@ namespace phpgtk {
 using VfuncInstall = void (*)(gpointer klass);
 // MINIT (generated register_vfuncs_<Class>()): vfunc `name` of the native type `owner`.
 void register_vfunc(GType owner, const char *name, VfuncInstall install);
+// MINIT (generated register_vfuncs_<Interface>()): slot `name` of the interface `iface`. A PHP
+// class that `implements` the interface's PHP counterpart gets the interface added to its GType
+// (g_type_add_interface_static) with every registered slot pointing at a thunk that calls the
+// PHP method of the same name.
+void register_iface_vfunc(GType iface, const char *name, VfuncInstall install);
 
 // True for a GType registered here for a PHP class.
 bool is_php_type(GType type);

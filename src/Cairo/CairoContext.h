@@ -1,4 +1,4 @@
-// cairo_t -> Gtk4\CairoContext (registered via classes.h).
+// cairo_t -> Gtk4\CairoContext (registered via classes.h); implemented in CairoContext.cpp.
 #pragma once
 #include "php_gtk4.h"
 

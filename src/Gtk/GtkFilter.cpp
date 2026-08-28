@@ -12,18 +12,15 @@ using namespace phpgtk;
 /**
  * Gtk4\GtkFilter::__construct()
  *
- * GtkFilter has no constructor in GTK: `new` only works on a PHP subclass (which gets its own
- * GType).
+ * A GtkFilter with default properties (GTK's own constructor is varargs-only; set the
+ * properties afterwards).
  */
 ZEND_METHOD(Gtk4_GtkFilter, __construct) {
   ZEND_PARSE_PARAMETERS_NONE();
   GObject *obj = subtype_new(ZEND_THIS, nullptr);
   if (obj == nullptr) {
-    if (EG(exception) == nullptr) {
-      zend_throw_error(nullptr,
-                       "GtkFilter has no constructor in GTK: subclass it in PHP (new MyClass())");
-    }
-    RETURN_THROWS();
+    if (EG(exception) != nullptr) RETURN_THROWS();
+    obj = static_cast<GObject *>(g_object_new(GTK_TYPE_FILTER, nullptr));
   }
   attach_new(object_from_zval(ZEND_THIS), obj);
 }
@@ -99,7 +96,8 @@ GtkFilterMatch vfunc_thunk_get_strictness(GtkFilter *self) {
   return result;
 }
 
-// vfunc installer: GTK_FILTER_CLASS->get_strictness (called from class_init of a PHP subtype)
+// vfunc installer: GTK_FILTER_CLASS->get_strictness (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_get_strictness(gpointer klass) {
   GTK_FILTER_CLASS(klass)->get_strictness = vfunc_thunk_get_strictness;
 }
@@ -130,7 +128,7 @@ gboolean vfunc_thunk_match(GtkFilter *self, gpointer item) {
   return result;
 }
 
-// vfunc installer: GTK_FILTER_CLASS->match (called from class_init of a PHP subtype)
+// vfunc installer: GTK_FILTER_CLASS->match (called from class_init / iface_init of a PHP subtype)
 void vfunc_install_match(gpointer klass) {
   GTK_FILTER_CLASS(klass)->match = vfunc_thunk_match;
 }

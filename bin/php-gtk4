@@ -37,8 +37,11 @@ fi
 
 [[ "$GTK4_SO" == */* ]] && GTK4_SO=$(readlink -f "$GTK4_SO")
 
-# PHP_GTK4_ENV: extra VAR=value pairs applied to the php process only (used by
-# ci.sh --only=asan for LD_PRELOAD=libasan etc. - must not leak into this script's
-# own helper processes).
-# shellcheck disable=SC2086
-PHP_INI_SCAN_DIR="$TMP" exec env ${PHP_GTK4_ENV:-} "$PHP" -dextension="$GTK4_SO" "$@"
+# PHP_GTK4_ENV: extra VAR=value pairs, one per line, applied to the php process only
+# (used by ci.sh --only=asan for LD_PRELOAD=libasan etc. - must not leak into this
+# script's own helper processes). Newline-separated so a value may contain spaces.
+extra=()
+if [[ -n "${PHP_GTK4_ENV:-}" ]]; then
+    while IFS= read -r kv; do [[ -n "$kv" ]] && extra+=("$kv"); done <<< "$PHP_GTK4_ENV"
+fi
+PHP_INI_SCAN_DIR="$TMP" exec env "${extra[@]}" "$PHP" -dextension="$GTK4_SO" "$@"

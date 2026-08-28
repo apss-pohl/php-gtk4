@@ -20,6 +20,10 @@ std::unordered_set<PhpValue *> &live() {
 }
 }  // namespace
 
+// The three functions G_DEFINE_TYPE declares `static` (class_init/init by name, finalize from
+// class_init) must stay file-static, not anonymous-namespace: the macro's declaration is the
+// contract.
+
 // GObject finalize: release the PHP value (no-op if RSHUTDOWN already drained it).
 static void php_value_finalize(GObject *object) {
   auto *self = PHP_VALUE(object);

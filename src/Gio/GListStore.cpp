@@ -55,7 +55,7 @@ ZEND_METHOD(Gtk4_GListStore, find) {
   if (item_o == nullptr) RETURN_THROWS();
   guint position = 0;
   if (!g_list_store_find(self, G_OBJECT(item_o), &position)) RETURN_NULL();
-  RETVAL_LONG(position);
+  ZVAL_LONG(return_value, static_cast<zend_long>(position));
 }
 
 /**

@@ -192,16 +192,18 @@ tests\run --filter SignalTest            :: PHPUnit on the real desktop (no Xvfb
 
 Linux CI takes GTK from apt; Windows CI has no package manager and downloads gvsbuild's prebuilt
 `GTK4_Gvsbuild_<ver>_x64.zip` instead, pinned to one gvsbuild release by `GVSBUILD_VERSION` in
-`.github/workflows/windows.yml` **and** the `build-windows` job of `.github/workflows/release.yml`
-(the pin is also the cache key, so the 300 MB zip is fetched once per version). The Windows build
+`.github/workflows/windows-build.yml` — the one reusable Windows recipe that both `windows.yml` (CI)
+and the `build-windows` job of `release.yml` call (the pin is also the cache key, so the 300 MB zip is
+fetched once per version). The Windows build
 stays on that GTK until the number is bumped — nothing does it automatically: Dependabot only tracks
 package ecosystems and `uses:` lines, not an `env:` value.
 
 To move to a newer GTK on Windows: pick a release from <https://github.com/wingtk/gvsbuild/releases>,
-set the same version in both workflows (`WorkflowsTest` fails if they differ), push, and let
+set it in `windows-build.yml` (`WorkflowsTest` fails if a caller carries its own pin), push, and let
 `windows.yml` prove it. Do it when a newer GTK is needed or when a release is cut (it is on the
 checklist in `docs/RELEASING.md`), not on a schedule; an old pin is not a failure. Never below the
-4.14 floor — `config.w32` checks `gtk4 >= 4.14`.
+4.14 floor — `config.w32` checks `gtk4 >= 4.14` (through pkgconf, or `gtkversion.h` on the
+fallback path).
 
 ### What is Linux-only
 

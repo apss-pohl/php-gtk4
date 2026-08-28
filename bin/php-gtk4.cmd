@@ -13,8 +13,8 @@ set "ROOT=%~dp0.."
 if "%PHP%"=="" set "PHP=php"
 if "%GTK4_ROOT%"=="" set "GTK4_ROOT=C:\gtk-build\gtk\x64\release"
 if "%GTK4_DLL%"=="" (
-    if exist "%ROOT%\x64\Release\php_gtk4.dll" set "GTK4_DLL=%ROOT%\x64\Release\php_gtk4.dll"
-    if exist "%ROOT%\x64\Release_TS\php_gtk4.dll" set "GTK4_DLL=%ROOT%\x64\Release_TS\php_gtk4.dll"
+    rem newest php_gtk4.dll under x64\ (Release or Release_TS, whichever was built last)
+    for /f "delims=" %%f in ('powershell -NoProfile -Command "Get-ChildItem -Recurse -Filter php_gtk4.dll '%ROOT%\x64' -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName"') do set "GTK4_DLL=%%f"
 )
 if "%GTK4_DLL%"=="" (
     echo php-gtk4: no php_gtk4.dll found under %ROOT%\x64 - build it first ^(docs\BUILD.md^) or set GTK4_DLL 1>&2

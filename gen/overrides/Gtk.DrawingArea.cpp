@@ -1,5 +1,5 @@
 // GtkDrawingAreaDrawFunc (notified scope) - the template for "notified" callbacks.
-#include "core/cairo.h"
+#include "Cairo/CairoContext.h"
 #include "core/callback.h"
 #include "core/teardown.h"
 

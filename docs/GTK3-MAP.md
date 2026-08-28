@@ -24,23 +24,24 @@ the notes are hand-written and may lag.
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 20 | — |
+| ✅ implemented | 21 | — |
 | 🟡 partial | 2 | — |
-| ❌ to port (GTK 4 equivalent exists) | 72 | ~1750 |
+| ❌ to port (GTK 4 equivalent exists) | 71 | ~1750 |
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 5 | ~130 |
 
-php-gtk4 currently declares (2026-08-28, 61 names): `CairoContext`, `ExceptionMode`, `GAction`,
-`GActionGroup`, `GActionMap`, `GApplication`, `GApplicationFlags`, `GError`, `GLib`, `GListModel`,
-`GListStore`, `GMainLoop`, `GObject`, `GParamSpec`, `GSimpleAction`, `GdkDisplay`, `GdkMemoryFormat`,
-`GdkModifierType`, `GdkRGBA`, `GdkRectangle`, `GdkTexture`, `Gtk`, `GtkAlign`, `GtkApplication`,
-`GtkApplicationInhibitFlags`, `GtkBaselinePosition`, `GtkBox`, `GtkButton`, `GtkCssProvider`, `GtkCssSection`,
-`GtkCustomFilter`, `GtkCustomSorter`, `GtkDirectionType`, `GtkDrawingArea`, `GtkFilter`, `GtkFilterChange`,
-`GtkFilterListModel`, `GtkFilterMatch`, `GtkJustification`, `GtkLabel`, `GtkNaturalWrapMode`, `GtkOrdering`,
-`GtkOrientable`, `GtkOrientation`, `GtkOverflow`, `GtkPickFlags`, `GtkRoot`, `GtkSizeRequestMode`,
-`GtkSortListModel`, `GtkSorter`, `GtkSorterChange`, `GtkSorterOrder`, `GtkStateFlags`, `GtkStyleProvider`,
-`GtkStyleProviderPriority`, `GtkTextDirection`, `GtkWidget`, `GtkWindow`, `PangoEllipsizeMode`,
-`PangoWrapMode`, `PhpValue`. Everything else in this document is open work.
+php-gtk4 currently declares (2026-08-28, 65 names): `CairoContext`, `ExceptionMode`, `GAction`,
+`GActionGroup`, `GActionMap`, `GApplication`, `GApplicationFlags`, `GAsyncResult`, `GCancellable`, `GError`,
+`GLib`, `GListModel`, `GListStore`, `GMainLoop`, `GObject`, `GParamSpec`, `GSimpleAction`, `GdkDisplay`,
+`GdkMemoryFormat`, `GdkModifierType`, `GdkRGBA`, `GdkRectangle`, `GdkTexture`, `Gtk`, `GtkAlertDialog`,
+`GtkAlign`, `GtkApplication`, `GtkApplicationInhibitFlags`, `GtkBaselinePosition`, `GtkBox`, `GtkButton`,
+`GtkCssProvider`, `GtkCssSection`, `GtkCustomFilter`, `GtkCustomSorter`, `GtkDirectionType`, `GtkDrawingArea`,
+`GtkFilter`, `GtkFilterChange`, `GtkFilterListModel`, `GtkFilterMatch`, `GtkJustification`, `GtkLabel`,
+`GtkNaturalWrapMode`, `GtkOrdering`, `GtkOrientable`, `GtkOrientation`, `GtkOverflow`, `GtkPickFlags`,
+`GtkRequisition`, `GtkRoot`, `GtkSizeRequestMode`, `GtkSortListModel`, `GtkSorter`, `GtkSorterChange`,
+`GtkSorterOrder`, `GtkStateFlags`, `GtkStyleProvider`, `GtkStyleProviderPriority`, `GtkTextDirection`,
+`GtkWidget`, `GtkWindow`, `PangoEllipsizeMode`, `PangoWrapMode`, `PhpValue`. Everything else in this document
+is open work.
 
 ---
 
@@ -157,7 +158,7 @@ php-gtk4 currently declares (2026-08-28, 61 names): `CairoContext`, `ExceptionMo
 | php-gtk3 class | gtk3 methods | GTK 4 replacement | php-gtk4 | Notes |
 | --- | ---: | --- | :---: | --- |
 | `GtkDialog` | 13 | `GtkDialog` (dep. 4.10) | ❌ | `run()` is gone in GTK 4 — dialogs are async (`response` signal / `GtkAlertDialog`). |
-| `GtkMessageDialog` | 6 | `GtkAlertDialog` (4.10+) | ❌ | |
+| `GtkMessageDialog` | 6 | `GtkAlertDialog` (4.10+) | ✅ | |
 | `GtkAboutDialog` | 33 | `GtkAboutDialog` | ❌ | Still current. |
 | `GtkFileChooser` / `GtkFileChooserDialog` | 1 + 45 | `GtkFileDialog` (4.10+) | ❌ | Async API; `GtkFileChooserNative` for portals. |
 | `GtkFileFilter` | 8 | `GtkFileFilter` | ❌ | |

@@ -182,8 +182,16 @@ ZEND_METHOD(Gtk4_GtkWindow, get_default_size) {
   int height = 0;
   gtk_window_get_default_size(self, &width, &height);
   array_init_size(return_value, 2);
-  add_next_index_long(return_value, width);
-  add_next_index_long(return_value, height);
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(width));
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(height));
+    add_next_index_zval(return_value, &item);
+  }
 }
 
 /**
@@ -809,7 +817,8 @@ void vfunc_thunk_activate_default(GtkWindow *self) {
   report_pending_exception("GtkWindow::vfunc_activate_default");
 }
 
-// vfunc installer: GTK_WINDOW_CLASS->activate_default (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WINDOW_CLASS->activate_default (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_activate_default(gpointer klass) {
   GTK_WINDOW_CLASS(klass)->activate_default = vfunc_thunk_activate_default;
 }
@@ -833,7 +842,8 @@ void vfunc_thunk_activate_focus(GtkWindow *self) {
   report_pending_exception("GtkWindow::vfunc_activate_focus");
 }
 
-// vfunc installer: GTK_WINDOW_CLASS->activate_focus (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WINDOW_CLASS->activate_focus (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_activate_focus(gpointer klass) {
   GTK_WINDOW_CLASS(klass)->activate_focus = vfunc_thunk_activate_focus;
 }
@@ -861,7 +871,8 @@ gboolean vfunc_thunk_close_request(GtkWindow *self) {
   return result;
 }
 
-// vfunc installer: GTK_WINDOW_CLASS->close_request (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WINDOW_CLASS->close_request (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_close_request(gpointer klass) {
   GTK_WINDOW_CLASS(klass)->close_request = vfunc_thunk_close_request;
 }
@@ -894,7 +905,8 @@ gboolean vfunc_thunk_enable_debugging(GtkWindow *self, gboolean toggle) {
   return result;
 }
 
-// vfunc installer: GTK_WINDOW_CLASS->enable_debugging (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WINDOW_CLASS->enable_debugging (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_enable_debugging(gpointer klass) {
   GTK_WINDOW_CLASS(klass)->enable_debugging = vfunc_thunk_enable_debugging;
 }
@@ -918,7 +930,8 @@ void vfunc_thunk_keys_changed(GtkWindow *self) {
   report_pending_exception("GtkWindow::vfunc_keys_changed");
 }
 
-// vfunc installer: GTK_WINDOW_CLASS->keys_changed (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WINDOW_CLASS->keys_changed (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_keys_changed(gpointer klass) {
   GTK_WINDOW_CLASS(klass)->keys_changed = vfunc_thunk_keys_changed;
 }

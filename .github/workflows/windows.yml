@@ -1,9 +1,9 @@
 name: Windows build
 
-# The Windows counterpart of tests.yml: php_gtk4.dll built with the PHP SDK
-# (phpize.bat + configure + nmake, config.w32) against gvsbuild's prebuilt
-# MSVC GTK 4, loaded, then the PHPUnit suite on the runner's desktop.
-# tests/phpt is Linux-only (run-tests.php + Xvfb); see docs/BUILD.md "Windows".
+# The Windows counterpart of tests.yml: php_gtk4.dll built with the PHP SDK against gvsbuild's
+# MSVC GTK 4, loaded, then the PHPUnit suite on the runner's desktop - the recipe lives in
+# windows-build.yml (shared with release.yml). tests/phpt is Linux-only (run-tests.php + Xvfb);
+# see docs/BUILD.md "Windows".
 
 on:
   workflow_dispatch:
@@ -14,15 +14,6 @@ on:
 permissions:
   contents: read
 
-env:
-  # https://github.com/wingtk/gvsbuild/releases - prebuilt GTK4_Gvsbuild_<ver>_x64.zip.
-  # Bump together with the cache key; the asset is ~300 MB so it is cached per version.
-  GVSBUILD_VERSION: '2026.8.0'
-  GTK4_ROOT: C:\gtk
-  # php-src's Windows SDK (phpsdk-vs17-x64.bat, nmake wrappers, deps handling).
-  PHP_SDK_REF: master
-  PHP_SDK_VS: vs17
-
 # Superseded runs of the same ref are cancelled (a PR push while the previous one runs).
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -31,8 +22,6 @@ concurrency:
 jobs:
   windows:
     name: Windows PHP ${{ matrix.php }} (${{ matrix.ts }})
-    runs-on: windows-2022
-    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
@@ -40,119 +29,9 @@ jobs:
         # Both thread models, like tests.yml. setup-php reads phpts; the devel pack drops its
         # -nts suffix; output lands in Release_TS.
         ts: [nts, ts]
-    env:
-      phpts: ${{ matrix.ts }}
-    defaults:
-      run:
-        shell: pwsh
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Set up PHP ${{ matrix.php }}
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: dom, mbstring, tokenizer, xml, xmlwriter
-          tools: composer
-          coverage: none
-
-      # The devel pack matching the exact php.exe setup-php installed: headers, php8.lib,
-      # phpize.bat and the configure scripts. releases.json lists the current one per branch.
-      - name: PHP devel pack
-        id: devel
-        run: |
-          $ver = php -r 'echo PHP_VERSION;'
-          $ts = if ('${{ matrix.ts }}' -eq 'ts') { '' } else { '-nts' }
-          $zip = "php-devel-pack-$ver$ts-Win32-$env:PHP_SDK_VS-x64.zip"
-          $urls = @("https://downloads.php.net/~windows/releases/$zip",
-                    "https://downloads.php.net/~windows/releases/archives/$zip",
-                    "https://downloads.php.net/~windows/qa/$zip")
-          $ok = $false
-          foreach ($u in $urls) {
-            try { Invoke-WebRequest -Uri $u -OutFile $zip -ErrorAction Stop; $ok = $true; break } catch { Write-Host "not at $u" }
-          }
-          if (-not $ok) { throw "no devel pack for PHP $ver ($zip)" }
-          Expand-Archive $zip -DestinationPath C:\php-devel
-          $dir = (Get-ChildItem C:\php-devel -Directory | Select-Object -First 1).FullName
-          "dir=$dir" >> $env:GITHUB_OUTPUT
-          Write-Host "devel pack: $dir"
-          php -v
-
-      - name: PHP SDK binary tools
-        run: git clone --depth 1 --branch $env:PHP_SDK_REF https://github.com/php/php-sdk-binary-tools C:\php-sdk
-
-      - name: Cache gvsbuild GTK 4
-        id: gtk-cache
-        uses: actions/cache@v6
-        with:
-          path: C:\gtk
-          key: gvsbuild-gtk4-${{ env.GVSBUILD_VERSION }}-x64
-
-      - name: Download gvsbuild GTK 4 ${{ env.GVSBUILD_VERSION }}
-        if: steps.gtk-cache.outputs.cache-hit != 'true'
-        run: |
-          $zip = "GTK4_Gvsbuild_$env:GVSBUILD_VERSION`_x64.zip"
-          Invoke-WebRequest -Uri "https://github.com/wingtk/gvsbuild/releases/download/$env:GVSBUILD_VERSION/$zip" -OutFile $zip
-          Expand-Archive $zip -DestinationPath C:\gtk
-          # The asset may carry one wrapping directory; config.w32 wants <root>\include\gtk-4.0.
-          if (-not (Test-Path C:\gtk\include\gtk-4.0)) {
-            $inner = Get-ChildItem C:\gtk -Directory | Where-Object { Test-Path "$($_.FullName)\include\gtk-4.0" } | Select-Object -First 1
-            if (-not $inner) { throw 'unexpected gvsbuild zip layout' }
-            Get-ChildItem $inner.FullName | Move-Item -Destination C:\gtk
-            Remove-Item $inner.FullName -Recurse
-          }
-          Get-ChildItem C:\gtk
-
-      # phpize.bat (devel pack) -> configure.js from config.w32 -> configure -> nmake, inside the
-      # SDK shell so cl/link/nmake for the VS series PHP was built with are on PATH.
-      - name: Build php_gtk4.dll
-        shell: cmd
-        run: |
-          set "PATH=${{ steps.devel.outputs.dir }};%PATH%"
-          echo phpize ^&^& configure --with-gtk4=%GTK4_ROOT% ^&^& nmake > build-task.bat
-          call C:\php-sdk\phpsdk-${{ env.PHP_SDK_VS }}-x64.bat -t build-task.bat
-          if errorlevel 1 exit /b 1
-          dir /s /b x64\*.dll
-
-      - name: Extension loads and reports the right version
-        run: |
-          $dll = (Get-ChildItem -Recurse x64 -Filter php_gtk4.dll | Select-Object -First 1).FullName
-          "GTK4_DLL=$dll" >> $env:GITHUB_ENV
-          $env:PATH = "$env:GTK4_ROOT\bin;$env:PATH"
-          $want = (Get-Content VERSION -Raw).Trim()
-          $got = php -dextension="$dll" -r 'echo phpversion("gtk4");'
-          if ($LASTEXITCODE -ne 0) { throw 'php_gtk4.dll did not load' }
-          if ($got -ne $want) { throw "php_gtk4.dll reports '$got', VERSION says '$want'" }
-          php -dextension="$dll" -r 'echo Gtk4\BUILD_INFO, " ", Gtk4\FEATURES, "\n";'
-          php -dextension="$dll" --re gtk4 | Select-Object -First 5
-
-      - name: Cache Composer packages
-        uses: actions/cache@v6
-        with:
-          path: vendor
-          key: composer-win-php${{ matrix.php }}-${{ hashFiles('composer.lock') }}
-
-      - name: Install PHPUnit
-        run: composer install --no-interaction --no-progress --prefer-dist
-
-      # The runner session has a desktop, which is all GDK's win32 backend needs.
-      - name: Run PHPUnit
-        shell: cmd
-        run: tests\run.cmd --log-junit phpunit-junit.xml --display-warnings
-
-      - name: Upload PHPUnit report
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: phpunit-junit-windows-php${{ matrix.php }}-${{ matrix.ts }}
-          path: phpunit-junit.xml
-          if-no-files-found: ignore
-
-      - name: Upload php_gtk4.dll
-        uses: actions/upload-artifact@v7
-        with:
-          name: php_gtk4-php${{ matrix.php }}-${{ matrix.ts }}-${{ env.PHP_SDK_VS }}-x64
-          path: ${{ env.GTK4_DLL }}
-          if-no-files-found: error
-          retention-days: 7
+    uses: ./.github/workflows/windows-build.yml
+    with:
+      php: ${{ matrix.php }}
+      ts: ${{ matrix.ts }}
+      run-tests: true
+      artifact: php_gtk4-php${{ matrix.php }}-${{ matrix.ts }}-vs17-x64

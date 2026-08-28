@@ -95,7 +95,9 @@ ZEND_METHOD(Gtk4_GdkDisplay, get_monitors) {
 ZEND_METHOD(Gtk4_GdkDisplay, get_name) {
   ZEND_PARSE_PARAMETERS_NONE();
   GdkDisplay *self = PHPGTK_SELF(GdkDisplay, GDK_TYPE_DISPLAY);
-  RETURN_STRING(gdk_display_get_name(self));
+  const char *result = gdk_display_get_name(self);
+  if (result == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(result);
 }
 
 /**

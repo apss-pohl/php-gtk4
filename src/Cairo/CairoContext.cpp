@@ -6,6 +6,7 @@
 
 #include "core/boxed.h"
 #include "classes.h"
+#include "Cairo/CairoContext.h"
 #include "core/fundamental.h"
 
 using namespace phpgtk;

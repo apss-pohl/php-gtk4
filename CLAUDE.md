@@ -118,7 +118,10 @@ from php's `dlopen()`, which the sanitizer runtime otherwise refuses — setup-p
 
 Env: `PHP`, `PHP_CONFIG`, `PHPIZE`, `JOBS` (default nproc, used by every tool), `CLANG_TIDY`,
 `CLANG_FORMAT` (default: newest installed `clang-*-N`; CI and `.vscode` use 20), `COMPOSER`,
-`PHPT_TESTS` (default `tests/phpt`).
+`PHPT_TESTS` (default `tests/phpt`), `GTK4_CONFIGURE_ARGS` (extra configure switches for the
+default `build`, e.g. `--enable-gtk4-testing`). A build is incremental (plain `make`) when the
+configure arguments are unchanged and `Makefile` is newer than `config.m4`; otherwise it
+reconfigures from clean (`.ci/configure.args` remembers the arguments).
 
 C++: `.clang-tidy` has a documented deny-list (GLib and Zend macro expansions: do/while, varargs,
 void* casts, zval union access, ZPP cognitive complexity, C-array tables); everything else is
@@ -281,26 +284,32 @@ checklist; Dependabot watches composer and actions.
 
 ## CI
 
-Five workflows (three have a README badge): `.github/workflows/cpp-lint.yml`, `php-qa.yml`,
-`tests.yml`, `windows.yml`, `release.yml`. (1) static analysis — setup-php 8.4, GTK4/WebKitGTK
-headers, clang 20 from apt.llvm.org, `phpize && ./configure` (for `config.h`), then `./ci.sh --only=stubs` and
+Five workflows plus one reusable recipe (three have a README badge): `.github/workflows/cpp-lint.yml`,
+`php-qa.yml`, `tests.yml`, `windows.yml`, `release.yml`, and `windows-build.yml` (`workflow_call`,
+the single Windows build recipe both `windows.yml` and `release.yml` use). (1) static analysis —
+setup-php 8.4, GTK4/WebKitGTK headers, clang 20 from apt.llvm.org, `phpize && ./configure` (for
+`config.h`), then `./ci.sh --only=gen,stubs` (the only PR-time run of the generator gate) and
 `./ci.sh --only=cpp-lint` (same clang-tidy/clang-format stage as locally, any finding fails);
-(2) `./ci.sh --only=php-qa` + `--only=md-lint`; (3) build the extension and run the
+(2) `./ci.sh --only=php-qa` + `--only=md-lint`; (3) build the extension (with
+`GTK4_CONFIGURE_ARGS=--enable-gtk4-testing`, so the testing hooks run on every leg) and run the
 PHPUnit suite *and* `./ci.sh --only=phpt` for PHP 8.4 and 8.5, NTS and ZTS, on Ubuntu 24.04 (`fail-fast: false`;
-failing `.out`/`.diff` files upload as the `phpt-failures-php*` artifact), plus `sanitizers`
-(`ci.sh --only=valgrind` + `--only=asan`) and `coverage` (`--only=coverage`, gcovr HTML artifact)
-jobs on 8.4. The apt package lists must mirror `config.m4`'s pkg-config modules.
-(4) `windows.yml`: `windows-2022`, the same 8.4/8.5 × NTS/ZTS matrix via setup-php + the matching devel pack from
-windows.php.net + php-sdk-binary-tools + the cached `GTK4_Gvsbuild_<ver>_x64.zip` release asset
-(`GVSBUILD_VERSION`, pinned by hand in the workflow and in `release.yml` — `WorkflowsTest` keeps
-them equal, nothing bumps them; docs/BUILD.md "The pinned GTK version"), `phpize &&
-configure --with-gtk4 && nmake`, load check, PHPUnit via `tests/run.cmd` on the runner's desktop
-(no phpt). (5) `release.yml` on every push to `main`: reads `VERSION` and either publishes an
+failing `.out`/`.diff` files upload as the `phpt-failures-php*-<ts>` artifact), plus `sanitizers`
+(`ci.sh --only=valgrind` + `--only=asan`), `coverage` (`--only=coverage`, gcovr HTML artifact) and a
+`webkit-build` (`--enable-gtk4-webkit` compiles and loads) job on 8.4. The apt package lists must
+mirror `config.m4`'s pkg-config modules (plus `gir1.2-gtk-4.0` where the `gen` stage runs).
+(4) `windows.yml`: the 8.4/8.5 × NTS/ZTS matrix calling `windows-build.yml` — `windows-2022`,
+setup-php + the matching devel pack from windows.php.net + php-sdk-binary-tools + the cached
+`GTK4_Gvsbuild_<ver>_x64.zip` release asset (`GVSBUILD_VERSION`, pinned by hand in
+`windows-build.yml` only — `WorkflowsTest` enforces that, nothing bumps it; docs/BUILD.md "The
+pinned GTK version"), `phpize && configure --with-gtk4 && nmake` with a warning gate over `src\`
+(`/W3`), load check, PHPUnit via `tests/run.cmd` on the runner's desktop (no phpt). (5) `release.yml` on
+every push to `main`: reads `VERSION` and either publishes an
 immutable `vX.Y.Z-dev.<run>` pre-release (suffix `-dev`; the newest 5 are kept, older ones deleted with their
 tags) or the real `vX.Y.Z` release (no suffix, once),
 after running `./ci.sh` in full itself — it does not key off `tests.yml`. Assets are one `.so` per
 supported PHP named with its whole ABI identity, one `php_gtk4-<ver>-php<X.Y>-nts-vs17-x64.dll`
-per supported PHP (the `build-windows` job, same recipe as `windows.yml`), plus the source tarball
+per supported PHP (the `build-windows` job calling `windows-build.yml` with the release name), plus
+the source tarball
 and `SHA256SUMS`, with
 build provenance attestation instead of a signed tag. **`VERSION` is the only release trigger; never
 create a tag or a release by hand.** docs/RELEASING.md is the full description.
@@ -329,7 +338,9 @@ conventions here only.
   `phpvalue` (GType `PhpValue`: a GObject subclass carrying a zval so PHP data can sit in
   `GListStore`; instances drained in RSHUTDOWN), `collections` (`GList`/`GSList`/`GPtrArray`/`char**`
   → PHP lists with GIR transfer semantics),
-  `subtype` (PHP subclasses as real GTypes, registered at first `new`; constructors go through
+  `subtype` (PHP subclasses as real GTypes, registered at first `new`, and GTK interfaces
+  implemented from PHP — `implements GListModel` adds the interface to the GType with thunks into
+  the PHP methods; constructors go through
   `subtype_new()` with the arguments as construct properties (`gen/ctor-props.txt` for renames),
   `vfunc_<name>()` methods override class-struct slots through generated thunks, the generated
   native `vfunc_<name>()` on the owning class is what `parent::` chains to; abstract GTK classes

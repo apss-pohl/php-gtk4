@@ -132,9 +132,7 @@ ZEND_METHOD(Gtk4_GdkRectangle, equal) {
 namespace phpgtk {
 // MINIT: bind the PHP class to GDK_TYPE_RECTANGLE with its field table.
 void register_GdkRectangle(zend_class_entry *ce) {
-  register_boxed(
-      "GdkRectangle",
-      BoxedClass{
-          .type = GDK_TYPE_RECTANGLE, .ce = ce, .fields = fields, .read = read, .write = write});
+  register_boxed(BoxedClass{
+      .type = GDK_TYPE_RECTANGLE, .ce = ce, .fields = fields, .read = read, .write = write});
 }
 }  // namespace phpgtk

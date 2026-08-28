@@ -11,6 +11,72 @@
 namespace Gtk4;
 
 /**
+ * A `GtkAlertDialog` object collects the arguments that are needed to present a message to the
+ * user.
+ *
+ * @property ?array $buttons
+ * @property ?int $cancel_button
+ * @property ?int $default_button
+ * @property ?string $detail
+ * @property ?string $message
+ * @property ?bool $modal
+ */
+class GtkAlertDialog extends GObject
+{
+    /** A GtkAlertDialog with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct() {}
+
+    /** This function shows the alert to the user. */
+    public function choose(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes the `choose` call and returns the index of the button that was clicked. */
+    public function choose_finish(GAsyncResult $result): int {}
+
+    /**
+     * Returns the button labels for the alert.
+     *
+     * @return list<string>
+     */
+    public function get_buttons(): array {}
+
+    /** Returns the index of the cancel button. */
+    public function get_cancel_button(): int {}
+
+    /** Returns the index of the default button. */
+    public function get_default_button(): int {}
+
+    /** Returns the detail text that will be shown in the alert. */
+    public function get_detail(): string {}
+
+    /** Returns the message that will be shown in the alert. */
+    public function get_message(): string {}
+
+    /** Returns whether the alert blocks interaction with the parent window while it is presented. */
+    public function get_modal(): bool {}
+
+    /** Sets the button labels for the alert. */
+    public function set_buttons(array $labels): void {}
+
+    /** Sets the index of the cancel button. */
+    public function set_cancel_button(int $button): void {}
+
+    /** Sets the index of the default button. */
+    public function set_default_button(int $button): void {}
+
+    /** Sets the detail text that will be shown in the alert. */
+    public function set_detail(string $detail): void {}
+
+    /** Sets the message that will be shown in the alert. */
+    public function set_message(string $message): void {}
+
+    /** Sets whether the alert blocks interaction with the parent window while it is presented. */
+    public function set_modal(bool $modal): void {}
+
+    /** Show the alert to the user. */
+    public function show(?GtkWindow $parent): void {}
+}
+
+/**
  * Controls how a widget deals with extra space in a single dimension.
  */
 enum GtkAlign: int
@@ -419,7 +485,7 @@ class GtkDrawingArea extends GtkWidget
  */
 class GtkFilter extends GObject
 {
-    /** GtkFilter has no constructor in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    /** A GtkFilter with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
     public function __construct() {}
 
     /** Notifies all users of the filter that it has changed. */
@@ -755,6 +821,21 @@ final class GtkPickFlags
 }
 
 /**
+ * A `GtkRequisition` represents the desired size of a widget. See [GtkWidget’s geometry
+ * management section](class.Widget.html#height-for-width-geometry-management) for more
+ * information.
+ *
+ * @property int $width
+ * @property int $height
+ * @not-serializable
+ */
+final class GtkRequisition
+{
+    /** Allocates a new `GtkRequisition`. */
+    public function __construct() {}
+}
+
+/**
  * `GtkRoot` is the interface implemented by all widgets that can act as a toplevel widget.
  */
 interface GtkRoot
@@ -842,7 +923,7 @@ class GtkSortListModel extends GObject implements GListModel
  */
 class GtkSorter extends GObject
 {
-    /** GtkSorter has no constructor in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    /** A GtkSorter with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
     public function __construct() {}
 
     /** Notifies all users of the sorter that it has changed. */
@@ -1027,6 +1108,9 @@ class GtkWidget extends GObject
     /** Gets the value set with gtk_widget_set_child_visible(). */
     public function get_child_visible(): bool {}
 
+    /** Gets the current foreground color for the widget’s CSS style. */
+    public function get_color(): GdkRGBA {}
+
     /**
      * Returns the list of style classes applied to $widget.
      *
@@ -1105,6 +1189,14 @@ class GtkWidget extends GObject
 
     /** Returns the parent widget of $widget. */
     public function get_parent(): ?GtkWidget {}
+
+    /**
+     * Retrieves the minimum and natural size of a widget, taking into account the widget’s
+     * preference for height-for-width management.
+     *
+     * @return array{GtkRequisition, GtkRequisition}
+     */
+    public function get_preferred_size(): array {}
 
     /** Returns the widget’s previous sibling. */
     public function get_prev_sibling(): ?GtkWidget {}

@@ -80,7 +80,8 @@ ZEND_METHOD(Gtk4_GMainLoop, run) {
   g_main_loop_unref(loop);
   // Rethrow mode: a callback left its Throwable pending (it now propagates from this
   // run() call) or parked it inside a nested loop (rethrown here).
-  if (phpgtk::rethrow_parked_exception()) RETURN_THROWS();
+  if (phpgtk::rethrow_parked_exception() || EG(exception) != nullptr)
+    RETURN_THROWS();  // Rethrow mode
 }
 
 /**

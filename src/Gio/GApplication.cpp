@@ -2,6 +2,7 @@
 // Gtk4\GApplication
 #include "php_gtk4.h"
 #include "core/object.h"
+#include "core/gerror.h"
 #include "core/subtype.h"
 
 using namespace phpgtk;
@@ -266,6 +267,32 @@ ZEND_METHOD(Gtk4_GApplication, quit) {
 }
 
 /**
+ * Gtk4\GApplication::register(?GCancellable $cancellable): bool
+ *
+ * Attempts registration of the application.
+ */
+ZEND_METHOD(Gtk4_GApplication, register) {
+  zval *cancellable = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
+  ZEND_PARSE_PARAMETERS_END();
+  GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  GObject *cancellable_o = nullptr;
+  if (cancellable != nullptr) {
+    cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
+    if (cancellable_o == nullptr) RETURN_THROWS();
+  }
+  GError *error = nullptr;
+  const gboolean ok = g_application_register(
+      self, cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr, &error);
+  if (!ok) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  RETURN_BOOL(ok);
+}
+
+/**
  * Gtk4\GApplication::release(): void
  *
  * Decrease the use count of $application.
@@ -509,7 +536,8 @@ void vfunc_thunk_activate(GApplication *self) {
   report_pending_exception("GApplication::vfunc_activate");
 }
 
-// vfunc installer: G_APPLICATION_CLASS->activate (called from class_init of a PHP subtype)
+// vfunc installer: G_APPLICATION_CLASS->activate (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_activate(gpointer klass) {
   G_APPLICATION_CLASS(klass)->activate = vfunc_thunk_activate;
 }
@@ -536,7 +564,8 @@ gboolean vfunc_thunk_name_lost(GApplication *self) {
   return result;
 }
 
-// vfunc installer: G_APPLICATION_CLASS->name_lost (called from class_init of a PHP subtype)
+// vfunc installer: G_APPLICATION_CLASS->name_lost (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_name_lost(gpointer klass) {
   G_APPLICATION_CLASS(klass)->name_lost = vfunc_thunk_name_lost;
 }
@@ -560,7 +589,8 @@ void vfunc_thunk_quit_mainloop(GApplication *self) {
   report_pending_exception("GApplication::vfunc_quit_mainloop");
 }
 
-// vfunc installer: G_APPLICATION_CLASS->quit_mainloop (called from class_init of a PHP subtype)
+// vfunc installer: G_APPLICATION_CLASS->quit_mainloop (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_quit_mainloop(gpointer klass) {
   G_APPLICATION_CLASS(klass)->quit_mainloop = vfunc_thunk_quit_mainloop;
 }
@@ -584,7 +614,8 @@ void vfunc_thunk_run_mainloop(GApplication *self) {
   report_pending_exception("GApplication::vfunc_run_mainloop");
 }
 
-// vfunc installer: G_APPLICATION_CLASS->run_mainloop (called from class_init of a PHP subtype)
+// vfunc installer: G_APPLICATION_CLASS->run_mainloop (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_run_mainloop(gpointer klass) {
   G_APPLICATION_CLASS(klass)->run_mainloop = vfunc_thunk_run_mainloop;
 }
@@ -607,7 +638,8 @@ void vfunc_thunk_shutdown(GApplication *self) {
   report_pending_exception("GApplication::vfunc_shutdown");
 }
 
-// vfunc installer: G_APPLICATION_CLASS->shutdown (called from class_init of a PHP subtype)
+// vfunc installer: G_APPLICATION_CLASS->shutdown (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_shutdown(gpointer klass) {
   G_APPLICATION_CLASS(klass)->shutdown = vfunc_thunk_shutdown;
 }
@@ -630,7 +662,8 @@ void vfunc_thunk_startup(GApplication *self) {
   report_pending_exception("GApplication::vfunc_startup");
 }
 
-// vfunc installer: G_APPLICATION_CLASS->startup (called from class_init of a PHP subtype)
+// vfunc installer: G_APPLICATION_CLASS->startup (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_startup(gpointer klass) {
   G_APPLICATION_CLASS(klass)->startup = vfunc_thunk_startup;
 }

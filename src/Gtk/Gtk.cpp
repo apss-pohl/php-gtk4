@@ -2,6 +2,7 @@
 #include "php_gtk4.h"
 #include "core/error.h"
 #include "core/globals.h"
+#include "core/mainloop.h"
 #include "core/object.h"
 
 using namespace phpgtk;

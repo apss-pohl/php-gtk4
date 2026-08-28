@@ -2,6 +2,9 @@
 // Gtk4\GListModel
 #include "php_gtk4.h"
 #include "core/object.h"
+#include "core/subtype.h"
+#include "core/error.h"
+#include <array>
 
 using namespace phpgtk;
 
@@ -60,4 +63,113 @@ ZEND_METHOD(Gtk4_GListModel, items_changed) {
   GListModel *self = PHPGTK_SELF(GListModel, G_TYPE_LIST_MODEL);
   g_list_model_items_changed(self, static_cast<guint>(position), static_cast<guint>(removed),
                              static_cast<guint>(added));
+}
+
+// vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
+namespace {
+
+// vfunc thunk: static_cast<GListModelInterface *>->get_item -> $this->get_item() on a PHP subclass
+gpointer vfunc_thunk_get_item(GListModel *self, guint position) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "get_item", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return nullptr;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  ZVAL_LONG(&argv[0], static_cast<zend_long>(position));
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  gpointer result = nullptr;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    if (Z_TYPE(ret) == IS_OBJECT) {
+      GObject *o = unwrap(&ret, G_TYPE_OBJECT);
+      result = o != nullptr ? G_OBJECT(o) : nullptr;
+      if (result != nullptr) g_object_ref(result);  // transfer full
+    }
+  }
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GListModel::get_item");
+  return result;
+}
+
+// vfunc installer: static_cast<GListModelInterface *>->get_item (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_get_item(gpointer klass) {
+  static_cast<GListModelInterface *>(klass)->get_item = vfunc_thunk_get_item;
+}
+
+// vfunc thunk: static_cast<GListModelInterface *>->get_item_type -> $this->get_item_type() on a PHP
+// subclass
+GType vfunc_thunk_get_item_type(GListModel *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "get_item_type", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return G_TYPE_OBJECT;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  GType result = G_TYPE_OBJECT;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    if (Z_TYPE(ret) == IS_STRING) {
+      const GType named = g_type_from_name(Z_STRVAL(ret));
+      if (named != 0) result = named;
+    }
+  }
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GListModel::get_item_type");
+  return result;
+}
+
+// vfunc installer: static_cast<GListModelInterface *>->get_item_type (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_get_item_type(gpointer klass) {
+  static_cast<GListModelInterface *>(klass)->get_item_type = vfunc_thunk_get_item_type;
+}
+
+// vfunc thunk: static_cast<GListModelInterface *>->get_n_items -> $this->get_n_items() on a PHP
+// subclass
+guint vfunc_thunk_get_n_items(GListModel *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "get_n_items", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return 0;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  guint result = 0;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    result = static_cast<guint>(zval_get_long(&ret));
+  }
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GListModel::get_n_items");
+  return result;
+}
+
+// vfunc installer: static_cast<GListModelInterface *>->get_n_items (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_get_n_items(gpointer klass) {
+  static_cast<GListModelInterface *>(klass)->get_n_items = vfunc_thunk_get_n_items;
+}
+
+}  // namespace
+
+// MINIT: the vfunc thunks of GListModel (core/subtype.h).
+void register_vfuncs_GListModel() {
+  register_iface_vfunc(G_TYPE_LIST_MODEL, "get_item", vfunc_install_get_item);
+  register_iface_vfunc(G_TYPE_LIST_MODEL, "get_item_type", vfunc_install_get_item_type);
+  register_iface_vfunc(G_TYPE_LIST_MODEL, "get_n_items", vfunc_install_get_n_items);
 }

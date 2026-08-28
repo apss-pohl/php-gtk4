@@ -164,12 +164,17 @@ GTK4 / GLib C API
   map is a process-wide static behind a mutex (ZTS); `wrap()` resolves the class per request by
   name (no autoload) and falls back to the native parent when it does not exist there. Which
   vfuncs a GType has is decided by the first request that instantiates the class.
-- **Not covered (yet)**: implementing GTK *interfaces* from PHP (`g_type_add_interface_static`
-  and iface_init — `GListModel` in PHP would be the first consumer), declaring GObject properties
-  or signals in PHP, `snapshot()` (needs `GtkSnapshot`, wave 4/milestone 4), vfuncs whose
-  arguments are pointers to scalars without a GIR direction (`compute_expand`), interface
-  vfuncs. `GObject`'s own vfuncs (`dispose`, `set_property`, …) are hand-written territory and
-  not exposed.
+- **Interfaces from PHP** (2026-08-28): `class M extends GObject implements GListModel` — the
+  class' GType gets the GTK interface added (`g_type_add_interface_static`, `iface_init` installs
+  a generated thunk per slot that calls the PHP method of the same name: `get_item_type()`,
+  `get_n_items()`, `get_item()`); the PHP interface declares only those vfunc-backed methods,
+  the utility methods (`items_changed()`, `get_object()`) stay on the generated implementors via
+  `@implementation-alias` (a PHP model announces changes with `emit('items-changed', …)`).
+  `GObject::__construct()` exists for exactly this (`new M()` builds the subtype).
+- **Not covered (yet)**: declaring GObject properties or signals in PHP, `snapshot()` (needs
+  `GtkSnapshot`, wave 4/milestone 4), vfuncs whose arguments are pointers to scalars without a
+  GIR direction (`compute_expand`). `GObject`'s own vfuncs (`dispose`, `set_property`, …) are
+  hand-written territory and not exposed.
 
 ## 3. Code generation (`gen/`)
 
@@ -308,7 +313,7 @@ php-gtk4/
   .github/            workflows (cpp-lint, php-qa, tests, windows, release), dependabot,
                       ruleset-main.json (branch protection to apply once the repo is public/Pro)
   .githooks/          pre-commit (fast checks) and pre-push (full ci.sh) - `git config core.hooksPath .githooks`
-  gtk4.ini, CHANGELOG.md, composer.json (dev tooling), phpunit.xml, package.json (markdownlint pin)
+  gtk4.ini, CHANGELOG.md, composer.json (dev tooling), phpunit.xml.dist, package.json (markdownlint pin)
 ```
 
 ## 6. Testing
@@ -343,10 +348,13 @@ typed C callbacks, and `GError`/`GBytes` mappings. All done 2026-08-26, tracked 
 ### Conventions the generator relies on (2026-08-26)
 
 - **Out parameters**: a C function's `out` arguments become the PHP return value — one out → that
-  value, several → a list in declaration order (`get_size_request(): array{int,int}`). A `gboolean`
+  value (`get_color(): GdkRGBA`), several → a list in declaration order (`get_size_request():
+  array{int,int}`, `get_preferred_size(): array{GtkRequisition, GtkRequisition}`). A `gboolean`
   return combined with outs means "success": return the outs, or `null` on failure
-  (`GtkLabel::get_selection_bounds(): ?array`). `inout` = the argument is passed, the new value
-  returned. No PHP by-reference parameters anywhere.
+  (`GtkLabel::get_selection_bounds(): ?array`). Scalars, strings, objects, enums and
+  caller-allocated records (a stack struct, copied into a value handle) are supported; `inout` and
+  outs next to a non-boolean return are reported and skipped. No PHP by-reference parameters
+  anywhere.
 - **Collections**: `GList`/`GSList`/`GPtrArray`/`char**` returns become PHP lists via
   `src/core/collections.*`, converted by element GType (GObject → handle, string, boxed) with the
   GIR `transfer` annotation deciding what is freed (`Transfer::None/Container/Full`). Array
@@ -357,7 +365,9 @@ typed C callbacks, and `GError`/`GBytes` mappings. All done 2026-08-26, tracked 
 - **Typed C callbacks** (GIR `<callback>` parameters): every callback parameter becomes a PHP
   `callable` (nullable where the C side accepts `NULL`); the `closure` argument carries a
   `phpgtk::Callback` (`src/core/callback.*`) and the `destroy` argument is a per-callback
-  `*_free` notify. Trampoline shape: wrap each C argument with the type family rule (GObject →
+  `*_free` notify. The generator emits the trampoline itself for scopes `async` and `call`
+  (`GtkAlertDialog::choose()`); `notified` stays an override. Trampoline shape: wrap each C
+  argument with the type family rule (GObject →
   `wrap()`, `cairo_t` → `CairoContext`, ints/doubles → scalars), `callback_invoke()`, convert the
   return value (`gboolean` ← truthiness, `gint` ← sign of `zval_get_long`), dtor the zvals.
   Scope rules: `call` — no notify, the Callback lives on the C stack of the method;

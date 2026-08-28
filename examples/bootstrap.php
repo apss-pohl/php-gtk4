@@ -92,6 +92,8 @@ final class Demo
             'GdkDisplay',
         ],
         'Loop' => ['GLib', 'GMainLoop'],
+        'Geometry' => ['GtkRequisition'],
+        'Dialogs & async' => ['GtkAlertDialog', 'GCancellable', 'GAsyncResult', 'GTask'],
     ];
 
     /**

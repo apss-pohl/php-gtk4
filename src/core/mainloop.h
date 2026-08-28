@@ -24,7 +24,15 @@ void quit_running_loops();
 // True while a callback runs inside a main loop that is *not* registered here
 // (GTK-internal g_main_context_iteration() loops: DnD, portals, or PHP driving
 // GLib::main_context_iteration()) nested inside a registered run(). Quitting the
-// registered loops then cannot make control return to PHP right away.
+// registered loops then cannot make control return to PHP right away. With no
+// registered run() the driving PHP call is the next return: not nested.
 bool in_unregistered_nested_loop();
+
+// Records the thread that ran Gtk::init(); every later GTK entry point that
+// drives the main loop asserts it is on that thread. GTK is one per process
+// and single-threaded, whatever PHP's build: with ZTS, only one request
+// thread may own the GUI. Throws \Error and returns false on a violation.
+bool assert_gui_thread(const char *what);
+void record_gui_thread();
 
 }  // namespace phpgtk

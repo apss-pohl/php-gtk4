@@ -8,10 +8,26 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `name_is_valid` — static function on an interface (PHP interfaces have no bodies)
 - `parse_detailed_name` — static function on an interface (PHP interfaces have no bodies)
 - `print_detailed_name` — static function on an interface (PHP interfaces have no bodies)
+- `vfunc activate` — return or argument type not convertible in a thunk
+- `vfunc change_state` — return or argument type not convertible in a thunk
+- `vfunc get_name` — return or argument type not convertible in a thunk
+- `vfunc get_parameter_type` — return or argument type not convertible in a thunk
+- `vfunc get_state` — return or argument type not convertible in a thunk
+- `vfunc get_state_hint` — return or argument type not convertible in a thunk
+- `vfunc get_state_type` — return or argument type not convertible in a thunk
 
 ## GActionGroup
 
 - `query_action` — out parameter `parameter_type` of type GLib.VariantType
+- `vfunc action_state_changed` — return or argument type not convertible in a thunk
+- `vfunc activate_action` — return or argument type not convertible in a thunk
+- `vfunc change_action_state` — return or argument type not convertible in a thunk
+- `vfunc get_action_parameter_type` — return or argument type not convertible in a thunk
+- `vfunc get_action_state` — return or argument type not convertible in a thunk
+- `vfunc get_action_state_hint` — return or argument type not convertible in a thunk
+- `vfunc get_action_state_type` — return or argument type not convertible in a thunk
+- `vfunc list_actions` — return or argument type not convertible in a thunk
+- `vfunc query_action` — out parameter `parameter_type` of type GLib.VariantType
 
 ## GActionMap
 
@@ -24,7 +40,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `add_option_group` — parameter `group` of type GLib.OptionGroup
 - `get_dbus_connection` — return type Gio.DBusConnection (not in the closure)
 - `open` — parameter `files` of type array (C array)
-- `register` — parameter `cancellable` of type Gio.Cancellable
 - `send_notification` — parameter `notification` of type Gio.Notification
 - `set_action_group` — deprecated (2.32)
 - `vfunc add_platform_data` — parameter `builder` of type GLib.VariantBuilder
@@ -41,6 +56,19 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `flags_none` — skip.txt: deprecated enumerator (GLIB_DEPRECATED_ENUMERATOR is not in the GIR); DEFAULT_FLAGS is the name
 
+## GAsyncResult
+
+- `get_user_data` — return type gpointer
+- `is_tagged` — gpointer parameter
+- `vfunc get_user_data` — return or argument type not convertible in a thunk
+- `vfunc is_tagged` — gpointer parameter
+
+## GCancellable
+
+- `connect` — callback parameter (needs an override)
+- `make_pollfd` — parameter `pollfd` of type GLib.PollFD
+- `source_new` — return type GLib.Source
+
 ## GListModel
 
 - `get_item` — shadowed by get_object
@@ -52,6 +80,27 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `insert_sorted` — callback parameter (needs an override)
 - `sort` — callback parameter (needs an override)
 - `splice` — parameter `additions` of type array (C array)
+
+## GTask
+
+- `PHP subclasses` — constructor argument source_object is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GTask
+- `report_error` — gpointer parameter
+- `report_new_error` — varargs
+- `attach_source` — callback parameter (needs an override)
+- `get_context` — return type GLib.MainContext
+- `get_source_tag` — return type gpointer
+- `get_task_data` — return type gpointer
+- `propagate_pointer` — return type gpointer
+- `propagate_value` — caller-allocates out parameter `value` of type GObject.Value
+- `return_new_error` — varargs
+- `return_new_error_literal` — parameter `domain` of type GLib.Quark
+- `return_pointer` — gpointer parameter
+- `return_prefixed_error` — varargs
+- `return_value` — parameter `result` of type GObject.Value
+- `run_in_thread` — callback parameter (needs an override)
+- `run_in_thread_sync` — callback parameter (needs an override)
+- `set_source_tag` — gpointer parameter
+- `set_task_data` — gpointer parameter
 
 ## GdkDisplay
 
@@ -83,6 +132,10 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `download` — parameter `data` of type array (C array)
 - `__construct` — skip.txt: abstract for GTK's own subclasses only: a texture needs internal state (color state, 4.16+) that only the factories set - no PHP subtypes, no `new`
 - `smoke test` — smoke-skip.txt: factories need real image data (TextureTest covers it)
+
+## GtkAlertDialog
+
+- `new` — varargs
 
 ## GtkAlign
 
@@ -123,6 +176,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `property extra-menu` — property type Gio.MenuModel not mappable
 - `property tabs` — property type Pango.TabArray not mappable
 
+## GtkRequisition
+
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+
 ## GtkSortListModel
 
 - `property item-type` — property type Gtk.GType not mappable
@@ -133,9 +191,9 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `add_controller` — parameter `controller` of type Gtk.EventController
 - `add_tick_callback` — callback parameter (needs an override)
 - `allocate` — parameter `transform` of type Gsk.Transform
-- `compute_bounds` — caller-allocates out parameter out_bounds of type Graphene.Rect (needs an override)
+- `compute_bounds` — caller-allocates out parameter `out_bounds` of type Graphene.Rect
 - `compute_point` — parameter `point` of type Graphene.Point
-- `compute_transform` — caller-allocates out parameter out_transform of type Graphene.Matrix (needs an override)
+- `compute_transform` — caller-allocates out parameter `out_transform` of type Graphene.Matrix
 - `create_pango_context` — return type Pango.Context (not in the closure)
 - `create_pango_layout` — return type Pango.Layout (not in the closure)
 - `dispose_template` — parameter `widget_type` of type Gtk.GType
@@ -145,7 +203,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_allocation` — deprecated (4.12)
 - `get_ancestor` — parameter `widget_type` of type Gtk.GType
 - `get_clipboard` — return type Gdk.Clipboard (not in the closure)
-- `get_color` — caller-allocates out parameter color of type Gdk.RGBA (needs an override)
 - `get_cursor` — return type Gdk.Cursor (not in the closure)
 - `get_font_map` — return type Pango.FontMap (not in the closure)
 - `get_font_options` — return type cairo.FontOptions
@@ -153,7 +210,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_layout_manager` — return type Gtk.LayoutManager (not in the closure)
 - `get_native` — return type Gtk.Native (not in the closure)
 - `get_pango_context` — return type Pango.Context (not in the closure)
-- `get_preferred_size` — caller-allocates out parameter minimum_size of type Gtk.Requisition (needs an override)
 - `get_primary_clipboard` — return type Gdk.Clipboard (not in the closure)
 - `get_settings` — return type Gtk.Settings (not in the closure)
 - `get_style_context` — deprecated (4.10)
@@ -197,6 +253,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## Emitted files
 
+- `Gtk/GtkAlertDialog.cpp`
 - `Gtk/GtkApplication.cpp`
 - `Gtk/GtkBox.cpp`
 - `Gtk/GtkButton.cpp`
@@ -208,6 +265,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkFilterListModel.cpp`
 - `Gtk/GtkLabel.cpp`
 - `Gtk/GtkOrientable.cpp`
+- `Gtk/GtkRequisition.cpp`
 - `Gtk/GtkRoot.cpp`
 - `Gtk/GtkSortListModel.cpp`
 - `Gtk/GtkSorter.cpp`
@@ -220,9 +278,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GActionGroup.cpp`
 - `Gio/GActionMap.cpp`
 - `Gio/GApplication.cpp`
+- `Gio/GAsyncResult.cpp`
+- `Gio/GCancellable.cpp`
 - `Gio/GListModel.cpp`
 - `Gio/GListStore.cpp`
 - `Gio/GSimpleAction.cpp`
+- `Gio/GTask.cpp`
 - `Gio/Gio.stub.php`
 - `Gdk/GdkDisplay.cpp`
 - `Gdk/GdkTexture.cpp`
@@ -231,6 +292,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `gen_prototypes.h`
 - `gen_arginfo.h`
 - `examples/generated-sections.inc`
+- `tests/Generated/GtkAlertDialogSmokeTest.php`
 - `tests/Generated/GtkApplicationSmokeTest.php`
 - `tests/Generated/GtkButtonSmokeTest.php`
 - `tests/Generated/GtkCssProviderSmokeTest.php`
@@ -245,5 +307,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkWidgetSmokeTest.php`
 - `tests/Generated/GtkWindowSmokeTest.php`
 - `tests/Generated/GApplicationSmokeTest.php`
+- `tests/Generated/GCancellableSmokeTest.php`
 - `tests/Generated/GListStoreSmokeTest.php`
 - `tests/Generated/GSimpleActionSmokeTest.php`
+- `tests/Generated/GTaskSmokeTest.php`

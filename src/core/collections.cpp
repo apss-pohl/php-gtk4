@@ -85,6 +85,13 @@ void strv_to_php(char **strv, Transfer transfer, zval *rv) {
   }
 }
 
+// Borrowed const vector -> list<string>.
+void strv_to_php(const char *const *strv, zval *rv) {
+  array_init(rv);
+  for (const char *const *s = strv; s != nullptr && *s != nullptr; s++)
+    add_next_index_string(rv, *s);
+}
+
 // list<string> -> char** (NULL-terminated, owned by the caller).
 char **strv_from_php(zval *value) {
   ZVAL_DEREF(value);

@@ -3,8 +3,26 @@
 #include "core/gsignal.h"
 #include "core/marshal.h"
 #include "core/object.h"
+#include "core/subtype.h"
 
 using namespace phpgtk;
+
+/**
+ * Gtk4\GObject::__construct()
+ *
+ * A plain GObject - or, on a PHP subclass, an instance of that class' own GType (the way to
+ * implement a GTK interface such as {@see GListModel} in PHP: `class M extends GObject implements
+ * GListModel`).
+ */
+ZEND_METHOD(Gtk4_GObject, __construct) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GObject *obj = subtype_new(ZEND_THIS, nullptr);
+  if (obj == nullptr) {
+    if (EG(exception) != nullptr) RETURN_THROWS();
+    obj = static_cast<GObject *>(g_object_new(G_TYPE_OBJECT, nullptr));
+  }
+  attach_new(object_from_zval(ZEND_THIS), obj);
+}
 
 /**
  * Gtk4\GObject::connect(string $signal, callable $handler): int

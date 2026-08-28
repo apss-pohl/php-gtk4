@@ -14,7 +14,7 @@ final class GtkFilterSmokeTest extends GtkTestCase
 {
     private function subject(): GtkFilter
     {
-        return new class () extends GtkFilter {};
+        return new GtkFilter();
     }
 
     public function testConstructs(): void

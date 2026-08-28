@@ -34,7 +34,10 @@ void quit_running_loops() {
 // A dispatch of the innermost registered loop runs at its depth + 1; deeper means a loop
 // we do not know about is iterating in between.
 bool in_unregistered_nested_loop() {
-  return !stack().empty() && g_main_depth() > stack().back().depth + 1;
+  // No registered run() at all: whatever PHP call drove this dispatch (main_context_iteration(),
+  // a testing hook) is the next return to PHP, so a pending Throwable propagates directly.
+  if (stack().empty()) return false;
+  return g_main_depth() > stack().back().depth + 1;
 }
 
 }  // namespace phpgtk

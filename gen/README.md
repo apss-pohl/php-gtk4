@@ -1,8 +1,10 @@
 # gen/
 
 - `gen_stub.php` — vendored from php-src (`/usr/lib/php/<api>/build/gen_stub.php`, PHP 8.4). Turns
-  `src/gtk4.stub.php` into `src/gtk4_arginfo.h`. It downloads PHP-Parser 5.0.0 next to itself on
-  first run (`gen/PHP-Parser-5.0.0/`, gitignored).
+  every `*.stub.php` into its `*_arginfo.h`. Its `initPhpParser()` is patched to use composer's
+  `nikic/php-parser` (`vendor/`, the pin in `composer.json`) and only falls back to php-src's own
+  download of PHP-Parser 5.0.0 (`gen/PHP-Parser-5.0.0/`, gitignored) when `vendor/` is absent -
+  `ci.sh` runs `composer install` first, so that copy never appears in a normal checkout.
 - `ide-stub.php` — derives `stubs/gtk4.php` (dummy bodies) from the stub source.
 - `method-comments.php` — writes the comment block above every `ZEND_METHOD` from the stub's
   signature/docblock; `--check` also reports any other C++ function without a comment.
@@ -38,6 +40,19 @@
     (`Gio.Action.activate.cpp`) it replaces the one shared implementation.
   - `overrides/<Ns>.<Type>.cpp` — the class prelude: includes and file-static helpers (callback
     trampolines) emitted verbatim before the methods (`Gtk.CustomFilter.cpp`).
+  A boxed **record** (`glib:get-type`) in the allow-list becomes a value handle on `core/boxed`:
+  public scalar fields are PHP properties (`@property` tags, read/write through the field table),
+  GIR methods and constructors are emitted like a class's (`copy`/`free`/`ref`/`unref` are the
+  handle's business and skipped), a plain struct without a `new` constructor gets one built from
+  its fields; the registration `register_<Class>()` is generated too. **Out parameters** of scalar,
+  string, object, enum and (caller-allocated) record type are returned - one out is the return
+  value, several a list, a `gboolean` return with outs means "or null". **Callback parameters**
+  with GIR scope `async` (released after one invocation) or `call` (released after the call) whose
+  arguments convert become `callable` parameters with a generated trampoline (`GAsyncReadyCallback`
+  of every `*_async`/`choose()`-style method); `notified` scope still needs an override (the owner's
+  clear function). An **interface** with vfuncs (`GListModel`) can be implemented from PHP: its PHP
+  interface declares only the vfunc-backed methods, `core/subtype` adds the GTK interface to the
+  implementing class' GType and generated thunks call the PHP methods of the same name.
   Every GIR `<virtual-method>` of a non-final class whose types are in the closure becomes a
   thunk + installer (`vfunc_thunk_x`/`vfunc_install_x`, registered by `register_vfuncs_<Class>()`
   from `gen_minit.inc`) and a native `vfunc_x()` method for `parent::` chaining; the rest is

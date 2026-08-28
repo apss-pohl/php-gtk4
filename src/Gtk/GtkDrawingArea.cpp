@@ -9,7 +9,7 @@
 using namespace phpgtk;
 
 // GtkDrawingAreaDrawFunc (notified scope) - the template for "notified" callbacks.
-#include "core/cairo.h"
+#include "Cairo/CairoContext.h"
 #include "core/callback.h"
 #include "core/teardown.h"
 
@@ -162,7 +162,8 @@ void vfunc_thunk_resize(GtkDrawingArea *self, int width, int height) {
   report_pending_exception("GtkDrawingArea::vfunc_resize");
 }
 
-// vfunc installer: GTK_DRAWING_AREA_CLASS->resize (called from class_init of a PHP subtype)
+// vfunc installer: GTK_DRAWING_AREA_CLASS->resize (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_resize(gpointer klass) {
   GTK_DRAWING_AREA_CLASS(klass)->resize = vfunc_thunk_resize;
 }

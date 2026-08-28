@@ -12,8 +12,10 @@ struct PhpClosure {
   zend_string *signal_name;
 };
 
+namespace {
+
 // GClosure finalize notifier: untrack, release the callable and the signal name.
-static void closure_finalize(gpointer, GClosure *c) {
+void closure_finalize(gpointer, GClosure *c) {
   auto *pc = reinterpret_cast<PhpClosure *>(c);
   teardown_untrack_closure(c);
   zval_ptr_dtor(&pc->callable);
@@ -21,8 +23,8 @@ static void closure_finalize(gpointer, GClosure *c) {
 }
 
 // GClosure marshaller: GValue params -> zvals, call the handler, convert its return value.
-static void closure_marshal(GClosure *c, GValue *return_value, guint n_params, const GValue *params,
-                            gpointer, gpointer) {
+void closure_marshal(GClosure *c, GValue *return_value, guint n_params, const GValue *params,
+                     gpointer, gpointer) {
   auto *pc = reinterpret_cast<PhpClosure *>(c);
   const char *origin = ZSTR_VAL(pc->signal_name);
 
@@ -69,6 +71,7 @@ static void closure_marshal(GClosure *c, GValue *return_value, guint n_params, c
   // goes through the exception policy; nothing unwinds into GLib.
   report_pending_exception(origin);
 }
+}  // namespace
 
 // Shared body of GObject::connect() / connect_after().
 void signal_connect_method(INTERNAL_FUNCTION_PARAMETERS, bool after) {
@@ -99,6 +102,13 @@ void signal_connect_method(INTERNAL_FUNCTION_PARAMETERS, bool after) {
   g_closure_add_finalize_notifier(&pc->closure, nullptr, closure_finalize);
   g_closure_set_marshal(&pc->closure, closure_marshal);
   gulong id = g_signal_connect_closure_by_id(obj, signal_id, detail, &pc->closure, after);
+  if (id == 0) {  // GLib refused (it warned): the closure is ours to drop, nothing to track
+    g_closure_sink(g_closure_ref(&pc->closure));
+    g_closure_unref(&pc->closure);
+    zend_argument_value_error(1, "could not connect to signal '%s' on %s", ZSTR_VAL(signal),
+                              G_OBJECT_TYPE_NAME(obj));
+    RETURN_THROWS();
+  }
   teardown_track_closure(&pc->closure, obj, id);
   RETURN_LONG(static_cast<zend_long>(id));
 }

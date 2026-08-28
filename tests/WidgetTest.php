@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use Gtk4\GdkRGBA;
 use Gtk4\GObject;
 use Gtk4\GtkBox;
 use Gtk4\GtkButton;
@@ -49,6 +50,14 @@ final class WidgetTest extends GtkTestCase
         $this->expectExceptionMessage('abstract in GTK: subclass it in PHP');
         $name = self::dynamicClass(GtkWidget::class);
         new $name();
+    }
+
+    public function testSingleCallerAllocatedOutIsTheReturnValue(): void
+    {
+        // gtk_widget_get_color(widget, &rgba): one out -> that value (no array, no by-ref)
+        $color = $this->window()->get_color();
+        self::assertInstanceOf(GdkRGBA::class, $color);
+        self::assertEqualsWithDelta(1.0, $color->alpha, 1e-6);
     }
 
     public function testChildTypedAsWidget(): void

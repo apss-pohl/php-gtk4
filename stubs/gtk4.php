@@ -38,6 +38,14 @@ const FEATURES = '';
 class GObject
 {
     /**
+     * A plain GObject - or, on a PHP subclass, an instance of that class' own GType (the way to
+     * implement a GTK interface such as {@see GListModel} in PHP: `class M extends GObject
+     * implements GListModel`).
+     */
+    public function __construct()
+    {
+    }
+    /**
      * Connect a handler to a signal (optionally detailed, e.g. "notify::title").
      *
      * The handler receives the emitting object first, then the signal's own
@@ -1093,6 +1101,12 @@ class GApplication extends GObject implements GActionGroup, GActionMap
     public function quit(): void
     {
     }
+    /** Attempts registration of the application. */
+    public function register(?GCancellable $cancellable): bool
+    {
+        unset($cancellable);
+        return false;
+    }
     /** Decrease the use count of $application. */
     public function release(): void
     {
@@ -1317,6 +1331,100 @@ final class GApplicationFlags
     public const int REPLACE = 256;
 }
 /**
+ * `GAsyncResult` provides a base class for implementing asynchronous function results.
+ */
+interface GAsyncResult
+{
+    /** Gets the source object from a #GAsyncResult. */
+    public function get_source_object(): ?GObject;
+}
+/**
+ * `GCancellable` allows operations to be cancelled.
+ */
+class GCancellable extends GObject
+{
+    /** Creates a new #GCancellable object. */
+    public function __construct()
+    {
+    }
+    /** Gets the top cancellable from the stack. */
+    public static function get_current(): ?GCancellable
+    {
+        return null;
+    }
+    /**
+     * Will set $cancellable to cancelled, and will emit the #GCancellable::cancelled signal.
+     * (However, see the warning about race conditions in the documentation for that signal if you
+     * are planning to connect to it.)
+     */
+    public function cancel(): void
+    {
+    }
+    /**
+     * Disconnects a handler from a cancellable instance similar to g_signal_handler_disconnect().
+     * Additionally, in the event that a signal handler is currently running, this call will block
+     * until the handler has finished. Calling this function from a #GCancellable::cancelled signal
+     * handler will therefore result in a deadlock.
+     */
+    public function disconnect(int $handler_id): void
+    {
+        unset($handler_id);
+    }
+    /**
+     * Gets the file descriptor for a cancellable job. This can be used to implement cancellable
+     * operations on Unix systems. The returned fd will turn readable when $cancellable is
+     * cancelled.
+     */
+    public function get_fd(): int
+    {
+        return 0;
+    }
+    /** Checks if a cancellable job has been cancelled. */
+    public function is_cancelled(): bool
+    {
+        return false;
+    }
+    /**
+     * Pops $cancellable off the cancellable stack (verifying that $cancellable is on the top of
+     * the stack).
+     */
+    public function pop_current(): void
+    {
+    }
+    /**
+     * Pushes $cancellable onto the cancellable stack. The current cancellable can then be received
+     * using g_cancellable_get_current().
+     */
+    public function push_current(): void
+    {
+    }
+    /**
+     * Releases a resources previously allocated by g_cancellable_get_fd() or
+     * g_cancellable_make_pollfd().
+     */
+    public function release_fd(): void
+    {
+    }
+    /** Resets $cancellable to its uncancelled state. */
+    public function reset(): void
+    {
+    }
+    /**
+     * If the $cancellable is cancelled, sets the error to notify that the operation was cancelled.
+     */
+    public function set_error_if_cancelled(): bool
+    {
+        return false;
+    }
+    /**
+     * Native `cancelled` (CancellableClass.cancelled): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_cancelled()` from an override.
+     */
+    public function vfunc_cancelled(): void
+    {
+    }
+}
+/**
  * `GListModel` is an interface that represents a mutable list of `Object`. Its main intention is
  * as a model for various widgets in user interfaces, such as list views, but it can also be used
  * as a convenient method of returning lists of data, with support for updates.
@@ -1329,8 +1437,6 @@ interface GListModel
     public function get_n_items(): int;
     /** Get the item at $position. */
     public function get_item(int $position): ?GObject;
-    /** Emits the #GListModel::items-changed signal on $list. */
-    public function items_changed(int $position, int $removed, int $added): void;
 }
 /**
  * `GListStore` is a simple implementation of `ListModel` that stores all items in memory.
@@ -1480,6 +1586,263 @@ class GSimpleAction extends GObject implements GAction
     public function get_state_type(): ?string
     {
         return null;
+    }
+}
+/**
+ * A `GTask` represents and manages a cancellable ‘task’.
+ *
+ * @property-read ?bool $completed
+ */
+class GTask extends GObject implements GAsyncResult
+{
+    /**
+     * Creates a #GTask acting on $source_object, which will eventually be used to invoke $callback
+     * in the current [thread-default main context][g-main-context-push-thread-default].
+     */
+    public function __construct(?GObject $source_object = null, ?GCancellable $cancellable = null, ?callable $callback = null)
+    {
+        unset($source_object);
+        unset($cancellable);
+        unset($callback);
+    }
+    /**
+     * Checks that $result is a #GTask, and that $source_object is its source object (or that
+     * $source_object is `null` and $result has no source object). This can be used in
+     * g_return_if_fail() checks.
+     */
+    public static function is_valid(GAsyncResult $result, ?GObject $source_object = null): bool
+    {
+        unset($result);
+        unset($source_object);
+        return false;
+    }
+    /** Gets $task's #GCancellable */
+    public function get_cancellable(): ?GCancellable
+    {
+        return null;
+    }
+    /** Gets $task's check-cancellable flag. See g_task_set_check_cancellable() for more details. */
+    public function get_check_cancellable(): bool
+    {
+        return false;
+    }
+    /**
+     * Gets the value of #GTask:completed. This changes from `false` to `true` after the task’s
+     * callback is invoked, and will return `false` if called from inside the callback.
+     */
+    public function get_completed(): bool
+    {
+        return false;
+    }
+    /** Gets $task’s name. See g_task_set_name(). */
+    public function get_name(): ?string
+    {
+        return null;
+    }
+    /** Gets $task's priority */
+    public function get_priority(): int
+    {
+        return 0;
+    }
+    /** Gets $task's return-on-cancel flag. See g_task_set_return_on_cancel() for more details. */
+    public function get_return_on_cancel(): bool
+    {
+        return false;
+    }
+    /**
+     * Gets the source object from $task. Like g_async_result_get_source_object(), but does not ref
+     * the object.
+     */
+    public function get_source_object(): ?GObject
+    {
+        return null;
+    }
+    /** Tests if $task resulted in an error. */
+    public function had_error(): bool
+    {
+        return false;
+    }
+    /** Gets the result of $task as a #gboolean. */
+    public function propagate_boolean(): bool
+    {
+        return false;
+    }
+    /** Gets the result of $task as an integer (#gssize). */
+    public function propagate_int(): int
+    {
+        return 0;
+    }
+    /**
+     * Sets $task's result to $result and completes the task (see g_task_return_pointer() for more
+     * discussion of exactly what this means).
+     */
+    public function return_boolean(bool $result): void
+    {
+        unset($result);
+    }
+    /**
+     * Sets $task's result to $error (which $task assumes ownership of) and completes the task (see
+     * g_task_return_pointer() for more discussion of exactly what this means).
+     */
+    public function return_error(GError $error): void
+    {
+        unset($error);
+    }
+    /**
+     * Checks if $task's #GCancellable has been cancelled, and if so, sets $task's error
+     * accordingly and completes the task (see g_task_return_pointer() for more discussion of
+     * exactly what this means).
+     */
+    public function return_error_if_cancelled(): bool
+    {
+        return false;
+    }
+    /**
+     * Sets $task's result to $result and completes the task (see g_task_return_pointer() for more
+     * discussion of exactly what this means).
+     */
+    public function return_int(int $result): void
+    {
+        unset($result);
+    }
+    /**
+     * Sets or clears $task's check-cancellable flag. If this is `true` (the default), then
+     * g_task_propagate_pointer(), etc, and g_task_had_error() will check the task's #GCancellable
+     * first, and if it has been cancelled, then they will consider the task to have returned an
+     * "Operation was cancelled" error (%G_IO_ERROR_CANCELLED), regardless of any other error or
+     * return value the task may have had.
+     */
+    public function set_check_cancellable(bool $check_cancellable): void
+    {
+        unset($check_cancellable);
+    }
+    /** Sets $task’s name, used in debugging and profiling. The name defaults to `null`. */
+    public function set_name(?string $name): void
+    {
+        unset($name);
+    }
+    /** Sets $task's priority. If you do not call this, it will default to %G_PRIORITY_DEFAULT. */
+    public function set_priority(int $priority): void
+    {
+        unset($priority);
+    }
+    /**
+     * Sets or clears $task's return-on-cancel flag. This is only meaningful for tasks run via
+     * g_task_run_in_thread() or g_task_run_in_thread_sync().
+     */
+    public function set_return_on_cancel(bool $return_on_cancel): bool
+    {
+        unset($return_on_cancel);
+        return false;
+    }
+    /** Sets $task’s name, used in debugging and profiling. */
+    public function set_static_name(?string $name): void
+    {
+        unset($name);
+    }
+    public function legacy_propagate_error(): bool
+    {
+        return false;
+    }
+}
+/**
+ * A `GtkAlertDialog` object collects the arguments that are needed to present a message to the
+ * user.
+ *
+ * @property ?array $buttons
+ * @property ?int $cancel_button
+ * @property ?int $default_button
+ * @property ?string $detail
+ * @property ?string $message
+ * @property ?bool $modal
+ */
+class GtkAlertDialog extends GObject
+{
+    /** A GtkAlertDialog with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct()
+    {
+    }
+    /** This function shows the alert to the user. */
+    public function choose(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($parent);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes the `choose` call and returns the index of the button that was clicked. */
+    public function choose_finish(GAsyncResult $result): int
+    {
+        unset($result);
+        return 0;
+    }
+    /**
+     * Returns the button labels for the alert.
+     *
+     * @return list<string>
+     */
+    public function get_buttons(): array
+    {
+        return [];
+    }
+    /** Returns the index of the cancel button. */
+    public function get_cancel_button(): int
+    {
+        return 0;
+    }
+    /** Returns the index of the default button. */
+    public function get_default_button(): int
+    {
+        return 0;
+    }
+    /** Returns the detail text that will be shown in the alert. */
+    public function get_detail(): string
+    {
+        return '';
+    }
+    /** Returns the message that will be shown in the alert. */
+    public function get_message(): string
+    {
+        return '';
+    }
+    /** Returns whether the alert blocks interaction with the parent window while it is presented. */
+    public function get_modal(): bool
+    {
+        return false;
+    }
+    /** Sets the button labels for the alert. */
+    public function set_buttons(array $labels): void
+    {
+        unset($labels);
+    }
+    /** Sets the index of the cancel button. */
+    public function set_cancel_button(int $button): void
+    {
+        unset($button);
+    }
+    /** Sets the index of the default button. */
+    public function set_default_button(int $button): void
+    {
+        unset($button);
+    }
+    /** Sets the detail text that will be shown in the alert. */
+    public function set_detail(string $detail): void
+    {
+        unset($detail);
+    }
+    /** Sets the message that will be shown in the alert. */
+    public function set_message(string $message): void
+    {
+        unset($message);
+    }
+    /** Sets whether the alert blocks interaction with the parent window while it is presented. */
+    public function set_modal(bool $modal): void
+    {
+        unset($modal);
+    }
+    /** Show the alert to the user. */
+    public function show(?GtkWindow $parent): void
+    {
+        unset($parent);
     }
 }
 /**
@@ -2050,7 +2413,7 @@ class GtkDrawingArea extends GtkWidget
  */
 class GtkFilter extends GObject
 {
-    /** GtkFilter has no constructor in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    /** A GtkFilter with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
     public function __construct()
     {
     }
@@ -2503,6 +2866,39 @@ final class GtkPickFlags
     public const int NON_TARGETABLE = 2;
 }
 /**
+ * A `GtkRequisition` represents the desired size of a widget. See [GtkWidget’s geometry
+ * management section](class.Widget.html#height-for-width-geometry-management) for more
+ * information.
+ *
+ * @property int $width
+ * @property int $height
+ */
+final class GtkRequisition
+{
+    /** Allocates a new `GtkRequisition`. */
+    public function __construct()
+    {
+    }
+    /** GObject property read (engine handler; see gen/ide-stub.php). */
+    public function __get(string $name): mixed
+    {
+        unset($name);
+        return null;
+    }
+    /** GObject property write (engine handler; see gen/ide-stub.php). */
+    public function __set(string $name, mixed $value): void
+    {
+        unset($name);
+        unset($value);
+    }
+    /** GObject property isset (engine handler; see gen/ide-stub.php). */
+    public function __isset(string $name): bool
+    {
+        unset($name);
+        return false;
+    }
+}
+/**
  * `GtkRoot` is the interface implemented by all widgets that can act as a toplevel widget.
  */
 interface GtkRoot
@@ -2614,7 +3010,7 @@ class GtkSortListModel extends GObject implements GListModel
  */
 class GtkSorter extends GObject
 {
-    /** GtkSorter has no constructor in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    /** A GtkSorter with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
     public function __construct()
     {
     }
@@ -2853,6 +3249,11 @@ class GtkWidget extends GObject
     {
         return false;
     }
+    /** Gets the current foreground color for the widget’s CSS style. */
+    public function get_color(): GdkRGBA
+    {
+        return null;
+    }
     /**
      * Returns the list of style classes applied to $widget.
      *
@@ -2979,6 +3380,16 @@ class GtkWidget extends GObject
     public function get_parent(): ?GtkWidget
     {
         return null;
+    }
+    /**
+     * Retrieves the minimum and natural size of a widget, taking into account the widget’s
+     * preference for height-for-width management.
+     *
+     * @return array{GtkRequisition, GtkRequisition}
+     */
+    public function get_preferred_size(): array
+    {
+        return [];
     }
     /** Returns the widget’s previous sibling. */
     public function get_prev_sibling(): ?GtkWidget

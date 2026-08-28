@@ -165,10 +165,9 @@ void boxed_handlers_init() {
 }
 
 // MINIT: bind a PHP class to a boxed GType with its field accessors.
-void register_boxed(const char *gtype_name, const BoxedClass &info) {
+void register_boxed(const BoxedClass &info) {
   info.ce->create_object = create_object;
   registry()[info.type] = info;
-  (void)gtype_name;
 }
 
 // Registry lookup by GType.

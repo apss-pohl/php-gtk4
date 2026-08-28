@@ -14,7 +14,7 @@ final class GtkSorterSmokeTest extends GtkTestCase
 {
     private function subject(): GtkSorter
     {
-        return new class () extends GtkSorter {};
+        return new GtkSorter();
     }
 
     public function testConstructs(): void

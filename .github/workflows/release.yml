@@ -180,96 +180,19 @@ jobs:
   build-windows:
     name: Build .dll (PHP ${{ matrix.php }})
     needs: [plan, verify]
-    runs-on: windows-2022
-    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
         php: ['8.4', '8.5']
-    env:
-      GVSBUILD_VERSION: '2026.8.0'
-      GTK4_ROOT: C:\gtk
-      PHP_SDK_VS: vs17
-    defaults:
-      run:
-        shell: pwsh
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          coverage: none
-
-      - name: PHP devel pack
-        id: devel
-        run: |
-          $ver = php -r 'echo PHP_VERSION;'
-          $zip = "php-devel-pack-$ver-nts-Win32-$env:PHP_SDK_VS-x64.zip"
-          $ok = $false
-          foreach ($u in @("https://downloads.php.net/~windows/releases/$zip",
-                           "https://downloads.php.net/~windows/releases/archives/$zip",
-                           "https://downloads.php.net/~windows/qa/$zip")) {
-            try { Invoke-WebRequest -Uri $u -OutFile $zip -ErrorAction Stop; $ok = $true; break } catch { Write-Host "not at $u" }
-          }
-          if (-not $ok) { throw "no devel pack for PHP $ver ($zip)" }
-          Expand-Archive $zip -DestinationPath C:\php-devel
-          $dir = (Get-ChildItem C:\php-devel -Directory | Select-Object -First 1).FullName
-          "dir=$dir" >> $env:GITHUB_OUTPUT
-
-      - name: PHP SDK binary tools
-        run: git clone --depth 1 --branch master https://github.com/php/php-sdk-binary-tools C:\php-sdk
-
-      - name: Cache gvsbuild GTK 4
-        id: gtk-cache
-        uses: actions/cache@v6
-        with:
-          path: C:\gtk
-          key: gvsbuild-gtk4-${{ env.GVSBUILD_VERSION }}-x64
-
-      - name: Download gvsbuild GTK 4 ${{ env.GVSBUILD_VERSION }}
-        if: steps.gtk-cache.outputs.cache-hit != 'true'
-        run: |
-          $zip = "GTK4_Gvsbuild_$env:GVSBUILD_VERSION`_x64.zip"
-          Invoke-WebRequest -Uri "https://github.com/wingtk/gvsbuild/releases/download/$env:GVSBUILD_VERSION/$zip" -OutFile $zip
-          Expand-Archive $zip -DestinationPath C:\gtk
-          if (-not (Test-Path C:\gtk\include\gtk-4.0)) {
-            $inner = Get-ChildItem C:\gtk -Directory | Where-Object { Test-Path "$($_.FullName)\include\gtk-4.0" } | Select-Object -First 1
-            if (-not $inner) { throw 'unexpected gvsbuild zip layout' }
-            Get-ChildItem $inner.FullName | Move-Item -Destination C:\gtk
-            Remove-Item $inner.FullName -Recurse
-          }
-
-      - name: Build php_gtk4.dll
-        shell: cmd
-        run: |
-          set "PATH=${{ steps.devel.outputs.dir }};%PATH%"
-          echo phpize ^&^& configure --with-gtk4=%GTK4_ROOT% ^&^& nmake > build-task.bat
-          call C:\php-sdk\phpsdk-${{ env.PHP_SDK_VS }}-x64.bat -t build-task.bat
-          if errorlevel 1 exit /b 1
-
-      - name: Name and verify the artifact
-        run: |
-          $version = '${{ needs.plan.outputs.version }}'
-          $relver = '${{ needs.plan.outputs.relver }}'
-          $dll = (Get-ChildItem -Recurse x64 -Filter php_gtk4.dll | Select-Object -First 1).FullName
-          $name = "php_gtk4-$relver-php${{ matrix.php }}-nts-$env:PHP_SDK_VS-x64.dll"
-          New-Item -ItemType Directory dist | Out-Null
-          Copy-Item $dll "dist\$name"
-          $env:PATH = "$env:GTK4_ROOT\bin;$env:PATH"
-          $got = php -n -dextension="$PWD\dist\$name" -r 'echo phpversion("gtk4");'
-          if ($LASTEXITCODE -ne 0) { throw "$name did not load" }
-          if ($got -ne $version) { throw "$name reports '$got', expected '$version'" }
-          "$name -> $got (GTK from gvsbuild $env:GVSBUILD_VERSION)" >> $env:GITHUB_STEP_SUMMARY
-
-      - uses: actions/upload-artifact@v7
-        with:
-          name: dll-php${{ matrix.php }}
-          path: dist/*.dll
-          if-no-files-found: error
-          retention-days: 7
+    # The same recipe as windows.yml (windows-build.yml, GVSBUILD_VERSION pinned there); the
+    # dll is named with its whole ABI identity and checked against the planned version.
+    uses: ./.github/workflows/windows-build.yml
+    with:
+      php: ${{ matrix.php }}
+      ts: nts
+      artifact: dll-php${{ matrix.php }}
+      dll-name: php_gtk4-${{ needs.plan.outputs.relver }}-php${{ matrix.php }}-nts-vs17-x64.dll
+      expect-version: ${{ needs.plan.outputs.version }}
 
   publish:
     name: Publish ${{ needs.plan.outputs.tag }}

@@ -4,36 +4,40 @@
 #include "globals.h"
 #include "marshal.h"
 #include "subtype.h"
+#include <array>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 
 namespace phpgtk {
 
-static zend_object_handlers handlers;
+namespace {
+zend_object_handlers handlers;
 
 // GType name -> class (MINIT-filled). Plain function-static: destroyed when the module is
 // unloaded, holds no Zend resources (class entries belong to the engine), so that is safe.
-static std::unordered_map<std::string, zend_class_entry *> &registry() {
+std::unordered_map<std::string, zend_class_entry *> &registry() {
   static std::unordered_map<std::string, zend_class_entry *> map;
   return map;
 }
 
 // GType per registered class (for GListStore item types etc.).
-static std::unordered_map<zend_class_entry *, GType> &gtypes() {
+std::unordered_map<zend_class_entry *, GType> &gtypes() {
   static std::unordered_map<zend_class_entry *, GType> map;
   return map;
 }
 // GType -> class (the inverse of gtypes(), for parameter parsing by *_TYPE_* macro).
-static std::unordered_map<GType, zend_class_entry *> &classes() {
+std::unordered_map<GType, zend_class_entry *> &classes() {
   static std::unordered_map<GType, zend_class_entry *> map;
   return map;
 }
 
 // qdata key under which a GObject stores the pointer to its PHP handle.
-static GQuark handle_quark() {
+GQuark handle_quark() {
   static GQuark q = g_quark_from_static_string("php-gtk4-handle");
   return q;
 }
+}  // namespace
 
 // The handle registered on a GObject (qdata), nullptr if none.
 Object *object_handle(GObject *obj) {
@@ -47,15 +51,17 @@ void object_prebind(Object *self, GObject *obj) {
   g_object_set_qdata(obj, handle_quark(), self);
 }
 
+namespace {
+
 // True while `self` is only pre-bound to this very object (subtype construction: obj set
 // by instance_init, no reference yet). A second attach of the same object is nothing else.
-static bool prebound(const Object *self, const GObject *obj) {
+bool prebound(const Object *self, const GObject *obj) {
   return self->obj == obj;
 }
 
 // The GObject takes a reference on the zend_object: PHP-side state survives while GTK
 // holds the C object.
-static void hold(Object *self) {
+void hold(Object *self) {
   if (self->held || GTK4_G(shutting_down)) return;
   self->held = true;
   GTK4_G(held).insert(self);
@@ -72,18 +78,19 @@ static void hold(Object *self) {
 // below us: GTK finalizing widgets in a frame, a store dropping items) a Throwable from it
 // would stay pending inside GLib, so it goes through the exception boundary like any other
 // callback's. With a PHP frame below (a method that made GTK let go) it propagates by itself.
-static void settle_destructor_exception() {
+void settle_destructor_exception() {
   if (EG(exception) != nullptr && g_main_depth() > 0) report_pending_exception("__destruct");
 }
 
 // Drop the GObject's reference on the handle (see hold()); frees it if PHP had let go too.
-static void release_hold(Object *self) {
+void release_hold(Object *self) {
   if (!self->held) return;
   self->held = false;
   GTK4_G(held).erase(self);
   OBJ_RELEASE(&self->std);
   settle_destructor_exception();
 }
+}  // namespace
 
 // RSHUTDOWN: drop every hold (freeing handles only GTK still referenced) and refuse new ones.
 void object_release_holds() {
@@ -96,9 +103,11 @@ void object_request_init() {
   GTK4_G(shutting_down) = false;
 }
 
+namespace {
+
 // GToggleNotify: our reference became the last one (release the hold) or stopped being
 // it (take it).
-static void on_toggle(gpointer data, GObject *, gboolean is_last_ref) {
+void on_toggle(gpointer data, GObject *, gboolean is_last_ref) {
   auto *self = static_cast<Object *>(data);
   if (is_last_ref == TRUE) {
     release_hold(self);
@@ -109,12 +118,13 @@ static void on_toggle(gpointer data, GObject *, gboolean is_last_ref) {
 
 // self->obj holds one plain reference of ours: convert it into the toggle reference,
 // register the back-pointer and take the hold if GTK already holds the object.
-static void arm(Object *self) {
+void arm(Object *self) {
   g_object_set_qdata(self->obj, handle_quark(), self);
   g_object_add_toggle_ref(self->obj, on_toggle, self);
   g_object_unref(self->obj);  // 2 -> 1 notifies is_last_ref, a no-op while nothing is held
   if (g_atomic_int_get(&self->obj->ref_count) > 1) hold(self);
 }
+}  // namespace
 
 // Take ownership: ref_sink, then the toggle-ref dance.
 void attach(Object *self, GObject *obj) {
@@ -148,10 +158,12 @@ void attach_new(Object *self, GObject *obj) {
   arm(self);
 }
 
+namespace {
+
 // Release ownership (free_obj): drop the back-pointer and the toggle reference. A hold
 // cannot be set here (it owns a reference, so the refcount was not zero) except when the
 // object store frees everything at shutdown regardless of refcount.
-static void detach(Object *self) {
+void detach(Object *self) {
   if (self->obj == nullptr) return;
   GObject *obj = self->obj;
   self->obj = nullptr;
@@ -166,7 +178,7 @@ static void detach(Object *self) {
 // ---------------------------------------------------------------- handlers
 
 // create_object handler: the Object struct with an unattached obj; every GObject class shares it.
-static zend_object *create_object(zend_class_entry *ce) {
+zend_object *create_object(zend_class_entry *ce) {
   auto *self = static_cast<Object *>(zend_object_alloc(sizeof(Object), ce));
   self->obj = nullptr;
   self->held = false;
@@ -177,7 +189,7 @@ static zend_object *create_object(zend_class_entry *ce) {
 }
 
 // free_obj handler: release the C object, then the standard zend_object parts.
-static void free_obj(zend_object *o) {
+void free_obj(zend_object *o) {
   Object *self = object_from_zend(o);
   detach(self);
   callback_drain();  // the unref may have run destroy notifies
@@ -186,18 +198,19 @@ static void free_obj(zend_object *o) {
 }
 
 // "$obj->default_width" -> GParamSpec "default-width" (nullptr if no such property)
-static GParamSpec *find_property(Object *self, zend_string *member) {
+GParamSpec *find_property(Object *self, zend_string *member) {
   if (self->obj == nullptr) return nullptr;
-  std::string name(ZSTR_VAL(member), ZSTR_LEN(member));
-  for (auto &c : name) {
-    if (c == '_') c = '-';
-  }
-  return g_object_class_find_property(G_OBJECT_GET_CLASS(self->obj), name.c_str());
+  // On the $obj->prop path for every access: translate into a stack buffer, no heap.
+  std::array<char, 96> buf{};
+  const size_t len = ZSTR_LEN(member);
+  if (len >= buf.size()) return nullptr;  // no GObject property name is that long
+  size_t i = 0;
+  for (const char c : std::string_view(ZSTR_VAL(member), len)) buf.at(i++) = c == '_' ? '-' : c;
+  return g_object_class_find_property(G_OBJECT_GET_CLASS(self->obj), buf.data());
 }
 
 // read_property handler: GObject properties first, then standard (declared/dynamic) ones.
-static zval *read_property(zend_object *o, zend_string *member, int type, void **cache_slot,
-                           zval *rv) {
+zval *read_property(zend_object *o, zend_string *member, int type, void **cache_slot, zval *rv) {
   Object *self = object_from_zend(o);
   GParamSpec *spec = find_property(self, member);
   if (spec == nullptr || (spec->flags & G_PARAM_READABLE) == 0) {
@@ -212,7 +225,7 @@ static zval *read_property(zend_object *o, zend_string *member, int type, void *
 }
 
 // write_property handler: GObject properties first, then standard ones.
-static zval *write_property(zend_object *o, zend_string *member, zval *value, void **cache_slot) {
+zval *write_property(zend_object *o, zend_string *member, zval *value, void **cache_slot) {
   Object *self = object_from_zend(o);
   GParamSpec *spec = find_property(self, member);
   if (spec == nullptr || (spec->flags & G_PARAM_WRITABLE) == 0) {
@@ -227,8 +240,7 @@ static zval *write_property(zend_object *o, zend_string *member, zval *value, vo
 }
 
 // has_property handler: isset()/empty()/property_exists() for GObject properties.
-static int has_property(zend_object *o, zend_string *member, int has_set_exists,
-                        void **cache_slot) {
+int has_property(zend_object *o, zend_string *member, int has_set_exists, void **cache_slot) {
   Object *self = object_from_zend(o);
   GParamSpec *spec = find_property(self, member);
   if (spec == nullptr) return zend_std_has_property(o, member, has_set_exists, cache_slot);
@@ -243,15 +255,14 @@ static int has_property(zend_object *o, zend_string *member, int has_set_exists,
 // get_property_ptr_ptr handler: no direct slot for GObject properties, so `++`, `.=`, `+=`
 // and `&$obj->prop` go through read_property/write_property instead of creating a dynamic
 // property that would shadow nothing and silently swallow the write.
-static zval *get_property_ptr_ptr(zend_object *o, zend_string *member, int type,
-                                  void **cache_slot) {
+zval *get_property_ptr_ptr(zend_object *o, zend_string *member, int type, void **cache_slot) {
   Object *self = object_from_zend(o);
   if (find_property(self, member) != nullptr) return nullptr;
   return zend_std_get_property_ptr_ptr(o, member, type, cache_slot);
 }
 
 // unset_property handler: GObject properties cannot be unset (they always exist on the C object).
-static void unset_property(zend_object *o, zend_string *member, void **cache_slot) {
+void unset_property(zend_object *o, zend_string *member, void **cache_slot) {
   Object *self = object_from_zend(o);
   if (find_property(self, member) != nullptr) {
     zend_throw_error(nullptr, "Cannot unset GObject property %s::$%s", ZSTR_VAL(o->ce->name),
@@ -261,8 +272,10 @@ static void unset_property(zend_object *o, zend_string *member, void **cache_slo
   zend_std_unset_property(o, member, cache_slot);
 }
 
-// var_dump()/print_r(): every readable GObject property that we can convert.
-static HashTable *get_debug_info(zend_object *o, int *is_temp) {
+// var_dump()/print_r(): every readable GObject property that we can convert - that is one
+// g_object_get_property() per property (a GtkWindow has ~80), some of which realize GTK
+// internals; fine for debugging, not something to do inside a draw or measure vfunc.
+HashTable *get_debug_info(zend_object *o, int *is_temp) {
   Object *self = object_from_zend(o);
   HashTable *ht = zend_new_array(8);
   *is_temp = 1;
@@ -290,10 +303,11 @@ static HashTable *get_debug_info(zend_object *o, int *is_temp) {
 }
 
 // compare handler: handles are only equal to themselves (identity == same C object).
-static int compare_objects(zval *a, zval *b) {
+int compare_objects(zval *a, zval *b) {
   ZEND_COMPARE_OBJECTS_FALLBACK(a, b);
   return Z_OBJ_P(a) == Z_OBJ_P(b) ? 0 : 1;
 }
+}  // namespace
 
 // MINIT: build the shared handler table for all GObject classes.
 void object_handlers_init() {
@@ -312,8 +326,11 @@ void object_handlers_init() {
 
 // ---------------------------------------------------------------- registry
 
+namespace {
+
 // The root class entry, cached for unwrap() (registered first, before any other GObject class).
-static zend_class_entry *ce_root = nullptr;
+zend_class_entry *ce_root = nullptr;
+}  // namespace
 
 // MINIT: install create_object on a GObject class and record its GType (name and value).
 void register_class(const char *gtype_name, zend_class_entry *ce, GType type) {
@@ -388,8 +405,9 @@ GObject *unwrap(zval *zv, GType expected) {
     return nullptr;
   }
   Object *self = object_from_zval(zv);
-  if (self->obj == nullptr) {
-    zend_type_error("expected a live GObject instance (this handle was finalized)");
+  if (self->obj == nullptr) {  // the handle itself cannot do it: an Error, like a dead $this
+    zend_throw_error(nullptr, "%s given: this GObject was finalized",
+                     ZSTR_VAL(Z_OBJCE_P(zv)->name));
     return nullptr;
   }
   if (g_type_is_a(G_OBJECT_TYPE(self->obj), expected) == FALSE) {

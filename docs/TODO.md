@@ -186,31 +186,25 @@ Each needs a written design in PLAN.md before code; none blocks the waves.
       `gh api -X POST repos/apss-pohl/php-gtk4/rulesets --input .github/ruleset-main.json`
       (drop `required_approving_review_count` to 0 while there is a single maintainer).
 
-## 9b. Review 2026-08-28 — leftovers (each small, none blocks a wave)
+## 9b. Review 2026-08-28 — leftovers
 
-- [ ] `gen/gir.php` (2 400 lines, one class) has no tests of its own and 80 baselined PHPStan
-      findings (`phpstan-baseline-gir.neon`): split into loader / type map / emitters / writers
-      and add golden-file tests (small fixture `.gir` → expected `.cpp`); shrink the baseline.
-- [ ] Wave 5 needs an `async` callback scope (freed after one invocation) + a `GAsyncResult`
-      handle; wave 6/8 need records/boxed generated from GIR (`GtkTextIter`, `GdkContentFormats`)
-      — today `run()` skips `record` nodes and object parameters of unregistered boxed types
-      would dereference `boxed_class_for_type()` NULL.
-- [ ] `is_php_type()` takes a mutex per GType level in `wrap()`; cache per request (module
-      globals) once list views make `wrap()` per-item-per-frame.
-- [ ] `find_property()` allocates a `std::string` per `$obj->prop` access; stack buffer.
-- [ ] GFlags values are not validated on the way in (`to_gvalue` takes any int); `GdkModifierType`
-      (wave 3) should reject garbage bits like enums do.
-- [ ] `release.yml`'s `build-windows` duplicates `windows.yml` (~70 lines); extract a reusable
-      workflow. `config.w32`: no `/W3 /WX` warning gate, no GTK version check on the non-pkgconf
-      fallback path; `bin/php-gtk4.cmd`/`tests/run.cmd` pick `Release_TS` over `Release` by order.
-- [ ] `ci.sh --only=build` always rebuilds from scratch; reconfigure only when the configure
-      arguments or `config.m4` changed. The `test` stage never builds `--enable-gtk4-testing`, so
-      the `testing=yes` assertions only run in the asan/coverage jobs.
-- [ ] `core/cairo.h` declares an API implemented in `src/Cairo/`; `gen_prototypes.h` carries both
-      interface prototypes and `register_vfuncs_*` declarations; `globals.h` declares the GUI-thread
-      API implemented in `mainloop.cpp` — cosmetic layering.
-- [ ] `--enable-gtk4-webkit` is analysed but never built in CI; `upload-artifact@v7` vs
-      `download-artifact@v8` majors; `phpunit.xml` → `.dist`.
+Closed 2026-08-28 (second pass): lock-free PHP-GType snapshot on the `wrap()` path,
+`find_property()` without a heap allocation, GFlags input validation, the reusable Windows recipe
+(`windows-build.yml`: one gvsbuild pin, `/W3` + a warning gate on `src\`, GTK floor on the
+non-pkgconf path, newest-dll launchers), incremental `ci.sh` builds + `GTK4_CONFIGURE_ARGS`
+(`tests.yml` builds `--enable-gtk4-testing` on every leg, a WebKit build leg), `phpunit.xml.dist`,
+EXIT-trap cleanup / named asan env / phpt against the default build, `Cairo/CairoContext.h`,
+`register_boxed()` without the dead parameter, anonymous namespaces in `src/core`, dead handle
+arguments as `Error`, the comment gate over generated files, generated-sections only when needed,
+identifier-precise include selection. PHP-Parser: vendor-first by design (gen/README.md).
+
+- [ ] `gen/gir.php` split into loader / type map / emitters / writers with golden-file tests; the
+      80-entry `phpstan-baseline-gir.neon` only shrinks.
+- [ ] Per-namespace stub naming (`src/Gtk/Gtk.stub.php` next to the hand-written `Gtk.cpp`) stays
+      as documented in gen/README.md; renaming would touch every tool's path list for no behaviour.
+- [ ] `upload-artifact@v7` / `download-artifact@v8`: both on the v4+ artifact backend, verified
+      compatible; Dependabot keeps them moving, `WorkflowsTest` does not pin majors.
+- [ ] Branch protection for `main` (§9): blocked by the private/Free-plan repo.
 
 ## 10. Keep (verified good, do not "clean up")
 

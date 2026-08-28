@@ -18,6 +18,8 @@ void gslist_to_php(GSList *list, GType element_type, Transfer transfer, zval *rv
 void gptrarray_to_php(GPtrArray *array, GType element_type, Transfer transfer, zval *rv);
 // NULL-terminated char**; Full frees it with g_strfreev().
 void strv_to_php(char **strv, Transfer transfer, zval *rv);
+// A borrowed `const char * const *` (GTK getters): never freed.
+void strv_to_php(const char *const *strv, zval *rv);
 
 // PHP list of strings -> NULL-terminated char** (g_strfreev() it). Throws
 // TypeError and returns nullptr if the value is not an array of scalars.

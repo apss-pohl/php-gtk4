@@ -36,3 +36,17 @@ Gio.ApplicationFlags
 Gtk.CssProvider
 Gtk.StyleProvider
 Gdk.Display
+
+# Boxed records generated from GIR (core/boxed value handles): the first one, a plain struct,
+# also the type behind GtkWidget::get_preferred_size()'s caller-allocated outs.
+Gtk.Requisition
+
+# Async API (the wave-5 shape, validated early): a dialog whose choose() takes a
+# GAsyncReadyCallback (scope async -> generated trampoline), the cancellable that ends it,
+# and the result handle the *_finish() call takes.
+Gtk.AlertDialog
+Gio.Cancellable
+Gio.AsyncResult
+# The GAsyncResult GTK actually hands to the callback is a GTask: wrap() resolves by class
+# (interfaces are not instantiable), so the concrete class must be known.
+Gio.Task

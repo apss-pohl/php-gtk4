@@ -38,7 +38,7 @@ struct BoxedClass {
 };
 
 void boxed_handlers_init();
-void register_boxed(const char *gtype_name, const BoxedClass &info);
+void register_boxed(const BoxedClass &info);
 const BoxedClass *boxed_class_for_type(GType type);
 
 // Give a freshly created (constructor) handle its data: takes ownership of `data`

@@ -5,6 +5,7 @@
 #include "core/enums.h"
 #include "core/collections.h"
 #include "core/variant.h"
+#include "core/boxed.h"
 #include "core/subtype.h"
 #include "core/error.h"
 #include <array>
@@ -274,6 +275,19 @@ ZEND_METHOD(Gtk4_GtkWidget, get_child_visible) {
 }
 
 /**
+ * Gtk4\GtkWidget::get_color(): GdkRGBA
+ *
+ * Gets the current foreground color for the widget’s CSS style.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, get_color) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GdkRGBA color{};
+  gtk_widget_get_color(self, &color);
+  wrap_boxed(GDK_TYPE_RGBA, &color, return_value);
+}
+
+/**
  * Gtk4\GtkWidget::get_css_classes(): array
  *
  * Returns the list of style classes applied to $widget.
@@ -292,7 +306,9 @@ ZEND_METHOD(Gtk4_GtkWidget, get_css_classes) {
 ZEND_METHOD(Gtk4_GtkWidget, get_css_name) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  RETURN_STRING(gtk_widget_get_css_name(self));
+  const char *result = gtk_widget_get_css_name(self);
+  if (result == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(result);
 }
 
 /**
@@ -495,7 +511,9 @@ ZEND_METHOD(Gtk4_GtkWidget, get_margin_top) {
 ZEND_METHOD(Gtk4_GtkWidget, get_name) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  RETURN_STRING(gtk_widget_get_name(self));
+  const char *result = gtk_widget_get_name(self);
+  if (result == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(result);
 }
 
 /**
@@ -542,6 +560,31 @@ ZEND_METHOD(Gtk4_GtkWidget, get_parent) {
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
   GtkWidget *result = gtk_widget_get_parent(self);
   wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+}
+
+/**
+ * Gtk4\GtkWidget::get_preferred_size(): array
+ *
+ * Retrieves the minimum and natural size of a widget, taking into account the widget’s
+ * preference for height-for-width management.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, get_preferred_size) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GtkRequisition minimum_size{};
+  GtkRequisition natural_size{};
+  gtk_widget_get_preferred_size(self, &minimum_size, &natural_size);
+  array_init_size(return_value, 2);
+  {
+    zval item;
+    wrap_boxed(GTK_TYPE_REQUISITION, &minimum_size, &item);
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    wrap_boxed(GTK_TYPE_REQUISITION, &natural_size, &item);
+    add_next_index_zval(return_value, &item);
+  }
 }
 
 /**
@@ -655,8 +698,16 @@ ZEND_METHOD(Gtk4_GtkWidget, get_size_request) {
   int height = 0;
   gtk_widget_get_size_request(self, &width, &height);
   array_init_size(return_value, 2);
-  add_next_index_long(return_value, width);
-  add_next_index_long(return_value, height);
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(width));
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(height));
+    add_next_index_zval(return_value, &item);
+  }
 }
 
 /**
@@ -1019,10 +1070,26 @@ ZEND_METHOD(Gtk4_GtkWidget, measure) {
   gtk_widget_measure(self, static_cast<GtkOrientation>(orientation_v), static_cast<int>(for_size),
                      &minimum, &natural, &minimum_baseline, &natural_baseline);
   array_init_size(return_value, 4);
-  add_next_index_long(return_value, minimum);
-  add_next_index_long(return_value, natural);
-  add_next_index_long(return_value, minimum_baseline);
-  add_next_index_long(return_value, natural_baseline);
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(minimum));
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(natural));
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(minimum_baseline));
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(natural_baseline));
+    add_next_index_zval(return_value, &item);
+  }
 }
 
 /**
@@ -1728,7 +1795,8 @@ gboolean vfunc_thunk_contains(GtkWidget *self, double x, double y) {
   return result;
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->contains (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->contains (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_contains(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->contains = vfunc_thunk_contains;
 }
@@ -1757,7 +1825,8 @@ void vfunc_thunk_direction_changed(GtkWidget *self, GtkTextDirection previous_di
   report_pending_exception("GtkWidget::vfunc_direction_changed");
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->direction_changed (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->direction_changed (called from class_init / iface_init of a
+// PHP subtype)
 void vfunc_install_direction_changed(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->direction_changed = vfunc_thunk_direction_changed;
 }
@@ -1788,7 +1857,7 @@ gboolean vfunc_thunk_focus(GtkWidget *self, GtkDirectionType direction) {
   return result;
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->focus (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->focus (called from class_init / iface_init of a PHP subtype)
 void vfunc_install_focus(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->focus = vfunc_thunk_focus;
 }
@@ -1820,7 +1889,8 @@ GtkSizeRequestMode vfunc_thunk_get_request_mode(GtkWidget *self) {
   return result;
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->get_request_mode (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->get_request_mode (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_get_request_mode(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->get_request_mode = vfunc_thunk_get_request_mode;
 }
@@ -1848,7 +1918,8 @@ gboolean vfunc_thunk_grab_focus(GtkWidget *self) {
   return result;
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->grab_focus (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->grab_focus (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_grab_focus(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->grab_focus = vfunc_thunk_grab_focus;
 }
@@ -1880,7 +1951,8 @@ gboolean vfunc_thunk_keynav_failed(GtkWidget *self, GtkDirectionType direction) 
   return result;
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->keynav_failed (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->keynav_failed (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_keynav_failed(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->keynav_failed = vfunc_thunk_keynav_failed;
 }
@@ -1903,7 +1975,7 @@ void vfunc_thunk_map(GtkWidget *self) {
   report_pending_exception("GtkWidget::vfunc_map");
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->map (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->map (called from class_init / iface_init of a PHP subtype)
 void vfunc_install_map(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->map = vfunc_thunk_map;
 }
@@ -1952,7 +2024,7 @@ void vfunc_thunk_measure(GtkWidget *self, GtkOrientation orientation, int for_si
   report_pending_exception("GtkWidget::vfunc_measure");
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->measure (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->measure (called from class_init / iface_init of a PHP subtype)
 void vfunc_install_measure(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->measure = vfunc_thunk_measure;
 }
@@ -1986,7 +2058,8 @@ gboolean vfunc_thunk_mnemonic_activate(GtkWidget *self, gboolean group_cycling) 
   return result;
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->mnemonic_activate (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->mnemonic_activate (called from class_init / iface_init of a
+// PHP subtype)
 void vfunc_install_mnemonic_activate(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->mnemonic_activate = vfunc_thunk_mnemonic_activate;
 }
@@ -2014,7 +2087,8 @@ void vfunc_thunk_move_focus(GtkWidget *self, GtkDirectionType direction) {
   report_pending_exception("GtkWidget::vfunc_move_focus");
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->move_focus (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->move_focus (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_move_focus(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->move_focus = vfunc_thunk_move_focus;
 }
@@ -2037,7 +2111,7 @@ void vfunc_thunk_realize(GtkWidget *self) {
   report_pending_exception("GtkWidget::vfunc_realize");
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->realize (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->realize (called from class_init / iface_init of a PHP subtype)
 void vfunc_install_realize(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->realize = vfunc_thunk_realize;
 }
@@ -2060,7 +2134,7 @@ void vfunc_thunk_root(GtkWidget *self) {
   report_pending_exception("GtkWidget::vfunc_root");
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->root (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->root (called from class_init / iface_init of a PHP subtype)
 void vfunc_install_root(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->root = vfunc_thunk_root;
 }
@@ -2089,7 +2163,8 @@ void vfunc_thunk_set_focus_child(GtkWidget *self, GtkWidget *child) {
   report_pending_exception("GtkWidget::vfunc_set_focus_child");
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->set_focus_child (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->set_focus_child (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_set_focus_child(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->set_focus_child = vfunc_thunk_set_focus_child;
 }
@@ -2119,7 +2194,8 @@ void vfunc_thunk_size_allocate(GtkWidget *self, int width, int height, int basel
   report_pending_exception("GtkWidget::vfunc_size_allocate");
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->size_allocate (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->size_allocate (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_size_allocate(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->size_allocate = vfunc_thunk_size_allocate;
 }
@@ -2149,7 +2225,8 @@ void vfunc_thunk_state_flags_changed(GtkWidget *self, GtkStateFlags previous_sta
   report_pending_exception("GtkWidget::vfunc_state_flags_changed");
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->state_flags_changed (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->state_flags_changed (called from class_init / iface_init of a
+// PHP subtype)
 void vfunc_install_state_flags_changed(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->state_flags_changed = vfunc_thunk_state_flags_changed;
 }
@@ -2178,8 +2255,8 @@ void vfunc_thunk_system_setting_changed(GtkWidget *self, GtkSystemSetting settin
   report_pending_exception("GtkWidget::vfunc_system_setting_changed");
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->system_setting_changed (called from class_init of a PHP
-// subtype)
+// vfunc installer: GTK_WIDGET_CLASS->system_setting_changed (called from class_init / iface_init of
+// a PHP subtype)
 void vfunc_install_system_setting_changed(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->system_setting_changed = vfunc_thunk_system_setting_changed;
 }
@@ -2202,7 +2279,7 @@ void vfunc_thunk_unmap(GtkWidget *self) {
   report_pending_exception("GtkWidget::vfunc_unmap");
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->unmap (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->unmap (called from class_init / iface_init of a PHP subtype)
 void vfunc_install_unmap(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->unmap = vfunc_thunk_unmap;
 }
@@ -2225,7 +2302,8 @@ void vfunc_thunk_unrealize(GtkWidget *self) {
   report_pending_exception("GtkWidget::vfunc_unrealize");
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->unrealize (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->unrealize (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_unrealize(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->unrealize = vfunc_thunk_unrealize;
 }
@@ -2248,7 +2326,7 @@ void vfunc_thunk_unroot(GtkWidget *self) {
   report_pending_exception("GtkWidget::vfunc_unroot");
 }
 
-// vfunc installer: GTK_WIDGET_CLASS->unroot (called from class_init of a PHP subtype)
+// vfunc installer: GTK_WIDGET_CLASS->unroot (called from class_init / iface_init of a PHP subtype)
 void vfunc_install_unroot(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->unroot = vfunc_thunk_unroot;
 }
@@ -2480,10 +2558,26 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_measure) {
   klass->measure(self, static_cast<GtkOrientation>(orientation_v), static_cast<int>(for_size),
                  &minimum, &natural, &minimum_baseline, &natural_baseline);
   array_init_size(return_value, 4);
-  add_next_index_long(return_value, minimum);
-  add_next_index_long(return_value, natural);
-  add_next_index_long(return_value, minimum_baseline);
-  add_next_index_long(return_value, natural_baseline);
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(minimum));
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(natural));
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(minimum_baseline));
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(natural_baseline));
+    add_next_index_zval(return_value, &item);
+  }
 }
 
 /**

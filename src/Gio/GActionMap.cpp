@@ -2,6 +2,9 @@
 // Gtk4\GActionMap
 #include "php_gtk4.h"
 #include "core/object.h"
+#include "core/subtype.h"
+#include "core/error.h"
+#include <array>
 
 using namespace phpgtk;
 
@@ -48,4 +51,116 @@ ZEND_METHOD(Gtk4_GActionMap, remove_action) {
   ZEND_PARSE_PARAMETERS_END();
   GActionMap *self = PHPGTK_SELF(GActionMap, G_TYPE_ACTION_MAP);
   g_action_map_remove_action(self, ZSTR_VAL(action_name));
+}
+
+// vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
+namespace {
+
+// vfunc thunk: static_cast<GActionMapInterface *>->add_action -> $this->add_action() on a PHP
+// subclass
+void vfunc_thunk_add_action(GActionMap *self, GAction *action) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "add_action", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  wrap(action != nullptr ? G_OBJECT(action) : nullptr, &argv[0]);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GActionMap::add_action");
+}
+
+// vfunc installer: static_cast<GActionMapInterface *>->add_action (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_add_action(gpointer klass) {
+  static_cast<GActionMapInterface *>(klass)->add_action = vfunc_thunk_add_action;
+}
+
+// vfunc thunk: static_cast<GActionMapInterface *>->lookup_action -> $this->lookup_action() on a PHP
+// subclass
+GAction *vfunc_thunk_lookup_action(GActionMap *self, const gchar *action_name) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "lookup_action", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return nullptr;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  if (action_name == nullptr) {
+    ZVAL_NULL(&argv[0]);
+  } else {
+    ZVAL_STRING(&argv[0], action_name);
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  GAction *result = nullptr;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    if (Z_TYPE(ret) == IS_OBJECT) {
+      GObject *o = unwrap(&ret, G_TYPE_ACTION);
+      result = o != nullptr ? G_ACTION(o) : nullptr;
+    }
+  }
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GActionMap::lookup_action");
+  return result;
+}
+
+// vfunc installer: static_cast<GActionMapInterface *>->lookup_action (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_lookup_action(gpointer klass) {
+  static_cast<GActionMapInterface *>(klass)->lookup_action = vfunc_thunk_lookup_action;
+}
+
+// vfunc thunk: static_cast<GActionMapInterface *>->remove_action -> $this->remove_action() on a PHP
+// subclass
+void vfunc_thunk_remove_action(GActionMap *self, const gchar *action_name) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "remove_action", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  if (action_name == nullptr) {
+    ZVAL_NULL(&argv[0]);
+  } else {
+    ZVAL_STRING(&argv[0], action_name);
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GActionMap::remove_action");
+}
+
+// vfunc installer: static_cast<GActionMapInterface *>->remove_action (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_remove_action(gpointer klass) {
+  static_cast<GActionMapInterface *>(klass)->remove_action = vfunc_thunk_remove_action;
+}
+
+}  // namespace
+
+// MINIT: the vfunc thunks of GActionMap (core/subtype.h).
+void register_vfuncs_GActionMap() {
+  register_iface_vfunc(G_TYPE_ACTION_MAP, "add_action", vfunc_install_add_action);
+  register_iface_vfunc(G_TYPE_ACTION_MAP, "lookup_action", vfunc_install_lookup_action);
+  register_iface_vfunc(G_TYPE_ACTION_MAP, "remove_action", vfunc_install_remove_action);
 }

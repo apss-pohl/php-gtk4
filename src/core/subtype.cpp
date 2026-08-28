@@ -4,6 +4,8 @@
 #include "globals.h"
 #include "object.h"
 
+#include <atomic>
+#include <deque>
 #include <mutex>
 #include <string>
 #include <unordered_map>
@@ -24,17 +26,76 @@ std::vector<Vfunc> &vfuncs() {
   static std::vector<Vfunc> v;
   return v;
 }
+// Interface slots, keyed by the interface GType (MINIT-filled).
+std::vector<Vfunc> &iface_vfuncs() {
+  static std::vector<Vfunc> v;
+  return v;
+}
+
+// Stable storage for the interface GType an iface_init receives as iface_data (process-wide,
+// like the GTypes themselves; a deque never moves its elements).
+std::deque<GType> &iface_keys() {
+  static std::deque<GType> keys;
+  return keys;
+}
+
+// GInterfaceInitFunc: the PHP class implements every slot (PHP made it implement the
+// interface's methods), so install all of them.
+void iface_init(gpointer iface, gpointer iface_data) {
+  const GType type = *static_cast<const GType *>(iface_data);
+  for (const Vfunc &vf : iface_vfuncs()) {
+    if (vf.owner == type) vf.install(iface);
+  }
+}
+
+// The interfaces a PHP class declares that are registered GTK interfaces with slots.
+std::vector<GType> php_interfaces(zend_class_entry *ce) {
+  std::vector<GType> out;
+  for (uint32_t i = 0; i < ce->num_interfaces; i++) {
+    const GType it = gtype_for_class(ce->interfaces[i]);
+    if (it == 0 || G_TYPE_IS_INTERFACE(it) == FALSE) continue;
+    for (const Vfunc &vf : iface_vfuncs()) {
+      if (vf.owner == it) {
+        out.push_back(it);
+        break;
+      }
+    }
+  }
+  return out;
+}
 
 // Process-wide (GTypes cannot be unregistered): PHP GType -> PHP class name. The strings
 // are leaked on purpose: class_data of the GTypeInfo points at them for the process' life.
-std::unordered_map<GType, const std::string *> &php_types() {
-  static std::unordered_map<GType, const std::string *> map;
-  return map;
+// Copy-on-write: readers (wrap() walks the parent chain of every wrapped object, on hot
+// paths) load the current snapshot pointer and never lock; writers (rare: first `new` of a
+// class) serialise on the mutex and publish a new map. Every snapshot ever published stays
+// owned by a process-wide deque (stable addresses, a few small maps) so a reader mid-walk
+// never sees a freed one - simpler than hazard pointers and nothing for LSan to report.
+using TypeMap = std::unordered_map<GType, const std::string *>;
+// Every snapshot ever published, in order (process-wide static; deque elements never move).
+std::deque<TypeMap> &php_type_snapshots() {
+  static std::deque<TypeMap> maps(1);  // the empty initial snapshot
+  return maps;
 }
-// Guards php_types() (a ZTS thread may register while another wraps).
+// The pointer readers load (process-wide static, atomic).
+std::atomic<const TypeMap *> &php_types_snapshot() {
+  static std::atomic<const TypeMap *> snapshot{&php_type_snapshots().front()};
+  return snapshot;
+}
+// A reader's view of the registry: no lock; valid for the process' life.
+const TypeMap *php_types() {
+  return php_types_snapshot().load();
+}
+// Serialises registrations (register-check-publish must be atomic between ZTS threads).
 std::mutex &types_mutex() {
   static std::mutex m;
   return m;
+}
+// Publish a copy with `type` added (under types_mutex()); the previous map stays alive.
+void php_types_add(GType type, const std::string *name) {
+  TypeMap &next = php_type_snapshots().emplace_back(*php_types());
+  next[type] = name;
+  php_types_snapshot().store(&next);
 }
 
 // GTypeClassInit: install a thunk for every vfunc the PHP class defines as vfunc_<name>().
@@ -96,10 +157,14 @@ void register_vfunc(GType owner, const char *name, VfuncInstall install) {
   vfuncs().push_back({.owner = owner, .name = name, .install = install});
 }
 
+// MINIT (generated): remember an interface slot installer for iface_init.
+void register_iface_vfunc(GType iface, const char *name, VfuncInstall install) {
+  iface_vfuncs().push_back({.owner = iface, .name = name, .install = install});
+}
+
 // Registered here for a PHP class? (process-wide registry)
 bool is_php_type(GType type) {
-  const std::lock_guard<std::mutex> lock(types_mutex());
-  return php_types().contains(type);
+  return php_types()->contains(type);
 }
 
 // The PHP class' GType, registered on first use with its PHP ancestors (parents first).
@@ -123,7 +188,7 @@ GType subtype_for_class(zend_class_entry *ce) {
   const std::lock_guard<std::mutex> lock(types_mutex());
   if (const GType existing = g_type_from_name(name.c_str()); existing != 0) {
     // Registered for this very class? (`App\Foo` and `App__Foo` map to the same GType name.)
-    if (auto it = php_types().find(existing); it != php_types().end()) {
+    if (auto it = php_types()->find(existing); it != php_types()->end()) {
       const std::string *owner = it->second;
       if (owner->size() == ZSTR_LEN(ce->name) &&
           zend_binary_strcasecmp(owner->c_str(), owner->size(), ZSTR_VAL(ce->name),
@@ -161,7 +226,20 @@ GType subtype_for_class(zend_class_entry *ce) {
                      name.c_str());
     return 0;
   }
-  php_types()[type] = cname;
+  // `implements GListModel` on the PHP class: the GType implements the GTK interface too,
+  // each slot a thunk into the PHP method of the same name (the parent's own interfaces are
+  // inherited by GType and need nothing).
+  for (const GType it : php_interfaces(ce)) {
+    if (g_type_is_a(parent, it) == TRUE) continue;
+    iface_keys().push_back(it);
+    const GInterfaceInfo iinfo = {
+        .interface_init = iface_init,
+        .interface_finalize = nullptr,
+        .interface_data = &iface_keys().back(),
+    };
+    g_type_add_interface_static(type, it, &iinfo);
+  }
+  php_types_add(type, cname);
   return type;
 }
 
@@ -210,13 +288,10 @@ gpointer subtype_native_class(GObject *obj) {
 
 // wrap(): the PHP class behind a PHP GType in this request (no autoload), or nullptr.
 zend_class_entry *subtype_class_for_gtype(GType type) {
-  const std::string *name = nullptr;
-  {
-    const std::lock_guard<std::mutex> lock(types_mutex());
-    auto it = php_types().find(type);
-    if (it == php_types().end()) return nullptr;
-    name = it->second;
-  }
+  const TypeMap *types = php_types();
+  auto it = types->find(type);
+  if (it == types->end()) return nullptr;
+  const std::string *name = it->second;
   zend_string *zn = zend_string_init(name->c_str(), name->size(), false);
   zend_class_entry *ce =
       zend_lookup_class_ex(zn, nullptr, ZEND_FETCH_CLASS_NO_AUTOLOAD | ZEND_FETCH_CLASS_SILENT);

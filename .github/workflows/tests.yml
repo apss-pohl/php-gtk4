@@ -52,8 +52,10 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             pkg-config libgtk-4-dev xvfb build-essential
 
+      # --enable-gtk4-testing: the Gtk::testing_* hooks (RethrowModeTest's nested-loop cases)
+      # run on every matrix leg, not only under the sanitizers; releases build without it.
       - name: Build extension (phpize)
-        run: ./ci.sh --only=build
+        run: GTK4_CONFIGURE_ARGS=--enable-gtk4-testing ./ci.sh --only=build
 
       - name: Extension loads
         run: ./ci.sh --only=load
@@ -176,3 +178,31 @@ jobs:
           name: cpp-coverage
           path: coverage/
           if-no-files-found: ignore
+
+  # --enable-gtk4-webkit is analysed by cpp-lint.yml; this leg makes sure it also compiles,
+  # links and loads (no WebKit tests yet - docs/PLAN.md milestone 6).
+  webkit-build:
+    name: WebKitGTK build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PHP: php
+      PHP_CONFIG: php-config
+      PHPIZE: phpize
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: none
+
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends pkg-config libgtk-4-dev libwebkitgtk-6.0-dev build-essential
+
+      - name: Build and load with WebKit
+        run: GTK4_CONFIGURE_ARGS=--enable-gtk4-webkit ./ci.sh --only=build,load

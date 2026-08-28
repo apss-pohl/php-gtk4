@@ -9,6 +9,13 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- Boxed records generated from GIR (`GtkRequisition` first): fields as properties, value
+  semantics, generated registration. Out parameters of string/object/enum/record kind, including
+  caller-allocated structs (`GtkWidget::get_color(): GdkRGBA`, `get_preferred_size()`).
+- Async API: callback parameters with GIR scope `async`/`call` get a generated trampoline;
+  `GtkAlertDialog` (`choose()` + `choose_finish()`), `GCancellable`, `GAsyncResult`.
+- GTK interfaces implemented from PHP: `class M extends GObject implements GListModel` is a real
+  `GListModel` (`SubclassTest`); `GObject::__construct()`.
 - CSS (docs/PLAN.md milestone 8): `GtkCssProvider` (`load_from_string`/`_path`/`_bytes`/`_resource`,
   `load_named`, `to_string`) plus `Gtk::add_provider_for_display()` /
   `remove_provider_for_display()` and the `GtkStyleProviderPriority` constants attach a stylesheet
@@ -113,6 +120,10 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Changed
 
+- Interfaces with vfuncs declare only their vfunc-backed methods in PHP (`GListModel`:
+  `get_item_type`, `get_n_items`, `get_item`); the utility methods remain on the implementing
+  classes. Native `vfunc_*()` callable only from a PHP subclass; `emit()` arity errors are
+  `ArgumentCountError`.
 - The generator throws on an unresolvable MINIT parent (was a silent comment), skips
   caller-allocates out parameters (never a by-reference PHP parameter), emits `interface X
   extends Y` from GIR prerequisites, puts thunks in an anonymous namespace, and seeds the MINIT

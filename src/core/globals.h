@@ -60,12 +60,3 @@ ZEND_END_MODULE_GLOBALS(gtk4)
 
 ZEND_EXTERN_MODULE_GLOBALS(gtk4)
 #define GTK4_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(gtk4, v)
-
-namespace phpgtk {
-// Records the thread that ran Gtk::init(); every later GTK entry point that
-// drives the main loop asserts it is on that thread. GTK is one per process
-// and single-threaded, whatever PHP's build: with ZTS, only one request
-// thread may own the GUI. Throws \Error and returns false on a violation.
-bool assert_gui_thread(const char *what);
-void record_gui_thread();
-}  // namespace phpgtk

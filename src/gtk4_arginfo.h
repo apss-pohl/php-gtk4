@@ -1,5 +1,8 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: bff479e47cbaf2fc7b62dd4429ed0a38e69ad787 */
+ * Stub hash: 3e8fa53c0132e558a50dc5a212b419a290de9422 */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GObject___construct, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GObject_connect, 0, 2, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, signal, IS_STRING, 0)
@@ -94,8 +97,7 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GLib_main_context_ite
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, may_block, _IS_BOOL, 0, "false")
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GMainLoop___construct, 0, 0, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_GMainLoop___construct arginfo_class_Gtk4_GObject___construct
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMainLoop_run, 0, 0, IS_VOID, 0)
 ZEND_END_ARG_INFO()
@@ -247,6 +249,7 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkCssSection_get_end_location arginfo_class_Gtk4_GtkCssSection_get_start_location
 
+ZEND_METHOD(Gtk4_GObject, __construct);
 ZEND_METHOD(Gtk4_GObject, connect);
 ZEND_METHOD(Gtk4_GObject, connect_after);
 ZEND_METHOD(Gtk4_GObject, emit);
@@ -319,6 +322,7 @@ ZEND_METHOD(Gtk4_GtkCssSection, get_start_location);
 ZEND_METHOD(Gtk4_GtkCssSection, get_end_location);
 
 static const zend_function_entry class_Gtk4_GObject_methods[] = {
+	ZEND_ME(Gtk4_GObject, __construct, arginfo_class_Gtk4_GObject___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GObject, connect, arginfo_class_Gtk4_GObject_connect, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GObject, connect_after, arginfo_class_Gtk4_GObject_connect_after, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GObject, emit, arginfo_class_Gtk4_GObject_emit, ZEND_ACC_PUBLIC)

@@ -199,6 +199,9 @@ class GApplication extends GObject implements GActionGroup, GActionMap
     /** Immediately quits the application. */
     public function quit(): void {}
 
+    /** Attempts registration of the application. */
+    public function register(?GCancellable $cancellable): bool {}
+
     /** Decrease the use count of $application. */
     public function release(): void {}
 
@@ -363,6 +366,84 @@ final class GApplicationFlags
 }
 
 /**
+ * `GAsyncResult` provides a base class for implementing asynchronous function results.
+ */
+interface GAsyncResult
+{
+    /** Gets the source object from a #GAsyncResult. */
+    public function get_source_object(): ?GObject;
+}
+
+/**
+ * `GCancellable` allows operations to be cancelled.
+ */
+class GCancellable extends GObject
+{
+    /** Creates a new #GCancellable object. */
+    public function __construct() {}
+
+    /** Gets the top cancellable from the stack. */
+    public static function get_current(): ?GCancellable {}
+
+    /**
+     * Will set $cancellable to cancelled, and will emit the #GCancellable::cancelled signal.
+     * (However, see the warning about race conditions in the documentation for that signal if you
+     * are planning to connect to it.)
+     */
+    public function cancel(): void {}
+
+    /**
+     * Disconnects a handler from a cancellable instance similar to g_signal_handler_disconnect().
+     * Additionally, in the event that a signal handler is currently running, this call will block
+     * until the handler has finished. Calling this function from a #GCancellable::cancelled signal
+     * handler will therefore result in a deadlock.
+     */
+    public function disconnect(int $handler_id): void {}
+
+    /**
+     * Gets the file descriptor for a cancellable job. This can be used to implement cancellable
+     * operations on Unix systems. The returned fd will turn readable when $cancellable is
+     * cancelled.
+     */
+    public function get_fd(): int {}
+
+    /** Checks if a cancellable job has been cancelled. */
+    public function is_cancelled(): bool {}
+
+    /**
+     * Pops $cancellable off the cancellable stack (verifying that $cancellable is on the top of
+     * the stack).
+     */
+    public function pop_current(): void {}
+
+    /**
+     * Pushes $cancellable onto the cancellable stack. The current cancellable can then be received
+     * using g_cancellable_get_current().
+     */
+    public function push_current(): void {}
+
+    /**
+     * Releases a resources previously allocated by g_cancellable_get_fd() or
+     * g_cancellable_make_pollfd().
+     */
+    public function release_fd(): void {}
+
+    /** Resets $cancellable to its uncancelled state. */
+    public function reset(): void {}
+
+    /**
+     * If the $cancellable is cancelled, sets the error to notify that the operation was cancelled.
+     */
+    public function set_error_if_cancelled(): bool {}
+
+    /**
+     * Native `cancelled` (CancellableClass.cancelled): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_cancelled()` from an override.
+     */
+    public function vfunc_cancelled(): void {}
+}
+
+/**
  * `GListModel` is an interface that represents a mutable list of `Object`. Its main intention is
  * as a model for various widgets in user interfaces, such as list views, but it can also be used
  * as a convenient method of returning lists of data, with support for updates.
@@ -377,9 +458,6 @@ interface GListModel
 
     /** Get the item at $position. */
     public function get_item(int $position): ?GObject;
-
-    /** Emits the #GListModel::items-changed signal on $list. */
-    public function items_changed(int $position, int $removed, int $added): void;
 }
 
 /**
@@ -488,4 +566,113 @@ class GSimpleAction extends GObject implements GAction
 
     /** @implementation-alias Gtk4\GAction::get_state_type */
     public function get_state_type(): ?string {}
+}
+
+/**
+ * A `GTask` represents and manages a cancellable ‘task’.
+ *
+ * @property-read ?bool $completed
+ */
+class GTask extends GObject implements GAsyncResult
+{
+    /**
+     * Creates a #GTask acting on $source_object, which will eventually be used to invoke $callback
+     * in the current [thread-default main context][g-main-context-push-thread-default].
+     */
+    public function __construct(?GObject $source_object = null, ?GCancellable $cancellable = null, ?callable $callback = null) {}
+
+    /**
+     * Checks that $result is a #GTask, and that $source_object is its source object (or that
+     * $source_object is `null` and $result has no source object). This can be used in
+     * g_return_if_fail() checks.
+     */
+    public static function is_valid(GAsyncResult $result, ?GObject $source_object = null): bool {}
+
+    /** Gets $task's #GCancellable */
+    public function get_cancellable(): ?GCancellable {}
+
+    /** Gets $task's check-cancellable flag. See g_task_set_check_cancellable() for more details. */
+    public function get_check_cancellable(): bool {}
+
+    /**
+     * Gets the value of #GTask:completed. This changes from `false` to `true` after the task’s
+     * callback is invoked, and will return `false` if called from inside the callback.
+     */
+    public function get_completed(): bool {}
+
+    /** Gets $task’s name. See g_task_set_name(). */
+    public function get_name(): ?string {}
+
+    /** Gets $task's priority */
+    public function get_priority(): int {}
+
+    /** Gets $task's return-on-cancel flag. See g_task_set_return_on_cancel() for more details. */
+    public function get_return_on_cancel(): bool {}
+
+    /**
+     * Gets the source object from $task. Like g_async_result_get_source_object(), but does not ref
+     * the object.
+     */
+    public function get_source_object(): ?GObject {}
+
+    /** Tests if $task resulted in an error. */
+    public function had_error(): bool {}
+
+    /** Gets the result of $task as a #gboolean. */
+    public function propagate_boolean(): bool {}
+
+    /** Gets the result of $task as an integer (#gssize). */
+    public function propagate_int(): int {}
+
+    /**
+     * Sets $task's result to $result and completes the task (see g_task_return_pointer() for more
+     * discussion of exactly what this means).
+     */
+    public function return_boolean(bool $result): void {}
+
+    /**
+     * Sets $task's result to $error (which $task assumes ownership of) and completes the task (see
+     * g_task_return_pointer() for more discussion of exactly what this means).
+     */
+    public function return_error(GError $error): void {}
+
+    /**
+     * Checks if $task's #GCancellable has been cancelled, and if so, sets $task's error
+     * accordingly and completes the task (see g_task_return_pointer() for more discussion of
+     * exactly what this means).
+     */
+    public function return_error_if_cancelled(): bool {}
+
+    /**
+     * Sets $task's result to $result and completes the task (see g_task_return_pointer() for more
+     * discussion of exactly what this means).
+     */
+    public function return_int(int $result): void {}
+
+    /**
+     * Sets or clears $task's check-cancellable flag. If this is `true` (the default), then
+     * g_task_propagate_pointer(), etc, and g_task_had_error() will check the task's #GCancellable
+     * first, and if it has been cancelled, then they will consider the task to have returned an
+     * "Operation was cancelled" error (%G_IO_ERROR_CANCELLED), regardless of any other error or
+     * return value the task may have had.
+     */
+    public function set_check_cancellable(bool $check_cancellable): void {}
+
+    /** Sets $task’s name, used in debugging and profiling. The name defaults to `null`. */
+    public function set_name(?string $name): void {}
+
+    /** Sets $task's priority. If you do not call this, it will default to %G_PRIORITY_DEFAULT. */
+    public function set_priority(int $priority): void {}
+
+    /**
+     * Sets or clears $task's return-on-cancel flag. This is only meaningful for tasks run via
+     * g_task_run_in_thread() or g_task_run_in_thread_sync().
+     */
+    public function set_return_on_cancel(bool $return_on_cancel): bool {}
+
+    /** Sets $task’s name, used in debugging and profiling. */
+    public function set_static_name(?string $name): void {}
+
+    /** @implementation-alias Gtk4\GAsyncResult::legacy_propagate_error */
+    public function legacy_propagate_error(): bool {}
 }

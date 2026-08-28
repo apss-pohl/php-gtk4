@@ -4,6 +4,9 @@
 #include "core/object.h"
 #include "core/collections.h"
 #include "core/variant.h"
+#include "core/subtype.h"
+#include "core/error.h"
+#include <array>
 
 using namespace phpgtk;
 
@@ -244,4 +247,194 @@ ZEND_METHOD(Gtk4_GActionGroup, activate_action) {
   g_action_group_activate_action(group, ZSTR_VAL(name), v);
   if (v != nullptr) g_variant_unref(v);
   if (EG(exception) != nullptr) RETURN_THROWS();
+}
+
+// vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
+namespace {
+
+// vfunc thunk: static_cast<GActionGroupInterface *>->action_added -> $this->action_added() on a PHP
+// subclass
+void vfunc_thunk_action_added(GActionGroup *self, const gchar *action_name) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "action_added", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  if (action_name == nullptr) {
+    ZVAL_NULL(&argv[0]);
+  } else {
+    ZVAL_STRING(&argv[0], action_name);
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GActionGroup::action_added");
+}
+
+// vfunc installer: static_cast<GActionGroupInterface *>->action_added (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_action_added(gpointer klass) {
+  static_cast<GActionGroupInterface *>(klass)->action_added = vfunc_thunk_action_added;
+}
+
+// vfunc thunk: static_cast<GActionGroupInterface *>->action_enabled_changed ->
+// $this->action_enabled_changed() on a PHP subclass
+void vfunc_thunk_action_enabled_changed(GActionGroup *self, const gchar *action_name,
+                                        gboolean enabled) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "action_enabled_changed", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return;
+  }
+  std::array<zval, 2> args{};
+  zval *argv = args.data();
+  if (action_name == nullptr) {
+    ZVAL_NULL(&argv[0]);
+  } else {
+    ZVAL_STRING(&argv[0], action_name);
+  }
+  ZVAL_BOOL(&argv[1], enabled != FALSE);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 2, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GActionGroup::action_enabled_changed");
+}
+
+// vfunc installer: static_cast<GActionGroupInterface *>->action_enabled_changed (called from
+// class_init / iface_init of a PHP subtype)
+void vfunc_install_action_enabled_changed(gpointer klass) {
+  static_cast<GActionGroupInterface *>(klass)->action_enabled_changed =
+      vfunc_thunk_action_enabled_changed;
+}
+
+// vfunc thunk: static_cast<GActionGroupInterface *>->action_removed -> $this->action_removed() on a
+// PHP subclass
+void vfunc_thunk_action_removed(GActionGroup *self, const gchar *action_name) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "action_removed", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  if (action_name == nullptr) {
+    ZVAL_NULL(&argv[0]);
+  } else {
+    ZVAL_STRING(&argv[0], action_name);
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GActionGroup::action_removed");
+}
+
+// vfunc installer: static_cast<GActionGroupInterface *>->action_removed (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_action_removed(gpointer klass) {
+  static_cast<GActionGroupInterface *>(klass)->action_removed = vfunc_thunk_action_removed;
+}
+
+// vfunc thunk: static_cast<GActionGroupInterface *>->get_action_enabled ->
+// $this->get_action_enabled() on a PHP subclass
+gboolean vfunc_thunk_get_action_enabled(GActionGroup *self, const gchar *action_name) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "get_action_enabled", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return FALSE;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  if (action_name == nullptr) {
+    ZVAL_NULL(&argv[0]);
+  } else {
+    ZVAL_STRING(&argv[0], action_name);
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  gboolean result = FALSE;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    result = zend_is_true(&ret) ? TRUE : FALSE;
+  }
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GActionGroup::get_action_enabled");
+  return result;
+}
+
+// vfunc installer: static_cast<GActionGroupInterface *>->get_action_enabled (called from class_init
+// / iface_init of a PHP subtype)
+void vfunc_install_get_action_enabled(gpointer klass) {
+  static_cast<GActionGroupInterface *>(klass)->get_action_enabled = vfunc_thunk_get_action_enabled;
+}
+
+// vfunc thunk: static_cast<GActionGroupInterface *>->has_action -> $this->has_action() on a PHP
+// subclass
+gboolean vfunc_thunk_has_action(GActionGroup *self, const gchar *action_name) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "has_action", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return FALSE;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  if (action_name == nullptr) {
+    ZVAL_NULL(&argv[0]);
+  } else {
+    ZVAL_STRING(&argv[0], action_name);
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  gboolean result = FALSE;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    result = zend_is_true(&ret) ? TRUE : FALSE;
+  }
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GActionGroup::has_action");
+  return result;
+}
+
+// vfunc installer: static_cast<GActionGroupInterface *>->has_action (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_has_action(gpointer klass) {
+  static_cast<GActionGroupInterface *>(klass)->has_action = vfunc_thunk_has_action;
+}
+
+}  // namespace
+
+// MINIT: the vfunc thunks of GActionGroup (core/subtype.h).
+void register_vfuncs_GActionGroup() {
+  register_iface_vfunc(G_TYPE_ACTION_GROUP, "action_added", vfunc_install_action_added);
+  register_iface_vfunc(G_TYPE_ACTION_GROUP, "action_enabled_changed",
+                       vfunc_install_action_enabled_changed);
+  register_iface_vfunc(G_TYPE_ACTION_GROUP, "action_removed", vfunc_install_action_removed);
+  register_iface_vfunc(G_TYPE_ACTION_GROUP, "get_action_enabled", vfunc_install_get_action_enabled);
+  register_iface_vfunc(G_TYPE_ACTION_GROUP, "has_action", vfunc_install_has_action);
 }

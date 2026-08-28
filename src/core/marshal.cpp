@@ -186,9 +186,20 @@ bool to_gvalue(zval *pv, GType t, GValue *out) {
       g_value_set_enum(out, e);
       return true;
     }
-    case G_TYPE_FLAGS:
-      g_value_set_flags(out, static_cast<guint>(zval_get_long(pv)));
+    case G_TYPE_FLAGS: {
+      const zend_long bits = zval_get_long(pv);
+      auto *klass = static_cast<GFlagsClass *>(g_type_class_ref(t));
+      const guint mask = klass->mask;
+      g_type_class_unref(klass);
+      if (bits < 0 || (static_cast<guint64>(bits) & ~static_cast<guint64>(mask)) != 0) {
+        g_value_unset(out);
+        zend_value_error("%s: invalid flags value %ld (mask 0x%x)", g_type_name(t),
+                         static_cast<long>(bits), mask);
+        return false;
+      }
+      g_value_set_flags(out, static_cast<guint>(bits));
       return true;
+    }
     case G_TYPE_FLOAT:
       g_value_set_float(out, static_cast<gfloat>(zval_get_double(pv)));
       return true;

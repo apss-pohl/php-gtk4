@@ -3,6 +3,8 @@
 #include "php_gtk4.h"
 #include "core/object.h"
 #include "core/variant.h"
+#include "core/subtype.h"
+#include "core/error.h"
 
 using namespace phpgtk;
 
@@ -47,7 +49,9 @@ ZEND_METHOD(Gtk4_GAction, get_enabled) {
 ZEND_METHOD(Gtk4_GAction, get_name) {
   ZEND_PARSE_PARAMETERS_NONE();
   GAction *self = PHPGTK_SELF(GAction, G_TYPE_ACTION);
-  RETURN_STRING(g_action_get_name(self));
+  const char *result = g_action_get_name(self);
+  if (result == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(result);
 }
 
 /**
@@ -139,4 +143,43 @@ ZEND_METHOD(Gtk4_GAction, activate) {
   g_action_activate(a, v);
   if (v != nullptr) g_variant_unref(v);
   if (EG(exception) != nullptr) RETURN_THROWS();
+}
+
+// vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
+namespace {
+
+// vfunc thunk: static_cast<GActionInterface *>->get_enabled -> $this->get_enabled() on a PHP
+// subclass
+gboolean vfunc_thunk_get_enabled(GAction *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "get_enabled", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return FALSE;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  gboolean result = FALSE;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    result = zend_is_true(&ret) ? TRUE : FALSE;
+  }
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GAction::get_enabled");
+  return result;
+}
+
+// vfunc installer: static_cast<GActionInterface *>->get_enabled (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_get_enabled(gpointer klass) {
+  static_cast<GActionInterface *>(klass)->get_enabled = vfunc_thunk_get_enabled;
+}
+
+}  // namespace
+
+// MINIT: the vfunc thunks of GAction (core/subtype.h).
+void register_vfuncs_GAction() {
+  register_iface_vfunc(G_TYPE_ACTION, "get_enabled", vfunc_install_get_enabled);
 }

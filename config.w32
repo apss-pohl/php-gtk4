@@ -78,6 +78,22 @@ if (PHP_GTK4 != "no") {
 		}
 	} else {
 		WARNING("no pkgconf.exe in " + gtk4_root + "\\bin - assuming the gvsbuild layout");
+		// The same floor as the pkg-config path (gtk4 >= 4.14), read from gtkversion.h.
+		var vh = gtk4_root + "\\include\\gtk-4.0\\gtk\\gtkversion.h";
+		if (!FSO.FileExists(vh)) {
+			ERROR("no " + vh + " - not a GTK 4 tree");
+		}
+		var vtext = file_get_contents(vh);
+		var major = /#define\s+GTK_MAJOR_VERSION\s+\((\d+)\)/.exec(vtext);
+		var minor = /#define\s+GTK_MINOR_VERSION\s+\((\d+)\)/.exec(vtext);
+		var micro = /#define\s+GTK_MICRO_VERSION\s+\((\d+)\)/.exec(vtext);
+		if (!major || !minor || !micro) {
+			ERROR("cannot read the GTK version from " + vh);
+		}
+		if (parseInt(major[1]) != 4 || parseInt(minor[1]) < 14) {
+			ERROR("GTK " + major[1] + "." + minor[1] + " found, php-gtk4 needs gtk4 >= 4.14");
+		}
+		gtk4_version = major[1] + "." + minor[1] + "." + micro[1];
 		var incs = ["include\\gtk-4.0", "include\\glib-2.0", "lib\\glib-2.0\\include", "include\\cairo",
 			"include\\pango-1.0", "include\\harfbuzz", "include\\gdk-pixbuf-2.0", "include\\graphene-1.0",
 			"lib\\graphene-1.0\\include", "include\\fribidi", "include\\freetype2", "include\\pixman-1", "include"];
@@ -174,8 +190,10 @@ if (PHP_GTK4 != "no") {
 	}
 	// C++20 with exceptions enabled (the standard library needs EH; PHP throwables never unwind
 	// through GLib frames regardless - see the trampoline rule in CLAUDE.md). /utf-8: the sources
-	// and GTK headers are UTF-8. /wd4200: zend structs with flexible array members.
-	var cxxflags = "/std:c++20 /EHsc /utf-8 /Zc:__cplusplus /wd4200 " +
+	// and GTK headers are UTF-8. /wd4200: zend structs with flexible array members. /W3 like
+	// -Wall -Wextra on Linux; the workflow fails the build on a warning in src\ (windows-build.yml),
+	// the counterpart of ci.sh's grep, so system headers cannot break it (/WX would).
+	var cxxflags = "/std:c++20 /EHsc /utf-8 /Zc:__cplusplus /W3 /wd4200 " +
 		'/I "' + gtk4_src + '" /I "' + gtk4_src + '\\src" ';
 	EXTENSION("gtk4", sources.join(" "), true, cxxflags);
 	ADD_FLAG("CFLAGS_GTK4", cxxflags);

@@ -24,10 +24,14 @@
   phpgtk::register_enum(GDK_TYPE_MEMORY_FORMAT, register_class_Gtk4_GdkMemoryFormat());
   phpgtk::register_flags(GDK_TYPE_MODIFIER_TYPE, register_class_Gtk4_GdkModifierType());
 // --- interfaces and classes, parents first
+  zend_class_entry *ce_GtkAlertDialog = register_class_Gtk4_GtkAlertDialog(ce_GObject);
+  phpgtk::register_class("GtkAlertDialog", ce_GtkAlertDialog, GTK_TYPE_ALERT_DIALOG);
   zend_class_entry *ce_GtkFilter = register_class_Gtk4_GtkFilter(ce_GObject);
   phpgtk::register_class("GtkFilter", ce_GtkFilter, GTK_TYPE_FILTER);
   zend_class_entry *ce_GtkOrientable = register_class_Gtk4_GtkOrientable();
   phpgtk::register_interface("GtkOrientable", ce_GtkOrientable, GTK_TYPE_ORIENTABLE);
+  zend_class_entry *ce_GtkRequisition = register_class_Gtk4_GtkRequisition();
+  phpgtk::register_GtkRequisition(ce_GtkRequisition);
   zend_class_entry *ce_GtkRoot = register_class_Gtk4_GtkRoot();
   phpgtk::register_interface("GtkRoot", ce_GtkRoot, GTK_TYPE_ROOT);
   zend_class_entry *ce_GtkSorter = register_class_Gtk4_GtkSorter(ce_GObject);
@@ -46,12 +50,18 @@
   phpgtk::register_interface("GActionMap", ce_GActionMap, G_TYPE_ACTION_MAP);
   zend_class_entry *ce_GApplication = register_class_Gtk4_GApplication(ce_GObject, ce_GActionGroup, ce_GActionMap);
   phpgtk::register_class("GApplication", ce_GApplication, G_TYPE_APPLICATION);
+  zend_class_entry *ce_GAsyncResult = register_class_Gtk4_GAsyncResult();
+  phpgtk::register_interface("GAsyncResult", ce_GAsyncResult, G_TYPE_ASYNC_RESULT);
+  zend_class_entry *ce_GCancellable = register_class_Gtk4_GCancellable(ce_GObject);
+  phpgtk::register_class("GCancellable", ce_GCancellable, G_TYPE_CANCELLABLE);
   zend_class_entry *ce_GListModel = register_class_Gtk4_GListModel();
   phpgtk::register_interface("GListModel", ce_GListModel, G_TYPE_LIST_MODEL);
   zend_class_entry *ce_GListStore = register_class_Gtk4_GListStore(ce_GObject, ce_GListModel);
   phpgtk::register_class("GListStore", ce_GListStore, G_TYPE_LIST_STORE);
   zend_class_entry *ce_GSimpleAction = register_class_Gtk4_GSimpleAction(ce_GObject, ce_GAction);
   phpgtk::register_class("GSimpleAction", ce_GSimpleAction, G_TYPE_SIMPLE_ACTION);
+  zend_class_entry *ce_GTask = register_class_Gtk4_GTask(ce_GObject, ce_GAsyncResult);
+  phpgtk::register_class("GTask", ce_GTask, G_TYPE_TASK);
   zend_class_entry *ce_GdkDisplay = register_class_Gtk4_GdkDisplay(ce_GObject);
   phpgtk::register_class("GdkDisplay", ce_GdkDisplay, GDK_TYPE_DISPLAY);
   zend_class_entry *ce_GdkTexture = register_class_Gtk4_GdkTexture(ce_GObject);
@@ -84,4 +94,10 @@
   register_vfuncs_GtkSorter();
   register_vfuncs_GtkWidget();
   register_vfuncs_GtkWindow();
+  register_vfuncs_GAction();
+  register_vfuncs_GActionGroup();
+  register_vfuncs_GActionMap();
   register_vfuncs_GApplication();
+  register_vfuncs_GAsyncResult();
+  register_vfuncs_GCancellable();
+  register_vfuncs_GListModel();

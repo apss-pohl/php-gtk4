@@ -1,0 +1,187 @@
+name: Windows build (reusable)
+
+# The one Windows recipe - php_gtk4.dll with the PHP SDK (phpize.bat + configure + nmake,
+# config.w32) against gvsbuild's prebuilt MSVC GTK 4 - called by windows.yml (every PR, with
+# the PHPUnit suite on the runner's desktop) and by release.yml (named, version-checked
+# release asset). GVSBUILD_VERSION is pinned here only; docs/BUILD.md "The pinned GTK version".
+
+on:
+  workflow_call:
+    inputs:
+      php:
+        description: PHP version (setup-php)
+        required: true
+        type: string
+      ts:
+        description: nts or ts
+        required: false
+        type: string
+        default: nts
+      run-tests:
+        description: run the PHPUnit suite against the built dll
+        required: false
+        type: boolean
+        default: false
+      artifact:
+        description: name of the uploaded dll artifact
+        required: true
+        type: string
+      dll-name:
+        description: file name for the dll in the artifact (default php_gtk4.dll)
+        required: false
+        type: string
+        default: php_gtk4.dll
+      expect-version:
+        description: phpversion("gtk4") the dll must report (default VERSION file)
+        required: false
+        type: string
+        default: ''
+
+env:
+  # https://github.com/wingtk/gvsbuild/releases - prebuilt GTK4_Gvsbuild_<ver>_x64.zip.
+  # Bump here (the cache key follows); the asset is ~300 MB so it is cached per version.
+  GVSBUILD_VERSION: '2026.8.0'
+  GTK4_ROOT: C:\gtk
+  # php-src's Windows SDK (phpsdk-vs17-x64.bat, nmake wrappers, deps handling).
+  PHP_SDK_REF: master
+  PHP_SDK_VS: vs17
+
+jobs:
+  build:
+    name: PHP ${{ inputs.php }} (${{ inputs.ts }})
+    runs-on: windows-2022
+    timeout-minutes: 45
+    env:
+      phpts: ${{ inputs.ts }}
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up PHP ${{ inputs.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php }}
+          extensions: dom, mbstring, tokenizer, xml, xmlwriter
+          tools: composer
+          coverage: none
+
+      # The devel pack matching the exact php.exe setup-php installed: headers, php8.lib,
+      # phpize.bat and the configure scripts. releases.json lists the current one per branch.
+      - name: PHP devel pack
+        id: devel
+        run: |
+          $ver = php -r 'echo PHP_VERSION;'
+          $ts = if ('${{ inputs.ts }}' -eq 'ts') { '' } else { '-nts' }
+          $zip = "php-devel-pack-$ver$ts-Win32-$env:PHP_SDK_VS-x64.zip"
+          $urls = @("https://downloads.php.net/~windows/releases/$zip",
+                    "https://downloads.php.net/~windows/releases/archives/$zip",
+                    "https://downloads.php.net/~windows/qa/$zip")
+          $ok = $false
+          foreach ($u in $urls) {
+            try { Invoke-WebRequest -Uri $u -OutFile $zip -ErrorAction Stop; $ok = $true; break } catch { Write-Host "not at $u" }
+          }
+          if (-not $ok) { throw "no devel pack for PHP $ver ($zip)" }
+          Expand-Archive $zip -DestinationPath C:\php-devel
+          $dir = (Get-ChildItem C:\php-devel -Directory | Select-Object -First 1).FullName
+          "dir=$dir" >> $env:GITHUB_OUTPUT
+          Write-Host "devel pack: $dir"
+          php -v
+
+      - name: PHP SDK binary tools
+        run: git clone --depth 1 --branch $env:PHP_SDK_REF https://github.com/php/php-sdk-binary-tools C:\php-sdk
+
+      - name: Cache gvsbuild GTK 4
+        id: gtk-cache
+        uses: actions/cache@v6
+        with:
+          path: C:\gtk
+          key: gvsbuild-gtk4-${{ env.GVSBUILD_VERSION }}-x64
+
+      - name: Download gvsbuild GTK 4 ${{ env.GVSBUILD_VERSION }}
+        if: steps.gtk-cache.outputs.cache-hit != 'true'
+        run: |
+          $zip = "GTK4_Gvsbuild_$env:GVSBUILD_VERSION`_x64.zip"
+          Invoke-WebRequest -Uri "https://github.com/wingtk/gvsbuild/releases/download/$env:GVSBUILD_VERSION/$zip" -OutFile $zip
+          Expand-Archive $zip -DestinationPath C:\gtk
+          # The asset may carry one wrapping directory; config.w32 wants <root>\include\gtk-4.0.
+          if (-not (Test-Path C:\gtk\include\gtk-4.0)) {
+            $inner = Get-ChildItem C:\gtk -Directory | Where-Object { Test-Path "$($_.FullName)\include\gtk-4.0" } | Select-Object -First 1
+            if (-not $inner) { throw 'unexpected gvsbuild zip layout' }
+            Get-ChildItem $inner.FullName | Move-Item -Destination C:\gtk
+            Remove-Item $inner.FullName -Recurse
+          }
+          Get-ChildItem C:\gtk
+
+      # phpize.bat (devel pack) -> configure.js from config.w32 -> configure -> nmake, inside the
+      # SDK shell so cl/link/nmake for the VS series PHP was built with are on PATH. The build
+      # log is kept: a compiler warning in src\ fails the job (config.w32 sets /W3; the
+      # counterpart of ci.sh's warning gate, without /WX so system headers cannot break it).
+      - name: Build php_gtk4.dll
+        shell: cmd
+        run: |
+          set "PATH=${{ steps.devel.outputs.dir }};%PATH%"
+          echo phpize ^&^& configure --with-gtk4=%GTK4_ROOT% ^&^& nmake > build-task.bat
+          call C:\php-sdk\phpsdk-${{ env.PHP_SDK_VS }}-x64.bat -t build-task.bat > build.log 2>&1
+          set RC=%ERRORLEVEL%
+          type build.log
+          if not "%RC%"=="0" exit /b %RC%
+          dir /s /b x64\*.dll
+
+      - name: No compiler warnings in src
+        run: |
+          $hits = Select-String -Path build.log -Pattern '\\src\\.*warning C\d+' -CaseSensitive:$false
+          if ($hits) { $hits | ForEach-Object { Write-Host $_.Line }; throw 'compiler warnings in src\ (see above)' }
+
+      - name: Extension loads and reports the right version
+        run: |
+          $dll = (Get-ChildItem -Recurse x64 -Filter php_gtk4.dll | Select-Object -First 1).FullName
+          "GTK4_DLL=$dll" >> $env:GITHUB_ENV
+          $env:PATH = "$env:GTK4_ROOT\bin;$env:PATH"
+          $want = '${{ inputs.expect-version }}'
+          if ($want -eq '') { $want = (Get-Content VERSION -Raw).Trim() }
+          $got = php -n -dextension="$dll" -r 'echo phpversion("gtk4");'
+          if ($LASTEXITCODE -ne 0) { throw 'php_gtk4.dll did not load' }
+          if ($got -ne $want) { throw "php_gtk4.dll reports '$got', expected '$want'" }
+          php -n -dextension="$dll" -r 'echo Gtk4\BUILD_INFO, " ", Gtk4\FEATURES, "\n";'
+          "${{ inputs.dll-name }} -> $got (GTK from gvsbuild $env:GVSBUILD_VERSION)" >> $env:GITHUB_STEP_SUMMARY
+
+      - name: Cache Composer packages
+        if: inputs.run-tests
+        uses: actions/cache@v6
+        with:
+          path: vendor
+          key: composer-win-php${{ inputs.php }}-${{ hashFiles('composer.lock') }}
+
+      - name: Install PHPUnit
+        if: inputs.run-tests
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      # The runner session has a desktop, which is all GDK's win32 backend needs.
+      - name: Run PHPUnit
+        if: inputs.run-tests
+        shell: cmd
+        run: tests\run.cmd --log-junit phpunit-junit.xml --display-warnings
+
+      - name: Upload PHPUnit report
+        if: inputs.run-tests && always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: phpunit-junit-windows-php${{ inputs.php }}-${{ inputs.ts }}
+          path: phpunit-junit.xml
+          if-no-files-found: ignore
+
+      - name: Stage the dll under its artifact name
+        run: |
+          New-Item -ItemType Directory dist | Out-Null
+          Copy-Item $env:GTK4_DLL "dist\${{ inputs.dll-name }}"
+
+      - name: Upload php_gtk4.dll
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ inputs.artifact }}
+          path: dist/${{ inputs.dll-name }}
+          if-no-files-found: error
+          retention-days: 7

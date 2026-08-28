@@ -114,8 +114,10 @@ void variant_to_php(GVariant *v, zval *rv) {
   ZVAL_NULL(rv);
 }
 
+namespace {
+
 // True for a list (0..n-1 keys) whose values are all strings -> inferred as "as".
-static bool array_is_string_list(HashTable *ht) {
+bool array_is_string_list(HashTable *ht) {
   if (!zend_array_is_list(ht)) return false;
   zval *item;
   // NOLINTNEXTLINE(readability-math-missing-parentheses) Zend macro expansion
@@ -127,12 +129,13 @@ static bool array_is_string_list(HashTable *ht) {
 }
 
 // Throw the TypeError for a value that does not fit `type` and return nullptr.
-static GVariant *fail(zval *value, const GVariantType *type) {
+GVariant *fail(zval *value, const GVariantType *type) {
   gchar *ts = type != nullptr ? g_variant_type_dup_string(type) : g_strdup("(inferred)");
   zend_type_error("cannot convert %s to GVariant type %s", zend_zval_value_name(value), ts);
   g_free(ts);
   return nullptr;
 }
+}  // namespace
 
 // PHP value -> GVariant of `type` (or inferred when nullptr); see variant.h.
 GVariant *php_to_variant(zval *value, const GVariantType *type) {

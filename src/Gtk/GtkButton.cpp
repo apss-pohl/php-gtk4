@@ -248,7 +248,8 @@ void vfunc_thunk_activate(GtkButton *self) {
   report_pending_exception("GtkButton::vfunc_activate");
 }
 
-// vfunc installer: GTK_BUTTON_CLASS->activate (called from class_init of a PHP subtype)
+// vfunc installer: GTK_BUTTON_CLASS->activate (called from class_init / iface_init of a PHP
+// subtype)
 void vfunc_install_activate(gpointer klass) {
   GTK_BUTTON_CLASS(klass)->activate = vfunc_thunk_activate;
 }
@@ -271,7 +272,7 @@ void vfunc_thunk_clicked(GtkButton *self) {
   report_pending_exception("GtkButton::vfunc_clicked");
 }
 
-// vfunc installer: GTK_BUTTON_CLASS->clicked (called from class_init of a PHP subtype)
+// vfunc installer: GTK_BUTTON_CLASS->clicked (called from class_init / iface_init of a PHP subtype)
 void vfunc_install_clicked(gpointer klass) {
   GTK_BUTTON_CLASS(klass)->clicked = vfunc_thunk_clicked;
 }

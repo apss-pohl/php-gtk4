@@ -121,7 +121,6 @@ namespace phpgtk {
 // MINIT: bind the PHP class to GDK_TYPE_RGBA with its field table.
 void register_GdkRGBA(zend_class_entry *ce) {
   register_boxed(
-      "GdkRGBA",
       BoxedClass{.type = GDK_TYPE_RGBA, .ce = ce, .fields = fields, .read = read, .write = write});
 }
 }  // namespace phpgtk
