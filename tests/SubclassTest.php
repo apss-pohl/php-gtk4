@@ -1,0 +1,170 @@
+<?php
+
+declare(strict_types=1);
+
+namespace PhpGtk4\Tests;
+
+use Gtk4\GListStore;
+use Gtk4\GtkBox;
+use Gtk4\GtkButton;
+use Gtk4\GtkFilter;
+use Gtk4\GtkFilterListModel;
+use Gtk4\GtkFilterMatch;
+use Gtk4\GtkLabel;
+use Gtk4\GtkOrientation;
+use Gtk4\GtkSizeRequestMode;
+use Gtk4\GtkWidget;
+use Gtk4\PhpValue;
+use PhpGtk4\Tests\Subclass\BigSquare;
+use PhpGtk4\Tests\Subclass\EvenFilter;
+use PhpGtk4\Tests\Subclass\HelloLabel;
+use PhpGtk4\Tests\Subclass\NativeChain;
+use PhpGtk4\Tests\Subclass\Square;
+use PhpGtk4\Tests\Subclass\Throwing;
+use PhpGtk4\Tests\Subclass\TitledWindow;
+use PhpGtk4\Tests\Subclass\VBox;
+
+/** src/core/subtype: PHP subclasses as real GTypes, vfunc_* overrides, construct properties. */
+final class SubclassTest extends GtkTestCase
+{
+    public function testAbstractClassIsConstructibleOnlyThroughASubclass(): void
+    {
+        $sq = new Square();
+        self::assertInstanceOf(GtkWidget::class, $sq);
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessage('subclass it in PHP');
+        $class = self::className(GtkWidget::class);
+        new $class();
+    }
+
+    private static function className(string $name): string
+    {
+        return $name;  // hides the literal from static analysis
+    }
+
+    public function testMeasureVfuncDrivesGtkGeometry(): void
+    {
+        $sq = new Square();
+        self::assertSame([40, 40, -1, -1], $sq->measure(GtkOrientation::Horizontal, -1));
+        self::assertSame([60, 60, -1, -1], $sq->measure(GtkOrientation::Vertical, -1));
+        self::assertSame(2, $sq->measured, 'GTK called the PHP method');
+        self::assertSame(GtkSizeRequestMode::ConstantSize, $sq->get_request_mode());
+    }
+
+    public function testParentChainingAcrossTwoPhpLevels(): void
+    {
+        $big = new BigSquare();
+        self::assertSame([140, 140, -1, -1], $big->measure(GtkOrientation::Horizontal, -1));
+        self::assertSame(1, $big->measured, 'parent::vfunc_measure() ran Square\'s override once');
+    }
+
+    public function testParentChainingReachesGtk(): void
+    {
+        $w = new NativeChain();
+        self::assertSame([7, 7, -1, -1], $w->measure(GtkOrientation::Horizontal, -1));
+        self::assertSame([0, 0], array_slice($w->native, 0, 2), 'GtkWidget\'s own measure() reports nothing');
+    }
+
+    public function testNativeVfuncMethodOnANativeInstance(): void
+    {
+        // vfunc_measure() on a plain GtkLabel is GtkLabel's C implementation, same as measure()
+        $l = new GtkLabel('abc');
+        $viaGtk = $l->measure(GtkOrientation::Horizontal, -1);
+        $direct = $l->vfunc_measure(GtkOrientation::Horizontal, -1);
+        self::assertSame(array_slice($viaGtk, 0, 2), array_slice($direct, 0, 2));
+        self::assertGreaterThan(0, $direct[0]);
+    }
+
+    public function testFilterWrittenInPhp(): void
+    {
+        $store = new GListStore(PhpValue::class);
+        foreach ([1, 2, 3, 4, 5, 6] as $i) {
+            $store->append(new PhpValue($i));
+        }
+        $filter = new EvenFilter();
+        self::assertInstanceOf(GtkFilter::class, $filter);
+        self::assertSame(GtkFilterMatch::Some, $filter->get_strictness());
+        $model = new GtkFilterListModel($store, $filter);
+        self::assertSame(3, $model->get_n_items());
+        self::assertSame(6, $filter->calls, 'GTK matched every item through the PHP vfunc');
+        $item = $model->get_item(0);
+        self::assertInstanceOf(PhpValue::class, $item);
+        self::assertSame(2, $item->get_value());
+        self::assertTrue($filter->match(new PhpValue(8)), 'match() dispatches to the PHP override too');
+        self::assertFalse($filter->match(new PhpValue(9)));
+    }
+
+    public function testConstructorArgumentsBecomeConstructProperties(): void
+    {
+        $box = new VBox('x');
+        self::assertSame('x', $box->tag);
+        self::assertSame(7, $box->get_spacing());
+        self::assertSame(GtkOrientation::Vertical, $box->get_orientation());
+        self::assertInstanceOf(GtkBox::class, $box);
+    }
+
+    public function testRenamedConstructorArgument(): void
+    {
+        // gtk_label_new(str) sets "label": gen/ctor-props.txt maps it for the subtype path
+        $label = new HelloLabel('hello');
+        self::assertSame('hello', $label->get_text());
+        self::assertSame(HelloLabel::class, $label::class);
+    }
+
+    public function testRootSubtypeFollowsTheOwnershipRule(): void
+    {
+        $win = new TitledWindow();
+        self::assertSame('titled', $win->get_title());
+        $weak = \WeakReference::create($win);
+        unset($win);
+        $again = $weak->get();
+        self::assertInstanceOf(TitledWindow::class, $again, 'the toplevel list holds it, the handle stays');
+        $again->destroy();
+        unset($again);
+        self::assertNull($weak->get());
+    }
+
+    public function testIdentityAndClassSurviveGtkRoundTrip(): void
+    {
+        $box = new GtkBox(GtkOrientation::Horizontal, 0);
+        $box->append(new Square());
+        $child = $box->get_first_child();
+        self::assertInstanceOf(Square::class, $child);
+        self::assertSame([40, 40, -1, -1], $child->measure(GtkOrientation::Horizontal, -1));
+    }
+
+    public function testThrowingVfuncGoesThroughTheExceptionBoundary(): void
+    {
+        $w = new Throwing();
+        $result = null;
+        $seen = $this->captureHandlerException(function () use ($w, &$result): void {
+            $result = $w->measure(GtkOrientation::Horizontal, -1);
+        });
+        self::assertSame([0, 0, -1, -1], $result, 'GTK got the fallback');
+        self::assertNotNull($seen);
+        self::assertSame(['measure failed', 'GtkWidget::vfunc_measure'], [$seen[0], $seen[1]]);
+    }
+
+    public function testPlainWrapperSubclassOfAFinalClassStillWorks(): void
+    {
+        // GtkLabel is final in GIR? No - GtkFilterListModel is: no GType for a PHP subclass of it,
+        // `new` builds the native class and the PHP object is a plain wrapper subclass.
+        $sub = new class (new GListStore(PhpValue::class), null) extends GtkFilterListModel {
+            public int $x = 1;
+        };
+        self::assertSame(0, $sub->get_n_items());
+        self::assertSame(1, $sub->x);
+    }
+
+    public function testSubclassOfAConcreteClassGetsItsOwnGType(): void
+    {
+        $b = new class extends GtkButton {
+            public function vfunc_clicked(): void
+            {
+                $this->set_label('clicked from vfunc');
+            }
+        };
+        $b->emit('clicked');
+        self::assertSame('clicked from vfunc', $b->get_label(), 'the clicked class handler is the PHP method');
+    }
+}

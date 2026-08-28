@@ -1,0 +1,5 @@
+# Constructor arguments that are construct properties under another name, so that a PHP
+# subclass (core/subtype.h) can be built with the same `new` arguments as the native class:
+#   Ns.Type.param property
+# Everything else matches by name (`_` -> `-`); gen/report.md lists what does not match.
+Gtk.Label.str label

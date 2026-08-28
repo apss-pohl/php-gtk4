@@ -1,0 +1,7 @@
+# <Ns.Type.member>  <reason> - members (or `*` for the class) left out of the generated smoke
+# tests (tests/Generated): round trips that GTK legitimately does not honour.
+Gdk.Texture.*   factories need real image data (TextureTest covers it)
+Gio.Application.set_application_id   'smoke' is not a valid application id (reverse-DNS); GTK rejects it
+Gio.Application.application_id       same, as a property
+Gio.Application.set_resource_base_path   must start with '/'; 'smoke' is rejected
+Gio.Application.resource_base_path       same, as a property

@@ -1,0 +1,5 @@
+# <Ns.Type.method>  <reason> - members the binding deliberately does not expose.
+Gio.ApplicationFlags.flags_none   deprecated enumerator (GLIB_DEPRECATED_ENUMERATOR is not in the GIR); DEFAULT_FLAGS is the name
+Gdk.Texture.new_from_resource   g_error()s (aborts the process) on an invalid resource path - not a PHP-safe API
+Gtk.Application.inhibit     crashes inside GTK when the window has no surface / the app is not registered
+Gtk.Application.uninhibit   pairs with inhibit

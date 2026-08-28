@@ -1,0 +1,31 @@
+# Wave 0: the classes that exist hand-written today (docs/PLAN.md §3 "Rollout").
+# One qualified GIR name per line; parents, same-namespace interfaces and the
+# enums used by kept signatures are pulled in automatically.
+Gtk.Widget
+Gtk.Window
+Gtk.Button
+Gtk.Label
+Gtk.Box
+Gtk.DrawingArea
+Gtk.Filter
+Gtk.CustomFilter
+Gtk.FilterListModel
+Gtk.Sorter
+Gtk.CustomSorter
+Gtk.SortListModel
+Gio.Application
+Gtk.Application
+Gtk.Orientable
+Gtk.Root
+Gdk.Texture
+Gio.ListModel
+Gio.ListStore
+Gio.Action
+Gio.ActionMap
+Gio.ActionGroup
+Gio.SimpleAction
+Gtk.Align
+Gtk.Orientation
+Gtk.FilterChange
+Gtk.SorterChange
+Gio.ApplicationFlags

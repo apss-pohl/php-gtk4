@@ -1,0 +1,9 @@
+# Types the generator must know (as parents and parameter/return types) but never
+# emits: their src/<Ns>/<Type>.cpp and stub section are owned by hand.
+GObject.Object
+GObject.ParamSpec
+GLib.MainLoop
+GLib.Error
+Gdk.RGBA
+Gdk.Rectangle
+cairo.Context
