@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -39,7 +40,7 @@ final class DocsTest extends TestCase
         }
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('docs')]
+    #[DataProvider('docs')]
     public function testMentionedRepositoryPathsExist(string $doc): void
     {
         $md = (string) file_get_contents(self::ROOT . '/' . $doc);

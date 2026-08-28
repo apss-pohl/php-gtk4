@@ -67,6 +67,7 @@ void phpvalue_request_shutdown() {
     if (!Z_ISUNDEF(self->value)) zval_ptr_dtor(&self->value);
     ZVAL_UNDEF(&self->value);
   }
+  live().clear();  // instances GTK keeps past this request finalize with nothing to release
 }
 
 }  // namespace phpgtk

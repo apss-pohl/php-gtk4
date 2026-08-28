@@ -171,11 +171,16 @@ ZEND_METHOD(Gtk4_GtkApplication, set_accels_for_action) {
   g_strfreev(accels_v);
 }
 
+// vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
+namespace {
+
 // vfunc thunk: GTK_APPLICATION_CLASS->window_added -> $this->vfunc_window_added() on a PHP subclass
-static void vfunc_thunk_window_added(GtkApplication *self, GtkWindow *window) {
+void vfunc_thunk_window_added(GtkApplication *self, GtkWindow *window) {
   zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_window_added", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_window_added", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
     auto *native = GTK_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->window_added != nullptr) native->window_added(self, window);
     return;
@@ -186,7 +191,6 @@ static void vfunc_thunk_window_added(GtkApplication *self, GtkWindow *window) {
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
   for (zval &arg : args) zval_ptr_dtor(&arg);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
@@ -194,9 +198,40 @@ static void vfunc_thunk_window_added(GtkApplication *self, GtkWindow *window) {
 }
 
 // vfunc installer: GTK_APPLICATION_CLASS->window_added (called from class_init of a PHP subtype)
-static void vfunc_install_window_added(gpointer klass) {
+void vfunc_install_window_added(gpointer klass) {
   GTK_APPLICATION_CLASS(klass)->window_added = vfunc_thunk_window_added;
 }
+
+// vfunc thunk: GTK_APPLICATION_CLASS->window_removed -> $this->vfunc_window_removed() on a PHP
+// subclass
+void vfunc_thunk_window_removed(GtkApplication *self, GtkWindow *window) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_window_removed", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->window_removed != nullptr) native->window_removed(self, window);
+    return;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  wrap(window != nullptr ? G_OBJECT(window) : nullptr, &argv[0]);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkApplication::vfunc_window_removed");
+}
+
+// vfunc installer: GTK_APPLICATION_CLASS->window_removed (called from class_init of a PHP subtype)
+void vfunc_install_window_removed(gpointer klass) {
+  GTK_APPLICATION_CLASS(klass)->window_removed = vfunc_thunk_window_removed;
+}
+
+}  // namespace
 
 /**
  * Gtk4\GtkApplication::vfunc_window_added(GtkWindow $window): void
@@ -225,34 +260,6 @@ ZEND_METHOD(Gtk4_GtkApplication, vfunc_window_added) {
   GObject *window_o = unwrap(window, GTK_TYPE_WINDOW);
   if (window_o == nullptr) RETURN_THROWS();
   klass->window_added(self, GTK_WINDOW(window_o));
-}
-
-// vfunc thunk: GTK_APPLICATION_CLASS->window_removed -> $this->vfunc_window_removed() on a PHP
-// subclass
-static void vfunc_thunk_window_removed(GtkApplication *self, GtkWindow *window) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_window_removed", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->window_removed != nullptr) native->window_removed(self, window);
-    return;
-  }
-  std::array<zval, 1> args{};
-  zval *argv = args.data();
-  wrap(window != nullptr ? G_OBJECT(window) : nullptr, &argv[0]);
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  for (zval &arg : args) zval_ptr_dtor(&arg);
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkApplication::vfunc_window_removed");
-}
-
-// vfunc installer: GTK_APPLICATION_CLASS->window_removed (called from class_init of a PHP subtype)
-static void vfunc_install_window_removed(gpointer klass) {
-  GTK_APPLICATION_CLASS(klass)->window_removed = vfunc_thunk_window_removed;
 }
 
 /**

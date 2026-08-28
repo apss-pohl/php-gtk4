@@ -46,5 +46,7 @@ gpointer unwrap_fundamental(zval *zv, GType expected);
 }  // namespace phpgtk
 
 // In a ZEND_METHOD of a fundamental class: `GParamSpec *s = PHPGTK_FUNDAMENTAL_SELF(GParamSpec);`
+// NOLINTBEGIN(bugprone-macro-parentheses) `ctype` is a type name in a cast, not an expression
 #define PHPGTK_FUNDAMENTAL_SELF(ctype) \
-  static_cast<ctype *>(phpgtk::fundamental_from_zval(ZEND_THIS)->instance)
+  (static_cast<ctype *>(phpgtk::fundamental_from_zval(ZEND_THIS)->instance))
+// NOLINTEND(bugprone-macro-parentheses)

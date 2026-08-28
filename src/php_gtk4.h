@@ -36,6 +36,7 @@ extern "C" {
 #endif
 
 extern zend_module_entry gtk4_module_entry;
+// NOLINTNEXTLINE(readability-identifier-naming) the name Zend's static-build glue expects
 #define phpext_gtk4_ptr &gtk4_module_entry
 
 // `const char *` that may be NULL (transfer none) -> ?string.

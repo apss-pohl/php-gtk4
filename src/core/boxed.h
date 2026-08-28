@@ -3,7 +3,7 @@
 // clone makes another copy, and struct fields are exposed as PHP properties.
 //
 // Boxed types that map better to plain PHP values are converted in marshal
-// instead of getting a handle: GStrv <-> list<string> (later GBytes <-> string,
+// instead of getting a handle: GStrv <-> list<string> (likewise GBytes <-> string,
 // GError -> exception).
 #pragma once
 #include "php_gtk4.h"
@@ -54,4 +54,5 @@ gpointer unwrap_boxed(zval *zv, GType expected);
 }  // namespace phpgtk
 
 // In a ZEND_METHOD of a boxed class: `GdkRGBA *c = PHPGTK_BOXED_SELF(GdkRGBA);`
-#define PHPGTK_BOXED_SELF(ctype) static_cast<ctype *>(phpgtk::boxed_from_zval(ZEND_THIS)->data)
+// NOLINTNEXTLINE(bugprone-macro-parentheses) `ctype` is a type name in a cast, not an expression
+#define PHPGTK_BOXED_SELF(ctype) (static_cast<ctype *>(phpgtk::boxed_from_zval(ZEND_THIS)->data))

@@ -77,7 +77,6 @@ static void pin_gtk_library() {
   Dl_info info{};
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast) dladdr wants a data pointer
   if (dladdr(reinterpret_cast<const void *>(&gtk_init), &info) != 0 && info.dli_fname != nullptr) {
-    // NOLINTNEXTLINE(hicpp-signed-bitwise) glibc flag macros
     void *handle = dlopen(info.dli_fname, RTLD_NOW | RTLD_NOLOAD | RTLD_NODELETE);
     (void)handle;  // deliberately leaked: the reference is the point
   }

@@ -136,11 +136,15 @@ ZEND_METHOD(Gtk4_GtkDrawingArea, set_draw_func) {
   callback_drain();  // the previous draw func's notify ran inside the setter
 }
 
+// vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
+namespace {
+
 // vfunc thunk: GTK_DRAWING_AREA_CLASS->resize -> $this->vfunc_resize() on a PHP subclass
-static void vfunc_thunk_resize(GtkDrawingArea *self, int width, int height) {
+void vfunc_thunk_resize(GtkDrawingArea *self, int width, int height) {
   zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_resize", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_resize", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
     auto *native = GTK_DRAWING_AREA_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->resize != nullptr) native->resize(self, width, height);
     return;
@@ -152,7 +156,6 @@ static void vfunc_thunk_resize(GtkDrawingArea *self, int width, int height) {
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 2, args.data());
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
   for (zval &arg : args) zval_ptr_dtor(&arg);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
@@ -160,9 +163,11 @@ static void vfunc_thunk_resize(GtkDrawingArea *self, int width, int height) {
 }
 
 // vfunc installer: GTK_DRAWING_AREA_CLASS->resize (called from class_init of a PHP subtype)
-static void vfunc_install_resize(gpointer klass) {
+void vfunc_install_resize(gpointer klass) {
   GTK_DRAWING_AREA_CLASS(klass)->resize = vfunc_thunk_resize;
 }
+
+}  // namespace
 
 /**
  * Gtk4\GtkDrawingArea::vfunc_resize(int $width, int $height): void

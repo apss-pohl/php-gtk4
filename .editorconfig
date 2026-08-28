@@ -1,0 +1,29 @@
+# Mirrors the formatters: .clang-format (C++: 2 spaces, 100 cols), phpcs/php-cs-fixer (PHP: PSR-12,
+# 4 spaces, 120 cols), .markdownlint-cli2.jsonc (Markdown: 110 cols). The tools are the authority.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{cpp,h,c}]
+indent_style = space
+indent_size = 2
+max_line_length = 100
+
+[*.{php,inc}]
+indent_style = space
+indent_size = 4
+max_line_length = 120
+
+[*.md]
+max_line_length = 110
+trim_trailing_whitespace = false
+
+[{Makefile,*.mk}]
+indent_style = tab
+
+[*.{cmd,bat}]
+end_of_line = crlf

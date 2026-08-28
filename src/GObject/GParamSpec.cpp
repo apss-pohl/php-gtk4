@@ -12,6 +12,8 @@ static GParamSpec *self_spec(zend_execute_data *execute_data) {
 
 /**
  * Gtk4\GParamSpec::get_name(): string
+ *
+ * GTK's property name with dashes, e.g. `default-width`.
  */
 ZEND_METHOD(Gtk4_GParamSpec, get_name) {
   ZEND_PARSE_PARAMETERS_NONE();
@@ -20,6 +22,8 @@ ZEND_METHOD(Gtk4_GParamSpec, get_name) {
 
 /**
  * Gtk4\GParamSpec::get_nick(): ?string
+ *
+ * Short human-readable name, or null.
  */
 ZEND_METHOD(Gtk4_GParamSpec, get_nick) {
   ZEND_PARSE_PARAMETERS_NONE();
@@ -28,6 +32,8 @@ ZEND_METHOD(Gtk4_GParamSpec, get_nick) {
 
 /**
  * Gtk4\GParamSpec::get_blurb(): ?string
+ *
+ * Longer description, or null.
  */
 ZEND_METHOD(Gtk4_GParamSpec, get_blurb) {
   ZEND_PARSE_PARAMETERS_NONE();
@@ -56,6 +62,8 @@ ZEND_METHOD(Gtk4_GParamSpec, get_flags) {
 
 /**
  * Gtk4\GParamSpec::is_readable(): bool
+ *
+ * Whether `get_property()` / `$obj->prop` may read it (G_PARAM_READABLE).
  */
 ZEND_METHOD(Gtk4_GParamSpec, is_readable) {
   ZEND_PARSE_PARAMETERS_NONE();
@@ -64,6 +72,8 @@ ZEND_METHOD(Gtk4_GParamSpec, is_readable) {
 
 /**
  * Gtk4\GParamSpec::is_writable(): bool
+ *
+ * Whether `set_property()` / `$obj->prop = ...` may write it (G_PARAM_WRITABLE).
  */
 ZEND_METHOD(Gtk4_GParamSpec, is_writable) {
   ZEND_PARSE_PARAMETERS_NONE();

@@ -10,6 +10,11 @@ on:
 permissions:
   contents: read
 
+# Superseded runs of the same ref are cancelled (a PR push while the previous one runs).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   php-tests:
     name: PHP ${{ matrix.php }}${{ matrix.ts == 'ts' && ' ZTS' || '' }}
@@ -45,7 +50,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            libgtk-4-dev xvfb build-essential
+            pkg-config libgtk-4-dev xvfb build-essential
 
       - name: Build extension (phpize)
         run: ./ci.sh --only=build
@@ -88,7 +93,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: phpt-failures-php${{ matrix.php }}
+          name: phpt-failures-php${{ matrix.php }}-${{ matrix.ts }}
           path: |
             tests/phpt/*.out
             tests/phpt/*.diff
@@ -118,7 +123,7 @@ jobs:
       - name: Install build deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libgtk-4-dev xvfb build-essential valgrind
+          sudo apt-get install -y --no-install-recommends pkg-config libgtk-4-dev xvfb build-essential valgrind
 
       - name: Install PHPUnit
         run: composer install --no-interaction --no-progress --prefer-dist
@@ -157,7 +162,7 @@ jobs:
       - name: Install build deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libgtk-4-dev xvfb build-essential gcovr
+          sudo apt-get install -y --no-install-recommends pkg-config libgtk-4-dev xvfb build-essential gcovr
 
       - name: Install PHPUnit
         run: composer install --no-interaction --no-progress --prefer-dist

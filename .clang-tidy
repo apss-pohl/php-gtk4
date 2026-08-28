@@ -22,6 +22,7 @@ Checks: >-
   -cppcoreguidelines-noexcept-swap,
   -cppcoreguidelines-avoid-non-const-global-variables,
   -performance-noexcept-swap,
+  -performance-enum-size,  # uint8_t bases for a two-case enum buy nothing and hurt readability
   -readability-convert-member-functions-to-static,
   -readability-make-member-function-const,
   -readability-implicit-bool-conversion,
@@ -74,5 +75,7 @@ CheckOptions:
   readability-identifier-naming.MemberCase: lower_case
   readability-identifier-naming.MacroDefinitionCase: UPPER_CASE
   readability-identifier-naming.TypeAliasCase: CamelCase
-HeaderFilterRegex: '^(src/|main\.h)'
+# ci.sh passes --header-filter (and --exclude-header-filter for the gen_stub *_arginfo.h)
+# explicitly: this key alone left src/**/*.h unlinted for TUs given with absolute -I paths.
+HeaderFilterRegex: '(^|/)src/'
 FormatStyle: file

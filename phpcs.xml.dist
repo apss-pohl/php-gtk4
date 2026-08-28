@@ -29,7 +29,7 @@
     </rule>
 
     <!-- gen/gir.php: the generator's data model (Type, Param, Func, Node) and the generator are
-         one program; splitting them into files would only spread a 1000-line script over six. -->
+         one program; splitting them into files would only spread one script over six. -->
     <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
         <exclude-pattern>gen/gir.php</exclude-pattern>
     </rule>

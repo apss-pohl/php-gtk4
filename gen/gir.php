@@ -102,6 +102,8 @@ final class Node
     public array $members = [];
     /** @var list<string> qualified names */
     public array $implements = [];
+    /** @var list<string> qualified names an interface requires (`interface X extends Y` when Y is one) */
+    public array $prerequisites = [];
     public ?string $parent = null;      // qualified
     public bool $abstract = false;
     public bool $final = false;
@@ -173,6 +175,8 @@ final class Gir
                 assert($impl instanceof \DOMElement);
                 if ($impl->localName === 'implements') {
                     $node->implements[] = self::qualify($ns, $impl->getAttribute('name'));
+                } else {
+                    $node->prerequisites[] = self::qualify($ns, $impl->getAttribute('name'));
                 }
             }
             foreach ($x->query('g:method|g:constructor|g:function', $el) as $f) {
@@ -955,7 +959,8 @@ final class Generator
             $parentPhp = 'GObject';
         }
         $ifaces = [];
-        foreach ($n->implements as $i) {
+        // an interface's prerequisites that are interfaces become `extends` (GtkSelectionModel: GListModel)
+        foreach ($n->kind === 'interface' ? $n->prerequisites : $n->implements as $i) {
             if ($this->known($i) && $this->gir->types[$i]->kind === 'interface') {
                 $ifaces[] = phpClass($this->gir->types[$i]);
             }
@@ -1412,7 +1417,8 @@ final class Generator
         }
         $classMacro = "{$castMacro}_CLASS";
         $stub = [];
-        $cpp = [];
+        $thunks = [];
+        $natives = [];
         $reg = [];
         foreach ($n->vfuncs as $v) {
             $label = "vfunc {$v->name}";
@@ -1520,13 +1526,17 @@ final class Generator
             }
             $seenNames[$phpName] = true;
             $stub[] = $m[1];
-            $cpp[] = $thunk;
-            $cpp[] = $m[2];
+            $thunks[] = $thunk;
+            $natives[] = $m[2];
             $reg[] = "  register_vfunc($typeMacro, \"{$v->name}\", vfunc_install_{$v->name});";
         }
         if ($reg === []) {
             return [[], [], ''];
         }
+        // file-local thunks and installers in one anonymous namespace (the convention for
+        // hand-written helpers in gen/overrides), the native vfunc_*() methods after it
+        $cpp = ["// vfunc thunks and installers: file-local, installed by class_init of a PHP subtype\n"
+            . "namespace {\n\n" . implode('', $thunks) . "}  // namespace\n\n", ...$natives];
         $regFn = "// MINIT: the vfunc thunks of $php (core/subtype.h).\nvoid register_vfuncs_{$php}() {\n"
             . implode("\n", $reg) . "\n}\n\n";
         return [$stub, $cpp, $regFn];
@@ -1571,10 +1581,13 @@ final class Generator
         }
         $l = [];
         $l[] = "// vfunc thunk: {$classMacro}->{$v->name} -> \$this->$phpName() on a PHP subclass";
-        $l[] = "static $retCt vfunc_thunk_{$v->name}(" . implode(', ', $cParams) . ') {';
+        $l[] = "$retCt vfunc_thunk_{$v->name}(" . implode(', ', $cParams) . ') {';
         $l[] = '  zval zself;';
-        $l[] = "  zend_function *fn = subtype_vfunc(G_OBJECT(self), \"$phpName\", &zself);";
-        $l[] = '  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK\'s own';
+        // An exception already pending (an earlier callback of this emission threw, Rethrow mode)
+        // must not be reported again by every later thunk: GTK's own implementation runs instead.
+        $l[] = "  zend_function *fn = EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), \"$phpName\", &zself)";
+        $l[] = '                                                 : nullptr;';
+        $l[] = '  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending';
         $l[] = "    auto *native = $classMacro(subtype_native_class(G_OBJECT(self)));";
         $nativeCall = "native->{$v->name}(" . implode(', ', $passArgs) . ')';
         if ($retCt === 'void') {
@@ -1598,11 +1611,13 @@ final class Generator
         }
         $argvExpr = $argc > 0 ? 'args.data()' : 'nullptr';
         $l[] = "  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, $argc, $argvExpr);";
-        $l[] = '  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {';
-        foreach ($resultConv as $c) {
-            $l[] = "    $c";
+        if ($resultConv !== []) {
+            $l[] = '  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {';
+            foreach ($resultConv as $c) {
+                $l[] = "    $c";
+            }
+            $l[] = '  }';
         }
-        $l[] = '  }';
         if ($argc > 0) {
             $l[] = '  for (zval &arg : args) zval_ptr_dtor(&arg);';
         }
@@ -1615,7 +1630,7 @@ final class Generator
         $l[] = '}';
         $l[] = '';
         $l[] = "// vfunc installer: {$classMacro}->{$v->name} (called from class_init of a PHP subtype)";
-        $l[] = "static void vfunc_install_{$v->name}(gpointer klass) {";
+        $l[] = "void vfunc_install_{$v->name}(gpointer klass) {";
         $l[] = "  $classMacro(klass)->{$v->name} = vfunc_thunk_{$v->name};";
         $l[] = '}';
         return implode("\n", $l) . "\n\n";
@@ -1881,10 +1896,15 @@ final class Generator
             if ($p->name === 'user_data' && in_array($p->type->name, ['gpointer', 'gconstpointer'], true)) {
                 return 'gpointer parameter';
             }
+            if ($p->direction === 'out' && $p->callerAllocates) {
+                // A caller-allocated out (gtk_widget_get_allocation(&rect)) is not a PHP argument:
+                // the convention returns outs, never fills a by-reference parameter (PLAN.md).
+                return "caller-allocates out parameter {$p->name} of type {$p->type->name} (needs an override)";
+            }
             if ($p->direction === 'out' && !$p->callerAllocates) {
                 $ct = $this->outCType($p->type);
                 if ($ct === null) {
-                    return "out parameter {$p->name} of type {$p->type->name}";
+                    return "out parameter `{$p->name}` of type {$p->type->name}";
                 }
                 $outs[] = ['name' => $p->name, 'ctype' => $ct[0], 'init' => $ct[1], 'add' => $ct[2]];
                 continue;
@@ -1901,7 +1921,7 @@ final class Generator
             }
             $m = $this->inParam($p, $trailingNullable && $f->kind !== 'method', count($ins) + 1);
             if ($m === null) {
-                return "parameter {$p->name} of type {$p->type->name}" . ($p->type->isArray ? ' (array)' : '');
+                return "parameter `{$p->name}` of type {$p->type->name}" . ($p->type->isArray ? ' (C array)' : '');
             }
             $ins[] = $m;
         }
@@ -2290,7 +2310,13 @@ final class Generator
         $rest = array_values(array_diff($minit, $enums));
         // order class registrations so that a parent's ce_ exists before use
         $ordered = [];
+        // hand-written classes exist before gen_minit.inc is included (src/gtk4.cpp MINIT)
         $defined = ['ce_GObject' => true];
+        foreach ($this->handwritten as $q) {
+            if (isset($this->gir->types[$q])) {
+                $defined['ce_' . phpClass($this->gir->types[$q])] = true;
+            }
+        }
         $pending = [];
         for ($i = 0; $i < count($rest); $i += 2) {
             $pending[] = [$rest[$i], $rest[$i + 1]];
@@ -2308,8 +2334,11 @@ final class Generator
                 }
             }
         }
-        foreach ($pending as [$decl]) {
-            $ordered[] = "  // UNRESOLVED PARENT: $decl";
+        if ($pending !== []) {
+            // a silently unregistered class would only show up as "class not found" at runtime
+            throw new \RuntimeException('MINIT ordering: unresolved parent/interface for '
+                . implode(', ', array_map(fn($p) => $p[0], $pending))
+                . ' (allow-list the parent or add it to handwritten.txt)');
         }
         return "// GENERATED by gen/gir.php - the MINIT registration block, included by src/gtk4.cpp\n"
             . "// after the hand-written classes (ce_GObject and friends exist by then).\n"

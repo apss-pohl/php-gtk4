@@ -93,18 +93,14 @@ if test "$PHP_GTK4" != "no"; then
   PHP_SUBST([GTK4_SHARED_LIBADD])
 
   dnl Every .cpp under src/ is compiled; nothing to maintain when a class file is added
-  dnl (sorted for a reproducible link order). The build dirs below must list every
-  dnl subdirectory or an out-of-tree build cannot place the objects.
+  dnl (sorted for a reproducible link order). Every directory under src/ becomes a build dir
+  dnl (an out-of-tree build cannot place the objects otherwise) - derived, like the sources,
+  dnl so a new GIR namespace directory (src/Pango, src/Gsk) needs no edit here or in config.w32.
   GTK4_SOURCES=`cd "$srcdir" && find src -name '*.cpp' | LC_ALL=C sort | tr '\n' ' '`
   PHP_NEW_EXTENSION([gtk4], [$GTK4_SOURCES], [$ext_shared], [], [$GTK4_CXXFLAGS], [cxx])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/core])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/GLib])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/GObject])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/Gio])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/Gdk])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/Gtk])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/Cairo])
+  for gtk4_dir in `cd "$srcdir" && find src -type d -not -name '.libs' | LC_ALL=C sort`; do
+    PHP_ADD_BUILD_DIR([$ext_builddir/$gtk4_dir])
+  done
   PHP_ADD_INCLUDE([$ext_srcdir])
   PHP_ADD_INCLUDE([$ext_srcdir/src])
 fi

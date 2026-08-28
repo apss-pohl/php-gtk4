@@ -22,7 +22,7 @@ steps if the tree being pushed was never checked (a `--no-verify` commit). Skip 
 
 ## Hard constraints
 
-- **PHP 8.4+ only**, NTS. No compatibility shims for older PHP; use 8.4 features freely.
+- **PHP 8.4+ only**, NTS or ZTS. No compatibility shims for older PHP; use 8.4 features freely.
 - **C++20**, **GTK 4.14+** — guard anything newer with `GTK_CHECK_VERSION`. Never GTK 3 APIs.
 - **Naming is snake_case, final.** Methods mirror the C API minus the type prefix
   (`gtk_window_set_title` → `set_title`); properties keep GTK's names with underscores. No
@@ -33,17 +33,15 @@ steps if the tree being pushed was never checked (a `--no-verify` commit). Skip 
 
 ## Definition of done for a new class / method / constant
 
-All four in the same change, or CI rejects it:
+All four in the same change, or CI rejects it — the detail (what each of these means, the
+generator's part in it) is in CLAUDE.md "Definition of done", which is the authority:
 
-1. **Implementation** — `ZEND_METHOD(Gtk4_Class, name)` in `src/<Namespace>/<Class>.cpp` and
-   registration in `src/gtk4.cpp` MINIT (`register_class(...)` for GObject handles, parents first).
-2. **Tests** — a class per GTK class in `tests/`, extending `GtkTestCase`; every method exercised
-   at least once, including its error path.
-3. **Declaration** — `src/gtk4.stub.php` (typed signature, docblock, `@property` tags), then
-   `./ci.sh --only=stubs --fix` to regenerate `src/gtk4_arginfo.h`, `stubs/gtk4.php` and the
-   method comment blocks. Never edit generated files.
-4. **Example** — `examples/<Class>.php` returning `Demo::page(...)`, plus the class in
-   `Demo::SECTIONS` in `examples/bootstrap.php`. Visual, and it must not run itself.
+1. **Implementation** — generated from GIR for a GObject class (`gen/allowlist.txt`, overrides in
+   `gen/overrides/`), hand-written `ZEND_METHOD`s + `src/gtk4.cpp` MINIT registration otherwise.
+2. **Tests** — the generated smoke test, plus `tests/<Class>Test.php` for everything beyond it.
+3. **Declaration** — the stub (hand-written `src/gtk4.stub.php` or the generated per-namespace one),
+   then `./ci.sh --only=gen,stubs --fix`. Never edit generated files.
+4. **Example** — `examples/<Class>.php` returning `Demo::page(...)`, listed in `Demo::SECTIONS`.
 
 `EveryClassTest`, `RobustnessTest`, `ExampleTest` and `StubsTest` are generic — they pick up new
 classes automatically and must not be edited for one.

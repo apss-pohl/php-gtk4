@@ -1,6 +1,7 @@
 # stubs/
 
-`gtk4.php` — IDE stub, **generated** from the API declaration `src/gtk4.stub.php` by
+`gtk4.php` — IDE stub, **generated** from the hand-written `src/gtk4.stub.php` and every generated
+`src/<Ns>/<Ns>.stub.php` by
 `gen/ide-stub.php` (same declarations with dummy bodies so Intelephense/PhpStorm stay quiet,
 plus `__get/__set/__isset` on `GObject` so `@property` tags are honoured). Do not edit;
 `./ci.sh --only=stubs --fix` regenerates it together with `src/gtk4_arginfo.h`.

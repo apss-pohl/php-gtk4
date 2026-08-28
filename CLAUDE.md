@@ -90,7 +90,9 @@ bear -- make                           # compile_commands.json for clangd / clan
 
 ## Lint, QA, build, test — `./ci.sh`
 
-One script, same stages as GitHub Actions: `version` → `stubs` → `cpp-lint` → `md-lint` → `php-qa` →
+One script, same stages as GitHub Actions: `version` → `gen` (`gir.php --install` must reproduce
+the committed generated files — it regenerates in place even without `--fix` and fails on a diff,
+like `stubs`) → `stubs` → `cpp-lint` → `md-lint` → `php-qa` →
 `build` → `load` → `test` → `phpt` (php-src `run-tests.php` over `tests/phpt`), plus the opt-in `asan` (ASan+UBSan
 on the suite, LSan on `tests/scripts/stress.php`,
 `gtk4-asan.so`; `tests/asan-dlopen-shim.c` is preloaded ahead of libasan to strip `RTLD_DEEPBIND`
@@ -134,7 +136,9 @@ is rewrapped by hand. The stage prefers a global `markdownlint-cli2` and falls b
 ## PHP QA
 
 `php-qa` = phplint → phpcs (PSR-12) → php-cs-fixer (PER-CS 2.0) → phpstan (level max) over
-`tests/`, `examples/`, `gen/ide-stub.php`. Like `cpp-lint`, each formatter is **one** step that either
+the whole PHP side — `tests/`, `examples/`, `gen/*.php` (phpstan: `gen/gir.php` against a baseline,
+`phpstan-baseline-gir.neon`, that only shrinks), `bin/` and the hand-written stub for phplint — minus
+the vendored/generated files each config excludes. Like `cpp-lint`, each formatter is **one** step that either
 checks or fixes: without `--fix` phpcs reports and php-cs-fixer prints a diff; with `--fix` phpcbf and
 `php-cs-fixer fix` apply the changes and no diff is printed. phpcs still gates in `--fix` mode, because
 it is the only one that reports what no fixer can repair (line length above 120). Every tool runs on
@@ -150,13 +154,16 @@ excluded from the style tools. Configs: `phpstan.neon`, `.php-cs-fixer.dist.php`
 Every new class, method or constant ships with **all four** in the same change:
 
 1. the `ZEND_METHOD` implementation + registration in `src/gtk4.cpp` MINIT,
-2. **tests** in `tests/` — a test class per new GTK class (extend `GtkTestCase`), every method
-   exercised at least once, including its error path,
+2. **tests** in `tests/` — the generated smoke test (`tests/Generated/<Class>SmokeTest.php`) always;
+   a hand-written `tests/<Class>Test.php` (extend `GtkTestCase`) for every behaviour beyond
+   round-tripping — every hand-written method exercised at least once, including its error path,
 3. its declaration in **`src/gtk4.stub.php`** (typed signature, docblock, `@property` tags) +
    regenerated `src/gtk4_arginfo.h` and `stubs/gtk4.php` (`./ci.sh --only=stubs --fix`;
    `StubsTest`/CI enforce),
 4. **`examples/<Class>.php`** — one source file per registered class, named after it, ending in
-   `return Demo::page('<Class>', '<summary>', function (GtkWindow $win, GtkApplication $app) {...})`
+   `return Demo::page('<Class>', '<summary>', function (GtkWindow $win): GtkWidget {...})` (the
+   builder may take a second `GtkApplication $app` parameter; `page()` also accepts width, height
+   and an `$alone` callback for running stand-alone — see `examples/bootstrap.php`)
    and requiring `examples/bootstrap.php` (with `require_once`). The file *describes* a demo and runs
    nothing — `examples/demo.php` requires them all, so anything that ran itself would fire on import.
    That one application mounts every page (header, sidebar, content — all `GtkBox`); `demo.php
@@ -195,12 +202,16 @@ display, and calls `Gtk::init()` once.
   construction, setter/getter pairs and writable properties round-trip a sample value;
   `gen/smoke-skip.txt` lists what GTK does not honour. Never edit them; behaviour beyond that is
   tested by hand in `tests/<Class>Test.php` like everything else.
-- One test class per `src/core` module: `WrapTest`, `MarshalTest`, `SignalTest`, `ErrorTest`,
-  `PropertyAccessTest`, `RethrowModeTest`, `BoxedTest`, `ParamSpecTest`, `WidgetTest`, `ActionTest`
-  (variants + interfaces), `ShutdownTest`, `EnumTest`, `FoundationTest` (collections/fundamental/
-  out-params), `TextureTest` (+ `GError`), `ListStoreTest`, `FilterSortTest`, `DrawingAreaTest`
-  (+ `CairoContext`), `BoxTest`, plus `ExtensionTest`, `MainLoopTest` (GMainLoop + GLib sources),
-  `ApplicationTest`, `StubsTest`, `ExampleTest`, `EveryClassTest`, `RobustnessTest`, `DocsTest`. Extend `GtkTestCase`
+- One test class per `src/core` module (`WrapTest`, `MarshalTest`, `SignalTest`, `ErrorTest`,
+  `PropertyAccessTest`, `RethrowModeTest`, `BoxedTest`, `ParamSpecTest`, `EnumTest`, `FoundationTest`,
+  `SubclassTest` + `VfuncTest` for `subtype`, `MainLoopTest`, `ShutdownTest`), one per hand-tested
+  class (`WidgetTest`, `LabelTest`, `ButtonTest`, `BoxTest`, `ActionTest`, `TextureTest`,
+  `ListStoreTest`, `FilterSortTest`, `DrawingAreaTest`, `ApplicationTest`, …), and the meta tests
+  (`ExtensionTest`, `StubsTest`, `ExampleTest`, `EveryClassTest`, `RobustnessTest`, `DocsTest`,
+  `HeaderNamesTest`, `WorkflowsTest`). Every test that touches GTK extends `GtkTestCase`; the meta
+  tests that never load a widget extend PHPUnit's `TestCase` directly. Fixtures that subclass GTK
+  classes live in `tests/Subclass/` (namespace `PhpGtk4\Tests\Subclass`), script-only ones next to
+  their script in `tests/scripts/`. `GtkTestCase`
   — `$this->window()` gives a `GtkWindow` destroyed in
   `tearDown()`, `captureHandlerException()` installs a temporary `Gtk::set_exception_handler`,
   `latch()`/`latched()` for flags set from GTK callbacks, `opaque()` to pass deliberately wrong
@@ -226,19 +237,16 @@ display, and calls `Gtk::init()` once.
   exits normally; used by the `asan` (with LSan), `coverage` and `valgrind` stages. Extend it when
   adding runtime paths. `tests/lsan.supp` and `tests/valgrind.supp` may only contain third-party
   symbols.
-- `tests/run.sh` pins **`GDK_BACKEND=x11`** (and `GSK_RENDERER=cairo`, `GDK_DEBUG=gl-disable`): with
-  `WAYLAND_DISPLAY` set in a developer session GDK would ignore the Xvfb `DISPLAY` and run the suite
-  on the real compositor — GTK 4.14's Wayland backend then corrupts the heap after enough windows
-  are presented/destroyed (`malloc(): unaligned fastbin chunk`, write into a freed block inside
-  libgtk, zero frames of ours). Xvfb/X11 is the test target; Wayland is exercised manually.
+- `tests/run.sh` **forces `GDK_BACKEND=x11`** and unsets `WAYLAND_DISPLAY` (forced, not defaulted;
+  `GSK_RENDERER=cairo` and `GDK_DEBUG=gl-disable` stay overridable — docs/PLAN.md wants a
+  `GSK_RENDERER=gl` run). A desktop session exports `GDK_BACKEND=wayland`, GDK then prefers the real
+  compositor over the display Xvfb provides, and GTK 4.14's Wayland backend corrupts the heap
+  partway through the suite (`gtk_widget_queue_draw: assertion 'GTK_IS_WIDGET (widget)' failed`,
+  `malloc(): unaligned fastbin chunk`, a write into a freed block inside libgtk with zero frames of
+  ours). CI never saw it because runners have no compositor. Xvfb/X11 is the test target; Wayland
+  is exercised manually.
 - `tests/run.sh` forces `XDEBUG_MODE=off`: xdebug's develop-mode observer segfaults at request
   shutdown after `ReflectionMethod::invoke()` on internal methods. Not our bug; don't debug it.
-- It also forces `GDK_BACKEND=x11` and unsets `WAYLAND_DISPLAY` — **forced, not defaulted**. A
-  desktop session exports `GDK_BACKEND=wayland`, GDK then prefers the real compositor over the
-  display Xvfb provides, and GTK 4.14's Wayland backend corrupts the heap partway through the suite
-  (`gtk_widget_queue_draw: assertion 'GTK_IS_WIDGET (widget)' failed`, then a `malloc()` abort around
-  test 252). CI never saw it because runners have no compositor. `GSK_RENDERER` and `GDK_DEBUG` stay
-  overridable on purpose (docs/PLAN.md wants a `GSK_RENDERER=gl` run); the backend must not be.
 - Arginfo comes from the stub, argument parsing from `ZEND_PARSE_PARAMETERS_*` — arity/type
   violations are `ArgumentCountError`/`TypeError` (PHP 8 semantics).
 - GLib `CRITICAL` lines on stderr from `ErrorTest` are expected (the g_critical fallback path for
@@ -350,22 +358,29 @@ conventions here only.
   the stub declaration + the `ZEND_METHOD`) or the class prelude `gen/overrides/<Ns>.<Type>.cpp`
   (shared trampolines/statics); members deliberately not exposed go to `gen/skip.txt`; every skip
   is listed in `gen/report.md`. `src/core/` holds no `ZEND_METHOD`s. Registration lives in
-  `src/gtk4.cpp` MINIT (hand-written classes) and the generated `src/gen_minit.inc`, in exactly
-  three shapes:
+  `src/gtk4.cpp` MINIT (hand-written classes) and the generated `src/gen_minit.inc`, in four
+  shapes:
   `register_class("GTypeName", register_class_Gtk4_X(parent_ce), G_TYPE_X)` for GObject handles,
   parents first — `register_class()` installs `create_object` (inherited by subclasses registered
   afterwards) and records the GType → class mapping `wrap()` uses — pass the `*_TYPE_*` macro, never
   look types up by name at MINIT (GTK registers GTypes lazily); `register_enum/flags(GTK_TYPE_X,
-  register_class_Gtk4_X())` for enums; and `register_X(register_class_Gtk4_X())` for everything
-  else (boxed, fundamental, own object layout), declared in `src/classes.h` and defined next to
-  the class. Interfaces (`GAction`, `GActionMap`, `GActionGroup`, `GListModel`) come from
+  register_class_Gtk4_X())` for enums; `register_interface("GTypeName", ce, G_TYPE_X)` for
+  interfaces (registry entries, no `create_object`); and `register_X(register_class_Gtk4_X())` for
+  everything else (boxed, fundamental, own object layout), declared in `src/classes.h` and defined
+  next to the class — **that last shape is the fourth place for hand code** besides `gen/overrides/`,
+  `gen/skip.txt` and `handwritten.txt`: a non-GObject type is registered by hand in `src/classes.h`
+  and `src/gtk4.cpp`, the generator only emits `gen_minit.inc` for GObject classes, interfaces and
+  enums. Interfaces (`GAction`, `GActionMap`, `GActionGroup`, `GListModel`) come from
   `implements` in the stub (gen_stub emits `zend_class_implements`); when an interface's methods
   have one C implementation, write it **once** as `ZEND_METHOD(Gtk4_<Interface>, m)`
   (`src/Gio/GListModel.cpp`, prototypes in `src/gen_prototypes.h`) and tag every implementing class's method
   in the stub with `/** @implementation-alias Gtk4\<Interface>::m */` — gen_stub emits a
   `ZEND_MALIAS`, no per-class C++. `G_TYPE_POINTER` is unsupported on purpose.
-- `gen/` — `gen_stub.php` (vendored), `ide-stub.php`; the GIR generator (docs/PLAN.md milestone 3) will
-  live here and emit stub sections, `ZEND_METHOD` skeletons and the MINIT block.
+- `gen/` — `gir.php` (the GIR generator: per-namespace stubs, `src/<Ns>/<Class>.cpp`, `gen_minit.inc`,
+  `gen_prototypes.h`, vfunc thunks, smoke tests, example skeletons, `report.md`, the map's status
+  column via `map-status.php`) with its inputs `allowlist.txt`, `handwritten.txt`, `skip.txt`,
+  `ctor-props.txt`, `smoke-skip.txt` and `overrides/`; `gen_stub.php` (vendored from php-src),
+  `ide-stub.php`, `method-comments.php`. `gen/README.md` has the flow diagram.
 - **Everything PHP-visible is in the `Gtk4\` namespace**; PHP class name = `Gtk4\<GTypeName>`, and
   `wrap()` walks the GType parent chain to the nearest registered class. Constants:
   `Gtk4\VERSION`, `BUILD_INFO`, `FEATURES`. One `Object` struct serves every class (all per-class
@@ -391,14 +406,31 @@ conventions here only.
 - Actions: `GSimpleAction` + `GtkApplication::add_action()`; GVariant parameters/states are plain
   PHP values. `has_action/list_actions/activate_action` only work once the app is registered
   (from `startup` on); `add/remove/lookup_action` always. Errors raised *to* PHP from methods use the PHP 8
-  vocabulary, by what went wrong: bad *argument* → `zend_argument_value_error`/`zend_type_error`/
-  `zend_value_error` (`ValueError`/`TypeError`); the wrapped object is in the wrong *state* for the
-  call (running loop, stateless action) → `spl_ce_LogicException`; the *handle itself* cannot do
-  it — dead GObject, `new`/`clone` of a C-created handle, `unset()` of a GObject property → plain
-  `\Error` via `zend_throw_error(nullptr, …)`, as the engine does for readonly/uncloneable. Shared
+  vocabulary, by what went wrong: bad *argument* → `zend_argument_value_error(pos, …)` /
+  `zend_argument_type_error` / `zend_argument_count_error` (`ValueError`/`TypeError`/
+  `ArgumentCountError`) — always the positional form when the value came in as a parameter, so
+  the message names it (`connect(): Argument #1 ($signal) …`); a dead handle passed *as an
+  argument* is a `TypeError` for the same reason, a dead `$this` is an `Error`; the wrapped object
+  is in the wrong *state* for the call (running loop, stateless action, a native `vfunc_*()` outside
+  `parent::` chaining) → `spl_ce_LogicException`; the *handle itself* cannot do it — dead `$this`,
+  `new`/`clone` of a C-created handle, `unset()` of a GObject property, a GTK precondition failure
+  (NULL result, no `GError`) → plain `\Error` via `zend_throw_error(nullptr, …)`, as the engine
+  does for readonly/uncloneable. Shared
   helpers: `PHPGTK_RETURN_STRING_OR_NULL(expr)` for nullable C strings (`php_gtk4.h`),
   the generated `?GtkWidget` parameter handling for everything else.
 - **Naming is snake_case, final** (decided 2026-08-25, docs/PLAN.md): methods mirror the GTK C API
   with the type prefix stripped (`gtk_window_set_title` → `set_title`), properties keep GTK's names
-  with underscores (`$win->default_width`). Never add camelCase aliases; the phpcs camelCaps
-  exclusion for the stub is intentional.
+  with underscores (`$win->default_width`). Never add camelCase aliases. Two deliberate exceptions:
+  `GError::getDomain()` sits next to the inherited `getCode()`/`getMessage()`, and enum *cases* are
+  CamelCase (`GtkAlign::Center`, PHP enum convention). phpcs' camelCaps rule is switched off for
+  `tests/` and `examples/` because PHP subclasses override GTK slots as `vfunc_<name>()`; the stub
+  itself is not linted by phpcs at all.
+- **C++ file conventions**: `src/core/*.cpp` define inside `namespace phpgtk {}` and mark
+  file-local helpers `static`; class files (`src/<Ns>/*.cpp`, generated or hand-written, and the
+  `gen/overrides/` preludes) `using namespace phpgtk;` and put file-local helpers (trampolines,
+  thunks) in an anonymous namespace. Include order in a `.cpp`: own header, project headers, then
+  `<std>` headers, each group separated by a blank line (`SortIncludes` is off — clang-format keeps
+  what you write). `NOLINTNEXTLINE(check) reason` — with the reason — is allowed for findings inside
+  GLib/Zend macro expansions and for GLib API signatures we cannot change (`gconstpointer` items,
+  `gint8` chars); multi-line macros use `NOLINTBEGIN`/`NOLINTEND`. The magic-number and enum-size
+  checks are off in `.clang-tidy` (deny-list rationale there).

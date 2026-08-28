@@ -1,7 +1,9 @@
 // MINIT hooks of the classes that are not plain GObject handles: boxed values,
 // fundamental handles and classes with their own object layout. Each one gets the
 // class entry gen_stub created and installs handlers / registry entries. Called
-// from src/gtk4.cpp only (the generator will emit both this list and that block).
+// from src/gtk4.cpp only (the generator emits gen_minit.inc for GObject classes, interfaces and
+// enums; this list of non-GObject handles stays hand-written - the fourth place for hand code, see
+// CLAUDE.md).
 #pragma once
 #include "php_gtk4.h"
 

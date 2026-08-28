@@ -141,7 +141,7 @@ final class VfuncTest extends GtkTestCase
      * @param class-string $base
      * @param list<string> $expectedHits thunks GTK itself must have called
      */
-    private function assertAllVfuncs(string $base, object $o, array $expectedHits): void
+    private function checkAllVfuncs(string $base, object $o, array $expectedHits): void
     {
         foreach ($expectedHits as $h) {
             self::assertContains($h, self::hitsOf($o), "$base: GTK called $h through the thunk");
@@ -183,7 +183,7 @@ final class VfuncTest extends GtkTestCase
         $w->set_direction(GtkTextDirection::Rtl);
         $win->set_child(null);
         $win->destroy();
-        $this->assertAllVfuncs(GtkWidget::class, $w, [
+        $this->checkAllVfuncs(GtkWidget::class, $w, [
             'vfunc_root', 'vfunc_realize', 'vfunc_map', 'vfunc_measure', 'vfunc_size_allocate',
             'vfunc_get_request_mode', 'vfunc_grab_focus', 'vfunc_contains', 'vfunc_state_flags_changed',
             'vfunc_direction_changed', 'vfunc_focus', 'vfunc_keynav_failed', 'vfunc_mnemonic_activate',
@@ -197,7 +197,7 @@ final class VfuncTest extends GtkTestCase
         $b = new $class();
         $b->emit('clicked');
         $b->emit('activate');
-        $this->assertAllVfuncs(GtkButton::class, $b, ['vfunc_clicked', 'vfunc_activate']);
+        $this->checkAllVfuncs(GtkButton::class, $b, ['vfunc_clicked', 'vfunc_activate']);
     }
 
     public function testDrawingArea(): void
@@ -211,7 +211,7 @@ final class VfuncTest extends GtkTestCase
         $win->present();
         self::pump();
         $d->vfunc_size_allocate(80, 60, -1);  // GtkDrawingArea's own size_allocate emits `resize`
-        $this->assertAllVfuncs(GtkDrawingArea::class, $d, ['vfunc_resize']);
+        $this->checkAllVfuncs(GtkDrawingArea::class, $d, ['vfunc_resize']);
     }
 
     public function testWindow(): void
@@ -226,7 +226,7 @@ final class VfuncTest extends GtkTestCase
         $w->emit('keys-changed');
         $w->close();  // emits close-request synchronously
         self::pump();
-        $this->assertAllVfuncs(GtkWindow::class, $w, [
+        $this->checkAllVfuncs(GtkWindow::class, $w, [
             'vfunc_activate_default', 'vfunc_activate_focus', 'vfunc_keys_changed', 'vfunc_close_request',
         ]);
         $w->destroy();
@@ -242,7 +242,7 @@ final class VfuncTest extends GtkTestCase
         $store->append(new PhpValue(1));
         $model = new GtkFilterListModel($store, $f);
         self::assertSame(1, $model->get_n_items());
-        $this->assertAllVfuncs(GtkFilter::class, $f, ['vfunc_match', 'vfunc_get_strictness']);
+        $this->checkAllVfuncs(GtkFilter::class, $f, ['vfunc_match', 'vfunc_get_strictness']);
 
         $sClass = self::recordingSubclass(GtkSorter::class, [
             'vfunc_compare' => 'return \Gtk4\GtkOrdering::Equal;',
@@ -253,7 +253,7 @@ final class VfuncTest extends GtkTestCase
         $sorted = new GtkSortListModel($store, $s);
         self::assertSame(2, $sorted->get_n_items());
         $s->compare(new PhpValue(1), new PhpValue(2));
-        $this->assertAllVfuncs(GtkSorter::class, $s, ['vfunc_compare', 'vfunc_get_order']);
+        $this->checkAllVfuncs(GtkSorter::class, $s, ['vfunc_compare', 'vfunc_get_order']);
     }
 
     public function testApplications(): void
@@ -267,7 +267,7 @@ final class VfuncTest extends GtkTestCase
             $app->quit();
         });
         $app->run([]);
-        $this->assertAllVfuncs(GtkApplication::class, $app, [
+        $this->checkAllVfuncs(GtkApplication::class, $app, [
             'vfunc_startup', 'vfunc_activate', 'vfunc_shutdown', 'vfunc_window_added', 'vfunc_window_removed',
         ]);
 
@@ -275,6 +275,6 @@ final class VfuncTest extends GtkTestCase
         $g = new $gClass('org.phpgtk4.vfunc.g' . getmypid(), GApplicationFlags::NON_UNIQUE);
         $g->connect('activate', fn() => $g->quit());
         $g->run([]);
-        $this->assertAllVfuncs(GApplication::class, $g, ['vfunc_startup', 'vfunc_activate', 'vfunc_shutdown']);
+        $this->checkAllVfuncs(GApplication::class, $g, ['vfunc_startup', 'vfunc_activate', 'vfunc_shutdown']);
     }
 }

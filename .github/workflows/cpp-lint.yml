@@ -10,11 +10,20 @@ on:
 permissions:
   contents: read
 
+# Superseded runs of the same ref are cancelled (a PR push while the previous one runs).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   cpp-static-analysis:
     name: C++ static analysis
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    env:
+      PHP: php
+      PHP_CONFIG: php-config
+      PHPIZE: phpize
 
     steps:
       - name: Checkout repository
@@ -36,7 +45,7 @@ jobs:
           echo "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-20 main" | sudo tee /etc/apt/sources.list.d/llvm-20.list
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            libgtk-4-dev libwebkitgtk-6.0-dev clang-tidy-20 clang-format-20
+            pkg-config libgtk-4-dev libwebkitgtk-6.0-dev gir1.2-gtk-4.0 clang-tidy-20 clang-format-20
 
       # config.h (build metadata) is what src/php_gtk4.h includes; configure generates it.
       - name: Configure
@@ -45,8 +54,10 @@ jobs:
           PHPIZE: phpize
         run: phpize && ./configure --with-php-config="$(command -v php-config)" --enable-gtk4-webkit
 
-      - name: Generated stubs are up to date
-        run: composer install --no-interaction --no-progress --prefer-dist && ./ci.sh --only=stubs
+      # gen: a fresh gir.php --install must equal the committed tree (src/<Ns>/, tests/Generated,
+      # gen/report.md, the map) - the only PR-time run of that gate; then the stubs derived from it.
+      - name: Generated sources and stubs are up to date
+        run: composer install --no-interaction --no-progress --prefer-dist && ./ci.sh --only=gen,stubs
 
       # Same stage as the pre-commit hook and `./ci.sh --only=cpp-lint`: clang-tidy with
       # WarningsAsErrors '*' and clang-format --dry-run over src/. Any finding fails the job.

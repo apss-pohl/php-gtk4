@@ -96,7 +96,7 @@ final class Demo
 
     /**
      * SECTIONS plus the classes the generator added but nobody placed yet
-     * (examples/generated-sections.php, written by gen/gir.php --install).
+     * (examples/generated-sections.inc, written by gen/gir.php --install).
      *
      * @return array<string, list<string>>
      */

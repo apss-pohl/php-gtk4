@@ -11,31 +11,31 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GActionGroup
 
-- `query_action` — out parameter parameter_type of type GLib.VariantType
+- `query_action` — out parameter `parameter_type` of type GLib.VariantType
 
 ## GActionMap
 
-- `add_action_entries` — parameter entries of type array (array)
-- `remove_action_entries` — parameter entries of type array (array)
+- `add_action_entries` — parameter `entries` of type array (C array)
+- `remove_action_entries` — parameter `entries` of type array (C array)
 
 ## GApplication
 
-- `add_main_option_entries` — parameter entries of type array (array)
-- `add_option_group` — parameter group of type GLib.OptionGroup
+- `add_main_option_entries` — parameter `entries` of type array (C array)
+- `add_option_group` — parameter `group` of type GLib.OptionGroup
 - `get_dbus_connection` — return type Gio.DBusConnection (not in the closure)
-- `open` — parameter files of type array (array)
-- `register` — parameter cancellable of type Gio.Cancellable
-- `send_notification` — parameter notification of type Gio.Notification
+- `open` — parameter `files` of type array (C array)
+- `register` — parameter `cancellable` of type Gio.Cancellable
+- `send_notification` — parameter `notification` of type Gio.Notification
 - `set_action_group` — deprecated (2.32)
-- `vfunc add_platform_data` — parameter builder of type GLib.VariantBuilder
+- `vfunc add_platform_data` — parameter `builder` of type GLib.VariantBuilder
 - `vfunc after_emit` — return or argument type not convertible in a thunk
 - `vfunc before_emit` — return or argument type not convertible in a thunk
-- `vfunc command_line` — parameter command_line of type Gio.ApplicationCommandLine
+- `vfunc command_line` — parameter `command_line` of type Gio.ApplicationCommandLine
 - `vfunc dbus_register` — GError out parameter
-- `vfunc dbus_unregister` — parameter connection of type Gio.DBusConnection
-- `vfunc handle_local_options` — parameter options of type GLib.VariantDict
+- `vfunc dbus_unregister` — parameter `connection` of type Gio.DBusConnection
+- `vfunc handle_local_options` — parameter `options` of type GLib.VariantDict
 - `vfunc local_command_line` — inout parameter arguments
-- `vfunc open` — parameter files of type array (array)
+- `vfunc open` — parameter `files` of type array (C array)
 
 ## GApplicationFlags
 
@@ -51,36 +51,36 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `find_with_equal_func_full` — callback parameter (needs an override)
 - `insert_sorted` — callback parameter (needs an override)
 - `sort` — callback parameter (needs an override)
-- `splice` — parameter additions of type array (array)
+- `splice` — parameter `additions` of type array (C array)
 
 ## GdkDisplay
 
 - `create_gl_context` — return type Gdk.GLContext (not in the closure)
-- `device_is_grabbed` — parameter device of type Gdk.Device
+- `device_is_grabbed` — parameter `device` of type Gdk.Device
 - `get_app_launch_context` — return type Gdk.AppLaunchContext (not in the closure)
 - `get_clipboard` — return type Gdk.Clipboard (not in the closure)
 - `get_default_seat` — return type Gdk.Seat (not in the closure)
 - `get_dmabuf_formats` — return type Gdk.DmabufFormats
-- `get_monitor_at_surface` — parameter surface of type Gdk.Surface
+- `get_monitor_at_surface` — parameter `surface` of type Gdk.Surface
 - `get_primary_clipboard` — return type Gdk.Clipboard (not in the closure)
-- `get_setting` — parameter value of type GObject.Value
+- `get_setting` — parameter `value` of type GObject.Value
 - `get_startup_notification_id` — deprecated (4.10)
 - `list_seats` — list of Gdk.Seat
-- `map_keycode` — out parameter keys of type array
-- `map_keyval` — out parameter keys of type array
+- `map_keycode` — out parameter `keys` of type array
+- `map_keyval` — out parameter `keys` of type array
 - `notify_startup_complete` — deprecated (4.10)
 - `put_event` — deprecated (4.10)
-- `translate_key` — out parameter consumed of type Gdk.ModifierType
+- `translate_key` — out parameter `consumed` of type Gdk.ModifierType
 - `__construct` — skip.txt: GDK owns displays (GdkDisplay::get_default() / open()); a PHP subtype would have no backend behind it
 - `property dmabuf-formats` — property type Gdk.DmabufFormats not mappable
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GdkTexture
 
-- `new_for_pixbuf` — parameter pixbuf of type GdkPixbuf.Pixbuf
-- `new_from_file` — parameter file of type Gio.File
+- `new_for_pixbuf` — parameter `pixbuf` of type GdkPixbuf.Pixbuf
+- `new_from_file` — parameter `file` of type Gio.File
 - `new_from_resource` — skip.txt: g_error()s (aborts the process) on an invalid resource path - not a PHP-safe API
-- `download` — parameter data of type array (array)
+- `download` — parameter `data` of type array (C array)
 - `__construct` — skip.txt: abstract for GTK's own subclasses only: a texture needs internal state (color state, 4.16+) that only the factories set - no PHP subtypes, no `new`
 - `smoke test` — smoke-skip.txt: factories need real image data (TextureTest covers it)
 
@@ -93,7 +93,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_menu_by_id` — return type Gio.Menu (not in the closure)
 - `get_menubar` — return type Gio.MenuModel (not in the closure)
 - `inhibit` — skip.txt: crashes inside GTK when the window has no surface / the app is not registered
-- `set_menubar` — parameter menubar of type Gio.MenuModel
+- `set_menubar` — parameter `menubar` of type Gio.MenuModel
 - `uninhibit` — skip.txt: pairs with inhibit
 - `property menubar` — property type Gio.MenuModel not mappable
 
@@ -104,7 +104,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkCssProvider
 
 - `load_from_data` — deprecated (4.12)
-- `load_from_file` — parameter file of type Gio.File
+- `load_from_file` — parameter `file` of type Gio.File
 
 ## GtkFilterListModel
 
@@ -116,9 +116,9 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_extra_menu` — return type Gio.MenuModel (not in the closure)
 - `get_layout` — return type Pango.Layout (not in the closure)
 - `get_tabs` — return type Pango.TabArray
-- `set_attributes` — parameter attrs of type Pango.AttrList
-- `set_extra_menu` — parameter model of type Gio.MenuModel
-- `set_tabs` — parameter tabs of type Pango.TabArray
+- `set_attributes` — parameter `attrs` of type Pango.AttrList
+- `set_extra_menu` — parameter `model` of type Gio.MenuModel
+- `set_tabs` — parameter `tabs` of type Pango.TabArray
 - `property attributes` — property type Pango.AttrList not mappable
 - `property extra-menu` — property type Gio.MenuModel not mappable
 - `property tabs` — property type Pango.TabArray not mappable
@@ -130,22 +130,22 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkWidget
 
 - `activate_action` — shadowed by activate_action_variant
-- `add_controller` — parameter controller of type Gtk.EventController
+- `add_controller` — parameter `controller` of type Gtk.EventController
 - `add_tick_callback` — callback parameter (needs an override)
-- `allocate` — parameter transform of type Gsk.Transform
-- `compute_bounds` — out parameter out_bounds
-- `compute_point` — parameter point of type Graphene.Point
-- `compute_transform` — out parameter out_transform
+- `allocate` — parameter `transform` of type Gsk.Transform
+- `compute_bounds` — caller-allocates out parameter out_bounds of type Graphene.Rect (needs an override)
+- `compute_point` — parameter `point` of type Graphene.Point
+- `compute_transform` — caller-allocates out parameter out_transform of type Graphene.Matrix (needs an override)
 - `create_pango_context` — return type Pango.Context (not in the closure)
 - `create_pango_layout` — return type Pango.Layout (not in the closure)
-- `dispose_template` — parameter widget_type of type Gtk.GType
+- `dispose_template` — parameter `widget_type` of type Gtk.GType
 - `get_allocated_baseline` — deprecated (4.12)
 - `get_allocated_height` — deprecated (4.12)
 - `get_allocated_width` — deprecated (4.12)
 - `get_allocation` — deprecated (4.12)
-- `get_ancestor` — parameter widget_type of type Gtk.GType
+- `get_ancestor` — parameter `widget_type` of type Gtk.GType
 - `get_clipboard` — return type Gdk.Clipboard (not in the closure)
-- `get_color` — out parameter color
+- `get_color` — caller-allocates out parameter color of type Gdk.RGBA (needs an override)
 - `get_cursor` — return type Gdk.Cursor (not in the closure)
 - `get_font_map` — return type Pango.FontMap (not in the closure)
 - `get_font_options` — return type cairo.FontOptions
@@ -153,33 +153,33 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_layout_manager` — return type Gtk.LayoutManager (not in the closure)
 - `get_native` — return type Gtk.Native (not in the closure)
 - `get_pango_context` — return type Pango.Context (not in the closure)
-- `get_preferred_size` — out parameter minimum_size
+- `get_preferred_size` — caller-allocates out parameter minimum_size of type Gtk.Requisition (needs an override)
 - `get_primary_clipboard` — return type Gdk.Clipboard (not in the closure)
 - `get_settings` — return type Gtk.Settings (not in the closure)
 - `get_style_context` — deprecated (4.10)
-- `get_template_child` — parameter widget_type of type Gtk.GType
+- `get_template_child` — parameter `widget_type` of type Gtk.GType
 - `hide` — deprecated (4.10)
-- `remove_controller` — parameter controller of type Gtk.EventController
-- `set_cursor` — parameter cursor of type Gdk.Cursor
-- `set_font_map` — parameter font_map of type Pango.FontMap
-- `set_font_options` — parameter options of type cairo.FontOptions
-- `set_layout_manager` — parameter layout_manager of type Gtk.LayoutManager
+- `remove_controller` — parameter `controller` of type Gtk.EventController
+- `set_cursor` — parameter `cursor` of type Gdk.Cursor
+- `set_font_map` — parameter `font_map` of type Pango.FontMap
+- `set_font_options` — parameter `options` of type cairo.FontOptions
+- `set_layout_manager` — parameter `layout_manager` of type Gtk.LayoutManager
 - `show` — deprecated (4.10)
-- `size_allocate` — parameter allocation of type Gtk.Allocation
-- `snapshot_child` — parameter snapshot of type Gtk.Snapshot
+- `size_allocate` — parameter `allocation` of type Gtk.Allocation
+- `snapshot_child` — parameter `snapshot` of type Gtk.Snapshot
 - `translate_coordinates` — deprecated (4.12)
 - `vfunc compute_expand` — parameter vexpand_p is a pointer to a scalar without direction
-- `vfunc css_changed` — parameter change of type Gtk.CssStyleChange
+- `vfunc css_changed` — parameter `change` of type Gtk.CssStyleChange
 - `vfunc hide` — deprecated (4.10)
-- `vfunc query_tooltip` — parameter tooltip of type Gtk.Tooltip
+- `vfunc query_tooltip` — parameter `tooltip` of type Gtk.Tooltip
 - `vfunc show` — deprecated (4.10)
-- `vfunc snapshot` — parameter snapshot of type Gtk.Snapshot
+- `vfunc snapshot` — parameter `snapshot` of type Gtk.Snapshot
 - `property cursor` — property type Gdk.Cursor not mappable
 - `property layout-manager` — property type Gtk.LayoutManager not mappable
 
 ## GtkWindow
 
-- `fullscreen_on_monitor` — parameter monitor of type Gdk.Monitor
+- `fullscreen_on_monitor` — parameter `monitor` of type Gdk.Monitor
 - `get_group` — return type Gtk.WindowGroup (not in the closure)
 - `present_with_time` — deprecated (4.14)
 

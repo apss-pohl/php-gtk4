@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PhpGtk4\Tests;
+namespace PhpGtk4\Tests\Subclass;
 
 use Gtk4\GtkButton;
 

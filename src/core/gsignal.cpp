@@ -87,7 +87,8 @@ void signal_connect_method(INTERNAL_FUNCTION_PARAMETERS, bool after) {
   guint signal_id = 0;
   GQuark detail = 0;
   if (!g_signal_parse_name(ZSTR_VAL(signal), G_OBJECT_TYPE(obj), &signal_id, &detail, TRUE)) {
-    zend_value_error("unknown signal '%s' on %s", ZSTR_VAL(signal), G_OBJECT_TYPE_NAME(obj));
+    zend_argument_value_error(1, "unknown signal '%s' on %s", ZSTR_VAL(signal),
+                              G_OBJECT_TYPE_NAME(obj));
     RETURN_THROWS();
   }
 
@@ -118,14 +119,15 @@ void signal_emit_method(INTERNAL_FUNCTION_PARAMETERS) {
   guint signal_id = 0;
   GQuark detail = 0;
   if (!g_signal_parse_name(ZSTR_VAL(signal), G_OBJECT_TYPE(obj), &signal_id, &detail, TRUE)) {
-    zend_value_error("unknown signal '%s' on %s", ZSTR_VAL(signal), G_OBJECT_TYPE_NAME(obj));
+    zend_argument_value_error(1, "unknown signal '%s' on %s", ZSTR_VAL(signal),
+                              G_OBJECT_TYPE_NAME(obj));
     RETURN_THROWS();
   }
   GSignalQuery query;
   g_signal_query(signal_id, &query);
   if (query.n_params != argc) {
-    zend_value_error("signal '%s' takes %u argument(s), %u given", ZSTR_VAL(signal), query.n_params,
-                     argc);
+    zend_argument_count_error("signal '%s' takes %u argument(s), %u given", ZSTR_VAL(signal),
+                              query.n_params, argc);
     RETURN_THROWS();
   }
 

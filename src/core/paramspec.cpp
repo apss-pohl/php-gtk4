@@ -1,6 +1,6 @@
 #include "paramspec.h"
 
-#include "../classes.h"
+#include "classes.h"
 #include "fundamental.h"
 
 namespace phpgtk {

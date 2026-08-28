@@ -107,10 +107,13 @@ class GObject
  */
 final class GParamSpec
 {
+    /** GTK's property name with dashes, e.g. `default-width`. */
     public function get_name(): string {}
 
+    /** Short human-readable name, or null. */
     public function get_nick(): ?string {}
 
+    /** Longer description, or null. */
     public function get_blurb(): ?string {}
 
     /** GType name of the value, e.g. "gchararray", "gint", "GtkWindow". */
@@ -119,8 +122,10 @@ final class GParamSpec
     /** GParamFlags bitmask (READABLE = 1, WRITABLE = 2, CONSTRUCT_ONLY = 8, ...). */
     public function get_flags(): int {}
 
+    /** Whether `get_property()` / `$obj->prop` may read it (G_PARAM_READABLE). */
     public function is_readable(): bool {}
 
+    /** Whether `set_property()` / `$obj->prop = ...` may write it (G_PARAM_WRITABLE). */
     public function is_writable(): bool {}
 
     /** The property's default, converted like get_property(); null if the type is unsupported. */
@@ -160,8 +165,10 @@ final class Gtk
      */
     public static function set_exception_handler(?callable $handler): void {}
 
+    /** What a Throwable escaping a handler does: `Log` (report, GTK continues) or `Rethrow` (stop loops, propagate). */
     public static function set_exception_mode(ExceptionMode $mode): void {}
 
+    /** The current mode; `Log` by default. */
     public static function get_exception_mode(): ExceptionMode {}
 
     /**
@@ -228,6 +235,7 @@ final class GLib
  */
 final class GMainLoop
 {
+    /** A loop on the default main context (`GLib::idle_add()` / `timeout_add()` sources run in it). */
     public function __construct() {}
 
     /**
@@ -237,8 +245,10 @@ final class GMainLoop
      */
     public function run(): void {}
 
+    /** Make a running `run()` return; a no-op when not running. */
     public function quit(): void {}
 
+    /** True between `run()` and the `quit()` that ends it. */
     public function is_running(): bool {}
 }
 
@@ -274,10 +284,13 @@ class GError extends \RuntimeException
  */
 final class PhpValue extends GObject
 {
+    /** A GObject carrying any PHP value, so PHP data can live in a `GListStore`. */
     public function __construct(mixed $value = null) {}
 
+    /** The carried value. */
     public function get_value(): mixed {}
 
+    /** Replace the carried value. */
     public function set_value(mixed $value): void {}
 }
 
@@ -306,8 +319,10 @@ final class GdkRGBA
     /** CSS representation, e.g. `rgb(255,0,0)` or `rgba(255,0,0,0.5)`. */
     public function to_string(): string {}
 
+    /** Component-wise equality (`==` compares handles by value too). */
     public function equal(GdkRGBA $other): bool {}
 
+    /** True when alpha is 1. */
     public function is_opaque(): bool {}
 }
 
@@ -324,6 +339,7 @@ final class GdkRGBA
  */
 final class GdkRectangle
 {
+    /** Origin and size in pixels. */
     public function __construct(int $x = 0, int $y = 0, int $width = 0, int $height = 0) {}
 
     /** The overlap with $other, or null if they do not intersect. */
@@ -332,8 +348,10 @@ final class GdkRectangle
     /** The smallest rectangle containing both. */
     public function union(GdkRectangle $other): GdkRectangle {}
 
+    /** Whether the point lies inside the rectangle. */
     public function contains_point(int $x, int $y): bool {}
 
+    /** Position and size equal. */
     public function equal(GdkRectangle $other): bool {}
 }
 
@@ -347,48 +365,67 @@ final class GdkRectangle
  */
 final class CairoContext
 {
+    /** Opaque source colour, components 0..1. */
     public function set_source_rgb(float $red, float $green, float $blue): void {}
 
+    /** Translucent source colour, components 0..1. */
     public function set_source_rgba(float $red, float $green, float $blue, float $alpha): void {}
 
+    /** Source colour from a `GdkRGBA`. */
     public function set_source_color(GdkRGBA $color): void {}
 
+    /** Width for `stroke()` in user units. */
     public function set_line_width(float $width): void {}
 
+    /** Begin a new sub-path at the point. */
     public function move_to(float $x, float $y): void {}
 
+    /** Straight line from the current point. */
     public function line_to(float $x, float $y): void {}
 
+    /** Add a closed rectangular sub-path. */
     public function rectangle(float $x, float $y, float $width, float $height): void {}
 
     /** Angles in radians. */
     public function arc(float $xc, float $yc, float $radius, float $angle1, float $angle2): void {}
 
+    /** Line back to the start of the current sub-path. */
     public function close_path(): void {}
 
+    /** Fill the current path and clear it. */
     public function fill(): void {}
 
+    /** Fill the current path, keeping it for a following `stroke()`. */
     public function fill_preserve(): void {}
 
+    /** Stroke the current path with the line width and clear it. */
     public function stroke(): void {}
 
+    /** Stroke the current path, keeping it. */
     public function stroke_preserve(): void {}
 
     /** Paint the current source everywhere within the clip. */
     public function paint(): void {}
 
+    /** Push the drawing state (source, line width, transformation, clip). */
     public function save(): void {}
 
+    /** Pop the state pushed by `save()`. */
     public function restore(): void {}
 
+    /** Move the user-space origin. */
     public function translate(float $tx, float $ty): void {}
 
+    /** Scale user space. */
     public function scale(float $sx, float $sy): void {}
 
+    /** Rotate user space by the angle in radians. */
     public function rotate(float $angle): void {}
 
+    /** Font size in user units for `show_text()`. */
     public function set_font_size(float $size): void {}
 
+    /** Draw the text at the current point with the toy font API. */
     public function show_text(string $text): void {}
 }
 

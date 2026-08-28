@@ -63,7 +63,7 @@ php-gtk4 currently declares (2026-08-28, 61 names): `CairoContext`, `ExceptionMo
 | `Gtk::timeout_add`, `Gtk::source_remove` | `g_timeout_add` / `g_source_remove` | ✅ | `GLib::timeout_add()`, `GLib::idle_add()`, `GLib::source_remove()`. |
 | `Gtk::get_major_version` / `minor` / `micro` | `gtk_get_major_version` … | ❌ | php-gtk4 exposes `Gtk4\VERSION`, `BUILD_INFO`, `FEATURES` but not the runtime GTK version triple. |
 | `Gtk::show_uri_on_window` | `gtk_show_uri` / `GtkUriLauncher` | ❌ | `gtk_show_uri` is deprecated in 4.10; port as `GtkUriLauncher`. |
-| `Gtk::is_destroyed` | — | ⛔ | php-gtk3 handle bookkeeping; php-gtk4 uses weak refs + qdata identity instead. |
+| `Gtk::is_destroyed` | — | ⛔ | php-gtk3 handle bookkeeping; php-gtk4 uses a toggle-ref hold + qdata identity instead. |
 | — | `Gtk::init`, `set_exception_handler`, `set_exception_mode` | ✅ | New in php-gtk4 (`Gtk4\ExceptionMode`). |
 | — | `GMainLoop` (`run`/`quit`/`is_running`) | ✅ | New class. |
 

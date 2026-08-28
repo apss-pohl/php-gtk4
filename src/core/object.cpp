@@ -1,5 +1,6 @@
 #include "object.h"
 #include "callback.h"
+#include "error.h"
 #include "globals.h"
 #include "marshal.h"
 #include "subtype.h"
@@ -10,9 +11,9 @@ namespace phpgtk {
 
 static zend_object_handlers handlers;
 
+// GType name -> class (MINIT-filled). Plain function-static: destroyed when the module is
+// unloaded, holds no Zend resources (class entries belong to the engine), so that is safe.
 static std::unordered_map<std::string, zend_class_entry *> &registry() {
-  // Plain function-static: destroyed when the module is unloaded, holds no Zend
-  // resources (class entries belong to the engine), so that is safe.
   static std::unordered_map<std::string, zend_class_entry *> map;
   return map;
 }
@@ -23,7 +24,7 @@ static std::unordered_map<zend_class_entry *, GType> &gtypes() {
   return map;
 }
 // GType -> class (the inverse of gtypes(), for parameter parsing by *_TYPE_* macro).
-std::unordered_map<GType, zend_class_entry *> &classes() {
+static std::unordered_map<GType, zend_class_entry *> &classes() {
   static std::unordered_map<GType, zend_class_entry *> map;
   return map;
 }
@@ -67,11 +68,21 @@ static void hold(Object *self) {
 // toggle notify, so the nested finalize is fine - it is how every toggle-ref binding
 // (PyGObject, gjs) releases wrappers, and it keeps release deterministic ("the store
 // dropped the item, the payload is gone").
+// Releasing a handle may run a PHP __destruct. Inside a main-loop dispatch (no PHP frame
+// below us: GTK finalizing widgets in a frame, a store dropping items) a Throwable from it
+// would stay pending inside GLib, so it goes through the exception boundary like any other
+// callback's. With a PHP frame below (a method that made GTK let go) it propagates by itself.
+static void settle_destructor_exception() {
+  if (EG(exception) != nullptr && g_main_depth() > 0) report_pending_exception("__destruct");
+}
+
+// Drop the GObject's reference on the handle (see hold()); frees it if PHP had let go too.
 static void release_hold(Object *self) {
   if (!self->held) return;
   self->held = false;
   GTK4_G(held).erase(self);
   OBJ_RELEASE(&self->std);
+  settle_destructor_exception();
 }
 
 // RSHUTDOWN: drop every hold (freeing handles only GTK still referenced) and refuse new ones.
@@ -154,6 +165,7 @@ static void detach(Object *self) {
 
 // ---------------------------------------------------------------- handlers
 
+// create_object handler: the Object struct with an unattached obj; every GObject class shares it.
 static zend_object *create_object(zend_class_entry *ce) {
   auto *self = static_cast<Object *>(zend_object_alloc(sizeof(Object), ce));
   self->obj = nullptr;
@@ -170,6 +182,7 @@ static void free_obj(zend_object *o) {
   detach(self);
   callback_drain();  // the unref may have run destroy notifies
   zend_object_std_dtor(o);
+  settle_destructor_exception();  // a __destruct of something the callables / properties held
 }
 
 // "$obj->default_width" -> GParamSpec "default-width" (nullptr if no such property)
@@ -341,6 +354,7 @@ zend_class_entry *class_for_gtype_name(const char *gtype_name) {
 
 // ---------------------------------------------------------------- conversions
 
+// C -> PHP: the existing handle (qdata) or a new one of the nearest registered class.
 void wrap(GObject *obj, zval *rv) {
   if (obj == nullptr) {
     ZVAL_NULL(rv);
@@ -368,7 +382,8 @@ void wrap(GObject *obj, zval *rv) {
 
 // PHP -> C: the live GObject behind a handle that is-a `expected`, else TypeError + nullptr.
 GObject *unwrap(zval *zv, GType expected) {
-  if (Z_TYPE_P(zv) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(zv), ce_root)) {
+  if (Z_TYPE_P(zv) != IS_OBJECT || ce_root == nullptr ||
+      !instanceof_function(Z_OBJCE_P(zv), ce_root)) {
     zend_type_error("expected a GObject instance, %s given", zend_zval_value_name(zv));
     return nullptr;
   }

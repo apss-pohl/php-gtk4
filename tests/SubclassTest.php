@@ -166,4 +166,18 @@ final class SubclassTest extends GtkTestCase
         $b->emit('clicked');
         self::assertSame('clicked from vfunc', $b->get_label(), 'the clicked class handler is the PHP method');
     }
+
+    public function testGTypeNameCollisionIsRefused(): void
+    {
+        // `Sub\Foo` and `Sub__Foo` both map to the GType name Php__...__Sub__Foo; the second class
+        // must not silently reuse the first one's GType (and vfuncs).
+        eval('namespace PhpGtk4\\Tests\\Coll; final class Sub__Foo extends \\Gtk4\\GtkButton {}');
+        eval('namespace PhpGtk4\\Tests\\Coll\\Sub; final class Foo extends \\Gtk4\\GtkButton {}');
+        $first = self::className('PhpGtk4\\Tests\\Coll\\Sub__Foo');
+        $second = self::className('PhpGtk4\\Tests\\Coll\\Sub\\Foo');
+        self::assertInstanceOf(GtkButton::class, new $first());
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessage('already used by the PHP class');
+        new $second();
+    }
 }

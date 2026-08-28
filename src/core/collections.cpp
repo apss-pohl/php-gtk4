@@ -65,8 +65,12 @@ void gptrarray_to_php(GPtrArray *array, GType element_type, Transfer transfer, z
       element_to_php(g_ptr_array_index(array, i), element_type, transfer, &item);
       zend_hash_next_index_insert(Z_ARRVAL_P(rv), &item);
     }
-    // Elements were released above when Full; never let the array free them again.
-    if (transfer != Transfer::None) g_ptr_array_free(array, TRUE);
+    // Full: the elements were released above; Container: they stay the callee's. Either way the
+    // array's own element-free function must not run again.
+    if (transfer != Transfer::None) {
+      g_ptr_array_set_free_func(array, nullptr);
+      g_ptr_array_free(array, TRUE);
+    }
   }
 }
 
@@ -74,7 +78,11 @@ void gptrarray_to_php(GPtrArray *array, GType element_type, Transfer transfer, z
 void strv_to_php(char **strv, Transfer transfer, zval *rv) {
   array_init(rv);
   for (char **s = strv; s != nullptr && *s != nullptr; s++) add_next_index_string(rv, *s);
-  if (transfer == Transfer::Full) g_strfreev(strv);
+  if (transfer == Transfer::Full) {
+    g_strfreev(strv);
+  } else if (transfer == Transfer::Container) {
+    g_free(static_cast<void *>(strv));  // the array, not the strings
+  }
 }
 
 // list<string> -> char** (NULL-terminated, owned by the caller).

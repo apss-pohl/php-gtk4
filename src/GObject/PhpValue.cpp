@@ -7,6 +7,8 @@ using namespace phpgtk;
 
 /**
  * Gtk4\PhpValue::__construct(mixed $value = null)
+ *
+ * A GObject carrying any PHP value, so PHP data can live in a `GListStore`.
  */
 ZEND_METHOD(Gtk4_PhpValue, __construct) {
   zval *value = nullptr;
@@ -21,6 +23,8 @@ ZEND_METHOD(Gtk4_PhpValue, __construct) {
 
 /**
  * Gtk4\PhpValue::get_value(): mixed
+ *
+ * The carried value.
  */
 ZEND_METHOD(Gtk4_PhpValue, get_value) {
   ZEND_PARSE_PARAMETERS_NONE();
@@ -32,6 +36,8 @@ ZEND_METHOD(Gtk4_PhpValue, get_value) {
 
 /**
  * Gtk4\PhpValue::set_value(mixed $value): void
+ *
+ * Replace the carried value.
  */
 ZEND_METHOD(Gtk4_PhpValue, set_value) {
   zval *value;

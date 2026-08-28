@@ -9,12 +9,16 @@ use Gtk4\GLib;
 use Gtk4\GMainLoop;
 use Gtk4\Gtk;
 use Gtk4\GtkApplication;
+use Gtk4\GtkOrientation;
+use Gtk4\GtkSizeRequestMode;
+use Gtk4\GtkWidget;
 
 /** Gtk4\ExceptionMode::Rethrow - callback throwables propagate to PHP. */
 final class RethrowModeTest extends GtkTestCase
 {
     protected function setUp(): void
     {
+        parent::setUp();
         Gtk::set_exception_mode(ExceptionMode::Rethrow);
     }
 
@@ -223,5 +227,41 @@ final class RethrowModeTest extends GtkTestCase
         });
         $this->expectException(\TypeError::class);
         $w->set_title('x');
+    }
+
+    public function testVfuncThunksReportOneThrowableOnce(): void
+    {
+        // Two PHP vfuncs run in one GTK call (measure() calls get_request_mode() and measure);
+        // the first throws, the second must chain to GTK instead of reporting the same Throwable again.
+        $w = new class extends GtkWidget {
+            public int $calls = 0;
+
+            public function vfunc_get_request_mode(): GtkSizeRequestMode
+            {
+                $this->calls++;
+                throw new \RuntimeException('first');
+            }
+
+            public function vfunc_measure(GtkOrientation $orientation, int $for_size): array
+            {
+                $this->calls++;
+
+                return [1, 1, -1, -1];
+            }
+        };
+        $seen = 0;
+        Gtk::set_exception_handler(function () use (&$seen): void {
+            $seen++;
+        });
+        try {
+            $w->measure(GtkOrientation::Horizontal, -1);
+            self::fail('Rethrow mode must propagate the Throwable');
+        } catch (\RuntimeException $e) {
+            self::assertSame('first', $e->getMessage());
+        } finally {
+            Gtk::set_exception_handler(null);
+        }
+        self::assertSame(1, $seen, 'the handler saw the Throwable exactly once');
+        self::assertSame(1, $w->calls, 'the second vfunc was skipped (exception pending)');
     }
 }

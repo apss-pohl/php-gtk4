@@ -96,6 +96,8 @@ ZEND_METHOD(Gtk4_GdkRGBA, to_string) {
 
 /**
  * Gtk4\GdkRGBA::equal(GdkRGBA $other): bool
+ *
+ * Component-wise equality (`==` compares handles by value too).
  */
 ZEND_METHOD(Gtk4_GdkRGBA, equal) {
   zval *other;
@@ -107,6 +109,8 @@ ZEND_METHOD(Gtk4_GdkRGBA, equal) {
 
 /**
  * Gtk4\GdkRGBA::is_opaque(): bool
+ *
+ * True when alpha is 1.
  */
 ZEND_METHOD(Gtk4_GdkRGBA, is_opaque) {
   ZEND_PARSE_PARAMETERS_NONE();

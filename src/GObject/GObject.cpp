@@ -54,7 +54,7 @@ ZEND_METHOD(Gtk4_GObject, handler_disconnect) {
 static GParamSpec *require_property(GObject *obj, zend_string *name) {
   GParamSpec *spec = g_object_class_find_property(G_OBJECT_GET_CLASS(obj), ZSTR_VAL(name));
   if (spec == nullptr) {
-    zend_value_error("no property '%s' on %s", ZSTR_VAL(name), G_OBJECT_TYPE_NAME(obj));
+    zend_argument_value_error(1, "no property '%s' on %s", ZSTR_VAL(name), G_OBJECT_TYPE_NAME(obj));
   }
   return spec;
 }

@@ -38,6 +38,9 @@ ZEND_METHOD(Gtk4_Gtk, set_exception_handler) {
 
 /**
  * static Gtk4\Gtk::set_exception_mode(ExceptionMode $mode): void
+ *
+ * What a Throwable escaping a handler does: `Log` (report, GTK continues) or `Rethrow` (stop
+ * loops, propagate).
  */
 ZEND_METHOD(Gtk4_Gtk, set_exception_mode) {
   zval *mode;
@@ -50,6 +53,8 @@ ZEND_METHOD(Gtk4_Gtk, set_exception_mode) {
 
 /**
  * static Gtk4\Gtk::get_exception_mode(): ExceptionMode
+ *
+ * The current mode; `Log` by default.
  */
 ZEND_METHOD(Gtk4_Gtk, get_exception_mode) {
   ZEND_PARSE_PARAMETERS_NONE();

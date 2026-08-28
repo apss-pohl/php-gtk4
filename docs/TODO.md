@@ -38,7 +38,8 @@ longer holds for a PHP 8.4+ target, and it blocks idiomatic PHP:
 
 - [x] **snake_case methods** (`set_title`) — kept, final. 1:1 mapping to docs.gtk.org and every
       other binding (PyGObject, gjs, gtk-rs, Vala); recorded in docs/PLAN.md; single spelling, no
-      camelCase aliases; phpcs exclusion for the stub is intentional
+      camelCase aliases (exceptions: `GError::getDomain()`, CamelCase enum cases); phpcs' camelCaps
+      rule is off for tests/examples because of `vfunc_<name>()` overrides
 - [x] property access: `get_property()/set_property()` *and* `$obj->prop` via handlers
 
 - [ ] **Branch protection for `main`** — blocked (private repo, Free plan); details in §9.
@@ -185,9 +186,35 @@ Each needs a written design in PLAN.md before code; none blocks the waves.
       `gh api -X POST repos/apss-pohl/php-gtk4/rulesets --input .github/ruleset-main.json`
       (drop `required_approving_review_count` to 0 while there is a single maintainer).
 
+## 9b. Review 2026-08-28 — leftovers (each small, none blocks a wave)
+
+- [ ] `gen/gir.php` (2 400 lines, one class) has no tests of its own and 80 baselined PHPStan
+      findings (`phpstan-baseline-gir.neon`): split into loader / type map / emitters / writers
+      and add golden-file tests (small fixture `.gir` → expected `.cpp`); shrink the baseline.
+- [ ] Wave 5 needs an `async` callback scope (freed after one invocation) + a `GAsyncResult`
+      handle; wave 6/8 need records/boxed generated from GIR (`GtkTextIter`, `GdkContentFormats`)
+      — today `run()` skips `record` nodes and object parameters of unregistered boxed types
+      would dereference `boxed_class_for_type()` NULL.
+- [ ] `is_php_type()` takes a mutex per GType level in `wrap()`; cache per request (module
+      globals) once list views make `wrap()` per-item-per-frame.
+- [ ] `find_property()` allocates a `std::string` per `$obj->prop` access; stack buffer.
+- [ ] GFlags values are not validated on the way in (`to_gvalue` takes any int); `GdkModifierType`
+      (wave 3) should reject garbage bits like enums do.
+- [ ] `release.yml`'s `build-windows` duplicates `windows.yml` (~70 lines); extract a reusable
+      workflow. `config.w32`: no `/W3 /WX` warning gate, no GTK version check on the non-pkgconf
+      fallback path; `bin/php-gtk4.cmd`/`tests/run.cmd` pick `Release_TS` over `Release` by order.
+- [ ] `ci.sh --only=build` always rebuilds from scratch; reconfigure only when the configure
+      arguments or `config.m4` changed. The `test` stage never builds `--enable-gtk4-testing`, so
+      the `testing=yes` assertions only run in the asan/coverage jobs.
+- [ ] `core/cairo.h` declares an API implemented in `src/Cairo/`; `gen_prototypes.h` carries both
+      interface prototypes and `register_vfuncs_*` declarations; `globals.h` declares the GUI-thread
+      API implemented in `mainloop.cpp` — cosmetic layering.
+- [ ] `--enable-gtk4-webkit` is analysed but never built in CI; `upload-artifact@v7` vs
+      `download-artifact@v8` majors; `phpunit.xml` → `.dist`.
+
 ## 10. Keep (verified good, do not "clean up")
 
 Namespace `Gtk4\`; PHP class == GType name + registry; toggle-ref hold + qdata identity;
 GValue-array GClosure marshaller; single GValue bridge; catch → leave scope → report; `ci.sh`
-stages; ASan/UBSan/LSan + valgrind + gcov; `EveryClassTest`/`ExampleTest`; PHP 8.4/8.5 ×
-GTK 4.14/4.22 matrix; C++20.
+stages; ASan/UBSan/LSan + valgrind + gcov; `EveryClassTest`/`ExampleTest`; PHP 8.4/8.5 × NTS/ZTS
+on GTK 4.14 (Linux) and the pinned gvsbuild GTK (Windows); C++20.

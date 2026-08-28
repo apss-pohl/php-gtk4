@@ -23,6 +23,11 @@ env:
   PHP_SDK_REF: master
   PHP_SDK_VS: vs17
 
+# Superseded runs of the same ref are cancelled (a PR push while the previous one runs).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   windows:
     name: Windows PHP ${{ matrix.php }} (${{ matrix.ts }})

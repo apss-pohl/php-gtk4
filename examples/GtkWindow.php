@@ -70,7 +70,7 @@ return Demo::page(
         };
 
         // Returning true from close-request cancels the close.
-        $demo->connect('close-request', function (GtkWindow $window) use ($state, $refresh): bool {
+        $demo->connect('close-request', function (GtkWindow $win) use ($state, $refresh): bool {
             if ($state->veto) {
                 $state->refused++;
                 $refresh();

@@ -10,6 +10,11 @@ on:
 permissions:
   contents: read
 
+# Superseded runs of the same ref are cancelled (a PR push while the previous one runs).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   php-qa:
     name: PHP QA (phplint, phpcs, php-cs-fixer, phpstan, markdownlint)

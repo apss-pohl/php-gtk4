@@ -113,6 +113,10 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Changed
 
+- The generator throws on an unresolvable MINIT parent (was a silent comment), skips
+  caller-allocates out parameters (never a by-reference PHP parameter), emits `interface X
+  extends Y` from GIR prerequisites, puts thunks in an anonymous namespace, and seeds the MINIT
+  order with the hand-written classes. `gen/gir.php` is analysed by PHPStan against a baseline.
 - Handles keep a *toggle* reference on their GObject: while GTK holds the object (a parented
   widget, a `GListStore` item, a window in the toplevel list) the PHP object stays alive with it,
   so a PHP subclass appended without keeping a reference is returned from `get_first_child()` as
@@ -144,6 +148,28 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Fixed
 
+- `throw_gerror()` on a NULL result without a `GError` (a failed GTK precondition) threw a plain
+  `Error` instead of dereferencing NULL; `GtkFilter`'s `gptrarray_to_php`/`strv_to_php` no longer
+  double-free (transfer full with a free func) or leak (transfer container).
+- A PHP `__destruct` running inside a GTK frame (a handle GTK let go of in a main-loop dispatch)
+  now goes through the exception boundary; a Throwable pending at request shutdown is reported.
+- Generated vfunc thunks skip the PHP method while an exception is already pending (Rethrow
+  mode reported one Throwable once per remaining thunk); native `vfunc_*()` empty slots are
+  no-ops instead of errors.
+- Two PHP classes whose names map to the same GType name (`App\Foo` / `App__Foo`, and *every*
+  anonymous class — their names carry a NUL) no longer share one GType; the second one throws.
+- `subtype` `instance_init` binds only the instance being constructed; `gui_thread` and the
+  enum-verification flag are atomic (ZTS); the fundamental registry walks GType parents (a
+  `GdkKeyEvent` handle is a `GdkEvent`); `emit()` with the wrong argument count throws
+  `ArgumentCountError`, unknown signals/properties/actions name the argument.
+- `.clang-tidy`'s header filter never matched (absolute include paths): `src/**/*.h` are linted
+  now (`--header-filter` from `ci.sh`, gen_stub arginfo excluded), findings fixed; `--fix` runs
+  clang-tidy one TU at a time so shared headers are patched once.
+- Build: `config.m4` and `config.w32` derive the source directories from the tree (a new
+  namespace directory such as `src/Pango` needs no edit); `ci.sh`'s `gen` gate covers
+  `gen/report.md`, the map and new example skeletons and runs on pull requests (`cpp-lint.yml`)
+  and in the pre-commit hook; `PHPT_TESTS` documented; `--only=tidy` rejected with a hint;
+  compiler-warning gate limited to our sources.
 - RSHUTDOWN teardown walks the live registries instead of a snapshot, so a disconnect that
   finalizes another tracked object can no longer leave a dangling pointer for the next iteration.
 - `ci.sh --only=cpp-lint` on a fresh checkout failed with `'config.h' file not found` (the stage

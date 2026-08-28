@@ -10,6 +10,10 @@
   from the stub files (a row is ✅/🟡/❌ by whether its GTK 4 classes are declared; ⛔/🧩 rows,
   non-class rows and rows without a php-gtk3 counterpart stay as written, notes are never touched).
   Run by `gir.php --install`; `--check` only reports.
+- Hand-written and generated files share directories: `src/Gtk/Gtk.cpp` is the hand-written `Gtk4\Gtk`
+  class, `src/Gtk/Gtk.stub.php` the *generated* per-namespace stub (same in `src/Gdk/`); the
+  `GENERATED` header is the only distinction. An enum-only namespace (`src/Pango/`) has just the
+  stub and its arginfo, no `.cpp`.
 - `gir.php` — the GIR generator (docs/PLAN.md milestone 3). `php gen/gir.php --install` (what
   `./ci.sh --only=gen` runs and checks) reads the installed GIR files (`gir1.2-gtk-4.0`), takes
   `allowlist.txt` (+ parents, and the enums kept signatures use), and writes per GIR namespace
@@ -41,8 +45,9 @@
   with `@implementation-alias`; interfaces not in the allow-list are not declared on the class.
   Methods whose types fall outside the closure, callbacks, varargs, deprecated and post-4.14 API
   are skipped and reported, never emitted with a placeholder. Classes are never `abstract` in PHP
-  (`wrap()` must instantiate them for whatever GTK hands back); a GIR-abstract class gets a private
-  constructor instead.
+  (`wrap()` must instantiate them for whatever GTK hands back); a GIR-abstract class gets a public
+  constructor that only works on a PHP subclass (`Error` on the native class) — a `skip.txt` entry
+  for its `__construct` makes it private instead (`GdkTexture`).
 
 ## The GIR flow in one picture
 
@@ -91,8 +96,8 @@ Which `attach*()` a generated constructor emits is decided by the return type, n
 | a plain `GObject`, `transfer="full"`             | `attach_new()` | adopts the returned ref              |
 | anything else                                    | error          | hand-write it in `overrides/`        |
 
-`GtkRoot` is read from GIR (`implements`), never from a name list. Wave 0 must diff its choice
-against the 27 hand-written constructors before anything else is generated; `attach_new()` also
-catches a root at runtime with a `g_critical`.
+`GtkRoot` is read from GIR (`implements`), never from a name list. Wave 0 diffed this choice against
+the then hand-written constructors before anything else was generated; `attach_new()` also catches a
+root at runtime with a `g_critical`.
 
 Run everything via `./ci.sh --only=stubs [--fix]`.

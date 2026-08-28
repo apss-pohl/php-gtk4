@@ -45,6 +45,8 @@ void ret_rect(zval *rv, const GdkRectangle &r) {
 
 /**
  * Gtk4\GdkRectangle::__construct(int $x = 0, int $y = 0, int $width = 0, int $height = 0)
+ *
+ * Origin and size in pixels.
  */
 ZEND_METHOD(Gtk4_GdkRectangle, __construct) {
   zend_long x = 0;
@@ -100,6 +102,8 @@ ZEND_METHOD(Gtk4_GdkRectangle, union) {
 
 /**
  * Gtk4\GdkRectangle::contains_point(int $x, int $y): bool
+ *
+ * Whether the point lies inside the rectangle.
  */
 ZEND_METHOD(Gtk4_GdkRectangle, contains_point) {
   zend_long x, y;
@@ -113,6 +117,8 @@ ZEND_METHOD(Gtk4_GdkRectangle, contains_point) {
 
 /**
  * Gtk4\GdkRectangle::equal(GdkRectangle $other): bool
+ *
+ * Position and size equal.
  */
 ZEND_METHOD(Gtk4_GdkRectangle, equal) {
   zval *other;

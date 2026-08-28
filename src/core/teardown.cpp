@@ -1,6 +1,7 @@
 #include "teardown.h"
 
 #include "callback.h"
+#include "error.h"
 #include "globals.h"
 #include "object.h"
 
@@ -83,6 +84,11 @@ void teardown_request() {
   }
   object_release_holds();  // may free handles -> finalize GObjects -> more destroy notifies
   callback_drain();
+  // A __destruct that threw during the above: nothing is left to rethrow to, report it.
+  if (EG(exception) != nullptr) {
+    set_exception_mode(ExceptionMode::Log);
+    report_pending_exception("request shutdown");
+  }
 }
 
 }  // namespace phpgtk

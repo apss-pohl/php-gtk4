@@ -222,7 +222,8 @@ ZEND_METHOD(Gtk4_GActionGroup, activate_action) {
   ZEND_PARSE_PARAMETERS_END();
   GActionGroup *group = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
   if (!g_action_group_has_action(group, ZSTR_VAL(name))) {
-    zend_value_error("no action '%s' on this %s", ZSTR_VAL(name), G_OBJECT_TYPE_NAME(group));
+    zend_argument_value_error(1, "no action '%s' on this %s", ZSTR_VAL(name),
+                              G_OBJECT_TYPE_NAME(group));
     RETURN_THROWS();
   }
   const GVariantType *t = g_action_group_get_action_parameter_type(group, ZSTR_VAL(name));

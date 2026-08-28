@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
 use ReflectionExtension;
 use ReflectionMethod;
@@ -51,7 +52,7 @@ final class EveryClassTest extends GtkTestCase
     /**
      * @param class-string $class
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('instantiableClasses')]
+    #[DataProvider('instantiableClasses')]
     public function testConstructAndCallEveryGetter(string $class): void
     {
         try {

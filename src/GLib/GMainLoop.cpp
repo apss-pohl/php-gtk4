@@ -50,6 +50,8 @@ void quit_loop(gpointer data) {
 
 /**
  * Gtk4\GMainLoop::__construct()
+ *
+ * A loop on the default main context (`GLib::idle_add()` / `timeout_add()` sources run in it).
  */
 ZEND_METHOD(Gtk4_GMainLoop, __construct) {
   ZEND_PARSE_PARAMETERS_NONE();
@@ -83,6 +85,8 @@ ZEND_METHOD(Gtk4_GMainLoop, run) {
 
 /**
  * Gtk4\GMainLoop::quit(): void
+ *
+ * Make a running `run()` return; a no-op when not running.
  */
 ZEND_METHOD(Gtk4_GMainLoop, quit) {
   ZEND_PARSE_PARAMETERS_NONE();
@@ -91,6 +95,8 @@ ZEND_METHOD(Gtk4_GMainLoop, quit) {
 
 /**
  * Gtk4\GMainLoop::is_running(): bool
+ *
+ * True between `run()` and the `quit()` that ends it.
  */
 ZEND_METHOD(Gtk4_GMainLoop, is_running) {
   ZEND_PARSE_PARAMETERS_NONE();

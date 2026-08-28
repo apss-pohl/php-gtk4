@@ -156,7 +156,7 @@ foreach ($files as $file) {
             continue;
         }
         // --- any other function definition at column 0 needs a comment right above
-        $definition = '/^(?:static |inline )?[A-Za-z_][\w:<>\*& ]*\**\s*&?\s*\b(\w+)\s*\([^;]*$/';
+        $definition = '/^(?:static |inline )?[A-Za-z_][\w:<>\*&, ]*\**\s*&?\s*\b(\w+)\s*\([^;]*$/';
         $isDefinition = preg_match($definition, $line, $fm) && !str_contains($line, '=');
         $keywords = '/^(?:namespace|using|struct|class|enum|return|if|for|while|switch|extern|#|PHP_|ZEND_)/';
         if ($isDefinition && !preg_match($keywords, $line)) {
@@ -164,7 +164,9 @@ foreach ($files as $file) {
             while ($prev >= 0 && trim($out[$prev]) === '') {
                 $prev--;
             }
-            $hasComment = $prev >= 0 && preg_match('#^\s*(//|\*/|/\*)#', $out[$prev]);
+            // a section banner (`// ---- handlers`) is not a comment about the function
+            $hasComment = $prev >= 0 && preg_match('#^\s*(//|\*/|/\*)#', $out[$prev])
+                && !preg_match('#^\s*//\s*-{3,}#', $out[$prev]);
             if (!$hasComment) {
                 $problems[] = sprintf('%s:%d: function %s() has no comment above it', $file, $i + 1, $fm[1]);
             }

@@ -14,6 +14,11 @@
         "phpunit/phpunit": "^12.5",
         "squizlabs/php_codesniffer": "^4.0"
     },
+    "scripts": {
+        "qa": "./ci.sh --only=php-qa",
+        "test": "./tests/run.sh",
+        "ci": "./ci.sh"
+    },
     "autoload-dev": {
         "psr-4": { "PhpGtk4\\Tests\\": "tests/" }
     },

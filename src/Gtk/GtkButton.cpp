@@ -227,11 +227,15 @@ ZEND_METHOD(Gtk4_GtkButton, set_use_underline) {
   gtk_button_set_use_underline(self, use_underline);
 }
 
+// vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
+namespace {
+
 // vfunc thunk: GTK_BUTTON_CLASS->activate -> $this->vfunc_activate() on a PHP subclass
-static void vfunc_thunk_activate(GtkButton *self) {
+void vfunc_thunk_activate(GtkButton *self) {
   zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_activate", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_activate", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
     auto *native = GTK_BUTTON_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->activate != nullptr) native->activate(self);
     return;
@@ -239,16 +243,40 @@ static void vfunc_thunk_activate(GtkButton *self) {
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkButton::vfunc_activate");
 }
 
 // vfunc installer: GTK_BUTTON_CLASS->activate (called from class_init of a PHP subtype)
-static void vfunc_install_activate(gpointer klass) {
+void vfunc_install_activate(gpointer klass) {
   GTK_BUTTON_CLASS(klass)->activate = vfunc_thunk_activate;
 }
+
+// vfunc thunk: GTK_BUTTON_CLASS->clicked -> $this->vfunc_clicked() on a PHP subclass
+void vfunc_thunk_clicked(GtkButton *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_clicked", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_BUTTON_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->clicked != nullptr) native->clicked(self);
+    return;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkButton::vfunc_clicked");
+}
+
+// vfunc installer: GTK_BUTTON_CLASS->clicked (called from class_init of a PHP subtype)
+void vfunc_install_clicked(gpointer klass) {
+  GTK_BUTTON_CLASS(klass)->clicked = vfunc_thunk_clicked;
+}
+
+}  // namespace
 
 /**
  * Gtk4\GtkButton::vfunc_activate(): void
@@ -272,29 +300,6 @@ ZEND_METHOD(Gtk4_GtkButton, vfunc_activate) {
     return;
   }
   klass->activate(self);
-}
-
-// vfunc thunk: GTK_BUTTON_CLASS->clicked -> $this->vfunc_clicked() on a PHP subclass
-static void vfunc_thunk_clicked(GtkButton *self) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_clicked", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_BUTTON_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->clicked != nullptr) native->clicked(self);
-    return;
-  }
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkButton::vfunc_clicked");
-}
-
-// vfunc installer: GTK_BUTTON_CLASS->clicked (called from class_init of a PHP subtype)
-static void vfunc_install_clicked(gpointer klass) {
-  GTK_BUTTON_CLASS(klass)->clicked = vfunc_thunk_clicked;
 }
 
 /**

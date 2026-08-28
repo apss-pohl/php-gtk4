@@ -14,8 +14,16 @@ void gerror_to_php(const GError *error, zval *rv) {
                               g_quark_to_string(error->domain));
 }
 
-// Throw a GError as Gtk4\GError and free it.
+// Throw a GError as Gtk4\GError and free it. A NULL result *without* a GError is a failed
+// GTK precondition (g_return_val_if_fail): the Gtk-CRITICAL said what, throw an Error here
+// instead of dereferencing nothing.
 void throw_gerror(GError *error) {
+  if (error == nullptr) {
+    zend_throw_error(
+        nullptr,
+        "GTK returned no result and no error (a precondition failed, see the CRITICAL above)");
+    return;
+  }
   zval ex;
   gerror_to_php(error, &ex);
   g_error_free(error);

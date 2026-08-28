@@ -106,12 +106,12 @@ jobs:
           echo "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-20 main" | sudo tee /etc/apt/sources.list.d/llvm-20.list
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            libgtk-4-dev xvfb build-essential clang-tidy-20 clang-format-20
+            pkg-config libgtk-4-dev gir1.2-gtk-4.0 xvfb build-essential clang-tidy-20 clang-format-20
 
       - name: Install PHPUnit
         run: composer install --no-interaction --no-progress --prefer-dist
 
-      # version + stubs + lint + build + load + test + phpt. The version stage and
+      # version + gen + stubs + lint + build + load + test + phpt. The version stage and
       # config.m4 both assert ./VERSION == src/php_gtk4.h, and the load stage
       # asserts the built .so reports it too.
       - name: Full CI gate
@@ -145,7 +145,7 @@ jobs:
       - name: Install build deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libgtk-4-dev build-essential
+          sudo apt-get install -y --no-install-recommends pkg-config libgtk-4-dev build-essential
 
       - name: Build extension
         run: ./ci.sh --only=build

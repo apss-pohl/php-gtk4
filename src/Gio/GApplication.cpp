@@ -488,11 +488,15 @@ ZEND_METHOD(Gtk4_GApplication, run) {
   RETURN_LONG(status);
 }
 
+// vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
+namespace {
+
 // vfunc thunk: G_APPLICATION_CLASS->activate -> $this->vfunc_activate() on a PHP subclass
-static void vfunc_thunk_activate(GApplication *self) {
+void vfunc_thunk_activate(GApplication *self) {
   zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_activate", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_activate", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
     auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->activate != nullptr) native->activate(self);
     return;
@@ -500,16 +504,138 @@ static void vfunc_thunk_activate(GApplication *self) {
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_activate");
 }
 
 // vfunc installer: G_APPLICATION_CLASS->activate (called from class_init of a PHP subtype)
-static void vfunc_install_activate(gpointer klass) {
+void vfunc_install_activate(gpointer klass) {
   G_APPLICATION_CLASS(klass)->activate = vfunc_thunk_activate;
 }
+
+// vfunc thunk: G_APPLICATION_CLASS->name_lost -> $this->vfunc_name_lost() on a PHP subclass
+gboolean vfunc_thunk_name_lost(GApplication *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_name_lost", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
+    return native->name_lost != nullptr ? native->name_lost(self) : FALSE;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  gboolean result = FALSE;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    result = zend_is_true(&ret) ? TRUE : FALSE;
+  }
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GApplication::vfunc_name_lost");
+  return result;
+}
+
+// vfunc installer: G_APPLICATION_CLASS->name_lost (called from class_init of a PHP subtype)
+void vfunc_install_name_lost(gpointer klass) {
+  G_APPLICATION_CLASS(klass)->name_lost = vfunc_thunk_name_lost;
+}
+
+// vfunc thunk: G_APPLICATION_CLASS->quit_mainloop -> $this->vfunc_quit_mainloop() on a PHP subclass
+void vfunc_thunk_quit_mainloop(GApplication *self) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_quit_mainloop", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->quit_mainloop != nullptr) native->quit_mainloop(self);
+    return;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GApplication::vfunc_quit_mainloop");
+}
+
+// vfunc installer: G_APPLICATION_CLASS->quit_mainloop (called from class_init of a PHP subtype)
+void vfunc_install_quit_mainloop(gpointer klass) {
+  G_APPLICATION_CLASS(klass)->quit_mainloop = vfunc_thunk_quit_mainloop;
+}
+
+// vfunc thunk: G_APPLICATION_CLASS->run_mainloop -> $this->vfunc_run_mainloop() on a PHP subclass
+void vfunc_thunk_run_mainloop(GApplication *self) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_run_mainloop", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->run_mainloop != nullptr) native->run_mainloop(self);
+    return;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GApplication::vfunc_run_mainloop");
+}
+
+// vfunc installer: G_APPLICATION_CLASS->run_mainloop (called from class_init of a PHP subtype)
+void vfunc_install_run_mainloop(gpointer klass) {
+  G_APPLICATION_CLASS(klass)->run_mainloop = vfunc_thunk_run_mainloop;
+}
+
+// vfunc thunk: G_APPLICATION_CLASS->shutdown -> $this->vfunc_shutdown() on a PHP subclass
+void vfunc_thunk_shutdown(GApplication *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_shutdown", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->shutdown != nullptr) native->shutdown(self);
+    return;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GApplication::vfunc_shutdown");
+}
+
+// vfunc installer: G_APPLICATION_CLASS->shutdown (called from class_init of a PHP subtype)
+void vfunc_install_shutdown(gpointer klass) {
+  G_APPLICATION_CLASS(klass)->shutdown = vfunc_thunk_shutdown;
+}
+
+// vfunc thunk: G_APPLICATION_CLASS->startup -> $this->vfunc_startup() on a PHP subclass
+void vfunc_thunk_startup(GApplication *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_startup", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->startup != nullptr) native->startup(self);
+    return;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GApplication::vfunc_startup");
+}
+
+// vfunc installer: G_APPLICATION_CLASS->startup (called from class_init of a PHP subtype)
+void vfunc_install_startup(gpointer klass) {
+  G_APPLICATION_CLASS(klass)->startup = vfunc_thunk_startup;
+}
+
+}  // namespace
 
 /**
  * Gtk4\GApplication::vfunc_activate(): void
@@ -534,32 +660,6 @@ ZEND_METHOD(Gtk4_GApplication, vfunc_activate) {
   klass->activate(self);
 }
 
-// vfunc thunk: G_APPLICATION_CLASS->name_lost -> $this->vfunc_name_lost() on a PHP subclass
-static gboolean vfunc_thunk_name_lost(GApplication *self) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_name_lost", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
-    return native->name_lost != nullptr ? native->name_lost(self) : FALSE;
-  }
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  gboolean result = FALSE;
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
-    result = zend_is_true(&ret) ? TRUE : FALSE;
-  }
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GApplication::vfunc_name_lost");
-  return result;
-}
-
-// vfunc installer: G_APPLICATION_CLASS->name_lost (called from class_init of a PHP subtype)
-static void vfunc_install_name_lost(gpointer klass) {
-  G_APPLICATION_CLASS(klass)->name_lost = vfunc_thunk_name_lost;
-}
-
 /**
  * Gtk4\GApplication::vfunc_name_lost(): bool
  *
@@ -582,29 +682,6 @@ ZEND_METHOD(Gtk4_GApplication, vfunc_name_lost) {
     RETURN_FALSE;
   }
   RETURN_BOOL(klass->name_lost(self));
-}
-
-// vfunc thunk: G_APPLICATION_CLASS->quit_mainloop -> $this->vfunc_quit_mainloop() on a PHP subclass
-static void vfunc_thunk_quit_mainloop(GApplication *self) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_quit_mainloop", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->quit_mainloop != nullptr) native->quit_mainloop(self);
-    return;
-  }
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GApplication::vfunc_quit_mainloop");
-}
-
-// vfunc installer: G_APPLICATION_CLASS->quit_mainloop (called from class_init of a PHP subtype)
-static void vfunc_install_quit_mainloop(gpointer klass) {
-  G_APPLICATION_CLASS(klass)->quit_mainloop = vfunc_thunk_quit_mainloop;
 }
 
 /**
@@ -632,29 +709,6 @@ ZEND_METHOD(Gtk4_GApplication, vfunc_quit_mainloop) {
   klass->quit_mainloop(self);
 }
 
-// vfunc thunk: G_APPLICATION_CLASS->run_mainloop -> $this->vfunc_run_mainloop() on a PHP subclass
-static void vfunc_thunk_run_mainloop(GApplication *self) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_run_mainloop", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->run_mainloop != nullptr) native->run_mainloop(self);
-    return;
-  }
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GApplication::vfunc_run_mainloop");
-}
-
-// vfunc installer: G_APPLICATION_CLASS->run_mainloop (called from class_init of a PHP subtype)
-static void vfunc_install_run_mainloop(gpointer klass) {
-  G_APPLICATION_CLASS(klass)->run_mainloop = vfunc_thunk_run_mainloop;
-}
-
 /**
  * Gtk4\GApplication::vfunc_run_mainloop(): void
  *
@@ -680,29 +734,6 @@ ZEND_METHOD(Gtk4_GApplication, vfunc_run_mainloop) {
   klass->run_mainloop(self);
 }
 
-// vfunc thunk: G_APPLICATION_CLASS->shutdown -> $this->vfunc_shutdown() on a PHP subclass
-static void vfunc_thunk_shutdown(GApplication *self) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_shutdown", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->shutdown != nullptr) native->shutdown(self);
-    return;
-  }
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GApplication::vfunc_shutdown");
-}
-
-// vfunc installer: G_APPLICATION_CLASS->shutdown (called from class_init of a PHP subtype)
-static void vfunc_install_shutdown(gpointer klass) {
-  G_APPLICATION_CLASS(klass)->shutdown = vfunc_thunk_shutdown;
-}
-
 /**
  * Gtk4\GApplication::vfunc_shutdown(): void
  *
@@ -725,29 +756,6 @@ ZEND_METHOD(Gtk4_GApplication, vfunc_shutdown) {
     return;
   }
   klass->shutdown(self);
-}
-
-// vfunc thunk: G_APPLICATION_CLASS->startup -> $this->vfunc_startup() on a PHP subclass
-static void vfunc_thunk_startup(GApplication *self) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_startup", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->startup != nullptr) native->startup(self);
-    return;
-  }
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GApplication::vfunc_startup");
-}
-
-// vfunc installer: G_APPLICATION_CLASS->startup (called from class_init of a PHP subtype)
-static void vfunc_install_startup(gpointer klass) {
-  G_APPLICATION_CLASS(klass)->startup = vfunc_thunk_startup;
 }
 
 /**

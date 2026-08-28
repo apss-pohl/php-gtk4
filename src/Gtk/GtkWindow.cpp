@@ -786,12 +786,17 @@ ZEND_METHOD(Gtk4_GtkWindow, unminimize) {
   gtk_window_unminimize(self);
 }
 
+// vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
+namespace {
+
 // vfunc thunk: GTK_WINDOW_CLASS->activate_default -> $this->vfunc_activate_default() on a PHP
 // subclass
-static void vfunc_thunk_activate_default(GtkWindow *self) {
+void vfunc_thunk_activate_default(GtkWindow *self) {
   zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_activate_default", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_activate_default", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
     auto *native = GTK_WINDOW_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->activate_default != nullptr) native->activate_default(self);
     return;
@@ -799,16 +804,126 @@ static void vfunc_thunk_activate_default(GtkWindow *self) {
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWindow::vfunc_activate_default");
 }
 
 // vfunc installer: GTK_WINDOW_CLASS->activate_default (called from class_init of a PHP subtype)
-static void vfunc_install_activate_default(gpointer klass) {
+void vfunc_install_activate_default(gpointer klass) {
   GTK_WINDOW_CLASS(klass)->activate_default = vfunc_thunk_activate_default;
 }
+
+// vfunc thunk: GTK_WINDOW_CLASS->activate_focus -> $this->vfunc_activate_focus() on a PHP subclass
+void vfunc_thunk_activate_focus(GtkWindow *self) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_activate_focus", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WINDOW_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->activate_focus != nullptr) native->activate_focus(self);
+    return;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWindow::vfunc_activate_focus");
+}
+
+// vfunc installer: GTK_WINDOW_CLASS->activate_focus (called from class_init of a PHP subtype)
+void vfunc_install_activate_focus(gpointer klass) {
+  GTK_WINDOW_CLASS(klass)->activate_focus = vfunc_thunk_activate_focus;
+}
+
+// vfunc thunk: GTK_WINDOW_CLASS->close_request -> $this->vfunc_close_request() on a PHP subclass
+gboolean vfunc_thunk_close_request(GtkWindow *self) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_close_request", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WINDOW_CLASS(subtype_native_class(G_OBJECT(self)));
+    return native->close_request != nullptr ? native->close_request(self) : FALSE;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  gboolean result = FALSE;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    result = zend_is_true(&ret) ? TRUE : FALSE;
+  }
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWindow::vfunc_close_request");
+  return result;
+}
+
+// vfunc installer: GTK_WINDOW_CLASS->close_request (called from class_init of a PHP subtype)
+void vfunc_install_close_request(gpointer klass) {
+  GTK_WINDOW_CLASS(klass)->close_request = vfunc_thunk_close_request;
+}
+
+// vfunc thunk: GTK_WINDOW_CLASS->enable_debugging -> $this->vfunc_enable_debugging() on a PHP
+// subclass
+gboolean vfunc_thunk_enable_debugging(GtkWindow *self, gboolean toggle) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_enable_debugging", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WINDOW_CLASS(subtype_native_class(G_OBJECT(self)));
+    return native->enable_debugging != nullptr ? native->enable_debugging(self, toggle) : FALSE;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  ZVAL_BOOL(&argv[0], toggle != FALSE);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  gboolean result = FALSE;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    result = zend_is_true(&ret) ? TRUE : FALSE;
+  }
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWindow::vfunc_enable_debugging");
+  return result;
+}
+
+// vfunc installer: GTK_WINDOW_CLASS->enable_debugging (called from class_init of a PHP subtype)
+void vfunc_install_enable_debugging(gpointer klass) {
+  GTK_WINDOW_CLASS(klass)->enable_debugging = vfunc_thunk_enable_debugging;
+}
+
+// vfunc thunk: GTK_WINDOW_CLASS->keys_changed -> $this->vfunc_keys_changed() on a PHP subclass
+void vfunc_thunk_keys_changed(GtkWindow *self) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_keys_changed", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WINDOW_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->keys_changed != nullptr) native->keys_changed(self);
+    return;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWindow::vfunc_keys_changed");
+}
+
+// vfunc installer: GTK_WINDOW_CLASS->keys_changed (called from class_init of a PHP subtype)
+void vfunc_install_keys_changed(gpointer klass) {
+  GTK_WINDOW_CLASS(klass)->keys_changed = vfunc_thunk_keys_changed;
+}
+
+}  // namespace
 
 /**
  * Gtk4\GtkWindow::vfunc_activate_default(): void
@@ -832,29 +947,6 @@ ZEND_METHOD(Gtk4_GtkWindow, vfunc_activate_default) {
     return;
   }
   klass->activate_default(self);
-}
-
-// vfunc thunk: GTK_WINDOW_CLASS->activate_focus -> $this->vfunc_activate_focus() on a PHP subclass
-static void vfunc_thunk_activate_focus(GtkWindow *self) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_activate_focus", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_WINDOW_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->activate_focus != nullptr) native->activate_focus(self);
-    return;
-  }
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkWindow::vfunc_activate_focus");
-}
-
-// vfunc installer: GTK_WINDOW_CLASS->activate_focus (called from class_init of a PHP subtype)
-static void vfunc_install_activate_focus(gpointer klass) {
-  GTK_WINDOW_CLASS(klass)->activate_focus = vfunc_thunk_activate_focus;
 }
 
 /**
@@ -881,32 +973,6 @@ ZEND_METHOD(Gtk4_GtkWindow, vfunc_activate_focus) {
   klass->activate_focus(self);
 }
 
-// vfunc thunk: GTK_WINDOW_CLASS->close_request -> $this->vfunc_close_request() on a PHP subclass
-static gboolean vfunc_thunk_close_request(GtkWindow *self) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_close_request", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_WINDOW_CLASS(subtype_native_class(G_OBJECT(self)));
-    return native->close_request != nullptr ? native->close_request(self) : FALSE;
-  }
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  gboolean result = FALSE;
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
-    result = zend_is_true(&ret) ? TRUE : FALSE;
-  }
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkWindow::vfunc_close_request");
-  return result;
-}
-
-// vfunc installer: GTK_WINDOW_CLASS->close_request (called from class_init of a PHP subtype)
-static void vfunc_install_close_request(gpointer klass) {
-  GTK_WINDOW_CLASS(klass)->close_request = vfunc_thunk_close_request;
-}
-
 /**
  * Gtk4\GtkWindow::vfunc_close_request(): bool
  *
@@ -929,37 +995,6 @@ ZEND_METHOD(Gtk4_GtkWindow, vfunc_close_request) {
     RETURN_FALSE;
   }
   RETURN_BOOL(klass->close_request(self));
-}
-
-// vfunc thunk: GTK_WINDOW_CLASS->enable_debugging -> $this->vfunc_enable_debugging() on a PHP
-// subclass
-static gboolean vfunc_thunk_enable_debugging(GtkWindow *self, gboolean toggle) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_enable_debugging", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_WINDOW_CLASS(subtype_native_class(G_OBJECT(self)));
-    return native->enable_debugging != nullptr ? native->enable_debugging(self, toggle) : FALSE;
-  }
-  std::array<zval, 1> args{};
-  zval *argv = args.data();
-  ZVAL_BOOL(&argv[0], toggle != FALSE);
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  gboolean result = FALSE;
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
-    result = zend_is_true(&ret) ? TRUE : FALSE;
-  }
-  for (zval &arg : args) zval_ptr_dtor(&arg);
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkWindow::vfunc_enable_debugging");
-  return result;
-}
-
-// vfunc installer: GTK_WINDOW_CLASS->enable_debugging (called from class_init of a PHP subtype)
-static void vfunc_install_enable_debugging(gpointer klass) {
-  GTK_WINDOW_CLASS(klass)->enable_debugging = vfunc_thunk_enable_debugging;
 }
 
 /**
@@ -987,29 +1022,6 @@ ZEND_METHOD(Gtk4_GtkWindow, vfunc_enable_debugging) {
     RETURN_FALSE;
   }
   RETURN_BOOL(klass->enable_debugging(self, toggle));
-}
-
-// vfunc thunk: GTK_WINDOW_CLASS->keys_changed -> $this->vfunc_keys_changed() on a PHP subclass
-static void vfunc_thunk_keys_changed(GtkWindow *self) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_keys_changed", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_WINDOW_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->keys_changed != nullptr) native->keys_changed(self);
-    return;
-  }
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkWindow::vfunc_keys_changed");
-}
-
-// vfunc installer: GTK_WINDOW_CLASS->keys_changed (called from class_init of a PHP subtype)
-static void vfunc_install_keys_changed(gpointer klass) {
-  GTK_WINDOW_CLASS(klass)->keys_changed = vfunc_thunk_keys_changed;
 }
 
 /**

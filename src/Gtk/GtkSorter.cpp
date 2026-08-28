@@ -76,11 +76,15 @@ ZEND_METHOD(Gtk4_GtkSorter, get_order) {
   enum_to_php(GTK_TYPE_SORTER_ORDER, gtk_sorter_get_order(self), return_value);
 }
 
+// vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
+namespace {
+
 // vfunc thunk: GTK_SORTER_CLASS->compare -> $this->vfunc_compare() on a PHP subclass
-static GtkOrdering vfunc_thunk_compare(GtkSorter *self, gpointer item1, gpointer item2) {
+GtkOrdering vfunc_thunk_compare(GtkSorter *self, gpointer item1, gpointer item2) {
   zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_compare", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_compare", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
     auto *native = GTK_SORTER_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->compare != nullptr ? native->compare(self, item1, item2)
                                       : static_cast<GtkOrdering>(0);
@@ -105,9 +109,39 @@ static GtkOrdering vfunc_thunk_compare(GtkSorter *self, gpointer item1, gpointer
 }
 
 // vfunc installer: GTK_SORTER_CLASS->compare (called from class_init of a PHP subtype)
-static void vfunc_install_compare(gpointer klass) {
+void vfunc_install_compare(gpointer klass) {
   GTK_SORTER_CLASS(klass)->compare = vfunc_thunk_compare;
 }
+
+// vfunc thunk: GTK_SORTER_CLASS->get_order -> $this->vfunc_get_order() on a PHP subclass
+GtkSorterOrder vfunc_thunk_get_order(GtkSorter *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_get_order", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_SORTER_CLASS(subtype_native_class(G_OBJECT(self)));
+    return native->get_order != nullptr ? native->get_order(self) : static_cast<GtkSorterOrder>(0);
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  GtkSorterOrder result = static_cast<GtkSorterOrder>(0);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    gint v = 0;
+    if (enum_from_php(&ret, GTK_TYPE_SORTER_ORDER, &v)) result = static_cast<GtkSorterOrder>(v);
+  }
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkSorter::vfunc_get_order");
+  return result;
+}
+
+// vfunc installer: GTK_SORTER_CLASS->get_order (called from class_init of a PHP subtype)
+void vfunc_install_get_order(gpointer klass) {
+  GTK_SORTER_CLASS(klass)->get_order = vfunc_thunk_get_order;
+}
+
+}  // namespace
 
 /**
  * Gtk4\GtkSorter::vfunc_compare(?GObject $item1, ?GObject $item2): GtkOrdering
@@ -149,33 +183,6 @@ ZEND_METHOD(Gtk4_GtkSorter, vfunc_compare) {
               klass->compare(self, item1_o != nullptr ? G_OBJECT(item1_o) : nullptr,
                              item2_o != nullptr ? G_OBJECT(item2_o) : nullptr),
               return_value);
-}
-
-// vfunc thunk: GTK_SORTER_CLASS->get_order -> $this->vfunc_get_order() on a PHP subclass
-static GtkSorterOrder vfunc_thunk_get_order(GtkSorter *self) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_get_order", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_SORTER_CLASS(subtype_native_class(G_OBJECT(self)));
-    return native->get_order != nullptr ? native->get_order(self) : static_cast<GtkSorterOrder>(0);
-  }
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  GtkSorterOrder result = static_cast<GtkSorterOrder>(0);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
-    gint v = 0;
-    if (enum_from_php(&ret, GTK_TYPE_SORTER_ORDER, &v)) result = static_cast<GtkSorterOrder>(v);
-  }
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkSorter::vfunc_get_order");
-  return result;
-}
-
-// vfunc installer: GTK_SORTER_CLASS->get_order (called from class_init of a PHP subtype)
-static void vfunc_install_get_order(gpointer klass) {
-  GTK_SORTER_CLASS(klass)->get_order = vfunc_thunk_get_order;
 }
 
 /**

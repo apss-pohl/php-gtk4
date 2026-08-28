@@ -1,5 +1,5 @@
 // The single GValue <-> zval bridge. Properties, signal arguments, signal
-// return values and (later) list-model items all go through here.
+// return values and list-model items all go through here.
 #pragma once
 #include "php_gtk4.h"
 

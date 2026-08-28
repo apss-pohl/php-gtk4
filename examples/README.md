@@ -16,7 +16,7 @@ The application is a header row, a sidebar and a content area, all `GtkBox`. Tha
 made it an application at all: before it, a `GtkWindow` held exactly one child and a `GtkButton` one
 more, so navigation could not sit next to the thing it navigates and the demo had to be a timed
 slideshow. The sidebar shows the current section only, because `GtkScrolledWindow` is not bound yet
-and 36 buttons do not fit; `Demo::SECTIONS` is the grouping and every registered class must appear
+and that many buttons do not fit; `Demo::SECTIONS` is the grouping and every registered class must appear
 in it exactly once.
 
 Each page opens on what its class does rather than printing about it. A window still holds one

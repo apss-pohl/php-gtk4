@@ -14,6 +14,8 @@ class RunningLoop {
   ~RunningLoop();
   RunningLoop(const RunningLoop &) = delete;
   RunningLoop &operator=(const RunningLoop &) = delete;
+  RunningLoop(RunningLoop &&) = delete;
+  RunningLoop &operator=(RunningLoop &&) = delete;
 };
 
 // Ask every registered loop (innermost first) to quit.

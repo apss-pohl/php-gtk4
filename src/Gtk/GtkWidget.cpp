@@ -1698,11 +1698,15 @@ ZEND_METHOD(Gtk4_GtkWidget, unset_state_flags) {
   gtk_widget_unset_state_flags(self, static_cast<GtkStateFlags>(flags));
 }
 
+// vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
+namespace {
+
 // vfunc thunk: GTK_WIDGET_CLASS->contains -> $this->vfunc_contains() on a PHP subclass
-static gboolean vfunc_thunk_contains(GtkWidget *self, double x, double y) {
+gboolean vfunc_thunk_contains(GtkWidget *self, double x, double y) {
   zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_contains", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_contains", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->contains != nullptr ? native->contains(self, x, y) : FALSE;
   }
@@ -1725,45 +1729,18 @@ static gboolean vfunc_thunk_contains(GtkWidget *self, double x, double y) {
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->contains (called from class_init of a PHP subtype)
-static void vfunc_install_contains(gpointer klass) {
+void vfunc_install_contains(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->contains = vfunc_thunk_contains;
-}
-
-/**
- * Gtk4\GtkWidget::vfunc_contains(float $x, float $y): bool
- *
- * Native `contains` (WidgetClass.contains): the GTK implementation below any PHP subclass, for
- * `parent::vfunc_contains()` from an override. Tests if the point at ($x, $y) is contained in
- * $widget.
- */
-ZEND_METHOD(Gtk4_GtkWidget, vfunc_contains) {
-  double x;
-  double y;
-  ZEND_PARSE_PARAMETERS_START(2, 2)
-  Z_PARAM_DOUBLE(x)
-  Z_PARAM_DOUBLE(y)
-  ZEND_PARSE_PARAMETERS_END();
-  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  if (!is_php_type(G_OBJECT_TYPE(self))) {
-    zend_throw_exception_ex(
-        spl_ce_LogicException, 0,
-        "GtkWidget::vfunc_contains(): for parent:: chaining from a PHP subclass "
-        "only; call the public method instead");
-    RETURN_THROWS();
-  }
-  auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->contains == nullptr) {
-    RETURN_FALSE;
-  }
-  RETURN_BOOL(klass->contains(self, x, y));
 }
 
 // vfunc thunk: GTK_WIDGET_CLASS->direction_changed -> $this->vfunc_direction_changed() on a PHP
 // subclass
-static void vfunc_thunk_direction_changed(GtkWidget *self, GtkTextDirection previous_direction) {
+void vfunc_thunk_direction_changed(GtkWidget *self, GtkTextDirection previous_direction) {
   zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_direction_changed", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_direction_changed", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->direction_changed != nullptr) native->direction_changed(self, previous_direction);
     return;
@@ -1774,7 +1751,6 @@ static void vfunc_thunk_direction_changed(GtkWidget *self, GtkTextDirection prev
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
   for (zval &arg : args) zval_ptr_dtor(&arg);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
@@ -1782,45 +1758,16 @@ static void vfunc_thunk_direction_changed(GtkWidget *self, GtkTextDirection prev
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->direction_changed (called from class_init of a PHP subtype)
-static void vfunc_install_direction_changed(gpointer klass) {
+void vfunc_install_direction_changed(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->direction_changed = vfunc_thunk_direction_changed;
 }
 
-/**
- * Gtk4\GtkWidget::vfunc_direction_changed(GtkTextDirection $previous_direction): void
- *
- * Native `direction_changed` (WidgetClass.direction_changed): the GTK implementation below any PHP
- * subclass, for `parent::vfunc_direction_changed()` from an override. Signal emitted when the text
- * direction of a widget changes.
- */
-ZEND_METHOD(Gtk4_GtkWidget, vfunc_direction_changed) {
-  zval *previous_direction;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS(previous_direction, enum_class_for_type(GTK_TYPE_TEXT_DIRECTION))
-  ZEND_PARSE_PARAMETERS_END();
-  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  if (!is_php_type(G_OBJECT_TYPE(self))) {
-    zend_throw_exception_ex(
-        spl_ce_LogicException, 0,
-        "GtkWidget::vfunc_direction_changed(): for parent:: chaining from a PHP subclass "
-        "only; call the public method instead");
-    RETURN_THROWS();
-  }
-  auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->direction_changed == nullptr) {
-    return;
-  }
-  gint previous_direction_v = 0;
-  if (!enum_from_php(previous_direction, GTK_TYPE_TEXT_DIRECTION, &previous_direction_v))
-    RETURN_THROWS();
-  klass->direction_changed(self, static_cast<GtkTextDirection>(previous_direction_v));
-}
-
 // vfunc thunk: GTK_WIDGET_CLASS->focus -> $this->vfunc_focus() on a PHP subclass
-static gboolean vfunc_thunk_focus(GtkWidget *self, GtkDirectionType direction) {
+gboolean vfunc_thunk_focus(GtkWidget *self, GtkDirectionType direction) {
   zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_focus", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_focus", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->focus != nullptr ? native->focus(self, direction) : FALSE;
   }
@@ -1842,43 +1789,18 @@ static gboolean vfunc_thunk_focus(GtkWidget *self, GtkDirectionType direction) {
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->focus (called from class_init of a PHP subtype)
-static void vfunc_install_focus(gpointer klass) {
+void vfunc_install_focus(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->focus = vfunc_thunk_focus;
-}
-
-/**
- * Gtk4\GtkWidget::vfunc_focus(GtkDirectionType $direction): bool
- *
- * Native `focus` (WidgetClass.focus): the GTK implementation below any PHP subclass, for
- * `parent::vfunc_focus()` from an override. Vfunc for gtk_widget_child_focus()
- */
-ZEND_METHOD(Gtk4_GtkWidget, vfunc_focus) {
-  zval *direction;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS(direction, enum_class_for_type(GTK_TYPE_DIRECTION_TYPE))
-  ZEND_PARSE_PARAMETERS_END();
-  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  if (!is_php_type(G_OBJECT_TYPE(self))) {
-    zend_throw_exception_ex(spl_ce_LogicException, 0,
-                            "GtkWidget::vfunc_focus(): for parent:: chaining from a PHP subclass "
-                            "only; call the public method instead");
-    RETURN_THROWS();
-  }
-  auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->focus == nullptr) {
-    RETURN_FALSE;
-  }
-  gint direction_v = 0;
-  if (!enum_from_php(direction, GTK_TYPE_DIRECTION_TYPE, &direction_v)) RETURN_THROWS();
-  RETURN_BOOL(klass->focus(self, static_cast<GtkDirectionType>(direction_v)));
 }
 
 // vfunc thunk: GTK_WIDGET_CLASS->get_request_mode -> $this->vfunc_get_request_mode() on a PHP
 // subclass
-static GtkSizeRequestMode vfunc_thunk_get_request_mode(GtkWidget *self) {
+GtkSizeRequestMode vfunc_thunk_get_request_mode(GtkWidget *self) {
   zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_get_request_mode", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_get_request_mode", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->get_request_mode != nullptr ? native->get_request_mode(self)
                                                : static_cast<GtkSizeRequestMode>(0);
@@ -1899,40 +1821,17 @@ static GtkSizeRequestMode vfunc_thunk_get_request_mode(GtkWidget *self) {
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->get_request_mode (called from class_init of a PHP subtype)
-static void vfunc_install_get_request_mode(gpointer klass) {
+void vfunc_install_get_request_mode(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->get_request_mode = vfunc_thunk_get_request_mode;
 }
 
-/**
- * Gtk4\GtkWidget::vfunc_get_request_mode(): GtkSizeRequestMode
- *
- * Native `get_request_mode` (WidgetClass.get_request_mode): the GTK implementation below any PHP
- * subclass, for `parent::vfunc_get_request_mode()` from an override. Gets whether the widget
- * prefers a height-for-width layout or a width-for-height layout.
- */
-ZEND_METHOD(Gtk4_GtkWidget, vfunc_get_request_mode) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  if (!is_php_type(G_OBJECT_TYPE(self))) {
-    zend_throw_exception_ex(
-        spl_ce_LogicException, 0,
-        "GtkWidget::vfunc_get_request_mode(): for parent:: chaining from a PHP subclass "
-        "only; call the public method instead");
-    RETURN_THROWS();
-  }
-  auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->get_request_mode == nullptr) {
-    enum_to_php(GTK_TYPE_SIZE_REQUEST_MODE, 0, return_value);
-    return;
-  }
-  enum_to_php(GTK_TYPE_SIZE_REQUEST_MODE, klass->get_request_mode(self), return_value);
-}
-
 // vfunc thunk: GTK_WIDGET_CLASS->grab_focus -> $this->vfunc_grab_focus() on a PHP subclass
-static gboolean vfunc_thunk_grab_focus(GtkWidget *self) {
+gboolean vfunc_thunk_grab_focus(GtkWidget *self) {
   zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_grab_focus", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_grab_focus", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->grab_focus != nullptr ? native->grab_focus(self) : FALSE;
   }
@@ -1950,39 +1849,17 @@ static gboolean vfunc_thunk_grab_focus(GtkWidget *self) {
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->grab_focus (called from class_init of a PHP subtype)
-static void vfunc_install_grab_focus(gpointer klass) {
+void vfunc_install_grab_focus(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->grab_focus = vfunc_thunk_grab_focus;
 }
 
-/**
- * Gtk4\GtkWidget::vfunc_grab_focus(): bool
- *
- * Native `grab_focus` (WidgetClass.grab_focus): the GTK implementation below any PHP subclass, for
- * `parent::vfunc_grab_focus()` from an override. Causes $widget to have the keyboard focus for the
- * `GtkWindow` it's inside.
- */
-ZEND_METHOD(Gtk4_GtkWidget, vfunc_grab_focus) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  if (!is_php_type(G_OBJECT_TYPE(self))) {
-    zend_throw_exception_ex(
-        spl_ce_LogicException, 0,
-        "GtkWidget::vfunc_grab_focus(): for parent:: chaining from a PHP subclass "
-        "only; call the public method instead");
-    RETURN_THROWS();
-  }
-  auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->grab_focus == nullptr) {
-    RETURN_FALSE;
-  }
-  RETURN_BOOL(klass->grab_focus(self));
-}
-
 // vfunc thunk: GTK_WIDGET_CLASS->keynav_failed -> $this->vfunc_keynav_failed() on a PHP subclass
-static gboolean vfunc_thunk_keynav_failed(GtkWidget *self, GtkDirectionType direction) {
+gboolean vfunc_thunk_keynav_failed(GtkWidget *self, GtkDirectionType direction) {
   zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_keynav_failed", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_keynav_failed", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->keynav_failed != nullptr ? native->keynav_failed(self, direction) : FALSE;
   }
@@ -2004,44 +1881,16 @@ static gboolean vfunc_thunk_keynav_failed(GtkWidget *self, GtkDirectionType dire
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->keynav_failed (called from class_init of a PHP subtype)
-static void vfunc_install_keynav_failed(gpointer klass) {
+void vfunc_install_keynav_failed(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->keynav_failed = vfunc_thunk_keynav_failed;
 }
 
-/**
- * Gtk4\GtkWidget::vfunc_keynav_failed(GtkDirectionType $direction): bool
- *
- * Native `keynav_failed` (WidgetClass.keynav_failed): the GTK implementation below any PHP
- * subclass, for `parent::vfunc_keynav_failed()` from an override. Emits the `::keynav-failed`
- * signal on the widget.
- */
-ZEND_METHOD(Gtk4_GtkWidget, vfunc_keynav_failed) {
-  zval *direction;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS(direction, enum_class_for_type(GTK_TYPE_DIRECTION_TYPE))
-  ZEND_PARSE_PARAMETERS_END();
-  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  if (!is_php_type(G_OBJECT_TYPE(self))) {
-    zend_throw_exception_ex(
-        spl_ce_LogicException, 0,
-        "GtkWidget::vfunc_keynav_failed(): for parent:: chaining from a PHP subclass "
-        "only; call the public method instead");
-    RETURN_THROWS();
-  }
-  auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->keynav_failed == nullptr) {
-    RETURN_FALSE;
-  }
-  gint direction_v = 0;
-  if (!enum_from_php(direction, GTK_TYPE_DIRECTION_TYPE, &direction_v)) RETURN_THROWS();
-  RETURN_BOOL(klass->keynav_failed(self, static_cast<GtkDirectionType>(direction_v)));
-}
-
 // vfunc thunk: GTK_WIDGET_CLASS->map -> $this->vfunc_map() on a PHP subclass
-static void vfunc_thunk_map(GtkWidget *self) {
+void vfunc_thunk_map(GtkWidget *self) {
   zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_map", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_map", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->map != nullptr) native->map(self);
     return;
@@ -2049,46 +1898,23 @@ static void vfunc_thunk_map(GtkWidget *self) {
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_map");
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->map (called from class_init of a PHP subtype)
-static void vfunc_install_map(gpointer klass) {
+void vfunc_install_map(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->map = vfunc_thunk_map;
 }
 
-/**
- * Gtk4\GtkWidget::vfunc_map(): void
- *
- * Native `map` (WidgetClass.map): the GTK implementation below any PHP subclass, for
- * `parent::vfunc_map()` from an override. Causes a widget to be mapped if it isn’t already.
- */
-ZEND_METHOD(Gtk4_GtkWidget, vfunc_map) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  if (!is_php_type(G_OBJECT_TYPE(self))) {
-    zend_throw_exception_ex(spl_ce_LogicException, 0,
-                            "GtkWidget::vfunc_map(): for parent:: chaining from a PHP subclass "
-                            "only; call the public method instead");
-    RETURN_THROWS();
-  }
-  auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->map == nullptr) {
-    return;
-  }
-  klass->map(self);
-}
-
 // vfunc thunk: GTK_WIDGET_CLASS->measure -> $this->vfunc_measure() on a PHP subclass
-static void vfunc_thunk_measure(GtkWidget *self, GtkOrientation orientation, int for_size,
-                                int *minimum, int *natural, int *minimum_baseline,
-                                int *natural_baseline) {
+void vfunc_thunk_measure(GtkWidget *self, GtkOrientation orientation, int for_size, int *minimum,
+                         int *natural, int *minimum_baseline, int *natural_baseline) {
   zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_measure", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_measure", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->measure != nullptr)
       native->measure(self, orientation, for_size, minimum, natural, minimum_baseline,
@@ -2127,8 +1953,492 @@ static void vfunc_thunk_measure(GtkWidget *self, GtkOrientation orientation, int
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->measure (called from class_init of a PHP subtype)
-static void vfunc_install_measure(gpointer klass) {
+void vfunc_install_measure(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->measure = vfunc_thunk_measure;
+}
+
+// vfunc thunk: GTK_WIDGET_CLASS->mnemonic_activate -> $this->vfunc_mnemonic_activate() on a PHP
+// subclass
+gboolean vfunc_thunk_mnemonic_activate(GtkWidget *self, gboolean group_cycling) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_mnemonic_activate", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+    return native->mnemonic_activate != nullptr ? native->mnemonic_activate(self, group_cycling)
+                                                : FALSE;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  ZVAL_BOOL(&argv[0], group_cycling != FALSE);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  gboolean result = FALSE;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    result = zend_is_true(&ret) ? TRUE : FALSE;
+  }
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWidget::vfunc_mnemonic_activate");
+  return result;
+}
+
+// vfunc installer: GTK_WIDGET_CLASS->mnemonic_activate (called from class_init of a PHP subtype)
+void vfunc_install_mnemonic_activate(gpointer klass) {
+  GTK_WIDGET_CLASS(klass)->mnemonic_activate = vfunc_thunk_mnemonic_activate;
+}
+
+// vfunc thunk: GTK_WIDGET_CLASS->move_focus -> $this->vfunc_move_focus() on a PHP subclass
+void vfunc_thunk_move_focus(GtkWidget *self, GtkDirectionType direction) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_move_focus", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->move_focus != nullptr) native->move_focus(self, direction);
+    return;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  enum_to_php(GTK_TYPE_DIRECTION_TYPE, static_cast<gint>(direction), &argv[0]);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWidget::vfunc_move_focus");
+}
+
+// vfunc installer: GTK_WIDGET_CLASS->move_focus (called from class_init of a PHP subtype)
+void vfunc_install_move_focus(gpointer klass) {
+  GTK_WIDGET_CLASS(klass)->move_focus = vfunc_thunk_move_focus;
+}
+
+// vfunc thunk: GTK_WIDGET_CLASS->realize -> $this->vfunc_realize() on a PHP subclass
+void vfunc_thunk_realize(GtkWidget *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_realize", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->realize != nullptr) native->realize(self);
+    return;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWidget::vfunc_realize");
+}
+
+// vfunc installer: GTK_WIDGET_CLASS->realize (called from class_init of a PHP subtype)
+void vfunc_install_realize(gpointer klass) {
+  GTK_WIDGET_CLASS(klass)->realize = vfunc_thunk_realize;
+}
+
+// vfunc thunk: GTK_WIDGET_CLASS->root -> $this->vfunc_root() on a PHP subclass
+void vfunc_thunk_root(GtkWidget *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_root", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->root != nullptr) native->root(self);
+    return;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWidget::vfunc_root");
+}
+
+// vfunc installer: GTK_WIDGET_CLASS->root (called from class_init of a PHP subtype)
+void vfunc_install_root(gpointer klass) {
+  GTK_WIDGET_CLASS(klass)->root = vfunc_thunk_root;
+}
+
+// vfunc thunk: GTK_WIDGET_CLASS->set_focus_child -> $this->vfunc_set_focus_child() on a PHP
+// subclass
+void vfunc_thunk_set_focus_child(GtkWidget *self, GtkWidget *child) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_set_focus_child", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->set_focus_child != nullptr) native->set_focus_child(self, child);
+    return;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  wrap(child != nullptr ? G_OBJECT(child) : nullptr, &argv[0]);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWidget::vfunc_set_focus_child");
+}
+
+// vfunc installer: GTK_WIDGET_CLASS->set_focus_child (called from class_init of a PHP subtype)
+void vfunc_install_set_focus_child(gpointer klass) {
+  GTK_WIDGET_CLASS(klass)->set_focus_child = vfunc_thunk_set_focus_child;
+}
+
+// vfunc thunk: GTK_WIDGET_CLASS->size_allocate -> $this->vfunc_size_allocate() on a PHP subclass
+void vfunc_thunk_size_allocate(GtkWidget *self, int width, int height, int baseline) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_size_allocate", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->size_allocate != nullptr) native->size_allocate(self, width, height, baseline);
+    return;
+  }
+  std::array<zval, 3> args{};
+  zval *argv = args.data();
+  ZVAL_LONG(&argv[0], static_cast<zend_long>(width));
+  ZVAL_LONG(&argv[1], static_cast<zend_long>(height));
+  ZVAL_LONG(&argv[2], static_cast<zend_long>(baseline));
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 3, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWidget::vfunc_size_allocate");
+}
+
+// vfunc installer: GTK_WIDGET_CLASS->size_allocate (called from class_init of a PHP subtype)
+void vfunc_install_size_allocate(gpointer klass) {
+  GTK_WIDGET_CLASS(klass)->size_allocate = vfunc_thunk_size_allocate;
+}
+
+// vfunc thunk: GTK_WIDGET_CLASS->state_flags_changed -> $this->vfunc_state_flags_changed() on a PHP
+// subclass
+void vfunc_thunk_state_flags_changed(GtkWidget *self, GtkStateFlags previous_state_flags) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_state_flags_changed", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->state_flags_changed != nullptr)
+      native->state_flags_changed(self, previous_state_flags);
+    return;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  ZVAL_LONG(&argv[0], static_cast<zend_long>(previous_state_flags));
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWidget::vfunc_state_flags_changed");
+}
+
+// vfunc installer: GTK_WIDGET_CLASS->state_flags_changed (called from class_init of a PHP subtype)
+void vfunc_install_state_flags_changed(gpointer klass) {
+  GTK_WIDGET_CLASS(klass)->state_flags_changed = vfunc_thunk_state_flags_changed;
+}
+
+// vfunc thunk: GTK_WIDGET_CLASS->system_setting_changed -> $this->vfunc_system_setting_changed() on
+// a PHP subclass
+void vfunc_thunk_system_setting_changed(GtkWidget *self, GtkSystemSetting settings) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_system_setting_changed", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->system_setting_changed != nullptr) native->system_setting_changed(self, settings);
+    return;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  ZVAL_LONG(&argv[0], static_cast<zend_long>(settings));
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWidget::vfunc_system_setting_changed");
+}
+
+// vfunc installer: GTK_WIDGET_CLASS->system_setting_changed (called from class_init of a PHP
+// subtype)
+void vfunc_install_system_setting_changed(gpointer klass) {
+  GTK_WIDGET_CLASS(klass)->system_setting_changed = vfunc_thunk_system_setting_changed;
+}
+
+// vfunc thunk: GTK_WIDGET_CLASS->unmap -> $this->vfunc_unmap() on a PHP subclass
+void vfunc_thunk_unmap(GtkWidget *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_unmap", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->unmap != nullptr) native->unmap(self);
+    return;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWidget::vfunc_unmap");
+}
+
+// vfunc installer: GTK_WIDGET_CLASS->unmap (called from class_init of a PHP subtype)
+void vfunc_install_unmap(gpointer klass) {
+  GTK_WIDGET_CLASS(klass)->unmap = vfunc_thunk_unmap;
+}
+
+// vfunc thunk: GTK_WIDGET_CLASS->unrealize -> $this->vfunc_unrealize() on a PHP subclass
+void vfunc_thunk_unrealize(GtkWidget *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_unrealize", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->unrealize != nullptr) native->unrealize(self);
+    return;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWidget::vfunc_unrealize");
+}
+
+// vfunc installer: GTK_WIDGET_CLASS->unrealize (called from class_init of a PHP subtype)
+void vfunc_install_unrealize(gpointer klass) {
+  GTK_WIDGET_CLASS(klass)->unrealize = vfunc_thunk_unrealize;
+}
+
+// vfunc thunk: GTK_WIDGET_CLASS->unroot -> $this->vfunc_unroot() on a PHP subclass
+void vfunc_thunk_unroot(GtkWidget *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_unroot", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->unroot != nullptr) native->unroot(self);
+    return;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWidget::vfunc_unroot");
+}
+
+// vfunc installer: GTK_WIDGET_CLASS->unroot (called from class_init of a PHP subtype)
+void vfunc_install_unroot(gpointer klass) {
+  GTK_WIDGET_CLASS(klass)->unroot = vfunc_thunk_unroot;
+}
+
+}  // namespace
+
+/**
+ * Gtk4\GtkWidget::vfunc_contains(float $x, float $y): bool
+ *
+ * Native `contains` (WidgetClass.contains): the GTK implementation below any PHP subclass, for
+ * `parent::vfunc_contains()` from an override. Tests if the point at ($x, $y) is contained in
+ * $widget.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, vfunc_contains) {
+  double x;
+  double y;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_DOUBLE(x)
+  Z_PARAM_DOUBLE(y)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_contains(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->contains == nullptr) {
+    RETURN_FALSE;
+  }
+  RETURN_BOOL(klass->contains(self, x, y));
+}
+
+/**
+ * Gtk4\GtkWidget::vfunc_direction_changed(GtkTextDirection $previous_direction): void
+ *
+ * Native `direction_changed` (WidgetClass.direction_changed): the GTK implementation below any PHP
+ * subclass, for `parent::vfunc_direction_changed()` from an override. Signal emitted when the text
+ * direction of a widget changes.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, vfunc_direction_changed) {
+  zval *previous_direction;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(previous_direction, enum_class_for_type(GTK_TYPE_TEXT_DIRECTION))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_direction_changed(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->direction_changed == nullptr) {
+    return;
+  }
+  gint previous_direction_v = 0;
+  if (!enum_from_php(previous_direction, GTK_TYPE_TEXT_DIRECTION, &previous_direction_v))
+    RETURN_THROWS();
+  klass->direction_changed(self, static_cast<GtkTextDirection>(previous_direction_v));
+}
+
+/**
+ * Gtk4\GtkWidget::vfunc_focus(GtkDirectionType $direction): bool
+ *
+ * Native `focus` (WidgetClass.focus): the GTK implementation below any PHP subclass, for
+ * `parent::vfunc_focus()` from an override. Vfunc for gtk_widget_child_focus()
+ */
+ZEND_METHOD(Gtk4_GtkWidget, vfunc_focus) {
+  zval *direction;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(direction, enum_class_for_type(GTK_TYPE_DIRECTION_TYPE))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "GtkWidget::vfunc_focus(): for parent:: chaining from a PHP subclass "
+                            "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->focus == nullptr) {
+    RETURN_FALSE;
+  }
+  gint direction_v = 0;
+  if (!enum_from_php(direction, GTK_TYPE_DIRECTION_TYPE, &direction_v)) RETURN_THROWS();
+  RETURN_BOOL(klass->focus(self, static_cast<GtkDirectionType>(direction_v)));
+}
+
+/**
+ * Gtk4\GtkWidget::vfunc_get_request_mode(): GtkSizeRequestMode
+ *
+ * Native `get_request_mode` (WidgetClass.get_request_mode): the GTK implementation below any PHP
+ * subclass, for `parent::vfunc_get_request_mode()` from an override. Gets whether the widget
+ * prefers a height-for-width layout or a width-for-height layout.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, vfunc_get_request_mode) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_get_request_mode(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->get_request_mode == nullptr) {
+    enum_to_php(GTK_TYPE_SIZE_REQUEST_MODE, 0, return_value);
+    return;
+  }
+  enum_to_php(GTK_TYPE_SIZE_REQUEST_MODE, klass->get_request_mode(self), return_value);
+}
+
+/**
+ * Gtk4\GtkWidget::vfunc_grab_focus(): bool
+ *
+ * Native `grab_focus` (WidgetClass.grab_focus): the GTK implementation below any PHP subclass, for
+ * `parent::vfunc_grab_focus()` from an override. Causes $widget to have the keyboard focus for the
+ * `GtkWindow` it's inside.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, vfunc_grab_focus) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_grab_focus(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->grab_focus == nullptr) {
+    RETURN_FALSE;
+  }
+  RETURN_BOOL(klass->grab_focus(self));
+}
+
+/**
+ * Gtk4\GtkWidget::vfunc_keynav_failed(GtkDirectionType $direction): bool
+ *
+ * Native `keynav_failed` (WidgetClass.keynav_failed): the GTK implementation below any PHP
+ * subclass, for `parent::vfunc_keynav_failed()` from an override. Emits the `::keynav-failed`
+ * signal on the widget.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, vfunc_keynav_failed) {
+  zval *direction;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(direction, enum_class_for_type(GTK_TYPE_DIRECTION_TYPE))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_keynav_failed(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->keynav_failed == nullptr) {
+    RETURN_FALSE;
+  }
+  gint direction_v = 0;
+  if (!enum_from_php(direction, GTK_TYPE_DIRECTION_TYPE, &direction_v)) RETURN_THROWS();
+  RETURN_BOOL(klass->keynav_failed(self, static_cast<GtkDirectionType>(direction_v)));
+}
+
+/**
+ * Gtk4\GtkWidget::vfunc_map(): void
+ *
+ * Native `map` (WidgetClass.map): the GTK implementation below any PHP subclass, for
+ * `parent::vfunc_map()` from an override. Causes a widget to be mapped if it isn’t already.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, vfunc_map) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "GtkWidget::vfunc_map(): for parent:: chaining from a PHP subclass "
+                            "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->map == nullptr) {
+    return;
+  }
+  klass->map(self);
 }
 
 /**
@@ -2176,38 +2486,6 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_measure) {
   add_next_index_long(return_value, natural_baseline);
 }
 
-// vfunc thunk: GTK_WIDGET_CLASS->mnemonic_activate -> $this->vfunc_mnemonic_activate() on a PHP
-// subclass
-static gboolean vfunc_thunk_mnemonic_activate(GtkWidget *self, gboolean group_cycling) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_mnemonic_activate", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-    return native->mnemonic_activate != nullptr ? native->mnemonic_activate(self, group_cycling)
-                                                : FALSE;
-  }
-  std::array<zval, 1> args{};
-  zval *argv = args.data();
-  ZVAL_BOOL(&argv[0], group_cycling != FALSE);
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  gboolean result = FALSE;
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
-    result = zend_is_true(&ret) ? TRUE : FALSE;
-  }
-  for (zval &arg : args) zval_ptr_dtor(&arg);
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkWidget::vfunc_mnemonic_activate");
-  return result;
-}
-
-// vfunc installer: GTK_WIDGET_CLASS->mnemonic_activate (called from class_init of a PHP subtype)
-static void vfunc_install_mnemonic_activate(gpointer klass) {
-  GTK_WIDGET_CLASS(klass)->mnemonic_activate = vfunc_thunk_mnemonic_activate;
-}
-
 /**
  * Gtk4\GtkWidget::vfunc_mnemonic_activate(bool $group_cycling): bool
  *
@@ -2233,33 +2511,6 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_mnemonic_activate) {
     RETURN_FALSE;
   }
   RETURN_BOOL(klass->mnemonic_activate(self, group_cycling));
-}
-
-// vfunc thunk: GTK_WIDGET_CLASS->move_focus -> $this->vfunc_move_focus() on a PHP subclass
-static void vfunc_thunk_move_focus(GtkWidget *self, GtkDirectionType direction) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_move_focus", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->move_focus != nullptr) native->move_focus(self, direction);
-    return;
-  }
-  std::array<zval, 1> args{};
-  zval *argv = args.data();
-  enum_to_php(GTK_TYPE_DIRECTION_TYPE, static_cast<gint>(direction), &argv[0]);
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  for (zval &arg : args) zval_ptr_dtor(&arg);
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkWidget::vfunc_move_focus");
-}
-
-// vfunc installer: GTK_WIDGET_CLASS->move_focus (called from class_init of a PHP subtype)
-static void vfunc_install_move_focus(gpointer klass) {
-  GTK_WIDGET_CLASS(klass)->move_focus = vfunc_thunk_move_focus;
 }
 
 /**
@@ -2291,29 +2542,6 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_move_focus) {
   klass->move_focus(self, static_cast<GtkDirectionType>(direction_v));
 }
 
-// vfunc thunk: GTK_WIDGET_CLASS->realize -> $this->vfunc_realize() on a PHP subclass
-static void vfunc_thunk_realize(GtkWidget *self) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_realize", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->realize != nullptr) native->realize(self);
-    return;
-  }
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkWidget::vfunc_realize");
-}
-
-// vfunc installer: GTK_WIDGET_CLASS->realize (called from class_init of a PHP subtype)
-static void vfunc_install_realize(gpointer klass) {
-  GTK_WIDGET_CLASS(klass)->realize = vfunc_thunk_realize;
-}
-
 /**
  * Gtk4\GtkWidget::vfunc_realize(): void
  *
@@ -2334,29 +2562,6 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_realize) {
     return;
   }
   klass->realize(self);
-}
-
-// vfunc thunk: GTK_WIDGET_CLASS->root -> $this->vfunc_root() on a PHP subclass
-static void vfunc_thunk_root(GtkWidget *self) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_root", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->root != nullptr) native->root(self);
-    return;
-  }
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkWidget::vfunc_root");
-}
-
-// vfunc installer: GTK_WIDGET_CLASS->root (called from class_init of a PHP subtype)
-static void vfunc_install_root(gpointer klass) {
-  GTK_WIDGET_CLASS(klass)->root = vfunc_thunk_root;
 }
 
 /**
@@ -2380,34 +2585,6 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_root) {
     return;
   }
   klass->root(self);
-}
-
-// vfunc thunk: GTK_WIDGET_CLASS->set_focus_child -> $this->vfunc_set_focus_child() on a PHP
-// subclass
-static void vfunc_thunk_set_focus_child(GtkWidget *self, GtkWidget *child) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_set_focus_child", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->set_focus_child != nullptr) native->set_focus_child(self, child);
-    return;
-  }
-  std::array<zval, 1> args{};
-  zval *argv = args.data();
-  wrap(child != nullptr ? G_OBJECT(child) : nullptr, &argv[0]);
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  for (zval &arg : args) zval_ptr_dtor(&arg);
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkWidget::vfunc_set_focus_child");
-}
-
-// vfunc installer: GTK_WIDGET_CLASS->set_focus_child (called from class_init of a PHP subtype)
-static void vfunc_install_set_focus_child(gpointer klass) {
-  GTK_WIDGET_CLASS(klass)->set_focus_child = vfunc_thunk_set_focus_child;
 }
 
 /**
@@ -2442,35 +2619,6 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_set_focus_child) {
   klass->set_focus_child(self, child_o != nullptr ? GTK_WIDGET(child_o) : nullptr);
 }
 
-// vfunc thunk: GTK_WIDGET_CLASS->size_allocate -> $this->vfunc_size_allocate() on a PHP subclass
-static void vfunc_thunk_size_allocate(GtkWidget *self, int width, int height, int baseline) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_size_allocate", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->size_allocate != nullptr) native->size_allocate(self, width, height, baseline);
-    return;
-  }
-  std::array<zval, 3> args{};
-  zval *argv = args.data();
-  ZVAL_LONG(&argv[0], static_cast<zend_long>(width));
-  ZVAL_LONG(&argv[1], static_cast<zend_long>(height));
-  ZVAL_LONG(&argv[2], static_cast<zend_long>(baseline));
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 3, args.data());
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  for (zval &arg : args) zval_ptr_dtor(&arg);
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkWidget::vfunc_size_allocate");
-}
-
-// vfunc installer: GTK_WIDGET_CLASS->size_allocate (called from class_init of a PHP subtype)
-static void vfunc_install_size_allocate(gpointer klass) {
-  GTK_WIDGET_CLASS(klass)->size_allocate = vfunc_thunk_size_allocate;
-}
-
 /**
  * Gtk4\GtkWidget::vfunc_size_allocate(int $width, int $height, int $baseline): void
  *
@@ -2503,35 +2651,6 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_size_allocate) {
                        static_cast<int>(baseline));
 }
 
-// vfunc thunk: GTK_WIDGET_CLASS->state_flags_changed -> $this->vfunc_state_flags_changed() on a PHP
-// subclass
-static void vfunc_thunk_state_flags_changed(GtkWidget *self, GtkStateFlags previous_state_flags) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_state_flags_changed", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->state_flags_changed != nullptr)
-      native->state_flags_changed(self, previous_state_flags);
-    return;
-  }
-  std::array<zval, 1> args{};
-  zval *argv = args.data();
-  ZVAL_LONG(&argv[0], static_cast<zend_long>(previous_state_flags));
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  for (zval &arg : args) zval_ptr_dtor(&arg);
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkWidget::vfunc_state_flags_changed");
-}
-
-// vfunc installer: GTK_WIDGET_CLASS->state_flags_changed (called from class_init of a PHP subtype)
-static void vfunc_install_state_flags_changed(gpointer klass) {
-  GTK_WIDGET_CLASS(klass)->state_flags_changed = vfunc_thunk_state_flags_changed;
-}
-
 /**
  * Gtk4\GtkWidget::vfunc_state_flags_changed(int $previous_state_flags): void
  *
@@ -2557,35 +2676,6 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_state_flags_changed) {
     return;
   }
   klass->state_flags_changed(self, static_cast<GtkStateFlags>(previous_state_flags));
-}
-
-// vfunc thunk: GTK_WIDGET_CLASS->system_setting_changed -> $this->vfunc_system_setting_changed() on
-// a PHP subclass
-static void vfunc_thunk_system_setting_changed(GtkWidget *self, GtkSystemSetting settings) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_system_setting_changed", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->system_setting_changed != nullptr) native->system_setting_changed(self, settings);
-    return;
-  }
-  std::array<zval, 1> args{};
-  zval *argv = args.data();
-  ZVAL_LONG(&argv[0], static_cast<zend_long>(settings));
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  for (zval &arg : args) zval_ptr_dtor(&arg);
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkWidget::vfunc_system_setting_changed");
-}
-
-// vfunc installer: GTK_WIDGET_CLASS->system_setting_changed (called from class_init of a PHP
-// subtype)
-static void vfunc_install_system_setting_changed(gpointer klass) {
-  GTK_WIDGET_CLASS(klass)->system_setting_changed = vfunc_thunk_system_setting_changed;
 }
 
 /**
@@ -2615,29 +2705,6 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_system_setting_changed) {
   klass->system_setting_changed(self, static_cast<GtkSystemSetting>(settings));
 }
 
-// vfunc thunk: GTK_WIDGET_CLASS->unmap -> $this->vfunc_unmap() on a PHP subclass
-static void vfunc_thunk_unmap(GtkWidget *self) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_unmap", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->unmap != nullptr) native->unmap(self);
-    return;
-  }
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkWidget::vfunc_unmap");
-}
-
-// vfunc installer: GTK_WIDGET_CLASS->unmap (called from class_init of a PHP subtype)
-static void vfunc_install_unmap(gpointer klass) {
-  GTK_WIDGET_CLASS(klass)->unmap = vfunc_thunk_unmap;
-}
-
 /**
  * Gtk4\GtkWidget::vfunc_unmap(): void
  *
@@ -2659,29 +2726,6 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_unmap) {
     return;
   }
   klass->unmap(self);
-}
-
-// vfunc thunk: GTK_WIDGET_CLASS->unrealize -> $this->vfunc_unrealize() on a PHP subclass
-static void vfunc_thunk_unrealize(GtkWidget *self) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_unrealize", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->unrealize != nullptr) native->unrealize(self);
-    return;
-  }
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkWidget::vfunc_unrealize");
-}
-
-// vfunc installer: GTK_WIDGET_CLASS->unrealize (called from class_init of a PHP subtype)
-static void vfunc_install_unrealize(gpointer klass) {
-  GTK_WIDGET_CLASS(klass)->unrealize = vfunc_thunk_unrealize;
 }
 
 /**
@@ -2706,29 +2750,6 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_unrealize) {
     return;
   }
   klass->unrealize(self);
-}
-
-// vfunc thunk: GTK_WIDGET_CLASS->unroot -> $this->vfunc_unroot() on a PHP subclass
-static void vfunc_thunk_unroot(GtkWidget *self) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_unroot", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-    if (native->unroot != nullptr) native->unroot(self);
-    return;
-  }
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {}
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkWidget::vfunc_unroot");
-}
-
-// vfunc installer: GTK_WIDGET_CLASS->unroot (called from class_init of a PHP subtype)
-static void vfunc_install_unroot(gpointer klass) {
-  GTK_WIDGET_CLASS(klass)->unroot = vfunc_thunk_unroot;
 }
 
 /**

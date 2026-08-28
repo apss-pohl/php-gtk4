@@ -67,6 +67,8 @@ CAIRO_DOUBLE_METHOD(set_source_rgba, 4, cairo_set_source_rgba(cr, a[0], a[1], a[
 
 /**
  * Gtk4\CairoContext::set_source_color(GdkRGBA $color): void
+ *
+ * Source colour from a `GdkRGBA`.
  */
 ZEND_METHOD(Gtk4_CairoContext, set_source_color) {
   zval *color;
@@ -174,6 +176,8 @@ CAIRO_VOID_METHOD(restore, cairo_restore)
 
 /**
  * Gtk4\CairoContext::show_text(string $text): void
+ *
+ * Draw the text at the current point with the toy font API.
  */
 ZEND_METHOD(Gtk4_CairoContext, show_text) {
   zend_string *text;

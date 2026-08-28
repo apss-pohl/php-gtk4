@@ -39,7 +39,9 @@ struct TrackedNotified {
 
 }  // namespace phpgtk
 
-// NOLINTNEXTLINE(modernize-use-using) Zend macro expands to a typedef struct
+// Zend macro: a typedef struct, value-initialised by GINIT's placement new; `_PhpValue` is
+// GObject's naming (G_DECLARE_FINAL_TYPE) for the C struct.
+// NOLINTBEGIN(modernize-use-using,cppcoreguidelines-pro-type-member-init,bugprone-reserved-identifier)
 ZEND_BEGIN_MODULE_GLOBALS(gtk4)
 zval exception_handler;  // Gtk::set_exception_handler(); IS_UNDEF when none
 zval parked_exception;   // Rethrow mode, nested unregistered loop: waiting for a boundary
@@ -54,6 +56,7 @@ std::unordered_set<phpgtk::Object *> held;         // handles their GObject hold
 bool shutting_down;                                // RSHUTDOWN: no new holds, Zend is going away
 phpgtk::Object *constructing;                      // subtype.cpp: handle a g_object_new() is for
 ZEND_END_MODULE_GLOBALS(gtk4)
+// NOLINTEND(modernize-use-using,cppcoreguidelines-pro-type-member-init,bugprone-reserved-identifier)
 
 ZEND_EXTERN_MODULE_GLOBALS(gtk4)
 #define GTK4_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(gtk4, v)

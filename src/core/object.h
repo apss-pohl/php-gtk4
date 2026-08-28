@@ -87,6 +87,8 @@ GObject *self_object(zend_execute_data *execute_data, GType expected, const char
 
 // In a ZEND_METHOD: `GtkWindow *w = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);` -
 // returns from the method (exception already thrown) if unavailable.
+// NOLINTBEGIN(bugprone-macro-parentheses) `ctype` is a type name; the macro is a statement pair
 #define PHPGTK_SELF(ctype, gtype)                                                  \
   reinterpret_cast<ctype *>(phpgtk::self_object(execute_data, (gtype), __func__)); \
   if (EG(exception)) return
+// NOLINTEND(bugprone-macro-parentheses)

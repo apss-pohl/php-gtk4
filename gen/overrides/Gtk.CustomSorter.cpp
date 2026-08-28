@@ -10,7 +10,7 @@ gint compare_func(gconstpointer a, gconstpointer b, gpointer data) {
   zval args[2];
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast) GLib's gconstpointer, items are GObjects
   wrap(G_OBJECT(const_cast<gpointer>(a)), &args[0]);
-  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast) GLib's gconstpointer, items are GObjects
   wrap(G_OBJECT(const_cast<gpointer>(b)), &args[1]);
   zval retval;
   const bool ok = callback_invoke(cb, 2, args, &retval);

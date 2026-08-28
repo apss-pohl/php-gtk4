@@ -30,7 +30,7 @@ export GTK_A11Y=${GTK_A11Y:-none}
 export GDK_BACKEND=x11
 unset WAYLAND_DISPLAY
 # Never run the suite under xdebug: its develop-mode observer segfaults at
-# request shutdown after ReflectionMethod::invoke() on PHP-CPP methods
+# request shutdown after ReflectionMethod::invoke() on internal methods
 # (EveryClassTest), and it slows everything down. The stress/ASan runs use
 # php -n and never load it.
 export XDEBUG_MODE=off

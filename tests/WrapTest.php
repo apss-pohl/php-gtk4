@@ -10,6 +10,8 @@ use Gtk4\GtkBox;
 use Gtk4\GtkButton;
 use Gtk4\GtkOrientation;
 use Gtk4\GtkWindow;
+use PhpGtk4\Tests\Subclass\DestructCountingButton;
+use PhpGtk4\Tests\Subclass\StatefulButton;
 
 /** src/core/wrap: object handles, identity, ownership. */
 final class WrapTest extends GtkTestCase

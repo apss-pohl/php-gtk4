@@ -8,7 +8,7 @@ use Gtk4\GtkOrientation;
 use Gtk4\GtkSizeRequestMode;
 use Gtk4\GtkWidget;
 
-/** A widget written in PHP: fixed 40x60 request, constant-size mode. */
+/** A widget written in PHP: fixed 40x60 request, constant-size mode. Not final: BigSquare extends it. */
 class Square extends GtkWidget
 {
     public int $measured = 0;

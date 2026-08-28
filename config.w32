@@ -152,16 +152,23 @@ if (PHP_GTK4 != "no") {
 	AC_DEFINE("PHPGTK_BUILD_INFO", "built " + build_date + ", git " + git_hash, "Build info", true);
 	AC_DEFINE("PHPGTK_BUILD_FEATURES", features, "Compiled-in optional features", true);
 
-	// ---- Sources: every .cpp under src/ (relative paths; the object tree mirrors the source
-	// tree), so nothing has to be maintained here when a class file is added.
-	var dirs = ["src", "src\\core", "src\\GLib", "src\\GObject", "src\\Gio", "src\\Gdk", "src\\Gtk", "src\\Cairo"];
+	// ---- Sources: every .cpp under src/, recursively (relative paths; the object tree mirrors
+	// the source tree), so nothing has to be maintained here when a class file *or a namespace
+	// directory* is added - the same rule as config.m4's find.
 	var sources = [];
-	for (var i = 0; i < dirs.length; i++) {
-		var files = glob(gtk4_src + "\\" + dirs[i] + "\\*.cpp");
+	function gtk4_collect(rel) {
+		var files = glob(gtk4_src + "\\" + rel + "\\*.cpp");
 		for (var j = 0; j < files.length; j++) {
-			sources.push(dirs[i] + "\\" + FSO.GetFileName(files[j]));
+			sources.push(rel + "\\" + FSO.GetFileName(files[j]));
+		}
+		var sub = FSO.GetFolder(gtk4_src + "\\" + rel).SubFolders;
+		for (var e = new Enumerator(sub); !e.atEnd(); e.moveNext()) {
+			var name = e.item().Name;
+			if (name != ".libs") gtk4_collect(rel + "\\" + name);
 		}
 	}
+	gtk4_collect("src");
+	sources.sort();
 	if (sources.length == 0) {
 		ERROR("no .cpp files found under " + gtk4_src + "\\src");
 	}

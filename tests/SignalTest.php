@@ -117,7 +117,7 @@ final class SignalTest extends GtkTestCase
 
     public function testEmitRejectsWrongArgumentCount(): void
     {
-        $this->expectException(\ValueError::class);
+        $this->expectException(\ArgumentCountError::class);
         $this->window()->emit('close-request', 'extra');
     }
 

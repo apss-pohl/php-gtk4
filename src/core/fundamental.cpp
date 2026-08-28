@@ -8,6 +8,7 @@ namespace {
 
 zend_object_handlers handlers;
 
+// GType -> fundamental class info (MINIT-filled).
 std::unordered_map<GType, FundamentalClass> &registry() {
   static std::unordered_map<GType, FundamentalClass> map;
   return map;
@@ -59,10 +60,14 @@ void register_fundamental(const FundamentalClass &info) {
   registry()[info.type] = info;
 }
 
-// Registry lookup by GType.
+// Registry lookup by GType, walking up to the nearest registered ancestor (a GdkKeyEvent is
+// handled by the GdkEvent class, like wrap() does for GObjects).
 const FundamentalClass *fundamental_class_for_type(GType type) {
-  auto it = registry().find(type);
-  return it == registry().end() ? nullptr : &it->second;
+  for (GType t = type; t != 0; t = g_type_parent(t)) {
+    auto it = registry().find(t);
+    if (it != registry().end()) return &it->second;
+  }
+  return nullptr;
 }
 
 // C -> PHP: new handle with its own reference.
@@ -86,7 +91,9 @@ void wrap_fundamental(GType type, gpointer instance, zval *rv) {
 // PHP -> C: borrowed instance of exactly `expected`.
 gpointer unwrap_fundamental(zval *zv, GType expected) {
   const FundamentalClass *info = fundamental_class_for_type(expected);
-  if (info == nullptr || Z_TYPE_P(zv) != IS_OBJECT || Z_OBJCE_P(zv) != info->ce) {
+  if (info == nullptr || Z_TYPE_P(zv) != IS_OBJECT ||
+      !instanceof_function(Z_OBJCE_P(zv), info->ce) ||
+      g_type_is_a(fundamental_from_zval(zv)->type, expected) == FALSE) {
     zend_type_error("expected %s, %s given", g_type_name(expected), zend_zval_value_name(zv));
     return nullptr;
   }

@@ -1,6 +1,7 @@
 #include "mainloop.h"
 #include "globals.h"
 
+#include <atomic>
 #include <utility>
 #include <vector>
 
@@ -41,19 +42,23 @@ bool in_unregistered_nested_loop() {
 namespace phpgtk {
 
 namespace {
-// The one thread allowed to talk to GTK: process-wide (GTK is), never a module global.
-GThread *gui_thread = nullptr;
+// The one thread allowed to talk to GTK: process-wide (GTK is), never a module global, and
+// permanent - once a thread owned the GUI no other thread in the process can (GTK cannot be
+// re-initialised). The one runtime-written process-wide static; atomic for ZTS.
+std::atomic<GThread *> gui_thread = nullptr;
 }  // namespace
 
 // Gtk::init() succeeded on this thread; first caller wins, later inits on the same thread are fine.
 void record_gui_thread() {
-  if (gui_thread == nullptr) gui_thread = g_thread_self();
+  GThread *expected = nullptr;
+  gui_thread.compare_exchange_strong(expected, g_thread_self());
 }
 
 // Throws \Error if GTK was initialised on another thread. No-op before init (GTK is not in use
 // yet) and always true on NTS, where there is only one PHP thread.
 bool assert_gui_thread(const char *what) {
-  if (gui_thread == nullptr || gui_thread == g_thread_self()) return true;
+  GThread *owner = gui_thread.load();
+  if (owner == nullptr || owner == g_thread_self()) return true;
   zend_throw_error(nullptr, "%s: GTK is single-threaded and was initialised on another thread",
                    what);
   return false;

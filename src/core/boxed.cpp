@@ -9,6 +9,7 @@ namespace {
 
 zend_object_handlers handlers;
 
+// GType -> boxed class info (MINIT-filled).
 std::unordered_map<GType, BoxedClass> &registry() {
   static std::unordered_map<GType, BoxedClass> map;
   return map;

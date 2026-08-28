@@ -62,17 +62,26 @@ void class_init(gpointer klass, gpointer class_data) {
 // vfuncs running during the rest of g_object_new() and wrap() find it.
 void instance_init(GTypeInstance *instance, gpointer) {
   Object *self = GTK4_G(constructing);
-  if (self != nullptr) object_prebind(self, G_OBJECT(instance));
+  if (self == nullptr) return;
+  // Only the instance subtype_new() is building - not one GTK constructs on the side (a
+  // template child, a factory item): its class must be the handle's class or an ancestor.
+  zend_class_entry *ce = subtype_class_for_gtype(G_TYPE_FROM_INSTANCE(instance));
+  if (ce == nullptr || !instanceof_function(self->std.ce, ce)) return;
+  object_prebind(self, G_OBJECT(instance));
 }
 
-// "App\\MyButton" -> "Php__App__MyButton" (GType names allow [A-Za-z0-9_+-]).
+// "App\\MyButton" -> "Php__App__MyButton" (GType names allow [A-Za-z0-9_+-]). The whole
+// zend_string, not up to the first NUL: an anonymous class is "class@anonymous\0<file>:<line>$<n>",
+// and stopping at the NUL would give every anonymous subclass the same GType name.
 std::string gtype_name_for(zend_class_entry *ce) {
   std::string name = "Php__";
-  for (const char *p = ZSTR_VAL(ce->name); *p != '\0'; p++) {
-    if (*p == '\\') {
+  const char *p = ZSTR_VAL(ce->name);
+  for (size_t i = 0; i < ZSTR_LEN(ce->name); i++) {
+    const char c = p[i];
+    if (c == '\\') {
       name += "__";
-    } else if (g_ascii_isalnum(*p) || *p == '_') {
-      name += *p;
+    } else if (g_ascii_isalnum(c) || c == '_') {
+      name += c;
     } else {
       name += '-';
     }
@@ -113,7 +122,18 @@ GType subtype_for_class(zend_class_entry *ce) {
   const std::string name = gtype_name_for(ce);
   const std::lock_guard<std::mutex> lock(types_mutex());
   if (const GType existing = g_type_from_name(name.c_str()); existing != 0) {
-    if (php_types().contains(existing)) return existing;
+    // Registered for this very class? (`App\Foo` and `App__Foo` map to the same GType name.)
+    if (auto it = php_types().find(existing); it != php_types().end()) {
+      const std::string *owner = it->second;
+      if (owner->size() == ZSTR_LEN(ce->name) &&
+          zend_binary_strcasecmp(owner->c_str(), owner->size(), ZSTR_VAL(ce->name),
+                                 ZSTR_LEN(ce->name)) == 0) {
+        return existing;
+      }
+      zend_throw_error(nullptr, "%s: GType name %s is already used by the PHP class %s",
+                       ZSTR_VAL(ce->name), name.c_str(), owner->c_str());
+      return 0;
+    }
     zend_throw_error(nullptr, "%s: GType name %s is already taken", ZSTR_VAL(ce->name),
                      name.c_str());
     return 0;

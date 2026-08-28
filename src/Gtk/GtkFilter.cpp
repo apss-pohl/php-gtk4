@@ -71,11 +71,16 @@ ZEND_METHOD(Gtk4_GtkFilter, match) {
   RETURN_BOOL(gtk_filter_match(self, G_OBJECT(item_o)));
 }
 
+// vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
+namespace {
+
 // vfunc thunk: GTK_FILTER_CLASS->get_strictness -> $this->vfunc_get_strictness() on a PHP subclass
-static GtkFilterMatch vfunc_thunk_get_strictness(GtkFilter *self) {
+GtkFilterMatch vfunc_thunk_get_strictness(GtkFilter *self) {
   zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_get_strictness", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_get_strictness", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
     auto *native = GTK_FILTER_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->get_strictness != nullptr ? native->get_strictness(self)
                                              : static_cast<GtkFilterMatch>(0);
@@ -95,9 +100,42 @@ static GtkFilterMatch vfunc_thunk_get_strictness(GtkFilter *self) {
 }
 
 // vfunc installer: GTK_FILTER_CLASS->get_strictness (called from class_init of a PHP subtype)
-static void vfunc_install_get_strictness(gpointer klass) {
+void vfunc_install_get_strictness(gpointer klass) {
   GTK_FILTER_CLASS(klass)->get_strictness = vfunc_thunk_get_strictness;
 }
+
+// vfunc thunk: GTK_FILTER_CLASS->match -> $this->vfunc_match() on a PHP subclass
+gboolean vfunc_thunk_match(GtkFilter *self, gpointer item) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_match", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_FILTER_CLASS(subtype_native_class(G_OBJECT(self)));
+    return native->match != nullptr ? native->match(self, item) : FALSE;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  wrap(item != nullptr ? G_OBJECT(item) : nullptr, &argv[0]);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  gboolean result = FALSE;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    result = zend_is_true(&ret) ? TRUE : FALSE;
+  }
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkFilter::vfunc_match");
+  return result;
+}
+
+// vfunc installer: GTK_FILTER_CLASS->match (called from class_init of a PHP subtype)
+void vfunc_install_match(gpointer klass) {
+  GTK_FILTER_CLASS(klass)->match = vfunc_thunk_match;
+}
+
+}  // namespace
 
 /**
  * Gtk4\GtkFilter::vfunc_get_strictness(): GtkFilterMatch
@@ -122,36 +160,6 @@ ZEND_METHOD(Gtk4_GtkFilter, vfunc_get_strictness) {
     return;
   }
   enum_to_php(GTK_TYPE_FILTER_MATCH, klass->get_strictness(self), return_value);
-}
-
-// vfunc thunk: GTK_FILTER_CLASS->match -> $this->vfunc_match() on a PHP subclass
-static gboolean vfunc_thunk_match(GtkFilter *self, gpointer item) {
-  zval zself;
-  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_match", &zself);
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown): GTK's own
-    auto *native = GTK_FILTER_CLASS(subtype_native_class(G_OBJECT(self)));
-    return native->match != nullptr ? native->match(self, item) : FALSE;
-  }
-  std::array<zval, 1> args{};
-  zval *argv = args.data();
-  wrap(item != nullptr ? G_OBJECT(item) : nullptr, &argv[0]);
-  zval ret;
-  ZVAL_UNDEF(&ret);
-  gboolean result = FALSE;
-  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
-  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
-    result = zend_is_true(&ret) ? TRUE : FALSE;
-  }
-  for (zval &arg : args) zval_ptr_dtor(&arg);
-  zval_ptr_dtor(&ret);
-  zval_ptr_dtor(&zself);
-  report_pending_exception("GtkFilter::vfunc_match");
-  return result;
-}
-
-// vfunc installer: GTK_FILTER_CLASS->match (called from class_init of a PHP subtype)
-static void vfunc_install_match(gpointer klass) {
-  GTK_FILTER_CLASS(klass)->match = vfunc_thunk_match;
 }
 
 /**

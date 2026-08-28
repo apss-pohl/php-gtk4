@@ -79,7 +79,7 @@ enabling it. See "Coexisting with php-gtk3" in the README.
 ## Verifying the build
 
 ```sh
-./ci.sh                                   # every default stage: version, stubs, lint, QA, build, load, test, phpt
+./ci.sh                                   # every default stage: version, gen, stubs, lint, QA, build, load, test, phpt
 ./ci.sh --only=load                       # does the .so load, does it report the right version
 ./ci.sh --only=test --filter SignalTest   # PHPUnit under Xvfb (tests/run.sh)
 ./ci.sh --with=asan,coverage,valgrind     # the extra stages CI runs on top

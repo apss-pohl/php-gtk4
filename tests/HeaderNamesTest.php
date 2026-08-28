@@ -13,7 +13,8 @@ use PHPUnit\Framework\TestCase;
  * silently picked up GLib's gio/glistmodel.h there (MSVC: 'ce_GListModel' is
  * not a member of 'phpgtk'), and putting src/ first would break GLib's own
  * <gio/glistmodel.h> the same way. So our per-namespace directories must not
- * mirror GTK's header names - src/Gio/listmodel.h, not src/Gio/GListModel.h.
+ * mirror GTK's header names - the shared prototypes live in src/gen_prototypes.h, and
+ * src/<Ns>/ holds no headers at all.
  */
 final class HeaderNamesTest extends TestCase
 {
