@@ -21,7 +21,9 @@
   - `allowlist.txt` — `Ns.Name` per line, the classes/enums of the wave;
   - `handwritten.txt` — types the generator must know as parents/parameter types but never
     emits (`GObject.Object`, the boxed and fundamental handles);
-  - `skip.txt` — `Ns.Type.member reason`: members deliberately not exposed;
+  - `skip.txt` — `Ns.Type.member reason`: members deliberately not exposed; `Ns.Type.__construct`
+    on an abstract class keeps its constructor private (no PHP subtypes: `GdkTexture` needs state
+    only its factories set);
   - `ctor-props.txt` — `Ns.Type.param property`: constructor arguments that are construct
     properties under another name (`Gtk.Label.str label`), so `new MyLabel('x')` on a PHP subclass
     (its own GType, `src/core/subtype`) can apply them through `g_object_new()`; arguments that are

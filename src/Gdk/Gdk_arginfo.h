@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 722c391e6af122cf1ea143db1ec43a9587c8b7db */
+ * Stub hash: a9000c50a1bfe608ffc1ddf81282fe684be2f07d */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkTexture___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -43,7 +43,7 @@ ZEND_METHOD(Gtk4_GdkTexture, save_to_tiff);
 ZEND_METHOD(Gtk4_GdkTexture, save_to_tiff_bytes);
 
 static const zend_function_entry class_Gtk4_GdkTexture_methods[] = {
-	ZEND_ME(Gtk4_GdkTexture, __construct, arginfo_class_Gtk4_GdkTexture___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkTexture, __construct, arginfo_class_Gtk4_GdkTexture___construct, ZEND_ACC_PRIVATE)
 	ZEND_ME(Gtk4_GdkTexture, new_from_bytes, arginfo_class_Gtk4_GdkTexture_new_from_bytes, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkTexture, new_from_filename, arginfo_class_Gtk4_GdkTexture_new_from_filename, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkTexture, get_format, arginfo_class_Gtk4_GdkTexture_get_format, ZEND_ACC_PUBLIC)

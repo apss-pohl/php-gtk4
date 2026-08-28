@@ -3,3 +3,4 @@ Gio.ApplicationFlags.flags_none   deprecated enumerator (GLIB_DEPRECATED_ENUMERA
 Gdk.Texture.new_from_resource   g_error()s (aborts the process) on an invalid resource path - not a PHP-safe API
 Gtk.Application.inhibit     crashes inside GTK when the window has no surface / the app is not registered
 Gtk.Application.uninhibit   pairs with inhibit
+Gdk.Texture.__construct abstract for GTK's own subclasses only: a texture needs internal state (color state, 4.16+) that only the factories set - no PHP subtypes, no `new`

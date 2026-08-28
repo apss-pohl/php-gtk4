@@ -605,8 +605,8 @@ enum GdkMemoryFormat : int
  */
 class GdkTexture extends GObject
 {
-    /** GdkTexture is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType). */
-    public function __construct()
+    /** GdkTexture is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
     {
     }
     /** Creates a new texture by loading an image from memory, */

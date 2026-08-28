@@ -4,26 +4,17 @@
 #include "core/object.h"
 #include "core/enums.h"
 #include "core/gerror.h"
-#include "core/subtype.h"
 
 using namespace phpgtk;
 
 /**
  * Gtk4\GdkTexture::__construct()
  *
- * GdkTexture is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType).
+ * GdkTexture is abstract in GTK: instances come from GTK, never from `new`.
  */
 ZEND_METHOD(Gtk4_GdkTexture, __construct) {
+  // Private: never called (object_init_ex() in wrap() skips constructors).
   ZEND_PARSE_PARAMETERS_NONE();
-  GObject *obj = subtype_new(ZEND_THIS, nullptr);
-  if (obj == nullptr) {
-    if (EG(exception) == nullptr) {
-      zend_throw_error(nullptr,
-                       "GdkTexture is abstract in GTK: subclass it in PHP (new MyClass())");
-    }
-    RETURN_THROWS();
-  }
-  attach_new(object_from_zval(ZEND_THIS), obj);
 }
 
 /**

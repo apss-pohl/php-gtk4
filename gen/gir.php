@@ -997,7 +997,13 @@ final class Generator
         if ($n->kind === 'class' && !isset($seenNames['__construct'])) {
             $seenNames['__construct'] = true;
             $why = $n->abstract ? 'abstract in GTK' : 'has no constructor in GTK';
-            if ($n->final) {
+            // skip.txt "Ns.Type.__construct": abstract for GTK's own subclasses only (GdkTexture
+            // needs internal state a factory sets; g_object_new() of a subtype aborts on 4.16+).
+            $notSubclassable = isset($this->skipList[$n->qname() . '.__construct']);
+            if ($notSubclassable) {
+                $this->skip($n, '__construct', 'skip.txt: ' . $this->skipList[$n->qname() . '.__construct']);
+            }
+            if ($n->final || $notSubclassable) {
                 array_unshift($stubMethods, "    /** $php is $why: instances come from GTK, never from `new`. */\n"
                     . "    private function __construct() {}\n");
                 array_unshift($cppMethods, "/**\n * Gtk4\\$php::__construct()\n *\n"
