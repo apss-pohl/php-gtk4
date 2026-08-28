@@ -135,8 +135,11 @@ GTK4 GIR only). Every open item here is generator output and is ticked when its 
       `GtkGridView`, `GtkSignalListItemFactory` (`setup`/`bind`), `GtkListItem`. Done 2026-08-26:
       `Gtk4\PhpValue` (GType `PhpValue`, a GObject carrying a zval), `GListModel`, `GListStore`,
       `GtkFilterListModel`/`GtkCustomFilter`, `GtkSortListModel`/`GtkCustomSorter`.
-- [ ] **CSS** → wave 8: `GtkCssProvider` + `gtk_style_context_add_provider_for_display`; custom
-      properties. Two small classes.
+- [x] **CSS** (2026-08-28) — `GtkCssProvider`, `GtkStyleProvider`, `GtkCssSection` (the
+      `parsing-error` argument, a refcounted boxed type on the fundamental registry),
+      `GtkStyleProviderPriority` and `Gtk::add_provider_for_display()` /
+      `remove_provider_for_display()`; `GdkDisplay` came with it. Custom CSS *properties*
+      (`gtk_widget_class_install_style_property`-style) are not a GTK 4 concept and are not planned.
 - [ ] **Rendering from PHP** → milestone 4: `GtkSnapshot`, `GdkPaintable` (`GdkTexture`,
       `GtkDrawingArea::set_draw_func` + `CairoContext` done 2026-08-26).
 - [x] **GL renderer smoke test** — the test infrastructure forces `GSK_RENDERER=cairo` +

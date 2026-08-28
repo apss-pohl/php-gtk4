@@ -996,7 +996,7 @@ final class Generator
         }
         if ($n->kind === 'class' && !isset($seenNames['__construct'])) {
             $seenNames['__construct'] = true;
-            $why = $n->abstract ? 'abstract in GTK' : 'has no constructor in GTK';
+            $why = $n->abstract ? 'is abstract in GTK' : 'has no constructor in GTK';
             // skip.txt "Ns.Type.__construct": abstract for GTK's own subclasses only (GdkTexture
             // needs internal state a factory sets; g_object_new() of a subtype aborts on 4.16+).
             $notSubclassable = isset($this->skipList[$n->qname() . '.__construct']);
@@ -1004,10 +1004,10 @@ final class Generator
                 $this->skip($n, '__construct', 'skip.txt: ' . $this->skipList[$n->qname() . '.__construct']);
             }
             if ($n->final || $notSubclassable) {
-                array_unshift($stubMethods, "    /** $php is $why: instances come from GTK, never from `new`. */\n"
+                array_unshift($stubMethods, "    /** $php $why: instances come from GTK, never from `new`. */\n"
                     . "    private function __construct() {}\n");
                 array_unshift($cppMethods, "/**\n * Gtk4\\$php::__construct()\n *\n"
-                    . " * $php is $why: instances come from GTK, never from `new`.\n */\n"
+                    . " * $php $why: instances come from GTK, never from `new`.\n */\n"
                     . "ZEND_METHOD({$this->ceName($php)}, __construct) {\n"
                     . "  // Private: never called (object_init_ex() in wrap() skips constructors).\n"
                     . "  ZEND_PARSE_PARAMETERS_NONE();\n}\n\n");
@@ -1015,16 +1015,16 @@ final class Generator
                 // public (a PHP subclass without its own constructor inherits it): `new GtkWidget()`
                 // throws, `new MyWidget()` (a PHP subclass, its own GType through core/subtype.h)
                 // works - that is how a widget is written in PHP.
-                array_unshift($stubMethods, "    /** $php is $why: `new` only works on a PHP subclass "
+                array_unshift($stubMethods, "    /** $php $why: `new` only works on a PHP subclass "
                     . "(which gets its own GType). */\n    public function __construct() {}\n");
                 array_unshift($cppMethods, "/**\n * Gtk4\\$php::__construct()\n *\n"
-                    . " * $php is $why: `new` only works on a PHP subclass (which gets its own GType).\n */\n"
+                    . " * $php $why: `new` only works on a PHP subclass (which gets its own GType).\n */\n"
                     . "ZEND_METHOD({$this->ceName($php)}, __construct) {\n"
                     . "  ZEND_PARSE_PARAMETERS_NONE();\n"
                     . "  GObject *obj = subtype_new(ZEND_THIS, nullptr);\n"
                     . "  if (obj == nullptr) {\n"
                     . "    if (EG(exception) == nullptr) {\n"
-                    . "      zend_throw_error(nullptr, \"$php is $why: subclass it in PHP (new MyClass())\");\n"
+                    . "      zend_throw_error(nullptr, \"$php $why: subclass it in PHP (new MyClass())\");\n"
                     . "    }\n"
                     . "    RETURN_THROWS();\n  }\n"
                     . '  ' . ($isRoot ? 'attach' : 'attach_new') . "(object_from_zval(ZEND_THIS), obj);\n}\n\n");

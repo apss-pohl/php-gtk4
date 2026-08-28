@@ -18,7 +18,10 @@ use Gtk4\Gtk;
 use Gtk4\GtkApplication;
 use Gtk4\GtkBox;
 use Gtk4\GtkButton;
+use Gtk4\GtkCssProvider;
+use Gtk4\GtkCssSection;
 use Gtk4\GtkOrientation;
+use Gtk4\GtkStyleProviderPriority;
 use Gtk4\GtkWindow;
 use PhpGtk4\Tests\Scripts\StressSquare;
 
@@ -90,6 +93,25 @@ for ($i = 0; $i < $rounds; $i++) {
     unset($sq);
     $w->set_child($box);
     unset($box);
+
+    // CSS: a provider attached to the display and detached again, a stylesheet reloaded
+    // (GTK keeps and frees the old one), and a parsing error handing over a GtkCssSection
+    // handle that only the handler's frame holds.
+    $display = $w->get_display();
+    $css = new GtkCssProvider();
+    $css->connect('parsing-error', function (GtkCssProvider $p, GtkCssSection $s) use (&$sections): void {
+        $sections = ($sections ?? 0) + strlen($s->to_string()) + $s->get_start_location()['bytes'];
+    });
+    $css->load_from_string(".stress-$i { color: rgb(1,2,3); }");
+    Gtk::add_provider_for_display($display, $css, GtkStyleProviderPriority::APPLICATION);
+    $css->load_from_string(".stress-$i { color: nonsense-value; }");   // one parsing error
+    $w->add_css_class("stress-$i");
+    Gtk::remove_provider_for_display($display, $css);
+    if ($i % 2 === 0) {
+        unset($css);          // dropped while its handlers are still connected
+    } else {
+        $keep[] = $css;       // outlives the loop
+    }
 
     // identity + object property round trip
     $other = new GtkWindow();
@@ -190,4 +212,4 @@ if ($reported !== $expected) {
     exit(1);
 }
 
-echo "stress ok: $rounds rounds, ", count($keep), " windows alive at shutdown\n";
+echo "stress ok: $rounds rounds, ", count($keep), " handles alive at shutdown\n";

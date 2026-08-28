@@ -551,6 +551,22 @@ ZEND_METHOD(Gtk4_GtkWindow, set_destroy_with_parent) {
 }
 
 /**
+ * Gtk4\GtkWindow::set_display(GdkDisplay $display): void
+ *
+ * Sets the `GdkDisplay` where the $window is displayed.
+ */
+ZEND_METHOD(Gtk4_GtkWindow, set_display) {
+  zval *display;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(display, class_for_gtype(GDK_TYPE_DISPLAY))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWindow *self = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
+  GObject *display_o = unwrap(display, GDK_TYPE_DISPLAY);
+  if (display_o == nullptr) RETURN_THROWS();
+  gtk_window_set_display(self, GDK_DISPLAY(display_o));
+}
+
+/**
  * Gtk4\GtkWindow::set_focus(?GtkWidget $focus): void
  *
  * Sets the focus widget.

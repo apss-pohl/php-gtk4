@@ -6,6 +6,18 @@
 using namespace phpgtk;
 
 /**
+ * Gtk4\GtkRoot::get_display(): GdkDisplay
+ *
+ * Returns the display that this `GtkRoot` is on.
+ */
+ZEND_METHOD(Gtk4_GtkRoot, get_display) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkRoot *self = PHPGTK_SELF(GtkRoot, GTK_TYPE_ROOT);
+  GdkDisplay *result = gtk_root_get_display(self);
+  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkRoot::get_focus(): ?GtkWidget
  *
  * Retrieves the current focused widget within the root.

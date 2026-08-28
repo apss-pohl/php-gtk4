@@ -87,6 +87,10 @@ final class Demo
             'GtkCustomSorter', 'GtkSortListModel', 'GtkSorterChange', 'GtkSorterOrder',
             'GtkOrdering',
         ],
+        'Styling' => [
+            'GtkCssProvider', 'GtkStyleProvider', 'GtkStyleProviderPriority', 'GtkCssSection',
+            'GdkDisplay',
+        ],
         'Loop' => ['GLib', 'GMainLoop'],
     ];
 

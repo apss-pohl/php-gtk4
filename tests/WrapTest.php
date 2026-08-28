@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use Gtk4\GdkDisplay;
 use Gtk4\GObject;
 use Gtk4\GtkBox;
 use Gtk4\GtkButton;
@@ -23,10 +24,23 @@ final class WrapTest extends GtkTestCase
 
     public function testObjectPropertyIsWrappedAsNearestRegisteredClass(): void
     {
-        // GdkDisplay has no PHP class yet -> falls back to Gtk4\GObject, not an exception.
+        // The display is a backend subclass (GdkX11Display, GdkWaylandDisplay) that has no
+        // PHP class; wrap() walks the GType parents up to the registered GdkDisplay.
         $display = $this->window()->get_property('display');
-        self::assertInstanceOf(GObject::class, $display);
-        self::assertSame(GObject::class, $display::class);
+        self::assertInstanceOf(GdkDisplay::class, $display);
+        self::assertSame(GdkDisplay::class, $display::class);
+    }
+
+    public function testUnregisteredTypeFallsBackToGObject(): void
+    {
+        // GdkMonitor is not bound: the nearest registered ancestor is GObject itself,
+        // which is a handle like any other - not an exception.
+        $display = GdkDisplay::get_default();
+        self::assertInstanceOf(GdkDisplay::class, $display);
+        $monitor = $display->get_monitors()->get_item(0);
+        self::assertInstanceOf(GObject::class, $monitor);
+        self::assertSame(GObject::class, $monitor::class);
+        self::assertIsInt($monitor->get_property('width-mm'), 'a GObject handle still reads properties');
     }
 
     public function testNullObjectProperty(): void

@@ -24,21 +24,22 @@ the notes are hand-written and may lag.
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 18 | — |
+| ✅ implemented | 20 | — |
 | 🟡 partial | 2 | — |
-| ❌ to port (GTK 4 equivalent exists) | 74 | ~1750 |
+| ❌ to port (GTK 4 equivalent exists) | 72 | ~1750 |
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 5 | ~130 |
 
-php-gtk4 currently declares (2026-08-28, 55 names): `CairoContext`, `ExceptionMode`, `GAction`,
+php-gtk4 currently declares (2026-08-28, 61 names): `CairoContext`, `ExceptionMode`, `GAction`,
 `GActionGroup`, `GActionMap`, `GApplication`, `GApplicationFlags`, `GError`, `GLib`, `GListModel`,
-`GListStore`, `GMainLoop`, `GObject`, `GParamSpec`, `GSimpleAction`, `GdkMemoryFormat`, `GdkRGBA`,
-`GdkRectangle`, `GdkTexture`, `Gtk`, `GtkAlign`, `GtkApplication`, `GtkApplicationInhibitFlags`,
-`GtkBaselinePosition`, `GtkBox`, `GtkButton`, `GtkCustomFilter`, `GtkCustomSorter`, `GtkDirectionType`,
-`GtkDrawingArea`, `GtkFilter`, `GtkFilterChange`, `GtkFilterListModel`, `GtkFilterMatch`, `GtkJustification`,
-`GtkLabel`, `GtkNaturalWrapMode`, `GtkOrdering`, `GtkOrientable`, `GtkOrientation`, `GtkOverflow`,
-`GtkPickFlags`, `GtkRoot`, `GtkSizeRequestMode`, `GtkSortListModel`, `GtkSorter`, `GtkSorterChange`,
-`GtkSorterOrder`, `GtkStateFlags`, `GtkTextDirection`, `GtkWidget`, `GtkWindow`, `PangoEllipsizeMode`,
+`GListStore`, `GMainLoop`, `GObject`, `GParamSpec`, `GSimpleAction`, `GdkDisplay`, `GdkMemoryFormat`,
+`GdkModifierType`, `GdkRGBA`, `GdkRectangle`, `GdkTexture`, `Gtk`, `GtkAlign`, `GtkApplication`,
+`GtkApplicationInhibitFlags`, `GtkBaselinePosition`, `GtkBox`, `GtkButton`, `GtkCssProvider`, `GtkCssSection`,
+`GtkCustomFilter`, `GtkCustomSorter`, `GtkDirectionType`, `GtkDrawingArea`, `GtkFilter`, `GtkFilterChange`,
+`GtkFilterListModel`, `GtkFilterMatch`, `GtkJustification`, `GtkLabel`, `GtkNaturalWrapMode`, `GtkOrdering`,
+`GtkOrientable`, `GtkOrientation`, `GtkOverflow`, `GtkPickFlags`, `GtkRoot`, `GtkSizeRequestMode`,
+`GtkSortListModel`, `GtkSorter`, `GtkSorterChange`, `GtkSorterOrder`, `GtkStateFlags`, `GtkStyleProvider`,
+`GtkStyleProviderPriority`, `GtkTextDirection`, `GtkWidget`, `GtkWindow`, `PangoEllipsizeMode`,
 `PangoWrapMode`, `PhpValue`. Everything else in this document is open work.
 
 ---
@@ -195,7 +196,7 @@ php-gtk4 currently declares (2026-08-28, 55 names): `CairoContext`, `ExceptionMo
 
 | php-gtk3 class | gtk3 methods | GTK 4 replacement | php-gtk4 | Notes |
 | --- | ---: | --- | :---: | --- |
-| `GtkCssProvider` | 16 | `GtkCssProvider` | ❌ | `load_from_data` signature changed (no length/GError out-param in 4.12+). |
+| `GtkCssProvider` | 16 | `GtkCssProvider` | ✅ | `load_from_data` signature changed (no length/GError out-param in 4.12+). |
 | `GtkStyleContext` | 79 | — | ⛔ | **Deprecated/gutted in GTK 4**; use `GtkWidget::add_css_class` / `remove_css_class` — already ✅ on `GtkWidget`. |
 | `GtkWidgetPath` | 39 | — | ⛔ | Removed in GTK 4. |
 | `GtkBuilder` | 26 | `GtkBuilder` | ❌ | GTK 4 `.ui` syntax; `connect_signals` replaced by `GtkBuilderScope`. |
@@ -217,7 +218,7 @@ php-gtk4 currently declares (2026-08-28, 55 names): `CairoContext`, `ExceptionMo
 | --- | ---: | --- | :---: | --- |
 | `GdkRGBA` | 4 | `GdkRGBA` | ✅ | Boxed type with `parse`, `to_string`, `equal`, `is_opaque` + `r/g/b/a` fields. Richer than php-gtk3's. |
 | — | — | `GdkRectangle` | ✅ | New in php-gtk4 (`intersect`, `union`, `contains_point`, `equal`). |
-| `GdkDisplay` | 5 | `GdkDisplay` | ❌ | `get_monitors()` returns a `GListModel` in GTK 4. |
+| `GdkDisplay` | 5 | `GdkDisplay` | ✅ | `get_monitors()` returns a `GListModel` in GTK 4. |
 | `GdkMonitor` | 5 | `GdkMonitor` | ❌ | `get_geometry`, `get_width_mm`; `get_workarea` removed in GTK 4. |
 | `GdkScreen` | 4 | — | ⛔ | Removed in GTK 4; use `GdkDisplay`. |
 | `GdkVisual` | 6 | — | ⛔ | Removed in GTK 4. |

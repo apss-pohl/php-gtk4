@@ -22,6 +22,7 @@
   phpgtk::register_enum(PANGO_TYPE_WRAP_MODE, register_class_Gtk4_PangoWrapMode());
   phpgtk::register_flags(G_TYPE_APPLICATION_FLAGS, register_class_Gtk4_GApplicationFlags());
   phpgtk::register_enum(GDK_TYPE_MEMORY_FORMAT, register_class_Gtk4_GdkMemoryFormat());
+  phpgtk::register_flags(GDK_TYPE_MODIFIER_TYPE, register_class_Gtk4_GdkModifierType());
 // --- interfaces and classes, parents first
   zend_class_entry *ce_GtkFilter = register_class_Gtk4_GtkFilter(ce_GObject);
   phpgtk::register_class("GtkFilter", ce_GtkFilter, GTK_TYPE_FILTER);
@@ -31,6 +32,8 @@
   phpgtk::register_interface("GtkRoot", ce_GtkRoot, GTK_TYPE_ROOT);
   zend_class_entry *ce_GtkSorter = register_class_Gtk4_GtkSorter(ce_GObject);
   phpgtk::register_class("GtkSorter", ce_GtkSorter, GTK_TYPE_SORTER);
+  zend_class_entry *ce_GtkStyleProvider = register_class_Gtk4_GtkStyleProvider();
+  phpgtk::register_interface("GtkStyleProvider", ce_GtkStyleProvider, GTK_TYPE_STYLE_PROVIDER);
   zend_class_entry *ce_GtkWidget = register_class_Gtk4_GtkWidget(ce_GObject);
   phpgtk::register_class("GtkWidget", ce_GtkWidget, GTK_TYPE_WIDGET);
   zend_class_entry *ce_GtkWindow = register_class_Gtk4_GtkWindow(ce_GtkWidget, ce_GtkRoot);
@@ -49,6 +52,8 @@
   phpgtk::register_class("GListStore", ce_GListStore, G_TYPE_LIST_STORE);
   zend_class_entry *ce_GSimpleAction = register_class_Gtk4_GSimpleAction(ce_GObject, ce_GAction);
   phpgtk::register_class("GSimpleAction", ce_GSimpleAction, G_TYPE_SIMPLE_ACTION);
+  zend_class_entry *ce_GdkDisplay = register_class_Gtk4_GdkDisplay(ce_GObject);
+  phpgtk::register_class("GdkDisplay", ce_GdkDisplay, GDK_TYPE_DISPLAY);
   zend_class_entry *ce_GdkTexture = register_class_Gtk4_GdkTexture(ce_GObject);
   phpgtk::register_class("GdkTexture", ce_GdkTexture, GDK_TYPE_TEXTURE);
   zend_class_entry *ce_GtkApplication = register_class_Gtk4_GtkApplication(ce_GApplication, ce_GActionGroup, ce_GActionMap);
@@ -57,6 +62,8 @@
   phpgtk::register_class("GtkBox", ce_GtkBox, GTK_TYPE_BOX);
   zend_class_entry *ce_GtkButton = register_class_Gtk4_GtkButton(ce_GtkWidget);
   phpgtk::register_class("GtkButton", ce_GtkButton, GTK_TYPE_BUTTON);
+  zend_class_entry *ce_GtkCssProvider = register_class_Gtk4_GtkCssProvider(ce_GObject, ce_GtkStyleProvider);
+  phpgtk::register_class("GtkCssProvider", ce_GtkCssProvider, GTK_TYPE_CSS_PROVIDER);
   zend_class_entry *ce_GtkCustomFilter = register_class_Gtk4_GtkCustomFilter(ce_GtkFilter);
   phpgtk::register_class("GtkCustomFilter", ce_GtkCustomFilter, GTK_TYPE_CUSTOM_FILTER);
   zend_class_entry *ce_GtkCustomSorter = register_class_Gtk4_GtkCustomSorter(ce_GtkSorter);

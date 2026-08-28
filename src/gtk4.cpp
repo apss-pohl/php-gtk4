@@ -111,6 +111,8 @@ static PHP_MINIT_FUNCTION(gtk4) {
   phpgtk::ce_GError = register_class_Gtk4_GError(spl_ce_RuntimeException);
   phpgtk::register_class("PhpValue", register_class_Gtk4_PhpValue(ce_GObject), PHP_TYPE_VALUE);
   phpgtk::register_CairoContext(register_class_Gtk4_CairoContext());
+  phpgtk::register_GtkCssSection(register_class_Gtk4_GtkCssSection());
+  register_class_Gtk4_GtkStyleProviderPriority();
   // Generated classes (gen/gir.php): enums first, then interfaces and classes parents first.
 #include "gen_minit.inc"
 

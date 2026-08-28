@@ -1,8 +1,45 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: a9000c50a1bfe608ffc1ddf81282fe684be2f07d */
+ * Stub hash: c4244cea7c884ffad605385c912a81c7724c32d6 */
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkTexture___construct, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkDisplay___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDisplay_get_default, 0, 0, Gtk4\\GdkDisplay, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDisplay_open, 0, 0, Gtk4\\GdkDisplay, 1)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, display_name, IS_STRING, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkDisplay_beep, 0, 0, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkDisplay_close arginfo_class_Gtk4_GdkDisplay_beep
+
+#define arginfo_class_Gtk4_GdkDisplay_flush arginfo_class_Gtk4_GdkDisplay_beep
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDisplay_get_monitors, 0, 0, Gtk4\\GListModel, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkDisplay_get_name, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkDisplay_is_closed, 0, 0, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkDisplay_is_composited arginfo_class_Gtk4_GdkDisplay_is_closed
+
+#define arginfo_class_Gtk4_GdkDisplay_is_rgba arginfo_class_Gtk4_GdkDisplay_is_closed
+
+#define arginfo_class_Gtk4_GdkDisplay_prepare_gl arginfo_class_Gtk4_GdkDisplay_is_closed
+
+#define arginfo_class_Gtk4_GdkDisplay_supports_input_shapes arginfo_class_Gtk4_GdkDisplay_is_closed
+
+#define arginfo_class_Gtk4_GdkDisplay_supports_shadow_width arginfo_class_Gtk4_GdkDisplay_is_closed
+
+#define arginfo_class_Gtk4_GdkDisplay_sync arginfo_class_Gtk4_GdkDisplay_beep
+
+#define arginfo_class_Gtk4_GdkTexture___construct arginfo_class_Gtk4_GdkDisplay___construct
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkTexture_new_from_bytes, 0, 1, Gtk4\\GdkTexture, 0)
 	ZEND_ARG_TYPE_INFO(0, bytes, IS_STRING, 0)
@@ -24,13 +61,27 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkTexture_save_to_pn
 	ZEND_ARG_TYPE_INFO(0, filename, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkTexture_save_to_png_bytes, 0, 0, IS_STRING, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_GdkTexture_save_to_png_bytes arginfo_class_Gtk4_GdkDisplay_get_name
 
 #define arginfo_class_Gtk4_GdkTexture_save_to_tiff arginfo_class_Gtk4_GdkTexture_save_to_png
 
-#define arginfo_class_Gtk4_GdkTexture_save_to_tiff_bytes arginfo_class_Gtk4_GdkTexture_save_to_png_bytes
+#define arginfo_class_Gtk4_GdkTexture_save_to_tiff_bytes arginfo_class_Gtk4_GdkDisplay_get_name
 
+ZEND_METHOD(Gtk4_GdkDisplay, __construct);
+ZEND_METHOD(Gtk4_GdkDisplay, get_default);
+ZEND_METHOD(Gtk4_GdkDisplay, open);
+ZEND_METHOD(Gtk4_GdkDisplay, beep);
+ZEND_METHOD(Gtk4_GdkDisplay, close);
+ZEND_METHOD(Gtk4_GdkDisplay, flush);
+ZEND_METHOD(Gtk4_GdkDisplay, get_monitors);
+ZEND_METHOD(Gtk4_GdkDisplay, get_name);
+ZEND_METHOD(Gtk4_GdkDisplay, is_closed);
+ZEND_METHOD(Gtk4_GdkDisplay, is_composited);
+ZEND_METHOD(Gtk4_GdkDisplay, is_rgba);
+ZEND_METHOD(Gtk4_GdkDisplay, prepare_gl);
+ZEND_METHOD(Gtk4_GdkDisplay, supports_input_shapes);
+ZEND_METHOD(Gtk4_GdkDisplay, supports_shadow_width);
+ZEND_METHOD(Gtk4_GdkDisplay, sync);
 ZEND_METHOD(Gtk4_GdkTexture, __construct);
 ZEND_METHOD(Gtk4_GdkTexture, new_from_bytes);
 ZEND_METHOD(Gtk4_GdkTexture, new_from_filename);
@@ -41,6 +92,25 @@ ZEND_METHOD(Gtk4_GdkTexture, save_to_png);
 ZEND_METHOD(Gtk4_GdkTexture, save_to_png_bytes);
 ZEND_METHOD(Gtk4_GdkTexture, save_to_tiff);
 ZEND_METHOD(Gtk4_GdkTexture, save_to_tiff_bytes);
+
+static const zend_function_entry class_Gtk4_GdkDisplay_methods[] = {
+	ZEND_ME(Gtk4_GdkDisplay, __construct, arginfo_class_Gtk4_GdkDisplay___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GdkDisplay, get_default, arginfo_class_Gtk4_GdkDisplay_get_default, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GdkDisplay, open, arginfo_class_Gtk4_GdkDisplay_open, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GdkDisplay, beep, arginfo_class_Gtk4_GdkDisplay_beep, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDisplay, close, arginfo_class_Gtk4_GdkDisplay_close, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDisplay, flush, arginfo_class_Gtk4_GdkDisplay_flush, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDisplay, get_monitors, arginfo_class_Gtk4_GdkDisplay_get_monitors, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDisplay, get_name, arginfo_class_Gtk4_GdkDisplay_get_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDisplay, is_closed, arginfo_class_Gtk4_GdkDisplay_is_closed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDisplay, is_composited, arginfo_class_Gtk4_GdkDisplay_is_composited, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDisplay, is_rgba, arginfo_class_Gtk4_GdkDisplay_is_rgba, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDisplay, prepare_gl, arginfo_class_Gtk4_GdkDisplay_prepare_gl, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDisplay, supports_input_shapes, arginfo_class_Gtk4_GdkDisplay_supports_input_shapes, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDisplay, supports_shadow_width, arginfo_class_Gtk4_GdkDisplay_supports_shadow_width, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDisplay, sync, arginfo_class_Gtk4_GdkDisplay_sync, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
 
 static const zend_function_entry class_Gtk4_GdkTexture_methods[] = {
 	ZEND_ME(Gtk4_GdkTexture, __construct, arginfo_class_Gtk4_GdkTexture___construct, ZEND_ACC_PRIVATE)
@@ -55,6 +125,16 @@ static const zend_function_entry class_Gtk4_GdkTexture_methods[] = {
 	ZEND_ME(Gtk4_GdkTexture, save_to_tiff_bytes, arginfo_class_Gtk4_GdkTexture_save_to_tiff_bytes, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
+
+static zend_class_entry *register_class_Gtk4_GdkDisplay(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkDisplay", class_Gtk4_GdkDisplay_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
 
 static zend_class_entry *register_class_Gtk4_GdkMemoryFormat(void)
 {
@@ -195,6 +275,94 @@ static zend_class_entry *register_class_Gtk4_GdkMemoryFormat(void)
 	zval enum_case_NFormats_value;
 	ZVAL_LONG(&enum_case_NFormats_value, 33);
 	zend_enum_add_case_cstr(class_entry, "NFormats", &enum_case_NFormats_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkModifierType(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkModifierType", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NO_MODIFIER_MASK_value;
+	ZVAL_LONG(&const_NO_MODIFIER_MASK_value, 0);
+	zend_string *const_NO_MODIFIER_MASK_name = zend_string_init_interned("NO_MODIFIER_MASK", sizeof("NO_MODIFIER_MASK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NO_MODIFIER_MASK_name, &const_NO_MODIFIER_MASK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NO_MODIFIER_MASK_name);
+
+	zval const_SHIFT_MASK_value;
+	ZVAL_LONG(&const_SHIFT_MASK_value, 1);
+	zend_string *const_SHIFT_MASK_name = zend_string_init_interned("SHIFT_MASK", sizeof("SHIFT_MASK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_SHIFT_MASK_name, &const_SHIFT_MASK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_SHIFT_MASK_name);
+
+	zval const_LOCK_MASK_value;
+	ZVAL_LONG(&const_LOCK_MASK_value, 2);
+	zend_string *const_LOCK_MASK_name = zend_string_init_interned("LOCK_MASK", sizeof("LOCK_MASK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_LOCK_MASK_name, &const_LOCK_MASK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_LOCK_MASK_name);
+
+	zval const_CONTROL_MASK_value;
+	ZVAL_LONG(&const_CONTROL_MASK_value, 4);
+	zend_string *const_CONTROL_MASK_name = zend_string_init_interned("CONTROL_MASK", sizeof("CONTROL_MASK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_CONTROL_MASK_name, &const_CONTROL_MASK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_CONTROL_MASK_name);
+
+	zval const_ALT_MASK_value;
+	ZVAL_LONG(&const_ALT_MASK_value, 8);
+	zend_string *const_ALT_MASK_name = zend_string_init_interned("ALT_MASK", sizeof("ALT_MASK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_ALT_MASK_name, &const_ALT_MASK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_ALT_MASK_name);
+
+	zval const_BUTTON1_MASK_value;
+	ZVAL_LONG(&const_BUTTON1_MASK_value, 256);
+	zend_string *const_BUTTON1_MASK_name = zend_string_init_interned("BUTTON1_MASK", sizeof("BUTTON1_MASK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_BUTTON1_MASK_name, &const_BUTTON1_MASK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_BUTTON1_MASK_name);
+
+	zval const_BUTTON2_MASK_value;
+	ZVAL_LONG(&const_BUTTON2_MASK_value, 512);
+	zend_string *const_BUTTON2_MASK_name = zend_string_init_interned("BUTTON2_MASK", sizeof("BUTTON2_MASK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_BUTTON2_MASK_name, &const_BUTTON2_MASK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_BUTTON2_MASK_name);
+
+	zval const_BUTTON3_MASK_value;
+	ZVAL_LONG(&const_BUTTON3_MASK_value, 1024);
+	zend_string *const_BUTTON3_MASK_name = zend_string_init_interned("BUTTON3_MASK", sizeof("BUTTON3_MASK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_BUTTON3_MASK_name, &const_BUTTON3_MASK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_BUTTON3_MASK_name);
+
+	zval const_BUTTON4_MASK_value;
+	ZVAL_LONG(&const_BUTTON4_MASK_value, 2048);
+	zend_string *const_BUTTON4_MASK_name = zend_string_init_interned("BUTTON4_MASK", sizeof("BUTTON4_MASK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_BUTTON4_MASK_name, &const_BUTTON4_MASK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_BUTTON4_MASK_name);
+
+	zval const_BUTTON5_MASK_value;
+	ZVAL_LONG(&const_BUTTON5_MASK_value, 4096);
+	zend_string *const_BUTTON5_MASK_name = zend_string_init_interned("BUTTON5_MASK", sizeof("BUTTON5_MASK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_BUTTON5_MASK_name, &const_BUTTON5_MASK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_BUTTON5_MASK_name);
+
+	zval const_SUPER_MASK_value;
+	ZVAL_LONG(&const_SUPER_MASK_value, 67108864);
+	zend_string *const_SUPER_MASK_name = zend_string_init_interned("SUPER_MASK", sizeof("SUPER_MASK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_SUPER_MASK_name, &const_SUPER_MASK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_SUPER_MASK_name);
+
+	zval const_HYPER_MASK_value;
+	ZVAL_LONG(&const_HYPER_MASK_value, 134217728);
+	zend_string *const_HYPER_MASK_name = zend_string_init_interned("HYPER_MASK", sizeof("HYPER_MASK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_HYPER_MASK_name, &const_HYPER_MASK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_HYPER_MASK_name);
+
+	zval const_META_MASK_value;
+	ZVAL_LONG(&const_META_MASK_value, 268435456);
+	zend_string *const_META_MASK_name = zend_string_init_interned("META_MASK", sizeof("META_MASK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_META_MASK_name, &const_META_MASK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_META_MASK_name);
 
 	return class_entry;
 }

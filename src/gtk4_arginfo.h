@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3dc88c98dafa6e3069ab4ba7c72332b090366e9c */
+ * Stub hash: 069b8b874ff37f0c93ee187d307ad645081052ee */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GObject_connect, 0, 2, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, signal, IS_STRING, 0)
@@ -58,6 +58,17 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_Gtk_set_exception_mod
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_Gtk_get_exception_mode, 0, 0, Gtk4\\ExceptionMode, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_Gtk_add_provider_for_display, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, display, Gtk4\\GdkDisplay, 0)
+	ZEND_ARG_OBJ_INFO(0, provider, Gtk4\\GtkStyleProvider, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, priority, IS_LONG, 0, "Gtk4\\GtkStyleProviderPriority::APPLICATION")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_Gtk_remove_provider_for_display, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, display, Gtk4\\GdkDisplay, 0)
+	ZEND_ARG_OBJ_INFO(0, provider, Gtk4\\GtkStyleProvider, 0)
 ZEND_END_ARG_INFO()
 
 #if defined(PHPGTK_TESTING)
@@ -226,6 +237,16 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoContext_show_tex
 	ZEND_ARG_TYPE_INFO(0, text, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+#define arginfo_class_Gtk4_GtkCssSection_to_string arginfo_class_Gtk4_GParamSpec_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkCssSection_get_parent, 0, 0, Gtk4\\GtkCssSection, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkCssSection_get_start_location, 0, 0, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkCssSection_get_end_location arginfo_class_Gtk4_GtkCssSection_get_start_location
+
 ZEND_METHOD(Gtk4_GObject, connect);
 ZEND_METHOD(Gtk4_GObject, connect_after);
 ZEND_METHOD(Gtk4_GObject, emit);
@@ -244,6 +265,8 @@ ZEND_METHOD(Gtk4_Gtk, init);
 ZEND_METHOD(Gtk4_Gtk, set_exception_handler);
 ZEND_METHOD(Gtk4_Gtk, set_exception_mode);
 ZEND_METHOD(Gtk4_Gtk, get_exception_mode);
+ZEND_METHOD(Gtk4_Gtk, add_provider_for_display);
+ZEND_METHOD(Gtk4_Gtk, remove_provider_for_display);
 #if defined(PHPGTK_TESTING)
 ZEND_METHOD(Gtk4_Gtk, testing_iterate_nested);
 #endif
@@ -290,6 +313,10 @@ ZEND_METHOD(Gtk4_CairoContext, scale);
 ZEND_METHOD(Gtk4_CairoContext, rotate);
 ZEND_METHOD(Gtk4_CairoContext, set_font_size);
 ZEND_METHOD(Gtk4_CairoContext, show_text);
+ZEND_METHOD(Gtk4_GtkCssSection, to_string);
+ZEND_METHOD(Gtk4_GtkCssSection, get_parent);
+ZEND_METHOD(Gtk4_GtkCssSection, get_start_location);
+ZEND_METHOD(Gtk4_GtkCssSection, get_end_location);
 
 static const zend_function_entry class_Gtk4_GObject_methods[] = {
 	ZEND_ME(Gtk4_GObject, connect, arginfo_class_Gtk4_GObject_connect, ZEND_ACC_PUBLIC)
@@ -318,6 +345,8 @@ static const zend_function_entry class_Gtk4_Gtk_methods[] = {
 	ZEND_ME(Gtk4_Gtk, set_exception_handler, arginfo_class_Gtk4_Gtk_set_exception_handler, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_Gtk, set_exception_mode, arginfo_class_Gtk4_Gtk_set_exception_mode, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_Gtk, get_exception_mode, arginfo_class_Gtk4_Gtk_get_exception_mode, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_Gtk, add_provider_for_display, arginfo_class_Gtk4_Gtk_add_provider_for_display, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_Gtk, remove_provider_for_display, arginfo_class_Gtk4_Gtk_remove_provider_for_display, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 #if defined(PHPGTK_TESTING)
 	ZEND_ME(Gtk4_Gtk, testing_iterate_nested, arginfo_class_Gtk4_Gtk_testing_iterate_nested, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 #endif
@@ -392,6 +421,14 @@ static const zend_function_entry class_Gtk4_CairoContext_methods[] = {
 	ZEND_ME(Gtk4_CairoContext, rotate, arginfo_class_Gtk4_CairoContext_rotate, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_CairoContext, set_font_size, arginfo_class_Gtk4_CairoContext_set_font_size, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_CairoContext, show_text, arginfo_class_Gtk4_CairoContext_show_text, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkCssSection_methods[] = {
+	ZEND_ME(Gtk4_GtkCssSection, to_string, arginfo_class_Gtk4_GtkCssSection_to_string, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkCssSection, get_parent, arginfo_class_Gtk4_GtkCssSection_get_parent, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkCssSection, get_start_location, arginfo_class_Gtk4_GtkCssSection_get_start_location, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkCssSection, get_end_location, arginfo_class_Gtk4_GtkCssSection_get_end_location, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -518,6 +555,56 @@ static zend_class_entry *register_class_Gtk4_CairoContext(void)
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "CairoContext", class_Gtk4_CairoContext_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkStyleProviderPriority(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkStyleProviderPriority", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_FALLBACK_value;
+	ZVAL_LONG(&const_FALLBACK_value, 1);
+	zend_string *const_FALLBACK_name = zend_string_init_interned("FALLBACK", sizeof("FALLBACK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_FALLBACK_name, &const_FALLBACK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_FALLBACK_name);
+
+	zval const_THEME_value;
+	ZVAL_LONG(&const_THEME_value, 200);
+	zend_string *const_THEME_name = zend_string_init_interned("THEME", sizeof("THEME") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_THEME_name, &const_THEME_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_THEME_name);
+
+	zval const_SETTINGS_value;
+	ZVAL_LONG(&const_SETTINGS_value, 400);
+	zend_string *const_SETTINGS_name = zend_string_init_interned("SETTINGS", sizeof("SETTINGS") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_SETTINGS_name, &const_SETTINGS_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_SETTINGS_name);
+
+	zval const_APPLICATION_value;
+	ZVAL_LONG(&const_APPLICATION_value, 600);
+	zend_string *const_APPLICATION_name = zend_string_init_interned("APPLICATION", sizeof("APPLICATION") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_APPLICATION_name, &const_APPLICATION_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_APPLICATION_name);
+
+	zval const_USER_value;
+	ZVAL_LONG(&const_USER_value, 800);
+	zend_string *const_USER_name = zend_string_init_interned("USER", sizeof("USER") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_USER_name, &const_USER_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_USER_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkCssSection(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkCssSection", class_Gtk4_GtkCssSection_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
 
 	return class_entry;

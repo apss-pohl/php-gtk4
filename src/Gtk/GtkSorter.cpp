@@ -12,7 +12,7 @@ using namespace phpgtk;
 /**
  * Gtk4\GtkSorter::__construct()
  *
- * GtkSorter is has no constructor in GTK: `new` only works on a PHP subclass (which gets its own
+ * GtkSorter has no constructor in GTK: `new` only works on a PHP subclass (which gets its own
  * GType).
  */
 ZEND_METHOD(Gtk4_GtkSorter, __construct) {
@@ -20,8 +20,8 @@ ZEND_METHOD(Gtk4_GtkSorter, __construct) {
   GObject *obj = subtype_new(ZEND_THIS, nullptr);
   if (obj == nullptr) {
     if (EG(exception) == nullptr) {
-      zend_throw_error(
-          nullptr, "GtkSorter is has no constructor in GTK: subclass it in PHP (new MyClass())");
+      zend_throw_error(nullptr,
+                       "GtkSorter has no constructor in GTK: subclass it in PHP (new MyClass())");
     }
     RETURN_THROWS();
   }

@@ -29,3 +29,10 @@ Gtk.Orientation
 Gtk.FilterChange
 Gtk.SorterChange
 Gio.ApplicationFlags
+
+# Wave 8 (CSS): stylesheets from PHP - GtkCssProvider + the display to attach it to.
+# GtkCssSection (the parsing-error argument) is hand-written: an opaque refcounted
+# boxed type on the fundamental registry, like CairoContext.
+Gtk.CssProvider
+Gtk.StyleProvider
+Gdk.Display

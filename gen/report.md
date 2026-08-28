@@ -53,6 +53,28 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `sort` — callback parameter (needs an override)
 - `splice` — parameter additions of type array (array)
 
+## GdkDisplay
+
+- `create_gl_context` — return type Gdk.GLContext (not in the closure)
+- `device_is_grabbed` — parameter device of type Gdk.Device
+- `get_app_launch_context` — return type Gdk.AppLaunchContext (not in the closure)
+- `get_clipboard` — return type Gdk.Clipboard (not in the closure)
+- `get_default_seat` — return type Gdk.Seat (not in the closure)
+- `get_dmabuf_formats` — return type Gdk.DmabufFormats
+- `get_monitor_at_surface` — parameter surface of type Gdk.Surface
+- `get_primary_clipboard` — return type Gdk.Clipboard (not in the closure)
+- `get_setting` — parameter value of type GObject.Value
+- `get_startup_notification_id` — deprecated (4.10)
+- `list_seats` — list of Gdk.Seat
+- `map_keycode` — out parameter keys of type array
+- `map_keyval` — out parameter keys of type array
+- `notify_startup_complete` — deprecated (4.10)
+- `put_event` — deprecated (4.10)
+- `translate_key` — out parameter consumed of type Gdk.ModifierType
+- `__construct` — skip.txt: GDK owns displays (GdkDisplay::get_default() / open()); a PHP subtype would have no backend behind it
+- `property dmabuf-formats` — property type Gdk.DmabufFormats not mappable
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## GdkTexture
 
 - `new_for_pixbuf` — parameter pixbuf of type GdkPixbuf.Pixbuf
@@ -79,6 +101,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## GtkCssProvider
+
+- `load_from_data` — deprecated (4.12)
+- `load_from_file` — parameter file of type Gio.File
+
 ## GtkFilterListModel
 
 - `property item-type` — property type Gtk.GType not mappable
@@ -95,10 +122,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `property attributes` — property type Pango.AttrList not mappable
 - `property extra-menu` — property type Gio.MenuModel not mappable
 - `property tabs` — property type Pango.TabArray not mappable
-
-## GtkRoot
-
-- `get_display` — return type Gdk.Display (not in the closure)
 
 ## GtkSortListModel
 
@@ -124,7 +147,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_clipboard` — return type Gdk.Clipboard (not in the closure)
 - `get_color` — out parameter color
 - `get_cursor` — return type Gdk.Cursor (not in the closure)
-- `get_display` — return type Gdk.Display (not in the closure)
 - `get_font_map` — return type Pango.FontMap (not in the closure)
 - `get_font_options` — return type cairo.FontOptions
 - `get_frame_clock` — return type Gdk.FrameClock (not in the closure)
@@ -160,8 +182,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `fullscreen_on_monitor` — parameter monitor of type Gdk.Monitor
 - `get_group` — return type Gtk.WindowGroup (not in the closure)
 - `present_with_time` — deprecated (4.14)
-- `set_display` — parameter display of type Gdk.Display
-- `property display` — property type Gdk.Display not mappable
 
 ## Overrides in effect
 
@@ -180,6 +200,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkApplication.cpp`
 - `Gtk/GtkBox.cpp`
 - `Gtk/GtkButton.cpp`
+- `Gtk/GtkCssProvider.cpp`
 - `Gtk/GtkCustomFilter.cpp`
 - `Gtk/GtkCustomSorter.cpp`
 - `Gtk/GtkDrawingArea.cpp`
@@ -190,6 +211,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkRoot.cpp`
 - `Gtk/GtkSortListModel.cpp`
 - `Gtk/GtkSorter.cpp`
+- `Gtk/GtkStyleProvider.cpp`
 - `Gtk/GtkWidget.cpp`
 - `Gtk/GtkWindow.cpp`
 - `Gtk/Gtk.stub.php`
@@ -202,6 +224,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GListStore.cpp`
 - `Gio/GSimpleAction.cpp`
 - `Gio/Gio.stub.php`
+- `Gdk/GdkDisplay.cpp`
 - `Gdk/GdkTexture.cpp`
 - `Gdk/Gdk.stub.php`
 - `gen_minit.inc`
@@ -210,6 +233,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `examples/generated-sections.inc`
 - `tests/Generated/GtkApplicationSmokeTest.php`
 - `tests/Generated/GtkButtonSmokeTest.php`
+- `tests/Generated/GtkCssProviderSmokeTest.php`
 - `tests/Generated/GtkCustomFilterSmokeTest.php`
 - `tests/Generated/GtkCustomSorterSmokeTest.php`
 - `tests/Generated/GtkDrawingAreaSmokeTest.php`

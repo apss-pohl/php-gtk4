@@ -74,6 +74,16 @@ drives a window with no `GtkApplication`. Both pass a standalone override to `De
 | [GError.php](GError.php) | what a failing C call throws, domain and code included |
 | [ExceptionMode.php](ExceptionMode.php) | `Log` survives; `Rethrow` comes back out of `run()` |
 
+## Styling
+
+| File | Shows |
+| ---- | ----- |
+| [GtkCssProvider.php](GtkCssProvider.php) | three stylesheets swapped under a live label |
+| [GtkStyleProvider.php](GtkStyleProvider.php) | attaching and detaching a provider on the fly |
+| [GtkStyleProviderPriority.php](GtkStyleProviderPriority.php) | two providers, one class, who wins |
+| [GtkCssSection.php](GtkCssSection.php) | broken CSS reporting itself through `parsing-error` |
+| [GdkDisplay.php](GdkDisplay.php) | the display everything above is attached to |
+
 ## Lists
 
 | File | Shows |

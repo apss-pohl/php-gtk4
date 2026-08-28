@@ -7,3 +7,4 @@ GLib.Error
 Gdk.RGBA
 Gdk.Rectangle
 cairo.Context
+Gtk.CssSection

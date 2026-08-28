@@ -164,6 +164,24 @@ final class Gtk
 
     public static function get_exception_mode(): ExceptionMode {}
 
+    /**
+     * Add a style provider (a {@see GtkCssProvider}) to every widget on $display
+     * (gtk_style_context_add_provider_for_display - the function outlived the
+     * GtkStyleContext class it is named after).
+     *
+     * The highest priority wins per property; use {@see GtkStyleProviderPriority}
+     * for $priority. Providers stay attached until removed, and reloading the
+     * provider's CSS restyles everything immediately.
+     */
+    public static function add_provider_for_display(
+        GdkDisplay $display,
+        GtkStyleProvider $provider,
+        int $priority = GtkStyleProviderPriority::APPLICATION,
+    ): void {}
+
+    /** Detach a provider added with {@see add_provider_for_display()}; unknown providers are ignored. */
+    public static function remove_provider_for_display(GdkDisplay $display, GtkStyleProvider $provider): void {}
+
 #if defined(PHPGTK_TESTING)
     /**
      * Test builds only (`--enable-gtk4-testing`, `FEATURES` has `testing=yes`): iterate the
@@ -374,3 +392,56 @@ final class CairoContext
     public function show_text(string $text): void {}
 }
 
+/**
+ * Priorities for {@see Gtk::add_provider_for_display()}, in the order GTK applies
+ * them: a property set by a higher-priority provider wins.
+ *
+ * @link https://docs.gtk.org/gtk4/index.html#constants
+ */
+final class GtkStyleProviderPriority
+{
+    /** Below the theme: defaults an application ships that the theme may override. */
+    public const int FALLBACK = 1;
+    /** The current theme. */
+    public const int THEME = 200;
+    /** GtkSettings, e.g. gtk-key-theme-name. */
+    public const int SETTINGS = 400;
+    /** Where an application's own stylesheet belongs (the default). */
+    public const int APPLICATION = 600;
+    /** ~/.config/gtk-4.0/gtk.css; above everything an application loads. */
+    public const int USER = 800;
+}
+
+/**
+ * The part of a stylesheet a `parsing-error` refers to, as passed to handlers of
+ * {@see GtkCssProvider}'s `parsing-error` signal together with a {@see GError}.
+ *
+ * @link https://docs.gtk.org/gtk4/struct.CssSection.html
+ * @not-serializable
+ */
+final class GtkCssSection
+{
+    /** "<file>:<start line>:<start column>-<end line>:<end column>", 1-based, as GTK prints it. */
+    public function to_string(): string {}
+
+    /**
+     * The section this one is nested in, or null when there is none - which is what
+     * GTK 4.14 reports for every parsing error, nested or not.
+     */
+    public function get_parent(): ?GtkCssSection {}
+
+    /**
+     * Where the section starts, as GtkCssLocation's fields (all 0-based counts from the
+     * start of the document; `lines` is the line number, `line_chars` the column).
+     *
+     * @return array{bytes: int, chars: int, lines: int, line_bytes: int, line_chars: int}
+     */
+    public function get_start_location(): array {}
+
+    /**
+     * Where the section ends; same shape as {@see get_start_location()}.
+     *
+     * @return array{bytes: int, chars: int, lines: int, line_bytes: int, line_chars: int}
+     */
+    public function get_end_location(): array {}
+}

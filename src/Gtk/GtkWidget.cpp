@@ -307,6 +307,18 @@ ZEND_METHOD(Gtk4_GtkWidget, get_direction) {
 }
 
 /**
+ * Gtk4\GtkWidget::get_display(): GdkDisplay
+ *
+ * Get the `GdkDisplay` for the toplevel window associated with this widget.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, get_display) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GdkDisplay *result = gtk_widget_get_display(self);
+  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkWidget::get_first_child(): ?GtkWidget
  *
  * Returns the widget’s first child.

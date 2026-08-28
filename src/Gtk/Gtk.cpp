@@ -2,6 +2,7 @@
 #include "php_gtk4.h"
 #include "core/error.h"
 #include "core/globals.h"
+#include "core/object.h"
 
 using namespace phpgtk;
 
@@ -55,6 +56,57 @@ ZEND_METHOD(Gtk4_Gtk, get_exception_mode) {
   const char *name = exception_mode() == ExceptionMode::Rethrow ? "Rethrow" : "Log";
   zend_object *c = zend_enum_get_case_cstr(ce_ExceptionMode, name);
   RETURN_OBJ_COPY(c);
+}
+
+/**
+ * static Gtk4\Gtk::add_provider_for_display(GdkDisplay $display, GtkStyleProvider $provider, int
+ * $priority = GtkStyleProviderPriority::APPLICATION): void
+ *
+ * Add a style provider (a {@see GtkCssProvider}) to every widget on $display
+ * (gtk_style_context_add_provider_for_display - the function outlived the GtkStyleContext class it
+ * is named after).
+ */
+ZEND_METHOD(Gtk4_Gtk, add_provider_for_display) {
+  zval *display = nullptr;
+  zval *provider = nullptr;
+  zend_long priority = GTK_STYLE_PROVIDER_PRIORITY_APPLICATION;
+  ZEND_PARSE_PARAMETERS_START(2, 3)
+  Z_PARAM_OBJECT_OF_CLASS(display, class_for_gtype(GDK_TYPE_DISPLAY))
+  Z_PARAM_OBJECT_OF_CLASS(provider, class_for_gtype(GTK_TYPE_STYLE_PROVIDER))
+  Z_PARAM_OPTIONAL
+  Z_PARAM_LONG(priority)
+  ZEND_PARSE_PARAMETERS_END();
+  if (priority < 0) {
+    zend_argument_value_error(3, "must be greater than or equal to 0");
+    RETURN_THROWS();
+  }
+  GObject *display_o = unwrap(display, GDK_TYPE_DISPLAY);
+  if (display_o == nullptr) RETURN_THROWS();
+  GObject *provider_o = unwrap(provider, GTK_TYPE_STYLE_PROVIDER);
+  if (provider_o == nullptr) RETURN_THROWS();
+  gtk_style_context_add_provider_for_display(GDK_DISPLAY(display_o), GTK_STYLE_PROVIDER(provider_o),
+                                             static_cast<guint>(priority));
+}
+
+/**
+ * static Gtk4\Gtk::remove_provider_for_display(GdkDisplay $display, GtkStyleProvider $provider):
+ * void
+ *
+ * Detach a provider added with {@see add_provider_for_display()}; unknown providers are ignored.
+ */
+ZEND_METHOD(Gtk4_Gtk, remove_provider_for_display) {
+  zval *display = nullptr;
+  zval *provider = nullptr;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(display, class_for_gtype(GDK_TYPE_DISPLAY))
+  Z_PARAM_OBJECT_OF_CLASS(provider, class_for_gtype(GTK_TYPE_STYLE_PROVIDER))
+  ZEND_PARSE_PARAMETERS_END();
+  GObject *display_o = unwrap(display, GDK_TYPE_DISPLAY);
+  if (display_o == nullptr) RETURN_THROWS();
+  GObject *provider_o = unwrap(provider, GTK_TYPE_STYLE_PROVIDER);
+  if (provider_o == nullptr) RETURN_THROWS();
+  gtk_style_context_remove_provider_for_display(GDK_DISPLAY(display_o),
+                                                GTK_STYLE_PROVIDER(provider_o));
 }
 
 #ifdef PHPGTK_TESTING

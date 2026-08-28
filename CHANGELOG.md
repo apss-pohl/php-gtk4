@@ -9,6 +9,16 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- CSS (docs/PLAN.md milestone 8): `GtkCssProvider` (`load_from_string`/`_path`/`_bytes`/`_resource`,
+  `load_named`, `to_string`) plus `Gtk::add_provider_for_display()` /
+  `remove_provider_for_display()` and the `GtkStyleProviderPriority` constants attach a stylesheet
+  to every widget on a display; `GtkStyleProvider` is the interface they take. Parse errors come
+  back through the `parsing-error` signal as a `GtkCssSection` (`to_string()`, `get_parent()`,
+  `get_start_location()`/`get_end_location()`) and a `GError` — CSS is parsed leniently and the
+  loaders never throw, so connecting that signal is the only way to see a typo. `GdkDisplay` is
+  bound with it (`get_default()`, `open()`, `get_monitors()`, …), and `GtkWidget::get_display()`,
+  `GtkWindow::get_display()`/`set_display()` and `GtkRoot::get_display()` come along.
+
 - PHP subclasses of GObject classes are real GTypes (`src/core/subtype`, docs/PLAN.md §2.6):
   `class MyWidget extends GtkWidget` gets its own GType at the first `new`, constructor arguments
   become construct properties, and `vfunc_<name>()` methods override the GTK class-struct slots

@@ -306,6 +306,33 @@ class GtkButton extends GtkWidget
 }
 
 /**
+ * `GtkCssProvider` is an object implementing the `GtkStyleProvider` interface for CSS.
+ */
+class GtkCssProvider extends GObject implements GtkStyleProvider
+{
+    /** Returns a newly created `GtkCssProvider`. */
+    public function __construct() {}
+
+    /** Loads $data into $css_provider. */
+    public function load_from_bytes(string $data): void {}
+
+    /** Loads the data contained in $path into $css_provider. */
+    public function load_from_path(string $path): void {}
+
+    /** Loads the data contained in the resource at $resource_path into the $css_provider. */
+    public function load_from_resource(string $resource_path): void {}
+
+    /** Loads $string into $css_provider. */
+    public function load_from_string(string $string): void {}
+
+    /** Loads a theme from the usual theme paths. */
+    public function load_named(string $name, ?string $variant): void {}
+
+    /** Converts the $provider into a string representation in CSS format. */
+    public function to_string(): string {}
+}
+
+/**
  * `GtkCustomFilter` determines whether to include items with a callback.
  */
 class GtkCustomFilter extends GtkFilter
@@ -392,7 +419,7 @@ class GtkDrawingArea extends GtkWidget
  */
 class GtkFilter extends GObject
 {
-    /** GtkFilter is has no constructor in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    /** GtkFilter has no constructor in GTK: `new` only works on a PHP subclass (which gets its own GType). */
     public function __construct() {}
 
     /** Notifies all users of the filter that it has changed. */
@@ -732,6 +759,9 @@ final class GtkPickFlags
  */
 interface GtkRoot
 {
+    /** Returns the display that this `GtkRoot` is on. */
+    public function get_display(): GdkDisplay;
+
     /** Retrieves the current focused widget within the root. */
     public function get_focus(): ?GtkWidget;
 
@@ -812,7 +842,7 @@ class GtkSortListModel extends GObject implements GListModel
  */
 class GtkSorter extends GObject
 {
-    /** GtkSorter is has no constructor in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    /** GtkSorter has no constructor in GTK: `new` only works on a PHP subclass (which gets its own GType). */
     public function __construct() {}
 
     /** Notifies all users of the sorter that it has changed. */
@@ -880,6 +910,13 @@ final class GtkStateFlags
     public const int DROP_ACTIVE = 4096;
     public const int FOCUS_VISIBLE = 8192;
     public const int FOCUS_WITHIN = 16384;
+}
+
+/**
+ * `GtkStyleProvider` is an interface for style information used by `GtkStyleContext`.
+ */
+interface GtkStyleProvider
+{
 }
 
 /**
@@ -1002,6 +1039,9 @@ class GtkWidget extends GObject
 
     /** Gets the reading direction for a particular widget. */
     public function get_direction(): GtkTextDirection {}
+
+    /** Get the `GdkDisplay` for the toplevel window associated with this widget. */
+    public function get_display(): GdkDisplay {}
 
     /** Returns the widget’s first child. */
     public function get_first_child(): ?GtkWidget {}
@@ -1494,6 +1534,7 @@ class GtkWidget extends GObject
  * @property ?int $default_width
  * @property ?bool $deletable
  * @property ?bool $destroy_with_parent
+ * @property ?GdkDisplay $display
  * @property ?bool $focus_visible
  * @property ?GtkWidget $focus_widget
  * @property ?bool $fullscreened
@@ -1653,6 +1694,9 @@ class GtkWindow extends GtkWidget implements GtkRoot
      */
     public function set_destroy_with_parent(bool $setting): void {}
 
+    /** Sets the `GdkDisplay` where the $window is displayed. */
+    public function set_display(GdkDisplay $display): void {}
+
     /** Sets the focus widget. */
     public function set_focus(?GtkWidget $focus): void {}
 
@@ -1708,6 +1752,9 @@ class GtkWindow extends GtkWidget implements GtkRoot
 
     /** Asks to unminimize the specified $window. */
     public function unminimize(): void {}
+
+    /** @implementation-alias Gtk4\GtkRoot::get_display */
+    public function get_display(): GdkDisplay {}
 
     /**
      * Native `activate_default` (WindowClass.activate_default): the GTK implementation below any

@@ -12,7 +12,7 @@ using namespace phpgtk;
 /**
  * Gtk4\GtkFilter::__construct()
  *
- * GtkFilter is has no constructor in GTK: `new` only works on a PHP subclass (which gets its own
+ * GtkFilter has no constructor in GTK: `new` only works on a PHP subclass (which gets its own
  * GType).
  */
 ZEND_METHOD(Gtk4_GtkFilter, __construct) {
@@ -20,8 +20,8 @@ ZEND_METHOD(Gtk4_GtkFilter, __construct) {
   GObject *obj = subtype_new(ZEND_THIS, nullptr);
   if (obj == nullptr) {
     if (EG(exception) == nullptr) {
-      zend_throw_error(
-          nullptr, "GtkFilter is has no constructor in GTK: subclass it in PHP (new MyClass())");
+      zend_throw_error(nullptr,
+                       "GtkFilter has no constructor in GTK: subclass it in PHP (new MyClass())");
     }
     RETURN_THROWS();
   }

@@ -11,6 +11,71 @@
 namespace Gtk4;
 
 /**
+ * `GdkDisplay` objects are the GDK representation of a workstation.
+ *
+ * @property-read ?bool $composited
+ * @property-read ?bool $input_shapes
+ * @property-read ?bool $rgba
+ * @property-read ?bool $shadow_width
+ */
+class GdkDisplay extends GObject
+{
+    /** GdkDisplay has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Gets the default `GdkDisplay`. */
+    public static function get_default(): ?GdkDisplay {}
+
+    /** Opens a display. */
+    public static function open(?string $display_name = null): ?GdkDisplay {}
+
+    /** Emits a short beep on $display */
+    public function beep(): void {}
+
+    /** Closes the connection to the windowing system for the given display. */
+    public function close(): void {}
+
+    /** Flushes any requests queued for the windowing system. */
+    public function flush(): void {}
+
+    /** Gets the list of monitors associated with this display. */
+    public function get_monitors(): GListModel {}
+
+    /** Gets the name of the display. */
+    public function get_name(): string {}
+
+    /** Finds out if the display has been closed. */
+    public function is_closed(): bool {}
+
+    /**
+     * Returns whether surfaces can reasonably be expected to have their alpha channel drawn
+     * correctly on the screen.
+     */
+    public function is_composited(): bool {}
+
+    /** Returns whether surfaces on this $display are created with an alpha channel. */
+    public function is_rgba(): bool {}
+
+    /**
+     * Checks that OpenGL is available for $self and ensures that it is properly initialized. When
+     * this fails, an $error will be set describing the error and this function returns `false`.
+     */
+    public function prepare_gl(): bool {}
+
+    /** Returns `true` if the display supports input shapes. */
+    public function supports_input_shapes(): bool {}
+
+    /** Returns whether it's possible for a surface to draw outside of the window area. */
+    public function supports_shadow_width(): bool {}
+
+    /**
+     * Flushes any requests queued for the windowing system and waits until all requests have been
+     * handled.
+     */
+    public function sync(): void {}
+}
+
+/**
  * `GdkMemoryFormat` describes formats that image data can have in memory.
  */
 enum GdkMemoryFormat: int
@@ -49,6 +114,26 @@ enum GdkMemoryFormat: int
     case R8g8b8x8 = 31;
     case X8b8g8r8 = 32;
     case NFormats = 33;
+}
+
+/**
+ * Flags to indicate the state of modifier keys and mouse buttons in events.
+ */
+final class GdkModifierType
+{
+    public const int NO_MODIFIER_MASK = 0;
+    public const int SHIFT_MASK = 1;
+    public const int LOCK_MASK = 2;
+    public const int CONTROL_MASK = 4;
+    public const int ALT_MASK = 8;
+    public const int BUTTON1_MASK = 256;
+    public const int BUTTON2_MASK = 512;
+    public const int BUTTON3_MASK = 1024;
+    public const int BUTTON4_MASK = 2048;
+    public const int BUTTON5_MASK = 4096;
+    public const int SUPER_MASK = 67108864;
+    public const int HYPER_MASK = 134217728;
+    public const int META_MASK = 268435456;
 }
 
 /**

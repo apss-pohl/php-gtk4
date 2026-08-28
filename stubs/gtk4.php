@@ -209,6 +209,27 @@ final class Gtk
     {
         return null;
     }
+    /**
+     * Add a style provider (a {@see GtkCssProvider}) to every widget on $display
+     * (gtk_style_context_add_provider_for_display - the function outlived the
+     * GtkStyleContext class it is named after).
+     *
+     * The highest priority wins per property; use {@see GtkStyleProviderPriority}
+     * for $priority. Providers stay attached until removed, and reloading the
+     * provider's CSS restyles everything immediately.
+     */
+    public static function add_provider_for_display(GdkDisplay $display, GtkStyleProvider $provider, int $priority = GtkStyleProviderPriority::APPLICATION): void
+    {
+        unset($display);
+        unset($provider);
+        unset($priority);
+    }
+    /** Detach a provider added with {@see add_provider_for_display()}; unknown providers are ignored. */
+    public static function remove_provider_for_display(GdkDisplay $display, GtkStyleProvider $provider): void
+    {
+        unset($display);
+        unset($provider);
+    }
     #if defined(PHPGTK_TESTING)
     /**
      * Test builds only (`--enable-gtk4-testing`, `FEATURES` has `testing=yes`): iterate the
@@ -558,6 +579,157 @@ final class CairoContext
     }
 }
 /**
+ * Priorities for {@see Gtk::add_provider_for_display()}, in the order GTK applies
+ * them: a property set by a higher-priority provider wins.
+ *
+ * @link https://docs.gtk.org/gtk4/index.html#constants
+ */
+final class GtkStyleProviderPriority
+{
+    /** Below the theme: defaults an application ships that the theme may override. */
+    public const int FALLBACK = 1;
+    /** The current theme. */
+    public const int THEME = 200;
+    /** GtkSettings, e.g. gtk-key-theme-name. */
+    public const int SETTINGS = 400;
+    /** Where an application's own stylesheet belongs (the default). */
+    public const int APPLICATION = 600;
+    /** ~/.config/gtk-4.0/gtk.css; above everything an application loads. */
+    public const int USER = 800;
+}
+/**
+ * The part of a stylesheet a `parsing-error` refers to, as passed to handlers of
+ * {@see GtkCssProvider}'s `parsing-error` signal together with a {@see GError}.
+ *
+ * @link https://docs.gtk.org/gtk4/struct.CssSection.html
+ */
+final class GtkCssSection
+{
+    /** "<file>:<start line>:<start column>-<end line>:<end column>", 1-based, as GTK prints it. */
+    public function to_string(): string
+    {
+        return '';
+    }
+    /**
+     * The section this one is nested in, or null when there is none - which is what
+     * GTK 4.14 reports for every parsing error, nested or not.
+     */
+    public function get_parent(): ?GtkCssSection
+    {
+        return null;
+    }
+    /**
+     * Where the section starts, as GtkCssLocation's fields (all 0-based counts from the
+     * start of the document; `lines` is the line number, `line_chars` the column).
+     *
+     * @return array{bytes: int, chars: int, lines: int, line_bytes: int, line_chars: int}
+     */
+    public function get_start_location(): array
+    {
+        return [];
+    }
+    /**
+     * Where the section ends; same shape as {@see get_start_location()}.
+     *
+     * @return array{bytes: int, chars: int, lines: int, line_bytes: int, line_chars: int}
+     */
+    public function get_end_location(): array
+    {
+        return [];
+    }
+}
+/**
+ * `GdkDisplay` objects are the GDK representation of a workstation.
+ *
+ * @property-read ?bool $composited
+ * @property-read ?bool $input_shapes
+ * @property-read ?bool $rgba
+ * @property-read ?bool $shadow_width
+ */
+class GdkDisplay extends GObject
+{
+    /** GdkDisplay has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Gets the default `GdkDisplay`. */
+    public static function get_default(): ?GdkDisplay
+    {
+        return null;
+    }
+    /** Opens a display. */
+    public static function open(?string $display_name = null): ?GdkDisplay
+    {
+        unset($display_name);
+        return null;
+    }
+    /** Emits a short beep on $display */
+    public function beep(): void
+    {
+    }
+    /** Closes the connection to the windowing system for the given display. */
+    public function close(): void
+    {
+    }
+    /** Flushes any requests queued for the windowing system. */
+    public function flush(): void
+    {
+    }
+    /** Gets the list of monitors associated with this display. */
+    public function get_monitors(): GListModel
+    {
+        return null;
+    }
+    /** Gets the name of the display. */
+    public function get_name(): string
+    {
+        return '';
+    }
+    /** Finds out if the display has been closed. */
+    public function is_closed(): bool
+    {
+        return false;
+    }
+    /**
+     * Returns whether surfaces can reasonably be expected to have their alpha channel drawn
+     * correctly on the screen.
+     */
+    public function is_composited(): bool
+    {
+        return false;
+    }
+    /** Returns whether surfaces on this $display are created with an alpha channel. */
+    public function is_rgba(): bool
+    {
+        return false;
+    }
+    /**
+     * Checks that OpenGL is available for $self and ensures that it is properly initialized. When
+     * this fails, an $error will be set describing the error and this function returns `false`.
+     */
+    public function prepare_gl(): bool
+    {
+        return false;
+    }
+    /** Returns `true` if the display supports input shapes. */
+    public function supports_input_shapes(): bool
+    {
+        return false;
+    }
+    /** Returns whether it's possible for a surface to draw outside of the window area. */
+    public function supports_shadow_width(): bool
+    {
+        return false;
+    }
+    /**
+     * Flushes any requests queued for the windowing system and waits until all requests have been
+     * handled.
+     */
+    public function sync(): void
+    {
+    }
+}
+/**
  * `GdkMemoryFormat` describes formats that image data can have in memory.
  */
 enum GdkMemoryFormat : int
@@ -596,6 +768,25 @@ enum GdkMemoryFormat : int
     case R8g8b8x8 = 31;
     case X8b8g8r8 = 32;
     case NFormats = 33;
+}
+/**
+ * Flags to indicate the state of modifier keys and mouse buttons in events.
+ */
+final class GdkModifierType
+{
+    public const int NO_MODIFIER_MASK = 0;
+    public const int SHIFT_MASK = 1;
+    public const int LOCK_MASK = 2;
+    public const int CONTROL_MASK = 4;
+    public const int ALT_MASK = 8;
+    public const int BUTTON1_MASK = 256;
+    public const int BUTTON2_MASK = 512;
+    public const int BUTTON3_MASK = 1024;
+    public const int BUTTON4_MASK = 2048;
+    public const int BUTTON5_MASK = 4096;
+    public const int SUPER_MASK = 67108864;
+    public const int HYPER_MASK = 134217728;
+    public const int META_MASK = 268435456;
 }
 /**
  * `GdkTexture` is the basic element used to refer to pixel data.
@@ -1673,6 +1864,47 @@ class GtkButton extends GtkWidget
     }
 }
 /**
+ * `GtkCssProvider` is an object implementing the `GtkStyleProvider` interface for CSS.
+ */
+class GtkCssProvider extends GObject implements GtkStyleProvider
+{
+    /** Returns a newly created `GtkCssProvider`. */
+    public function __construct()
+    {
+    }
+    /** Loads $data into $css_provider. */
+    public function load_from_bytes(string $data): void
+    {
+        unset($data);
+    }
+    /** Loads the data contained in $path into $css_provider. */
+    public function load_from_path(string $path): void
+    {
+        unset($path);
+    }
+    /** Loads the data contained in the resource at $resource_path into the $css_provider. */
+    public function load_from_resource(string $resource_path): void
+    {
+        unset($resource_path);
+    }
+    /** Loads $string into $css_provider. */
+    public function load_from_string(string $string): void
+    {
+        unset($string);
+    }
+    /** Loads a theme from the usual theme paths. */
+    public function load_named(string $name, ?string $variant): void
+    {
+        unset($name);
+        unset($variant);
+    }
+    /** Converts the $provider into a string representation in CSS format. */
+    public function to_string(): string
+    {
+        return '';
+    }
+}
+/**
  * `GtkCustomFilter` determines whether to include items with a callback.
  */
 class GtkCustomFilter extends GtkFilter
@@ -1780,7 +2012,7 @@ class GtkDrawingArea extends GtkWidget
  */
 class GtkFilter extends GObject
 {
-    /** GtkFilter is has no constructor in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    /** GtkFilter has no constructor in GTK: `new` only works on a PHP subclass (which gets its own GType). */
     public function __construct()
     {
     }
@@ -2237,6 +2469,8 @@ final class GtkPickFlags
  */
 interface GtkRoot
 {
+    /** Returns the display that this `GtkRoot` is on. */
+    public function get_display(): GdkDisplay;
     /** Retrieves the current focused widget within the root. */
     public function get_focus(): ?GtkWidget;
     /**
@@ -2342,7 +2576,7 @@ class GtkSortListModel extends GObject implements GListModel
  */
 class GtkSorter extends GObject
 {
-    /** GtkSorter is has no constructor in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    /** GtkSorter has no constructor in GTK: `new` only works on a PHP subclass (which gets its own GType). */
     public function __construct()
     {
     }
@@ -2423,6 +2657,12 @@ final class GtkStateFlags
     public const int DROP_ACTIVE = 4096;
     public const int FOCUS_VISIBLE = 8192;
     public const int FOCUS_WITHIN = 16384;
+}
+/**
+ * `GtkStyleProvider` is an interface for style information used by `GtkStyleContext`.
+ */
+interface GtkStyleProvider
+{
 }
 /**
  * Reading directions for text.
@@ -2591,6 +2831,11 @@ class GtkWidget extends GObject
     }
     /** Gets the reading direction for a particular widget. */
     public function get_direction(): GtkTextDirection
+    {
+        return null;
+    }
+    /** Get the `GdkDisplay` for the toplevel window associated with this widget. */
+    public function get_display(): GdkDisplay
     {
         return null;
     }
@@ -3339,6 +3584,7 @@ class GtkWidget extends GObject
  * @property ?int $default_width
  * @property ?bool $deletable
  * @property ?bool $destroy_with_parent
+ * @property ?GdkDisplay $display
  * @property ?bool $focus_visible
  * @property ?GtkWidget $focus_widget
  * @property ?bool $fullscreened
@@ -3578,6 +3824,11 @@ class GtkWindow extends GtkWidget implements GtkRoot
     {
         unset($setting);
     }
+    /** Sets the `GdkDisplay` where the $window is displayed. */
+    public function set_display(GdkDisplay $display): void
+    {
+        unset($display);
+    }
     /** Sets the focus widget. */
     public function set_focus(?GtkWidget $focus): void
     {
@@ -3660,6 +3911,10 @@ class GtkWindow extends GtkWidget implements GtkRoot
     /** Asks to unminimize the specified $window. */
     public function unminimize(): void
     {
+    }
+    public function get_display(): GdkDisplay
+    {
+        return null;
     }
     /**
      * Native `activate_default` (WindowClass.activate_default): the GTK implementation below any

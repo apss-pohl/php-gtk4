@@ -27,6 +27,12 @@ $app->connect('activate', function (GtkApplication $app): void {
 exit($app->run($argv));
 ```
 
+Styling is CSS: a `GtkCssProvider` holds the stylesheet, `Gtk::add_provider_for_display($win->get_display(),
+$provider, GtkStyleProviderPriority::APPLICATION)` attaches it to every widget on the display, and
+`$widget->add_css_class('card')` is what a selector matches. Loading new CSS into an attached
+provider restyles what is on screen; parse errors arrive through the provider's `parsing-error`
+signal as a `GtkCssSection` and a `GError` (the loaders themselves never throw).
+
 Actions: `new GSimpleAction('quit')` + `$app->add_action()` — reachable as `app.quit` from widgets
 (`$button->activate_action('app.quit')`); GVariant parameters/states are plain PHP values.
 Exceptions thrown in handlers are logged by default; `Gtk::set_exception_mode(ExceptionMode::Rethrow)`

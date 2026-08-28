@@ -10,6 +10,7 @@ void register_vfuncs_GtkDrawingArea();
 void register_vfuncs_GtkFilter();
 ZEND_METHOD(Gtk4_GtkOrientable, get_orientation);
 ZEND_METHOD(Gtk4_GtkOrientable, set_orientation);
+ZEND_METHOD(Gtk4_GtkRoot, get_display);
 ZEND_METHOD(Gtk4_GtkRoot, get_focus);
 ZEND_METHOD(Gtk4_GtkRoot, set_focus);
 void register_vfuncs_GtkSorter();
