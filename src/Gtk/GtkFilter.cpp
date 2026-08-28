@@ -109,10 +109,17 @@ static void vfunc_install_get_strictness(gpointer klass) {
 ZEND_METHOD(Gtk4_GtkFilter, vfunc_get_strictness) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkFilter *self = PHPGTK_SELF(GtkFilter, GTK_TYPE_FILTER);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkFilter::vfunc_get_strictness(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_FILTER_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->get_strictness == nullptr) {
-    zend_throw_error(nullptr, "GtkFilter::vfunc_get_strictness(): no native implementation");
-    RETURN_THROWS();
+    enum_to_php(GTK_TYPE_FILTER_MATCH, 0, return_value);
+    return;
   }
   enum_to_php(GTK_TYPE_FILTER_MATCH, klass->get_strictness(self), return_value);
 }
@@ -160,10 +167,15 @@ ZEND_METHOD(Gtk4_GtkFilter, vfunc_match) {
   Z_PARAM_OBJECT_OF_CLASS_OR_NULL(item, class_for_gtype(G_TYPE_OBJECT))
   ZEND_PARSE_PARAMETERS_END();
   GtkFilter *self = PHPGTK_SELF(GtkFilter, GTK_TYPE_FILTER);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "GtkFilter::vfunc_match(): for parent:: chaining from a PHP subclass "
+                            "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_FILTER_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->match == nullptr) {
-    zend_throw_error(nullptr, "GtkFilter::vfunc_match(): no native implementation");
-    RETURN_THROWS();
+    RETURN_FALSE;
   }
   GObject *item_o = nullptr;
   if (item != nullptr) {

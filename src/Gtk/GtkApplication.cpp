@@ -211,10 +211,16 @@ ZEND_METHOD(Gtk4_GtkApplication, vfunc_window_added) {
   Z_PARAM_OBJECT_OF_CLASS(window, class_for_gtype(GTK_TYPE_WINDOW))
   ZEND_PARSE_PARAMETERS_END();
   GtkApplication *self = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkApplication::vfunc_window_added(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->window_added == nullptr) {
-    zend_throw_error(nullptr, "GtkApplication::vfunc_window_added(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   GObject *window_o = unwrap(window, GTK_TYPE_WINDOW);
   if (window_o == nullptr) RETURN_THROWS();
@@ -263,10 +269,16 @@ ZEND_METHOD(Gtk4_GtkApplication, vfunc_window_removed) {
   Z_PARAM_OBJECT_OF_CLASS(window, class_for_gtype(GTK_TYPE_WINDOW))
   ZEND_PARSE_PARAMETERS_END();
   GtkApplication *self = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkApplication::vfunc_window_removed(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->window_removed == nullptr) {
-    zend_throw_error(nullptr, "GtkApplication::vfunc_window_removed(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   GObject *window_o = unwrap(window, GTK_TYPE_WINDOW);
   if (window_o == nullptr) RETURN_THROWS();

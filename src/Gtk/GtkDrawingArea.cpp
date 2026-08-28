@@ -178,10 +178,16 @@ ZEND_METHOD(Gtk4_GtkDrawingArea, vfunc_resize) {
   Z_PARAM_LONG(height)
   ZEND_PARSE_PARAMETERS_END();
   GtkDrawingArea *self = PHPGTK_SELF(GtkDrawingArea, GTK_TYPE_DRAWING_AREA);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkDrawingArea::vfunc_resize(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_DRAWING_AREA_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->resize == nullptr) {
-    zend_throw_error(nullptr, "GtkDrawingArea::vfunc_resize(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->resize(self, static_cast<int>(width), static_cast<int>(height));
 }

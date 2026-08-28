@@ -65,14 +65,13 @@ final class SubclassTest extends GtkTestCase
         self::assertSame([0, 0], array_slice($w->native, 0, 2), 'GtkWidget\'s own measure() reports nothing');
     }
 
-    public function testNativeVfuncMethodOnANativeInstance(): void
+    public function testNativeVfuncMethodRefusesANativeInstance(): void
     {
-        // vfunc_measure() on a plain GtkLabel is GtkLabel's C implementation, same as measure()
-        $l = new GtkLabel('abc');
-        $viaGtk = $l->measure(GtkOrientation::Horizontal, -1);
-        $direct = $l->vfunc_measure(GtkOrientation::Horizontal, -1);
-        self::assertSame(array_slice($viaGtk, 0, 2), array_slice($direct, 0, 2));
-        self::assertGreaterThan(0, $direct[0]);
+        // vfunc_*() is the slot below the PHP levels, for parent:: chaining; on a plain GtkLabel
+        // it would bypass the public API's preconditions.
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('parent:: chaining');
+        new GtkLabel('abc')->vfunc_measure(GtkOrientation::Horizontal, -1);
     }
 
     public function testFilterWrittenInPhp(): void

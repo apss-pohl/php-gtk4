@@ -260,10 +260,16 @@ static void vfunc_install_activate(gpointer klass) {
 ZEND_METHOD(Gtk4_GtkButton, vfunc_activate) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkButton *self = PHPGTK_SELF(GtkButton, GTK_TYPE_BUTTON);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkButton::vfunc_activate(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_BUTTON_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->activate == nullptr) {
-    zend_throw_error(nullptr, "GtkButton::vfunc_activate(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->activate(self);
 }
@@ -301,10 +307,15 @@ static void vfunc_install_clicked(gpointer klass) {
 ZEND_METHOD(Gtk4_GtkButton, vfunc_clicked) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkButton *self = PHPGTK_SELF(GtkButton, GTK_TYPE_BUTTON);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "GtkButton::vfunc_clicked(): for parent:: chaining from a PHP subclass "
+                            "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_BUTTON_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->clicked == nullptr) {
-    zend_throw_error(nullptr, "GtkButton::vfunc_clicked(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->clicked(self);
 }

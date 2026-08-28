@@ -18,6 +18,6 @@ final class StressSquare extends GtkWidget
             throw new \RuntimeException('expected');
         }
 
-        return [40 + self::$round % 3, 40, -1, -1];
+        return [40 + self::$round % 3, 40 + self::$round % 3, -1, -1];
     }
 }

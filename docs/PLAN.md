@@ -148,9 +148,11 @@ GTK4 / GLib C API
   returned list as for methods, exceptions through `report_pending_exception`), an installer,
   and a native `vfunc_<name>()` method on the owning class that calls the implementation of the
   nearest non-PHP ancestor — so `parent::vfunc_<name>()` chains correctly through any number of
-  PHP levels. The GType's `class_init` installs a thunk only for the slots the PHP class
-  defines (`vfunc_*` in its function table, user functions only), so undefined vfuncs cost
-  nothing. PHP enforces the stub's signature on overrides (`vfunc_match(?GObject $item): bool`).
+  PHP levels (on a native instance it throws `LogicException`: slots bypass the public API's
+  preconditions; an empty slot is a no-op yielding the zero value). The GType's `class_init`
+  installs a thunk only for the slots the PHP class defines (`vfunc_*` in its function table,
+  user functions only), so undefined vfuncs cost nothing. PHP enforces the stub's signature on
+  overrides (`vfunc_match(?GObject $item): bool`).
 - **Construction and handles**: `subtype_new()` parks the handle in `GTK4_G(constructing)`;
   the type's `instance_init` pre-binds it (`object_prebind`: `obj` + qdata, no reference yet) so
   vfuncs and `wrap()` during the rest of `g_object_new()` find the PHP object; `attach*()` then

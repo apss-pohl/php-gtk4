@@ -520,10 +520,16 @@ static void vfunc_install_activate(gpointer klass) {
 ZEND_METHOD(Gtk4_GApplication, vfunc_activate) {
   ZEND_PARSE_PARAMETERS_NONE();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GApplication::vfunc_activate(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->activate == nullptr) {
-    zend_throw_error(nullptr, "GApplication::vfunc_activate(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->activate(self);
 }
@@ -564,10 +570,16 @@ static void vfunc_install_name_lost(gpointer klass) {
 ZEND_METHOD(Gtk4_GApplication, vfunc_name_lost) {
   ZEND_PARSE_PARAMETERS_NONE();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GApplication::vfunc_name_lost(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->name_lost == nullptr) {
-    zend_throw_error(nullptr, "GApplication::vfunc_name_lost(): no native implementation");
-    RETURN_THROWS();
+    RETURN_FALSE;
   }
   RETURN_BOOL(klass->name_lost(self));
 }
@@ -606,10 +618,16 @@ static void vfunc_install_quit_mainloop(gpointer klass) {
 ZEND_METHOD(Gtk4_GApplication, vfunc_quit_mainloop) {
   ZEND_PARSE_PARAMETERS_NONE();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GApplication::vfunc_quit_mainloop(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->quit_mainloop == nullptr) {
-    zend_throw_error(nullptr, "GApplication::vfunc_quit_mainloop(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->quit_mainloop(self);
 }
@@ -648,10 +666,16 @@ static void vfunc_install_run_mainloop(gpointer klass) {
 ZEND_METHOD(Gtk4_GApplication, vfunc_run_mainloop) {
   ZEND_PARSE_PARAMETERS_NONE();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GApplication::vfunc_run_mainloop(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->run_mainloop == nullptr) {
-    zend_throw_error(nullptr, "GApplication::vfunc_run_mainloop(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->run_mainloop(self);
 }
@@ -689,10 +713,16 @@ static void vfunc_install_shutdown(gpointer klass) {
 ZEND_METHOD(Gtk4_GApplication, vfunc_shutdown) {
   ZEND_PARSE_PARAMETERS_NONE();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GApplication::vfunc_shutdown(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->shutdown == nullptr) {
-    zend_throw_error(nullptr, "GApplication::vfunc_shutdown(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->shutdown(self);
 }
@@ -730,10 +760,16 @@ static void vfunc_install_startup(gpointer klass) {
 ZEND_METHOD(Gtk4_GApplication, vfunc_startup) {
   ZEND_PARSE_PARAMETERS_NONE();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GApplication::vfunc_startup(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->startup == nullptr) {
-    zend_throw_error(nullptr, "GApplication::vfunc_startup(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->startup(self);
 }

@@ -124,10 +124,16 @@ ZEND_METHOD(Gtk4_GtkSorter, vfunc_compare) {
   Z_PARAM_OBJECT_OF_CLASS_OR_NULL(item2, class_for_gtype(G_TYPE_OBJECT))
   ZEND_PARSE_PARAMETERS_END();
   GtkSorter *self = PHPGTK_SELF(GtkSorter, GTK_TYPE_SORTER);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "GtkSorter::vfunc_compare(): for parent:: chaining from a PHP subclass "
+                            "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_SORTER_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->compare == nullptr) {
-    zend_throw_error(nullptr, "GtkSorter::vfunc_compare(): no native implementation");
-    RETURN_THROWS();
+    enum_to_php(GTK_TYPE_ORDERING, 0, return_value);
+    return;
   }
   GObject *item1_o = nullptr;
   if (item1 != nullptr) {
@@ -181,10 +187,17 @@ static void vfunc_install_get_order(gpointer klass) {
 ZEND_METHOD(Gtk4_GtkSorter, vfunc_get_order) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkSorter *self = PHPGTK_SELF(GtkSorter, GTK_TYPE_SORTER);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkSorter::vfunc_get_order(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_SORTER_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->get_order == nullptr) {
-    zend_throw_error(nullptr, "GtkSorter::vfunc_get_order(): no native implementation");
-    RETURN_THROWS();
+    enum_to_php(GTK_TYPE_SORTER_ORDER, 0, return_value);
+    return;
   }
   enum_to_php(GTK_TYPE_SORTER_ORDER, klass->get_order(self), return_value);
 }

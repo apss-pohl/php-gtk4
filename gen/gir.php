@@ -1219,6 +1219,7 @@ final class Generator
         string $castMacro,
         bool $isRoot,
         array $vfuncPre = [],
+        ?array $presetOuts = null,
     ): ?array {
         $reason = $this->methodSkipReason($n, $f);
         if ($reason !== null) {
@@ -1236,6 +1237,9 @@ final class Generator
             return null;
         }
         [$ins, $outs] = $mapped;
+        if ($presetOuts !== null) {
+            $outs = $presetOuts;
+        }
         $retMap = $this->retMapping($n, $f, $outs);
         if (is_string($retMap)) {
             $this->skip($n, $f->name, $retMap);
@@ -1466,11 +1470,45 @@ final class Generator
                 "Native `{$v->name}` ({$struct->name}.{$v->name}): the GTK implementation below any PHP "
                 . "subclass, for `parent::$phpName()` from an override. " . docSummary($v->doc),
             );
-            $pre = ["auto *klass = $classMacro(subtype_native_class(G_OBJECT(self)));",
-                "if (klass->{$v->name} == nullptr) {",
-                "  zend_throw_error(nullptr, \"$php::$phpName(): no native implementation\");",
-                '  RETURN_THROWS();', '}'];
-            $m = $this->method($n, $native, $typeMacro, $castMacro, false, $pre);
+            // An empty slot (a signal's class handler GTK left NULL, `clicked`) is a no-op that
+            // yields the type's zero value, so parent::vfunc_x() from an override always works.
+            $retMap = $this->retMapping($n, $native, $outs);
+            $phpRet = is_array($retMap) ? $retMap['phpType'] : 'void';
+            $empty = match (true) {
+                $phpRet === 'void' => ['return;'],
+                $phpRet === 'bool' => ['RETURN_FALSE;'],
+                $phpRet === 'int' => ['RETURN_LONG(0);'],
+                $phpRet === 'float' => ['RETURN_DOUBLE(0);'],
+                $phpRet === 'string' => ['RETURN_EMPTY_STRING();'],
+                $phpRet === 'array' => ['array_init_size(return_value, ' . count($outs) . ');',
+                    ...array_map(
+                        fn($o) => "{$o['add']}(return_value, "
+                            . (str_contains($o['name'], 'baseline') ? '-1' : '0') . ');',
+                        $outs,
+                    ),
+                    'return;'],
+                str_starts_with($phpRet, '?') => ['RETURN_NULL();'],
+                default => ['enum_to_php(' . ($this->enumMacroOf($v->ret) ?? 'G_TYPE_NONE') . ', 0, return_value);',
+                    'return;'],
+            };
+            // Only a PHP subtype may reach the slot directly (parent:: from its override): on a
+            // native instance this bypasses the public API's preconditions (map() unrealized ...).
+            $pre = ['if (!is_php_type(G_OBJECT_TYPE(self))) {',
+                '  zend_throw_exception_ex(spl_ce_LogicException, 0,',
+                "                          \"$php::$phpName(): for parent:: chaining from a PHP subclass \"",
+                '                          "only; call the public method instead");',
+                '  RETURN_THROWS();', '}',
+                "auto *klass = $classMacro(subtype_native_class(G_OBJECT(self)));",
+                "if (klass->{$v->name} == nullptr) {", ...array_map(fn($l) => "  $l", $empty), '}'];
+            // gtk_widget_measure() hands the vfunc baselines preset to -1 ("no baseline"); the
+            // out-parameter convention would report 0, which GTK then warns about.
+            foreach ($outs as &$o) {
+                if (str_contains($o['name'], 'baseline')) {
+                    $o['init'] = '-1';
+                }
+            }
+            unset($o);
+            $m = $this->method($n, $native, $typeMacro, $castMacro, false, $pre, $outs);
             if ($m === null) {
                 continue;  // reported by method()
             }
@@ -1581,6 +1619,16 @@ final class Generator
         $l[] = "  $classMacro(klass)->{$v->name} = vfunc_thunk_{$v->name};";
         $l[] = '}';
         return implode("\n", $l) . "\n\n";
+    }
+
+    /** The *_TYPE_* macro of a known GEnum return type, null otherwise. */
+    private function enumMacroOf(Type $t): ?string
+    {
+        $node = $this->gir->types[$t->name] ?? null;
+        if ($node === null || $node->kind !== 'enum' || $node->gtypeName === null || !$this->known($t->name)) {
+            return null;
+        }
+        return macroParts($this->gir, $node)[0];
     }
 
     /**

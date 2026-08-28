@@ -1732,10 +1732,16 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_contains) {
   Z_PARAM_DOUBLE(y)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_contains(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->contains == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_contains(): no native implementation");
-    RETURN_THROWS();
+    RETURN_FALSE;
   }
   RETURN_BOOL(klass->contains(self, x, y));
 }
@@ -1781,10 +1787,16 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_direction_changed) {
   Z_PARAM_OBJECT_OF_CLASS(previous_direction, enum_class_for_type(GTK_TYPE_TEXT_DIRECTION))
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_direction_changed(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->direction_changed == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_direction_changed(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   gint previous_direction_v = 0;
   if (!enum_from_php(previous_direction, GTK_TYPE_TEXT_DIRECTION, &previous_direction_v))
@@ -1834,10 +1846,15 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_focus) {
   Z_PARAM_OBJECT_OF_CLASS(direction, enum_class_for_type(GTK_TYPE_DIRECTION_TYPE))
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "GtkWidget::vfunc_focus(): for parent:: chaining from a PHP subclass "
+                            "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->focus == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_focus(): no native implementation");
-    RETURN_THROWS();
+    RETURN_FALSE;
   }
   gint direction_v = 0;
   if (!enum_from_php(direction, GTK_TYPE_DIRECTION_TYPE, &direction_v)) RETURN_THROWS();
@@ -1884,10 +1901,17 @@ static void vfunc_install_get_request_mode(gpointer klass) {
 ZEND_METHOD(Gtk4_GtkWidget, vfunc_get_request_mode) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_get_request_mode(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->get_request_mode == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_get_request_mode(): no native implementation");
-    RETURN_THROWS();
+    enum_to_php(GTK_TYPE_SIZE_REQUEST_MODE, 0, return_value);
+    return;
   }
   enum_to_php(GTK_TYPE_SIZE_REQUEST_MODE, klass->get_request_mode(self), return_value);
 }
@@ -1928,10 +1952,16 @@ static void vfunc_install_grab_focus(gpointer klass) {
 ZEND_METHOD(Gtk4_GtkWidget, vfunc_grab_focus) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_grab_focus(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->grab_focus == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_grab_focus(): no native implementation");
-    RETURN_THROWS();
+    RETURN_FALSE;
   }
   RETURN_BOOL(klass->grab_focus(self));
 }
@@ -1979,10 +2009,16 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_keynav_failed) {
   Z_PARAM_OBJECT_OF_CLASS(direction, enum_class_for_type(GTK_TYPE_DIRECTION_TYPE))
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_keynav_failed(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->keynav_failed == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_keynav_failed(): no native implementation");
-    RETURN_THROWS();
+    RETURN_FALSE;
   }
   gint direction_v = 0;
   if (!enum_from_php(direction, GTK_TYPE_DIRECTION_TYPE, &direction_v)) RETURN_THROWS();
@@ -2021,10 +2057,15 @@ static void vfunc_install_map(gpointer klass) {
 ZEND_METHOD(Gtk4_GtkWidget, vfunc_map) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "GtkWidget::vfunc_map(): for parent:: chaining from a PHP subclass "
+                            "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->map == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_map(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->map(self);
 }
@@ -2093,17 +2134,27 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_measure) {
   Z_PARAM_LONG(for_size)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "GtkWidget::vfunc_measure(): for parent:: chaining from a PHP subclass "
+                            "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->measure == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_measure(): no native implementation");
-    RETURN_THROWS();
+    array_init_size(return_value, 4);
+    add_next_index_long(return_value, 0);
+    add_next_index_long(return_value, 0);
+    add_next_index_long(return_value, -1);
+    add_next_index_long(return_value, -1);
+    return;
   }
   gint orientation_v = 0;
   if (!enum_from_php(orientation, GTK_TYPE_ORIENTATION, &orientation_v)) RETURN_THROWS();
   int minimum = 0;
   int natural = 0;
-  int minimum_baseline = 0;
-  int natural_baseline = 0;
+  int minimum_baseline = -1;
+  int natural_baseline = -1;
   klass->measure(self, static_cast<GtkOrientation>(orientation_v), static_cast<int>(for_size),
                  &minimum, &natural, &minimum_baseline, &natural_baseline);
   array_init_size(return_value, 4);
@@ -2158,10 +2209,16 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_mnemonic_activate) {
   Z_PARAM_BOOL(group_cycling)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_mnemonic_activate(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->mnemonic_activate == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_mnemonic_activate(): no native implementation");
-    RETURN_THROWS();
+    RETURN_FALSE;
   }
   RETURN_BOOL(klass->mnemonic_activate(self, group_cycling));
 }
@@ -2206,10 +2263,16 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_move_focus) {
   Z_PARAM_OBJECT_OF_CLASS(direction, enum_class_for_type(GTK_TYPE_DIRECTION_TYPE))
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_move_focus(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->move_focus == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_move_focus(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   gint direction_v = 0;
   if (!enum_from_php(direction, GTK_TYPE_DIRECTION_TYPE, &direction_v)) RETURN_THROWS();
@@ -2248,10 +2311,15 @@ static void vfunc_install_realize(gpointer klass) {
 ZEND_METHOD(Gtk4_GtkWidget, vfunc_realize) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "GtkWidget::vfunc_realize(): for parent:: chaining from a PHP subclass "
+                            "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->realize == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_realize(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->realize(self);
 }
@@ -2289,10 +2357,15 @@ static void vfunc_install_root(gpointer klass) {
 ZEND_METHOD(Gtk4_GtkWidget, vfunc_root) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "GtkWidget::vfunc_root(): for parent:: chaining from a PHP subclass "
+                            "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->root == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_root(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->root(self);
 }
@@ -2338,10 +2411,16 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_set_focus_child) {
   Z_PARAM_OBJECT_OF_CLASS_OR_NULL(child, class_for_gtype(GTK_TYPE_WIDGET))
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_set_focus_child(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->set_focus_child == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_set_focus_child(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   GObject *child_o = nullptr;
   if (child != nullptr) {
@@ -2397,10 +2476,16 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_size_allocate) {
   Z_PARAM_LONG(baseline)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_size_allocate(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->size_allocate == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_size_allocate(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->size_allocate(self, static_cast<int>(width), static_cast<int>(height),
                        static_cast<int>(baseline));
@@ -2448,10 +2533,16 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_state_flags_changed) {
   Z_PARAM_LONG(previous_state_flags)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_state_flags_changed(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->state_flags_changed == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_state_flags_changed(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->state_flags_changed(self, static_cast<GtkStateFlags>(previous_state_flags));
 }
@@ -2498,11 +2589,16 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_system_setting_changed) {
   Z_PARAM_LONG(settings)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_system_setting_changed(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->system_setting_changed == nullptr) {
-    zend_throw_error(nullptr,
-                     "GtkWidget::vfunc_system_setting_changed(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->system_setting_changed(self, static_cast<GtkSystemSetting>(settings));
 }
@@ -2540,10 +2636,15 @@ static void vfunc_install_unmap(gpointer klass) {
 ZEND_METHOD(Gtk4_GtkWidget, vfunc_unmap) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "GtkWidget::vfunc_unmap(): for parent:: chaining from a PHP subclass "
+                            "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->unmap == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_unmap(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->unmap(self);
 }
@@ -2581,10 +2682,16 @@ static void vfunc_install_unrealize(gpointer klass) {
 ZEND_METHOD(Gtk4_GtkWidget, vfunc_unrealize) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_unrealize(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->unrealize == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_unrealize(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->unrealize(self);
 }
@@ -2622,10 +2729,15 @@ static void vfunc_install_unroot(gpointer klass) {
 ZEND_METHOD(Gtk4_GtkWidget, vfunc_unroot) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "GtkWidget::vfunc_unroot(): for parent:: chaining from a PHP subclass "
+                            "only; call the public method instead");
+    RETURN_THROWS();
+  }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
   if (klass->unroot == nullptr) {
-    zend_throw_error(nullptr, "GtkWidget::vfunc_unroot(): no native implementation");
-    RETURN_THROWS();
+    return;
   }
   klass->unroot(self);
 }
