@@ -141,7 +141,9 @@ final class VscodeConfigTest extends TestCase
     {
         $script = self::ROOT . '/bin/php-gtk4-debug';
         self::assertFileExists($script);
-        self::assertTrue(is_executable($script), 'bin/php-gtk4-debug must be executable');
+        if (PHP_OS_FAMILY !== 'Windows') {  // no executable bit on NTFS checkouts
+            self::assertTrue(is_executable($script), 'bin/php-gtk4-debug must be executable');
+        }
         $source = (string) file_get_contents($script);
         self::assertStringContainsString('XDEBUG_MODE=debug', $source);
         self::assertStringContainsString('php-gtk4', $source, 'it must go through the launcher');
