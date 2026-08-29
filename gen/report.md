@@ -133,6 +133,10 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `__construct` — skip.txt: abstract for GTK's own subclasses only: a texture needs internal state (color state, 4.16+) that only the factories set - no PHP subtypes, no `new`
 - `smoke test` — smoke-skip.txt: factories need real image data (TextureTest covers it)
 
+## GtkAdjustment
+
+- `smoke test` — smoke-skip.txt: the sample (every argument 1.0: upper == lower with a page size) is refused by newer GTK (gvsbuild on Windows); LayoutTest builds it with a real range
+
 ## GtkAlertDialog
 
 - `new` — varargs
@@ -355,7 +359,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `gen_prototypes.h`
 - `gen_arginfo.h`
 - `examples/generated-sections.inc`
-- `tests/Generated/GtkAdjustmentSmokeTest.php`
 - `tests/Generated/GtkAlertDialogSmokeTest.php`
 - `tests/Generated/GtkApplicationSmokeTest.php`
 - `tests/Generated/GtkButtonSmokeTest.php`

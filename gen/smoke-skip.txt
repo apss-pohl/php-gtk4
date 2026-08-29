@@ -9,3 +9,4 @@ Gtk.Notebook.set_current_page   an empty notebook has no page 1 (get_current_pag
 Gtk.Notebook.page               same, as a property
 Gtk.Stack.set_visible_child_name   an empty stack has no child named 'smoke' (visible-child-name stays null)
 Gtk.Stack.visible_child_name       same, as a property
+Gtk.Adjustment.*   the sample (every argument 1.0: upper == lower with a page size) is refused by newer GTK (gvsbuild on Windows); LayoutTest builds it with a real range

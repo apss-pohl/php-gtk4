@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Conventional Commits, checked while the message is still in the editor buffer -
+# the one moment when fixing it costs nothing. The same check runs in CI over the
+# whole PR (./ci.sh --only=commits) because these messages become the release notes.
+# Enable once per clone:  git config core.hooksPath .githooks
+# Skip once:              git commit --no-verify
+set -e
+cd "$(git rev-parse --show-toplevel)"
+exec ./bin/commit-lint --message "$1"

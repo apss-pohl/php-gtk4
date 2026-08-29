@@ -7,8 +7,10 @@ namespace PhpGtk4\Tests;
 use Gtk4\GLib;
 use Gtk4\GObject;
 use Gtk4\GtkAdjustment;
+use Gtk4\GtkBaselinePosition;
 use Gtk4\GtkBox;
 use Gtk4\GtkButton;
+use Gtk4\GtkCornerType;
 use Gtk4\GtkFixed;
 use Gtk4\GtkFrame;
 use Gtk4\GtkGrid;
@@ -22,7 +24,9 @@ use Gtk4\GtkPaned;
 use Gtk4\GtkPolicyType;
 use Gtk4\GtkPositionType;
 use Gtk4\GtkRevealer;
+use Gtk4\GtkRevealerTransitionType;
 use Gtk4\GtkScrollable;
+use Gtk4\GtkScrollablePolicy;
 use Gtk4\GtkScrolledWindow;
 use Gtk4\GtkSeparator;
 use Gtk4\GtkSizeGroup;
@@ -286,6 +290,153 @@ final class LayoutTest extends GtkTestCase
         self::assertSame(GtkOrientation::Vertical, $sep->get_orientation());
         $sep->set_orientation(GtkOrientation::Horizontal);
         self::assertSame(GtkOrientation::Horizontal, $sep->orientation);
+    }
+
+    public function testNotebookTabsMenusAndOrder(): void
+    {
+        $nb = new GtkNotebook();
+        $a = new GtkLabel('a');
+        $b = new GtkLabel('b');
+        $c = new GtkLabel('c');
+        self::assertSame(0, $nb->prepend_page($b, new GtkLabel('B')));
+        self::assertSame(0, $nb->prepend_page_menu($a, new GtkLabel('A'), new GtkLabel('menu A')));
+        self::assertSame(2, $nb->insert_page($c, null, 2));
+        self::assertSame(2, $nb->append_page_menu(new GtkLabel('d'), null, null) - 1);
+        self::assertSame(1, $nb->insert_page_menu(new GtkLabel('e'), null, new GtkLabel('menu E'), 1));
+        self::assertSame([$a, $b], [$nb->get_nth_page(0), $nb->get_nth_page(2)]);
+        $nb->reorder_child($c, 0);
+        self::assertSame(0, $nb->page_num($c));
+
+        $tab = new GtkButton();
+        $nb->set_tab_label($b, $tab);
+        self::assertSame($tab, $nb->get_tab_label($b));
+        self::assertNull($nb->get_tab_label_text($b), 'a widget tab has no text');
+        $nb->set_menu_label($b, new GtkLabel('menu B'));
+        self::assertInstanceOf(GtkLabel::class, $nb->get_menu_label($b));
+        $nb->set_menu_label_text($c, 'menu C');
+        self::assertSame('menu C', $nb->get_menu_label_text($c));
+        self::assertInstanceOf(GtkLabel::class, $nb->get_menu_label($a), 'the menu label given at insert time');
+
+        $nb->set_tab_reorderable($a, true);
+        $nb->set_tab_detachable($a, true);
+        self::assertTrue($nb->get_tab_reorderable($a));
+        self::assertTrue($nb->get_tab_detachable($a));
+        $nb->set_group_name('g');
+        self::assertSame('g', $nb->get_group_name());
+        $nb->popup_enable();
+        $nb->popup_disable();
+        $nb->set_show_tabs(false);
+        $nb->set_show_border(false);
+        $nb->set_scrollable(true);
+        self::assertFalse($nb->get_show_tabs());
+        self::assertFalse($nb->get_show_border());
+        self::assertTrue($nb->get_scrollable());
+
+        $nb->set_current_page(2);
+        self::assertSame(2, $nb->get_current_page());
+        $nb->next_page();
+        self::assertSame(3, $nb->get_current_page());
+        $nb->prev_page();
+        self::assertSame(2, $nb->get_current_page());
+        $nb->detach_tab($c);
+        self::assertSame(-1, $nb->page_num($c));
+        self::assertSame(4, $nb->get_n_pages());
+    }
+
+    public function testStackPageProperties(): void
+    {
+        $stack = new GtkStack();
+        $stack->set_transition_type(GtkStackTransitionType::Crossfade);
+        self::assertSame(GtkStackTransitionType::Crossfade, $stack->get_transition_type());
+        $child = new GtkLabel('x');
+        $page = $stack->add_child($child);
+        self::assertNull($page->get_name());
+        $page->set_name('x');
+        $page->set_title('_X');
+        $page->set_use_underline(true);
+        $page->set_icon_name('go-next-symbolic');
+        self::assertSame('x', $page->get_name());
+        self::assertSame('_X', $page->get_title());
+        self::assertTrue($page->get_use_underline());
+        self::assertSame('go-next-symbolic', $page->get_icon_name());
+        self::assertTrue($page->get_visible());
+        $page->set_visible(false);
+        self::assertFalse($page->get_visible());
+        $other = new GtkLabel('y');
+        $stack->add_named($other, 'y');
+        $stack->set_visible_child($other);
+        self::assertSame($other, $stack->get_visible_child());
+        $stack->set_visible_child_name('x');
+        self::assertSame('x', $stack->get_visible_child_name());
+        $stack->set_hhomogeneous(false);
+        $stack->set_interpolate_size(true);
+        self::assertFalse($stack->get_hhomogeneous());
+        self::assertTrue($stack->get_interpolate_size());
+    }
+
+    public function testPanedFlags(): void
+    {
+        $paned = new GtkPaned(GtkOrientation::Vertical);
+        $paned->set_wide_handle(true);
+        $paned->set_shrink_start_child(false);
+        $paned->set_shrink_end_child(false);
+        $paned->set_resize_start_child(false);
+        $paned->set_resize_end_child(false);
+        self::assertTrue($paned->get_wide_handle());
+        self::assertFalse($paned->get_shrink_start_child());
+        self::assertFalse($paned->get_shrink_end_child());
+        self::assertFalse($paned->get_resize_start_child());
+        self::assertFalse($paned->get_resize_end_child());
+    }
+
+    public function testGridRowsAndColumns(): void
+    {
+        $grid = new GtkGrid();
+        $a = new GtkLabel('a');
+        $grid->attach($a, 1, 1, 1, 1);
+        $grid->insert_column(0);
+        self::assertSame([2, 1, 1, 1], $grid->query_child($a));
+        $grid->remove_column(0);
+        $grid->remove_row(0);
+        self::assertSame([1, 0, 1, 1], $grid->query_child($a));
+        $grid->insert_next_to($a, GtkPositionType::Left);
+        self::assertSame([2, 0, 1, 1], $grid->query_child($a), 'insert_next_to() opened a column');
+        $grid->set_row_baseline_position(0, GtkBaselinePosition::Top);
+        self::assertSame(GtkBaselinePosition::Top, $grid->get_row_baseline_position(0));
+        $grid->set_baseline_row(0);
+        self::assertSame(0, $grid->get_baseline_row());
+    }
+
+    public function testScrollableSettersOnAViewport(): void
+    {
+        $vp = new GtkViewport();
+        $vp->set_child(new GtkLabel('inside'));
+        self::assertInstanceOf(GtkLabel::class, $vp->get_child());
+        $h = new GtkAdjustment(0.0, 0.0, 5.0, 1.0, 1.0, 1.0);
+        $v = new GtkAdjustment(0.0, 0.0, 6.0, 1.0, 1.0, 1.0);
+        $vp->set_hadjustment($h);
+        $vp->set_vadjustment($v);
+        self::assertSame($h, $vp->get_hadjustment());
+        self::assertSame($v, $vp->get_vadjustment());
+        $vp->set_hscroll_policy(GtkScrollablePolicy::Natural);
+        $vp->set_vscroll_policy(GtkScrollablePolicy::Natural);
+        self::assertSame(GtkScrollablePolicy::Natural, $vp->get_hscroll_policy());
+        self::assertSame(GtkScrollablePolicy::Natural, $vp->get_vscroll_policy());
+
+        $sw = new GtkScrolledWindow();
+        $sw->set_hadjustment($h);
+        self::assertSame($h, $sw->get_hadjustment());
+        $sw->set_placement(GtkCornerType::BottomRight);
+        self::assertSame(GtkCornerType::BottomRight, $sw->get_placement());
+        $sw->unset_placement();
+        self::assertSame(GtkCornerType::TopLeft, $sw->get_placement());
+    }
+
+    public function testRevealerTransitionType(): void
+    {
+        $revealer = new GtkRevealer();
+        $revealer->set_transition_type(GtkRevealerTransitionType::SlideUp);
+        self::assertSame(GtkRevealerTransitionType::SlideUp, $revealer->get_transition_type());
     }
 
     /** Pump the main context so GTK allocates what was just presented. */

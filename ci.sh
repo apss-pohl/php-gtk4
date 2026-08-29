@@ -2,6 +2,7 @@
 #
 # The one QA entry point - same stages as the GitHub workflows (.github/workflows/*.yml):
 #
+#   commits    Conventional Commit messages (bin/commit-lint) - they become the release notes
 #   version    ./VERSION is the single source of truth; src/php_gtk4.h and src/gtk4.stub.php mirror it
 #   gen        gir.php --install must reproduce src/<Ns>/, tests/Generated, gen/report.md, the map status
 #   stubs      src/gtk4.stub.php -> gen_stub.php (src/gtk4_arginfo.h) + gen/ide-stub.php (stubs/gtk4.php) are current,
@@ -37,6 +38,7 @@
 #   ./ci.sh --only=md-lint --fix     markdownlint over the docs, applying the fixable rules
 #   ./ci.sh --only=version --fix     rewrite the version mirrors from ./VERSION (then --only=stubs --fix)
 #   COVERAGE_MIN_LINES=80 ./ci.sh --only=coverage   fail below this line coverage (default 80)
+#   COMMIT_LINT_RANGE=main..HEAD ./ci.sh --only=commits   check that range instead of the unpushed commits
 #
 # Env: PHP=php8.4 PHP_CONFIG=/usr/bin/php-config8.4 PHPIZE=phpize8.4 PHPT_TESTS=tests/phpt
 #      JOBS=$(nproc) CLANG_TIDY=clang-tidy-20 CLANG_FORMAT=clang-format-20 (default: newest installed)
@@ -61,7 +63,7 @@ newest_tool() {
 CLANG_TIDY=${CLANG_TIDY:-$(newest_tool clang-tidy)}
 CLANG_FORMAT=${CLANG_FORMAT:-$(newest_tool clang-format)}
 
-ALL_STAGES="version gen stubs cpp-lint md-lint php-qa build load test phpt asan coverage valgrind"
+ALL_STAGES="commits version gen stubs cpp-lint md-lint php-qa build load test phpt asan coverage valgrind"
 DEFAULT_OFF="asan coverage valgrind"
 ONLY=""; SKIP=""; WITH=""; FIX=0; STAN=1; FAIL_FAST=0; PHPUNIT_ARGS=()
 usage() { sed -n '2,/^set -/p' "$0" | sed '$d' | sed 's/^# \{0,1\}//'; }
@@ -144,6 +146,16 @@ ensure_vendor() {
 # config.m4 repeats the header check at configure time, so a hand-edited header
 # cannot survive a build either; docs/RELEASING.md explains the -dev suffix.
 version_file() { tr -d ' \t\r\n' < VERSION; }
+
+# ---------------------------------------------------------------- commits
+# Conventional Commits (https://www.conventionalcommits.org) are mandatory here because
+# they are the release notes: bin/release-notes groups them by type into the body of every
+# release. By default this checks the commits the branch has not pushed yet - the ones
+# still cheap to reword; CI passes the PR's whole range in COMMIT_LINT_RANGE.
+stage_commits() {
+    step "commits (Conventional Commits, bin/commit-lint)"
+    ./bin/commit-lint || fail "commits (see docs/CONTRIBUTING.md 'Commit messages')"
+}
 
 stage_version() {
     step "version: ./VERSION mirrored in src/php_gtk4.h and src/gtk4.stub.php"
@@ -540,6 +552,7 @@ ran=""
 for stage in $ALL_STAGES; do
     enabled "$stage" || continue
     case "$stage" in
+        commits)  stage_commits ;;
         version)  stage_version ;;
         stubs)    stage_stubs ;;
         gen) stage_gen ;;

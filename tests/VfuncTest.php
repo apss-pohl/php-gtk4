@@ -8,6 +8,7 @@ use Gtk4\GApplication;
 use Gtk4\GApplicationFlags;
 use Gtk4\GLib;
 use Gtk4\GListStore;
+use Gtk4\GtkAdjustment;
 use Gtk4\GtkApplication;
 use Gtk4\GtkButton;
 use Gtk4\GtkDirectionType;
@@ -46,6 +47,7 @@ final class VfuncTest extends GtkTestCase
             'vfunc_keys_changed'],
         GtkFilter::class => ['vfunc_get_strictness'],
         GtkSorter::class => ['vfunc_get_order'],
+        GtkAdjustment::class => ['vfunc_changed', 'vfunc_value_changed'],
         GtkApplication::class => [],
         GApplication::class => [],
     ];
@@ -254,6 +256,17 @@ final class VfuncTest extends GtkTestCase
         self::assertSame(2, $sorted->get_n_items());
         $s->compare(new PhpValue(1), new PhpValue(2));
         $this->checkAllVfuncs(GtkSorter::class, $s, ['vfunc_compare', 'vfunc_get_order']);
+    }
+
+    public function testAdjustment(): void
+    {
+        // GtkAdjustment's two slots are the class handlers of its `changed` / `value-changed`
+        // signals: a setter emits the signal, GTK runs the slot, the thunk reaches the PHP method.
+        $class = self::recordingSubclass(GtkAdjustment::class);
+        $a = new $class(0.0, 0.0, 10.0, 1.0, 2.0, 1.0);
+        $a->set_value(5.0);
+        $a->set_upper(20.0);
+        $this->checkAllVfuncs(GtkAdjustment::class, $a, ['vfunc_value_changed', 'vfunc_changed']);
     }
 
     public function testApplications(): void
