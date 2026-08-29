@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use Gtk4\GdkDragAction;
 use Gtk4\GdkPaintable;
+use Gtk4\GdkPaintableFlags;
 use Gtk4\GdkTexture;
+use Gtk4\GtkAccessiblePlatformState;
 use Gtk4\GtkAdjustment;
 use Gtk4\GtkCalendar;
 use Gtk4\GtkCheckButton;
@@ -18,14 +21,17 @@ use Gtk4\GtkEntryIconPosition;
 use Gtk4\GtkIconSize;
 use Gtk4\GtkImage;
 use Gtk4\GtkImageType;
+use Gtk4\GtkInputHints;
 use Gtk4\GtkInputPurpose;
 use Gtk4\GtkOrientation;
 use Gtk4\GtkPasswordEntry;
 use Gtk4\GtkPicture;
 use Gtk4\GtkPositionType;
 use Gtk4\GtkProgressBar;
+use Gtk4\GtkRange;
 use Gtk4\GtkScale;
 use Gtk4\GtkSpinButton;
+use Gtk4\GtkSpinButtonUpdatePolicy;
 use Gtk4\GtkSpinner;
 use Gtk4\GtkSpinType;
 use Gtk4\GtkStringFilterMatchMode;
@@ -388,6 +394,35 @@ final class ControlsTest extends GtkTestCase
         self::assertSame(GtkStringFilterMatchMode::Prefix, $dd->get_search_match_mode());
         $dd->set_model(null);
         self::assertNull($dd->get_selected_item());
+    }
+
+    public function testEnumsAndFlagsOfTheWave(): void
+    {
+        $spin = GtkSpinButton::new_with_range(0.0, 1.0, 1.0);
+        $scale = GtkScale::new_with_range(GtkOrientation::Horizontal, 0.0, 1.0, 1.0);
+        self::assertInstanceOf(GtkRange::class, $scale, 'GtkScale is the GtkRange we bind');
+        $spin->set_update_policy(GtkSpinButtonUpdatePolicy::IfValid);
+        self::assertSame(GtkSpinButtonUpdatePolicy::IfValid, $spin->get_update_policy());
+
+        $entry = new GtkEntry();
+        $entry->set_input_hints(GtkInputHints::SPELLCHECK | GtkInputHints::UPPERCASE_WORDS);
+        self::assertSame(GtkInputHints::SPELLCHECK | GtkInputHints::UPPERCASE_WORDS, $entry->get_input_hints());
+        self::assertSame(-1, $entry->get_current_icon_drag_source(), 'no icon is being dragged');
+        self::assertSame(1, GdkDragAction::COPY, 'flags are the C values');
+        self::assertFalse($entry->delegate_get_accessible_platform_state(GtkAccessiblePlatformState::Focused));
+        self::assertTrue($entry->delegate_get_accessible_platform_state(GtkAccessiblePlatformState::Focusable));
+
+        $png = base64_decode(
+            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==',
+            true,
+        );
+        self::assertIsString($png);
+        $texture = GdkTexture::new_from_bytes($png);
+        self::assertSame(
+            GdkPaintableFlags::SIZE | GdkPaintableFlags::CONTENTS,
+            $texture->get_flags(),
+            'a texture is static in size and contents',
+        );
     }
 
     /** Pump the main context so GTK draws what was just presented. */

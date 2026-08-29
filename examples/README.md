@@ -15,9 +15,9 @@ import. `ExampleTest` enforces that.
 The application is a header row, a sidebar and a content area, all `GtkBox`. That container is what
 made it an application at all: before it, a `GtkWindow` held exactly one child and a `GtkButton` one
 more, so navigation could not sit next to the thing it navigates and the demo had to be a timed
-slideshow. The sidebar shows the current section only, because `GtkScrolledWindow` is not bound yet
-and that many buttons do not fit; `Demo::SECTIONS` is the grouping and every registered class must appear
-in it exactly once.
+slideshow. The sidebar shows the current section only and scrolls it (`GtkScrolledWindow`, bound in wave 1 —
+before that, the sections were what kept it on screen); `Demo::SECTIONS` is the grouping and every
+registered class must appear in it exactly once.
 
 Each page opens on what its class does rather than printing about it. A window still holds one
 child, so a page is usually a Pango-markup `GtkLabel` or a cairo `GtkDrawingArea`, sometimes inside
@@ -111,3 +111,94 @@ drives a window with no `GtkApplication`. Both pass a standalone override to `De
 | [GMainLoop.php](GMainLoop.php) | a window with no `GtkApplication` at all |
 | [GtkAlign.php](GtkAlign.php) | every alignment case, applied on a timer |
 | [GtkOrientation.php](GtkOrientation.php) | the two cases, drawn |
+
+## Layout
+
+| File | Shows |
+| ---- | ----- |
+| [GtkGrid.php](GtkGrid.php) | rows and columns - attach() a child to a cell with a span |
+| [GtkPaned.php](GtkPaned.php) | two children and a draggable divider between them |
+| [GtkFrame.php](GtkFrame.php) | a border with an optional caption - string or widget |
+| [GtkOverlay.php](GtkOverlay.php) | widgets stacked on top of one child - badges, toasts, corner labels |
+| [GtkRevealer.php](GtkRevealer.php) | animate a child in and out - reveal_child asks, child_revealed answers |
+| [GtkRevealerTransitionType.php](GtkRevealerTransitionType.php) | how a GtkRevealer animates - slide, swing, crossfade or nothing |
+| [GtkFixed.php](GtkFixed.php) | children at pixel coordinates - put() and move(), no layout |
+| [GtkSeparator.php](GtkSeparator.php) | a line between things - horizontal between rows, vertical between columns |
+| [GtkSizeGroup.php](GtkSizeGroup.php) | widgets that agree on a width, a height or both |
+| [GtkSizeGroupMode.php](GtkSizeGroupMode.php) | which dimension a size group equalises - none, width, height or both |
+
+## Stacks & tabs
+
+| File | Shows |
+| ---- | ----- |
+| [GtkStack.php](GtkStack.php) | one child visible at a time, switched with a transition |
+| [GtkStackPage.php](GtkStackPage.php) | the per-child record a stack keeps: name, title, icon, attention flag |
+| [GtkStackSwitcher.php](GtkStackSwitcher.php) | a row of toggle buttons, one per titled page of a stack |
+| [GtkStackSidebar.php](GtkStackSidebar.php) | a vertical list of page titles beside a stack |
+| [GtkStackTransitionType.php](GtkStackTransitionType.php) | how a stack animates from one page to the next - every case in turn |
+| [GtkNotebook.php](GtkNotebook.php) | tabbed pages - append_page(), next_page(), set_tab_pos() |
+| [GtkNotebookPage.php](GtkNotebookPage.php) | the per-child record a notebook keeps, reachable through get_page() |
+| [GtkPackType.php](GtkPackType.php) | Start or End - which end of the tab row an action widget sits at |
+| [GtkPositionType.php](GtkPositionType.php) | Left, Right, Top, Bottom - the tabs of a notebook walk around every side |
+
+## Scrolling
+
+| File | Shows |
+| ---- | ----- |
+| [GtkScrolledWindow.php](GtkScrolledWindow.php) | the container that makes its child scrollable |
+| [GtkViewport.php](GtkViewport.php) | the adapter that makes any widget scrollable |
+| [GtkScrollable.php](GtkScrollable.php) | the interface between a scrolled window and what it scrolls |
+| [GtkAdjustment.php](GtkAdjustment.php) | a bounded value with increments - the model behind scrollbars and scales |
+| [GtkPolicyType.php](GtkPolicyType.php) | when a scrolled window shows its scrollbars |
+| [GtkCornerType.php](GtkCornerType.php) | which corner the scrolled child sits in - the scrollbars take the others |
+| [GtkScrollablePolicy.php](GtkScrollablePolicy.php) | minimum or natural size request of a scrollable along an axis |
+
+## Text input
+
+| File | Shows |
+| ---- | ----- |
+| [GtkEntry.php](GtkEntry.php) | the single-line text entry - text, icons, progress and the GtkEditable API |
+| [GtkEditable.php](GtkEditable.php) | the text-editing interface every entry, password entry and spin button implement |
+| [GtkEntryBuffer.php](GtkEntryBuffer.php) | the text model behind an entry - shared by two entries, editable from the outside |
+| [GtkPasswordEntry.php](GtkPasswordEntry.php) | the entry for secrets - hidden text, a peek icon, GtkEditable underneath |
+| [GtkEntryIconPosition.php](GtkEntryIconPosition.php) | which of an entry's two icon slots you mean - Primary or Secondary |
+| [GtkInputHints.php](GtkInputHints.php) | the bitfield an entry hands to input methods - spellcheck, casing, emoji, OSK |
+| [GtkInputPurpose.php](GtkInputPurpose.php) | what kind of text an entry is for - digits, email, phone, password … |
+| [GtkImageType.php](GtkImageType.php) | where an image's pixels come from - empty, icon name, GIcon or paintable |
+| [GtkAccessiblePlatformState.php](GtkAccessiblePlatformState.php) | Focusable / Focused / Active - what an entry tells the accessibility backend |
+
+## Buttons & ranges
+
+| File | Shows |
+| ---- | ----- |
+| [GtkCheckButton.php](GtkCheckButton.php) | check boxes, radio groups via set_group(), and the inconsistent state |
+| [GtkToggleButton.php](GtkToggleButton.php) | a button that stays pressed; set_group() makes a radio bar |
+| [GtkSpinButton.php](GtkSpinButton.php) | a number entry with arrows - ranges, increments, digits, wrap and spin() |
+| [GtkSpinButtonUpdatePolicy.php](GtkSpinButtonUpdatePolicy.php) | Always parses anything typed, IfValid keeps the last valid value |
+| [GtkSpinType.php](GtkSpinType.php) | the directions spin() can move a spin button in |
+| [GtkRange.php](GtkRange.php) | bounds, increments, inversion and fill level, shown on a GtkScale |
+| [GtkScale.php](GtkScale.php) | a slider with marks, a printed value and an origin highlight |
+| [GtkProgressBar.php](GtkProgressBar.php) | set_fraction() when you know how far, pulse() when you do not |
+| [GtkSpinner.php](GtkSpinner.php) | start() and stop() - the busy indicator, invisible when idle |
+
+## Images & dates
+
+| File | Shows |
+| ---- | ----- |
+| [GtkImage.php](GtkImage.php) | the widget that shows an icon - by name, size or pixel size |
+| [GtkPicture.php](GtkPicture.php) | shows a GdkPaintable at its natural size, or fitted |
+| [GdkPaintable.php](GdkPaintable.php) | the interface behind everything GTK can draw as an image |
+| [GdkPaintableFlags.php](GdkPaintableFlags.php) | what a paintable promises never to change - a GFlags bitfield |
+| [GtkContentFit.php](GtkContentFit.php) | how a GtkPicture fits its paintable into the allocation |
+| [GtkIconSize.php](GtkIconSize.php) | built-in icon sizes - Inherit, Normal, Large |
+| [GtkCalendar.php](GtkCalendar.php) | one month of a Gregorian calendar, with a selected day |
+| [GdkDragAction.php](GdkDragAction.php) | what a drop is allowed to do - a GFlags bitfield |
+
+## Choices
+
+| File | Shows |
+| ---- | ----- |
+| [GtkDropDown.php](GtkDropDown.php) | pick one item out of a list model |
+| [GtkStringList.php](GtkStringList.php) | a GListModel that wraps an array of strings |
+| [GtkStringObject.php](GtkStringObject.php) | one string as a GObject - the item type of GtkStringList |
+| [GtkStringFilterMatchMode.php](GtkStringFilterMatchMode.php) | where a search string may sit inside the text |
