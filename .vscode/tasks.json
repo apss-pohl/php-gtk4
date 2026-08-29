@@ -1,0 +1,49 @@
+{
+  // Ctrl+Shift+B builds; the rest are Terminal > Run Task. Deliberately not wired as
+  // preLaunchTask on the debug configurations - a rebuild is ~20 s and the PHP side of
+  // an example changes far more often than the extension. Run "build extension" after
+  // touching anything under src/, then F5.
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "php-gtk4: build extension",
+      "detail": "phpize + configure + make -> ./gtk4.so, which bin/php-gtk4 prefers over the installed copy",
+      "type": "shell",
+      "command": "./ci.sh --only=build",
+      "problemMatcher": ["$gcc"],
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "label": "php-gtk4: run the demo application",
+      "detail": "every class, one page at a time - no debugger attached",
+      "type": "shell",
+      "command": "bin/php-gtk4 examples/demo.php",
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "php-gtk4: run the open example's page",
+      "detail": "examples/demo.php <the open file's class>, no debugger",
+      "type": "shell",
+      "command": "bin/php-gtk4 examples/demo.php ${fileBasenameNoExtension}",
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "php-gtk4: ci",
+      "detail": "the default stages: commits, version, gen, stubs, lint, QA, build, load, test, phpt",
+      "type": "shell",
+      "command": "./ci.sh",
+      "problemMatcher": [],
+      "group": { "kind": "test", "isDefault": true }
+    },
+    {
+      "label": "php-gtk4: ci --fix",
+      "detail": "apply every auto-fix: clang-format, phpcbf, php-cs-fixer, stubs, markdownlint",
+      "type": "shell",
+      "command": "./ci.sh --fix",
+      "problemMatcher": [],
+      "group": "none"
+    }
+  ]
+}

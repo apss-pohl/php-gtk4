@@ -76,6 +76,45 @@ classes automatically and must not be edited for one.
 A segfault shows up as PHPUnit dying mid-run; bisect with `--filter 'Class::method$'`. GLib
 `CRITICAL` lines from `ErrorTest` are expected; their text is asserted in `tests/phpt/`.
 
+## Debugging
+
+Xdebug works on the PHP side of an example, breakpoints inside signal handlers and GLib callbacks
+included — the call stack then shows your closure above `GtkApplication::run()`. Install
+`php8.4-xdebug` and the [PHP Debug](https://marketplace.visualstudio.com/items?itemName=xdebug.php-debug)
+extension (`.vscode/extensions.json` recommends it); how `xdebug.mode` is set in `php.ini` does not
+matter, the launch configuration decides.
+
+`.vscode/launch.json` has five ready configurations:
+
+| Configuration | Runs |
+| ------------- | ---- |
+| **Example: the open file's page** | `examples/demo.php <the open file's class>` — F5 in `examples/GtkCssProvider.php` debugs that page |
+| **Example: pick a class** | the same, asking for the class name |
+| **Example: the whole demo application** | `examples/demo.php` |
+| **Script: the open PHP file** | `${file}` — a scratch script, `tests/scripts/stress.php` |
+| **PHPUnit: one filtered test** | `vendor/bin/phpunit --filter <what you type>` |
+| **Listen for Xdebug** | nothing; waits for a process you start yourself |
+
+An example file *describes* a page and runs nothing, so debugging one means running `demo.php` with
+its class name — which is what those configurations do for you.
+
+From a terminal, with the "Listen for Xdebug" configuration started:
+
+```sh
+bin/php-gtk4-debug examples/demo.php GtkBox     # bin/php-gtk4 + Xdebug pointed at port 9003
+XDEBUG_PORT=9004 bin/php-gtk4-debug script.php  # when something else owns 9003
+```
+
+Two things to know:
+
+- Nothing rebuilds the extension for you — run the **php-gtk4: build extension** task
+  (Ctrl+Shift+B) after touching `src/`, or you are stepping through PHP that calls a stale
+  `./gtk4.so`.
+- Debug a *filtered* test, never the whole suite: under Xdebug the process segfaults at request
+  shutdown after `ReflectionMethod::invoke()` on internal methods (`RobustnessTest`,
+  `EveryClassTest`), after the results are printed. That is why `tests/run.sh` sets
+  `XDEBUG_MODE=off`; it is not our bug and not worth chasing.
+
 ## Commit messages
 
 **[Conventional Commits](https://www.conventionalcommits.org) are mandatory**, because they *are*

@@ -9,6 +9,12 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- Debugging the examples with Xdebug: `.vscode/launch.json` (F5 on an example file debugs its page
+  through `examples/demo.php`, plus configurations for the whole demo, an arbitrary script, one
+  filtered PHPUnit test and a listen-only session), `.vscode/tasks.json` (build, run, `ci.sh`) and
+  `bin/php-gtk4-debug` for the same from a terminal. Breakpoints inside signal handlers and GLib
+  callbacks work; `docs/CONTRIBUTING.md` "Debugging" has the caveats.
+
 - Conventional Commits are mandatory (`docs/CONTRIBUTING.md` "Commit messages") and become the
   release notes. `bin/commit-lint` enforces the format from three places — the `commit-msg` hook,
   `./ci.sh --only=commits` (the branch's unpushed commits, or `COMMIT_LINT_RANGE`) and a `commits`

@@ -249,8 +249,13 @@ display, and calls `Gtk::init()` once.
   `malloc(): unaligned fastbin chunk`, a write into a freed block inside libgtk with zero frames of
   ours). CI never saw it because runners have no compositor. Xvfb/X11 is the test target; Wayland
   is exercised manually.
-- `tests/run.sh` forces `XDEBUG_MODE=off`: xdebug's develop-mode observer segfaults at request
-  shutdown after `ReflectionMethod::invoke()` on internal methods. Not our bug; don't debug it.
+- `tests/run.sh` forces `XDEBUG_MODE=off`: xdebug's observer segfaults at request
+  shutdown after `ReflectionMethod::invoke()` on internal methods (`debug` mode too, not only
+  `develop` — verified 2026-08-29 with Xdebug 3.5: the suite passes, then the process dies after
+  the summary). Not our bug; don't debug it. Debugging one *filtered* test is fine, and so is
+  debugging `examples/` — `.vscode/launch.json` and `bin/php-gtk4-debug` do exactly that
+  (docs/CONTRIBUTING.md "Debugging"); breakpoints inside signal handlers and GLib callbacks work,
+  the stack shows the closure above `GtkApplication::run()`.
 - Arginfo comes from the stub, argument parsing from `ZEND_PARSE_PARAMETERS_*` — arity/type
   violations are `ArgumentCountError`/`TypeError` (PHP 8 semantics).
 - GLib `CRITICAL` lines on stderr from `ErrorTest` are expected (the g_critical fallback path for

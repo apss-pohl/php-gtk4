@@ -407,8 +407,9 @@ load (verified with valgrind: write into a freed block inside libgtk, no php-gtk
   PHP-CPP-template Makefile is gone.
 - `EveryClassTest` is the generic "instantiate every class, call every getter" smoke test — it must
   never need editing when classes are added; the generator's output is covered by it automatically.
-- Tests never run under xdebug (`XDEBUG_MODE=off` in `tests/run.sh`): its develop-mode observer
-  segfaults after `ReflectionMethod::invoke()` on internal methods.
+- Tests never run under xdebug (`XDEBUG_MODE=off` in `tests/run.sh`): its observer segfaults after
+  `ReflectionMethod::invoke()` on internal methods, in `debug` mode as well as `develop`. Examples
+  are a different story and *are* debuggable (`.vscode/launch.json`, `bin/php-gtk4-debug`).
 
 ## 7. Milestones
 

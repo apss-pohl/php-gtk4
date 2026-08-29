@@ -1,0 +1,127 @@
+{
+  // Xdebug for php-gtk4. Needs the "PHP Debug" extension (xdebug.php-debug, in
+  // extensions.json) and php8.4-xdebug installed; docs/CONTRIBUTING.md "Debugging".
+  //
+  // Everything runs through bin/php-gtk4, which loads the freshly built ./gtk4.so and
+  // filters php-gtk3 out of the ini scan dir - php -n would drop xdebug with it. The
+  // env block is what starts the session: XDEBUG_SESSION is the trigger, XDEBUG_CONFIG
+  // points Xdebug back at the port this configuration listens on.
+  //
+  // An example file only *describes* a page (it returns Demo::page(...)), so the thing
+  // to run is always examples/demo.php with the class name - that is what mounts it.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // F5 in examples/GtkCssProvider.php runs `demo.php GtkCssProvider`. Breakpoints
+      // work inside signal handlers and GLib callbacks: the stack shows the closure
+      // above GtkApplication::run().
+      "name": "Example: the open file's page",
+      "type": "php",
+      "request": "launch",
+      "program": "${workspaceFolder}/examples/demo.php",
+      "args": ["${fileBasenameNoExtension}"],
+      "runtimeExecutable": "${workspaceFolder}/bin/php-gtk4",
+      "cwd": "${workspaceFolder}",
+      "port": 9003,
+      "env": {
+        "XDEBUG_MODE": "debug",
+        "XDEBUG_SESSION": "1",
+        "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003",
+        "GDK_BACKEND": "x11"
+      }
+    },
+    {
+      "name": "Example: pick a class",
+      "type": "php",
+      "request": "launch",
+      "program": "${workspaceFolder}/examples/demo.php",
+      "args": ["${input:exampleClass}"],
+      "runtimeExecutable": "${workspaceFolder}/bin/php-gtk4",
+      "cwd": "${workspaceFolder}",
+      "port": 9003,
+      "env": {
+        "XDEBUG_MODE": "debug",
+        "XDEBUG_SESSION": "1",
+        "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003",
+        "GDK_BACKEND": "x11"
+      }
+    },
+    {
+      "name": "Example: the whole demo application",
+      "type": "php",
+      "request": "launch",
+      "program": "${workspaceFolder}/examples/demo.php",
+      "runtimeExecutable": "${workspaceFolder}/bin/php-gtk4",
+      "cwd": "${workspaceFolder}",
+      "port": 9003,
+      "env": {
+        "XDEBUG_MODE": "debug",
+        "XDEBUG_SESSION": "1",
+        "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003",
+        "GDK_BACKEND": "x11"
+      }
+    },
+    {
+      // Any script that runs itself - a scratch file, tests/scripts/stress.php.
+      "name": "Script: the open PHP file",
+      "type": "php",
+      "request": "launch",
+      "program": "${file}",
+      "runtimeExecutable": "${workspaceFolder}/bin/php-gtk4",
+      "cwd": "${workspaceFolder}",
+      "port": 9003,
+      "env": {
+        "XDEBUG_MODE": "debug",
+        "XDEBUG_SESSION": "1",
+        "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003",
+        "GDK_BACKEND": "x11"
+      }
+    },
+    {
+      // Always with a filter. Under Xdebug the *whole* suite segfaults at request
+      // shutdown after ReflectionMethod::invoke() on internal methods (RobustnessTest,
+      // EveryClassTest) - after the results are printed, and not our bug (CLAUDE.md
+      // "Tests"). tests/run.sh therefore sets XDEBUG_MODE=off; this deliberately does not.
+      "name": "PHPUnit: one filtered test",
+      "type": "php",
+      "request": "launch",
+      "program": "${workspaceFolder}/vendor/bin/phpunit",
+      "args": ["--no-coverage", "--filter", "${input:phpunitFilter}"],
+      "runtimeExecutable": "${workspaceFolder}/bin/php-gtk4",
+      "cwd": "${workspaceFolder}",
+      "port": 9003,
+      "env": {
+        "XDEBUG_MODE": "debug",
+        "XDEBUG_SESSION": "1",
+        "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003",
+        "GDK_BACKEND": "x11",
+        "GSK_RENDERER": "cairo"
+      }
+    },
+    {
+      // Start the process yourself and have VS Code wait for it:
+      //   bin/php-gtk4-debug examples/demo.php GtkBox
+      // The way to debug something this file does not cover - a different display, gdb
+      // on the C++ side at the same time, a script with awkward arguments.
+      "name": "Listen for Xdebug (bin/php-gtk4-debug ...)",
+      "type": "php",
+      "request": "launch",
+      "port": 9003,
+      "cwd": "${workspaceFolder}"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "exampleClass",
+      "type": "promptString",
+      "description": "Which class page? (bin/php-gtk4 examples/demo.php --list)",
+      "default": "GtkCssProvider"
+    },
+    {
+      "id": "phpunitFilter",
+      "type": "promptString",
+      "description": "PHPUnit --filter (e.g. CssTest, or 'CssTest::testLoadFromPathReadsAFile$')",
+      "default": "CssTest"
+    }
+  ]
+}
