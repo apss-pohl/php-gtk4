@@ -14,7 +14,8 @@ git config core.hooksPath .githooks         # pre-commit = fast QA, pre-push = f
 ./ci.sh                                     # everything green before you start
 ```
 
-The hooks are the local gate: `pre-commit` runs version/stub checks, PHP style (without phpstan),
+The hooks are the local gate: `commit-msg` checks the commit message (see below), `pre-commit` runs
+version/stub checks, PHP style (without phpstan),
 clang-format and markdownlint in about ten seconds and remembers which tree passed; `pre-push` runs
 the rest of `ci.sh` (clang-tidy, phpstan, build, load, tests, phpt) and only repeats the pre-commit
 steps if the tree being pushed was never checked (a `--no-verify` commit). Skip once with
@@ -75,9 +76,60 @@ classes automatically and must not be edited for one.
 A segfault shows up as PHPUnit dying mid-run; bisect with `--filter 'Class::method$'`. GLib
 `CRITICAL` lines from `ErrorTest` are expected; their text is asserted in `tests/phpt/`.
 
+## Commit messages
+
+**[Conventional Commits](https://www.conventionalcommits.org) are mandatory**, because they *are*
+the release notes: `bin/release-notes` groups them by type into the body of every release
+(`docs/RELEASING.md`). A wrong type is a wrong section in the next release.
+
+```text
+<type>[(scope)][!]: <subject>
+
+<body>
+```
+
+```sh
+git commit -m 'feat(css): GtkCssProvider and the display it attaches to'
+git commit -m 'fix: GdkTexture keeps a private constructor'
+git commit -m 'refactor(core)!: wrap() returns the nearest registered class'   # ! = breaking
+```
+
+| Type | For | Release section |
+| ---- | --- | --------------- |
+| `feat` | a new class, method, constant — anything a user can call | Features |
+| `fix` | wrong behaviour, a crash, a leak | Fixes |
+| `perf` | same behaviour, less time or memory | Performance |
+| `refactor` | internal shape only | Refactoring |
+| `docs` | `*.md`, docblocks, `examples/` prose | Documentation |
+| `test` | `tests/`, `tests/phpt/`, the stress script | Tests |
+| `build` | `config.m4`, `config.w32`, `composer.json`, dependencies | Build & CI |
+| `ci` | `ci.sh`, `.github/`, the hooks | Build & CI |
+| `chore` | releases, housekeeping (`chore(release): 0.2.0`) | Chores |
+| `style` | formatting only, no behaviour | Chores |
+| `revert` | undoing a commit | Chores |
+
+The scope is optional and lower-case — a class (`css`, `core`, `gen`) or a file. A breaking change
+is `!` before the colon, or a `BREAKING CHANGE:` footer; either one lifts the commit into the
+release's first section. The subject is not capitalisation-checked (it usually starts with an
+identifier), must not end in a period, and the whole header stays under 100 characters.
+
+Three places enforce it, all running the same `bin/commit-lint`:
+
+```sh
+git commit -m 'wip'                  # rejected by .githooks/commit-msg, before you leave the editor
+./ci.sh --only=commits               # the commits this branch has not pushed yet
+COMMIT_LINT_RANGE=main..HEAD ./ci.sh --only=commits    # any range
+bin/release-notes                    # what the next release body will say
+```
+
+CI checks the **PR title** as well, because `main` takes squash merges and the title becomes the
+commit message then. `git commit --fixup` is fine locally; autosquash it away (`git rebase -i
+--autosquash`) before pushing, or CI rejects the branch.
+
 ## Pull requests
 
 - Branch from `main`; one topic per PR. `pre-push` has already run `./ci.sh` when you push.
+- The PR title is a Conventional Commit too — a squash merge makes it the commit on `main`.
 - Add a line under `## [Unreleased]` in `CHANGELOG.md` for anything user-visible.
 - Don't bump `VERSION` in a feature PR — that is the release trigger (`docs/RELEASING.md`).
 - Dependabot handles composer and actions updates; don't bundle those.

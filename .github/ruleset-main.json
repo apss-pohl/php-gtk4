@@ -50,6 +50,9 @@
         "strict_required_status_checks_policy": true,
         "required_status_checks": [
           {
+            "context": "Commit messages (Conventional Commits)"
+          },
+          {
             "context": "PHP 8.4"
           },
           {
@@ -59,7 +62,7 @@
             "context": "C++ static analysis"
           },
           {
-            "context": "PHP QA (phplint, phpcs, php-cs-fixer, phpstan)"
+            "context": "PHP QA (phplint, phpcs, php-cs-fixer, phpstan, markdownlint)"
           },
           {
             "context": "Valgrind / ASan / UBSan / LSan"

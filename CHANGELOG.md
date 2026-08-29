@@ -9,6 +9,13 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- Conventional Commits are mandatory (`docs/CONTRIBUTING.md` "Commit messages") and become the
+  release notes. `bin/commit-lint` enforces the format from three places — the `commit-msg` hook,
+  `./ci.sh --only=commits` (the branch's unpushed commits, or `COMMIT_LINT_RANGE`) and a `commits`
+  job in `php-qa.yml` that also checks the PR title, because a squash merge turns the title into the
+  commit. `bin/release-notes` groups the commits since the previous release by type and
+  `release.yml` appends that to every release body, after the `CHANGELOG.md` section.
+
 - Wave 2 (controls, docs/PLAN.md §3): `GtkEntry`, `GtkEditable`, `GtkEntryBuffer`,
   `GtkPasswordEntry`, `GtkCheckButton`, `GtkToggleButton`, `GtkSpinButton`, `GtkRange`, `GtkScale`
   (`set_format_value_func(callable)`), `GtkProgressBar`, `GtkImage`, `GtkPicture`, `GdkPaintable`,

@@ -258,6 +258,18 @@ jobs:
               cat .notes-body
             fi
 
+            # The commit messages, grouped by Conventional Commit type. They are the
+            # detail behind the prose above and the whole body of a dev build's notes
+            # (docs/RELEASING.md "What a release body says"). --stable measures a real
+            # release from the previous real release, skipping the v*-dev.* tags between.
+            printf '\n'
+            if [[ "${{ needs.plan.outputs.kind }}" == dev ]]; then
+              ./bin/release-notes
+            else
+              ./bin/release-notes --stable
+            fi
+            printf '\n'
+
             cat <<'EOF'
 
           ### Install

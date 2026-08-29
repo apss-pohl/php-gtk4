@@ -28,19 +28,26 @@ case ${1:-} in
     *) since=$1 ;;
 esac
 
-# The tag the previous release was cut from. Dev pre-releases are tagged too
-# (v0.2.0-dev.7), so --stable filters them out for a real release.
+# The tag the previous release was cut from: the nearest one *in history*, not the
+# newest by date (two tags can share a timestamp; only the graph is authoritative).
+# Dev pre-releases are tagged too (v0.2.0-dev.7), so --stable skips anything with a
+# suffix and measures a real release from the previous real release.
+previous_tag() {
+    local from=$1
+    if [[ $stable_only -eq 1 ]]; then
+        git describe --tags --abbrev=0 --match 'v[0-9]*' --exclude '*-*' "$from" 2>/dev/null
+    else
+        git describe --tags --abbrev=0 --match 'v[0-9]*' "$from" 2>/dev/null
+    fi
+}
+
 if [[ -z $since ]]; then
-    pattern='v*'
-    [[ $stable_only -eq 1 ]] && pattern='v[0-9]*.[0-9]*.[0-9]*'
-    while IFS= read -r tag; do
-        [[ -n $tag ]] || continue
-        [[ $stable_only -eq 1 && $tag == *-* ]] && continue   # v0.2.0-dev.7
-        if git merge-base --is-ancestor "$tag" HEAD 2>/dev/null && [[ $(git rev-parse "$tag^{commit}") != $(git rev-parse HEAD) ]]; then
-            since=$tag
-            break
-        fi
-    done < <(git tag --list "$pattern" --sort=-creatordate)
+    since=$(previous_tag HEAD || true)
+    # A release is tagged after its notes are written, but if HEAD already carries the
+    # tag (a re-run, a local dry run) step back one commit and take the one before it.
+    if [[ -n $since && $(git rev-parse "$since^{commit}") == $(git rev-parse HEAD) ]]; then
+        since=$(previous_tag 'HEAD^' || true)
+    fi
 fi
 
 range=${since:+$since..}HEAD
@@ -72,17 +79,23 @@ while IFS=$'\x1f' read -r -d $'\x1e' sha subject body; do
     total=$((total + 1))
     bucket=other
     scope=""
+    breaking=""
     text=$subject
     if [[ $subject =~ ^([a-z]+)(\(([a-z0-9][a-z0-9._/-]*)\))?(!)?:\ (.+)$ ]]; then
         type=${BASH_REMATCH[1]}
-        scope=${BASH_REMATCH[3]}
         breaking=${BASH_REMATCH[4]}
-        text=${BASH_REMATCH[5]}
         case $type in
             feat|fix|perf|refactor|docs|test) bucket=$type ;;
             build|ci) bucket=buildci ;;
             chore|style|revert) bucket=chore ;;
+            # An unknown type is not ours to interpret: the subject stays whole under
+            # "Other", prefix included, so nothing is silently relabelled.
+            *) bucket=other ;;
         esac
+        if [[ $bucket != other ]]; then
+            scope=${BASH_REMATCH[3]}
+            text=${BASH_REMATCH[5]}
+        fi
         # `!` in the header or a BREAKING CHANGE footer moves it to the top section,
         # where it is listed once - not again under its own type.
         if [[ -n $breaking || $body == *"BREAKING CHANGE:"* || $body == *"BREAKING-CHANGE:"* ]]; then

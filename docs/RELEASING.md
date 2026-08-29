@@ -17,8 +17,9 @@ version, and without the suffix the file would name the version already shipped.
 | `0.2.0-dev` | a dev build, **`v0.2.0-dev.<run>`**, as a pre-release |
 | `0.2.0` | the real release **`v0.2.0`** — once; later merges are a no-op until someone bumps again |
 
-`.github/workflows/release.yml` reads the file and decides. Nothing else triggers a release: no tag pushes, no
-manual `gh release create`, no commit-message conventions. Bumping the file *is* the release action.
+`.github/workflows/release.yml` reads the file and decides. Nothing else *triggers* a release: no tag pushes,
+no manual `gh release create`, no magic word in a commit. Bumping the file *is* the release action. (Commit
+messages do shape what a release *says* — see "What a release body says" below.)
 
 ## Cutting a release
 
@@ -30,12 +31,34 @@ grep -n GVSBUILD_VERSION .github/workflows/*.yml   # Windows GTK pin: bump to gv
 ./ci.sh --with=asan,coverage,valgrind
 ```
 
-Open that as a `release: 0.2.0` PR. Merging it tags, builds, and publishes. Then immediately open the
+Open that as a `chore(release): 0.2.0` PR — the title is the squashed commit, so it follows the commit
+convention like every other one. Merging it tags, builds, and publishes. Then immediately open the
 follow-up: `VERSION` → `0.3.0-dev`, `./ci.sh --only=version,stubs --fix`, a fresh `## [Unreleased]` — so the
 tree never sits in the state where merges publish nothing.
 
-The `## [0.2.0]` section of `CHANGELOG.md` becomes the release body verbatim, and the workflow **fails** if it
-is missing. That is deliberate: it is the one part of a release that cannot be reconstructed from git.
+## What a release body says
+
+Two halves, in this order:
+
+1. The `## [0.2.0]` section of `CHANGELOG.md`, **verbatim**. The workflow *fails* if it is missing —
+   deliberately: the prose is the one part of a release that cannot be reconstructed from git. A dev
+   build has no such section and gets the "development build, not a release" note instead.
+2. `### Changes since v0.1.0` — every commit since the previous release, grouped by
+   [Conventional Commit](https://www.conventionalcommits.org) type (`bin/release-notes`). That is why
+   the format is mandatory and enforced on every commit and every PR title
+   (`docs/CONTRIBUTING.md` "Commit messages"): a wrong type puts a change in the wrong section, and
+   a subject written for nobody is what the release then says.
+
+```sh
+bin/release-notes                 # since the newest tag - what the next dev build will list
+bin/release-notes --stable        # since the newest real release, skipping the v*-dev.* tags
+bin/release-notes v0.1.0          # since that tag
+```
+
+A real release measures itself from the previous *real* release (`--stable`), a dev build from the
+tag before it, so consecutive dev builds each list only what they added. Breaking changes (`!` or a
+`BREAKING CHANGE:` footer) come first; anything whose subject is not conventional is kept under
+"Other" rather than dropped — the notes never hide a commit.
 
 ## Version consistency
 

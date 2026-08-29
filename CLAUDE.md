@@ -90,7 +90,8 @@ bear -- make                           # compile_commands.json for clangd / clan
 
 ## Lint, QA, build, test — `./ci.sh`
 
-One script, same stages as GitHub Actions: `version` → `gen` (`gir.php --install` must reproduce
+One script, same stages as GitHub Actions: `commits` (Conventional Commits, `bin/commit-lint`) →
+`version` → `gen` (`gir.php --install` must reproduce
 the committed generated files — it regenerates in place even without `--fix` and fails on a diff,
 like `stubs`) → `stubs` → `cpp-lint` → `md-lint` → `php-qa` →
 `build` → `load` → `test` → `phpt` (php-src `run-tests.php` over `tests/phpt`), plus the opt-in `asan` (ASan+UBSan
@@ -269,7 +270,9 @@ display, and calls `Gtk::init()` once.
 
 ## Local gates
 
-`git config core.hooksPath .githooks` once per clone: `pre-commit` runs the fast checks (version, stubs,
+`git config core.hooksPath .githooks` once per clone: `commit-msg` runs `bin/commit-lint` on the message
+(Conventional Commits are **mandatory** — they are the release notes, see below); `pre-commit` runs the
+fast checks (version, stubs,
 PHP style without phpstan, clang-format, markdownlint) in one `ci.sh` call and stamps the tree hash in
 `.git/gtk4-precommit-tree`; `pre-push` runs `./ci.sh` and, when the stamp matches `HEAD^{tree}` and the
 tree is clean, skips exactly those steps (`--skip=version,stubs,md-lint,format,style`) — a `--no-verify`
@@ -279,7 +282,9 @@ ZTS builds are supported: all per-request state is in the module globals (`src/c
 process-wide statics allowed. GTK itself stays single-threaded (`assert_gui_thread()`); CI builds
 and tests NTS and ZTS on both platforms. Coverage has a floor
 (`COVERAGE_MIN_LINES`, default 80). `RobustnessTest` calls every method with garbage arguments;
-`DocsTest` guards CLAUDE.md sections and doc-mentioned paths. `CHANGELOG.md` has the release
+`DocsTest` guards CLAUDE.md sections and doc-mentioned paths; `CommitLintTest` and
+`ReleaseNotesTest` pin every accepted/rejected commit shape and the grouping of the release body.
+`CHANGELOG.md` has the release
 checklist; Dependabot watches composer and actions.
 
 ## CI
@@ -290,7 +295,9 @@ the single Windows build recipe both `windows.yml` and `release.yml` use). (1) s
 setup-php 8.4, GTK4/WebKitGTK headers, clang 20 from apt.llvm.org, `phpize && ./configure` (for
 `config.h`), then `./ci.sh --only=gen,stubs` (the only PR-time run of the generator gate) and
 `./ci.sh --only=cpp-lint` (same clang-tidy/clang-format stage as locally, any finding fails);
-(2) `./ci.sh --only=php-qa` + `--only=md-lint`; (3) build the extension (with
+(2) `./ci.sh --only=php-qa` + `--only=md-lint`, plus a `commits` job that runs `bin/commit-lint`
+over the PR title (a squash merge makes it the commit) and `./ci.sh --only=commits` over the
+branch's commits (a rebase merge keeps them); (3) build the extension (with
 `GTK4_CONFIGURE_ARGS=--enable-gtk4-testing`, so the testing hooks run on every leg) and run the
 PHPUnit suite *and* `./ci.sh --only=phpt` for PHP 8.4 and 8.5, NTS and ZTS, on Ubuntu 24.04 (`fail-fast: false`;
 failing `.out`/`.diff` files upload as the `phpt-failures-php*-<ts>` artifact), plus `sanitizers`
@@ -306,7 +313,9 @@ pinned GTK version"), `phpize && configure --with-gtk4 && nmake` with a warning 
 every push to `main`: reads `VERSION` and either publishes an
 immutable `vX.Y.Z-dev.<run>` pre-release (suffix `-dev`; the newest 5 are kept, older ones deleted with their
 tags) or the real `vX.Y.Z` release (no suffix, once),
-after running `./ci.sh` in full itself — it does not key off `tests.yml`. Assets are one `.so` per
+after running `./ci.sh` in full itself — it does not key off `tests.yml`. The body is the
+`CHANGELOG.md` section for the version (required, verbatim) followed by `bin/release-notes`,
+which groups the commits since the previous release by Conventional Commit type. Assets are one `.so` per
 supported PHP named with its whole ABI identity, one `php_gtk4-<ver>-php<X.Y>-nts-vs17-x64.dll`
 per supported PHP (the `build-windows` job calling `windows-build.yml` with the release name), plus
 the source tarball
