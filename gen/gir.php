@@ -1182,7 +1182,8 @@ final class Generator
         foreach (
             ['enum_' => '"core/enums.h"', 'strv_' => '"core/collections.h"', 'glist_to_php' => '"core/collections.h"',
                 'gslist_to_php' => '"core/collections.h"', 'gptrarray_to_php' => '"core/collections.h"',
-                'throw_gerror' => '"core/gerror.h"', 'variant' => '"core/variant.h"', 'wrap_boxed' => '"core/boxed.h"',
+                'throw_gerror' => '"core/gerror.h"', 'gerror_from_php' => '"core/gerror.h"',
+                'variant' => '"core/variant.h"', 'wrap_boxed' => '"core/boxed.h"',
                 'unwrap_boxed' => '"core/boxed.h"', 'boxed_class_for_type' => '"core/boxed.h"',
                 'wrap_cairo' => '"Cairo/CairoContext.h"', 'wrap_param_spec' => '"core/paramspec.h"',
                 'subtype_' => '"core/subtype.h"', 'report_pending_exception' => '"core/error.h"',
@@ -1774,7 +1775,8 @@ final class Generator
         $includes = ['"php_gtk4.h"', '"core/boxed.h"', '"core/object.h"', '<cstring>'];
         $code = preg_replace('#^\s*(//|/\*|\*).*$#m', '', $joined) ?? '';
         foreach (
-            ['enum_' => '"core/enums.h"', 'throw_gerror' => '"core/gerror.h"', 'strv_' => '"core/collections.h"',
+            ['enum_' => '"core/enums.h"', 'throw_gerror' => '"core/gerror.h"',
+                'gerror_from_php' => '"core/gerror.h"', 'strv_' => '"core/collections.h"',
                 'variant' => '"core/variant.h"', 'std::array' => '<array>'] as $needle => $inc
         ) {
             if (str_contains($code, $needle) && !in_array($inc, $includes, true)) {
@@ -2560,6 +2562,21 @@ final class Generator
                     : "$castMacro({$name}_o)",
             ]);
         }
+        if ($t->name === 'GLib.Error') {
+            // Gtk4\GError is an exception class (core/gerror), not a boxed handle: a GError is
+            // built from it for the call and freed afterwards unless the callee takes it.
+            $pre = $nullable
+                ? ["GError *{$name}_e = nullptr;", "if ($name != nullptr) {$name}_e = gerror_from_php($name);"]
+                : ["GError *{$name}_e = gerror_from_php($name);"];
+            return array_merge($r, [
+                'phpType' => ($nullable ? '?' : '') . 'GError',
+                'decl' => "zval *$name" . ($nullable ? ' = nullptr' : '') . ';',
+                'zpp' => 'Z_PARAM_OBJECT_OF_CLASS' . ($nullable ? '_OR_NULL' : '') . "($name, ce_GError)",
+                'pre' => $pre,
+                'carg' => "{$name}_e",
+                'post' => $p->transfer === 'full' ? [] : ["if ({$name}_e != nullptr) g_error_free({$name}_e);"],
+            ]);
+        }
         if ($node->kind === 'record' && $node->gtypeName !== null && $this->known($t->name)) {
             return array_merge($r, [
                 'phpType' => ($nullable ? '?' : '') . phpClass($node),
@@ -2750,11 +2767,19 @@ final class Generator
                 : ["const char *result = $call;", 'if (result == nullptr) RETURN_EMPTY_STRING();',
                     'RETURN_STRING(result);']];
         }
+        // Scalar returns of a `throws` function carry no failure marker of their own (a dismissed
+        // GtkAlertDialog::choose_finish() is -1 *and* a GError): the GError decides, and dropping
+        // it would leak it - so the value is taken first and the error checked before returning.
         if (in_array($t->name, ['gfloat', 'gdouble'], true)) {
-            return ['phpType' => 'float', 'lines' => fn(string $call) => ["RETURN_DOUBLE($call);"]];
+            return ['phpType' => 'float', 'lines' => fn(string $call) => $f->throws
+                ? ["const double value = $call;", ...$throwCheck('error != nullptr'), 'RETURN_DOUBLE(value);']
+                : ["RETURN_DOUBLE($call);"]];
         }
         if (preg_match(INT_TYPES, $t->name)) {
-            return ['phpType' => 'int', 'lines' => fn(string $call) => ["RETURN_LONG(static_cast<zend_long>($call));"]];
+            return ['phpType' => 'int', 'lines' => fn(string $call) => $f->throws
+                ? ["const auto value = static_cast<zend_long>($call);", ...$throwCheck('error != nullptr'),
+                    'RETURN_LONG(value);']
+                : ["RETURN_LONG(static_cast<zend_long>($call));"]];
         }
         if ($t->name === 'GLib.Variant') {
             return ['phpType' => 'mixed', 'lines' => fn(string $call) => [

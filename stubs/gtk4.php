@@ -257,6 +257,15 @@ final class Gtk
     {
         unset($iterations);
     }
+    /**
+     * Test builds only: run `g_object_run_dispose()` on $object from C while PHP still holds it,
+     * the way GTK guts a widget that a C owner destroys. The handle turns *disposed*: method
+     * calls and passing it as an argument throw an `Error` from then on.
+     */
+    public static function testing_run_dispose(GObject $object): void
+    {
+        unset($object);
+    }
     #endif
 }
 /**

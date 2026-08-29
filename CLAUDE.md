@@ -421,7 +421,8 @@ conventions here only.
   `zend_argument_type_error` / `zend_argument_count_error` (`ValueError`/`TypeError`/
   `ArgumentCountError`) — always the positional form when the value came in as a parameter, so
   the message names it (`connect(): Argument #1 ($signal) …`); a dead handle passed *as an
-  argument* is a `TypeError` for the same reason, a dead `$this` is an `Error`; the wrapped object
+  argument* is a `TypeError` for the same reason, a dead or *disposed* `$this` (GTK ran dispose
+  under a live handle — `Object::disposed`, set by a weak notify) is an `Error`; the wrapped object
   is in the wrong *state* for the call (running loop, stateless action, a native `vfunc_*()` outside
   `parent::` chaining) → `spl_ce_LogicException`; the *handle itself* cannot do it — dead `$this`,
   `new`/`clone` of a C-created handle, `unset()` of a GObject property, a GTK precondition failure

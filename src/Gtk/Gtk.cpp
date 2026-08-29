@@ -139,4 +139,21 @@ ZEND_METHOD(Gtk4_Gtk, testing_iterate_nested) {
     g_main_context_iteration(nullptr, TRUE);
   }
 }
+
+/**
+ * static Gtk4\Gtk::testing_run_dispose(GObject $object): void
+ *
+ * Test builds only: run `g_object_run_dispose()` on $object from C while PHP still holds it, the
+ * way GTK guts a widget that a C owner destroys. The handle turns *disposed*: method calls and
+ * passing it as an argument throw an `Error` from then on.
+ */
+ZEND_METHOD(Gtk4_Gtk, testing_run_dispose) {
+  zval *object;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(object, class_for_gtype(G_TYPE_OBJECT))
+  ZEND_PARSE_PARAMETERS_END();
+  GObject *obj = unwrap(object, G_TYPE_OBJECT);
+  if (obj == nullptr) RETURN_THROWS();
+  g_object_run_dispose(obj);
+}
 #endif

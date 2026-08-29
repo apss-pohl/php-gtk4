@@ -20,6 +20,7 @@ namespace phpgtk {
 struct Object {
   GObject *obj;     // nullptr = not attached yet
   bool held;        // the GObject holds a reference on `std` (toggle ref: not the last ref)
+  bool disposed;    // GObject::dispose ran while PHP still referenced it (gtk_window_destroy)
   zend_object std;  // must be last (zend_object is variable-sized)
 };
 

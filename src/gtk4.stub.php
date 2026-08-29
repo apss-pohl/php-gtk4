@@ -204,6 +204,13 @@ final class Gtk
      * {@see ExceptionMode::Rethrow} surfaces from the enclosing run(), as it would then.
      */
     public static function testing_iterate_nested(int $iterations): void {}
+
+    /**
+     * Test builds only: run `g_object_run_dispose()` on $object from C while PHP still holds it,
+     * the way GTK guts a widget that a C owner destroys. The handle turns *disposed*: method
+     * calls and passing it as an argument throw an `Error` from then on.
+     */
+    public static function testing_run_dispose(GObject $object): void {}
 #endif
 }
 

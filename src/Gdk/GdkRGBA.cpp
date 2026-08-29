@@ -76,9 +76,10 @@ ZEND_METHOD(Gtk4_GdkRGBA, parse) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_STR(css)
   ZEND_PARSE_PARAMETERS_END();
+  GdkRGBA *self = PHPGTK_BOXED_SELF(GdkRGBA);
   GdkRGBA tmp;
   if (!gdk_rgba_parse(&tmp, ZSTR_VAL(css))) RETURN_FALSE;
-  *PHPGTK_BOXED_SELF(GdkRGBA) = tmp;
+  *self = tmp;
   RETURN_TRUE;
 }
 
@@ -89,7 +90,8 @@ ZEND_METHOD(Gtk4_GdkRGBA, parse) {
  */
 ZEND_METHOD(Gtk4_GdkRGBA, to_string) {
   ZEND_PARSE_PARAMETERS_NONE();
-  gchar *s = gdk_rgba_to_string(PHPGTK_BOXED_SELF(GdkRGBA));
+  GdkRGBA *self = PHPGTK_BOXED_SELF(GdkRGBA);
+  gchar *s = gdk_rgba_to_string(self);
   RETVAL_STRING(s);
   g_free(s);
 }
@@ -104,7 +106,8 @@ ZEND_METHOD(Gtk4_GdkRGBA, equal) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_OBJECT_OF_CLASS(other, boxed_class_for_type(GDK_TYPE_RGBA)->ce)
   ZEND_PARSE_PARAMETERS_END();
-  RETURN_BOOL(gdk_rgba_equal(PHPGTK_BOXED_SELF(GdkRGBA), unwrap_boxed(other, GDK_TYPE_RGBA)));
+  GdkRGBA *self = PHPGTK_BOXED_SELF(GdkRGBA);
+  RETURN_BOOL(gdk_rgba_equal(self, unwrap_boxed(other, GDK_TYPE_RGBA)));
 }
 
 /**
@@ -114,7 +117,8 @@ ZEND_METHOD(Gtk4_GdkRGBA, equal) {
  */
 ZEND_METHOD(Gtk4_GdkRGBA, is_opaque) {
   ZEND_PARSE_PARAMETERS_NONE();
-  RETURN_BOOL(gdk_rgba_is_opaque(PHPGTK_BOXED_SELF(GdkRGBA)));
+  GdkRGBA *self = PHPGTK_BOXED_SELF(GdkRGBA);
+  RETURN_BOOL(gdk_rgba_is_opaque(self));
 }
 
 namespace phpgtk {

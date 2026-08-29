@@ -116,10 +116,21 @@ void on_toggle(gpointer data, GObject *, gboolean is_last_ref) {
   }
 }
 
+// GWeakNotify, run from g_object_real_dispose(): GTK disposed the object under a live handle
+// (gtk_window_destroy(), a GtkApplication closing its windows). The C object stays allocated
+// while PHP references it, but it is gutted - method calls on it are refused from here on
+// (self_object()/unwrap() throw), the same "dead $this" rule as a finalized one. The weak
+// reference is removed in detach() before our own last unref, so a normal finalization
+// (dispose from *our* unref) never reaches this.
+void on_dispose(gpointer data, GObject *) {
+  static_cast<Object *>(data)->disposed = true;
+}
+
 // self->obj holds one plain reference of ours: convert it into the toggle reference,
 // register the back-pointer and take the hold if GTK already holds the object.
 void arm(Object *self) {
   g_object_set_qdata(self->obj, handle_quark(), self);
+  g_object_weak_ref(self->obj, on_dispose, self);
   g_object_add_toggle_ref(self->obj, on_toggle, self);
   g_object_unref(self->obj);  // 2 -> 1 notifies is_last_ref, a no-op while nothing is held
   if (g_atomic_int_get(&self->obj->ref_count) > 1) hold(self);
@@ -172,6 +183,7 @@ void detach(Object *self) {
     GTK4_G(held).erase(self);
   }
   g_object_set_qdata(obj, handle_quark(), nullptr);
+  if (!self->disposed) g_object_weak_unref(obj, on_dispose, self);  // dispose already consumed it
   g_object_remove_toggle_ref(obj, on_toggle, self);
 }
 
@@ -182,6 +194,7 @@ zend_object *create_object(zend_class_entry *ce) {
   auto *self = static_cast<Object *>(zend_object_alloc(sizeof(Object), ce));
   self->obj = nullptr;
   self->held = false;
+  self->disposed = false;
   zend_object_std_init(&self->std, ce);
   object_properties_init(&self->std, ce);
   self->std.handlers = &handlers;
@@ -405,9 +418,9 @@ GObject *unwrap(zval *zv, GType expected) {
     return nullptr;
   }
   Object *self = object_from_zval(zv);
-  if (self->obj == nullptr) {  // the handle itself cannot do it: an Error, like a dead $this
-    zend_throw_error(nullptr, "%s given: this GObject was finalized",
-                     ZSTR_VAL(Z_OBJCE_P(zv)->name));
+  if (self->obj == nullptr || self->disposed) {  // the handle itself cannot do it: an Error
+    zend_throw_error(nullptr, "%s given: this GObject was %s", ZSTR_VAL(Z_OBJCE_P(zv)->name),
+                     self->obj == nullptr ? "finalized" : "disposed");
     return nullptr;
   }
   if (g_type_is_a(G_OBJECT_TYPE(self->obj), expected) == FALSE) {
@@ -420,8 +433,9 @@ GObject *unwrap(zval *zv, GType expected) {
 // $this of a method as the C object, validated for liveness and GType.
 GObject *self_object(zend_execute_data *execute_data, GType expected, const char *method) {
   Object *self = object_from_zend(Z_OBJ_P(ZEND_THIS));
-  if (self->obj == nullptr) {
-    zend_throw_error(nullptr, "%s() on a dead GObject", method);
+  if (self->obj == nullptr || self->disposed) {
+    zend_throw_error(nullptr, "%s() on a %s GObject", method,
+                     self->obj == nullptr ? "dead" : "disposed");
     return nullptr;
   }
   if (g_type_is_a(G_OBJECT_TYPE(self->obj), expected) == FALSE) {

@@ -159,6 +159,23 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Fixed
 
+- Generated `throws` methods with a scalar return (`GtkAlertDialog::choose_finish()`,
+  `GTask::propagate_int()`) checked the `GError` for nothing: a dismissed dialog came back as
+  `-1` and the error leaked. They throw the `GError` now (`GTaskTest`).
+- A `GError` *parameter* (`GTask::return_error()`) was generated as a boxed handle and
+  dereferenced NULL in argument parsing: the generator builds a `GError` from the `Gtk4\GError`
+  exception now (`gerror_from_php()`, domain `php-gtk4-error-quark` when the PHP side set none).
+- A boxed record the GIR gives no constructor (`GtkTextIter` will be the first) refuses `new`
+  like the fundamental handles do, and a boxed method on a handle without data throws an `Error`
+  instead of dereferencing NULL (`PHPGTK_BOXED_SELF` is a statement pair now, like `PHPGTK_SELF`).
+- Handles know when GTK *disposed* their object while PHP still held it (a weak notify set in
+  `arm()`): methods and argument passing throw an `Error` from then on instead of driving a gutted
+  widget. GTK 4's `gtk_window_destroy()` does not dispose a window PHP holds (it only drops GTK's
+  reference — `WrapTest`), so this guards C-owned disposal; `Gtk::testing_run_dispose()` triggers
+  it in test builds.
+- `callback_invoke()` reports a Throwable that is already pending when a non-signal callback is
+  entered in `Log` mode (it can only come from the trampoline's own argument conversion) instead of
+  leaving it to unwind through the GLib frame.
 - `throw_gerror()` on a NULL result without a `GError` (a failed GTK precondition) threw a plain
   `Error` instead of dereferencing NULL; `GtkFilter`'s `gptrarray_to_php`/`strv_to_php` no longer
   double-free (transfer full with a free func) or leak (transfer container).

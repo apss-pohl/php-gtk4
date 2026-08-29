@@ -3,7 +3,6 @@
 #include "php_gtk4.h"
 #include "core/object.h"
 #include "core/gerror.h"
-#include "core/boxed.h"
 #include "core/callback.h"
 #include <array>
 
@@ -216,7 +215,12 @@ ZEND_METHOD(Gtk4_GTask, propagate_int) {
   ZEND_PARSE_PARAMETERS_NONE();
   GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
   GError *error = nullptr;
-  RETURN_LONG(static_cast<zend_long>(g_task_propagate_int(self, &error)));
+  const auto value = static_cast<zend_long>(g_task_propagate_int(self, &error));
+  if (error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  RETURN_LONG(value);
 }
 
 /**
@@ -243,12 +247,11 @@ ZEND_METHOD(Gtk4_GTask, return_boolean) {
 ZEND_METHOD(Gtk4_GTask, return_error) {
   zval *error;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS(error, boxed_class_for_type(G_TYPE_ERROR)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(error, ce_GError)
   ZEND_PARSE_PARAMETERS_END();
   GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
-  gpointer error_b = unwrap_boxed(error, G_TYPE_ERROR);
-  if (error_b == nullptr) RETURN_THROWS();
-  g_task_return_error(self, static_cast<GError *>(error_b));
+  GError *error_e = gerror_from_php(error);
+  g_task_return_error(self, error_e);
 }
 
 /**

@@ -6,6 +6,7 @@ namespace PhpGtk4\Tests;
 
 use Gtk4\GdkDisplay;
 use Gtk4\GObject;
+use Gtk4\Gtk;
 use Gtk4\GtkBox;
 use Gtk4\GtkButton;
 use Gtk4\GtkOrientation;
@@ -189,5 +190,34 @@ final class WrapTest extends GtkTestCase
         $again->destroy();
         unset($again);
         self::assertNull($weak->get(), 'destroy() dropped the toplevel ref; last PHP ref frees it');
+    }
+
+    public function testDisposedHandleThrowsInsteadOfTouchingTheGuttedObject(): void
+    {
+        // GTK 4's gtk_window_destroy() only drops GTK's reference (testHandleOutlivesGtkWindowDestroy);
+        // disposal under a live handle comes from C owners, so it is driven from C here.
+        if (!str_contains((string) ini_get('gtk4.features'), 'testing=yes')) {
+            self::markTestSkipped('needs --enable-gtk4-testing (FEATURES testing=yes)');
+        }
+        $b = new GtkButton();
+        $other = $this->window();
+        Gtk::testing_run_dispose($b);
+        try {
+            $b->set_label('x');
+            self::fail('a method on a disposed handle must throw');
+        } catch (\Error $e) {
+            self::assertStringContainsString('disposed GObject', $e->getMessage());
+        }
+        try {
+            $other->set_child($b);
+            self::fail('a disposed handle as an argument must throw');
+        } catch (\Error $e) {
+            self::assertStringContainsString('was disposed', $e->getMessage());
+        }
+        // The C object is still allocated (PHP holds it): dropping the handle finalizes it
+        // cleanly - dispose ran once already and runs again on the last unref.
+        $weak = \WeakReference::create($b);
+        unset($b);
+        self::assertNull($weak->get());
     }
 }

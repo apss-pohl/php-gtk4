@@ -3,6 +3,7 @@
 #include "php_gtk4.h"
 #include "core/object.h"
 #include "core/collections.h"
+#include "core/gerror.h"
 #include "core/subtype.h"
 #include "core/callback.h"
 #include <array>
@@ -92,8 +93,13 @@ ZEND_METHOD(Gtk4_GtkAlertDialog, choose_finish) {
   GObject *result_o = unwrap(result, G_TYPE_ASYNC_RESULT);
   if (result_o == nullptr) RETURN_THROWS();
   GError *error = nullptr;
-  RETURN_LONG(static_cast<zend_long>(
-      gtk_alert_dialog_choose_finish(self, G_ASYNC_RESULT(result_o), &error)));
+  const auto value = static_cast<zend_long>(
+      gtk_alert_dialog_choose_finish(self, G_ASYNC_RESULT(result_o), &error));
+  if (error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  RETURN_LONG(value);
 }
 
 /**

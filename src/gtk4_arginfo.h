@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3e8fa53c0132e558a50dc5a212b419a290de9422 */
+ * Stub hash: b4b59d03934c5ea0b8d3e1bc5bfbf90c1e2c4985 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GObject___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -77,6 +77,10 @@ ZEND_END_ARG_INFO()
 #if defined(PHPGTK_TESTING)
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_Gtk_testing_iterate_nested, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, iterations, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_Gtk_testing_run_dispose, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, object, Gtk4\\GObject, 0)
 ZEND_END_ARG_INFO()
 #endif
 
@@ -272,6 +276,7 @@ ZEND_METHOD(Gtk4_Gtk, add_provider_for_display);
 ZEND_METHOD(Gtk4_Gtk, remove_provider_for_display);
 #if defined(PHPGTK_TESTING)
 ZEND_METHOD(Gtk4_Gtk, testing_iterate_nested);
+ZEND_METHOD(Gtk4_Gtk, testing_run_dispose);
 #endif
 ZEND_METHOD(Gtk4_GLib, idle_add);
 ZEND_METHOD(Gtk4_GLib, timeout_add);
@@ -353,6 +358,7 @@ static const zend_function_entry class_Gtk4_Gtk_methods[] = {
 	ZEND_ME(Gtk4_Gtk, remove_provider_for_display, arginfo_class_Gtk4_Gtk_remove_provider_for_display, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 #if defined(PHPGTK_TESTING)
 	ZEND_ME(Gtk4_Gtk, testing_iterate_nested, arginfo_class_Gtk4_Gtk_testing_iterate_nested, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_Gtk, testing_run_dispose, arginfo_class_Gtk4_Gtk_testing_run_dispose, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 #endif
 	ZEND_FE_END
 };

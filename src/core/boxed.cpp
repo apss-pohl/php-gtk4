@@ -31,6 +31,16 @@ zend_object *create_object(zend_class_entry *ce) {
   return &self->std;
 }
 
+// get_constructor handler: a record the GIR gives no constructor (GtkTextIter: iterators come
+// from the buffer) has no `__construct`, and `new X()` would leave a handle whose data is
+// nullptr - refuse it; classes with a constructor keep the standard lookup.
+zend_function *get_constructor(zend_object *o) {
+  if (o->ce->constructor != nullptr) return zend_std_get_constructor(o);
+  zend_throw_error(nullptr, "%s instances are created by the extension, not with new",
+                   ZSTR_VAL(o->ce->name));
+  return nullptr;
+}
+
 // free_obj handler: releases the owned copy with g_boxed_free().
 void free_obj(zend_object *o) {
   Boxed *self = boxed_from_zend(o);
@@ -154,6 +164,7 @@ void boxed_handlers_init() {
   memcpy(&handlers, &std_object_handlers, sizeof(zend_object_handlers));
   handlers.offset = XtOffsetOf(Boxed, std);
   handlers.free_obj = free_obj;
+  handlers.get_constructor = get_constructor;
   handlers.clone_obj = clone_obj;
   handlers.read_property = read_property;
   handlers.write_property = write_property;
@@ -210,6 +221,16 @@ gpointer unwrap_boxed(zval *zv, GType expected) {
     return nullptr;
   }
   return boxed_from_zval(zv)->data;
+}
+
+// $this of a boxed method: the data, or an Error when the handle never received any.
+gpointer boxed_self(zend_execute_data *execute_data, const char *method) {
+  Boxed *self = boxed_from_zval(ZEND_THIS);
+  if (self->data == nullptr) {
+    zend_throw_error(nullptr, "%s() on an uninitialized %s", method, ZSTR_VAL(self->std.ce->name));
+    return nullptr;
+  }
+  return self->data;
 }
 
 }  // namespace phpgtk

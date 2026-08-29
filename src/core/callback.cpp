@@ -43,7 +43,14 @@ void callback_drain() {
 // Invoke the callable; a Throwable goes through the exception policy with cb->origin.
 bool callback_invoke(Callback *cb, uint32_t argc, zval *args, zval *retval) {
   ZVAL_UNDEF(retval);
-  if (EG(exception) != nullptr) return false;  // Rethrow mode: an earlier callback threw
+  if (EG(exception) != nullptr) {
+    // Rethrow mode: an earlier callback threw and the Throwable is meant to stay pending
+    // until the next return into PHP. In Log mode nothing stays pending, so this one came
+    // from the trampoline itself (an argument conversion) and still owes the boundary a
+    // report - it must not unwind through the GLib frame below us.
+    if (exception_mode() == ExceptionMode::Log) report_pending_exception(cb->origin);
+    return false;
+  }
   zend_fcall_info fci;
   zend_fcall_info_cache fcc;
   if (zend_fcall_info_init(&cb->callable, 0, &fci, &fcc, nullptr, nullptr) != SUCCESS) {

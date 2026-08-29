@@ -51,8 +51,16 @@ void wrap_boxed(GType type, gconstpointer data, zval *rv);
 // PHP -> C: the handle's data (borrowed); TypeError + nullptr if not a handle of `expected`.
 gpointer unwrap_boxed(zval *zv, GType expected);
 
+// $this of a boxed method as its data; Error + nullptr on a handle that never got any
+// (a record without a constructor, see get_constructor in boxed.cpp).
+gpointer boxed_self(zend_execute_data *execute_data, const char *method);
+
 }  // namespace phpgtk
 
-// In a ZEND_METHOD of a boxed class: `GdkRGBA *c = PHPGTK_BOXED_SELF(GdkRGBA);`
-// NOLINTNEXTLINE(bugprone-macro-parentheses) `ctype` is a type name in a cast, not an expression
-#define PHPGTK_BOXED_SELF(ctype) (static_cast<ctype *>(phpgtk::boxed_from_zval(ZEND_THIS)->data))
+// In a ZEND_METHOD of a boxed class: `GdkRGBA *c = PHPGTK_BOXED_SELF(GdkRGBA);` -
+// returns from the method (exception already thrown) if the handle has no data.
+// NOLINTBEGIN(bugprone-macro-parentheses) `ctype` is a type name; the macro is a statement pair
+#define PHPGTK_BOXED_SELF(ctype)                                    \
+  static_cast<ctype *>(phpgtk::boxed_self(execute_data, __func__)); \
+  if (EG(exception)) return
+// NOLINTEND(bugprone-macro-parentheses)

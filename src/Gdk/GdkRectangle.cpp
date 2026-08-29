@@ -78,9 +78,10 @@ ZEND_METHOD(Gtk4_GdkRectangle, intersect) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_OBJECT_OF_CLASS(other, boxed_class_for_type(GDK_TYPE_RECTANGLE)->ce)
   ZEND_PARSE_PARAMETERS_END();
+  GdkRectangle *self = PHPGTK_BOXED_SELF(GdkRectangle);
   GdkRectangle out;
   auto *o = static_cast<GdkRectangle *>(unwrap_boxed(other, GDK_TYPE_RECTANGLE));
-  if (!gdk_rectangle_intersect(PHPGTK_BOXED_SELF(GdkRectangle), o, &out)) RETURN_NULL();
+  if (!gdk_rectangle_intersect(self, o, &out)) RETURN_NULL();
   ret_rect(return_value, out);
 }
 
@@ -94,9 +95,10 @@ ZEND_METHOD(Gtk4_GdkRectangle, union) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_OBJECT_OF_CLASS(other, boxed_class_for_type(GDK_TYPE_RECTANGLE)->ce)
   ZEND_PARSE_PARAMETERS_END();
+  GdkRectangle *self = PHPGTK_BOXED_SELF(GdkRectangle);
   GdkRectangle out;
   auto *o = static_cast<GdkRectangle *>(unwrap_boxed(other, GDK_TYPE_RECTANGLE));
-  gdk_rectangle_union(PHPGTK_BOXED_SELF(GdkRectangle), o, &out);
+  gdk_rectangle_union(self, o, &out);
   ret_rect(return_value, out);
 }
 
@@ -111,8 +113,8 @@ ZEND_METHOD(Gtk4_GdkRectangle, contains_point) {
   Z_PARAM_LONG(x)
   Z_PARAM_LONG(y)
   ZEND_PARSE_PARAMETERS_END();
-  RETURN_BOOL(gdk_rectangle_contains_point(PHPGTK_BOXED_SELF(GdkRectangle), static_cast<int>(x),
-                                           static_cast<int>(y)));
+  GdkRectangle *self = PHPGTK_BOXED_SELF(GdkRectangle);
+  RETURN_BOOL(gdk_rectangle_contains_point(self, static_cast<int>(x), static_cast<int>(y)));
 }
 
 /**
@@ -125,8 +127,9 @@ ZEND_METHOD(Gtk4_GdkRectangle, equal) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_OBJECT_OF_CLASS(other, boxed_class_for_type(GDK_TYPE_RECTANGLE)->ce)
   ZEND_PARSE_PARAMETERS_END();
+  GdkRectangle *self = PHPGTK_BOXED_SELF(GdkRectangle);
   auto *o = static_cast<GdkRectangle *>(unwrap_boxed(other, GDK_TYPE_RECTANGLE));
-  RETURN_BOOL(gdk_rectangle_equal(PHPGTK_BOXED_SELF(GdkRectangle), o));
+  RETURN_BOOL(gdk_rectangle_equal(self, o));
 }
 
 namespace phpgtk {
