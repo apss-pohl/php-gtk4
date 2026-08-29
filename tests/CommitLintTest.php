@@ -21,6 +21,13 @@ final class CommitLintTest extends TestCase
     private string $repoDir = '';
     private string $previousDir = '';
 
+    protected function setUp(): void
+    {
+        if (PHP_OS_FAMILY === 'Windows') {
+            self::markTestSkipped('bin/commit-lint is a bash script; the Linux legs cover it');
+        }
+    }
+
     protected function tearDown(): void
     {
         if ($this->repoDir !== '') {

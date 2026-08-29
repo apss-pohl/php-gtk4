@@ -20,6 +20,13 @@ final class ReleaseNotesTest extends TestCase
 
     private string $dir = '';
 
+    protected function setUp(): void
+    {
+        if (PHP_OS_FAMILY === 'Windows') {
+            self::markTestSkipped('bin/release-notes is a bash script; the Linux legs cover it');
+        }
+    }
+
     protected function tearDown(): void
     {
         if ($this->dir !== '') {
