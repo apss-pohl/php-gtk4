@@ -202,3 +202,55 @@ drives a window with no `GtkApplication`. Both pass a standalone override to `De
 | [GtkStringList.php](GtkStringList.php) | a GListModel that wraps an array of strings |
 | [GtkStringObject.php](GtkStringObject.php) | one string as a GObject - the item type of GtkStringList |
 | [GtkStringFilterMatchMode.php](GtkStringFilterMatchMode.php) | where a search string may sit inside the text |
+
+## Input controllers
+
+| File | Shows |
+| ---- | ----- |
+| [GtkEventController.php](GtkEventController.php) | the abstract base - name, propagation phase/limit, widget and the current event |
+| [GtkEventControllerKey.php](GtkEventControllerKey.php) | keyboard input - key-pressed / key-released with keyval, keycode and modifiers |
+| [GtkEventControllerMotion.php](GtkEventControllerMotion.php) | pointer enter / motion / leave with widget-relative coordinates |
+| [GtkEventControllerScroll.php](GtkEventControllerScroll.php) | wheel and touchpad scrolling as dx/dy deltas, with kinetic deceleration |
+| [GtkEventControllerFocus.php](GtkEventControllerFocus.php) | keyboard focus enter / leave, is_focus versus contains_focus |
+| [GtkEventControllerLegacy.php](GtkEventControllerLegacy.php) | every raw GdkEvent through one signal - typed subclass, position, time, modifiers |
+| [GtkPropagationPhase.php](GtkPropagationPhase.php) | Capture / Target / Bubble / None - when a controller sees an event |
+| [GtkPropagationLimit.php](GtkPropagationLimit.php) | SameNative or None - events from other native surfaces |
+| [GtkEventControllerScrollFlags.php](GtkEventControllerScrollFlags.php) | VERTICAL \| HORIZONTAL \| DISCRETE \| KINETIC - OR-able int constants |
+| [GdkScrollUnit.php](GdkScrollUnit.php) | Wheel notches or Surface pixels - the unit of a scroll delta |
+
+## Gestures
+
+| File | Shows |
+| ---- | ----- |
+| [GtkGesture.php](GtkGesture.php) | the abstract base of every gesture: state, bounding box, groups |
+| [GtkGestureSingle.php](GtkGestureSingle.php) | the base of every one-pointer gesture: button, exclusive, touch-only |
+| [GtkGestureClick.php](GtkGestureClick.php) | presses and releases, counted into single/double/triple clicks |
+| [GtkGestureDrag.php](GtkGestureDrag.php) | press, move, release - a start point and an offset |
+| [GtkGestureLongPress.php](GtkGestureLongPress.php) | press and hold without moving |
+| [GtkGestureSwipe.php](GtkGestureSwipe.php) | a drag judged by its speed at release |
+| [GtkGesturePan.php](GtkGesturePan.php) | a drag locked to one axis |
+| [GtkGestureZoom.php](GtkGestureZoom.php) | two-finger pinch, as a scale factor |
+| [GtkGestureRotate.php](GtkGestureRotate.php) | two fingers turning around each other |
+| [GtkPanDirection.php](GtkPanDirection.php) | which way a GtkGesturePan went |
+| [GtkEventSequenceState.php](GtkEventSequenceState.php) | what a gesture has decided about an event sequence |
+
+## Events
+
+| File | Shows |
+| ---- | ----- |
+| [GdkEvent.php](GdkEvent.php) | the base class of everything the windowing system reports |
+| [GdkKeyEvent.php](GdkKeyEvent.php) | a key press or release - keyval, keycode, layout, level and accelerator matching |
+| [GdkButtonEvent.php](GdkButtonEvent.php) | a mouse button press or release - which button, where, with what held |
+| [GdkScrollEvent.php](GdkScrollEvent.php) | a wheel click or a touchpad scroll - direction, deltas, unit and stop |
+| [GdkCrossingEvent.php](GdkCrossingEvent.php) | the pointer entered or left a widget - mode, detail and focus |
+| [GdkFocusEvent.php](GdkFocusEvent.php) | the keyboard focus entered or left the window - get_in() |
+| [GdkTouchEvent.php](GdkTouchEvent.php) | a finger on a touchscreen - begin, update, end, and pointer emulation |
+| [GdkTouchpadEvent.php](GdkTouchpadEvent.php) | a multi-finger touchpad gesture - phase, fingers, deltas, pinch scale and angle |
+| [GdkPadEvent.php](GdkPadEvent.php) | a drawing-tablet pad button, ring or strip - button, axis value, group and mode |
+| [GdkGrabBrokenEvent.php](GdkGrabBrokenEvent.php) | a pointer or keyboard grab was taken away - get_implicit() |
+| [GdkEventType.php](GdkEventType.php) | which kind of event a GdkEvent is - the case of every real event as it arrives |
+| [GdkScrollDirection.php](GdkScrollDirection.php) | which way a scroll event goes - wheel clicks versus smooth deltas |
+| [GdkCrossingMode.php](GdkCrossingMode.php) | why the pointer entered or left - motion, grabs, state changes, touch, device switch |
+| [GdkNotifyType.php](GdkNotifyType.php) | how the widget left and the widget entered are related - ancestor, inferior, nonlinear |
+| [GdkTouchpadGesturePhase.php](GdkTouchpadGesturePhase.php) | where in a touchpad gesture an event sits - begin, update, end, cancel |
+| [GdkKeyMatch.php](GdkKeyMatch.php) | how well a key event matches an accelerator - exact, partial or not at all |

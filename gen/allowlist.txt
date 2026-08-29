@@ -97,3 +97,35 @@ Gtk.Calendar
 Gtk.DropDown
 Gtk.StringList
 Gtk.StringObject
+
+# Wave 3 (event controllers, docs/PLAN.md §3): GTK 4's replacement for the GdkEvent signals -
+# controllers attached with GtkWidget::add_controller(). Key/motion/scroll/focus/legacy
+# controllers and the gestures (click, drag, long press, swipe, pan, zoom, rotate), with the
+# phase/limit/flag enums. GdkEvent itself is hand-written (fundamental registry).
+Gtk.EventController
+Gtk.EventControllerKey
+Gtk.EventControllerMotion
+Gtk.EventControllerScroll
+Gtk.EventControllerFocus
+Gtk.EventControllerLegacy
+Gtk.Gesture
+Gtk.GestureSingle
+Gtk.GestureClick
+Gtk.GestureDrag
+Gtk.GestureLongPress
+Gtk.GestureSwipe
+Gtk.GesturePan
+Gtk.GestureZoom
+Gtk.GestureRotate
+Gtk.PropagationPhase
+Gtk.PropagationLimit
+Gtk.EventControllerScrollFlags
+Gtk.PanDirection
+Gdk.ScrollUnit
+# The enums GdkEvent's typed getters return (GdkEvent itself is hand-written, src/Gdk/GdkEvent.cpp).
+Gdk.EventType
+Gdk.ScrollDirection
+Gdk.CrossingMode
+Gdk.NotifyType
+Gdk.TouchpadGesturePhase
+Gdk.KeyMatch

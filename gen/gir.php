@@ -337,6 +337,7 @@ final class Gir
 // ---------------------------------------------------------------- naming helpers
 
 /** GtkLabel -> GTK_TYPE_LABEL / GTK_LABEL, GListStore -> G_TYPE_LIST_STORE / G_LIST_STORE. */
+/** @return array{string, string} The `GDK_TYPE_EVENT` / `GDK_EVENT` macro pair of a node. */
 function macroParts(Gir $gir, Node $n): array
 {
     $prefix = $gir->prefixes[$n->ns];
@@ -390,6 +391,18 @@ final class Generator
     private array $emit = [];
     /** @var array<string, true> known but hand-written (usable as types, never emitted) */
     private array $handwritten = [];
+
+    /**
+     * Hand-written handles on the fundamental registry (src/core/fundamental) that generated
+     * signatures may take or return: GIR name => the unref function a transfer-full result needs.
+     */
+    private const array FUNDAMENTALS = ['Gdk.Event' => 'gdk_event_unref', 'Gtk.CssSection' => 'gtk_css_section_unref'];
+
+    /** The `GDK_TYPE_EVENT`-style macro of a node, for the emitted C++. */
+    private function typeMacroOf(Node $node): string
+    {
+        return macroParts($this->gir, $node)[0];
+    }
     /** @var array<string, array<string, string>> "Ns.Type" -> constructor param -> property (gen/ctor-props.txt) */
     private array $ctorProps = [];
     /** @var list<string> register_vfuncs_<Class>() calls for MINIT */
@@ -1236,6 +1249,8 @@ final class Generator
                 'throw_gerror' => '"core/gerror.h"', 'gerror_from_php' => '"core/gerror.h"',
                 'variant' => '"core/variant.h"', 'wrap_boxed' => '"core/boxed.h"',
                 'unwrap_boxed' => '"core/boxed.h"', 'boxed_class_for_type' => '"core/boxed.h"',
+                'wrap_fundamental' => '"core/fundamental.h"', 'unwrap_fundamental' => '"core/fundamental.h"',
+                'fundamental_class_for_type' => '"core/fundamental.h"',
                 'wrap_cairo' => '"Cairo/CairoContext.h"', 'wrap_param_spec' => '"core/paramspec.h"',
                 'subtype_' => '"core/subtype.h"', 'report_pending_exception' => '"core/error.h"',
                 'assert_gui_thread' => '"core/mainloop.h"', 'RunningLoop' => '"core/mainloop.h"',
@@ -2334,6 +2349,7 @@ final class Generator
             in_array($t->name, ['GObject.GType', 'Gio.GType', 'GLib.GType'], true) => 'string',
             $t->name === 'cairo.Context' => 'CairoContext',
             $t->name === 'GObject.ParamSpec' => 'GParamSpec',
+            isset(self::FUNDAMENTALS[$t->name]) => phpClass($this->gir->types[$t->name]),
             $t->name === 'GObject.Object' => 'GObject',
             $t->isArray => self::isStrv($t) ? 'array' : null,
             in_array($t->name, ['GLib.List', 'GLib.SList', 'GLib.PtrArray'], true) => 'array',
@@ -2626,6 +2642,24 @@ final class Generator
                     : "$castMacro({$name}_o)",
             ]);
         }
+        if (isset(self::FUNDAMENTALS[$t->name])) {
+            // A hand-written fundamental handle (GdkEvent) as an argument: borrowed for the call.
+            $fnode = $this->gir->types[$t->name];
+            $macro = $this->typeMacroOf($fnode);
+            return array_merge($r, [
+                'phpType' => ($nullable ? '?' : '') . phpClass($fnode),
+                'decl' => "zval *$name" . ($nullable ? ' = nullptr' : '') . ';',
+                'zpp' => 'Z_PARAM_OBJECT_OF_CLASS' . ($nullable ? '_OR_NULL' : '')
+                    . "($name, fundamental_class_for_type($macro)->ce)",
+                'pre' => $nullable
+                    ? ["gpointer {$name}_f = nullptr;", "if ($name != nullptr) {",
+                        "  {$name}_f = unwrap_fundamental($name, $macro);",
+                        "  if ({$name}_f == nullptr) RETURN_THROWS();", '}']
+                    : ["gpointer {$name}_f = unwrap_fundamental($name, $macro);",
+                        "if ({$name}_f == nullptr) RETURN_THROWS();"],
+                'carg' => "static_cast<{$fnode->ctype} *>({$name}_f)",
+            ]);
+        }
         if ($t->name === 'GLib.Error') {
             // Gtk4\GError is an exception class (core/gerror), not a boxed handle: a GError is
             // built from it for the call and freed afterwards unless the callee takes it.
@@ -2905,6 +2939,16 @@ final class Generator
         if ($t->name === 'GObject.ParamSpec') {
             return ['phpType' => ($f->retNullable ? '?' : '') . 'GParamSpec', 'lines' => fn(string $call) => [
                 "wrap_param_spec($call, return_value);"]];
+        }
+        if (isset(self::FUNDAMENTALS[$t->name])) {
+            // A hand-written fundamental handle (GdkEvent): wrap through its registry entry, which
+            // takes its own reference - a transfer-full result gives up the one it came with.
+            $fnode = $this->gir->types[$t->name];
+            $macro = $this->typeMacroOf($fnode);
+            $unref = self::FUNDAMENTALS[$t->name];
+            return ['phpType' => ($f->retNullable ? '?' : '') . phpClass($fnode), 'lines' => fn(string $call) => [
+                "gpointer result = $call;", "wrap_fundamental($macro, result, return_value);",
+                ...($full ? ["if (result != nullptr) $unref(static_cast<{$fnode->ctype} *>(result));"] : [])]];
         }
         $node = $this->gir->types[$t->name] ?? null;
         if ($node === null) {

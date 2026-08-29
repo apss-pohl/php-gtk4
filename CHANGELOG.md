@@ -22,6 +22,20 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   commit. `bin/release-notes` groups the commits since the previous release by type and
   `release.yml` appends that to every release body, after the `CHANGELOG.md` section.
 
+- Wave 3 (event controllers, docs/PLAN.md §3): `GtkEventController`, `GtkEventControllerKey`,
+  `GtkEventControllerMotion`, `GtkEventControllerScroll`, `GtkEventControllerFocus`,
+  `GtkEventControllerLegacy`, `GtkGesture`, `GtkGestureSingle`, `GtkGestureClick`, `GtkGestureDrag`,
+  `GtkGestureLongPress`, `GtkGestureSwipe`, `GtkGesturePan`, `GtkGestureZoom`, `GtkGestureRotate`
+  with `GtkPropagationPhase`, `GtkPropagationLimit`, `GtkEventControllerScrollFlags`,
+  `GtkPanDirection`, `GtkEventSequenceState`, `GdkScrollUnit` — generated — and the `GdkEvent`
+  family hand-written on the fundamental registry: `GdkEvent` (type, time, modifier state,
+  position, display, context-menu test) with `GdkKeyEvent`, `GdkButtonEvent`, `GdkScrollEvent`,
+  `GdkCrossingEvent`, `GdkFocusEvent`, `GdkTouchEvent`, `GdkTouchpadEvent`, `GdkPadEvent`,
+  `GdkGrabBrokenEvent` and the enums `GdkEventType`, `GdkScrollDirection`, `GdkCrossingMode`,
+  `GdkNotifyType`, `GdkTouchpadGesturePhase`, `GdkKeyMatch`. Events come out of
+  `GtkEventController::get_current_event()` and the legacy controller's `event` signal as their
+  real subclass; there is no `new`. `EventControllerTest` drives real X input into the Xvfb
+  display (`tests/XInput.php`, ext-ffi + libXtst; skipped where unavailable).
 - Wave 2 (controls, docs/PLAN.md §3): `GtkEntry`, `GtkEditable`, `GtkEntryBuffer`,
   `GtkPasswordEntry`, `GtkCheckButton`, `GtkToggleButton`, `GtkSpinButton`, `GtkRange`, `GtkScale`
   (`set_format_value_func(callable)`), `GtkProgressBar`, `GtkImage`, `GtkPicture`, `GdkPaintable`,

@@ -370,6 +370,240 @@ final class GdkRectangle
 }
 
 /**
+ * An input event, as GTK 4 delivers it to event controllers: an opaque, refcounted handle with
+ * typed getters (there are no fields to copy and no `new`). The class tells the kind — a
+ * {@see GdkKeyEvent}, {@see GdkButtonEvent}, ... — and {@see get_event_type()} the exact type.
+ * Comes from {@see GtkEventController::get_current_event()}, {@see GtkGesture::get_last_event()}
+ * and the `event` signal of {@see GtkEventControllerLegacy}.
+ *
+ * @link https://docs.gtk.org/gdk4/class.Event.html
+ * @not-serializable
+ */
+class GdkEvent
+{
+    /** What kind of event this is (also visible in the handle's class). */
+    public function get_event_type(): GdkEventType {}
+
+    /** The event's timestamp in milliseconds (server time, 0 when the event carries none). */
+    public function get_time(): int {}
+
+    /**
+     * The keyboard modifiers and mouse buttons held down when the event happened
+     * ({@see GdkModifierType} flags).
+     */
+    public function get_modifier_state(): int {}
+
+    /**
+     * The pointer position [x, y] in surface coordinates, or null for events that have none
+     * (key and focus events).
+     *
+     * @return array{float, float}|null
+     */
+    public function get_position(): ?array {}
+
+    /** True for a pointer event that was synthesised from a touch sequence. */
+    public function get_pointer_emulated(): bool {}
+
+    /**
+     * True when this event is the platform's "open a context menu" gesture (the secondary
+     * button, Control+click on macOS).
+     */
+    public function triggers_context_menu(): bool {}
+
+    /** The display the event came from. */
+    public function get_display(): ?GdkDisplay {}
+}
+
+/**
+ * A key press or release.
+ *
+ * @link https://docs.gtk.org/gdk4/class.KeyEvent.html
+ * @not-serializable
+ */
+final class GdkKeyEvent extends GdkEvent
+{
+    /** The key symbol (a `GDK_KEY_*` value, e.g. 65307 for Escape). */
+    public function get_keyval(): int {}
+
+    /** The hardware key code. */
+    public function get_keycode(): int {}
+
+    /**
+     * The modifiers that were used up producing the keyval ({@see GdkModifierType} flags) -
+     * Shift for "A", for instance - and so must not count as part of an accelerator.
+     */
+    public function get_consumed_modifiers(): int {}
+
+    /** The keyboard layout (group) the key was pressed in. */
+    public function get_layout(): int {}
+
+    /** The shift level of the key. */
+    public function get_level(): int {}
+
+    /** True when the key is itself a modifier (Shift, Control, ...). */
+    public function is_modifier(): bool {}
+
+    /**
+     * Whether the event matches an accelerator of $keyval + $modifiers ({@see GdkModifierType}
+     * flags): exactly, partially (layout-independent) or not at all.
+     */
+    public function matches(int $keyval, int $modifiers): GdkKeyMatch {}
+
+    /**
+     * The [keyval, modifiers] an accelerator would have to match this event, or null when the
+     * event cannot be matched (a modifier key on its own).
+     *
+     * @return array{int, int}|null
+     */
+    public function get_match(): ?array {}
+}
+
+/**
+ * A mouse button press or release.
+ *
+ * @link https://docs.gtk.org/gdk4/class.ButtonEvent.html
+ * @not-serializable
+ */
+final class GdkButtonEvent extends GdkEvent
+{
+    /** The mouse button (1 = primary, 2 = middle, 3 = secondary). */
+    public function get_button(): int {}
+}
+
+/**
+ * A scroll wheel or smooth-scroll event.
+ *
+ * @link https://docs.gtk.org/gdk4/class.ScrollEvent.html
+ * @not-serializable
+ */
+final class GdkScrollEvent extends GdkEvent
+{
+    /** The scroll direction; `Smooth` means {@see get_deltas()} carries the amount. */
+    public function get_direction(): GdkScrollDirection {}
+
+    /**
+     * The scroll amount [dx, dy] of a smooth scroll event.
+     *
+     * @return array{float, float}
+     */
+    public function get_deltas(): array {}
+
+    /** What the deltas are measured in (wheel clicks or surface pixels). */
+    public function get_unit(): GdkScrollUnit {}
+
+    /** True for the event that ends a smooth scroll sequence (fingers lifted). */
+    public function is_stop(): bool {}
+}
+
+/**
+ * The pointer entering or leaving a surface.
+ *
+ * @link https://docs.gtk.org/gdk4/class.CrossingEvent.html
+ * @not-serializable
+ */
+final class GdkCrossingEvent extends GdkEvent
+{
+    /** Why the pointer crossed (normal motion, a grab, ...). */
+    public function get_mode(): GdkCrossingMode {}
+
+    /** The surface hierarchy relation of the crossing. */
+    public function get_detail(): GdkNotifyType {}
+
+    /** True when the surface has (or had) keyboard focus. */
+    public function get_focus(): bool {}
+}
+
+/**
+ * Keyboard focus entering or leaving a surface.
+ *
+ * @link https://docs.gtk.org/gdk4/class.FocusEvent.html
+ * @not-serializable
+ */
+final class GdkFocusEvent extends GdkEvent
+{
+    /** True when focus came in, false when it left. */
+    public function get_in(): bool {}
+}
+
+/**
+ * A touch-screen contact.
+ *
+ * @link https://docs.gtk.org/gdk4/class.TouchEvent.html
+ * @not-serializable
+ */
+final class GdkTouchEvent extends GdkEvent
+{
+    /** True when this touch sequence also drives the pointer. */
+    public function get_emulating_pointer(): bool {}
+}
+
+/**
+ * A touchpad gesture (pinch, swipe, hold).
+ *
+ * @link https://docs.gtk.org/gdk4/class.TouchpadEvent.html
+ * @not-serializable
+ */
+final class GdkTouchpadEvent extends GdkEvent
+{
+    /** Where in the gesture this event sits (begin, update, end, cancel). */
+    public function get_gesture_phase(): GdkTouchpadGesturePhase {}
+
+    /** How many fingers the gesture uses. */
+    public function get_n_fingers(): int {}
+
+    /**
+     * The movement [dx, dy] since the previous event of the gesture.
+     *
+     * @return array{float, float}
+     */
+    public function get_deltas(): array {}
+
+    /** The rotation since the previous pinch event, in radians. */
+    public function get_pinch_angle_delta(): float {}
+
+    /** The scale of a pinch gesture relative to its start. */
+    public function get_pinch_scale(): float {}
+}
+
+/**
+ * A drawing-tablet pad event (buttons, rings and strips).
+ *
+ * @link https://docs.gtk.org/gdk4/class.PadEvent.html
+ * @not-serializable
+ */
+final class GdkPadEvent extends GdkEvent
+{
+    /**
+     * The [index, value] of the pad axis that moved (ring or strip events).
+     *
+     * @return array{int, float}
+     */
+    public function get_axis_value(): array {}
+
+    /** The pad button that was pressed or released. */
+    public function get_button(): int {}
+
+    /**
+     * The [group, mode] of the pad event.
+     *
+     * @return array{int, int}
+     */
+    public function get_group_mode(): array {}
+}
+
+/**
+ * A pointer or keyboard grab that was broken by another grab.
+ *
+ * @link https://docs.gtk.org/gdk4/class.GrabBrokenEvent.html
+ * @not-serializable
+ */
+final class GdkGrabBrokenEvent extends GdkEvent
+{
+    /** True when the broken grab was implicit (a button press), false for an explicit one. */
+    public function get_implicit(): bool {}
+}
+
+/**
  * A cairo drawing context, as handed to {@see GtkDrawingArea::set_draw_func()}
  * callbacks. Only valid during the callback. Minimal surface for now; grows
  * with the generator.

@@ -225,6 +225,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `PHP subclasses` — constructor argument initial_chars is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GtkEntryBuffer
 - `vfunc get_text` — parameter n_bytes is a pointer to a scalar without direction
 
+## GtkEventController
+
+- `get_current_event_device` — return type Gdk.Device (not in the closure)
+
+## GtkEventControllerKey
+
+- `get_im_context` — return type Gtk.IMContext (not in the closure)
+- `set_im_context` — parameter `im_context` of type Gtk.IMContext
+
 ## GtkFilterListModel
 
 - `property item-type` — property type Gtk.GType not mappable
@@ -237,6 +246,25 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkFrame
 
 - `vfunc compute_child_allocation` — parameter `allocation` of type Gtk.Allocation
+
+## GtkGesture
+
+- `get_device` — return type Gdk.Device (not in the closure)
+- `get_last_event` — parameter `sequence` of type Gdk.EventSequence
+- `get_last_updated_sequence` — return type Gdk.EventSequence
+- `get_point` — parameter `sequence` of type Gdk.EventSequence
+- `get_sequence_state` — parameter `sequence` of type Gdk.EventSequence
+- `get_sequences` — list of Gdk.EventSequence
+- `handles_sequence` — parameter `sequence` of type Gdk.EventSequence
+- `set_sequence_state` — deprecated (4.10.)
+
+## GtkGesturePan
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GtkGestureSingle
+
+- `get_current_sequence` — return type Gdk.EventSequence
 
 ## GtkImage
 
@@ -343,7 +371,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkWidget
 
 - `activate_action` — shadowed by activate_action_variant
-- `add_controller` — parameter `controller` of type Gtk.EventController
 - `add_tick_callback` — callback parameter (needs an override)
 - `allocate` — parameter `transform` of type Gsk.Transform
 - `compute_bounds` — caller-allocates out parameter `out_bounds` of type Graphene.Rect
@@ -370,7 +397,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_style_context` — deprecated (4.10)
 - `get_template_child` — parameter `widget_type` of type Gtk.GType
 - `hide` — deprecated (4.10)
-- `remove_controller` — parameter `controller` of type Gtk.EventController
 - `set_cursor` — parameter `cursor` of type Gdk.Cursor
 - `set_font_map` — parameter `font_map` of type Pango.FontMap
 - `set_font_options` — parameter `options` of type cairo.FontOptions
@@ -424,10 +450,25 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkEditable.cpp`
 - `Gtk/GtkEntry.cpp`
 - `Gtk/GtkEntryBuffer.cpp`
+- `Gtk/GtkEventController.cpp`
+- `Gtk/GtkEventControllerFocus.cpp`
+- `Gtk/GtkEventControllerKey.cpp`
+- `Gtk/GtkEventControllerLegacy.cpp`
+- `Gtk/GtkEventControllerMotion.cpp`
+- `Gtk/GtkEventControllerScroll.cpp`
 - `Gtk/GtkFilter.cpp`
 - `Gtk/GtkFilterListModel.cpp`
 - `Gtk/GtkFixed.cpp`
 - `Gtk/GtkFrame.cpp`
+- `Gtk/GtkGesture.cpp`
+- `Gtk/GtkGestureClick.cpp`
+- `Gtk/GtkGestureDrag.cpp`
+- `Gtk/GtkGestureLongPress.cpp`
+- `Gtk/GtkGesturePan.cpp`
+- `Gtk/GtkGestureRotate.cpp`
+- `Gtk/GtkGestureSingle.cpp`
+- `Gtk/GtkGestureSwipe.cpp`
+- `Gtk/GtkGestureZoom.cpp`
 - `Gtk/GtkGrid.cpp`
 - `Gtk/GtkImage.cpp`
 - `Gtk/GtkLabel.cpp`
@@ -496,10 +537,24 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkDropDownSmokeTest.php`
 - `tests/Generated/GtkEntrySmokeTest.php`
 - `tests/Generated/GtkEntryBufferSmokeTest.php`
+- `tests/Generated/GtkEventControllerSmokeTest.php`
+- `tests/Generated/GtkEventControllerFocusSmokeTest.php`
+- `tests/Generated/GtkEventControllerKeySmokeTest.php`
+- `tests/Generated/GtkEventControllerLegacySmokeTest.php`
+- `tests/Generated/GtkEventControllerMotionSmokeTest.php`
+- `tests/Generated/GtkEventControllerScrollSmokeTest.php`
 - `tests/Generated/GtkFilterSmokeTest.php`
 - `tests/Generated/GtkFilterListModelSmokeTest.php`
 - `tests/Generated/GtkFixedSmokeTest.php`
 - `tests/Generated/GtkFrameSmokeTest.php`
+- `tests/Generated/GtkGestureSmokeTest.php`
+- `tests/Generated/GtkGestureClickSmokeTest.php`
+- `tests/Generated/GtkGestureDragSmokeTest.php`
+- `tests/Generated/GtkGestureLongPressSmokeTest.php`
+- `tests/Generated/GtkGestureRotateSmokeTest.php`
+- `tests/Generated/GtkGestureSingleSmokeTest.php`
+- `tests/Generated/GtkGestureSwipeSmokeTest.php`
+- `tests/Generated/GtkGestureZoomSmokeTest.php`
 - `tests/Generated/GtkGridSmokeTest.php`
 - `tests/Generated/GtkImageSmokeTest.php`
 - `tests/Generated/GtkLabelSmokeTest.php`

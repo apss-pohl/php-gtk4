@@ -76,6 +76,9 @@ void wrap_fundamental(GType type, gpointer instance, zval *rv) {
     ZVAL_NULL(rv);
     return;
   }
+  // An instantiatable fundamental (GdkEvent) knows its real type: a GdkKeyEvent handed over as
+  // a GdkEvent still gets the GdkKeyEvent class. Refcounted boxed types (cairo_t) have no header.
+  if (G_TYPE_IS_INSTANTIATABLE(type)) type = G_TYPE_FROM_INSTANCE(instance);
   const FundamentalClass *info = fundamental_class_for_type(type);
   if (info == nullptr) {
     ZVAL_NULL(rv);

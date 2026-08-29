@@ -511,6 +511,300 @@ final class GdkRectangle
     }
 }
 /**
+ * An input event, as GTK 4 delivers it to event controllers: an opaque, refcounted handle with
+ * typed getters (there are no fields to copy and no `new`). The class tells the kind — a
+ * {@see GdkKeyEvent}, {@see GdkButtonEvent}, ... — and {@see get_event_type()} the exact type.
+ * Comes from {@see GtkEventController::get_current_event()}, {@see GtkGesture::get_last_event()}
+ * and the `event` signal of {@see GtkEventControllerLegacy}.
+ *
+ * @link https://docs.gtk.org/gdk4/class.Event.html
+ */
+class GdkEvent
+{
+    /** What kind of event this is (also visible in the handle's class). */
+    public function get_event_type(): GdkEventType
+    {
+        return null;
+    }
+    /** The event's timestamp in milliseconds (server time, 0 when the event carries none). */
+    public function get_time(): int
+    {
+        return 0;
+    }
+    /**
+     * The keyboard modifiers and mouse buttons held down when the event happened
+     * ({@see GdkModifierType} flags).
+     */
+    public function get_modifier_state(): int
+    {
+        return 0;
+    }
+    /**
+     * The pointer position [x, y] in surface coordinates, or null for events that have none
+     * (key and focus events).
+     *
+     * @return array{float, float}|null
+     */
+    public function get_position(): ?array
+    {
+        return null;
+    }
+    /** True for a pointer event that was synthesised from a touch sequence. */
+    public function get_pointer_emulated(): bool
+    {
+        return false;
+    }
+    /**
+     * True when this event is the platform's "open a context menu" gesture (the secondary
+     * button, Control+click on macOS).
+     */
+    public function triggers_context_menu(): bool
+    {
+        return false;
+    }
+    /** The display the event came from. */
+    public function get_display(): ?GdkDisplay
+    {
+        return null;
+    }
+}
+/**
+ * A key press or release.
+ *
+ * @link https://docs.gtk.org/gdk4/class.KeyEvent.html
+ */
+final class GdkKeyEvent extends GdkEvent
+{
+    /** The key symbol (a `GDK_KEY_*` value, e.g. 65307 for Escape). */
+    public function get_keyval(): int
+    {
+        return 0;
+    }
+    /** The hardware key code. */
+    public function get_keycode(): int
+    {
+        return 0;
+    }
+    /**
+     * The modifiers that were used up producing the keyval ({@see GdkModifierType} flags) -
+     * Shift for "A", for instance - and so must not count as part of an accelerator.
+     */
+    public function get_consumed_modifiers(): int
+    {
+        return 0;
+    }
+    /** The keyboard layout (group) the key was pressed in. */
+    public function get_layout(): int
+    {
+        return 0;
+    }
+    /** The shift level of the key. */
+    public function get_level(): int
+    {
+        return 0;
+    }
+    /** True when the key is itself a modifier (Shift, Control, ...). */
+    public function is_modifier(): bool
+    {
+        return false;
+    }
+    /**
+     * Whether the event matches an accelerator of $keyval + $modifiers ({@see GdkModifierType}
+     * flags): exactly, partially (layout-independent) or not at all.
+     */
+    public function matches(int $keyval, int $modifiers): GdkKeyMatch
+    {
+        unset($keyval);
+        unset($modifiers);
+        return null;
+    }
+    /**
+     * The [keyval, modifiers] an accelerator would have to match this event, or null when the
+     * event cannot be matched (a modifier key on its own).
+     *
+     * @return array{int, int}|null
+     */
+    public function get_match(): ?array
+    {
+        return null;
+    }
+}
+/**
+ * A mouse button press or release.
+ *
+ * @link https://docs.gtk.org/gdk4/class.ButtonEvent.html
+ */
+final class GdkButtonEvent extends GdkEvent
+{
+    /** The mouse button (1 = primary, 2 = middle, 3 = secondary). */
+    public function get_button(): int
+    {
+        return 0;
+    }
+}
+/**
+ * A scroll wheel or smooth-scroll event.
+ *
+ * @link https://docs.gtk.org/gdk4/class.ScrollEvent.html
+ */
+final class GdkScrollEvent extends GdkEvent
+{
+    /** The scroll direction; `Smooth` means {@see get_deltas()} carries the amount. */
+    public function get_direction(): GdkScrollDirection
+    {
+        return null;
+    }
+    /**
+     * The scroll amount [dx, dy] of a smooth scroll event.
+     *
+     * @return array{float, float}
+     */
+    public function get_deltas(): array
+    {
+        return [];
+    }
+    /** What the deltas are measured in (wheel clicks or surface pixels). */
+    public function get_unit(): GdkScrollUnit
+    {
+        return null;
+    }
+    /** True for the event that ends a smooth scroll sequence (fingers lifted). */
+    public function is_stop(): bool
+    {
+        return false;
+    }
+}
+/**
+ * The pointer entering or leaving a surface.
+ *
+ * @link https://docs.gtk.org/gdk4/class.CrossingEvent.html
+ */
+final class GdkCrossingEvent extends GdkEvent
+{
+    /** Why the pointer crossed (normal motion, a grab, ...). */
+    public function get_mode(): GdkCrossingMode
+    {
+        return null;
+    }
+    /** The surface hierarchy relation of the crossing. */
+    public function get_detail(): GdkNotifyType
+    {
+        return null;
+    }
+    /** True when the surface has (or had) keyboard focus. */
+    public function get_focus(): bool
+    {
+        return false;
+    }
+}
+/**
+ * Keyboard focus entering or leaving a surface.
+ *
+ * @link https://docs.gtk.org/gdk4/class.FocusEvent.html
+ */
+final class GdkFocusEvent extends GdkEvent
+{
+    /** True when focus came in, false when it left. */
+    public function get_in(): bool
+    {
+        return false;
+    }
+}
+/**
+ * A touch-screen contact.
+ *
+ * @link https://docs.gtk.org/gdk4/class.TouchEvent.html
+ */
+final class GdkTouchEvent extends GdkEvent
+{
+    /** True when this touch sequence also drives the pointer. */
+    public function get_emulating_pointer(): bool
+    {
+        return false;
+    }
+}
+/**
+ * A touchpad gesture (pinch, swipe, hold).
+ *
+ * @link https://docs.gtk.org/gdk4/class.TouchpadEvent.html
+ */
+final class GdkTouchpadEvent extends GdkEvent
+{
+    /** Where in the gesture this event sits (begin, update, end, cancel). */
+    public function get_gesture_phase(): GdkTouchpadGesturePhase
+    {
+        return null;
+    }
+    /** How many fingers the gesture uses. */
+    public function get_n_fingers(): int
+    {
+        return 0;
+    }
+    /**
+     * The movement [dx, dy] since the previous event of the gesture.
+     *
+     * @return array{float, float}
+     */
+    public function get_deltas(): array
+    {
+        return [];
+    }
+    /** The rotation since the previous pinch event, in radians. */
+    public function get_pinch_angle_delta(): float
+    {
+        return 0.0;
+    }
+    /** The scale of a pinch gesture relative to its start. */
+    public function get_pinch_scale(): float
+    {
+        return 0.0;
+    }
+}
+/**
+ * A drawing-tablet pad event (buttons, rings and strips).
+ *
+ * @link https://docs.gtk.org/gdk4/class.PadEvent.html
+ */
+final class GdkPadEvent extends GdkEvent
+{
+    /**
+     * The [index, value] of the pad axis that moved (ring or strip events).
+     *
+     * @return array{int, float}
+     */
+    public function get_axis_value(): array
+    {
+        return [];
+    }
+    /** The pad button that was pressed or released. */
+    public function get_button(): int
+    {
+        return 0;
+    }
+    /**
+     * The [group, mode] of the pad event.
+     *
+     * @return array{int, int}
+     */
+    public function get_group_mode(): array
+    {
+        return [];
+    }
+}
+/**
+ * A pointer or keyboard grab that was broken by another grab.
+ *
+ * @link https://docs.gtk.org/gdk4/class.GrabBrokenEvent.html
+ */
+final class GdkGrabBrokenEvent extends GdkEvent
+{
+    /** True when the broken grab was implicit (a button press), false for an explicit one. */
+    public function get_implicit(): bool
+    {
+        return false;
+    }
+}
+/**
  * A cairo drawing context, as handed to {@see GtkDrawingArea::set_draw_func()}
  * callbacks. Only valid during the callback. Minimal surface for now; grows
  * with the generator.
@@ -694,6 +988,21 @@ final class GtkCssSection
     }
 }
 /**
+ * Specifies the crossing mode for enter and leave events.
+ */
+enum GdkCrossingMode : int
+{
+    case Normal = 0;
+    case Grab = 1;
+    case Ungrab = 2;
+    case GtkGrab = 3;
+    case GtkUngrab = 4;
+    case StateChanged = 5;
+    case TouchBegin = 6;
+    case TouchEnd = 7;
+    case DeviceSwitch = 8;
+}
+/**
  * `GdkDisplay` objects are the GDK representation of a workstation.
  *
  * @property-read ?bool $composited
@@ -796,6 +1105,51 @@ final class GdkDragAction
     public const int ASK = 8;
 }
 /**
+ * Specifies the type of the event.
+ */
+enum GdkEventType : int
+{
+    case Delete = 0;
+    case MotionNotify = 1;
+    case ButtonPress = 2;
+    case ButtonRelease = 3;
+    case KeyPress = 4;
+    case KeyRelease = 5;
+    case EnterNotify = 6;
+    case LeaveNotify = 7;
+    case FocusChange = 8;
+    case ProximityIn = 9;
+    case ProximityOut = 10;
+    case DragEnter = 11;
+    case DragLeave = 12;
+    case DragMotion = 13;
+    case DropStart = 14;
+    case Scroll = 15;
+    case GrabBroken = 16;
+    case TouchBegin = 17;
+    case TouchUpdate = 18;
+    case TouchEnd = 19;
+    case TouchCancel = 20;
+    case TouchpadSwipe = 21;
+    case TouchpadPinch = 22;
+    case PadButtonPress = 23;
+    case PadButtonRelease = 24;
+    case PadRing = 25;
+    case PadStrip = 26;
+    case PadGroupMode = 27;
+    case TouchpadHold = 28;
+    case EventLast = 29;
+}
+/**
+ * Describes how well an event matches a given keyval and modifiers.
+ */
+enum GdkKeyMatch : int
+{
+    case None = 0;
+    case Partial = 1;
+    case Exact = 2;
+}
+/**
  * `GdkMemoryFormat` describes formats that image data can have in memory.
  */
 enum GdkMemoryFormat : int
@@ -855,6 +1209,18 @@ final class GdkModifierType
     public const int META_MASK = 268435456;
 }
 /**
+ * Specifies the kind of crossing for enter and leave events.
+ */
+enum GdkNotifyType : int
+{
+    case Ancestor = 0;
+    case Virtual = 1;
+    case Inferior = 2;
+    case Nonlinear = 3;
+    case NonlinearVirtual = 4;
+    case Unknown = 5;
+}
+/**
  * `GdkPaintable` is a simple interface used by GTK to represent content that can be painted.
  */
 interface GdkPaintable
@@ -877,6 +1243,25 @@ final class GdkPaintableFlags
 {
     public const int SIZE = 1;
     public const int CONTENTS = 2;
+}
+/**
+ * Specifies the direction for scroll events.
+ */
+enum GdkScrollDirection : int
+{
+    case Up = 0;
+    case Down = 1;
+    case Left = 2;
+    case Right = 3;
+    case Smooth = 4;
+}
+/**
+ * Specifies the unit of scroll deltas.
+ */
+enum GdkScrollUnit : int
+{
+    case Wheel = 0;
+    case Surface = 1;
 }
 /**
  * `GdkTexture` is the basic element used to refer to pixel data.
@@ -973,6 +1358,16 @@ class GdkTexture extends GObject implements GdkPaintable
     public function invalidate_size(): void
     {
     }
+}
+/**
+ * Specifies the current state of a touchpad gesture.
+ */
+enum GdkTouchpadGesturePhase : int
+{
+    case Begin = 0;
+    case Update = 1;
+    case End = 2;
+    case Cancel = 3;
 }
 /**
  * `GAction` represents a single named action.
@@ -3476,6 +3871,208 @@ enum GtkEntryIconPosition : int
     case Secondary = 1;
 }
 /**
+ * `GtkEventController` is the base class for event controllers.
+ *
+ * @property ?string $name
+ * @property ?GtkPropagationLimit $propagation_limit
+ * @property ?GtkPropagationPhase $propagation_phase
+ * @property-read ?GtkWidget $widget
+ */
+class GtkEventController extends GObject
+{
+    /** GtkEventController is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    public function __construct()
+    {
+    }
+    /** Returns the event that is currently being handled by the controller. */
+    public function get_current_event(): ?GdkEvent
+    {
+        return null;
+    }
+    /** Returns the modifier state of the event that is currently being handled by the controller. */
+    public function get_current_event_state(): int
+    {
+        return 0;
+    }
+    /** Returns the timestamp of the event that is currently being handled by the controller. */
+    public function get_current_event_time(): int
+    {
+        return 0;
+    }
+    /** Gets the name of $controller. */
+    public function get_name(): ?string
+    {
+        return null;
+    }
+    /** Gets the propagation limit of the event controller. */
+    public function get_propagation_limit(): GtkPropagationLimit
+    {
+        return null;
+    }
+    /** Gets the propagation phase at which $controller handles events. */
+    public function get_propagation_phase(): GtkPropagationPhase
+    {
+        return null;
+    }
+    /** Returns the `GtkWidget` this controller relates to. */
+    public function get_widget(): GtkWidget
+    {
+        return null;
+    }
+    /** Resets the $controller to a clean state. */
+    public function reset(): void
+    {
+    }
+    /** Sets a name on the controller that can be used for debugging. */
+    public function set_name(?string $name): void
+    {
+        unset($name);
+    }
+    /** Sets the event propagation limit on the event controller. */
+    public function set_propagation_limit(GtkPropagationLimit $limit): void
+    {
+        unset($limit);
+    }
+    /** Sets the propagation phase at which a controller handles events. */
+    public function set_propagation_phase(GtkPropagationPhase $phase): void
+    {
+        unset($phase);
+    }
+    /** Sets a name on the controller that can be used for debugging. */
+    public function set_static_name(?string $name): void
+    {
+        unset($name);
+    }
+}
+/**
+ * `GtkEventControllerFocus` is an event controller to keep track of keyboard focus.
+ *
+ * @property-read ?bool $contains_focus
+ * @property-read ?bool $is_focus
+ */
+class GtkEventControllerFocus extends GtkEventController
+{
+    /** Creates a new event controller that will handle focus events. */
+    public function __construct()
+    {
+    }
+    /** Returns `true` if focus is within $self or one of its children. */
+    public function contains_focus(): bool
+    {
+        return false;
+    }
+    /** Returns `true` if focus is within $self, but not one of its children. */
+    public function is_focus(): bool
+    {
+        return false;
+    }
+}
+/**
+ * `GtkEventControllerKey` is an event controller that provides access to key events.
+ */
+class GtkEventControllerKey extends GtkEventController
+{
+    /** Creates a new event controller that will handle key events. */
+    public function __construct()
+    {
+    }
+    /** Forwards the current event of this $controller to a $widget. */
+    public function forward(GtkWidget $widget): bool
+    {
+        unset($widget);
+        return false;
+    }
+    /** Gets the key group of the current event of this $controller. */
+    public function get_group(): int
+    {
+        return 0;
+    }
+}
+/**
+ * `GtkEventControllerLegacy` is an event controller that provides raw access to the event stream.
+ */
+class GtkEventControllerLegacy extends GtkEventController
+{
+    /** Creates a new legacy event controller. */
+    public function __construct()
+    {
+    }
+}
+/**
+ * `GtkEventControllerMotion` is an event controller tracking the pointer position.
+ *
+ * @property-read ?bool $contains_pointer
+ * @property-read ?bool $is_pointer
+ */
+class GtkEventControllerMotion extends GtkEventController
+{
+    /** Creates a new event controller that will handle motion events. */
+    public function __construct()
+    {
+    }
+    /** Returns if a pointer is within $self or one of its children. */
+    public function contains_pointer(): bool
+    {
+        return false;
+    }
+    /** Returns if a pointer is within $self, but not one of its children. */
+    public function is_pointer(): bool
+    {
+        return false;
+    }
+}
+/**
+ * `GtkEventControllerScroll` is an event controller that handles scroll events.
+ *
+ * @property ?int $flags
+ */
+class GtkEventControllerScroll extends GtkEventController
+{
+    /** Creates a new event controller that will handle scroll events. */
+    public function __construct(int $flags)
+    {
+        unset($flags);
+    }
+    /** Gets the flags conditioning the scroll controller behavior. */
+    public function get_flags(): int
+    {
+        return 0;
+    }
+    /**
+     * Gets the scroll unit of the last [signal@Gtk.EventControllerScroll::scroll] signal received.
+     */
+    public function get_unit(): GdkScrollUnit
+    {
+        return null;
+    }
+    /** Sets the flags conditioning scroll controller behavior. */
+    public function set_flags(int $flags): void
+    {
+        unset($flags);
+    }
+}
+/**
+ * Describes the behavior of a `GtkEventControllerScroll`.
+ */
+final class GtkEventControllerScrollFlags
+{
+    public const int NONE = 0;
+    public const int VERTICAL = 1;
+    public const int HORIZONTAL = 2;
+    public const int DISCRETE = 4;
+    public const int KINETIC = 8;
+    public const int BOTH_AXES = 3;
+}
+/**
+ * Describes the state of a `EventSequence` in a `Gesture`.
+ */
+enum GtkEventSequenceState : int
+{
+    case None = 0;
+    case Claimed = 1;
+    case Denied = 2;
+}
+/**
  * A `GtkFilter` object describes the filtering to be performed by a `FilterListModel`.
  */
 class GtkFilter extends GObject
@@ -3708,6 +4305,257 @@ class GtkFrame extends GtkWidget
     public function set_label_widget(?GtkWidget $label_widget): void
     {
         unset($label_widget);
+    }
+}
+/**
+ * `GtkGesture` is the base class for gesture recognition.
+ *
+ * @property ?int $n_points
+ */
+class GtkGesture extends GtkEventController
+{
+    /** GtkGesture is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    public function __construct()
+    {
+    }
+    /**
+     * If there are touch sequences being currently handled by $gesture, returns `true` and fills
+     * in $rect with the bounding box containing all active touches.
+     */
+    public function get_bounding_box(): ?GdkRectangle
+    {
+        return null;
+    }
+    /**
+     * If there are touch sequences being currently handled by $gesture, returns `true` and fills
+     * in $x and $y with the center of the bounding box containing all active touches.
+     *
+     * @return array{float, float}|null
+     */
+    public function get_bounding_box_center(): ?array
+    {
+        return null;
+    }
+    /**
+     * Returns all gestures in the group of $gesture
+     *
+     * @return list<GtkGesture>
+     */
+    public function get_group(): array
+    {
+        return [];
+    }
+    /** Adds $gesture to the same group than $group_gesture. */
+    public function group(GtkGesture $gesture): void
+    {
+        unset($gesture);
+    }
+    /** Returns `true` if the gesture is currently active. */
+    public function is_active(): bool
+    {
+        return false;
+    }
+    /** Returns `true` if both gestures pertain to the same group. */
+    public function is_grouped_with(GtkGesture $other): bool
+    {
+        unset($other);
+        return false;
+    }
+    /** Returns `true` if the gesture is currently recognized. */
+    public function is_recognized(): bool
+    {
+        return false;
+    }
+    /** Sets the state of all sequences that $gesture is currently interacting with. */
+    public function set_state(GtkEventSequenceState $state): bool
+    {
+        unset($state);
+        return false;
+    }
+    /** Separates $gesture into an isolated group. */
+    public function ungroup(): void
+    {
+    }
+}
+/**
+ * `GtkGestureClick` is a `GtkGesture` implementation for clicks.
+ */
+class GtkGestureClick extends GtkGestureSingle
+{
+    /** Returns a newly created `GtkGesture` that recognizes single and multiple presses. */
+    public function __construct()
+    {
+    }
+}
+/**
+ * `GtkGestureDrag` is a `GtkGesture` implementation for drags.
+ */
+class GtkGestureDrag extends GtkGestureSingle
+{
+    /** Returns a newly created `GtkGesture` that recognizes drags. */
+    public function __construct()
+    {
+    }
+    /**
+     * Gets the offset from the start point.
+     *
+     * @return array{float, float}|null
+     */
+    public function get_offset(): ?array
+    {
+        return null;
+    }
+    /**
+     * Gets the point where the drag started.
+     *
+     * @return array{float, float}|null
+     */
+    public function get_start_point(): ?array
+    {
+        return null;
+    }
+}
+/**
+ * `GtkGestureLongPress` is a `GtkGesture` for long presses.
+ *
+ * @property ?float $delay_factor
+ */
+class GtkGestureLongPress extends GtkGestureSingle
+{
+    /** Returns a newly created `GtkGesture` that recognizes long presses. */
+    public function __construct()
+    {
+    }
+    /** Returns the delay factor. */
+    public function get_delay_factor(): float
+    {
+        return 0.0;
+    }
+    /** Applies the given delay factor. */
+    public function set_delay_factor(float $delay_factor): void
+    {
+        unset($delay_factor);
+    }
+}
+/**
+ * `GtkGesturePan` is a `GtkGesture` for pan gestures.
+ *
+ * @property ?GtkOrientation $orientation
+ */
+class GtkGesturePan extends GtkGestureDrag
+{
+    /** Returns a newly created `GtkGesture` that recognizes pan gestures. */
+    public function __construct(GtkOrientation $orientation)
+    {
+        unset($orientation);
+    }
+    /** Returns the orientation of the pan gestures that this $gesture expects. */
+    public function get_orientation(): GtkOrientation
+    {
+        return null;
+    }
+    /** Sets the orientation to be expected on pan gestures. */
+    public function set_orientation(GtkOrientation $orientation): void
+    {
+        unset($orientation);
+    }
+}
+/**
+ * `GtkGestureRotate` is a `GtkGesture` for 2-finger rotations.
+ */
+class GtkGestureRotate extends GtkGesture
+{
+    /** Returns a newly created `GtkGesture` that recognizes 2-touch rotation gestures. */
+    public function __construct()
+    {
+    }
+    /** Gets the angle delta in radians. */
+    public function get_angle_delta(): float
+    {
+        return 0.0;
+    }
+}
+/**
+ * `GtkGestureSingle` is a `GtkGestures` subclass optimized for singe-touch and mouse gestures.
+ *
+ * @property ?int $button
+ * @property ?bool $exclusive
+ * @property ?bool $touch_only
+ */
+class GtkGestureSingle extends GtkGesture
+{
+    /** A GtkGestureSingle with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct()
+    {
+    }
+    /** Returns the button number $gesture listens for. */
+    public function get_button(): int
+    {
+        return 0;
+    }
+    /** Returns the button number currently interacting with $gesture, or 0 if there is none. */
+    public function get_current_button(): int
+    {
+        return 0;
+    }
+    /** Gets whether a gesture is exclusive. */
+    public function get_exclusive(): bool
+    {
+        return false;
+    }
+    /** Returns `true` if the gesture is only triggered by touch events. */
+    public function get_touch_only(): bool
+    {
+        return false;
+    }
+    /** Sets the button number $gesture listens to. */
+    public function set_button(int $button): void
+    {
+        unset($button);
+    }
+    /** Sets whether $gesture is exclusive. */
+    public function set_exclusive(bool $exclusive): void
+    {
+        unset($exclusive);
+    }
+    /** Sets whether to handle only touch events. */
+    public function set_touch_only(bool $touch_only): void
+    {
+        unset($touch_only);
+    }
+}
+/**
+ * `GtkGestureSwipe` is a `GtkGesture` for swipe gestures.
+ */
+class GtkGestureSwipe extends GtkGestureSingle
+{
+    /** Returns a newly created `GtkGesture` that recognizes swipes. */
+    public function __construct()
+    {
+    }
+    /**
+     * Gets the current velocity.
+     *
+     * @return array{float, float}|null
+     */
+    public function get_velocity(): ?array
+    {
+        return null;
+    }
+}
+/**
+ * `GtkGestureZoom` is a `GtkGesture` for 2-finger pinch/zoom gestures.
+ */
+class GtkGestureZoom extends GtkGesture
+{
+    /** Returns a newly created `GtkGesture` that recognizes pinch/zoom gestures. */
+    public function __construct()
+    {
+    }
+    /** Gets the scale delta. */
+    public function get_scale_delta(): float
+    {
+        return 0.0;
     }
 }
 /**
@@ -4701,6 +5549,16 @@ enum GtkPackType : int
     case End = 1;
 }
 /**
+ * Describes the panning direction of a `GesturePan`.
+ */
+enum GtkPanDirection : int
+{
+    case Left = 0;
+    case Right = 1;
+    case Up = 2;
+    case Down = 3;
+}
+/**
  * A widget with two panes, arranged either horizontally or vertically.
  *
  * @property ?GtkWidget $end_child
@@ -5131,6 +5989,24 @@ class GtkProgressBar extends GtkWidget implements GtkOrientable
     {
         unset($orientation);
     }
+}
+/**
+ * Describes limits of a `EventController` for handling events targeting other widgets.
+ */
+enum GtkPropagationLimit : int
+{
+    case None = 0;
+    case SameNative = 1;
+}
+/**
+ * Describes the stage at which events are fed into a `EventController`.
+ */
+enum GtkPropagationPhase : int
+{
+    case None = 0;
+    case Capture = 1;
+    case Bubble = 2;
+    case Target = 3;
 }
 /**
  * `GtkRange` is the common base class for widgets which visualize an adjustment.
@@ -6960,6 +7836,11 @@ class GtkWidget extends GObject
     public function activate_default(): void
     {
     }
+    /** Adds $controller to $widget so that it will receive events. */
+    public function add_controller(GtkEventController $controller): void
+    {
+        unset($controller);
+    }
     /** Adds a style class to $widget. */
     public function add_css_class(string $css_class): void
     {
@@ -7418,6 +8299,11 @@ class GtkWidget extends GObject
     /** Creates the GDK resources associated with a widget. */
     public function realize(): void
     {
+    }
+    /** Removes $controller from $widget, so that it doesn't process events anymore. */
+    public function remove_controller(GtkEventController $controller): void
+    {
+        unset($controller);
     }
     /** Removes a style from $widget. */
     public function remove_css_class(string $css_class): void

@@ -120,6 +120,23 @@ ZEND_METHOD(Gtk4_GtkWidget, activate_default) {
 }
 
 /**
+ * Gtk4\GtkWidget::add_controller(GtkEventController $controller): void
+ *
+ * Adds $controller to $widget so that it will receive events.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, add_controller) {
+  zval *controller;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(controller, class_for_gtype(GTK_TYPE_EVENT_CONTROLLER))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GObject *controller_o = unwrap(controller, GTK_TYPE_EVENT_CONTROLLER);
+  if (controller_o == nullptr) RETURN_THROWS();
+  if (controller_o != nullptr) g_object_ref(controller_o);  // transfer full
+  gtk_widget_add_controller(self, GTK_EVENT_CONTROLLER(controller_o));
+}
+
+/**
  * Gtk4\GtkWidget::add_css_class(string $css_class): void
  *
  * Adds a style class to $widget.
@@ -1193,6 +1210,22 @@ ZEND_METHOD(Gtk4_GtkWidget, realize) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
   gtk_widget_realize(self);
+}
+
+/**
+ * Gtk4\GtkWidget::remove_controller(GtkEventController $controller): void
+ *
+ * Removes $controller from $widget, so that it doesn't process events anymore.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, remove_controller) {
+  zval *controller;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(controller, class_for_gtype(GTK_TYPE_EVENT_CONTROLLER))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GObject *controller_o = unwrap(controller, GTK_TYPE_EVENT_CONTROLLER);
+  if (controller_o == nullptr) RETURN_THROWS();
+  gtk_widget_remove_controller(self, GTK_EVENT_CONTROLLER(controller_o));
 }
 
 /**

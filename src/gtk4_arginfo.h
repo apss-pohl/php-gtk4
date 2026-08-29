@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: b4b59d03934c5ea0b8d3e1bc5bfbf90c1e2c4985 */
+ * Stub hash: 034b38c1b5ec2fbe443c3c2ab37e6cc127ec1139 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GObject___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -162,6 +162,87 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkRectangle_equal, 0
 	ZEND_ARG_OBJ_INFO(0, other, Gtk4\\GdkRectangle, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkEvent_get_event_type, 0, 0, Gtk4\\GdkEventType, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkEvent_get_time arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_GdkEvent_get_modifier_state arginfo_class_Gtk4_GParamSpec_get_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkEvent_get_position, 0, 0, IS_ARRAY, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkEvent_get_pointer_emulated arginfo_class_Gtk4_GParamSpec_is_readable
+
+#define arginfo_class_Gtk4_GdkEvent_triggers_context_menu arginfo_class_Gtk4_GParamSpec_is_readable
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkEvent_get_display, 0, 0, Gtk4\\GdkDisplay, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkKeyEvent_get_keyval arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_GdkKeyEvent_get_keycode arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_GdkKeyEvent_get_consumed_modifiers arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_GdkKeyEvent_get_layout arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_GdkKeyEvent_get_level arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_GdkKeyEvent_is_modifier arginfo_class_Gtk4_GParamSpec_is_readable
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkKeyEvent_matches, 0, 2, Gtk4\\GdkKeyMatch, 0)
+	ZEND_ARG_TYPE_INFO(0, keyval, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, modifiers, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkKeyEvent_get_match arginfo_class_Gtk4_GdkEvent_get_position
+
+#define arginfo_class_Gtk4_GdkButtonEvent_get_button arginfo_class_Gtk4_GParamSpec_get_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkScrollEvent_get_direction, 0, 0, Gtk4\\GdkScrollDirection, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkScrollEvent_get_deltas, 0, 0, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkScrollEvent_get_unit, 0, 0, Gtk4\\GdkScrollUnit, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkScrollEvent_is_stop arginfo_class_Gtk4_GParamSpec_is_readable
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkCrossingEvent_get_mode, 0, 0, Gtk4\\GdkCrossingMode, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkCrossingEvent_get_detail, 0, 0, Gtk4\\GdkNotifyType, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkCrossingEvent_get_focus arginfo_class_Gtk4_GParamSpec_is_readable
+
+#define arginfo_class_Gtk4_GdkFocusEvent_get_in arginfo_class_Gtk4_GParamSpec_is_readable
+
+#define arginfo_class_Gtk4_GdkTouchEvent_get_emulating_pointer arginfo_class_Gtk4_GParamSpec_is_readable
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkTouchpadEvent_get_gesture_phase, 0, 0, Gtk4\\GdkTouchpadGesturePhase, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkTouchpadEvent_get_n_fingers arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_GdkTouchpadEvent_get_deltas arginfo_class_Gtk4_GdkScrollEvent_get_deltas
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkTouchpadEvent_get_pinch_angle_delta, 0, 0, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkTouchpadEvent_get_pinch_scale arginfo_class_Gtk4_GdkTouchpadEvent_get_pinch_angle_delta
+
+#define arginfo_class_Gtk4_GdkPadEvent_get_axis_value arginfo_class_Gtk4_GdkScrollEvent_get_deltas
+
+#define arginfo_class_Gtk4_GdkPadEvent_get_button arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_GdkPadEvent_get_group_mode arginfo_class_Gtk4_GdkScrollEvent_get_deltas
+
+#define arginfo_class_Gtk4_GdkGrabBrokenEvent_get_implicit arginfo_class_Gtk4_GParamSpec_is_readable
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoContext_set_source_rgb, 0, 3, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, red, IS_DOUBLE, 0)
 	ZEND_ARG_TYPE_INFO(0, green, IS_DOUBLE, 0)
@@ -248,10 +329,9 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkCssSection_get_parent, 0, 0, Gtk4\\GtkCssSection, 1)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkCssSection_get_start_location, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_GtkCssSection_get_start_location arginfo_class_Gtk4_GdkScrollEvent_get_deltas
 
-#define arginfo_class_Gtk4_GtkCssSection_get_end_location arginfo_class_Gtk4_GtkCssSection_get_start_location
+#define arginfo_class_Gtk4_GtkCssSection_get_end_location arginfo_class_Gtk4_GdkScrollEvent_get_deltas
 
 ZEND_METHOD(Gtk4_GObject, __construct);
 ZEND_METHOD(Gtk4_GObject, connect);
@@ -300,6 +380,40 @@ ZEND_METHOD(Gtk4_GdkRectangle, intersect);
 ZEND_METHOD(Gtk4_GdkRectangle, union);
 ZEND_METHOD(Gtk4_GdkRectangle, contains_point);
 ZEND_METHOD(Gtk4_GdkRectangle, equal);
+ZEND_METHOD(Gtk4_GdkEvent, get_event_type);
+ZEND_METHOD(Gtk4_GdkEvent, get_time);
+ZEND_METHOD(Gtk4_GdkEvent, get_modifier_state);
+ZEND_METHOD(Gtk4_GdkEvent, get_position);
+ZEND_METHOD(Gtk4_GdkEvent, get_pointer_emulated);
+ZEND_METHOD(Gtk4_GdkEvent, triggers_context_menu);
+ZEND_METHOD(Gtk4_GdkEvent, get_display);
+ZEND_METHOD(Gtk4_GdkKeyEvent, get_keyval);
+ZEND_METHOD(Gtk4_GdkKeyEvent, get_keycode);
+ZEND_METHOD(Gtk4_GdkKeyEvent, get_consumed_modifiers);
+ZEND_METHOD(Gtk4_GdkKeyEvent, get_layout);
+ZEND_METHOD(Gtk4_GdkKeyEvent, get_level);
+ZEND_METHOD(Gtk4_GdkKeyEvent, is_modifier);
+ZEND_METHOD(Gtk4_GdkKeyEvent, matches);
+ZEND_METHOD(Gtk4_GdkKeyEvent, get_match);
+ZEND_METHOD(Gtk4_GdkButtonEvent, get_button);
+ZEND_METHOD(Gtk4_GdkScrollEvent, get_direction);
+ZEND_METHOD(Gtk4_GdkScrollEvent, get_deltas);
+ZEND_METHOD(Gtk4_GdkScrollEvent, get_unit);
+ZEND_METHOD(Gtk4_GdkScrollEvent, is_stop);
+ZEND_METHOD(Gtk4_GdkCrossingEvent, get_mode);
+ZEND_METHOD(Gtk4_GdkCrossingEvent, get_detail);
+ZEND_METHOD(Gtk4_GdkCrossingEvent, get_focus);
+ZEND_METHOD(Gtk4_GdkFocusEvent, get_in);
+ZEND_METHOD(Gtk4_GdkTouchEvent, get_emulating_pointer);
+ZEND_METHOD(Gtk4_GdkTouchpadEvent, get_gesture_phase);
+ZEND_METHOD(Gtk4_GdkTouchpadEvent, get_n_fingers);
+ZEND_METHOD(Gtk4_GdkTouchpadEvent, get_deltas);
+ZEND_METHOD(Gtk4_GdkTouchpadEvent, get_pinch_angle_delta);
+ZEND_METHOD(Gtk4_GdkTouchpadEvent, get_pinch_scale);
+ZEND_METHOD(Gtk4_GdkPadEvent, get_axis_value);
+ZEND_METHOD(Gtk4_GdkPadEvent, get_button);
+ZEND_METHOD(Gtk4_GdkPadEvent, get_group_mode);
+ZEND_METHOD(Gtk4_GdkGrabBrokenEvent, get_implicit);
 ZEND_METHOD(Gtk4_CairoContext, set_source_rgb);
 ZEND_METHOD(Gtk4_CairoContext, set_source_rgba);
 ZEND_METHOD(Gtk4_CairoContext, set_source_color);
@@ -406,6 +520,80 @@ static const zend_function_entry class_Gtk4_GdkRectangle_methods[] = {
 	ZEND_ME(Gtk4_GdkRectangle, union, arginfo_class_Gtk4_GdkRectangle_union, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkRectangle, contains_point, arginfo_class_Gtk4_GdkRectangle_contains_point, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkRectangle, equal, arginfo_class_Gtk4_GdkRectangle_equal, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkEvent_methods[] = {
+	ZEND_ME(Gtk4_GdkEvent, get_event_type, arginfo_class_Gtk4_GdkEvent_get_event_type, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkEvent, get_time, arginfo_class_Gtk4_GdkEvent_get_time, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkEvent, get_modifier_state, arginfo_class_Gtk4_GdkEvent_get_modifier_state, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkEvent, get_position, arginfo_class_Gtk4_GdkEvent_get_position, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkEvent, get_pointer_emulated, arginfo_class_Gtk4_GdkEvent_get_pointer_emulated, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkEvent, triggers_context_menu, arginfo_class_Gtk4_GdkEvent_triggers_context_menu, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkEvent, get_display, arginfo_class_Gtk4_GdkEvent_get_display, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkKeyEvent_methods[] = {
+	ZEND_ME(Gtk4_GdkKeyEvent, get_keyval, arginfo_class_Gtk4_GdkKeyEvent_get_keyval, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkKeyEvent, get_keycode, arginfo_class_Gtk4_GdkKeyEvent_get_keycode, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkKeyEvent, get_consumed_modifiers, arginfo_class_Gtk4_GdkKeyEvent_get_consumed_modifiers, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkKeyEvent, get_layout, arginfo_class_Gtk4_GdkKeyEvent_get_layout, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkKeyEvent, get_level, arginfo_class_Gtk4_GdkKeyEvent_get_level, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkKeyEvent, is_modifier, arginfo_class_Gtk4_GdkKeyEvent_is_modifier, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkKeyEvent, matches, arginfo_class_Gtk4_GdkKeyEvent_matches, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkKeyEvent, get_match, arginfo_class_Gtk4_GdkKeyEvent_get_match, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkButtonEvent_methods[] = {
+	ZEND_ME(Gtk4_GdkButtonEvent, get_button, arginfo_class_Gtk4_GdkButtonEvent_get_button, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkScrollEvent_methods[] = {
+	ZEND_ME(Gtk4_GdkScrollEvent, get_direction, arginfo_class_Gtk4_GdkScrollEvent_get_direction, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkScrollEvent, get_deltas, arginfo_class_Gtk4_GdkScrollEvent_get_deltas, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkScrollEvent, get_unit, arginfo_class_Gtk4_GdkScrollEvent_get_unit, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkScrollEvent, is_stop, arginfo_class_Gtk4_GdkScrollEvent_is_stop, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkCrossingEvent_methods[] = {
+	ZEND_ME(Gtk4_GdkCrossingEvent, get_mode, arginfo_class_Gtk4_GdkCrossingEvent_get_mode, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkCrossingEvent, get_detail, arginfo_class_Gtk4_GdkCrossingEvent_get_detail, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkCrossingEvent, get_focus, arginfo_class_Gtk4_GdkCrossingEvent_get_focus, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkFocusEvent_methods[] = {
+	ZEND_ME(Gtk4_GdkFocusEvent, get_in, arginfo_class_Gtk4_GdkFocusEvent_get_in, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkTouchEvent_methods[] = {
+	ZEND_ME(Gtk4_GdkTouchEvent, get_emulating_pointer, arginfo_class_Gtk4_GdkTouchEvent_get_emulating_pointer, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkTouchpadEvent_methods[] = {
+	ZEND_ME(Gtk4_GdkTouchpadEvent, get_gesture_phase, arginfo_class_Gtk4_GdkTouchpadEvent_get_gesture_phase, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkTouchpadEvent, get_n_fingers, arginfo_class_Gtk4_GdkTouchpadEvent_get_n_fingers, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkTouchpadEvent, get_deltas, arginfo_class_Gtk4_GdkTouchpadEvent_get_deltas, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkTouchpadEvent, get_pinch_angle_delta, arginfo_class_Gtk4_GdkTouchpadEvent_get_pinch_angle_delta, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkTouchpadEvent, get_pinch_scale, arginfo_class_Gtk4_GdkTouchpadEvent_get_pinch_scale, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkPadEvent_methods[] = {
+	ZEND_ME(Gtk4_GdkPadEvent, get_axis_value, arginfo_class_Gtk4_GdkPadEvent_get_axis_value, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkPadEvent, get_button, arginfo_class_Gtk4_GdkPadEvent_get_button, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkPadEvent, get_group_mode, arginfo_class_Gtk4_GdkPadEvent_get_group_mode, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkGrabBrokenEvent_methods[] = {
+	ZEND_ME(Gtk4_GdkGrabBrokenEvent, get_implicit, arginfo_class_Gtk4_GdkGrabBrokenEvent_get_implicit, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -556,6 +744,106 @@ static zend_class_entry *register_class_Gtk4_GdkRectangle(void)
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkRectangle", class_Gtk4_GdkRectangle_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkEvent(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkEvent", class_Gtk4_GdkEvent_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkKeyEvent(zend_class_entry *class_entry_Gtk4_GdkEvent)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkKeyEvent", class_Gtk4_GdkKeyEvent_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GdkEvent, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkButtonEvent(zend_class_entry *class_entry_Gtk4_GdkEvent)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkButtonEvent", class_Gtk4_GdkButtonEvent_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GdkEvent, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkScrollEvent(zend_class_entry *class_entry_Gtk4_GdkEvent)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkScrollEvent", class_Gtk4_GdkScrollEvent_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GdkEvent, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkCrossingEvent(zend_class_entry *class_entry_Gtk4_GdkEvent)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkCrossingEvent", class_Gtk4_GdkCrossingEvent_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GdkEvent, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkFocusEvent(zend_class_entry *class_entry_Gtk4_GdkEvent)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkFocusEvent", class_Gtk4_GdkFocusEvent_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GdkEvent, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkTouchEvent(zend_class_entry *class_entry_Gtk4_GdkEvent)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkTouchEvent", class_Gtk4_GdkTouchEvent_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GdkEvent, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkTouchpadEvent(zend_class_entry *class_entry_Gtk4_GdkEvent)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkTouchpadEvent", class_Gtk4_GdkTouchpadEvent_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GdkEvent, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkPadEvent(zend_class_entry *class_entry_Gtk4_GdkEvent)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkPadEvent", class_Gtk4_GdkPadEvent_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GdkEvent, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkGrabBrokenEvent(zend_class_entry *class_entry_Gtk4_GdkEvent)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkGrabBrokenEvent", class_Gtk4_GdkGrabBrokenEvent_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GdkEvent, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
 
 	return class_entry;
 }

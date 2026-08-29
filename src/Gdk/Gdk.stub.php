@@ -11,6 +11,22 @@
 namespace Gtk4;
 
 /**
+ * Specifies the crossing mode for enter and leave events.
+ */
+enum GdkCrossingMode: int
+{
+    case Normal = 0;
+    case Grab = 1;
+    case Ungrab = 2;
+    case GtkGrab = 3;
+    case GtkUngrab = 4;
+    case StateChanged = 5;
+    case TouchBegin = 6;
+    case TouchEnd = 7;
+    case DeviceSwitch = 8;
+}
+
+/**
  * `GdkDisplay` objects are the GDK representation of a workstation.
  *
  * @property-read ?bool $composited
@@ -88,6 +104,53 @@ final class GdkDragAction
 }
 
 /**
+ * Specifies the type of the event.
+ */
+enum GdkEventType: int
+{
+    case Delete = 0;
+    case MotionNotify = 1;
+    case ButtonPress = 2;
+    case ButtonRelease = 3;
+    case KeyPress = 4;
+    case KeyRelease = 5;
+    case EnterNotify = 6;
+    case LeaveNotify = 7;
+    case FocusChange = 8;
+    case ProximityIn = 9;
+    case ProximityOut = 10;
+    case DragEnter = 11;
+    case DragLeave = 12;
+    case DragMotion = 13;
+    case DropStart = 14;
+    case Scroll = 15;
+    case GrabBroken = 16;
+    case TouchBegin = 17;
+    case TouchUpdate = 18;
+    case TouchEnd = 19;
+    case TouchCancel = 20;
+    case TouchpadSwipe = 21;
+    case TouchpadPinch = 22;
+    case PadButtonPress = 23;
+    case PadButtonRelease = 24;
+    case PadRing = 25;
+    case PadStrip = 26;
+    case PadGroupMode = 27;
+    case TouchpadHold = 28;
+    case EventLast = 29;
+}
+
+/**
+ * Describes how well an event matches a given keyval and modifiers.
+ */
+enum GdkKeyMatch: int
+{
+    case None = 0;
+    case Partial = 1;
+    case Exact = 2;
+}
+
+/**
  * `GdkMemoryFormat` describes formats that image data can have in memory.
  */
 enum GdkMemoryFormat: int
@@ -149,6 +212,19 @@ final class GdkModifierType
 }
 
 /**
+ * Specifies the kind of crossing for enter and leave events.
+ */
+enum GdkNotifyType: int
+{
+    case Ancestor = 0;
+    case Virtual = 1;
+    case Inferior = 2;
+    case Nonlinear = 3;
+    case NonlinearVirtual = 4;
+    case Unknown = 5;
+}
+
+/**
  * `GdkPaintable` is a simple interface used by GTK to represent content that can be painted.
  */
 interface GdkPaintable
@@ -176,6 +252,27 @@ final class GdkPaintableFlags
 {
     public const int SIZE = 1;
     public const int CONTENTS = 2;
+}
+
+/**
+ * Specifies the direction for scroll events.
+ */
+enum GdkScrollDirection: int
+{
+    case Up = 0;
+    case Down = 1;
+    case Left = 2;
+    case Right = 3;
+    case Smooth = 4;
+}
+
+/**
+ * Specifies the unit of scroll deltas.
+ */
+enum GdkScrollUnit: int
+{
+    case Wheel = 0;
+    case Surface = 1;
 }
 
 /**
@@ -239,4 +336,15 @@ class GdkTexture extends GObject implements GdkPaintable
 
     /** @implementation-alias Gtk4\GdkPaintable::invalidate_size */
     public function invalidate_size(): void {}
+}
+
+/**
+ * Specifies the current state of a touchpad gesture.
+ */
+enum GdkTouchpadGesturePhase: int
+{
+    case Begin = 0;
+    case Update = 1;
+    case End = 2;
+    case Cancel = 3;
 }

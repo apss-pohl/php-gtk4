@@ -38,7 +38,9 @@ bool to_php_supported(GType t) {
     case G_TYPE_VARIANT:
       return true;
     default:
-      return false;
+      // A fundamental of its own (GdkEvent: neither boxed nor a GObject) is supported once a
+      // handle class is registered for it (src/core/fundamental).
+      return G_TYPE_IS_INSTANTIATABLE(t) && fundamental_class_for_type(t) != nullptr;
   }
 }
 
@@ -141,6 +143,10 @@ void to_php(const GValue *v, zval *rv) {
       return;
     // G_TYPE_POINTER stays unsupported on purpose (no meaningful PHP value).
     default:
+      if (G_TYPE_IS_INSTANTIATABLE(t) && fundamental_class_for_type(t) != nullptr) {
+        wrap_fundamental(t, g_value_peek_pointer(v), rv);  // GdkEvent and friends
+        return;
+      }
       ZVAL_NULL(rv);
       zend_type_error("to_php: unsupported GType %s", g_type_name(t));
   }
@@ -286,6 +292,19 @@ bool to_gvalue(zval *pv, GType t, GValue *out) {
       return true;
     }
     default:
+      if (G_TYPE_IS_INSTANTIATABLE(t) && fundamental_class_for_type(t) != nullptr) {
+        if (Z_TYPE_P(pv) == IS_NULL) {
+          g_value_set_instance(out, nullptr);
+          return true;
+        }
+        gpointer instance = unwrap_fundamental(pv, t);
+        if (instance == nullptr) {
+          g_value_unset(out);
+          return false;
+        }
+        g_value_set_instance(out, instance);  // the value takes its own reference
+        return true;
+      }
       g_value_unset(out);
       zend_type_error("to_gvalue: unsupported GType %s", g_type_name(t));
       return false;

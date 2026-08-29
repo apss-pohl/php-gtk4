@@ -111,6 +111,22 @@ static PHP_MINIT_FUNCTION(gtk4) {
   phpgtk::register_class("PhpValue", register_class_Gtk4_PhpValue(ce_GObject), PHP_TYPE_VALUE);
   phpgtk::register_CairoContext(register_class_Gtk4_CairoContext());
   phpgtk::register_GtkCssSection(register_class_Gtk4_GtkCssSection());
+  // GdkEvent and the subtypes with getters of their own; the rest (motion, delete, ...) resolve
+  // to GdkEvent through the registry's parent walk.
+  zend_class_entry *ce_GdkEvent = register_class_Gtk4_GdkEvent();
+  phpgtk::register_GdkEvent(GDK_TYPE_EVENT, ce_GdkEvent);
+  phpgtk::register_GdkEvent(GDK_TYPE_KEY_EVENT, register_class_Gtk4_GdkKeyEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_BUTTON_EVENT, register_class_Gtk4_GdkButtonEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_SCROLL_EVENT, register_class_Gtk4_GdkScrollEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_CROSSING_EVENT,
+                            register_class_Gtk4_GdkCrossingEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_FOCUS_EVENT, register_class_Gtk4_GdkFocusEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_TOUCH_EVENT, register_class_Gtk4_GdkTouchEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_TOUCHPAD_EVENT,
+                            register_class_Gtk4_GdkTouchpadEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_PAD_EVENT, register_class_Gtk4_GdkPadEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_GRAB_BROKEN_EVENT,
+                            register_class_Gtk4_GdkGrabBrokenEvent(ce_GdkEvent));
   register_class_Gtk4_GtkStyleProviderPriority();
   // Generated classes (gen/gir.php): enums first, then interfaces and classes parents first.
 #include "gen_minit.inc"

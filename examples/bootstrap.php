@@ -118,6 +118,21 @@ final class Demo
             'GtkCalendar', 'GdkDragAction',
         ],
         'Choices' => ['GtkDropDown', 'GtkStringList', 'GtkStringObject', 'GtkStringFilterMatchMode'],
+        'Input controllers' => [
+            'GtkEventController', 'GtkEventControllerKey', 'GtkEventControllerMotion',
+            'GtkEventControllerScroll', 'GtkEventControllerFocus', 'GtkEventControllerLegacy',
+            'GtkPropagationPhase', 'GtkPropagationLimit', 'GtkEventControllerScrollFlags', 'GdkScrollUnit',
+        ],
+        'Gestures' => [
+            'GtkGesture', 'GtkGestureSingle', 'GtkGestureClick', 'GtkGestureDrag', 'GtkGestureLongPress',
+            'GtkGestureSwipe', 'GtkGesturePan', 'GtkGestureZoom', 'GtkGestureRotate', 'GtkPanDirection',
+            'GtkEventSequenceState',
+        ],
+        'Events' => [
+            'GdkEvent', 'GdkKeyEvent', 'GdkButtonEvent', 'GdkScrollEvent', 'GdkCrossingEvent', 'GdkFocusEvent',
+            'GdkTouchEvent', 'GdkTouchpadEvent', 'GdkPadEvent', 'GdkGrabBrokenEvent', 'GdkEventType',
+            'GdkScrollDirection', 'GdkCrossingMode', 'GdkNotifyType', 'GdkTouchpadGesturePhase', 'GdkKeyMatch',
+        ],
         'Loop' => ['GLib', 'GMainLoop'],
         'Geometry' => ['GtkRequisition'],
         'Dialogs & async' => ['GtkAlertDialog', 'GCancellable', 'GAsyncResult', 'GTask'],

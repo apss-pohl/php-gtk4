@@ -127,9 +127,19 @@ draft, hand-write via overrides / promotion where the project needs more.
       (`GtkCalendar::get_date`), `Gio.File` (`GtkPicture::set_file`), `Gio.Icon`, `Gio.MenuModel`
       (extra menus), `Gtk.Expression`/`Gtk.ListItemFactory` (`GtkDropDown` factories, wave 7),
       `Pango.AttrList`/`TabArray`, the 4.10-deprecated `GtkEntryCompletion`.
-- [ ] **Waves 3–8** as listed in PLAN.md §3 (the feature items in §7 below point at their wave);
+- [x] **Wave 3** (2026-08-29) — event controllers: `GtkEventController` + `Key`/`Motion`/`Scroll`/
+      `Focus`/`Legacy`, `GtkGesture`/`GtkGestureSingle` + `Click`/`Drag`/`LongPress`/`Swipe`/`Pan`/
+      `Zoom`/`Rotate`, their enums, and the hand-written `GdkEvent` family on the fundamental
+      registry (`src/Gdk/GdkEvent.cpp`: `GdkEvent` + 9 typed subclasses; the generator emits
+      `get_current_event()` etc. through a `FUNDAMENTALS` arm; marshal handles GdkEvent GValues).
+      Tests fake real X input through ext-ffi + libXtst (`tests/XInput.php`). Skipped for later
+      closures (gen/report.md): `Gdk.EventSequence` (every `GtkGesture` per-sequence method -
+      needs an opaque handle that keeps pointer identity, not a boxed copy), `Gdk.Device`,
+      `Gtk.IMContext`, `Gtk.ShortcutController` (accels already go through
+      `GtkApplication::set_accels_for_action()`).
+- [ ] **Waves 3b–8** as listed in PLAN.md §3 (the feature items in §7 below point at their wave);
       each merged only with the full pipeline green and the map's status column regenerated.
-      Next: wave 3 (event controllers).
+      Next: wave 4 (menus/actions) - what the fastlane port needs before 3b (drag and drop).
 
 ## 7. GTK4 feature surface (what the binding still has to expose to deliver GTK4's benefits)
 
@@ -141,7 +151,7 @@ GTK4 GIR only). Every open item here is generator output and is ticked when its 
 - [x] **Concrete layouts** → wave 1 (2026-08-29): `GtkGrid`, `GtkStack`, `GtkPaned`,
       `GtkScrolledWindow`, … (`GtkBox` and `GtkOrientable` done 2026-08-26/27). `GtkCenterBox`
       is not in the map's wave; add it to the allow-list when a port needs it.
-- [ ] **Event controllers** → wave 3: `GtkGestureClick`, `GtkEventControllerKey/Motion/Scroll/Focus`,
+- [x] **Event controllers** → wave 3 (2026-08-29): `GtkGestureClick`, `GtkEventControllerKey/Motion/Scroll/Focus`,
       `GtkWidget::add_controller()/remove_controller()`; signals already marshal (ints/doubles/flags);
       `GdkEvent` goes on the fundamental registry, `GdkModifierType` is a flags class.
 - [ ] **Drag and drop** → wave 3b (added to the PLAN table 2026-08-28): `GtkDragSource`,

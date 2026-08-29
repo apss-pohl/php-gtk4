@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 23d005a7fb0d8401482b03b1520b15c6c4799e23 */
+ * Stub hash: 34a131a9910059dfdb783d849bd90aa13934f4bb */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkDisplay___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -179,6 +179,49 @@ static const zend_function_entry class_Gtk4_GdkTexture_methods[] = {
 	ZEND_FE_END
 };
 
+static zend_class_entry *register_class_Gtk4_GdkCrossingMode(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GdkCrossingMode", IS_LONG, NULL);
+
+	zval enum_case_Normal_value;
+	ZVAL_LONG(&enum_case_Normal_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Normal", &enum_case_Normal_value);
+
+	zval enum_case_Grab_value;
+	ZVAL_LONG(&enum_case_Grab_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Grab", &enum_case_Grab_value);
+
+	zval enum_case_Ungrab_value;
+	ZVAL_LONG(&enum_case_Ungrab_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Ungrab", &enum_case_Ungrab_value);
+
+	zval enum_case_GtkGrab_value;
+	ZVAL_LONG(&enum_case_GtkGrab_value, 3);
+	zend_enum_add_case_cstr(class_entry, "GtkGrab", &enum_case_GtkGrab_value);
+
+	zval enum_case_GtkUngrab_value;
+	ZVAL_LONG(&enum_case_GtkUngrab_value, 4);
+	zend_enum_add_case_cstr(class_entry, "GtkUngrab", &enum_case_GtkUngrab_value);
+
+	zval enum_case_StateChanged_value;
+	ZVAL_LONG(&enum_case_StateChanged_value, 5);
+	zend_enum_add_case_cstr(class_entry, "StateChanged", &enum_case_StateChanged_value);
+
+	zval enum_case_TouchBegin_value;
+	ZVAL_LONG(&enum_case_TouchBegin_value, 6);
+	zend_enum_add_case_cstr(class_entry, "TouchBegin", &enum_case_TouchBegin_value);
+
+	zval enum_case_TouchEnd_value;
+	ZVAL_LONG(&enum_case_TouchEnd_value, 7);
+	zend_enum_add_case_cstr(class_entry, "TouchEnd", &enum_case_TouchEnd_value);
+
+	zval enum_case_DeviceSwitch_value;
+	ZVAL_LONG(&enum_case_DeviceSwitch_value, 8);
+	zend_enum_add_case_cstr(class_entry, "DeviceSwitch", &enum_case_DeviceSwitch_value);
+
+	return class_entry;
+}
+
 static zend_class_entry *register_class_Gtk4_GdkDisplay(zend_class_entry *class_entry_Gtk4_GObject)
 {
 	zend_class_entry ce, *class_entry;
@@ -219,6 +262,152 @@ static zend_class_entry *register_class_Gtk4_GdkDragAction(void)
 	zend_string *const_ASK_name = zend_string_init_interned("ASK", sizeof("ASK") - 1, 1);
 	zend_declare_typed_class_constant(class_entry, const_ASK_name, &const_ASK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
 	zend_string_release(const_ASK_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkEventType(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GdkEventType", IS_LONG, NULL);
+
+	zval enum_case_Delete_value;
+	ZVAL_LONG(&enum_case_Delete_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Delete", &enum_case_Delete_value);
+
+	zval enum_case_MotionNotify_value;
+	ZVAL_LONG(&enum_case_MotionNotify_value, 1);
+	zend_enum_add_case_cstr(class_entry, "MotionNotify", &enum_case_MotionNotify_value);
+
+	zval enum_case_ButtonPress_value;
+	ZVAL_LONG(&enum_case_ButtonPress_value, 2);
+	zend_enum_add_case_cstr(class_entry, "ButtonPress", &enum_case_ButtonPress_value);
+
+	zval enum_case_ButtonRelease_value;
+	ZVAL_LONG(&enum_case_ButtonRelease_value, 3);
+	zend_enum_add_case_cstr(class_entry, "ButtonRelease", &enum_case_ButtonRelease_value);
+
+	zval enum_case_KeyPress_value;
+	ZVAL_LONG(&enum_case_KeyPress_value, 4);
+	zend_enum_add_case_cstr(class_entry, "KeyPress", &enum_case_KeyPress_value);
+
+	zval enum_case_KeyRelease_value;
+	ZVAL_LONG(&enum_case_KeyRelease_value, 5);
+	zend_enum_add_case_cstr(class_entry, "KeyRelease", &enum_case_KeyRelease_value);
+
+	zval enum_case_EnterNotify_value;
+	ZVAL_LONG(&enum_case_EnterNotify_value, 6);
+	zend_enum_add_case_cstr(class_entry, "EnterNotify", &enum_case_EnterNotify_value);
+
+	zval enum_case_LeaveNotify_value;
+	ZVAL_LONG(&enum_case_LeaveNotify_value, 7);
+	zend_enum_add_case_cstr(class_entry, "LeaveNotify", &enum_case_LeaveNotify_value);
+
+	zval enum_case_FocusChange_value;
+	ZVAL_LONG(&enum_case_FocusChange_value, 8);
+	zend_enum_add_case_cstr(class_entry, "FocusChange", &enum_case_FocusChange_value);
+
+	zval enum_case_ProximityIn_value;
+	ZVAL_LONG(&enum_case_ProximityIn_value, 9);
+	zend_enum_add_case_cstr(class_entry, "ProximityIn", &enum_case_ProximityIn_value);
+
+	zval enum_case_ProximityOut_value;
+	ZVAL_LONG(&enum_case_ProximityOut_value, 10);
+	zend_enum_add_case_cstr(class_entry, "ProximityOut", &enum_case_ProximityOut_value);
+
+	zval enum_case_DragEnter_value;
+	ZVAL_LONG(&enum_case_DragEnter_value, 11);
+	zend_enum_add_case_cstr(class_entry, "DragEnter", &enum_case_DragEnter_value);
+
+	zval enum_case_DragLeave_value;
+	ZVAL_LONG(&enum_case_DragLeave_value, 12);
+	zend_enum_add_case_cstr(class_entry, "DragLeave", &enum_case_DragLeave_value);
+
+	zval enum_case_DragMotion_value;
+	ZVAL_LONG(&enum_case_DragMotion_value, 13);
+	zend_enum_add_case_cstr(class_entry, "DragMotion", &enum_case_DragMotion_value);
+
+	zval enum_case_DropStart_value;
+	ZVAL_LONG(&enum_case_DropStart_value, 14);
+	zend_enum_add_case_cstr(class_entry, "DropStart", &enum_case_DropStart_value);
+
+	zval enum_case_Scroll_value;
+	ZVAL_LONG(&enum_case_Scroll_value, 15);
+	zend_enum_add_case_cstr(class_entry, "Scroll", &enum_case_Scroll_value);
+
+	zval enum_case_GrabBroken_value;
+	ZVAL_LONG(&enum_case_GrabBroken_value, 16);
+	zend_enum_add_case_cstr(class_entry, "GrabBroken", &enum_case_GrabBroken_value);
+
+	zval enum_case_TouchBegin_value;
+	ZVAL_LONG(&enum_case_TouchBegin_value, 17);
+	zend_enum_add_case_cstr(class_entry, "TouchBegin", &enum_case_TouchBegin_value);
+
+	zval enum_case_TouchUpdate_value;
+	ZVAL_LONG(&enum_case_TouchUpdate_value, 18);
+	zend_enum_add_case_cstr(class_entry, "TouchUpdate", &enum_case_TouchUpdate_value);
+
+	zval enum_case_TouchEnd_value;
+	ZVAL_LONG(&enum_case_TouchEnd_value, 19);
+	zend_enum_add_case_cstr(class_entry, "TouchEnd", &enum_case_TouchEnd_value);
+
+	zval enum_case_TouchCancel_value;
+	ZVAL_LONG(&enum_case_TouchCancel_value, 20);
+	zend_enum_add_case_cstr(class_entry, "TouchCancel", &enum_case_TouchCancel_value);
+
+	zval enum_case_TouchpadSwipe_value;
+	ZVAL_LONG(&enum_case_TouchpadSwipe_value, 21);
+	zend_enum_add_case_cstr(class_entry, "TouchpadSwipe", &enum_case_TouchpadSwipe_value);
+
+	zval enum_case_TouchpadPinch_value;
+	ZVAL_LONG(&enum_case_TouchpadPinch_value, 22);
+	zend_enum_add_case_cstr(class_entry, "TouchpadPinch", &enum_case_TouchpadPinch_value);
+
+	zval enum_case_PadButtonPress_value;
+	ZVAL_LONG(&enum_case_PadButtonPress_value, 23);
+	zend_enum_add_case_cstr(class_entry, "PadButtonPress", &enum_case_PadButtonPress_value);
+
+	zval enum_case_PadButtonRelease_value;
+	ZVAL_LONG(&enum_case_PadButtonRelease_value, 24);
+	zend_enum_add_case_cstr(class_entry, "PadButtonRelease", &enum_case_PadButtonRelease_value);
+
+	zval enum_case_PadRing_value;
+	ZVAL_LONG(&enum_case_PadRing_value, 25);
+	zend_enum_add_case_cstr(class_entry, "PadRing", &enum_case_PadRing_value);
+
+	zval enum_case_PadStrip_value;
+	ZVAL_LONG(&enum_case_PadStrip_value, 26);
+	zend_enum_add_case_cstr(class_entry, "PadStrip", &enum_case_PadStrip_value);
+
+	zval enum_case_PadGroupMode_value;
+	ZVAL_LONG(&enum_case_PadGroupMode_value, 27);
+	zend_enum_add_case_cstr(class_entry, "PadGroupMode", &enum_case_PadGroupMode_value);
+
+	zval enum_case_TouchpadHold_value;
+	ZVAL_LONG(&enum_case_TouchpadHold_value, 28);
+	zend_enum_add_case_cstr(class_entry, "TouchpadHold", &enum_case_TouchpadHold_value);
+
+	zval enum_case_EventLast_value;
+	ZVAL_LONG(&enum_case_EventLast_value, 29);
+	zend_enum_add_case_cstr(class_entry, "EventLast", &enum_case_EventLast_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkKeyMatch(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GdkKeyMatch", IS_LONG, NULL);
+
+	zval enum_case_None_value;
+	ZVAL_LONG(&enum_case_None_value, 0);
+	zend_enum_add_case_cstr(class_entry, "None", &enum_case_None_value);
+
+	zval enum_case_Partial_value;
+	ZVAL_LONG(&enum_case_Partial_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Partial", &enum_case_Partial_value);
+
+	zval enum_case_Exact_value;
+	ZVAL_LONG(&enum_case_Exact_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Exact", &enum_case_Exact_value);
 
 	return class_entry;
 }
@@ -454,6 +643,37 @@ static zend_class_entry *register_class_Gtk4_GdkModifierType(void)
 	return class_entry;
 }
 
+static zend_class_entry *register_class_Gtk4_GdkNotifyType(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GdkNotifyType", IS_LONG, NULL);
+
+	zval enum_case_Ancestor_value;
+	ZVAL_LONG(&enum_case_Ancestor_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Ancestor", &enum_case_Ancestor_value);
+
+	zval enum_case_Virtual_value;
+	ZVAL_LONG(&enum_case_Virtual_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Virtual", &enum_case_Virtual_value);
+
+	zval enum_case_Inferior_value;
+	ZVAL_LONG(&enum_case_Inferior_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Inferior", &enum_case_Inferior_value);
+
+	zval enum_case_Nonlinear_value;
+	ZVAL_LONG(&enum_case_Nonlinear_value, 3);
+	zend_enum_add_case_cstr(class_entry, "Nonlinear", &enum_case_Nonlinear_value);
+
+	zval enum_case_NonlinearVirtual_value;
+	ZVAL_LONG(&enum_case_NonlinearVirtual_value, 4);
+	zend_enum_add_case_cstr(class_entry, "NonlinearVirtual", &enum_case_NonlinearVirtual_value);
+
+	zval enum_case_Unknown_value;
+	ZVAL_LONG(&enum_case_Unknown_value, 5);
+	zend_enum_add_case_cstr(class_entry, "Unknown", &enum_case_Unknown_value);
+
+	return class_entry;
+}
+
 static zend_class_entry *register_class_Gtk4_GdkPaintable(void)
 {
 	zend_class_entry ce, *class_entry;
@@ -486,6 +706,48 @@ static zend_class_entry *register_class_Gtk4_GdkPaintableFlags(void)
 	return class_entry;
 }
 
+static zend_class_entry *register_class_Gtk4_GdkScrollDirection(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GdkScrollDirection", IS_LONG, NULL);
+
+	zval enum_case_Up_value;
+	ZVAL_LONG(&enum_case_Up_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Up", &enum_case_Up_value);
+
+	zval enum_case_Down_value;
+	ZVAL_LONG(&enum_case_Down_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Down", &enum_case_Down_value);
+
+	zval enum_case_Left_value;
+	ZVAL_LONG(&enum_case_Left_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Left", &enum_case_Left_value);
+
+	zval enum_case_Right_value;
+	ZVAL_LONG(&enum_case_Right_value, 3);
+	zend_enum_add_case_cstr(class_entry, "Right", &enum_case_Right_value);
+
+	zval enum_case_Smooth_value;
+	ZVAL_LONG(&enum_case_Smooth_value, 4);
+	zend_enum_add_case_cstr(class_entry, "Smooth", &enum_case_Smooth_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkScrollUnit(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GdkScrollUnit", IS_LONG, NULL);
+
+	zval enum_case_Wheel_value;
+	ZVAL_LONG(&enum_case_Wheel_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Wheel", &enum_case_Wheel_value);
+
+	zval enum_case_Surface_value;
+	ZVAL_LONG(&enum_case_Surface_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Surface", &enum_case_Surface_value);
+
+	return class_entry;
+}
+
 static zend_class_entry *register_class_Gtk4_GdkTexture(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_GdkPaintable)
 {
 	zend_class_entry ce, *class_entry;
@@ -493,6 +755,29 @@ static zend_class_entry *register_class_Gtk4_GdkTexture(zend_class_entry *class_
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkTexture", class_Gtk4_GdkTexture_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
 	zend_class_implements(class_entry, 1, class_entry_Gtk4_GdkPaintable);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkTouchpadGesturePhase(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GdkTouchpadGesturePhase", IS_LONG, NULL);
+
+	zval enum_case_Begin_value;
+	ZVAL_LONG(&enum_case_Begin_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Begin", &enum_case_Begin_value);
+
+	zval enum_case_Update_value;
+	ZVAL_LONG(&enum_case_Update_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Update", &enum_case_Update_value);
+
+	zval enum_case_End_value;
+	ZVAL_LONG(&enum_case_End_value, 2);
+	zend_enum_add_case_cstr(class_entry, "End", &enum_case_End_value);
+
+	zval enum_case_Cancel_value;
+	ZVAL_LONG(&enum_case_Cancel_value, 3);
+	zend_enum_add_case_cstr(class_entry, "Cancel", &enum_case_Cancel_value);
 
 	return class_entry;
 }
