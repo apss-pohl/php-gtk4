@@ -124,6 +124,14 @@ default `build`, e.g. `--enable-gtk4-testing`). A build is incremental (plain `m
 configure arguments are unchanged and `Makefile` is newer than `config.m4`; otherwise it
 reconfigures from clean (`.ci/configure.args` remembers the arguments).
 
+clang-tidy is the most expensive thing in the pipeline (~200 s over the whole tree), so a run
+remembers which files it linted at which content in `.ci/tidy-ok` (gitignored — CI always does a
+full pass) and skips them next time; editing any header, `.clang-tidy` or a compiler flag
+invalidates the lot, and `GTK4_LINT_ALL=1` forces it. `gen/gir.php` and `gen_stub.php` write a
+generated file **only when its content changed**, so an unchanged tree keeps its mtimes and `make`
+stays a no-op — rewriting identical files used to cost ~50 s of recompiling on every `ci.sh` run.
+Together those two make a push that touched no C++ take seconds.
+
 C++: `.clang-tidy` has a documented deny-list (GLib and Zend macro expansions: do/while, varargs,
 void* casts, zval union access, ZPP cognitive complexity, C-array tables); everything else is
 enforced with `WarningsAsErrors: '*'` and **CI fails on any finding** — there is no backlog, keep
@@ -281,7 +289,10 @@ fast checks (version, stubs,
 PHP style without phpstan, clang-format, markdownlint) in one `ci.sh` call and stamps the tree hash in
 `.git/gtk4-precommit-tree`; `pre-push` runs `./ci.sh` and, when the stamp matches `HEAD^{tree}` and the
 tree is clean, skips exactly those steps (`--skip=version,stubs,md-lint,format,style`) — a `--no-verify`
-commit gets the full run. `--no-verify` skips once.
+commit gets the full run. `--no-verify` skips once; `GTK4_PREPUSH=fast git push` keeps the checks but
+drops `build,load,test,phpt` (CI still runs them on the PR). The build and the C++ lint are both
+incremental, so the full gate on a push that changed no C++ is seconds, not minutes — measure before
+weakening it.
 ZTS builds are supported: all per-request state is in the module globals (`src/core/globals.h`,
 `GTK4_G(x)`), never in a plain static — GType/class registries filled once in MINIT are the only
 process-wide statics allowed. GTK itself stays single-threaded (`assert_gui_thread()`); CI builds

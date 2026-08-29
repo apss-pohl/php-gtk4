@@ -150,6 +150,13 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Changed
 
+- `./ci.sh` no longer does pointless work: `gen/gir.php` writes a generated file only when its
+  content changed (rewriting identical files bumped their mtimes and cost ~50 s of recompiling on
+  every run), and clang-tidy remembers what it linted at which content in `.ci/tidy-ok`
+  (`GTK4_LINT_ALL=1` forces a full pass; any header change still relints everything). A run that
+  touched no C++ went from ~5 min to ~35 s, so `pre-push` keeps running the full gate —
+  `GTK4_PREPUSH=fast git push` drops `build,load,test,phpt` when you want it anyway.
+
 - Interfaces with vfuncs declare only their vfunc-backed methods in PHP (`GListModel`:
   `get_item_type`, `get_n_items`, `get_item`); the utility methods remain on the implementing
   classes. Native `vfunc_*()` callable only from a PHP subclass; `emit()` arity errors are

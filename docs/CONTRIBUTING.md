@@ -76,6 +76,14 @@ classes automatically and must not be edited for one.
 A segfault shows up as PHPUnit dying mid-run; bisect with `--filter 'Class::method$'`. GLib
 `CRITICAL` lines from `ErrorTest` are expected; their text is asserted in `tests/phpt/`.
 
+The two expensive stages only do the work that is needed: clang-tidy skips every file it already
+linted at that exact content (`.ci/tidy-ok`; a header change relints everything, `GTK4_LINT_ALL=1`
+forces a full pass) and the build is incremental. `./ci.sh` on a tree with no C++ change is around
+half a minute; the same run pays ~200 s of clang-tidy and ~50 s of compiling when you touch a
+header, which is the work, not overhead. `pre-push` therefore runs the whole thing —
+`GTK4_PREPUSH=fast git push` drops `build,load,test,phpt` if you are in a hurry, and CI still runs
+them on the PR.
+
 ## Debugging
 
 Xdebug works on the PHP side of an example, breakpoints inside signal handlers and GLib callbacks

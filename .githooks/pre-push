@@ -3,14 +3,28 @@
 # The steps pre-commit already ran on this exact tree (version, stubs, clang-format,
 # markdownlint, phplint/phpcs/php-cs-fixer) are skipped when its stamp matches HEAD;
 # a --no-verify commit or a dirty tree gets the whole thing.
+#
+# It is fast because the two expensive stages only do work that is actually needed:
+# clang-tidy skips files it already linted at this content (.ci/tidy-ok) and the build
+# is incremental, so a push that touched no C++ costs seconds. A push that did touch
+# C++ pays for compiling and linting it - which is the point of the gate.
+#
 # Enable once per clone:  git config core.hooksPath .githooks
-# Skip once:              git push --no-verify
+# Skip the build+tests:   GTK4_PREPUSH=fast git push   (CI still runs them)
+# Skip everything:        git push --no-verify
 set -e
 cd "$(git rev-parse --show-toplevel)"
+
+extra=""
+if [[ "${GTK4_PREPUSH:-}" == fast ]]; then
+    echo "pre-push: GTK4_PREPUSH=fast - skipping build, load, test and phpt (CI runs them on the PR)"
+    extra=",build,load,test,phpt"
+fi
+
 stamp="$(git rev-parse --git-dir)/gtk4-precommit-tree"
 if [[ -f "$stamp" && "$(cat "$stamp")" == "$(git rev-parse HEAD^{tree})" && -z "$(git status --porcelain --untracked-files=no)" ]]; then
     echo "pre-push: pre-commit already verified tree $(git rev-parse --short HEAD^{tree}) - skipping version, stubs, clang-format, markdownlint, PHP style"
-    ./ci.sh --skip=version,gen,stubs,md-lint,format,style
+    ./ci.sh --skip="version,gen,stubs,md-lint,format,style$extra"
 else
-    ./ci.sh
+    ./ci.sh ${extra:+--skip="${extra#,}"}
 fi
