@@ -28,6 +28,10 @@ The `$win` a page receives is the *application's* window. Reading it is fine; ta
 that wants a window of its own creates one, as `GtkWindow.php` does. The main window is primary:
 closing it quits, however many toplevels a page has opened.
 
+To step through one with a debugger, open its file in VS Code and press F5 — the "Example: the open
+file's page" configuration runs `demo.php <that class>` under Xdebug (`docs/CONTRIBUTING.md`
+"Debugging"); `bin/php-gtk4-debug examples/demo.php GtkBox` is the same thing from a terminal.
+
 `bootstrap.php` is the shared harness — `Demo::page()`, `pages()`, `showcase()`, `single()`,
 `run()`, `status()`, plus `label()`, `canvas()`, `bars()` and the sample dataset. It only declares
 (GTK is initialised lazily), so requiring it has no side effects.

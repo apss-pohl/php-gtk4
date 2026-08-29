@@ -2161,8 +2161,8 @@ final class Generator
             return [null, [], ''];
         }
         if (in_array($t->name, ['gfloat', 'gdouble'], true)) {
-            return [['decl' => "$ct result = 0;", 'default' => '0'],
-                ["result = static_cast<$ct>(zval_get_double(&ret));"], 'result'];
+            $conv = $ct === 'double' ? 'zval_get_double(&ret)' : "static_cast<$ct>(zval_get_double(&ret))";
+            return [['decl' => "$ct result = 0;", 'default' => '0'], ["result = $conv;"], 'result'];
         }
         if (preg_match(INT_TYPES, $t->name)) {
             return [['decl' => "$ct result = 0;", 'default' => '0'],
@@ -2453,7 +2453,13 @@ final class Generator
                 'phpType' => ($nullable ? '?' : '') . 'string',
                 'decl' => "zend_string *$name" . ($nullable ? ' = nullptr' : '') . ';',
                 'zpp' => $zpp . ($nullable ? '_OR_NULL' : '') . "($name)",
-                'carg' => $nullable ? "$name != nullptr ? ZSTR_VAL($name) : nullptr" : "ZSTR_VAL($name)",
+                // transfer full (gtk_string_list_take): the callee frees the string with g_free(),
+                // so it gets a GLib copy, never Zend's own buffer.
+                'carg' => $p->transfer === 'full'
+                    ? ($nullable
+                        ? "$name != nullptr ? g_strdup(ZSTR_VAL($name)) : nullptr"
+                        : "g_strdup(ZSTR_VAL($name))")
+                    : ($nullable ? "$name != nullptr ? ZSTR_VAL($name) : nullptr" : "ZSTR_VAL($name)"),
             ]);
         }
         if ($t->name === 'gboolean') {
@@ -2510,10 +2516,17 @@ final class Generator
             ]);
         }
         if (self::isStrv($t)) {
+            // A nullable string vector (GtkStringList::new(NULL) = an empty list) is ?array.
             return array_merge($r, [
-                'phpType' => 'array', 'decl' => "zval *$name;", 'zpp' => "Z_PARAM_ARRAY($name)",
-                'pre' => ["char **{$name}_v = strv_from_php($name);", "if ({$name}_v == nullptr) RETURN_THROWS();"],
-                'carg' => "const_cast<const char **>({$name}_v)", 'post' => ["g_strfreev({$name}_v);"],
+                'phpType' => ($nullable ? '?' : '') . 'array',
+                'decl' => "zval *$name" . ($nullable ? ' = nullptr' : '') . ';',
+                'zpp' => 'Z_PARAM_ARRAY' . ($nullable ? '_OR_NULL' : '') . "($name)",
+                'pre' => $nullable
+                    ? ["char **{$name}_v = nullptr;", "if ($name != nullptr) {",
+                        "  {$name}_v = strv_from_php($name);", "  if ({$name}_v == nullptr) RETURN_THROWS();", '}']
+                    : ["char **{$name}_v = strv_from_php($name);", "if ({$name}_v == nullptr) RETURN_THROWS();"],
+                'carg' => "const_cast<const char **>({$name}_v)",
+                'post' => [($nullable ? "if ({$name}_v != nullptr) " : '') . "g_strfreev({$name}_v);"],
             ]);
         }
         $node = $this->gir->types[$t->name] ?? null;

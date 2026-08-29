@@ -119,9 +119,17 @@ draft, hand-write via overrides / promotion where the project needs more.
       `GtkSizeGroup` and their enums; `examples/demo.php`'s sidebar scrolls. Skipped for later
       closures (gen/report.md): `Gsk.Transform`, `Gtk.Border`, `Gtk.SelectionModel` (`GtkStack::get_pages`),
       `Gtk.ScrollInfo`. `GtkStackPage`/`GtkNotebookPage` refuse `new` (GTK creates them).
-- [ ] **Waves 2–8** as listed in PLAN.md §3 (the feature items in §7 below point at their wave);
+- [x] **Wave 2** (2026-08-29) — controls: `GtkEntry`/`GtkEditable`/`GtkEntryBuffer`/
+      `GtkPasswordEntry`, `GtkCheckButton`, `GtkToggleButton`, `GtkSpinButton`, `GtkRange`/`GtkScale`
+      (`set_format_value_func` is an override), `GtkProgressBar`, `GtkImage`, `GtkPicture` +
+      `GdkPaintable`, `GtkSpinner`, `GtkCalendar`, `GtkDropDown` + `GtkStringList`/`GtkStringObject`
+      and their enums/flags. Skipped for later closures (gen/report.md): `GLib.DateTime`
+      (`GtkCalendar::get_date`), `Gio.File` (`GtkPicture::set_file`), `Gio.Icon`, `Gio.MenuModel`
+      (extra menus), `Gtk.Expression`/`Gtk.ListItemFactory` (`GtkDropDown` factories, wave 7),
+      `Pango.AttrList`/`TabArray`, the 4.10-deprecated `GtkEntryCompletion`.
+- [ ] **Waves 3–8** as listed in PLAN.md §3 (the feature items in §7 below point at their wave);
       each merged only with the full pipeline green and the map's status column regenerated.
-      Next: wave 2 (controls).
+      Next: wave 3 (event controllers).
 
 ## 7. GTK4 feature surface (what the binding still has to expose to deliver GTK4's benefits)
 

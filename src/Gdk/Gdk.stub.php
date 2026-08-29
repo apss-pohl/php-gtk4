@@ -76,6 +76,18 @@ class GdkDisplay extends GObject
 }
 
 /**
+ * Used in `GdkDrop` and `GdkDrag` to indicate the actions that the destination can and should do
+ * with the dropped data.
+ */
+final class GdkDragAction
+{
+    public const int COPY = 1;
+    public const int MOVE = 2;
+    public const int LINK = 4;
+    public const int ASK = 8;
+}
+
+/**
  * `GdkMemoryFormat` describes formats that image data can have in memory.
  */
 enum GdkMemoryFormat: int
@@ -137,12 +149,42 @@ final class GdkModifierType
 }
 
 /**
+ * `GdkPaintable` is a simple interface used by GTK to represent content that can be painted.
+ */
+interface GdkPaintable
+{
+    /** Gets an immutable paintable for the current contents displayed by $paintable. */
+    public function get_current_image(): GdkPaintable;
+
+    /** Get flags for the paintable. */
+    public function get_flags(): int;
+
+    /** Gets the preferred aspect ratio the $paintable would like to be displayed at. */
+    public function get_intrinsic_aspect_ratio(): float;
+
+    /** Gets the preferred height the $paintable would like to be displayed at. */
+    public function get_intrinsic_height(): int;
+
+    /** Gets the preferred width the $paintable would like to be displayed at. */
+    public function get_intrinsic_width(): int;
+}
+
+/**
+ * Flags about a paintable object.
+ */
+final class GdkPaintableFlags
+{
+    public const int SIZE = 1;
+    public const int CONTENTS = 2;
+}
+
+/**
  * `GdkTexture` is the basic element used to refer to pixel data.
  *
  * @property ?int $height
  * @property ?int $width
  */
-class GdkTexture extends GObject
+class GdkTexture extends GObject implements GdkPaintable
 {
     /** GdkTexture is abstract in GTK: instances come from GTK, never from `new`. */
     private function __construct() {}
@@ -173,4 +215,28 @@ class GdkTexture extends GObject
 
     /** Store the given $texture in memory as a TIFF file. */
     public function save_to_tiff_bytes(): string {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::compute_concrete_size */
+    public function compute_concrete_size(float $specified_width, float $specified_height, float $default_width, float $default_height): array {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::get_current_image */
+    public function get_current_image(): GdkPaintable {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::get_flags */
+    public function get_flags(): int {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::get_intrinsic_aspect_ratio */
+    public function get_intrinsic_aspect_ratio(): float {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::get_intrinsic_height */
+    public function get_intrinsic_height(): int {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::get_intrinsic_width */
+    public function get_intrinsic_width(): int {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::invalidate_contents */
+    public function invalidate_contents(): void {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::invalidate_size */
+    public function invalidate_size(): void {}
 }

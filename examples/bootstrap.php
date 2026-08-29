@@ -105,6 +105,19 @@ final class Demo
             'GtkScrolledWindow', 'GtkViewport', 'GtkScrollable', 'GtkAdjustment', 'GtkPolicyType',
             'GtkCornerType', 'GtkScrollablePolicy',
         ],
+        'Text input' => [
+            'GtkEntry', 'GtkEditable', 'GtkEntryBuffer', 'GtkPasswordEntry', 'GtkEntryIconPosition',
+            'GtkInputHints', 'GtkInputPurpose', 'GtkImageType', 'GtkAccessiblePlatformState',
+        ],
+        'Buttons & ranges' => [
+            'GtkCheckButton', 'GtkToggleButton', 'GtkSpinButton', 'GtkSpinButtonUpdatePolicy', 'GtkSpinType',
+            'GtkRange', 'GtkScale', 'GtkProgressBar', 'GtkSpinner',
+        ],
+        'Images & dates' => [
+            'GtkImage', 'GtkPicture', 'GdkPaintable', 'GdkPaintableFlags', 'GtkContentFit', 'GtkIconSize',
+            'GtkCalendar', 'GdkDragAction',
+        ],
+        'Choices' => ['GtkDropDown', 'GtkStringList', 'GtkStringObject', 'GtkStringFilterMatchMode'],
         'Loop' => ['GLib', 'GMainLoop'],
         'Geometry' => ['GtkRequisition'],
         'Dialogs & async' => ['GtkAlertDialog', 'GCancellable', 'GAsyncResult', 'GTask'],

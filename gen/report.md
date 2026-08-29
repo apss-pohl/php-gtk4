@@ -124,6 +124,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `property dmabuf-formats` — property type Gdk.DmabufFormats not mappable
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## GdkPaintable
+
+- `new_empty` — static function on an interface (PHP interfaces have no bodies)
+- `snapshot` — parameter `snapshot` of type Gdk.Snapshot
+- `vfunc snapshot` — parameter `snapshot` of type Gdk.Snapshot
+
 ## GdkTexture
 
 - `new_for_pixbuf` — parameter `pixbuf` of type GdkPixbuf.Pixbuf
@@ -158,10 +164,66 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## GtkCalendar
+
+- `get_date` — return type GLib.DateTime
+- `select_day` — parameter `date` of type GLib.DateTime
+
 ## GtkCssProvider
 
 - `load_from_data` — deprecated (4.12)
 - `load_from_file` — parameter `file` of type Gio.File
+
+## GtkDropDown
+
+- `new` — parameter `expression` of type Gtk.Expression
+- `get_expression` — return type Gtk.Expression (not in the closure)
+- `get_factory` — return type Gtk.ListItemFactory (not in the closure)
+- `get_header_factory` — return type Gtk.ListItemFactory (not in the closure)
+- `get_list_factory` — return type Gtk.ListItemFactory (not in the closure)
+- `set_expression` — parameter `expression` of type Gtk.Expression
+- `set_factory` — parameter `factory` of type Gtk.ListItemFactory
+- `set_header_factory` — parameter `factory` of type Gtk.ListItemFactory
+- `set_list_factory` — parameter `factory` of type Gtk.ListItemFactory
+- `property expression` — property type Gtk.Expression not mappable
+- `property factory` — property type Gtk.ListItemFactory not mappable
+- `property header-factory` — property type Gtk.ListItemFactory not mappable
+- `property list-factory` — property type Gtk.ListItemFactory not mappable
+
+## GtkEditable
+
+- `delegate_get_property` — static function on an interface (PHP interfaces have no bodies)
+- `delegate_set_property` — static function on an interface (PHP interfaces have no bodies)
+- `install_properties` — static function on an interface (PHP interfaces have no bodies)
+- `insert_text` — inout parameter position
+- `vfunc do_insert_text` — inout parameter position
+- `vfunc get_text` — return or argument type not convertible in a thunk
+- `vfunc insert_text` — inout parameter position
+
+## GtkEntry
+
+- `get_attributes` — return type Pango.AttrList
+- `get_completion` — deprecated (4.10)
+- `get_extra_menu` — return type Gio.MenuModel (not in the closure)
+- `get_icon_gicon` — return type Gio.Icon (not in the closure)
+- `get_tabs` — return type Pango.TabArray
+- `set_attributes` — parameter `attrs` of type Pango.AttrList
+- `set_completion` — deprecated (4.10)
+- `set_extra_menu` — parameter `model` of type Gio.MenuModel
+- `set_icon_drag_source` — parameter `provider` of type Gdk.ContentProvider
+- `set_icon_from_gicon` — parameter `icon` of type Gio.Icon
+- `set_tabs` — parameter `tabs` of type Pango.TabArray
+- `property attributes` — property type Pango.AttrList not mappable
+- `property completion` — property type Gtk.EntryCompletion not mappable
+- `property extra-menu` — property type Gio.MenuModel not mappable
+- `property primary-icon-gicon` — property type Gio.Icon not mappable
+- `property secondary-icon-gicon` — property type Gio.Icon not mappable
+- `property tabs` — property type Pango.TabArray not mappable
+
+## GtkEntryBuffer
+
+- `PHP subclasses` — constructor argument initial_chars is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GtkEntryBuffer
+- `vfunc get_text` — parameter n_bytes is a pointer to a scalar without direction
 
 ## GtkFilterListModel
 
@@ -175,6 +237,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkFrame
 
 - `vfunc compute_child_allocation` — parameter `allocation` of type Gtk.Allocation
+
+## GtkImage
+
+- `new_from_gicon` — parameter `icon` of type Gio.Icon
+- `new_from_pixbuf` — deprecated (4.12)
+- `get_gicon` — return type Gio.Icon (not in the closure)
+- `set_from_gicon` — parameter `icon` of type Gio.Icon
+- `set_from_pixbuf` — deprecated (4.12)
+- `property gicon` — property type Gio.Icon not mappable
 
 ## GtkLabel
 
@@ -198,10 +269,36 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## GtkPasswordEntry
+
+- `get_extra_menu` — return type Gio.MenuModel (not in the closure)
+- `set_extra_menu` — parameter `model` of type Gio.MenuModel
+- `property extra-menu` — property type Gio.MenuModel not mappable
+
+## GtkPicture
+
+- `new_for_file` — parameter `file` of type Gio.File
+- `new_for_pixbuf` — deprecated (4.12)
+- `get_file` — return type Gio.File (not in the closure)
+- `get_keep_aspect_ratio` — deprecated (4.8)
+- `set_file` — parameter `file` of type Gio.File
+- `set_keep_aspect_ratio` — deprecated (4.8)
+- `set_pixbuf` — deprecated (4.12)
+- `property file` — property type Gio.File not mappable
+
+## GtkRange
+
+- `vfunc get_range_border` — parameter `border_` of type Gtk.Border
+
 ## GtkRequisition
 
 - `copy` — memory management belongs to the handle (clone / destructor)
 - `free` — memory management belongs to the handle (clone / destructor)
+
+## GtkScale
+
+- `get_layout` — return type Pango.Layout (not in the closure)
+- `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GtkScrollable
 
@@ -229,6 +326,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `__construct` — skip.txt: GtkStack creates its pages (add_child()/add_titled(), get_page()); `new` g_error()s "is missing a child widget"
 - `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GtkStringList
+
+- `property item-type` — property type Gtk.GType not mappable
+
+## GtkToggleButton
+
+- `toggled` — deprecated (4.10)
+- `vfunc toggled` — deprecated (4.10)
 
 ## GtkViewport
 
@@ -299,6 +405,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.CustomFilter`: __construct, set_filter_func
 - `Gtk.CustomSorter`: __construct, set_sort_func
 - `Gtk.DrawingArea`: set_draw_func
+- `Gtk.Scale`: set_format_value_func
 
 ## Emitted files
 
@@ -307,35 +414,52 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkApplication.cpp`
 - `Gtk/GtkBox.cpp`
 - `Gtk/GtkButton.cpp`
+- `Gtk/GtkCalendar.cpp`
+- `Gtk/GtkCheckButton.cpp`
 - `Gtk/GtkCssProvider.cpp`
 - `Gtk/GtkCustomFilter.cpp`
 - `Gtk/GtkCustomSorter.cpp`
 - `Gtk/GtkDrawingArea.cpp`
+- `Gtk/GtkDropDown.cpp`
+- `Gtk/GtkEditable.cpp`
+- `Gtk/GtkEntry.cpp`
+- `Gtk/GtkEntryBuffer.cpp`
 - `Gtk/GtkFilter.cpp`
 - `Gtk/GtkFilterListModel.cpp`
 - `Gtk/GtkFixed.cpp`
 - `Gtk/GtkFrame.cpp`
 - `Gtk/GtkGrid.cpp`
+- `Gtk/GtkImage.cpp`
 - `Gtk/GtkLabel.cpp`
 - `Gtk/GtkNotebook.cpp`
 - `Gtk/GtkNotebookPage.cpp`
 - `Gtk/GtkOrientable.cpp`
 - `Gtk/GtkOverlay.cpp`
 - `Gtk/GtkPaned.cpp`
+- `Gtk/GtkPasswordEntry.cpp`
+- `Gtk/GtkPicture.cpp`
+- `Gtk/GtkProgressBar.cpp`
+- `Gtk/GtkRange.cpp`
 - `Gtk/GtkRequisition.cpp`
 - `Gtk/GtkRevealer.cpp`
 - `Gtk/GtkRoot.cpp`
+- `Gtk/GtkScale.cpp`
 - `Gtk/GtkScrollable.cpp`
 - `Gtk/GtkScrolledWindow.cpp`
 - `Gtk/GtkSeparator.cpp`
 - `Gtk/GtkSizeGroup.cpp`
 - `Gtk/GtkSortListModel.cpp`
 - `Gtk/GtkSorter.cpp`
+- `Gtk/GtkSpinButton.cpp`
+- `Gtk/GtkSpinner.cpp`
 - `Gtk/GtkStack.cpp`
 - `Gtk/GtkStackPage.cpp`
 - `Gtk/GtkStackSidebar.cpp`
 - `Gtk/GtkStackSwitcher.cpp`
+- `Gtk/GtkStringList.cpp`
+- `Gtk/GtkStringObject.cpp`
 - `Gtk/GtkStyleProvider.cpp`
+- `Gtk/GtkToggleButton.cpp`
 - `Gtk/GtkViewport.cpp`
 - `Gtk/GtkWidget.cpp`
 - `Gtk/GtkWindow.cpp`
@@ -353,6 +477,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GTask.cpp`
 - `Gio/Gio.stub.php`
 - `Gdk/GdkDisplay.cpp`
+- `Gdk/GdkPaintable.cpp`
 - `Gdk/GdkTexture.cpp`
 - `Gdk/Gdk.stub.php`
 - `gen_minit.inc`
@@ -362,25 +487,40 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkAlertDialogSmokeTest.php`
 - `tests/Generated/GtkApplicationSmokeTest.php`
 - `tests/Generated/GtkButtonSmokeTest.php`
+- `tests/Generated/GtkCalendarSmokeTest.php`
+- `tests/Generated/GtkCheckButtonSmokeTest.php`
 - `tests/Generated/GtkCssProviderSmokeTest.php`
 - `tests/Generated/GtkCustomFilterSmokeTest.php`
 - `tests/Generated/GtkCustomSorterSmokeTest.php`
 - `tests/Generated/GtkDrawingAreaSmokeTest.php`
+- `tests/Generated/GtkDropDownSmokeTest.php`
+- `tests/Generated/GtkEntrySmokeTest.php`
+- `tests/Generated/GtkEntryBufferSmokeTest.php`
 - `tests/Generated/GtkFilterSmokeTest.php`
 - `tests/Generated/GtkFilterListModelSmokeTest.php`
 - `tests/Generated/GtkFixedSmokeTest.php`
 - `tests/Generated/GtkFrameSmokeTest.php`
 - `tests/Generated/GtkGridSmokeTest.php`
+- `tests/Generated/GtkImageSmokeTest.php`
 - `tests/Generated/GtkLabelSmokeTest.php`
 - `tests/Generated/GtkNotebookSmokeTest.php`
 - `tests/Generated/GtkOverlaySmokeTest.php`
+- `tests/Generated/GtkPasswordEntrySmokeTest.php`
+- `tests/Generated/GtkPictureSmokeTest.php`
+- `tests/Generated/GtkProgressBarSmokeTest.php`
+- `tests/Generated/GtkRangeSmokeTest.php`
 - `tests/Generated/GtkRevealerSmokeTest.php`
 - `tests/Generated/GtkScrolledWindowSmokeTest.php`
 - `tests/Generated/GtkSortListModelSmokeTest.php`
 - `tests/Generated/GtkSorterSmokeTest.php`
+- `tests/Generated/GtkSpinButtonSmokeTest.php`
+- `tests/Generated/GtkSpinnerSmokeTest.php`
 - `tests/Generated/GtkStackSmokeTest.php`
 - `tests/Generated/GtkStackSidebarSmokeTest.php`
 - `tests/Generated/GtkStackSwitcherSmokeTest.php`
+- `tests/Generated/GtkStringListSmokeTest.php`
+- `tests/Generated/GtkStringObjectSmokeTest.php`
+- `tests/Generated/GtkToggleButtonSmokeTest.php`
 - `tests/Generated/GtkViewportSmokeTest.php`
 - `tests/Generated/GtkWidgetSmokeTest.php`
 - `tests/Generated/GtkWindowSmokeTest.php`

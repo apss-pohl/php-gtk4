@@ -9,6 +9,15 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- Wave 2 (controls, docs/PLAN.md §3): `GtkEntry`, `GtkEditable`, `GtkEntryBuffer`,
+  `GtkPasswordEntry`, `GtkCheckButton`, `GtkToggleButton`, `GtkSpinButton`, `GtkRange`, `GtkScale`
+  (`set_format_value_func(callable)`), `GtkProgressBar`, `GtkImage`, `GtkPicture`, `GdkPaintable`,
+  `GtkSpinner`, `GtkCalendar`, `GtkDropDown`, `GtkStringList`, `GtkStringObject`, with
+  `GtkEntryIconPosition`, `GtkInputPurpose`, `GtkInputHints`, `GtkImageType`, `GtkIconSize`,
+  `GtkContentFit`, `GtkSpinType`, `GtkSpinButtonUpdatePolicy`, `GtkStringFilterMatchMode`,
+  `GdkPaintableFlags`, `GdkDragAction`, `GtkAccessiblePlatformState` — generated, one example page
+  each, `ControlsTest`. Generator: nullable `GStrv` parameters are `?array`
+  (`new GtkStringList(null)`).
 - Wave 1 (layout, docs/PLAN.md §3): `GtkScrolledWindow`, `GtkViewport`, `GtkScrollable`,
   `GtkAdjustment`, `GtkGrid`, `GtkPaned`, `GtkFrame`, `GtkStack` + `GtkStackPage`/`GtkStackSwitcher`/
   `GtkStackSidebar`, `GtkNotebook` + `GtkNotebookPage`, `GtkOverlay`, `GtkRevealer`, `GtkFixed`,
@@ -167,6 +176,9 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Fixed
 
+- Generated methods handed a transfer-full string parameter (`GtkStringList::take()`) Zend's own
+  buffer, which GTK then `g_free()`d (`free(): invalid pointer`); the generator passes a
+  `g_strdup()` copy for transfer-full strings now.
 - Generated `throws` methods with a scalar return (`GtkAlertDialog::choose_finish()`,
   `GTask::propagate_int()`) checked the `GError` for nothing: a dismissed dialog came back as
   `-1` and the error leaked. They throw the `GError` now (`GTaskTest`).

@@ -24,9 +24,9 @@ the notes are hand-written and may lag.
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 36 | — |
+| ✅ implemented | 45 | — |
 | 🟡 partial | 2 | — |
-| ❌ to port (GTK 4 equivalent exists) | 56 | ~1750 |
+| ❌ to port (GTK 4 equivalent exists) | 47 | ~1750 |
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 5 | ~130 |
 
@@ -114,24 +114,24 @@ is open work.
 | `GtkWindow` | 85 | `GtkWindow` | ✅ | Generated (wave 0): 58 methods (title, sizes, modal/resizable/decorated/deletable, fullscreen/maximize, transient-for, default widget, focus, hide-on-close, …). **Removed in GTK 4:** `move`/`resize`/`get_position`/`get_size`, `set_position`, `set_type_hint`, `iconify`/`stick`/`set_keep_above`, `set_icon*`, `get_screen`, `add_accel_group`. |
 | `GtkApplicationWindow` | 2 | `GtkApplicationWindow` | ❌ | Not registered yet; `GtkWindow` takes the application in its constructor instead. |
 | `GtkButton` | 29 | `GtkButton` | ✅ | Generated (wave 0): 16 methods (label, child, icon name, has-frame, use-underline, static `new_with_label`/`new_with_mnemonic`/`new_from_icon_name`). **Removed:** `set_image`/`set_always_show_image`/`set_relief`/`set_alignment`/`set_use_stock`/`get_event_window`, `enter`/`leave`/`pressed`/`released` signals. |
-| `GtkToggleButton` | 10 | `GtkToggleButton` | ❌ | `set_inconsistent` kept; `set_mode` removed → use `GtkCheckButton`. |
-| `GtkCheckButton` | 6 | `GtkCheckButton` | ❌ | GTK 4 merges `GtkRadioButton` in via `set_group`. |
+| `GtkToggleButton` | 10 | `GtkToggleButton` | ✅ | `set_inconsistent` kept; `set_mode` removed → use `GtkCheckButton`. |
+| `GtkCheckButton` | 6 | `GtkCheckButton` | ✅ | GTK 4 merges `GtkRadioButton` in via `set_group`. |
 | `GtkRadioButton` | 9 | `GtkCheckButton::set_group` | ⛔ | Class removed in GTK 4. |
 | `GtkColorButton` | 13 | `GtkColorButton` (dep. 4.10 → `GtkColorDialogButton`) | ❌ | Prefer `GtkColorDialogButton` on 4.10+, guarded by `GTK_CHECK_VERSION`. |
 | `GtkFontButton` | 16 | `GtkFontButton` (dep. 4.10 → `GtkFontDialogButton`) | ❌ | Same caveat. |
 | `GtkAppChooserButton` | 11 | `GtkAppChooserButton` (dep. 4.10) | ❌ | |
 | `GtkMenuButton` | 2 | `GtkMenuButton` | ❌ | Takes a `GMenuModel` popover, not a `GtkMenu`. |
 | `GtkLabel` | 43 | `GtkLabel` | ✅ | Generated (wave 0): 44 methods (text/markup/mnemonic, `set_use_markup`, ellipsize, justify, wrap (`set_line_wrap` renamed), lines, width chars, xalign/yalign, mnemonic widget, selection, `get_current_uri`). `set_angle`/`set_pattern`/`get_layout` are GTK 3-only or Pango-dependent. |
-| `GtkEntry` | 41 | `GtkEntry` (+ `GtkText`) | ❌ | Text handling moved into `GtkEditable`/`GtkText`; `set_icon_from_pixbuf` etc. use `GdkPaintable` now. |
-| `GtkEntryBuffer` | 9 | `GtkEntryBuffer` | ❌ | Unchanged. |
+| `GtkEntry` | 41 | `GtkEntry` (+ `GtkText`) | 🟡 | Text handling moved into `GtkEditable`/`GtkText`; `set_icon_from_pixbuf` etc. use `GdkPaintable` now. |
+| `GtkEntryBuffer` | 9 | `GtkEntryBuffer` | ✅ | Unchanged. |
 | `GtkEntryCompletion` | 27 | `GtkEntryCompletion` (dep. 4.10) | ❌ | Deprecated in GTK 4.10; consider not porting. |
-| `GtkComboBox` | 40 | `GtkComboBox` (dep. 4.10 → `GtkDropDown`) | ❌ | Port to `GtkDropDown`. |
+| `GtkComboBox` | 40 | `GtkComboBox` (dep. 4.10 → `GtkDropDown`) | 🟡 | Port to `GtkDropDown`. |
 | `GtkComboBoxText` | 11 | `GtkDropDown` + `GtkStringList` | ⛔ | Deprecated 4.10. |
-| `GtkSpinner` | 3 | `GtkSpinner` | ❌ | |
-| `GtkProgressBar` | 14 | `GtkProgressBar` | ❌ | |
+| `GtkSpinner` | 3 | `GtkSpinner` | ✅ | |
+| `GtkProgressBar` | 14 | `GtkProgressBar` | ✅ | |
 | `GtkAdjustment` | 3 | `GtkAdjustment` | ✅ | |
-| `GtkCalendar` | 15 | `GtkCalendar` | ❌ | `get_date`/`select_day` reworked around `GDateTime`. |
-| `GtkImage` | 29 | `GtkImage` | ❌ | Pixbuf setters deprecated → `GdkPaintable`/`GdkTexture`, `set_from_icon_name`, `set_from_file`. |
+| `GtkCalendar` | 15 | `GtkCalendar` | ✅ | `get_date`/`select_day` reworked around `GDateTime`. |
+| `GtkImage` | 29 | `GtkImage` | ✅ | Pixbuf setters deprecated → `GdkPaintable`/`GdkTexture`, `set_from_icon_name`, `set_from_file`. |
 | `GtkStatusbar` | 7 | `GtkStatusbar` (dep. 4.10) | ❌ | |
 | `GtkInfoBar` | 14 | `GtkInfoBar` (dep. 4.10) | ❌ | |
 | `GtkStatusIcon` | 32 | — | ⛔ | Removed in GTK 4; no tray API. |
@@ -186,7 +186,7 @@ is open work.
 | `GtkTreeView` | 38 | `GtkColumnView` / `GtkListView` | ❌ | `GtkTreeView` still exists in 4.x but is **deprecated since 4.10**. Recommendation: bind the list-model stack instead. |
 | `GtkTreeViewColumn` | 28 | `GtkColumnViewColumn` | ❌ | |
 | `GtkTreeModel` | 6 | `GListModel` | ✅ | |
-| `GtkListStore` | 25 | `GListStore` / `GtkStringList` | 🟡 | |
+| `GtkListStore` | 25 | `GListStore` / `GtkStringList` | ✅ | |
 | `GtkTreeStore` | 17 | `GtkTreeListModel` | ❌ | |
 | `GtkTreeIter` | 1 | — | ⛔ | No iterator concept in `GListModel`. |
 | `GtkTreeSelection` | 20 | `GtkSelectionModel` (`GtkSingleSelection`, `GtkMultiSelection`) | ❌ | |
@@ -226,7 +226,7 @@ is open work.
 | `GdkWindow` | 10 | `GdkSurface` | ❌ | Much smaller API; most methods (`maximize`, `get_children`, `get_default_root_window`) are gone. |
 | `GdkDrawable` | 0 | — | ⛔ | Removed long ago. |
 | `GdkCursor` | 7 | `GdkCursor` | ❌ | `new_from_name`, `new_from_texture`; `get_cursor_type` removed. |
-| `GdkPixbuf` | 21 | `GdkTexture` / `GdkPaintable` | 🟡 | GdkPixbuf still exists as a library but GTK 4 widgets want `GdkPaintable`. |
+| `GdkPixbuf` | 21 | `GdkTexture` / `GdkPaintable` | ✅ | GdkPixbuf still exists as a library but GTK 4 widgets want `GdkPaintable`. |
 | `GdkPixbufFormat` | 1 | `GdkPixbufFormat` | ❌ | |
 | `GdkEvent` + `GdkEventButton/Key/Motion/Scroll/Crossing/Focus/Configure/Touch/Any` | 3 + 8×2 | `GdkEvent` (opaque) + event controllers | ⛔ | **The event unions are gone.** GTK 4 uses `GtkEventControllerKey`, `GtkGestureClick`, `GtkEventControllerMotion`, `GtkEventControllerScroll`, `GtkEventControllerFocus`. Binding these controllers is the port target. |
 | `GdkThreads` | 1 | `g_idle_add` | ⛔ | `GLib::idle_add()` ✅ covers it. |

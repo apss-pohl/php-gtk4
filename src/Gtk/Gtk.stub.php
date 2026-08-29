@@ -11,6 +11,16 @@
 namespace Gtk4;
 
 /**
+ * The various platform states which can be queried using `get_platform_state`.
+ */
+enum GtkAccessiblePlatformState: int
+{
+    case Focusable = 0;
+    case Focused = 1;
+    case Active = 2;
+}
+
+/**
  * `GtkAdjustment` is a model for a numeric value.
  *
  * @property ?float $lower
@@ -448,6 +458,148 @@ class GtkButton extends GtkWidget
 }
 
 /**
+ * `GtkCalendar` is a widget that displays a Gregorian calendar, one month at a time.
+ *
+ * @property ?int $day
+ * @property ?int $month
+ * @property ?bool $show_day_names
+ * @property ?bool $show_heading
+ * @property ?bool $show_week_numbers
+ * @property ?int $year
+ */
+class GtkCalendar extends GtkWidget
+{
+    /** Creates a new calendar, with the current date being selected. */
+    public function __construct() {}
+
+    /** Remove all visual markers. */
+    public function clear_marks(): void {}
+
+    /** Gets the day of the selected date. */
+    public function get_day(): int {}
+
+    /** Returns if the $day of the $calendar is already marked. */
+    public function get_day_is_marked(int $day): bool {}
+
+    /** Gets the month of the selected date. */
+    public function get_month(): int {}
+
+    /** Returns whether $self is currently showing the names of the week days. */
+    public function get_show_day_names(): bool {}
+
+    /** Returns whether $self is currently showing the heading. */
+    public function get_show_heading(): bool {}
+
+    /** Returns whether $self is showing week numbers right now. */
+    public function get_show_week_numbers(): bool {}
+
+    /** Gets the year of the selected date. */
+    public function get_year(): int {}
+
+    /** Places a visual marker on a particular day of the current month. */
+    public function mark_day(int $day): void {}
+
+    /** Sets the day for the selected date. */
+    public function set_day(int $day): void {}
+
+    /** Sets the month for the selected date. */
+    public function set_month(int $month): void {}
+
+    /** Sets whether the calendar shows day names. */
+    public function set_show_day_names(bool $value): void {}
+
+    /** Sets whether the calendar should show a heading. */
+    public function set_show_heading(bool $value): void {}
+
+    /** Sets whether week numbers are shown in the calendar. */
+    public function set_show_week_numbers(bool $value): void {}
+
+    /** Sets the year for the selected date. */
+    public function set_year(int $year): void {}
+
+    /** Removes the visual marker from a particular day. */
+    public function unmark_day(int $day): void {}
+}
+
+/**
+ * A `GtkCheckButton` places a label next to an indicator.
+ *
+ * @property ?bool $active
+ * @property ?GtkWidget $child
+ * @property ?GtkCheckButton $group
+ * @property ?bool $inconsistent
+ * @property ?string $label
+ * @property ?bool $use_underline
+ */
+class GtkCheckButton extends GtkWidget
+{
+    /** Creates a new `GtkCheckButton`. */
+    public function __construct() {}
+
+    /** Creates a new `GtkCheckButton` with the given text. */
+    public static function new_with_label(?string $label = null): GtkCheckButton {}
+
+    /** Creates a new `GtkCheckButton` with the given text and a mnemonic. */
+    public static function new_with_mnemonic(?string $label = null): GtkCheckButton {}
+
+    /** Returns whether the check button is active. */
+    public function get_active(): bool {}
+
+    /** Gets the child widget of $button or `NULL` if [property@CheckButton:label] is set. */
+    public function get_child(): ?GtkWidget {}
+
+    /** Returns whether the check button is in an inconsistent state. */
+    public function get_inconsistent(): bool {}
+
+    /** Returns the label of the check button or `NULL` if [property@CheckButton:child] is set. */
+    public function get_label(): ?string {}
+
+    /** Returns whether underlines in the label indicate mnemonics. */
+    public function get_use_underline(): bool {}
+
+    /** Changes the check buttons active state. */
+    public function set_active(bool $setting): void {}
+
+    /** Sets the child widget of $button. */
+    public function set_child(?GtkWidget $child): void {}
+
+    /** Adds $self to the group of $group. */
+    public function set_group(?GtkCheckButton $group): void {}
+
+    /** Sets the `GtkCheckButton` to inconsistent state. */
+    public function set_inconsistent(bool $inconsistent): void {}
+
+    /** Sets the text of $self. */
+    public function set_label(?string $label): void {}
+
+    /** Sets whether underlines in the label indicate mnemonics. */
+    public function set_use_underline(bool $setting): void {}
+
+    /**
+     * Native `activate` (CheckButtonClass.activate): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_activate()` from an override.
+     */
+    public function vfunc_activate(): void {}
+
+    /**
+     * Native `toggled` (CheckButtonClass.toggled): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_toggled()` from an override.
+     */
+    public function vfunc_toggled(): void {}
+}
+
+/**
+ * Controls how a content should be made to fit inside an allocation.
+ */
+enum GtkContentFit: int
+{
+    case Fill = 0;
+    case Contain = 1;
+    case Cover = 2;
+    case ScaleDown = 3;
+}
+
+/**
  * Specifies which corner a child widget should be placed in when packed into a
  * `GtkScrolledWindow.`
  */
@@ -566,6 +718,443 @@ class GtkDrawingArea extends GtkWidget
      * for `parent::vfunc_resize()` from an override.
      */
     public function vfunc_resize(int $width, int $height): void {}
+}
+
+/**
+ * `GtkDropDown` is a widget that allows the user to choose an item from a list of options.
+ *
+ * @property ?bool $enable_search
+ * @property ?GListModel $model
+ * @property ?GtkStringFilterMatchMode $search_match_mode
+ * @property ?int $selected
+ * @property-read ?GObject $selected_item
+ * @property ?bool $show_arrow
+ */
+class GtkDropDown extends GtkWidget
+{
+    /** A GtkDropDown with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct() {}
+
+    /** Creates a new `GtkDropDown` that is populated with the strings. */
+    public static function new_from_strings(array $strings): GtkDropDown {}
+
+    /** Returns whether search is enabled. */
+    public function get_enable_search(): bool {}
+
+    /** Gets the model that provides the displayed items. */
+    public function get_model(): ?GListModel {}
+
+    /** Returns the match mode that the search filter is using. */
+    public function get_search_match_mode(): GtkStringFilterMatchMode {}
+
+    /** Gets the position of the selected item. */
+    public function get_selected(): int {}
+
+    /** Gets the selected item. If no item is selected, `null` is returned. */
+    public function get_selected_item(): ?GObject {}
+
+    /** Returns whether to show an arrow within the widget. */
+    public function get_show_arrow(): bool {}
+
+    /**
+     * Sets whether a search entry will be shown in the popup that allows to search for items in
+     * the list.
+     */
+    public function set_enable_search(bool $enable_search): void {}
+
+    /** Sets the `GListModel` to use. */
+    public function set_model(?GListModel $model): void {}
+
+    /** Sets the match mode for the search filter. */
+    public function set_search_match_mode(GtkStringFilterMatchMode $search_match_mode): void {}
+
+    /** Selects the item at the given position. */
+    public function set_selected(int $position): void {}
+
+    /** Sets whether an arrow will be displayed within the widget. */
+    public function set_show_arrow(bool $show_arrow): void {}
+}
+
+/**
+ * `GtkEditable` is an interface for text editing widgets.
+ *
+ * @property-read ?int $cursor_position
+ * @property ?bool $editable
+ * @property ?bool $enable_undo
+ * @property ?int $max_width_chars
+ * @property-read ?int $selection_bound
+ * @property ?string $text
+ * @property ?int $width_chars
+ * @property ?float $xalign
+ */
+interface GtkEditable
+{
+    /** Deletes a sequence of characters. */
+    public function delete_text(int $start_pos, int $end_pos): void;
+
+    /** Gets the `GtkEditable` that $editable is delegating its implementation to. */
+    public function get_delegate(): ?GtkEditable;
+
+    /**
+     * Retrieves the selection bound of the editable.
+     *
+     * @return array{int, int}|null
+     */
+    public function get_selection_bounds(): ?array;
+
+    /** Retrieves the contents of $editable. */
+    public function get_text(): string;
+}
+
+/**
+ * `GtkEntry` is a single line text entry widget.
+ *
+ * @property ?bool $activates_default
+ * @property ?GtkEntryBuffer $buffer
+ * @property ?bool $enable_emoji_completion
+ * @property ?bool $has_frame
+ * @property ?string $im_module
+ * @property ?int $input_hints
+ * @property ?GtkInputPurpose $input_purpose
+ * @property ?int $invisible_char
+ * @property ?bool $invisible_char_set
+ * @property ?int $max_length
+ * @property ?bool $overwrite_mode
+ * @property ?string $placeholder_text
+ * @property ?bool $primary_icon_activatable
+ * @property ?string $primary_icon_name
+ * @property ?GdkPaintable $primary_icon_paintable
+ * @property ?bool $primary_icon_sensitive
+ * @property-read ?GtkImageType $primary_icon_storage_type
+ * @property ?string $primary_icon_tooltip_markup
+ * @property ?string $primary_icon_tooltip_text
+ * @property ?float $progress_fraction
+ * @property ?float $progress_pulse_step
+ * @property-read ?int $scroll_offset
+ * @property ?bool $secondary_icon_activatable
+ * @property ?string $secondary_icon_name
+ * @property ?GdkPaintable $secondary_icon_paintable
+ * @property ?bool $secondary_icon_sensitive
+ * @property-read ?GtkImageType $secondary_icon_storage_type
+ * @property ?string $secondary_icon_tooltip_markup
+ * @property ?string $secondary_icon_tooltip_text
+ * @property ?bool $show_emoji_icon
+ * @property-read ?int $text_length
+ * @property ?bool $truncate_multiline
+ * @property ?bool $visibility
+ */
+class GtkEntry extends GtkWidget implements GtkEditable
+{
+    /** Creates a new entry. */
+    public function __construct() {}
+
+    /** Creates a new entry with the specified text buffer. */
+    public static function new_with_buffer(GtkEntryBuffer $buffer): GtkEntry {}
+
+    /** Retrieves the value set by gtk_entry_set_activates_default(). */
+    public function get_activates_default(): bool {}
+
+    /** Gets the value set by gtk_entry_set_alignment(). */
+    public function get_alignment(): float {}
+
+    /** Get the `GtkEntryBuffer` object which holds the text for this widget. */
+    public function get_buffer(): GtkEntryBuffer {}
+
+    /** Returns the index of the icon which is the source of the current DND operation, or -1. */
+    public function get_current_icon_drag_source(): int {}
+
+    /** Gets the value set by gtk_entry_set_has_frame(). */
+    public function get_has_frame(): bool {}
+
+    /** Returns whether the icon is activatable. */
+    public function get_icon_activatable(GtkEntryIconPosition $icon_pos): bool {}
+
+    /** Gets the area where entry’s icon at $icon_pos is drawn. */
+    public function get_icon_area(GtkEntryIconPosition $icon_pos): GdkRectangle {}
+
+    /** Finds the icon at the given position and return its index. */
+    public function get_icon_at_pos(int $x, int $y): int {}
+
+    /** Retrieves the icon name used for the icon. */
+    public function get_icon_name(GtkEntryIconPosition $icon_pos): ?string {}
+
+    /** Retrieves the `GdkPaintable` used for the icon. */
+    public function get_icon_paintable(GtkEntryIconPosition $icon_pos): ?GdkPaintable {}
+
+    /** Returns whether the icon appears sensitive or insensitive. */
+    public function get_icon_sensitive(GtkEntryIconPosition $icon_pos): bool {}
+
+    /** Gets the type of representation being used by the icon to store image data. */
+    public function get_icon_storage_type(GtkEntryIconPosition $icon_pos): GtkImageType {}
+
+    /** Gets the contents of the tooltip on the icon at the specified position in $entry. */
+    public function get_icon_tooltip_markup(GtkEntryIconPosition $icon_pos): ?string {}
+
+    /** Gets the contents of the tooltip on the icon at the specified position in $entry. */
+    public function get_icon_tooltip_text(GtkEntryIconPosition $icon_pos): ?string {}
+
+    /** Gets the input hints of this `GtkEntry`. */
+    public function get_input_hints(): int {}
+
+    /** Gets the input purpose of the `GtkEntry`. */
+    public function get_input_purpose(): GtkInputPurpose {}
+
+    /** Retrieves the character displayed in place of the actual text in “password mode”. */
+    public function get_invisible_char(): int {}
+
+    /** Retrieves the maximum allowed length of the text in $entry. */
+    public function get_max_length(): int {}
+
+    /** Gets whether the `GtkEntry` is in overwrite mode. */
+    public function get_overwrite_mode(): bool {}
+
+    /** Retrieves the text that will be displayed when $entry is empty and unfocused */
+    public function get_placeholder_text(): ?string {}
+
+    /** Returns the current fraction of the task that’s been completed. */
+    public function get_progress_fraction(): float {}
+
+    /** Retrieves the pulse step set with gtk_entry_set_progress_pulse_step(). */
+    public function get_progress_pulse_step(): float {}
+
+    /** Retrieves the current length of the text in $entry. */
+    public function get_text_length(): int {}
+
+    /** Retrieves whether the text in $entry is visible. */
+    public function get_visibility(): bool {}
+
+    /** Causes $entry to have keyboard focus. */
+    public function grab_focus_without_selecting(): bool {}
+
+    /** Indicates that some progress is made, but you don’t know how much. */
+    public function progress_pulse(): void {}
+
+    /** Reset the input method context of the entry if needed. */
+    public function reset_im_context(): void {}
+
+    /**
+     * Sets whether pressing Enter in the $entry will activate the default widget for the window
+     * containing the entry.
+     */
+    public function set_activates_default(bool $setting): void {}
+
+    /** Sets the alignment for the contents of the entry. */
+    public function set_alignment(float $xalign): void {}
+
+    /** Set the `GtkEntryBuffer` object which holds the text for this widget. */
+    public function set_buffer(GtkEntryBuffer $buffer): void {}
+
+    /** Sets whether the entry has a beveled frame around it. */
+    public function set_has_frame(bool $setting): void {}
+
+    /** Sets whether the icon is activatable. */
+    public function set_icon_activatable(GtkEntryIconPosition $icon_pos, bool $activatable): void {}
+
+    /** Sets the icon shown in the entry at the specified position from the current icon theme. */
+    public function set_icon_from_icon_name(GtkEntryIconPosition $icon_pos, ?string $icon_name): void {}
+
+    /** Sets the icon shown in the specified position using a `GdkPaintable`. */
+    public function set_icon_from_paintable(GtkEntryIconPosition $icon_pos, ?GdkPaintable $paintable): void {}
+
+    /** Sets the sensitivity for the specified icon. */
+    public function set_icon_sensitive(GtkEntryIconPosition $icon_pos, bool $sensitive): void {}
+
+    /** Sets $tooltip as the contents of the tooltip for the icon at the specified position. */
+    public function set_icon_tooltip_markup(GtkEntryIconPosition $icon_pos, ?string $tooltip): void {}
+
+    /** Sets $tooltip as the contents of the tooltip for the icon at the specified position. */
+    public function set_icon_tooltip_text(GtkEntryIconPosition $icon_pos, ?string $tooltip): void {}
+
+    /** Set additional hints which allow input methods to fine-tune their behavior. */
+    public function set_input_hints(int $hints): void {}
+
+    /** Sets the input purpose which can be used by input methods to adjust their behavior. */
+    public function set_input_purpose(GtkInputPurpose $purpose): void {}
+
+    /** Sets the character to use in place of the actual text in “password mode”. */
+    public function set_invisible_char(int $ch): void {}
+
+    /** Sets the maximum allowed length of the contents of the widget. */
+    public function set_max_length(int $max): void {}
+
+    /** Sets whether the text is overwritten when typing in the `GtkEntry`. */
+    public function set_overwrite_mode(bool $overwrite): void {}
+
+    /** Sets text to be displayed in $entry when it is empty. */
+    public function set_placeholder_text(?string $text): void {}
+
+    /** Causes the entry’s progress indicator to “fill in” the given fraction of the bar. */
+    public function set_progress_fraction(float $fraction): void {}
+
+    /** Sets the fraction of total entry width to move the progress bouncing block for each pulse. */
+    public function set_progress_pulse_step(float $fraction): void {}
+
+    /** Sets whether the contents of the entry are visible or not. */
+    public function set_visibility(bool $visible): void {}
+
+    /**
+     * Unsets the invisible char, so that the default invisible char is used again. See
+     * `set_invisible_char`.
+     */
+    public function unset_invisible_char(): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::delegate_get_accessible_platform_state */
+    public function delegate_get_accessible_platform_state(GtkAccessiblePlatformState $state): bool {}
+
+    /** @implementation-alias Gtk4\GtkEditable::delete_selection */
+    public function delete_selection(): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::delete_text */
+    public function delete_text(int $start_pos, int $end_pos): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::finish_delegate */
+    public function finish_delegate(): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_chars */
+    public function get_chars(int $start_pos, int $end_pos): string {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_delegate */
+    public function get_delegate(): ?GtkEditable {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_editable */
+    public function get_editable(): bool {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_enable_undo */
+    public function get_enable_undo(): bool {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_max_width_chars */
+    public function get_max_width_chars(): int {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_position */
+    public function get_position(): int {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_selection_bounds */
+    public function get_selection_bounds(): ?array {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_text */
+    public function get_text(): string {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_width_chars */
+    public function get_width_chars(): int {}
+
+    /** @implementation-alias Gtk4\GtkEditable::init_delegate */
+    public function init_delegate(): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::select_region */
+    public function select_region(int $start_pos, int $end_pos): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_editable */
+    public function set_editable(bool $is_editable): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_enable_undo */
+    public function set_enable_undo(bool $enable_undo): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_max_width_chars */
+    public function set_max_width_chars(int $n_chars): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_position */
+    public function set_position(int $position): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_text */
+    public function set_text(string $text): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_width_chars */
+    public function set_width_chars(int $n_chars): void {}
+
+    /**
+     * Native `activate` (EntryClass.activate): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_activate()` from an override. Class handler for the `GtkEntry::activate`
+     * signal. The default implementation activates the gtk.activate-default action.
+     */
+    public function vfunc_activate(): void {}
+}
+
+/**
+ * A `GtkEntryBuffer` hold the text displayed in a `GtkText` widget.
+ *
+ * @property-read ?int $length
+ * @property ?int $max_length
+ * @property ?string $text
+ */
+class GtkEntryBuffer extends GObject
+{
+    /** Create a new `GtkEntryBuffer` object. */
+    public function __construct(?string $initial_chars, int $n_initial_chars) {}
+
+    /** Deletes a sequence of characters from the buffer. */
+    public function delete_text(int $position, int $n_chars): int {}
+
+    /** Used when subclassing `GtkEntryBuffer`. */
+    public function emit_deleted_text(int $position, int $n_chars): void {}
+
+    /** Used when subclassing `GtkEntryBuffer`. */
+    public function emit_inserted_text(int $position, string $chars, int $n_chars): void {}
+
+    /** Retrieves the length in bytes of the buffer. */
+    public function get_bytes(): int {}
+
+    /** Retrieves the length in characters of the buffer. */
+    public function get_length(): int {}
+
+    /** Retrieves the maximum allowed length of the text in $buffer. */
+    public function get_max_length(): int {}
+
+    /** Retrieves the contents of the buffer. */
+    public function get_text(): string {}
+
+    /**
+     * Inserts $n_chars characters of $chars into the contents of the buffer, at position
+     * $position.
+     */
+    public function insert_text(int $position, string $chars, int $n_chars): int {}
+
+    /** Sets the maximum allowed length of the contents of the buffer. */
+    public function set_max_length(int $max_length): void {}
+
+    /** Sets the text in the buffer. */
+    public function set_text(string $chars, int $n_chars): void {}
+
+    /**
+     * Native `delete_text` (EntryBufferClass.delete_text): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_delete_text()` from an override. Deletes a sequence of
+     * characters from the buffer.
+     */
+    public function vfunc_delete_text(int $position, int $n_chars): int {}
+
+    /**
+     * Native `deleted_text` (EntryBufferClass.deleted_text): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_deleted_text()` from an override.
+     */
+    public function vfunc_deleted_text(int $position, int $n_chars): void {}
+
+    /**
+     * Native `get_length` (EntryBufferClass.get_length): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_get_length()` from an override. Retrieves the length in
+     * characters of the buffer.
+     */
+    public function vfunc_get_length(): int {}
+
+    /**
+     * Native `insert_text` (EntryBufferClass.insert_text): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_insert_text()` from an override. Inserts $n_chars characters of
+     * $chars into the contents of the buffer, at position $position.
+     */
+    public function vfunc_insert_text(int $position, string $chars, int $n_chars): int {}
+
+    /**
+     * Native `inserted_text` (EntryBufferClass.inserted_text): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_inserted_text()` from an override.
+     */
+    public function vfunc_inserted_text(int $position, string $chars, int $n_chars): void {}
+}
+
+/**
+ * Specifies the side of the entry at which an icon is placed.
+ */
+enum GtkEntryIconPosition: int
+{
+    case Primary = 0;
+    case Secondary = 1;
 }
 
 /**
@@ -828,6 +1417,131 @@ class GtkGrid extends GtkWidget implements GtkOrientable
 
     /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
     public function set_orientation(GtkOrientation $orientation): void {}
+}
+
+/**
+ * Built-in icon sizes.
+ */
+enum GtkIconSize: int
+{
+    case Inherit = 0;
+    case Normal = 1;
+    case Large = 2;
+}
+
+/**
+ * The `GtkImage` widget displays an image.
+ *
+ * @property ?string $file
+ * @property ?string $icon_name
+ * @property ?GtkIconSize $icon_size
+ * @property ?GdkPaintable $paintable
+ * @property ?int $pixel_size
+ * @property ?string $resource
+ * @property-read ?GtkImageType $storage_type
+ * @property ?bool $use_fallback
+ */
+class GtkImage extends GtkWidget
+{
+    /** Creates a new empty `GtkImage` widget. */
+    public function __construct() {}
+
+    /** Creates a new `GtkImage` displaying the file $filename. */
+    public static function new_from_file(string $filename): GtkImage {}
+
+    /** Creates a `GtkImage` displaying an icon from the current icon theme. */
+    public static function new_from_icon_name(?string $icon_name = null): GtkImage {}
+
+    /** Creates a new `GtkImage` displaying $paintable. */
+    public static function new_from_paintable(?GdkPaintable $paintable = null): GtkImage {}
+
+    /** Creates a new `GtkImage` displaying the resource file $resource_path. */
+    public static function new_from_resource(string $resource_path): GtkImage {}
+
+    /** Resets the image to be empty. */
+    public function clear(): void {}
+
+    /** Gets the icon name and size being displayed by the `GtkImage`. */
+    public function get_icon_name(): ?string {}
+
+    /** Gets the icon size used by the $image when rendering icons. */
+    public function get_icon_size(): GtkIconSize {}
+
+    /** Gets the image `GdkPaintable` being displayed by the `GtkImage`. */
+    public function get_paintable(): ?GdkPaintable {}
+
+    /** Gets the pixel size used for named icons. */
+    public function get_pixel_size(): int {}
+
+    /** Gets the type of representation being used by the `GtkImage` to store image data. */
+    public function get_storage_type(): GtkImageType {}
+
+    /** Sets a `GtkImage` to show a file. */
+    public function set_from_file(?string $filename): void {}
+
+    /** Sets a `GtkImage` to show a named icon. */
+    public function set_from_icon_name(?string $icon_name): void {}
+
+    /** Sets a `GtkImage` to show a `GdkPaintable`. */
+    public function set_from_paintable(?GdkPaintable $paintable): void {}
+
+    /** Sets a `GtkImage` to show a resource. */
+    public function set_from_resource(?string $resource_path): void {}
+
+    /** Suggests an icon size to the theme for named icons. */
+    public function set_icon_size(GtkIconSize $icon_size): void {}
+
+    /** Sets the pixel size to use for named icons. */
+    public function set_pixel_size(int $pixel_size): void {}
+}
+
+/**
+ * Describes the image data representation used by a `Image`.
+ */
+enum GtkImageType: int
+{
+    case Empty = 0;
+    case IconName = 1;
+    case Gicon = 2;
+    case Paintable = 3;
+}
+
+/**
+ * Describes hints that might be taken into account by input methods or applications.
+ */
+final class GtkInputHints
+{
+    public const int NONE = 0;
+    public const int SPELLCHECK = 1;
+    public const int NO_SPELLCHECK = 2;
+    public const int WORD_COMPLETION = 4;
+    public const int LOWERCASE = 8;
+    public const int UPPERCASE_CHARS = 16;
+    public const int UPPERCASE_WORDS = 32;
+    public const int UPPERCASE_SENTENCES = 64;
+    public const int INHIBIT_OSK = 128;
+    public const int VERTICAL_WRITING = 256;
+    public const int EMOJI = 512;
+    public const int NO_EMOJI = 1024;
+    public const int PRIVATE = 2048;
+}
+
+/**
+ * Describes primary purpose of the input widget.
+ */
+enum GtkInputPurpose: int
+{
+    case FreeForm = 0;
+    case Alpha = 1;
+    case Digits = 2;
+    case Number = 3;
+    case Phone = 4;
+    case Url = 5;
+    case Email = 6;
+    case Name = 7;
+    case Password = 8;
+    case Pin = 9;
+    case Terminal = 10;
 }
 
 /**
@@ -1358,6 +2072,94 @@ class GtkPaned extends GtkWidget implements GtkOrientable
 }
 
 /**
+ * `GtkPasswordEntry` is an entry that has been tailored for entering secrets.
+ *
+ * @property ?bool $activates_default
+ * @property ?string $placeholder_text
+ * @property ?bool $show_peek_icon
+ */
+class GtkPasswordEntry extends GtkWidget implements GtkEditable
+{
+    /** Creates a `GtkPasswordEntry`. */
+    public function __construct() {}
+
+    /** Returns whether the entry is showing an icon to reveal the contents. */
+    public function get_show_peek_icon(): bool {}
+
+    /** Sets whether the entry should have a clickable icon to reveal the contents. */
+    public function set_show_peek_icon(bool $show_peek_icon): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::delegate_get_accessible_platform_state */
+    public function delegate_get_accessible_platform_state(GtkAccessiblePlatformState $state): bool {}
+
+    /** @implementation-alias Gtk4\GtkEditable::delete_selection */
+    public function delete_selection(): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::delete_text */
+    public function delete_text(int $start_pos, int $end_pos): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::finish_delegate */
+    public function finish_delegate(): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_alignment */
+    public function get_alignment(): float {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_chars */
+    public function get_chars(int $start_pos, int $end_pos): string {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_delegate */
+    public function get_delegate(): ?GtkEditable {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_editable */
+    public function get_editable(): bool {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_enable_undo */
+    public function get_enable_undo(): bool {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_max_width_chars */
+    public function get_max_width_chars(): int {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_position */
+    public function get_position(): int {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_selection_bounds */
+    public function get_selection_bounds(): ?array {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_text */
+    public function get_text(): string {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_width_chars */
+    public function get_width_chars(): int {}
+
+    /** @implementation-alias Gtk4\GtkEditable::init_delegate */
+    public function init_delegate(): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::select_region */
+    public function select_region(int $start_pos, int $end_pos): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_alignment */
+    public function set_alignment(float $xalign): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_editable */
+    public function set_editable(bool $is_editable): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_enable_undo */
+    public function set_enable_undo(bool $enable_undo): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_max_width_chars */
+    public function set_max_width_chars(int $n_chars): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_position */
+    public function set_position(int $position): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_text */
+    public function set_text(string $text): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_width_chars */
+    public function set_width_chars(int $n_chars): void {}
+}
+
+/**
  * Flags that influence the behavior of `pick`.
  */
 final class GtkPickFlags
@@ -1365,6 +2167,60 @@ final class GtkPickFlags
     public const int DEFAULT = 0;
     public const int INSENSITIVE = 1;
     public const int NON_TARGETABLE = 2;
+}
+
+/**
+ * The `GtkPicture` widget displays a `GdkPaintable`.
+ *
+ * @property ?string $alternative_text
+ * @property ?bool $can_shrink
+ * @property ?GtkContentFit $content_fit
+ * @property ?bool $keep_aspect_ratio
+ * @property ?GdkPaintable $paintable
+ */
+class GtkPicture extends GtkWidget
+{
+    /** Creates a new empty `GtkPicture` widget. */
+    public function __construct() {}
+
+    /** Creates a new `GtkPicture` displaying the file $filename. */
+    public static function new_for_filename(?string $filename = null): GtkPicture {}
+
+    /** Creates a new `GtkPicture` displaying $paintable. */
+    public static function new_for_paintable(?GdkPaintable $paintable = null): GtkPicture {}
+
+    /** Creates a new `GtkPicture` displaying the resource at $resource_path. */
+    public static function new_for_resource(?string $resource_path = null): GtkPicture {}
+
+    /** Gets the alternative textual description of the picture. */
+    public function get_alternative_text(): ?string {}
+
+    /** Returns whether the `GtkPicture` respects its contents size. */
+    public function get_can_shrink(): bool {}
+
+    /** Returns the fit mode for the content of the `GtkPicture`. */
+    public function get_content_fit(): GtkContentFit {}
+
+    /** Gets the `GdkPaintable` being displayed by the `GtkPicture`. */
+    public function get_paintable(): ?GdkPaintable {}
+
+    /** Sets an alternative textual description for the picture contents. */
+    public function set_alternative_text(?string $alternative_text): void {}
+
+    /** If set to `true`, the $self can be made smaller than its contents. */
+    public function set_can_shrink(bool $can_shrink): void {}
+
+    /** Sets how the content should be resized to fit the `GtkPicture`. */
+    public function set_content_fit(GtkContentFit $content_fit): void {}
+
+    /** Makes $self load and display the given $filename. */
+    public function set_filename(?string $filename): void {}
+
+    /** Makes $self display the given $paintable. */
+    public function set_paintable(?GdkPaintable $paintable): void {}
+
+    /** Makes $self load and display the resource at the given $resource_path. */
+    public function set_resource(?string $resource_path): void {}
 }
 
 /**
@@ -1388,6 +2244,189 @@ enum GtkPositionType: int
     case Right = 1;
     case Top = 2;
     case Bottom = 3;
+}
+
+/**
+ * `GtkProgressBar` is typically used to display the progress of a long running operation.
+ *
+ * @property ?PangoEllipsizeMode $ellipsize
+ * @property ?float $fraction
+ * @property ?bool $inverted
+ * @property ?float $pulse_step
+ * @property ?bool $show_text
+ * @property ?string $text
+ */
+class GtkProgressBar extends GtkWidget implements GtkOrientable
+{
+    /** Creates a new `GtkProgressBar`. */
+    public function __construct() {}
+
+    /** Returns the ellipsizing position of the progress bar. */
+    public function get_ellipsize(): PangoEllipsizeMode {}
+
+    /** Returns the current fraction of the task that’s been completed. */
+    public function get_fraction(): float {}
+
+    /** Returns whether the progress bar is inverted. */
+    public function get_inverted(): bool {}
+
+    /** Retrieves the pulse step. */
+    public function get_pulse_step(): float {}
+
+    /** Returns whether the `GtkProgressBar` shows text. */
+    public function get_show_text(): bool {}
+
+    /** Retrieves the text that is displayed with the progress bar. */
+    public function get_text(): ?string {}
+
+    /** Indicates that some progress has been made, but you don’t know how much. */
+    public function pulse(): void {}
+
+    /** Sets the mode used to ellipsize the text. */
+    public function set_ellipsize(PangoEllipsizeMode $mode): void {}
+
+    /** Causes the progress bar to “fill in” the given fraction of the bar. */
+    public function set_fraction(float $fraction): void {}
+
+    /** Sets whether the progress bar is inverted. */
+    public function set_inverted(bool $inverted): void {}
+
+    /** Sets the fraction of total progress bar length to move the bouncing block. */
+    public function set_pulse_step(float $fraction): void {}
+
+    /** Sets whether the progress bar will show text next to the bar. */
+    public function set_show_text(bool $show_text): void {}
+
+    /** Causes the given $text to appear next to the progress bar. */
+    public function set_text(?string $text): void {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::get_orientation */
+    public function get_orientation(): GtkOrientation {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
+    public function set_orientation(GtkOrientation $orientation): void {}
+}
+
+/**
+ * `GtkRange` is the common base class for widgets which visualize an adjustment.
+ *
+ * @property ?GtkAdjustment $adjustment
+ * @property ?float $fill_level
+ * @property ?bool $inverted
+ * @property ?bool $restrict_to_fill_level
+ * @property ?int $round_digits
+ * @property ?bool $show_fill_level
+ */
+class GtkRange extends GtkWidget implements GtkOrientable
+{
+    /** A GtkRange with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct() {}
+
+    /** Get the adjustment which is the “model” object for `GtkRange`. */
+    public function get_adjustment(): GtkAdjustment {}
+
+    /** Gets the current position of the fill level indicator. */
+    public function get_fill_level(): float {}
+
+    /** Gets whether the `GtkRange` respects text direction. */
+    public function get_flippable(): bool {}
+
+    /** Gets whether the range is inverted. */
+    public function get_inverted(): bool {}
+
+    /**
+     * This function returns the area that contains the range’s trough, in coordinates relative
+     * to $range's origin.
+     */
+    public function get_range_rect(): GdkRectangle {}
+
+    /** Gets whether the range is restricted to the fill level. */
+    public function get_restrict_to_fill_level(): bool {}
+
+    /** Gets the number of digits to round the value to when it changes. */
+    public function get_round_digits(): int {}
+
+    /** Gets whether the range displays the fill level graphically. */
+    public function get_show_fill_level(): bool {}
+
+    /**
+     * This function returns sliders range along the long dimension, in widget->window coordinates.
+     *
+     * @return array{int, int}
+     */
+    public function get_slider_range(): array {}
+
+    /** This function is useful mainly for `GtkRange` subclasses. */
+    public function get_slider_size_fixed(): bool {}
+
+    /** Gets the current value of the range. */
+    public function get_value(): float {}
+
+    /** Sets the adjustment to be used as the “model” object for the `GtkRange` */
+    public function set_adjustment(GtkAdjustment $adjustment): void {}
+
+    /** Set the new position of the fill level indicator. */
+    public function set_fill_level(float $fill_level): void {}
+
+    /** Sets whether the `GtkRange` respects text direction. */
+    public function set_flippable(bool $flippable): void {}
+
+    /** Sets the step and page sizes for the range. */
+    public function set_increments(float $step, float $page): void {}
+
+    /** Sets whether to invert the range. */
+    public function set_inverted(bool $setting): void {}
+
+    /** Sets the allowable values in the `GtkRange`. */
+    public function set_range(float $min, float $max): void {}
+
+    /** Sets whether the slider is restricted to the fill level. */
+    public function set_restrict_to_fill_level(bool $restrict_to_fill_level): void {}
+
+    /** Sets the number of digits to round the value to when it changes. */
+    public function set_round_digits(int $round_digits): void {}
+
+    /** Sets whether a graphical fill level is show on the trough. */
+    public function set_show_fill_level(bool $show_fill_level): void {}
+
+    /**
+     * Sets whether the range’s slider has a fixed size, or a size that depends on its
+     * adjustment’s page size.
+     */
+    public function set_slider_size_fixed(bool $size_fixed): void {}
+
+    /** Sets the current value of the range. */
+    public function set_value(float $value): void {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::get_orientation */
+    public function get_orientation(): GtkOrientation {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
+    public function set_orientation(GtkOrientation $orientation): void {}
+
+    /**
+     * Native `adjust_bounds` (RangeClass.adjust_bounds): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_adjust_bounds()` from an override.
+     */
+    public function vfunc_adjust_bounds(float $new_value): void {}
+
+    /**
+     * Native `change_value` (RangeClass.change_value): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_change_value()` from an override.
+     */
+    public function vfunc_change_value(int $scroll, float $new_value): bool {}
+
+    /**
+     * Native `move_slider` (RangeClass.move_slider): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_move_slider()` from an override.
+     */
+    public function vfunc_move_slider(int $scroll): void {}
+
+    /**
+     * Native `value_changed` (RangeClass.value_changed): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_value_changed()` from an override.
+     */
+    public function vfunc_value_changed(): void {}
 }
 
 /**
@@ -1481,6 +2520,82 @@ interface GtkRoot
      * the root.
      */
     public function set_focus(?GtkWidget $focus): void;
+}
+
+/**
+ * A `GtkScale` is a slider control used to select a numeric value.
+ *
+ * @property ?int $digits
+ * @property ?bool $draw_value
+ * @property ?bool $has_origin
+ * @property ?GtkPositionType $value_pos
+ */
+class GtkScale extends GtkRange implements GtkOrientable
+{
+    /** Creates a new `GtkScale`. */
+    public function __construct(GtkOrientation $orientation, ?GtkAdjustment $adjustment = null) {}
+
+    /** Creates a new scale widget with a range from $min to $max. */
+    public static function new_with_range(GtkOrientation $orientation, float $min, float $max, float $step): GtkScale {}
+
+    /** Adds a mark at $value. */
+    public function add_mark(float $value, GtkPositionType $position, ?string $markup): void {}
+
+    /** Removes any marks that have been added. */
+    public function clear_marks(): void {}
+
+    /** Gets the number of decimal places that are displayed in the value. */
+    public function get_digits(): int {}
+
+    /** Returns whether the current value is displayed as a string next to the slider. */
+    public function get_draw_value(): bool {}
+
+    /** Returns whether the scale has an origin. */
+    public function get_has_origin(): bool {}
+
+    /**
+     * Obtains the coordinates where the scale will draw the `PangoLayout` representing the text in
+     * the scale.
+     *
+     * @return array{int, int}
+     */
+    public function get_layout_offsets(): array {}
+
+    /** Gets the position in which the current value is displayed. */
+    public function get_value_pos(): GtkPositionType {}
+
+    /** Sets the number of decimal places that are displayed in the value. */
+    public function set_digits(int $digits): void {}
+
+    /** Specifies whether the current value is displayed as a string next to the slider. */
+    public function set_draw_value(bool $draw_value): void {}
+
+    /** Sets whether the scale has an origin. */
+    public function set_has_origin(bool $has_origin): void {}
+
+    /** Sets the position in which the current value is displayed. */
+    public function set_value_pos(GtkPositionType $pos): void {}
+
+    /**
+     * The callable that renders the value label: `function (GtkScale $scale, float $value): string`;
+     * null goes back to GTK's own formatting (`digits` decimals).
+     */
+    public function set_format_value_func(?callable $func): void {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::get_orientation */
+    public function get_orientation(): GtkOrientation {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
+    public function set_orientation(GtkOrientation $orientation): void {}
+
+    /**
+     * Native `get_layout_offsets` (ScaleClass.get_layout_offsets): the GTK implementation below
+     * any PHP subclass, for `parent::vfunc_get_layout_offsets()` from an override. Obtains the
+     * coordinates where the scale will draw the `PangoLayout` representing the text in the scale.
+     *
+     * @return array{int, int}
+     */
+    public function vfunc_get_layout_offsets(): array {}
 }
 
 /**
@@ -1814,6 +2929,251 @@ enum GtkSorterOrder: int
 }
 
 /**
+ * A `GtkSpinButton` is an ideal way to allow the user to set the value of some attribute.
+ *
+ * @property ?bool $activates_default
+ * @property ?GtkAdjustment $adjustment
+ * @property ?float $climb_rate
+ * @property ?int $digits
+ * @property ?bool $numeric
+ * @property ?bool $snap_to_ticks
+ * @property ?GtkSpinButtonUpdatePolicy $update_policy
+ * @property ?float $value
+ * @property ?bool $wrap
+ */
+class GtkSpinButton extends GtkWidget implements GtkEditable, GtkOrientable
+{
+    /** Creates a new `GtkSpinButton`. */
+    public function __construct(?GtkAdjustment $adjustment, float $climb_rate, int $digits) {}
+
+    /** Creates a new `GtkSpinButton` with the given properties. */
+    public static function new_with_range(float $min, float $max, float $step): GtkSpinButton {}
+
+    /** Changes the properties of an existing spin button. */
+    public function configure(?GtkAdjustment $adjustment, float $climb_rate, int $digits): void {}
+
+    /** Retrieves the value set by `set_activates_default`. */
+    public function get_activates_default(): bool {}
+
+    /** Get the adjustment associated with a `GtkSpinButton`. */
+    public function get_adjustment(): GtkAdjustment {}
+
+    /** Returns the acceleration rate for repeated changes. */
+    public function get_climb_rate(): float {}
+
+    /** Fetches the precision of $spin_button. */
+    public function get_digits(): int {}
+
+    /**
+     * Gets the current step and page the increments used by $spin_button.
+     *
+     * @return array{float, float}
+     */
+    public function get_increments(): array {}
+
+    /** Returns whether non-numeric text can be typed into the spin button. */
+    public function get_numeric(): bool {}
+
+    /**
+     * Gets the range allowed for $spin_button.
+     *
+     * @return array{float, float}
+     */
+    public function get_range(): array {}
+
+    /** Returns whether the values are corrected to the nearest step. */
+    public function get_snap_to_ticks(): bool {}
+
+    /** Gets the update behavior of a spin button. */
+    public function get_update_policy(): GtkSpinButtonUpdatePolicy {}
+
+    /** Get the value in the $spin_button. */
+    public function get_value(): float {}
+
+    /** Get the value $spin_button represented as an integer. */
+    public function get_value_as_int(): int {}
+
+    /**
+     * Returns whether the spin button’s value wraps around to the opposite limit when the upper
+     * or lower limit of the range is exceeded.
+     */
+    public function get_wrap(): bool {}
+
+    /**
+     * Sets whether activating the spin button will activate the default widget for the window
+     * containing the spin button.
+     */
+    public function set_activates_default(bool $activates_default): void {}
+
+    /** Replaces the `GtkAdjustment` associated with $spin_button. */
+    public function set_adjustment(GtkAdjustment $adjustment): void {}
+
+    /** Sets the acceleration rate for repeated changes when you hold down a button or key. */
+    public function set_climb_rate(float $climb_rate): void {}
+
+    /** Set the precision to be displayed by $spin_button. */
+    public function set_digits(int $digits): void {}
+
+    /** Sets the step and page increments for spin_button. */
+    public function set_increments(float $step, float $page): void {}
+
+    /** Sets the flag that determines if non-numeric text can be typed into the spin button. */
+    public function set_numeric(bool $numeric): void {}
+
+    /** Sets the minimum and maximum allowable values for $spin_button. */
+    public function set_range(float $min, float $max): void {}
+
+    /**
+     * Sets the policy as to whether values are corrected to the nearest step increment when a spin
+     * button is activated after providing an invalid value.
+     */
+    public function set_snap_to_ticks(bool $snap_to_ticks): void {}
+
+    /** Sets the update behavior of a spin button. */
+    public function set_update_policy(GtkSpinButtonUpdatePolicy $policy): void {}
+
+    /** Sets the value of $spin_button. */
+    public function set_value(float $value): void {}
+
+    /**
+     * Sets the flag that determines if a spin button value wraps around to the opposite limit when
+     * the upper or lower limit of the range is exceeded.
+     */
+    public function set_wrap(bool $wrap): void {}
+
+    /**
+     * Increment or decrement a spin button’s value in a specified direction by a specified
+     * amount.
+     */
+    public function spin(GtkSpinType $direction, float $increment): void {}
+
+    /** Manually force an update of the spin button. */
+    public function update(): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::delegate_get_accessible_platform_state */
+    public function delegate_get_accessible_platform_state(GtkAccessiblePlatformState $state): bool {}
+
+    /** @implementation-alias Gtk4\GtkEditable::delete_selection */
+    public function delete_selection(): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::delete_text */
+    public function delete_text(int $start_pos, int $end_pos): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::finish_delegate */
+    public function finish_delegate(): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_alignment */
+    public function get_alignment(): float {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_chars */
+    public function get_chars(int $start_pos, int $end_pos): string {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_delegate */
+    public function get_delegate(): ?GtkEditable {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_editable */
+    public function get_editable(): bool {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_enable_undo */
+    public function get_enable_undo(): bool {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_max_width_chars */
+    public function get_max_width_chars(): int {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_position */
+    public function get_position(): int {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_selection_bounds */
+    public function get_selection_bounds(): ?array {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_text */
+    public function get_text(): string {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_width_chars */
+    public function get_width_chars(): int {}
+
+    /** @implementation-alias Gtk4\GtkEditable::init_delegate */
+    public function init_delegate(): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::select_region */
+    public function select_region(int $start_pos, int $end_pos): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_alignment */
+    public function set_alignment(float $xalign): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_editable */
+    public function set_editable(bool $is_editable): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_enable_undo */
+    public function set_enable_undo(bool $enable_undo): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_max_width_chars */
+    public function set_max_width_chars(int $n_chars): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_position */
+    public function set_position(int $position): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_text */
+    public function set_text(string $text): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_width_chars */
+    public function set_width_chars(int $n_chars): void {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::get_orientation */
+    public function get_orientation(): GtkOrientation {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
+    public function set_orientation(GtkOrientation $orientation): void {}
+}
+
+/**
+ * Determines whether the spin button displays values outside the adjustment bounds.
+ */
+enum GtkSpinButtonUpdatePolicy: int
+{
+    case Always = 0;
+    case IfValid = 1;
+}
+
+/**
+ * The values of the GtkSpinType enumeration are used to specify the change to make in
+ * gtk_spin_button_spin().
+ */
+enum GtkSpinType: int
+{
+    case StepForward = 0;
+    case StepBackward = 1;
+    case PageForward = 2;
+    case PageBackward = 3;
+    case Home = 4;
+    case End = 5;
+    case UserDefined = 6;
+}
+
+/**
+ * A `GtkSpinner` widget displays an icon-size spinning animation.
+ *
+ * @property ?bool $spinning
+ */
+class GtkSpinner extends GtkWidget
+{
+    /** Returns a new spinner widget. Not yet started. */
+    public function __construct() {}
+
+    /** Returns whether the spinner is spinning. */
+    public function get_spinning(): bool {}
+
+    /** Sets the activity of the spinner. */
+    public function set_spinning(bool $spinning): void {}
+
+    /** Starts the animation of the spinner. */
+    public function start(): void {}
+
+    /** Stops the animation of the spinner. */
+    public function stop(): void {}
+}
+
+/**
  * `GtkStack` is a container which only shows one of its children at a time.
  *
  * @property ?bool $hhomogeneous
@@ -2053,6 +3413,69 @@ final class GtkStateFlags
 }
 
 /**
+ * Specifies how search strings are matched inside text.
+ */
+enum GtkStringFilterMatchMode: int
+{
+    case Exact = 0;
+    case Substring = 1;
+    case Prefix = 2;
+}
+
+/**
+ * `GtkStringList` is a list model that wraps an array of strings.
+ *
+ * @property-read ?int $n_items
+ * @property ?array $strings
+ */
+class GtkStringList extends GObject implements GListModel
+{
+    /** Creates a new `GtkStringList` with the given $strings. */
+    public function __construct(?array $strings = null) {}
+
+    /** Appends $string to $self. */
+    public function append(string $string): void {}
+
+    /** Gets the string that is at $position in $self. */
+    public function get_string(int $position): ?string {}
+
+    /** Removes the string at $position from $self. */
+    public function remove(int $position): void {}
+
+    /** Changes $self by removing $n_removals strings and adding $additions to it. */
+    public function splice(int $position, int $n_removals, ?array $additions): void {}
+
+    /** Adds $string to self at the end, and takes ownership of it. */
+    public function take(string $string): void {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item_type */
+    public function get_item_type(): string {}
+
+    /** @implementation-alias Gtk4\GListModel::get_n_items */
+    public function get_n_items(): int {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item */
+    public function get_item(int $position): ?GObject {}
+
+    /** @implementation-alias Gtk4\GListModel::items_changed */
+    public function items_changed(int $position, int $removed, int $added): void {}
+}
+
+/**
+ * `GtkStringObject` is the type of items in a `GtkStringList`.
+ *
+ * @property-read ?string $string
+ */
+class GtkStringObject extends GObject
+{
+    /** Wraps a string in an object for use with `GListModel`. */
+    public function __construct(string $string) {}
+
+    /** Returns the string contained in a `GtkStringObject`. */
+    public function get_string(): string {}
+}
+
+/**
  * `GtkStyleProvider` is an interface for style information used by `GtkStyleContext`.
  */
 interface GtkStyleProvider
@@ -2067,6 +3490,33 @@ enum GtkTextDirection: int
     case None = 0;
     case Ltr = 1;
     case Rtl = 2;
+}
+
+/**
+ * A `GtkToggleButton` is a button which remains “pressed-in” when clicked.
+ *
+ * @property ?bool $active
+ * @property ?GtkToggleButton $group
+ */
+class GtkToggleButton extends GtkButton
+{
+    /** Creates a new toggle button. */
+    public function __construct() {}
+
+    /** Creates a new toggle button with a text label. */
+    public static function new_with_label(string $label): GtkToggleButton {}
+
+    /** Creates a new `GtkToggleButton` containing a label. */
+    public static function new_with_mnemonic(string $label): GtkToggleButton {}
+
+    /** Queries a `GtkToggleButton` and returns its current state. */
+    public function get_active(): bool {}
+
+    /** Sets the status of the toggle button. */
+    public function set_active(bool $is_active): void {}
+
+    /** Adds $self to the group of $group. */
+    public function set_group(?GtkToggleButton $group): void {}
 }
 
 /**

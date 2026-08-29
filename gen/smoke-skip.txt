@@ -10,3 +10,17 @@ Gtk.Notebook.page               same, as a property
 Gtk.Stack.set_visible_child_name   an empty stack has no child named 'smoke' (visible-child-name stays null)
 Gtk.Stack.visible_child_name       same, as a property
 Gtk.Adjustment.*   the sample (every argument 1.0: upper == lower with a page size) is refused by newer GTK (gvsbuild on Windows); LayoutTest builds it with a real range
+Gtk.DropDown.set_selected   without a model there is nothing to select (GTK_INVALID_LIST_POSITION stays)
+Gtk.DropDown.selected       same, as a property
+Gtk.EntryBuffer.text        the max_length(1) set just before truncates 'smoke' to 's'
+Gtk.Entry.set_position      the cursor cannot move inside empty text (stays 0)
+Gtk.PasswordEntry.set_position   same
+Gtk.SpinButton.set_position      same
+Gtk.SpinButton.set_value    the default adjustment has range 0..0, so every value clamps to 0
+Gtk.SpinButton.value        same, as a property
+Gtk.Range.set_value         same: a GtkRange without an adjustment range clamps to 0
+Gtk.Image.file              a path that does not exist is cleared by GTK (file stays null)
+Gtk.Entry.set_text          the max_length(1) set just before truncates 'smoke' to 's'
+Gtk.SpinButton.set_text     a numeric spin button parses its text; 'smoke' is not a number
+Gtk.Image.icon_name         the failed `file` assignment just before leaves the image showing the broken-image icon
+Gtk.Image.resource          a resource path that does not exist is cleared by GTK (resource stays null)
