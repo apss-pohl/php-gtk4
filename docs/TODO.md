@@ -113,10 +113,15 @@ draft, hand-write via overrides / promotion where the project needs more.
       `#[\Deprecated]` emission — modern API only), GObject properties are `@property` tags mapped
       by the runtime handlers (not PHP 8.4 property hooks), docblocks carry GIR's first paragraph
       (no docs.gtk.org links yet). Not done: a coverage doc beyond `gen/report.md` + the map.
-- [ ] **Waves 1–8** as listed in PLAN.md §3 (the feature items in §7 below point at their wave);
+- [x] **Wave 1** (2026-08-29) — layout: `GtkScrolledWindow`/`GtkViewport`/`GtkScrollable`/
+      `GtkAdjustment`, `GtkGrid`, `GtkPaned`, `GtkFrame`, `GtkStack` (+`Page`/`Switcher`/`Sidebar`),
+      `GtkNotebook` (+`Page`), `GtkOverlay`, `GtkRevealer`, `GtkFixed`, `GtkSeparator`,
+      `GtkSizeGroup` and their enums; `examples/demo.php`'s sidebar scrolls. Skipped for later
+      closures (gen/report.md): `Gsk.Transform`, `Gtk.Border`, `Gtk.SelectionModel` (`GtkStack::get_pages`),
+      `Gtk.ScrollInfo`. `GtkStackPage`/`GtkNotebookPage` refuse `new` (GTK creates them).
+- [ ] **Waves 2–8** as listed in PLAN.md §3 (the feature items in §7 below point at their wave);
       each merged only with the full pipeline green and the map's status column regenerated.
-      Next: wave 1 (layout containers — `GtkScrolledWindow` is what `examples/demo.php`'s sidebar
-      needs).
+      Next: wave 2 (controls).
 
 ## 7. GTK4 feature surface (what the binding still has to expose to deliver GTK4's benefits)
 
@@ -125,13 +130,28 @@ GtkContainer), Wayland/HiDPI/platform backends, the cleaned-up API (the stub is 
 GTK4 GIR only). Every open item here is generator output and is ticked when its wave (§6, PLAN.md
 §3) lands; design questions live in §9.
 
-- [ ] **Concrete layouts** → wave 1: `GtkGrid`, `GtkCenterBox`, `GtkStack`, `GtkPaned`,
-      `GtkScrolledWindow`, … (`GtkBox` and `GtkOrientable` done 2026-08-26/27).
+- [x] **Concrete layouts** → wave 1 (2026-08-29): `GtkGrid`, `GtkStack`, `GtkPaned`,
+      `GtkScrolledWindow`, … (`GtkBox` and `GtkOrientable` done 2026-08-26/27). `GtkCenterBox`
+      is not in the map's wave; add it to the allow-list when a port needs it.
 - [ ] **Event controllers** → wave 3: `GtkGestureClick`, `GtkEventControllerKey/Motion/Scroll/Focus`,
       `GtkWidget::add_controller()/remove_controller()`; signals already marshal (ints/doubles/flags);
       `GdkEvent` goes on the fundamental registry, `GdkModifierType` is a flags class.
 - [ ] **Drag and drop** → wave 3b (added to the PLAN table 2026-08-28): `GtkDragSource`,
       `GtkDropTarget`, `GdkContentProvider` (GValue payloads: boxed/variant support exists).
+- [ ] **Intermittent `tests/phpt/init-no-display.phpt` segfault** (seen twice on 2026-08-29 in full
+      `./ci.sh` runs while the PHPUnit suite loaded the machine; "still alive" is printed, the
+      process dies afterwards - request or module shutdown after a *failed* `Gtk::init()`). Not
+      reproduced in 130+ loops (raw `php -n`, single-test and full `run-tests.php`, under load, on
+      this tree and on 5cd0eae), no core (apport keeps one report per binary). Same family as the
+      warm-up-thread crash `pin_gtk_library()` fixed; next step when it recurs: run the phpt stage
+      with `ulimit -c unlimited` after clearing `/var/crash/_usr_bin_php8.4.*` and take the core.
+- [ ] **Interface-only handles** (found in wave 1): `GtkNotebook::get_pages()` / `GtkStack::get_pages()`
+      return GTK-private classes (`GtkNotebookPages`) whose only PHP-visible face is an interface
+      (`GListModel`/`GtkSelectionModel`); `wrap()` resolves by class and falls back to a bare
+      `GObject`, so the list cannot be iterated from PHP. Needs a per-interface fallback class
+      (a hidden `final class` implementing the interface's methods via the shared
+      `ZEND_METHOD(Gtk4_<Interface>, m)`) that `wrap()` picks when no registered class matches
+      but a registered interface does — design in PLAN.md §9, land with wave 7.
 - [ ] **List views** → wave 7: `GtkStringList`, selection models, `GtkListView`/`GtkColumnView`/
       `GtkGridView`, `GtkSignalListItemFactory` (`setup`/`bind`), `GtkListItem`. Done 2026-08-26:
       `Gtk4\PhpValue` (GType `PhpValue`, a GObject carrying a zval), `GListModel`, `GListStore`,

@@ -50,3 +50,26 @@ Gio.AsyncResult
 # The GAsyncResult GTK actually hands to the callback is a GTask: wrap() resolves by class
 # (interfaces are not instantiable), so the concrete class must be known.
 Gio.Task
+
+# Wave 1 (layout, docs/PLAN.md §3): the containers a GTK3 application's structure maps onto -
+# scrolling, grid, paned, frame, stack (+ switcher/sidebar/page), notebook (+ page), overlay,
+# revealer, fixed, separator, size group. GtkAdjustment/GtkScrollable are what the scrolled
+# window's and viewport's signatures are made of (otherwise every adjustment method is skipped).
+Gtk.ScrolledWindow
+Gtk.Viewport
+Gtk.Scrollable
+Gtk.Adjustment
+Gtk.Grid
+Gtk.Paned
+Gtk.Frame
+Gtk.Stack
+Gtk.StackPage
+Gtk.StackSwitcher
+Gtk.StackSidebar
+Gtk.Notebook
+Gtk.NotebookPage
+Gtk.Overlay
+Gtk.Revealer
+Gtk.Fixed
+Gtk.Separator
+Gtk.SizeGroup

@@ -20,6 +20,8 @@ use Gtk4\GtkButton;
 use Gtk4\GtkDrawingArea;
 use Gtk4\GtkLabel;
 use Gtk4\GtkOrientation;
+use Gtk4\GtkPolicyType;
+use Gtk4\GtkScrolledWindow;
 use Gtk4\GtkWidget;
 use Gtk4\GtkWindow;
 use Gtk4\PhpValue;
@@ -55,8 +57,8 @@ final class Demo
 
     /**
      * The sidebar's sections, in order. Every registered class belongs to exactly
-     * one (ExampleTest checks); until GtkScrolledWindow is bound this is also what
-     * keeps the sidebar short enough to fit on screen.
+     * one (ExampleTest checks); the sidebar shows one section at a time and scrolls
+     * it (GtkScrolledWindow) when a section outgrows the window.
      *
      * @var array<string, list<string>>
      */
@@ -90,6 +92,18 @@ final class Demo
         'Styling' => [
             'GtkCssProvider', 'GtkStyleProvider', 'GtkStyleProviderPriority', 'GtkCssSection',
             'GdkDisplay',
+        ],
+        'Layout' => [
+            'GtkGrid', 'GtkPaned', 'GtkFrame', 'GtkOverlay', 'GtkRevealer', 'GtkRevealerTransitionType',
+            'GtkFixed', 'GtkSeparator', 'GtkSizeGroup', 'GtkSizeGroupMode',
+        ],
+        'Stacks & tabs' => [
+            'GtkStack', 'GtkStackPage', 'GtkStackSwitcher', 'GtkStackSidebar', 'GtkStackTransitionType',
+            'GtkNotebook', 'GtkNotebookPage', 'GtkPackType', 'GtkPositionType',
+        ],
+        'Scrolling' => [
+            'GtkScrolledWindow', 'GtkViewport', 'GtkScrollable', 'GtkAdjustment', 'GtkPolicyType',
+            'GtkCornerType', 'GtkScrollablePolicy',
         ],
         'Loop' => ['GLib', 'GMainLoop'],
         'Geometry' => ['GtkRequisition'],
@@ -285,8 +299,8 @@ final class Demo
                 $app->activate_action('select', $to);
             };
 
-            // The sidebar lists the current section only: 36 buttons do not fit on
-            // screen and GtkScrolledWindow is not bound yet.
+            // The sidebar lists the current section only; the list scrolls, so a long
+            // section (the layout wave has 27 entries) never pushes the window taller.
             $fillList = function () use ($list, &$section, &$class, $jump, $byClass): void {
                 foreach ($list->get_children() as $old) {
                     $list->remove($old);
@@ -398,10 +412,14 @@ final class Demo
                 $header->append($item);
             }
 
+            $scroller = new GtkScrolledWindow();
+            $scroller->set_policy(GtkPolicyType::Never, GtkPolicyType::Automatic);
+            $scroller->set_child($list);
+            $scroller->set_vexpand(true);
             $sidebar = new GtkBox(GtkOrientation::Vertical, 10);
             $sidebar->set_size_request(200, -1);
             $sidebar->append($sections);
-            $sidebar->append($list);
+            $sidebar->append($scroller);
 
             $body = new GtkBox(GtkOrientation::Horizontal, 16);
             $body->set_vexpand(true);

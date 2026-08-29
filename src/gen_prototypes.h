@@ -4,6 +4,7 @@
 #pragma once
 #include "php_gtk4.h"
 
+void register_vfuncs_GtkAdjustment();
 void register_vfuncs_GtkApplication();
 void register_vfuncs_GtkButton();
 void register_vfuncs_GtkDrawingArea();
@@ -16,6 +17,14 @@ void register_GtkRequisition(zend_class_entry *ce);
 ZEND_METHOD(Gtk4_GtkRoot, get_display);
 ZEND_METHOD(Gtk4_GtkRoot, get_focus);
 ZEND_METHOD(Gtk4_GtkRoot, set_focus);
+ZEND_METHOD(Gtk4_GtkScrollable, get_hadjustment);
+ZEND_METHOD(Gtk4_GtkScrollable, get_hscroll_policy);
+ZEND_METHOD(Gtk4_GtkScrollable, get_vadjustment);
+ZEND_METHOD(Gtk4_GtkScrollable, get_vscroll_policy);
+ZEND_METHOD(Gtk4_GtkScrollable, set_hadjustment);
+ZEND_METHOD(Gtk4_GtkScrollable, set_hscroll_policy);
+ZEND_METHOD(Gtk4_GtkScrollable, set_vadjustment);
+ZEND_METHOD(Gtk4_GtkScrollable, set_vscroll_policy);
 void register_vfuncs_GtkSorter();
 void register_vfuncs_GtkWidget();
 void register_vfuncs_GtkWindow();

@@ -11,6 +11,82 @@
 namespace Gtk4;
 
 /**
+ * `GtkAdjustment` is a model for a numeric value.
+ *
+ * @property ?float $lower
+ * @property ?float $page_increment
+ * @property ?float $page_size
+ * @property ?float $step_increment
+ * @property ?float $upper
+ * @property ?float $value
+ */
+class GtkAdjustment extends GObject
+{
+    /** Creates a new `GtkAdjustment`. */
+    public function __construct(float $value, float $lower, float $upper, float $step_increment, float $page_increment, float $page_size) {}
+
+    /**
+     * Updates the value property to ensure that the range between $lower and $upper is in the
+     * current page.
+     */
+    public function clamp_page(float $lower, float $upper): void {}
+
+    /** Sets all properties of the adjustment at once. */
+    public function configure(float $value, float $lower, float $upper, float $step_increment, float $page_increment, float $page_size): void {}
+
+    /** Retrieves the minimum value of the adjustment. */
+    public function get_lower(): float {}
+
+    /** Gets the smaller of step increment and page increment. */
+    public function get_minimum_increment(): float {}
+
+    /** Retrieves the page increment of the adjustment. */
+    public function get_page_increment(): float {}
+
+    /** Retrieves the page size of the adjustment. */
+    public function get_page_size(): float {}
+
+    /** Retrieves the step increment of the adjustment. */
+    public function get_step_increment(): float {}
+
+    /** Retrieves the maximum value of the adjustment. */
+    public function get_upper(): float {}
+
+    /** Gets the current value of the adjustment. */
+    public function get_value(): float {}
+
+    /** Sets the minimum value of the adjustment. */
+    public function set_lower(float $lower): void {}
+
+    /** Sets the page increment of the adjustment. */
+    public function set_page_increment(float $page_increment): void {}
+
+    /** Sets the page size of the adjustment. */
+    public function set_page_size(float $page_size): void {}
+
+    /** Sets the step increment of the adjustment. */
+    public function set_step_increment(float $step_increment): void {}
+
+    /** Sets the maximum value of the adjustment. */
+    public function set_upper(float $upper): void {}
+
+    /** Sets the `GtkAdjustment` value. */
+    public function set_value(float $value): void {}
+
+    /**
+     * Native `changed` (AdjustmentClass.changed): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_changed()` from an override.
+     */
+    public function vfunc_changed(): void {}
+
+    /**
+     * Native `value_changed` (AdjustmentClass.value_changed): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_value_changed()` from an override.
+     */
+    public function vfunc_value_changed(): void {}
+}
+
+/**
  * A `GtkAlertDialog` object collects the arguments that are needed to present a message to the
  * user.
  *
@@ -372,6 +448,18 @@ class GtkButton extends GtkWidget
 }
 
 /**
+ * Specifies which corner a child widget should be placed in when packed into a
+ * `GtkScrolledWindow.`
+ */
+enum GtkCornerType: int
+{
+    case TopLeft = 0;
+    case BottomLeft = 1;
+    case TopRight = 2;
+    case BottomRight = 3;
+}
+
+/**
  * `GtkCssProvider` is an object implementing the `GtkStyleProvider` interface for CSS.
  */
 class GtkCssProvider extends GObject implements GtkStyleProvider
@@ -583,6 +671,166 @@ enum GtkFilterMatch: int
 }
 
 /**
+ * `GtkFixed` places its child widgets at fixed positions and with fixed sizes.
+ */
+class GtkFixed extends GtkWidget
+{
+    /** Creates a new `GtkFixed`. */
+    public function __construct() {}
+
+    /**
+     * Retrieves the translation transformation of the given child `GtkWidget` in the `GtkFixed`.
+     *
+     * @return array{float, float}
+     */
+    public function get_child_position(GtkWidget $widget): array {}
+
+    /**
+     * Sets a translation transformation to the given $x and $y coordinates to the child $widget of
+     * the `GtkFixed`.
+     */
+    public function move(GtkWidget $widget, float $x, float $y): void {}
+
+    /** Adds a widget to a `GtkFixed` at the given position. */
+    public function put(GtkWidget $widget, float $x, float $y): void {}
+
+    /** Removes a child from $fixed. */
+    public function remove(GtkWidget $widget): void {}
+}
+
+/**
+ * `GtkFrame` is a widget that surrounds its child with a decorative frame and an optional label.
+ *
+ * @property ?GtkWidget $child
+ * @property ?string $label
+ * @property ?GtkWidget $label_widget
+ * @property ?float $label_xalign
+ */
+class GtkFrame extends GtkWidget
+{
+    /** Creates a new `GtkFrame`, with optional label $label. */
+    public function __construct(?string $label = null) {}
+
+    /** Gets the child widget of $frame. */
+    public function get_child(): ?GtkWidget {}
+
+    /** Returns the frame labels text. */
+    public function get_label(): ?string {}
+
+    /** Retrieves the X alignment of the frame’s label. */
+    public function get_label_align(): float {}
+
+    /** Retrieves the label widget for the frame. */
+    public function get_label_widget(): ?GtkWidget {}
+
+    /** Sets the child widget of $frame. */
+    public function set_child(?GtkWidget $child): void {}
+
+    /** Creates a new `GtkLabel` with the $label and sets it as the frame's label widget. */
+    public function set_label(?string $label): void {}
+
+    /** Sets the X alignment of the frame widget’s label. */
+    public function set_label_align(float $xalign): void {}
+
+    /** Sets the label widget for the frame. */
+    public function set_label_widget(?GtkWidget $label_widget): void {}
+}
+
+/**
+ * `GtkGrid` is a container which arranges its child widgets in rows and columns.
+ *
+ * @property ?int $baseline_row
+ * @property ?bool $column_homogeneous
+ * @property ?int $column_spacing
+ * @property ?bool $row_homogeneous
+ * @property ?int $row_spacing
+ */
+class GtkGrid extends GtkWidget implements GtkOrientable
+{
+    /** Creates a new grid widget. */
+    public function __construct() {}
+
+    /** Adds a widget to the grid. */
+    public function attach(GtkWidget $child, int $column, int $row, int $width, int $height): void {}
+
+    /** Adds a widget to the grid. */
+    public function attach_next_to(GtkWidget $child, ?GtkWidget $sibling, GtkPositionType $side, int $width, int $height): void {}
+
+    /** Returns which row defines the global baseline of $grid. */
+    public function get_baseline_row(): int {}
+
+    /** Gets the child of $grid whose area covers the grid cell at $column, $row. */
+    public function get_child_at(int $column, int $row): ?GtkWidget {}
+
+    /** Returns whether all columns of $grid have the same width. */
+    public function get_column_homogeneous(): bool {}
+
+    /** Returns the amount of space between the columns of $grid. */
+    public function get_column_spacing(): int {}
+
+    /** Returns the baseline position of $row. */
+    public function get_row_baseline_position(int $row): GtkBaselinePosition {}
+
+    /** Returns whether all rows of $grid have the same height. */
+    public function get_row_homogeneous(): bool {}
+
+    /** Returns the amount of space between the rows of $grid. */
+    public function get_row_spacing(): int {}
+
+    /** Inserts a column at the specified position. */
+    public function insert_column(int $position): void {}
+
+    /** Inserts a row or column at the specified position. */
+    public function insert_next_to(GtkWidget $sibling, GtkPositionType $side): void {}
+
+    /** Inserts a row at the specified position. */
+    public function insert_row(int $position): void {}
+
+    /**
+     * Queries the attach points and spans of $child inside the given `GtkGrid`.
+     *
+     * @return array{int, int, int, int}
+     */
+    public function query_child(GtkWidget $child): array {}
+
+    /** Removes a child from $grid. */
+    public function remove(GtkWidget $child): void {}
+
+    /** Removes a column from the grid. */
+    public function remove_column(int $position): void {}
+
+    /** Removes a row from the grid. */
+    public function remove_row(int $position): void {}
+
+    /** Sets which row defines the global baseline for the entire grid. */
+    public function set_baseline_row(int $row): void {}
+
+    /** Sets whether all columns of $grid will have the same width. */
+    public function set_column_homogeneous(bool $homogeneous): void {}
+
+    /** Sets the amount of space between columns of $grid. */
+    public function set_column_spacing(int $spacing): void {}
+
+    /**
+     * Sets how the baseline should be positioned on $row of the grid, in case that row is assigned
+     * more space than is requested.
+     */
+    public function set_row_baseline_position(int $row, GtkBaselinePosition $pos): void {}
+
+    /** Sets whether all rows of $grid will have the same height. */
+    public function set_row_homogeneous(bool $homogeneous): void {}
+
+    /** Sets the amount of space between rows of $grid. */
+    public function set_row_spacing(int $spacing): void {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::get_orientation */
+    public function get_orientation(): GtkOrientation {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
+    public function set_orientation(GtkOrientation $orientation): void {}
+}
+
+/**
  * Used for justifying the text inside a `Label` widget.
  */
 enum GtkJustification: int
@@ -768,6 +1016,185 @@ enum GtkNaturalWrapMode: int
 }
 
 /**
+ * `GtkNotebook` is a container whose children are pages switched between using tabs.
+ *
+ * @property ?bool $enable_popup
+ * @property ?string $group_name
+ * @property ?int $page
+ * @property-read ?GListModel $pages
+ * @property ?bool $scrollable
+ * @property ?bool $show_border
+ * @property ?bool $show_tabs
+ * @property ?GtkPositionType $tab_pos
+ */
+class GtkNotebook extends GtkWidget
+{
+    /** Creates a new `GtkNotebook` widget with no pages. */
+    public function __construct() {}
+
+    /** Appends a page to $notebook. */
+    public function append_page(GtkWidget $child, ?GtkWidget $tab_label): int {}
+
+    /** Appends a page to $notebook, specifying the widget to use as the label in the popup menu. */
+    public function append_page_menu(GtkWidget $child, ?GtkWidget $tab_label, ?GtkWidget $menu_label): int {}
+
+    /** Removes the child from the notebook. */
+    public function detach_tab(GtkWidget $child): void {}
+
+    /** Gets one of the action widgets. */
+    public function get_action_widget(GtkPackType $pack_type): ?GtkWidget {}
+
+    /** Returns the page number of the current page. */
+    public function get_current_page(): int {}
+
+    /** Gets the current group name for $notebook. */
+    public function get_group_name(): ?string {}
+
+    /** Retrieves the menu label widget of the page containing $child. */
+    public function get_menu_label(GtkWidget $child): ?GtkWidget {}
+
+    /** Retrieves the text of the menu label for the page containing $child. */
+    public function get_menu_label_text(GtkWidget $child): ?string {}
+
+    /** Gets the number of pages in a notebook. */
+    public function get_n_pages(): int {}
+
+    /** Returns the child widget contained in page number $page_num. */
+    public function get_nth_page(int $page_num): ?GtkWidget {}
+
+    /** Returns the `GtkNotebookPage` for $child. */
+    public function get_page(GtkWidget $child): GtkNotebookPage {}
+
+    /** Returns a `GListModel` that contains the pages of the notebook. */
+    public function get_pages(): GListModel {}
+
+    /** Returns whether the tab label area has arrows for scrolling. */
+    public function get_scrollable(): bool {}
+
+    /** Returns whether a bevel will be drawn around the notebook pages. */
+    public function get_show_border(): bool {}
+
+    /** Returns whether the tabs of the notebook are shown. */
+    public function get_show_tabs(): bool {}
+
+    /** Returns whether the tab contents can be detached from $notebook. */
+    public function get_tab_detachable(GtkWidget $child): bool {}
+
+    /** Returns the tab label widget for the page $child. */
+    public function get_tab_label(GtkWidget $child): ?GtkWidget {}
+
+    /** Retrieves the text of the tab label for the page containing $child. */
+    public function get_tab_label_text(GtkWidget $child): ?string {}
+
+    /** Gets the edge at which the tabs are drawn. */
+    public function get_tab_pos(): GtkPositionType {}
+
+    /** Gets whether the tab can be reordered via drag and drop or not. */
+    public function get_tab_reorderable(GtkWidget $child): bool {}
+
+    /** Insert a page into $notebook at the given position. */
+    public function insert_page(GtkWidget $child, ?GtkWidget $tab_label, int $position): int {}
+
+    /**
+     * Insert a page into $notebook at the given position, specifying the widget to use as the
+     * label in the popup menu.
+     */
+    public function insert_page_menu(GtkWidget $child, ?GtkWidget $tab_label, ?GtkWidget $menu_label, int $position): int {}
+
+    /** Switches to the next page. */
+    public function next_page(): void {}
+
+    /** Finds the index of the page which contains the given child widget. */
+    public function page_num(GtkWidget $child): int {}
+
+    /** Disables the popup menu. */
+    public function popup_disable(): void {}
+
+    /** Enables the popup menu. */
+    public function popup_enable(): void {}
+
+    /** Prepends a page to $notebook. */
+    public function prepend_page(GtkWidget $child, ?GtkWidget $tab_label): int {}
+
+    /** Prepends a page to $notebook, specifying the widget to use as the label in the popup menu. */
+    public function prepend_page_menu(GtkWidget $child, ?GtkWidget $tab_label, ?GtkWidget $menu_label): int {}
+
+    /** Switches to the previous page. */
+    public function prev_page(): void {}
+
+    /** Removes a page from the notebook given its index in the notebook. */
+    public function remove_page(int $page_num): void {}
+
+    /** Reorders the page containing $child, so that it appears in position $position. */
+    public function reorder_child(GtkWidget $child, int $position): void {}
+
+    /** Sets $widget as one of the action widgets. */
+    public function set_action_widget(GtkWidget $widget, GtkPackType $pack_type): void {}
+
+    /** Switches to the page number $page_num. */
+    public function set_current_page(int $page_num): void {}
+
+    /** Sets a group name for $notebook. */
+    public function set_group_name(?string $group_name): void {}
+
+    /** Changes the menu label for the page containing $child. */
+    public function set_menu_label(GtkWidget $child, ?GtkWidget $menu_label): void {}
+
+    /** Creates a new label and sets it as the menu label of $child. */
+    public function set_menu_label_text(GtkWidget $child, string $menu_text): void {}
+
+    /**
+     * Sets whether the tab label area will have arrows for scrolling if there are too many tabs to
+     * fit in the area.
+     */
+    public function set_scrollable(bool $scrollable): void {}
+
+    /** Sets whether a bevel will be drawn around the notebook pages. */
+    public function set_show_border(bool $show_border): void {}
+
+    /** Sets whether to show the tabs for the notebook or not. */
+    public function set_show_tabs(bool $show_tabs): void {}
+
+    /** Sets whether the tab can be detached from $notebook to another notebook or widget. */
+    public function set_tab_detachable(GtkWidget $child, bool $detachable): void {}
+
+    /** Changes the tab label for $child. */
+    public function set_tab_label(GtkWidget $child, ?GtkWidget $tab_label): void {}
+
+    /** Creates a new label and sets it as the tab label for the page containing $child. */
+    public function set_tab_label_text(GtkWidget $child, string $tab_text): void {}
+
+    /** Sets the edge at which the tabs are drawn. */
+    public function set_tab_pos(GtkPositionType $pos): void {}
+
+    /** Sets whether the notebook tab can be reordered via drag and drop or not. */
+    public function set_tab_reorderable(GtkWidget $child, bool $reorderable): void {}
+}
+
+/**
+ * `GtkNotebookPage` is an auxiliary object used by `GtkNotebook`.
+ *
+ * @property ?GtkWidget $child
+ * @property ?bool $detachable
+ * @property ?GtkWidget $menu
+ * @property ?string $menu_label
+ * @property ?int $position
+ * @property ?bool $reorderable
+ * @property ?GtkWidget $tab
+ * @property ?bool $tab_expand
+ * @property ?bool $tab_fill
+ * @property ?string $tab_label
+ */
+class GtkNotebookPage extends GObject
+{
+    /** GtkNotebookPage has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Returns the notebook child to which $page belongs. */
+    public function get_child(): GtkWidget {}
+}
+
+/**
  * Describes the way two values can be compared.
  */
 enum GtkOrdering: int
@@ -811,6 +1238,126 @@ enum GtkOverflow: int
 }
 
 /**
+ * `GtkOverlay` is a container which contains a single main child, on top of which it can place
+ * “overlay” widgets.
+ *
+ * @property ?GtkWidget $child
+ */
+class GtkOverlay extends GtkWidget
+{
+    /** Creates a new `GtkOverlay`. */
+    public function __construct() {}
+
+    /** Adds $widget to $overlay. */
+    public function add_overlay(GtkWidget $widget): void {}
+
+    /** Gets the child widget of $overlay. */
+    public function get_child(): ?GtkWidget {}
+
+    /** Gets whether $widget should be clipped within the parent. */
+    public function get_clip_overlay(GtkWidget $widget): bool {}
+
+    /** Gets whether $widget's size is included in the measurement of $overlay. */
+    public function get_measure_overlay(GtkWidget $widget): bool {}
+
+    /** Removes an overlay that was added with gtk_overlay_add_overlay(). */
+    public function remove_overlay(GtkWidget $widget): void {}
+
+    /** Sets the child widget of $overlay. */
+    public function set_child(?GtkWidget $child): void {}
+
+    /** Sets whether $widget should be clipped within the parent. */
+    public function set_clip_overlay(GtkWidget $widget, bool $clip_overlay): void {}
+
+    /** Sets whether $widget is included in the measured size of $overlay. */
+    public function set_measure_overlay(GtkWidget $widget, bool $measure): void {}
+}
+
+/**
+ * Represents the packing location of a children in its parent.
+ */
+enum GtkPackType: int
+{
+    case Start = 0;
+    case End = 1;
+}
+
+/**
+ * A widget with two panes, arranged either horizontally or vertically.
+ *
+ * @property ?GtkWidget $end_child
+ * @property-read ?int $max_position
+ * @property-read ?int $min_position
+ * @property ?int $position
+ * @property ?bool $position_set
+ * @property ?bool $resize_end_child
+ * @property ?bool $resize_start_child
+ * @property ?bool $shrink_end_child
+ * @property ?bool $shrink_start_child
+ * @property ?GtkWidget $start_child
+ * @property ?bool $wide_handle
+ */
+class GtkPaned extends GtkWidget implements GtkOrientable
+{
+    /** Creates a new `GtkPaned` widget. */
+    public function __construct(GtkOrientation $orientation) {}
+
+    /** Retrieves the end child of the given `GtkPaned`. */
+    public function get_end_child(): ?GtkWidget {}
+
+    /** Obtains the position of the divider between the two panes. */
+    public function get_position(): int {}
+
+    /** Returns whether the [property@Gtk.Paned:end-child] can be resized. */
+    public function get_resize_end_child(): bool {}
+
+    /** Returns whether the [property@Gtk.Paned:start-child] can be resized. */
+    public function get_resize_start_child(): bool {}
+
+    /** Returns whether the [property@Gtk.Paned:end-child] can shrink. */
+    public function get_shrink_end_child(): bool {}
+
+    /** Returns whether the [property@Gtk.Paned:start-child] can shrink. */
+    public function get_shrink_start_child(): bool {}
+
+    /** Retrieves the start child of the given `GtkPaned`. */
+    public function get_start_child(): ?GtkWidget {}
+
+    /** Gets whether the separator should be wide. */
+    public function get_wide_handle(): bool {}
+
+    /** Sets the end child of $paned to $child. */
+    public function set_end_child(?GtkWidget $child): void {}
+
+    /** Sets the position of the divider between the two panes. */
+    public function set_position(int $position): void {}
+
+    /** Sets whether the [property@Gtk.Paned:end-child] can be resized. */
+    public function set_resize_end_child(bool $resize): void {}
+
+    /** Sets whether the [property@Gtk.Paned:start-child] can be resized. */
+    public function set_resize_start_child(bool $resize): void {}
+
+    /** Sets whether the [property@Gtk.Paned:end-child] can shrink. */
+    public function set_shrink_end_child(bool $resize): void {}
+
+    /** Sets whether the [property@Gtk.Paned:start-child] can shrink. */
+    public function set_shrink_start_child(bool $resize): void {}
+
+    /** Sets the start child of $paned to $child. */
+    public function set_start_child(?GtkWidget $child): void {}
+
+    /** Sets whether the separator should be wide. */
+    public function set_wide_handle(bool $wide): void {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::get_orientation */
+    public function get_orientation(): GtkOrientation {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
+    public function set_orientation(GtkOrientation $orientation): void {}
+}
+
+/**
  * Flags that influence the behavior of `pick`.
  */
 final class GtkPickFlags
@@ -818,6 +1365,29 @@ final class GtkPickFlags
     public const int DEFAULT = 0;
     public const int INSENSITIVE = 1;
     public const int NON_TARGETABLE = 2;
+}
+
+/**
+ * Determines how the size should be computed to achieve the one of the visibility mode for the
+ * scrollbars.
+ */
+enum GtkPolicyType: int
+{
+    case Always = 0;
+    case Automatic = 1;
+    case Never = 2;
+    case External = 3;
+}
+
+/**
+ * Describes which edge of a widget a certain feature is positioned at.
+ */
+enum GtkPositionType: int
+{
+    case Left = 0;
+    case Right = 1;
+    case Top = 2;
+    case Bottom = 3;
 }
 
 /**
@@ -836,6 +1406,66 @@ final class GtkRequisition
 }
 
 /**
+ * A `GtkRevealer` animates the transition of its child from invisible to visible.
+ *
+ * @property ?GtkWidget $child
+ * @property-read ?bool $child_revealed
+ * @property ?bool $reveal_child
+ * @property ?int $transition_duration
+ * @property ?GtkRevealerTransitionType $transition_type
+ */
+class GtkRevealer extends GtkWidget
+{
+    /** Creates a new `GtkRevealer`. */
+    public function __construct() {}
+
+    /** Gets the child widget of $revealer. */
+    public function get_child(): ?GtkWidget {}
+
+    /** Returns whether the child is fully revealed. */
+    public function get_child_revealed(): bool {}
+
+    /** Returns whether the child is currently revealed. */
+    public function get_reveal_child(): bool {}
+
+    /** Returns the amount of time (in milliseconds) that transitions will take. */
+    public function get_transition_duration(): int {}
+
+    /** Gets the type of animation that will be used for transitions in $revealer. */
+    public function get_transition_type(): GtkRevealerTransitionType {}
+
+    /** Sets the child widget of $revealer. */
+    public function set_child(?GtkWidget $child): void {}
+
+    /** Tells the `GtkRevealer` to reveal or conceal its child. */
+    public function set_reveal_child(bool $reveal_child): void {}
+
+    /** Sets the duration that transitions will take. */
+    public function set_transition_duration(int $duration): void {}
+
+    /** Sets the type of animation that will be used for transitions in $revealer. */
+    public function set_transition_type(GtkRevealerTransitionType $transition): void {}
+}
+
+/**
+ * These enumeration values describe the possible transitions when the child of a `GtkRevealer`
+ * widget is shown or hidden.
+ */
+enum GtkRevealerTransitionType: int
+{
+    case None = 0;
+    case Crossfade = 1;
+    case SlideRight = 2;
+    case SlideLeft = 3;
+    case SlideUp = 4;
+    case SlideDown = 5;
+    case SwingRight = 6;
+    case SwingLeft = 7;
+    case SwingUp = 8;
+    case SwingDown = 9;
+}
+
+/**
  * `GtkRoot` is the interface implemented by all widgets that can act as a toplevel widget.
  */
 interface GtkRoot
@@ -851,6 +1481,219 @@ interface GtkRoot
      * the root.
      */
     public function set_focus(?GtkWidget $focus): void;
+}
+
+/**
+ * `GtkScrollable` is an interface for widgets with native scrolling ability.
+ *
+ * @property ?GtkAdjustment $hadjustment
+ * @property ?GtkScrollablePolicy $hscroll_policy
+ * @property ?GtkAdjustment $vadjustment
+ * @property ?GtkScrollablePolicy $vscroll_policy
+ */
+interface GtkScrollable
+{
+}
+
+/**
+ * Defines the policy to be used in a scrollable widget when updating the scrolled window
+ * adjustments in a given orientation.
+ */
+enum GtkScrollablePolicy: int
+{
+    case Minimum = 0;
+    case Natural = 1;
+}
+
+/**
+ * `GtkScrolledWindow` is a container that makes its child scrollable.
+ *
+ * @property ?GtkWidget $child
+ * @property ?GtkAdjustment $hadjustment
+ * @property ?bool $has_frame
+ * @property ?GtkPolicyType $hscrollbar_policy
+ * @property ?bool $kinetic_scrolling
+ * @property ?int $max_content_height
+ * @property ?int $max_content_width
+ * @property ?int $min_content_height
+ * @property ?int $min_content_width
+ * @property ?bool $overlay_scrolling
+ * @property ?bool $propagate_natural_height
+ * @property ?bool $propagate_natural_width
+ * @property ?GtkAdjustment $vadjustment
+ * @property ?GtkPolicyType $vscrollbar_policy
+ * @property ?GtkCornerType $window_placement
+ */
+class GtkScrolledWindow extends GtkWidget
+{
+    /** Creates a new scrolled window. */
+    public function __construct() {}
+
+    /** Gets the child widget of $scrolled_window. */
+    public function get_child(): ?GtkWidget {}
+
+    /** Returns the horizontal scrollbar’s adjustment. */
+    public function get_hadjustment(): GtkAdjustment {}
+
+    /** Gets whether the scrolled window draws a frame. */
+    public function get_has_frame(): bool {}
+
+    /** Returns the horizontal scrollbar of $scrolled_window. */
+    public function get_hscrollbar(): GtkWidget {}
+
+    /** Returns the specified kinetic scrolling behavior. */
+    public function get_kinetic_scrolling(): bool {}
+
+    /** Returns the maximum content height set. */
+    public function get_max_content_height(): int {}
+
+    /** Returns the maximum content width set. */
+    public function get_max_content_width(): int {}
+
+    /** Gets the minimal content height of $scrolled_window. */
+    public function get_min_content_height(): int {}
+
+    /** Gets the minimum content width of $scrolled_window. */
+    public function get_min_content_width(): int {}
+
+    /** Returns whether overlay scrolling is enabled for this scrolled window. */
+    public function get_overlay_scrolling(): bool {}
+
+    /** Gets the placement of the contents with respect to the scrollbars. */
+    public function get_placement(): GtkCornerType {}
+
+    /**
+     * Retrieves the current policy values for the horizontal and vertical scrollbars.
+     *
+     * @return array{GtkPolicyType, GtkPolicyType}
+     */
+    public function get_policy(): array {}
+
+    /**
+     * Reports whether the natural height of the child will be calculated and propagated through
+     * the scrolled window’s requested natural height.
+     */
+    public function get_propagate_natural_height(): bool {}
+
+    /**
+     * Reports whether the natural width of the child will be calculated and propagated through the
+     * scrolled window’s requested natural width.
+     */
+    public function get_propagate_natural_width(): bool {}
+
+    /** Returns the vertical scrollbar’s adjustment. */
+    public function get_vadjustment(): GtkAdjustment {}
+
+    /** Returns the vertical scrollbar of $scrolled_window. */
+    public function get_vscrollbar(): GtkWidget {}
+
+    /** Sets the child widget of $scrolled_window. */
+    public function set_child(?GtkWidget $child): void {}
+
+    /** Sets the `GtkAdjustment` for the horizontal scrollbar. */
+    public function set_hadjustment(?GtkAdjustment $hadjustment): void {}
+
+    /** Changes the frame drawn around the contents of $scrolled_window. */
+    public function set_has_frame(bool $has_frame): void {}
+
+    /** Turns kinetic scrolling on or off. */
+    public function set_kinetic_scrolling(bool $kinetic_scrolling): void {}
+
+    /** Sets the maximum height that $scrolled_window should keep visible. */
+    public function set_max_content_height(int $height): void {}
+
+    /** Sets the maximum width that $scrolled_window should keep visible. */
+    public function set_max_content_width(int $width): void {}
+
+    /** Sets the minimum height that $scrolled_window should keep visible. */
+    public function set_min_content_height(int $height): void {}
+
+    /** Sets the minimum width that $scrolled_window should keep visible. */
+    public function set_min_content_width(int $width): void {}
+
+    /** Enables or disables overlay scrolling for this scrolled window. */
+    public function set_overlay_scrolling(bool $overlay_scrolling): void {}
+
+    /** Sets the placement of the contents with respect to the scrollbars for the scrolled window. */
+    public function set_placement(GtkCornerType $window_placement): void {}
+
+    /** Sets the scrollbar policy for the horizontal and vertical scrollbars. */
+    public function set_policy(GtkPolicyType $hscrollbar_policy, GtkPolicyType $vscrollbar_policy): void {}
+
+    /**
+     * Sets whether the natural height of the child should be calculated and propagated through the
+     * scrolled window’s requested natural height.
+     */
+    public function set_propagate_natural_height(bool $propagate): void {}
+
+    /**
+     * Sets whether the natural width of the child should be calculated and propagated through the
+     * scrolled window’s requested natural width.
+     */
+    public function set_propagate_natural_width(bool $propagate): void {}
+
+    /** Sets the `GtkAdjustment` for the vertical scrollbar. */
+    public function set_vadjustment(?GtkAdjustment $vadjustment): void {}
+
+    /** Unsets the placement of the contents with respect to the scrollbars. */
+    public function unset_placement(): void {}
+}
+
+/**
+ * `GtkSeparator` is a horizontal or vertical separator widget.
+ */
+class GtkSeparator extends GtkWidget implements GtkOrientable
+{
+    /** Creates a new `GtkSeparator` with the given orientation. */
+    public function __construct(GtkOrientation $orientation) {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::get_orientation */
+    public function get_orientation(): GtkOrientation {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
+    public function set_orientation(GtkOrientation $orientation): void {}
+}
+
+/**
+ * `GtkSizeGroup` groups widgets together so they all request the same size.
+ *
+ * @property ?GtkSizeGroupMode $mode
+ */
+class GtkSizeGroup extends GObject
+{
+    /** Create a new `GtkSizeGroup`. */
+    public function __construct(GtkSizeGroupMode $mode) {}
+
+    /** Adds a widget to a `GtkSizeGroup`. */
+    public function add_widget(GtkWidget $widget): void {}
+
+    /** Gets the current mode of the size group. */
+    public function get_mode(): GtkSizeGroupMode {}
+
+    /**
+     * Returns the list of widgets associated with $size_group.
+     *
+     * @return list<GtkWidget>
+     */
+    public function get_widgets(): array {}
+
+    /** Removes a widget from a `GtkSizeGroup`. */
+    public function remove_widget(GtkWidget $widget): void {}
+
+    /** Sets the `GtkSizeGroupMode` of the size group. */
+    public function set_mode(GtkSizeGroupMode $mode): void {}
+}
+
+/**
+ * The mode of the size group determines the directions in which the size group affects the
+ * requested sizes of its component widgets.
+ */
+enum GtkSizeGroupMode: int
+{
+    case None = 0;
+    case Horizontal = 1;
+    case Vertical = 2;
+    case Both = 3;
 }
 
 /**
@@ -971,6 +1814,222 @@ enum GtkSorterOrder: int
 }
 
 /**
+ * `GtkStack` is a container which only shows one of its children at a time.
+ *
+ * @property ?bool $hhomogeneous
+ * @property ?bool $interpolate_size
+ * @property ?int $transition_duration
+ * @property-read ?bool $transition_running
+ * @property ?GtkStackTransitionType $transition_type
+ * @property ?bool $vhomogeneous
+ * @property ?GtkWidget $visible_child
+ * @property ?string $visible_child_name
+ */
+class GtkStack extends GtkWidget
+{
+    /** Creates a new `GtkStack`. */
+    public function __construct() {}
+
+    /** Adds a child to $stack. */
+    public function add_child(GtkWidget $child): GtkStackPage {}
+
+    /** Adds a child to $stack. */
+    public function add_named(GtkWidget $child, ?string $name): GtkStackPage {}
+
+    /** Adds a child to $stack. */
+    public function add_titled(GtkWidget $child, ?string $name, string $title): GtkStackPage {}
+
+    /** Finds the child with the name given as the argument. */
+    public function get_child_by_name(string $name): ?GtkWidget {}
+
+    /** Gets whether $stack is horizontally homogeneous. */
+    public function get_hhomogeneous(): bool {}
+
+    /**
+     * Returns whether the `GtkStack` is set up to interpolate between the sizes of children on
+     * page switch.
+     */
+    public function get_interpolate_size(): bool {}
+
+    /** Returns the `GtkStackPage` object for $child. */
+    public function get_page(GtkWidget $child): GtkStackPage {}
+
+    /**
+     * Returns the amount of time (in milliseconds) that transitions between pages in $stack will
+     * take.
+     */
+    public function get_transition_duration(): int {}
+
+    /** Returns whether the $stack is currently in a transition from one page to another. */
+    public function get_transition_running(): bool {}
+
+    /** Gets the type of animation that will be used for transitions between pages in $stack. */
+    public function get_transition_type(): GtkStackTransitionType {}
+
+    /** Gets whether $stack is vertically homogeneous. */
+    public function get_vhomogeneous(): bool {}
+
+    /** Gets the currently visible child of $stack. */
+    public function get_visible_child(): ?GtkWidget {}
+
+    /** Returns the name of the currently visible child of $stack. */
+    public function get_visible_child_name(): ?string {}
+
+    /** Removes a child widget from $stack. */
+    public function remove(GtkWidget $child): void {}
+
+    /** Sets the `GtkStack` to be horizontally homogeneous or not. */
+    public function set_hhomogeneous(bool $hhomogeneous): void {}
+
+    /** Sets whether or not $stack will interpolate its size when changing the visible child. */
+    public function set_interpolate_size(bool $interpolate_size): void {}
+
+    /** Sets the duration that transitions between pages in $stack will take. */
+    public function set_transition_duration(int $duration): void {}
+
+    /** Sets the type of animation that will be used for transitions between pages in $stack. */
+    public function set_transition_type(GtkStackTransitionType $transition): void {}
+
+    /** Sets the `GtkStack` to be vertically homogeneous or not. */
+    public function set_vhomogeneous(bool $vhomogeneous): void {}
+
+    /** Makes $child the visible child of $stack. */
+    public function set_visible_child(GtkWidget $child): void {}
+
+    /** Makes the child with the given name visible. */
+    public function set_visible_child_full(string $name, GtkStackTransitionType $transition): void {}
+
+    /** Makes the child with the given name visible. */
+    public function set_visible_child_name(string $name): void {}
+}
+
+/**
+ * `GtkStackPage` is an auxiliary class used by `GtkStack`.
+ *
+ * @property ?GtkWidget $child
+ * @property ?string $icon_name
+ * @property ?string $name
+ * @property ?bool $needs_attention
+ * @property ?string $title
+ * @property ?bool $use_underline
+ * @property ?bool $visible
+ */
+class GtkStackPage extends GObject
+{
+    /** GtkStackPage has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Returns the stack child to which $self belongs. */
+    public function get_child(): GtkWidget {}
+
+    /** Returns the icon name of the page. */
+    public function get_icon_name(): ?string {}
+
+    /** Returns the name of the page. */
+    public function get_name(): ?string {}
+
+    /** Returns whether the page is marked as “needs attention”. */
+    public function get_needs_attention(): bool {}
+
+    /** Gets the page title. */
+    public function get_title(): ?string {}
+
+    /** Gets whether underlines in the page title indicate mnemonics. */
+    public function get_use_underline(): bool {}
+
+    /** Returns whether $page is visible in its `GtkStack`. */
+    public function get_visible(): bool {}
+
+    /** Sets the icon name of the page. */
+    public function set_icon_name(string $setting): void {}
+
+    /** Sets the name of the page. */
+    public function set_name(string $setting): void {}
+
+    /** Sets whether the page is marked as “needs attention”. */
+    public function set_needs_attention(bool $setting): void {}
+
+    /** Sets the page title. */
+    public function set_title(string $setting): void {}
+
+    /** Sets whether underlines in the page title indicate mnemonics. */
+    public function set_use_underline(bool $setting): void {}
+
+    /** Sets whether $page is visible in its `GtkStack`. */
+    public function set_visible(bool $visible): void {}
+}
+
+/**
+ * A `GtkStackSidebar` uses a sidebar to switch between `GtkStack` pages.
+ *
+ * @property ?GtkStack $stack
+ */
+class GtkStackSidebar extends GtkWidget
+{
+    /** Creates a new `GtkStackSidebar`. */
+    public function __construct() {}
+
+    /** Retrieves the stack. */
+    public function get_stack(): ?GtkStack {}
+
+    /** Set the `GtkStack` associated with this `GtkStackSidebar`. */
+    public function set_stack(GtkStack $stack): void {}
+}
+
+/**
+ * The `GtkStackSwitcher` shows a row of buttons to switch between `GtkStack` pages.
+ *
+ * @property ?GtkStack $stack
+ */
+class GtkStackSwitcher extends GtkWidget implements GtkOrientable
+{
+    /** Create a new `GtkStackSwitcher`. */
+    public function __construct() {}
+
+    /** Retrieves the stack. */
+    public function get_stack(): ?GtkStack {}
+
+    /** Sets the stack to control. */
+    public function set_stack(?GtkStack $stack): void {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::get_orientation */
+    public function get_orientation(): GtkOrientation {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
+    public function set_orientation(GtkOrientation $orientation): void {}
+}
+
+/**
+ * Possible transitions between pages in a `GtkStack` widget.
+ */
+enum GtkStackTransitionType: int
+{
+    case None = 0;
+    case Crossfade = 1;
+    case SlideRight = 2;
+    case SlideLeft = 3;
+    case SlideUp = 4;
+    case SlideDown = 5;
+    case SlideLeftRight = 6;
+    case SlideUpDown = 7;
+    case OverUp = 8;
+    case OverDown = 9;
+    case OverLeft = 10;
+    case OverRight = 11;
+    case UnderUp = 12;
+    case UnderDown = 13;
+    case UnderLeft = 14;
+    case UnderRight = 15;
+    case OverUpDown = 16;
+    case OverDownUp = 17;
+    case OverLeftRight = 18;
+    case OverRightLeft = 19;
+    case RotateLeft = 20;
+    case RotateRight = 21;
+    case RotateLeftRight = 22;
+}
+
+/**
  * Describes a widget state.
  */
 final class GtkStateFlags
@@ -1008,6 +2067,54 @@ enum GtkTextDirection: int
     case None = 0;
     case Ltr = 1;
     case Rtl = 2;
+}
+
+/**
+ * `GtkViewport` implements scrollability for widgets that lack their own scrolling capabilities.
+ *
+ * @property ?GtkWidget $child
+ * @property ?bool $scroll_to_focus
+ */
+class GtkViewport extends GtkWidget implements GtkScrollable
+{
+    /** Creates a new `GtkViewport`. */
+    public function __construct(?GtkAdjustment $hadjustment = null, ?GtkAdjustment $vadjustment = null) {}
+
+    /** Gets the child widget of $viewport. */
+    public function get_child(): ?GtkWidget {}
+
+    /** Gets whether the viewport is scrolling to keep the focused child in view. */
+    public function get_scroll_to_focus(): bool {}
+
+    /** Sets the child widget of $viewport. */
+    public function set_child(?GtkWidget $child): void {}
+
+    /** Sets whether the viewport should automatically scroll to keep the focused child in view. */
+    public function set_scroll_to_focus(bool $scroll_to_focus): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_hadjustment */
+    public function get_hadjustment(): ?GtkAdjustment {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_hscroll_policy */
+    public function get_hscroll_policy(): GtkScrollablePolicy {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_vadjustment */
+    public function get_vadjustment(): ?GtkAdjustment {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_vscroll_policy */
+    public function get_vscroll_policy(): GtkScrollablePolicy {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_hadjustment */
+    public function set_hadjustment(?GtkAdjustment $hadjustment): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_hscroll_policy */
+    public function set_hscroll_policy(GtkScrollablePolicy $policy): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_vadjustment */
+    public function set_vadjustment(?GtkAdjustment $vadjustment): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_vscroll_policy */
+    public function set_vscroll_policy(GtkScrollablePolicy $policy): void {}
 }
 
 /**

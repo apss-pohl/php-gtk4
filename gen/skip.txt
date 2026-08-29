@@ -5,3 +5,5 @@ Gtk.Application.inhibit     crashes inside GTK when the window has no surface / 
 Gtk.Application.uninhibit   pairs with inhibit
 Gdk.Texture.__construct abstract for GTK's own subclasses only: a texture needs internal state (color state, 4.16+) that only the factories set - no PHP subtypes, no `new`
 Gdk.Display.__construct GDK owns displays (GdkDisplay::get_default() / open()); a PHP subtype would have no backend behind it
+Gtk.StackPage.__construct GtkStack creates its pages (add_child()/add_titled(), get_page()); `new` g_error()s "is missing a child widget"
+Gtk.NotebookPage.__construct GtkNotebook creates its pages (get_page()); a page without a notebook has no child

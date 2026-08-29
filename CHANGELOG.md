@@ -9,6 +9,14 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- Wave 1 (layout, docs/PLAN.md §3): `GtkScrolledWindow`, `GtkViewport`, `GtkScrollable`,
+  `GtkAdjustment`, `GtkGrid`, `GtkPaned`, `GtkFrame`, `GtkStack` + `GtkStackPage`/`GtkStackSwitcher`/
+  `GtkStackSidebar`, `GtkNotebook` + `GtkNotebookPage`, `GtkOverlay`, `GtkRevealer`, `GtkFixed`,
+  `GtkSeparator`, `GtkSizeGroup`, with `GtkPolicyType`, `GtkCornerType`, `GtkScrollablePolicy`,
+  `GtkPositionType`, `GtkPackType`, `GtkStackTransitionType`, `GtkRevealerTransitionType`,
+  `GtkSizeGroupMode` — generated, one example page each, `LayoutTest` for what round-trips cannot
+  show. The demo's sidebar scrolls. Page objects come from their container (`new GtkStackPage()`
+  is refused).
 - Boxed records generated from GIR (`GtkRequisition` first): fields as properties, value
   semantics, generated registration. Out parameters of string/object/enum/record kind, including
   caller-allocated structs (`GtkWidget::get_color(): GdkRGBA`, `get_preferred_size()`).

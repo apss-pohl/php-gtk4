@@ -5,3 +5,7 @@ Gio.Application.set_application_id   'smoke' is not a valid application id (reve
 Gio.Application.application_id       same, as a property
 Gio.Application.set_resource_base_path   must start with '/'; 'smoke' is rejected
 Gio.Application.resource_base_path       same, as a property
+Gtk.Notebook.set_current_page   an empty notebook has no page 1 (get_current_page() stays -1)
+Gtk.Notebook.page               same, as a property
+Gtk.Stack.set_visible_child_name   an empty stack has no child named 'smoke' (visible-child-name stays null)
+Gtk.Stack.visible_child_name       same, as a property

@@ -163,6 +163,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `property item-type` — property type Gtk.GType not mappable
 
+## GtkFixed
+
+- `get_child_transform` — return type Gsk.Transform
+- `set_child_transform` — parameter `transform` of type Gsk.Transform
+
+## GtkFrame
+
+- `vfunc compute_child_allocation` — parameter `allocation` of type Gtk.Allocation
+
 ## GtkLabel
 
 - `get_attributes` — return type Pango.AttrList
@@ -176,14 +185,50 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `property extra-menu` — property type Gio.MenuModel not mappable
 - `property tabs` — property type Pango.TabArray not mappable
 
+## GtkNotebookPage
+
+- `__construct` — skip.txt: GtkNotebook creates its pages (get_page()); a page without a notebook has no child
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GtkPaned
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## GtkRequisition
 
 - `copy` — memory management belongs to the handle (clone / destructor)
 - `free` — memory management belongs to the handle (clone / destructor)
 
+## GtkScrollable
+
+- `get_border` — caller-allocates out parameter `border` of type Gtk.Border
+- `vfunc get_border` — caller-allocates out parameter `border` of type Gtk.Border
+
+## GtkSeparator
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GtkSizeGroup
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## GtkSortListModel
 
 - `property item-type` — property type Gtk.GType not mappable
+
+## GtkStack
+
+- `get_pages` — return type Gtk.SelectionModel (not in the closure)
+- `property pages` — property type Gtk.SelectionModel not mappable
+
+## GtkStackPage
+
+- `__construct` — skip.txt: GtkStack creates its pages (add_child()/add_titled(), get_page()); `new` g_error()s "is missing a child widget"
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GtkViewport
+
+- `scroll_to` — parameter `scroll` of type Gtk.ScrollInfo
 
 ## GtkWidget
 
@@ -253,6 +298,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## Emitted files
 
+- `Gtk/GtkAdjustment.cpp`
 - `Gtk/GtkAlertDialog.cpp`
 - `Gtk/GtkApplication.cpp`
 - `Gtk/GtkBox.cpp`
@@ -263,13 +309,30 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkDrawingArea.cpp`
 - `Gtk/GtkFilter.cpp`
 - `Gtk/GtkFilterListModel.cpp`
+- `Gtk/GtkFixed.cpp`
+- `Gtk/GtkFrame.cpp`
+- `Gtk/GtkGrid.cpp`
 - `Gtk/GtkLabel.cpp`
+- `Gtk/GtkNotebook.cpp`
+- `Gtk/GtkNotebookPage.cpp`
 - `Gtk/GtkOrientable.cpp`
+- `Gtk/GtkOverlay.cpp`
+- `Gtk/GtkPaned.cpp`
 - `Gtk/GtkRequisition.cpp`
+- `Gtk/GtkRevealer.cpp`
 - `Gtk/GtkRoot.cpp`
+- `Gtk/GtkScrollable.cpp`
+- `Gtk/GtkScrolledWindow.cpp`
+- `Gtk/GtkSeparator.cpp`
+- `Gtk/GtkSizeGroup.cpp`
 - `Gtk/GtkSortListModel.cpp`
 - `Gtk/GtkSorter.cpp`
+- `Gtk/GtkStack.cpp`
+- `Gtk/GtkStackPage.cpp`
+- `Gtk/GtkStackSidebar.cpp`
+- `Gtk/GtkStackSwitcher.cpp`
 - `Gtk/GtkStyleProvider.cpp`
+- `Gtk/GtkViewport.cpp`
 - `Gtk/GtkWidget.cpp`
 - `Gtk/GtkWindow.cpp`
 - `Gtk/Gtk.stub.php`
@@ -292,6 +355,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `gen_prototypes.h`
 - `gen_arginfo.h`
 - `examples/generated-sections.inc`
+- `tests/Generated/GtkAdjustmentSmokeTest.php`
 - `tests/Generated/GtkAlertDialogSmokeTest.php`
 - `tests/Generated/GtkApplicationSmokeTest.php`
 - `tests/Generated/GtkButtonSmokeTest.php`
@@ -301,9 +365,20 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkDrawingAreaSmokeTest.php`
 - `tests/Generated/GtkFilterSmokeTest.php`
 - `tests/Generated/GtkFilterListModelSmokeTest.php`
+- `tests/Generated/GtkFixedSmokeTest.php`
+- `tests/Generated/GtkFrameSmokeTest.php`
+- `tests/Generated/GtkGridSmokeTest.php`
 - `tests/Generated/GtkLabelSmokeTest.php`
+- `tests/Generated/GtkNotebookSmokeTest.php`
+- `tests/Generated/GtkOverlaySmokeTest.php`
+- `tests/Generated/GtkRevealerSmokeTest.php`
+- `tests/Generated/GtkScrolledWindowSmokeTest.php`
 - `tests/Generated/GtkSortListModelSmokeTest.php`
 - `tests/Generated/GtkSorterSmokeTest.php`
+- `tests/Generated/GtkStackSmokeTest.php`
+- `tests/Generated/GtkStackSidebarSmokeTest.php`
+- `tests/Generated/GtkStackSwitcherSmokeTest.php`
+- `tests/Generated/GtkViewportSmokeTest.php`
 - `tests/Generated/GtkWidgetSmokeTest.php`
 - `tests/Generated/GtkWindowSmokeTest.php`
 - `tests/Generated/GApplicationSmokeTest.php`
