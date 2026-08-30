@@ -30,6 +30,24 @@ ZEND_METHOD(Gtk4_GtkPicture, __construct) {
 }
 
 /**
+ * static Gtk4\GtkPicture::new_for_file(?string $file = null): GtkPicture
+ *
+ * Creates a new `GtkPicture` displaying the given $file.
+ */
+ZEND_METHOD(Gtk4_GtkPicture, new_for_file) {
+  zend_string *file = nullptr;
+  ZEND_PARSE_PARAMETERS_START(0, 1)
+  Z_PARAM_OPTIONAL
+  Z_PARAM_PATH_STR_OR_NULL(file)
+  ZEND_PARSE_PARAMETERS_END();
+  GFile *file_f = file != nullptr ? g_file_new_for_commandline_arg(ZSTR_VAL(file)) : nullptr;
+  GtkWidget *call_result = gtk_picture_new_for_file(file_f);
+  if (file_f != nullptr) g_object_unref(file_f);
+  GObject *obj = G_OBJECT(call_result);
+  wrap(obj, return_value);
+}
+
+/**
  * static Gtk4\GtkPicture::new_for_filename(?string $filename = null): GtkPicture
  *
  * Creates a new `GtkPicture` displaying the file $filename.
@@ -117,6 +135,23 @@ ZEND_METHOD(Gtk4_GtkPicture, get_content_fit) {
 }
 
 /**
+ * Gtk4\GtkPicture::get_file(): ?string
+ *
+ * Gets the `GFile` currently displayed if $self is displaying a file.
+ */
+ZEND_METHOD(Gtk4_GtkPicture, get_file) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkPicture *self = PHPGTK_SELF(GtkPicture, GTK_TYPE_PICTURE);
+  GFile *file = gtk_picture_get_file(self);
+  if (file == nullptr) RETURN_NULL();
+  char *file_s = g_file_get_path(file);
+  if (file_s == nullptr) file_s = g_file_get_uri(file);
+  if (file_s == nullptr) RETURN_EMPTY_STRING();
+  RETVAL_STRING(file_s);
+  g_free(file_s);
+}
+
+/**
  * Gtk4\GtkPicture::get_paintable(): ?GdkPaintable
  *
  * Gets the `GdkPaintable` being displayed by the `GtkPicture`.
@@ -124,8 +159,8 @@ ZEND_METHOD(Gtk4_GtkPicture, get_content_fit) {
 ZEND_METHOD(Gtk4_GtkPicture, get_paintable) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkPicture *self = PHPGTK_SELF(GtkPicture, GTK_TYPE_PICTURE);
-  GdkPaintable *result = gtk_picture_get_paintable(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GdkPaintable *phpgtk_ret = gtk_picture_get_paintable(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -172,6 +207,22 @@ ZEND_METHOD(Gtk4_GtkPicture, set_content_fit) {
   gint content_fit_v = 0;
   if (!enum_from_php(content_fit, GTK_TYPE_CONTENT_FIT, &content_fit_v)) RETURN_THROWS();
   gtk_picture_set_content_fit(self, static_cast<GtkContentFit>(content_fit_v));
+}
+
+/**
+ * Gtk4\GtkPicture::set_file(?string $file): void
+ *
+ * Makes $self load and display $file.
+ */
+ZEND_METHOD(Gtk4_GtkPicture, set_file) {
+  zend_string *file = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_PATH_STR_OR_NULL(file)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkPicture *self = PHPGTK_SELF(GtkPicture, GTK_TYPE_PICTURE);
+  GFile *file_f = file != nullptr ? g_file_new_for_commandline_arg(ZSTR_VAL(file)) : nullptr;
+  gtk_picture_set_file(self, file_f);
+  if (file_f != nullptr) g_object_unref(file_f);
 }
 
 /**

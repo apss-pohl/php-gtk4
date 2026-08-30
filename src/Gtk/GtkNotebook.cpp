@@ -115,8 +115,9 @@ ZEND_METHOD(Gtk4_GtkNotebook, get_action_widget) {
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
   gint pack_type_v = 0;
   if (!enum_from_php(pack_type, GTK_TYPE_PACK_TYPE, &pack_type_v)) RETURN_THROWS();
-  GtkWidget *result = gtk_notebook_get_action_widget(self, static_cast<GtkPackType>(pack_type_v));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret =
+      gtk_notebook_get_action_widget(self, static_cast<GtkPackType>(pack_type_v));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -154,8 +155,8 @@ ZEND_METHOD(Gtk4_GtkNotebook, get_menu_label) {
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
-  GtkWidget *result = gtk_notebook_get_menu_label(self, GTK_WIDGET(child_o));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_notebook_get_menu_label(self, GTK_WIDGET(child_o));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -197,8 +198,8 @@ ZEND_METHOD(Gtk4_GtkNotebook, get_nth_page) {
   ZEND_PARSE_PARAMETERS_END();
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
   if (!phpgtk::check_range<int>(page_num, 1)) RETURN_THROWS();
-  GtkWidget *result = gtk_notebook_get_nth_page(self, static_cast<int>(page_num));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_notebook_get_nth_page(self, static_cast<int>(page_num));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -214,8 +215,8 @@ ZEND_METHOD(Gtk4_GtkNotebook, get_page) {
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
-  GtkNotebookPage *result = gtk_notebook_get_page(self, GTK_WIDGET(child_o));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkNotebookPage *phpgtk_ret = gtk_notebook_get_page(self, GTK_WIDGET(child_o));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -226,9 +227,9 @@ ZEND_METHOD(Gtk4_GtkNotebook, get_page) {
 ZEND_METHOD(Gtk4_GtkNotebook, get_pages) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
-  GListModel *result = gtk_notebook_get_pages(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
-  if (result != nullptr) g_object_unref(result);  // the handle took its own ref
+  GListModel *phpgtk_ret = gtk_notebook_get_pages(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
 }
 
 /**
@@ -293,8 +294,8 @@ ZEND_METHOD(Gtk4_GtkNotebook, get_tab_label) {
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
-  GtkWidget *result = gtk_notebook_get_tab_label(self, GTK_WIDGET(child_o));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_notebook_get_tab_label(self, GTK_WIDGET(child_o));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

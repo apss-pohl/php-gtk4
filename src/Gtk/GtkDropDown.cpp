@@ -61,8 +61,8 @@ ZEND_METHOD(Gtk4_GtkDropDown, get_enable_search) {
 ZEND_METHOD(Gtk4_GtkDropDown, get_model) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkDropDown *self = PHPGTK_SELF(GtkDropDown, GTK_TYPE_DROP_DOWN);
-  GListModel *result = gtk_drop_down_get_model(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GListModel *phpgtk_ret = gtk_drop_down_get_model(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -96,8 +96,8 @@ ZEND_METHOD(Gtk4_GtkDropDown, get_selected) {
 ZEND_METHOD(Gtk4_GtkDropDown, get_selected_item) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkDropDown *self = PHPGTK_SELF(GtkDropDown, GTK_TYPE_DROP_DOWN);
-  GObject *result = static_cast<GObject *>(gtk_drop_down_get_selected_item(self));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GObject *phpgtk_ret = static_cast<GObject *>(gtk_drop_down_get_selected_item(self));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

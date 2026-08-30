@@ -61,8 +61,8 @@ ZEND_METHOD(Gtk4_GtkPopover, get_cascade_popdown) {
 ZEND_METHOD(Gtk4_GtkPopover, get_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkPopover *self = PHPGTK_SELF(GtkPopover, GTK_TYPE_POPOVER);
-  GtkWidget *result = gtk_popover_get_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_popover_get_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

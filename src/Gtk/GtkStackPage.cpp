@@ -23,8 +23,8 @@ ZEND_METHOD(Gtk4_GtkStackPage, __construct) {
 ZEND_METHOD(Gtk4_GtkStackPage, get_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkStackPage *self = PHPGTK_SELF(GtkStackPage, GTK_TYPE_STACK_PAGE);
-  GtkWidget *result = gtk_stack_page_get_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_stack_page_get_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

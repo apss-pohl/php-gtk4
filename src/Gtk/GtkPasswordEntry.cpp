@@ -36,8 +36,8 @@ ZEND_METHOD(Gtk4_GtkPasswordEntry, __construct) {
 ZEND_METHOD(Gtk4_GtkPasswordEntry, get_extra_menu) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkPasswordEntry *self = PHPGTK_SELF(GtkPasswordEntry, GTK_TYPE_PASSWORD_ENTRY);
-  GMenuModel *result = gtk_password_entry_get_extra_menu(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GMenuModel *phpgtk_ret = gtk_password_entry_get_extra_menu(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

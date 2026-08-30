@@ -112,8 +112,8 @@ ZEND_METHOD(Gtk4_GtkMenuButton, get_can_shrink) {
 ZEND_METHOD(Gtk4_GtkMenuButton, get_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkMenuButton *self = PHPGTK_SELF(GtkMenuButton, GTK_TYPE_MENU_BUTTON);
-  GtkWidget *result = gtk_menu_button_get_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_menu_button_get_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -157,8 +157,8 @@ ZEND_METHOD(Gtk4_GtkMenuButton, get_label) {
 ZEND_METHOD(Gtk4_GtkMenuButton, get_menu_model) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkMenuButton *self = PHPGTK_SELF(GtkMenuButton, GTK_TYPE_MENU_BUTTON);
-  GMenuModel *result = gtk_menu_button_get_menu_model(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GMenuModel *phpgtk_ret = gtk_menu_button_get_menu_model(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -169,8 +169,8 @@ ZEND_METHOD(Gtk4_GtkMenuButton, get_menu_model) {
 ZEND_METHOD(Gtk4_GtkMenuButton, get_popover) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkMenuButton *self = PHPGTK_SELF(GtkMenuButton, GTK_TYPE_MENU_BUTTON);
-  GtkPopover *result = gtk_menu_button_get_popover(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkPopover *phpgtk_ret = gtk_menu_button_get_popover(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

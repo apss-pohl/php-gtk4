@@ -33,8 +33,8 @@ ZEND_METHOD(Gtk4_GtkRange, __construct) {
 ZEND_METHOD(Gtk4_GtkRange, get_adjustment) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkRange *self = PHPGTK_SELF(GtkRange, GTK_TYPE_RANGE);
-  GtkAdjustment *result = gtk_range_get_adjustment(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkAdjustment *phpgtk_ret = gtk_range_get_adjustment(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

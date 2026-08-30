@@ -105,8 +105,8 @@ ZEND_METHOD(Gtk4_GTask, is_valid) {
 ZEND_METHOD(Gtk4_GTask, get_cancellable) {
   ZEND_PARSE_PARAMETERS_NONE();
   GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
-  GCancellable *result = g_task_get_cancellable(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GCancellable *phpgtk_ret = g_task_get_cancellable(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -174,8 +174,8 @@ ZEND_METHOD(Gtk4_GTask, get_return_on_cancel) {
 ZEND_METHOD(Gtk4_GTask, get_source_object) {
   ZEND_PARSE_PARAMETERS_NONE();
   GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
-  GObject *result = static_cast<GObject *>(g_task_get_source_object(self));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GObject *phpgtk_ret = static_cast<GObject *>(g_task_get_source_object(self));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

@@ -149,7 +149,17 @@ draft, hand-write via overrides / promotion where the project needs more.
       callable + stream parked through the callback graveyard, RSHUTDOWN-tracked like timeouts
       (`IoWatchTest`). ext-sockets users go through `socket_export_stream()`. The runtime item the
       fastlane port needs to retire its 14 nested `events_pending()/main_iteration()` pumps.
-- [ ] **Waves 3b, 5–8** as listed in PLAN.md §3 (the feature items in §7 below point at their
+- [x] **Wave 5 — dialogs** (2026-08-30): `GtkFileDialog`, `GtkFileFilter`, `GtkColorDialog`,
+      `GtkFontDialog`, `GtkAboutDialog` (+ `PangoFontDescription`, `GtkLicense` and the Pango
+      enums the descriptions use). The async machinery was already there from the review wave, so
+      the wave is allow-list plus two decisions: **`Gio.File` maps to a path string** (a GFile
+      carries nothing else a PHP program can use, and the GIO file stack is unbound — it also
+      unlocked `GtkPicture::set_file`), and `GtkFileFilter::new_from_gvariant()` names the
+      `(sa(us))` type in an override because inference cannot build a tuple from a PHP list.
+      Generator fixes it forced: an enum case may not start with a digit (`GTK_LICENSE_0BSD` →
+      `Bsd0`), the emitted return local is `phpgtk_ret` (a parameter called `$result` collided),
+      and `ci.sh` reconfigures when the source list changes.
+- [ ] **Waves 3b, 6–8** as listed in PLAN.md §3 (the feature items in §7 below point at their
       wave); each merged only with the full pipeline green and the map's status column regenerated.
       Next: the fastlane port spike (one screen on php-gtk4) before wave 5.
 

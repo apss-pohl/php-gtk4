@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: b79d5c48fb73792f0dfbed5f402b73d6d35d053f */
+ * Stub hash: 30dcdeda044a753ad64e05ae3dc5a959f26af528 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkDisplay___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -81,6 +81,10 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkTexture_new_from_by
 	ZEND_ARG_TYPE_INFO(0, bytes, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkTexture_new_from_file, 0, 1, Gtk4\\GdkTexture, 0)
+	ZEND_ARG_TYPE_INFO(0, file, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkTexture_new_from_filename, 0, 1, Gtk4\\GdkTexture, 0)
 	ZEND_ARG_TYPE_INFO(0, path, IS_STRING, 0)
 ZEND_END_ARG_INFO()
@@ -139,6 +143,7 @@ ZEND_METHOD(Gtk4_GdkPaintable, invalidate_contents);
 ZEND_METHOD(Gtk4_GdkPaintable, invalidate_size);
 ZEND_METHOD(Gtk4_GdkTexture, __construct);
 ZEND_METHOD(Gtk4_GdkTexture, new_from_bytes);
+ZEND_METHOD(Gtk4_GdkTexture, new_from_file);
 ZEND_METHOD(Gtk4_GdkTexture, new_from_filename);
 ZEND_METHOD(Gtk4_GdkTexture, get_format);
 ZEND_METHOD(Gtk4_GdkTexture, get_height);
@@ -192,6 +197,7 @@ static const zend_function_entry class_Gtk4_GdkPaintableObject_methods[] = {
 static const zend_function_entry class_Gtk4_GdkTexture_methods[] = {
 	ZEND_ME(Gtk4_GdkTexture, __construct, arginfo_class_Gtk4_GdkTexture___construct, ZEND_ACC_PRIVATE)
 	ZEND_ME(Gtk4_GdkTexture, new_from_bytes, arginfo_class_Gtk4_GdkTexture_new_from_bytes, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GdkTexture, new_from_file, arginfo_class_Gtk4_GdkTexture_new_from_file, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkTexture, new_from_filename, arginfo_class_Gtk4_GdkTexture_new_from_filename, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkTexture, get_format, arginfo_class_Gtk4_GdkTexture_get_format, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkTexture, get_height, arginfo_class_Gtk4_GdkTexture_get_height, ZEND_ACC_PUBLIC)

@@ -51,6 +51,16 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- Wave 5 — **dialogs** (docs/PLAN.md §3): `GtkFileDialog`, `GtkFileFilter`, `GtkColorDialog`,
+  `GtkFontDialog` and `GtkAboutDialog`, with `PangoFontDescription` (a boxed value: clone copies,
+  `equal()` compares), `GtkLicense` and the Pango enums a description uses. GTK 4.10's dialogs are
+  async — `open()`/`choose_rgba()`/`choose_font()` return at once and `*_finish()` turns the
+  `GAsyncResult` into the answer or throws the `GError`.
+- **A `GFile` is a path string.** `Gio.File` parameters take a path or a URI
+  (`g_file_new_for_commandline_arg()`) and returns answer with the local path, falling back to the
+  URI — a GFile carries nothing else a PHP program can use while the GIO file stack is unbound.
+  It also unlocked `GtkPicture::set_file()`/`get_file()`.
+
 - GitHub issue forms (`.github/ISSUE_TEMPLATE/`): a bug form that requires the versions
   (`Gtk4\VERSION`/`BUILD_INFO`/`FEATURES`, `php -v`, `pkg-config --modversion gtk4`), the OS, the
   display server, how the extension was installed, a single-file reproduction script, the expected

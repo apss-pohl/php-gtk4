@@ -57,8 +57,8 @@ ZEND_METHOD(Gtk4_GtkViewport, __construct) {
 ZEND_METHOD(Gtk4_GtkViewport, get_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkViewport *self = PHPGTK_SELF(GtkViewport, GTK_TYPE_VIEWPORT);
-  GtkWidget *result = gtk_viewport_get_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_viewport_get_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

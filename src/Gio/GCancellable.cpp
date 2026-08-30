@@ -37,8 +37,8 @@ ZEND_METHOD(Gtk4_GCancellable, __construct) {
  */
 ZEND_METHOD(Gtk4_GCancellable, get_current) {
   ZEND_PARSE_PARAMETERS_NONE();
-  GCancellable *result = g_cancellable_get_current();
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GCancellable *phpgtk_ret = g_cancellable_get_current();
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

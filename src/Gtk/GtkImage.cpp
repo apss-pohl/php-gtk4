@@ -137,8 +137,8 @@ ZEND_METHOD(Gtk4_GtkImage, get_icon_size) {
 ZEND_METHOD(Gtk4_GtkImage, get_paintable) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkImage *self = PHPGTK_SELF(GtkImage, GTK_TYPE_IMAGE);
-  GdkPaintable *result = gtk_image_get_paintable(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GdkPaintable *phpgtk_ret = gtk_image_get_paintable(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

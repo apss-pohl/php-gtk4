@@ -35,8 +35,8 @@ ZEND_METHOD(Gtk4_GtkEventController, __construct) {
 ZEND_METHOD(Gtk4_GtkEventController, get_current_event) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkEventController *self = PHPGTK_SELF(GtkEventController, GTK_TYPE_EVENT_CONTROLLER);
-  gpointer result = gtk_event_controller_get_current_event(self);
-  wrap_fundamental(GDK_TYPE_EVENT, result, return_value);
+  gpointer phpgtk_ret = gtk_event_controller_get_current_event(self);
+  wrap_fundamental(GDK_TYPE_EVENT, phpgtk_ret, return_value);
 }
 
 /**
@@ -104,8 +104,8 @@ ZEND_METHOD(Gtk4_GtkEventController, get_propagation_phase) {
 ZEND_METHOD(Gtk4_GtkEventController, get_widget) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkEventController *self = PHPGTK_SELF(GtkEventController, GTK_TYPE_EVENT_CONTROLLER);
-  GtkWidget *result = gtk_event_controller_get_widget(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_event_controller_get_widget(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

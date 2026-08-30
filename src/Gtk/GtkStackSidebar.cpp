@@ -36,8 +36,8 @@ ZEND_METHOD(Gtk4_GtkStackSidebar, __construct) {
 ZEND_METHOD(Gtk4_GtkStackSidebar, get_stack) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkStackSidebar *self = PHPGTK_SELF(GtkStackSidebar, GTK_TYPE_STACK_SIDEBAR);
-  GtkStack *result = gtk_stack_sidebar_get_stack(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkStack *phpgtk_ret = gtk_stack_sidebar_get_stack(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

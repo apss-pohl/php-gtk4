@@ -93,8 +93,8 @@ ZEND_METHOD(Gtk4_GtkButton, get_can_shrink) {
 ZEND_METHOD(Gtk4_GtkButton, get_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkButton *self = PHPGTK_SELF(GtkButton, GTK_TYPE_BUTTON);
-  GtkWidget *result = gtk_button_get_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_button_get_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

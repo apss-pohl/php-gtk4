@@ -42,8 +42,8 @@ ZEND_METHOD(Gtk4_GtkStack, add_child) {
   GtkStack *self = PHPGTK_SELF(GtkStack, GTK_TYPE_STACK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
-  GtkStackPage *result = gtk_stack_add_child(self, GTK_WIDGET(child_o));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkStackPage *phpgtk_ret = gtk_stack_add_child(self, GTK_WIDGET(child_o));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -62,9 +62,9 @@ ZEND_METHOD(Gtk4_GtkStack, add_named) {
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
   if (name != nullptr && !phpgtk::check_utf8(name, 2)) RETURN_THROWS();
-  GtkStackPage *result =
+  GtkStackPage *phpgtk_ret =
       gtk_stack_add_named(self, GTK_WIDGET(child_o), name != nullptr ? ZSTR_VAL(name) : nullptr);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -86,9 +86,9 @@ ZEND_METHOD(Gtk4_GtkStack, add_titled) {
   if (child_o == nullptr) RETURN_THROWS();
   if (name != nullptr && !phpgtk::check_utf8(name, 2)) RETURN_THROWS();
   if (!phpgtk::check_utf8(title, 3)) RETURN_THROWS();
-  GtkStackPage *result = gtk_stack_add_titled(
+  GtkStackPage *phpgtk_ret = gtk_stack_add_titled(
       self, GTK_WIDGET(child_o), name != nullptr ? ZSTR_VAL(name) : nullptr, ZSTR_VAL(title));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -103,8 +103,8 @@ ZEND_METHOD(Gtk4_GtkStack, get_child_by_name) {
   ZEND_PARSE_PARAMETERS_END();
   GtkStack *self = PHPGTK_SELF(GtkStack, GTK_TYPE_STACK);
   if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
-  GtkWidget *result = gtk_stack_get_child_by_name(self, ZSTR_VAL(name));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_stack_get_child_by_name(self, ZSTR_VAL(name));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -143,8 +143,8 @@ ZEND_METHOD(Gtk4_GtkStack, get_page) {
   GtkStack *self = PHPGTK_SELF(GtkStack, GTK_TYPE_STACK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
-  GtkStackPage *result = gtk_stack_get_page(self, GTK_WIDGET(child_o));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkStackPage *phpgtk_ret = gtk_stack_get_page(self, GTK_WIDGET(child_o));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -199,8 +199,8 @@ ZEND_METHOD(Gtk4_GtkStack, get_vhomogeneous) {
 ZEND_METHOD(Gtk4_GtkStack, get_visible_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkStack *self = PHPGTK_SELF(GtkStack, GTK_TYPE_STACK);
-  GtkWidget *result = gtk_stack_get_visible_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_stack_get_visible_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

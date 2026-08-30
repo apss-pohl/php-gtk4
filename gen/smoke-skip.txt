@@ -28,3 +28,6 @@ Gtk.PopoverMenu.visible_submenu   names a submenu of the model; there is no subm
 Gtk.Text.set_position      the cursor cannot move inside empty text (stays 0), like the entries that delegate to it
 Gtk.Text.set_text          the max_length(1) set just before truncates 'smoke' to 's', as on GtkEntry
 Gtk.Text.text              same, as a property
+Gtk.Picture.set_file       a GFile parameter takes a path and answers with the absolute one ('smoke' -> '<cwd>/smoke'); the mapping is the point, the round trip cannot match
+Gtk.FileDialog.set_initial_file   GTK stores it as initial-folder + initial-name (initial-file stays NULL), so it never round trips
+Gtk.FileDialog.set_initial_folder   same: the path comes back absolute

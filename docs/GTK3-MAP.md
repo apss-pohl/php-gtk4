@@ -24,9 +24,9 @@ the notes are hand-written and may lag.
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 49 | — |
+| ✅ implemented | 54 | — |
 | 🟡 partial | 1 | — |
-| ❌ to port (GTK 4 equivalent exists) | 44 | ~1750 |
+| ❌ to port (GTK 4 equivalent exists) | 39 | ~1750 |
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 5 | ~130 |
 
@@ -159,11 +159,11 @@ is open work.
 | --- | ---: | --- | :---: | --- |
 | `GtkDialog` | 13 | `GtkDialog` (dep. 4.10) | ❌ | `run()` is gone in GTK 4 — dialogs are async (`response` signal / `GtkAlertDialog`). |
 | `GtkMessageDialog` | 6 | `GtkAlertDialog` (4.10+) | ✅ | |
-| `GtkAboutDialog` | 33 | `GtkAboutDialog` | ❌ | Still current. |
-| `GtkFileChooser` / `GtkFileChooserDialog` | 1 + 45 | `GtkFileDialog` (4.10+) | ❌ | Async API; `GtkFileChooserNative` for portals. |
-| `GtkFileFilter` | 8 | `GtkFileFilter` | ❌ | |
-| `GtkColorChooserDialog` | 6 | `GtkColorDialog` (4.10+) | ❌ | |
-| `GtkFontChooserDialog` | 7 | `GtkFontDialog` (4.10+) | ❌ | |
+| `GtkAboutDialog` | 33 | `GtkAboutDialog` | ✅ | Still current. |
+| `GtkFileChooser` / `GtkFileChooserDialog` | 1 + 45 | `GtkFileDialog` (4.10+) | ✅ | Async API; `GtkFileChooserNative` for portals. |
+| `GtkFileFilter` | 8 | `GtkFileFilter` | ✅ | |
+| `GtkColorChooserDialog` | 6 | `GtkColorDialog` (4.10+) | ✅ | |
+| `GtkFontChooserDialog` | 7 | `GtkFontDialog` (4.10+) | ✅ | |
 | `GtkAppChooserDialog` | 6 | `GtkAppChooserDialog` (dep. 4.10) | ❌ | |
 | `GtkRecentChooserDialog` | 33 | — | ⛔ | Recent-files API removed in GTK 4. |
 

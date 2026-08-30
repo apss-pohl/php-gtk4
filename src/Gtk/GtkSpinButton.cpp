@@ -108,8 +108,8 @@ ZEND_METHOD(Gtk4_GtkSpinButton, get_activates_default) {
 ZEND_METHOD(Gtk4_GtkSpinButton, get_adjustment) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkSpinButton *self = PHPGTK_SELF(GtkSpinButton, GTK_TYPE_SPIN_BUTTON);
-  GtkAdjustment *result = gtk_spin_button_get_adjustment(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkAdjustment *phpgtk_ret = gtk_spin_button_get_adjustment(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

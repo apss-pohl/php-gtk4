@@ -152,10 +152,10 @@ ZEND_METHOD(Gtk4_GActionGroup, get_action_state) {
   ZEND_PARSE_PARAMETERS_END();
   GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
   if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
-  GVariant *result = g_action_group_get_action_state(self, ZSTR_VAL(action_name));
-  if (result == nullptr) RETURN_NULL();
-  variant_to_php(result, return_value);
-  g_variant_unref(result);
+  GVariant *phpgtk_ret = g_action_group_get_action_state(self, ZSTR_VAL(action_name));
+  if (phpgtk_ret == nullptr) RETURN_NULL();
+  variant_to_php(phpgtk_ret, return_value);
+  g_variant_unref(phpgtk_ret);
 }
 
 /**
@@ -171,10 +171,10 @@ ZEND_METHOD(Gtk4_GActionGroup, get_action_state_hint) {
   ZEND_PARSE_PARAMETERS_END();
   GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
   if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
-  GVariant *result = g_action_group_get_action_state_hint(self, ZSTR_VAL(action_name));
-  if (result == nullptr) RETURN_NULL();
-  variant_to_php(result, return_value);
-  g_variant_unref(result);
+  GVariant *phpgtk_ret = g_action_group_get_action_state_hint(self, ZSTR_VAL(action_name));
+  if (phpgtk_ret == nullptr) RETURN_NULL();
+  variant_to_php(phpgtk_ret, return_value);
+  g_variant_unref(phpgtk_ret);
 }
 
 /**

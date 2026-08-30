@@ -9,5 +9,13 @@ return [
     'Generated' => [
         'GdkModifierType',
         'GtkText',
+        'PangoFontMask',
+        'PangoGravity',
+        'PangoGravityHint',
+        'PangoScript',
+        'PangoStretch',
+        'PangoStyle',
+        'PangoVariant',
+        'PangoWeight',
     ],
 ];

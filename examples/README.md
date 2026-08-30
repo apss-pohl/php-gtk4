@@ -78,6 +78,18 @@ drives a window with no `GtkApplication`. Both pass a standalone override to `De
 | [GError.php](GError.php) | what a failing C call throws, domain and code included |
 | [ExceptionMode.php](ExceptionMode.php) | `Log` survives; `Rethrow` comes back out of `run()` |
 
+## Dialogs
+
+| File | Shows |
+| ---- | ----- |
+| [GtkAlertDialog.php](GtkAlertDialog.php) | the async question: `choose()` now, the answer in the callback |
+| [GtkFileDialog.php](GtkFileDialog.php) | open/save/select a folder; the answer is a path string |
+| [GtkFileFilter.php](GtkFileFilter.php) | suffixes, patterns and mime types adding up to one filter |
+| [GtkColorDialog.php](GtkColorDialog.php) | a colour back as `GdkRGBA`, painted on a cairo swatch |
+| [GtkFontDialog.php](GtkFontDialog.php) | a font back as `PangoFontDescription`, applied to the sample |
+| [GtkAboutDialog.php](GtkAboutDialog.php) | the one dialog that is still a widget |
+| [PangoFontDescription.php](PangoFontDescription.php) | a font as a value: `from_string()`, `equal()`, clone |
+
 ## Styling
 
 | File | Shows |

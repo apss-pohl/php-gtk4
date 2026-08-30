@@ -49,10 +49,10 @@ ZEND_METHOD(Gtk4_GMenuModel, get_item_attribute_value) {
   GVariant *call_result = g_menu_model_get_item_attribute_value(
       self, static_cast<gint>(item_index), ZSTR_VAL(attribute), expected_type_t);
   if (expected_type_t != nullptr) g_variant_type_free(expected_type_t);
-  GVariant *result = call_result;
-  if (result == nullptr) RETURN_NULL();
-  variant_to_php(result, return_value);
-  g_variant_unref(result);
+  GVariant *phpgtk_ret = call_result;
+  if (phpgtk_ret == nullptr) RETURN_NULL();
+  variant_to_php(phpgtk_ret, return_value);
+  g_variant_unref(phpgtk_ret);
 }
 
 /**
@@ -70,10 +70,10 @@ ZEND_METHOD(Gtk4_GMenuModel, get_item_link) {
   GMenuModel *self = PHPGTK_SELF(GMenuModel, G_TYPE_MENU_MODEL);
   if (!phpgtk::check_range<gint>(item_index, 1)) RETURN_THROWS();
   if (!phpgtk::check_utf8(link, 2)) RETURN_THROWS();
-  GMenuModel *result =
+  GMenuModel *phpgtk_ret =
       g_menu_model_get_item_link(self, static_cast<gint>(item_index), ZSTR_VAL(link));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
-  if (result != nullptr) g_object_unref(result);  // the handle took its own ref
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
 }
 
 /**
@@ -254,9 +254,10 @@ ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_item_link) {
   }
   if (!phpgtk::check_range<gint>(item_index, 1)) RETURN_THROWS();
   if (!phpgtk::check_utf8(link, 2)) RETURN_THROWS();
-  GMenuModel *result = klass->get_item_link(self, static_cast<gint>(item_index), ZSTR_VAL(link));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
-  if (result != nullptr) g_object_unref(result);  // the handle took its own ref
+  GMenuModel *phpgtk_ret =
+      klass->get_item_link(self, static_cast<gint>(item_index), ZSTR_VAL(link));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
 }
 
 /**

@@ -98,8 +98,8 @@ ZEND_METHOD(Gtk4_GtkApplication, get_actions_for_accel) {
 ZEND_METHOD(Gtk4_GtkApplication, get_active_window) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkApplication *self = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
-  GtkWindow *result = gtk_application_get_active_window(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWindow *phpgtk_ret = gtk_application_get_active_window(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -114,8 +114,8 @@ ZEND_METHOD(Gtk4_GtkApplication, get_menu_by_id) {
   ZEND_PARSE_PARAMETERS_END();
   GtkApplication *self = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
   if (!phpgtk::check_utf8(id, 1)) RETURN_THROWS();
-  GMenu *result = gtk_application_get_menu_by_id(self, ZSTR_VAL(id));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GMenu *phpgtk_ret = gtk_application_get_menu_by_id(self, ZSTR_VAL(id));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -126,8 +126,8 @@ ZEND_METHOD(Gtk4_GtkApplication, get_menu_by_id) {
 ZEND_METHOD(Gtk4_GtkApplication, get_menubar) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkApplication *self = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
-  GMenuModel *result = gtk_application_get_menubar(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GMenuModel *phpgtk_ret = gtk_application_get_menubar(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -142,8 +142,8 @@ ZEND_METHOD(Gtk4_GtkApplication, get_window_by_id) {
   ZEND_PARSE_PARAMETERS_END();
   GtkApplication *self = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
   if (!phpgtk::check_range<guint>(id, 1)) RETURN_THROWS();
-  GtkWindow *result = gtk_application_get_window_by_id(self, static_cast<guint>(id));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWindow *phpgtk_ret = gtk_application_get_window_by_id(self, static_cast<guint>(id));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

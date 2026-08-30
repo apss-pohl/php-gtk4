@@ -82,8 +82,8 @@ ZEND_METHOD(Gtk4_GtkCheckButton, get_active) {
 ZEND_METHOD(Gtk4_GtkCheckButton, get_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkCheckButton *self = PHPGTK_SELF(GtkCheckButton, GTK_TYPE_CHECK_BUTTON);
-  GtkWidget *result = gtk_check_button_get_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_check_button_get_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

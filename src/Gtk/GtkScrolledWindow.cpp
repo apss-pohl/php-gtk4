@@ -37,8 +37,8 @@ ZEND_METHOD(Gtk4_GtkScrolledWindow, __construct) {
 ZEND_METHOD(Gtk4_GtkScrolledWindow, get_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkScrolledWindow *self = PHPGTK_SELF(GtkScrolledWindow, GTK_TYPE_SCROLLED_WINDOW);
-  GtkWidget *result = gtk_scrolled_window_get_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_scrolled_window_get_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -49,8 +49,8 @@ ZEND_METHOD(Gtk4_GtkScrolledWindow, get_child) {
 ZEND_METHOD(Gtk4_GtkScrolledWindow, get_hadjustment) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkScrolledWindow *self = PHPGTK_SELF(GtkScrolledWindow, GTK_TYPE_SCROLLED_WINDOW);
-  GtkAdjustment *result = gtk_scrolled_window_get_hadjustment(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkAdjustment *phpgtk_ret = gtk_scrolled_window_get_hadjustment(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -72,8 +72,8 @@ ZEND_METHOD(Gtk4_GtkScrolledWindow, get_has_frame) {
 ZEND_METHOD(Gtk4_GtkScrolledWindow, get_hscrollbar) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkScrolledWindow *self = PHPGTK_SELF(GtkScrolledWindow, GTK_TYPE_SCROLLED_WINDOW);
-  GtkWidget *result = gtk_scrolled_window_get_hscrollbar(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_scrolled_window_get_hscrollbar(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -209,8 +209,8 @@ ZEND_METHOD(Gtk4_GtkScrolledWindow, get_propagate_natural_width) {
 ZEND_METHOD(Gtk4_GtkScrolledWindow, get_vadjustment) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkScrolledWindow *self = PHPGTK_SELF(GtkScrolledWindow, GTK_TYPE_SCROLLED_WINDOW);
-  GtkAdjustment *result = gtk_scrolled_window_get_vadjustment(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkAdjustment *phpgtk_ret = gtk_scrolled_window_get_vadjustment(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -221,8 +221,8 @@ ZEND_METHOD(Gtk4_GtkScrolledWindow, get_vadjustment) {
 ZEND_METHOD(Gtk4_GtkScrolledWindow, get_vscrollbar) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkScrolledWindow *self = PHPGTK_SELF(GtkScrolledWindow, GTK_TYPE_SCROLLED_WINDOW);
-  GtkWidget *result = gtk_scrolled_window_get_vscrollbar(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_scrolled_window_get_vscrollbar(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

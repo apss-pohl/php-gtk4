@@ -327,6 +327,9 @@ class GdkTexture extends GObject implements GdkPaintable
     public static function new_from_bytes(string $bytes): GdkTexture {}
 
     /** Creates a new texture by loading an image from a file. */
+    public static function new_from_file(string $file): GdkTexture {}
+
+    /** Creates a new texture by loading an image from a file. */
     public static function new_from_filename(string $path): GdkTexture {}
 
     /** Gets the memory format most closely associated with the data of the texture. */

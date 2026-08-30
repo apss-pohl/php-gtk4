@@ -330,9 +330,9 @@ ZEND_METHOD(Gtk4_GtkWidget, get_css_classes) {
 ZEND_METHOD(Gtk4_GtkWidget, get_css_name) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  const char *result = gtk_widget_get_css_name(self);
-  if (result == nullptr) RETURN_EMPTY_STRING();
-  RETURN_STRING(result);
+  const char *phpgtk_ret = gtk_widget_get_css_name(self);
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(phpgtk_ret);
 }
 
 /**
@@ -354,8 +354,8 @@ ZEND_METHOD(Gtk4_GtkWidget, get_direction) {
 ZEND_METHOD(Gtk4_GtkWidget, get_display) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  GdkDisplay *result = gtk_widget_get_display(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GdkDisplay *phpgtk_ret = gtk_widget_get_display(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -366,8 +366,8 @@ ZEND_METHOD(Gtk4_GtkWidget, get_display) {
 ZEND_METHOD(Gtk4_GtkWidget, get_first_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  GtkWidget *result = gtk_widget_get_first_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_widget_get_first_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -378,8 +378,8 @@ ZEND_METHOD(Gtk4_GtkWidget, get_first_child) {
 ZEND_METHOD(Gtk4_GtkWidget, get_focus_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  GtkWidget *result = gtk_widget_get_focus_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_widget_get_focus_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -468,8 +468,8 @@ ZEND_METHOD(Gtk4_GtkWidget, get_hexpand_set) {
 ZEND_METHOD(Gtk4_GtkWidget, get_last_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  GtkWidget *result = gtk_widget_get_last_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_widget_get_last_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -535,9 +535,9 @@ ZEND_METHOD(Gtk4_GtkWidget, get_margin_top) {
 ZEND_METHOD(Gtk4_GtkWidget, get_name) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  const char *result = gtk_widget_get_name(self);
-  if (result == nullptr) RETURN_EMPTY_STRING();
-  RETURN_STRING(result);
+  const char *phpgtk_ret = gtk_widget_get_name(self);
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(phpgtk_ret);
 }
 
 /**
@@ -548,8 +548,8 @@ ZEND_METHOD(Gtk4_GtkWidget, get_name) {
 ZEND_METHOD(Gtk4_GtkWidget, get_next_sibling) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  GtkWidget *result = gtk_widget_get_next_sibling(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_widget_get_next_sibling(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -582,8 +582,8 @@ ZEND_METHOD(Gtk4_GtkWidget, get_overflow) {
 ZEND_METHOD(Gtk4_GtkWidget, get_parent) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  GtkWidget *result = gtk_widget_get_parent(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_widget_get_parent(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -619,8 +619,8 @@ ZEND_METHOD(Gtk4_GtkWidget, get_preferred_size) {
 ZEND_METHOD(Gtk4_GtkWidget, get_prev_sibling) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  GtkWidget *result = gtk_widget_get_prev_sibling(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_widget_get_prev_sibling(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -665,8 +665,8 @@ ZEND_METHOD(Gtk4_GtkWidget, get_request_mode) {
 ZEND_METHOD(Gtk4_GtkWidget, get_root) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  GtkRoot *result = gtk_widget_get_root(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkRoot *phpgtk_ret = gtk_widget_get_root(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -1141,9 +1141,9 @@ ZEND_METHOD(Gtk4_GtkWidget, mnemonic_activate) {
 ZEND_METHOD(Gtk4_GtkWidget, observe_children) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  GListModel *result = gtk_widget_observe_children(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
-  if (result != nullptr) g_object_unref(result);  // the handle took its own ref
+  GListModel *phpgtk_ret = gtk_widget_observe_children(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
 }
 
 /**
@@ -1154,9 +1154,9 @@ ZEND_METHOD(Gtk4_GtkWidget, observe_children) {
 ZEND_METHOD(Gtk4_GtkWidget, observe_controllers) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  GListModel *result = gtk_widget_observe_controllers(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
-  if (result != nullptr) g_object_unref(result);  // the handle took its own ref
+  GListModel *phpgtk_ret = gtk_widget_observe_controllers(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
 }
 
 /**
@@ -1175,8 +1175,8 @@ ZEND_METHOD(Gtk4_GtkWidget, pick) {
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
   if (!phpgtk::check_flags(GTK_TYPE_PICK_FLAGS, flags, 3)) RETURN_THROWS();
-  GtkWidget *result = gtk_widget_pick(self, x, y, static_cast<GtkPickFlags>(flags));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_widget_pick(self, x, y, static_cast<GtkPickFlags>(flags));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

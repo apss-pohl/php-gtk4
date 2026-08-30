@@ -94,8 +94,9 @@ ZEND_METHOD(Gtk4_GtkGesture, get_last_event) {
     sequence_f = unwrap_fundamental(sequence, GDK_TYPE_EVENT_SEQUENCE);
     if (sequence_f == nullptr) RETURN_THROWS();
   }
-  gpointer result = gtk_gesture_get_last_event(self, static_cast<GdkEventSequence *>(sequence_f));
-  wrap_fundamental(GDK_TYPE_EVENT, result, return_value);
+  gpointer phpgtk_ret =
+      gtk_gesture_get_last_event(self, static_cast<GdkEventSequence *>(sequence_f));
+  wrap_fundamental(GDK_TYPE_EVENT, phpgtk_ret, return_value);
 }
 
 /**
@@ -106,8 +107,8 @@ ZEND_METHOD(Gtk4_GtkGesture, get_last_event) {
 ZEND_METHOD(Gtk4_GtkGesture, get_last_updated_sequence) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkGesture *self = PHPGTK_SELF(GtkGesture, GTK_TYPE_GESTURE);
-  gpointer result = gtk_gesture_get_last_updated_sequence(self);
-  wrap_fundamental(GDK_TYPE_EVENT_SEQUENCE, result, return_value);
+  gpointer phpgtk_ret = gtk_gesture_get_last_updated_sequence(self);
+  wrap_fundamental(GDK_TYPE_EVENT_SEQUENCE, phpgtk_ret, return_value);
 }
 
 /**

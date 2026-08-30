@@ -58,8 +58,8 @@ ZEND_METHOD(Gtk4_GtkHeaderBar, get_show_title_buttons) {
 ZEND_METHOD(Gtk4_GtkHeaderBar, get_title_widget) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkHeaderBar *self = PHPGTK_SELF(GtkHeaderBar, GTK_TYPE_HEADER_BAR);
-  GtkWidget *result = gtk_header_bar_get_title_widget(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_header_bar_get_title_widget(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

@@ -42,8 +42,8 @@ ZEND_METHOD(Gtk4_GtkFrame, __construct) {
 ZEND_METHOD(Gtk4_GtkFrame, get_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkFrame *self = PHPGTK_SELF(GtkFrame, GTK_TYPE_FRAME);
-  GtkWidget *result = gtk_frame_get_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_frame_get_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -76,8 +76,8 @@ ZEND_METHOD(Gtk4_GtkFrame, get_label_align) {
 ZEND_METHOD(Gtk4_GtkFrame, get_label_widget) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkFrame *self = PHPGTK_SELF(GtkFrame, GTK_TYPE_FRAME);
-  GtkWidget *result = gtk_frame_get_label_widget(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_frame_get_label_widget(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

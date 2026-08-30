@@ -120,8 +120,9 @@ ZEND_METHOD(Gtk4_GtkGrid, get_child_at) {
   GtkGrid *self = PHPGTK_SELF(GtkGrid, GTK_TYPE_GRID);
   if (!phpgtk::check_range<int>(column, 1)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(row, 2)) RETURN_THROWS();
-  GtkWidget *result = gtk_grid_get_child_at(self, static_cast<int>(column), static_cast<int>(row));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret =
+      gtk_grid_get_child_at(self, static_cast<int>(column), static_cast<int>(row));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

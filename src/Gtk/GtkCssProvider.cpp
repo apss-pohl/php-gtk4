@@ -46,6 +46,22 @@ ZEND_METHOD(Gtk4_GtkCssProvider, load_from_bytes) {
 }
 
 /**
+ * Gtk4\GtkCssProvider::load_from_file(string $file): void
+ *
+ * Loads the data contained in $file into $css_provider.
+ */
+ZEND_METHOD(Gtk4_GtkCssProvider, load_from_file) {
+  zend_string *file;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_PATH_STR(file)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkCssProvider *self = PHPGTK_SELF(GtkCssProvider, GTK_TYPE_CSS_PROVIDER);
+  GFile *file_f = g_file_new_for_commandline_arg(ZSTR_VAL(file));
+  gtk_css_provider_load_from_file(self, file_f);
+  if (file_f != nullptr) g_object_unref(file_f);
+}
+
+/**
  * Gtk4\GtkCssProvider::load_from_path(string $path): void
  *
  * Loads the data contained in $path into $css_provider.
@@ -116,7 +132,7 @@ ZEND_METHOD(Gtk4_GtkCssProvider, load_named) {
 ZEND_METHOD(Gtk4_GtkCssProvider, to_string) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkCssProvider *self = PHPGTK_SELF(GtkCssProvider, GTK_TYPE_CSS_PROVIDER);
-  char *result = gtk_css_provider_to_string(self);
-  RETVAL_STRING(result);
-  g_free(result);
+  char *phpgtk_ret = gtk_css_provider_to_string(self);
+  RETVAL_STRING(phpgtk_ret);
+  g_free(phpgtk_ret);
 }

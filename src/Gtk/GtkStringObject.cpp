@@ -40,7 +40,7 @@ ZEND_METHOD(Gtk4_GtkStringObject, __construct) {
 ZEND_METHOD(Gtk4_GtkStringObject, get_string) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkStringObject *self = PHPGTK_SELF(GtkStringObject, GTK_TYPE_STRING_OBJECT);
-  const char *result = gtk_string_object_get_string(self);
-  if (result == nullptr) RETURN_EMPTY_STRING();
-  RETURN_STRING(result);
+  const char *phpgtk_ret = gtk_string_object_get_string(self);
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(phpgtk_ret);
 }

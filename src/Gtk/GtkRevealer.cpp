@@ -37,8 +37,8 @@ ZEND_METHOD(Gtk4_GtkRevealer, __construct) {
 ZEND_METHOD(Gtk4_GtkRevealer, get_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkRevealer *self = PHPGTK_SELF(GtkRevealer, GTK_TYPE_REVEALER);
-  GtkWidget *result = gtk_revealer_get_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_revealer_get_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

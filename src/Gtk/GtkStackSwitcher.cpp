@@ -36,8 +36,8 @@ ZEND_METHOD(Gtk4_GtkStackSwitcher, __construct) {
 ZEND_METHOD(Gtk4_GtkStackSwitcher, get_stack) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkStackSwitcher *self = PHPGTK_SELF(GtkStackSwitcher, GTK_TYPE_STACK_SWITCHER);
-  GtkStack *result = gtk_stack_switcher_get_stack(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkStack *phpgtk_ret = gtk_stack_switcher_get_stack(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

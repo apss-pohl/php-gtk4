@@ -41,6 +41,29 @@ ZEND_METHOD(Gtk4_GdkTexture, new_from_bytes) {
 }
 
 /**
+ * static Gtk4\GdkTexture::new_from_file(string $file): GdkTexture
+ *
+ * Creates a new texture by loading an image from a file.
+ */
+ZEND_METHOD(Gtk4_GdkTexture, new_from_file) {
+  zend_string *file;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_PATH_STR(file)
+  ZEND_PARSE_PARAMETERS_END();
+  GFile *file_f = g_file_new_for_commandline_arg(ZSTR_VAL(file));
+  GError *error = nullptr;
+  GdkTexture *call_result = gdk_texture_new_from_file(file_f, &error);
+  if (file_f != nullptr) g_object_unref(file_f);
+  GObject *obj = G_OBJECT(call_result);
+  if (obj == nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  wrap(obj, return_value);
+  if (obj != nullptr) g_object_unref(obj);  // the handle took its own reference
+}
+
+/**
  * static Gtk4\GdkTexture::new_from_filename(string $path): GdkTexture
  *
  * Creates a new texture by loading an image from a file.

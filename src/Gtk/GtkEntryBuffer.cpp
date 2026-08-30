@@ -136,9 +136,9 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, get_max_length) {
 ZEND_METHOD(Gtk4_GtkEntryBuffer, get_text) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkEntryBuffer *self = PHPGTK_SELF(GtkEntryBuffer, GTK_TYPE_ENTRY_BUFFER);
-  const char *result = gtk_entry_buffer_get_text(self);
-  if (result == nullptr) RETURN_EMPTY_STRING();
-  RETURN_STRING(result);
+  const char *phpgtk_ret = gtk_entry_buffer_get_text(self);
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(phpgtk_ret);
 }
 
 /**

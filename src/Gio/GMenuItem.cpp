@@ -123,10 +123,10 @@ ZEND_METHOD(Gtk4_GMenuItem, get_attribute_value) {
   GVariant *call_result =
       g_menu_item_get_attribute_value(self, ZSTR_VAL(attribute), expected_type_t);
   if (expected_type_t != nullptr) g_variant_type_free(expected_type_t);
-  GVariant *result = call_result;
-  if (result == nullptr) RETURN_NULL();
-  variant_to_php(result, return_value);
-  g_variant_unref(result);
+  GVariant *phpgtk_ret = call_result;
+  if (phpgtk_ret == nullptr) RETURN_NULL();
+  variant_to_php(phpgtk_ret, return_value);
+  g_variant_unref(phpgtk_ret);
 }
 
 /**
@@ -141,9 +141,9 @@ ZEND_METHOD(Gtk4_GMenuItem, get_link) {
   ZEND_PARSE_PARAMETERS_END();
   GMenuItem *self = PHPGTK_SELF(GMenuItem, G_TYPE_MENU_ITEM);
   if (!phpgtk::check_utf8(link, 1)) RETURN_THROWS();
-  GMenuModel *result = g_menu_item_get_link(self, ZSTR_VAL(link));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
-  if (result != nullptr) g_object_unref(result);  // the handle took its own ref
+  GMenuModel *phpgtk_ret = g_menu_item_get_link(self, ZSTR_VAL(link));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
 }
 
 /**

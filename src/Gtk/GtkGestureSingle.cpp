@@ -53,8 +53,8 @@ ZEND_METHOD(Gtk4_GtkGestureSingle, get_current_button) {
 ZEND_METHOD(Gtk4_GtkGestureSingle, get_current_sequence) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkGestureSingle *self = PHPGTK_SELF(GtkGestureSingle, GTK_TYPE_GESTURE_SINGLE);
-  gpointer result = gtk_gesture_single_get_current_sequence(self);
-  wrap_fundamental(GDK_TYPE_EVENT_SEQUENCE, result, return_value);
+  gpointer phpgtk_ret = gtk_gesture_single_get_current_sequence(self);
+  wrap_fundamental(GDK_TYPE_EVENT_SEQUENCE, phpgtk_ret, return_value);
 }
 
 /**

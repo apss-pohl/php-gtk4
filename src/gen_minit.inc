@@ -19,6 +19,7 @@
   phpgtk::register_flags(GTK_TYPE_INPUT_HINTS, register_class_Gtk4_GtkInputHints());
   phpgtk::register_enum(GTK_TYPE_INPUT_PURPOSE, register_class_Gtk4_GtkInputPurpose());
   phpgtk::register_enum(GTK_TYPE_JUSTIFICATION, register_class_Gtk4_GtkJustification());
+  phpgtk::register_enum(GTK_TYPE_LICENSE, register_class_Gtk4_GtkLicense());
   phpgtk::register_enum(GTK_TYPE_NATURAL_WRAP_MODE, register_class_Gtk4_GtkNaturalWrapMode());
   phpgtk::register_enum(GTK_TYPE_ORDERING, register_class_Gtk4_GtkOrdering());
   phpgtk::register_enum(GTK_TYPE_ORIENTATION, register_class_Gtk4_GtkOrientation());
@@ -44,6 +45,14 @@
   phpgtk::register_enum(GTK_TYPE_STRING_FILTER_MATCH_MODE, register_class_Gtk4_GtkStringFilterMatchMode());
   phpgtk::register_enum(GTK_TYPE_TEXT_DIRECTION, register_class_Gtk4_GtkTextDirection());
   phpgtk::register_enum(PANGO_TYPE_ELLIPSIZE_MODE, register_class_Gtk4_PangoEllipsizeMode());
+  phpgtk::register_flags(PANGO_TYPE_FONT_MASK, register_class_Gtk4_PangoFontMask());
+  phpgtk::register_enum(PANGO_TYPE_GRAVITY, register_class_Gtk4_PangoGravity());
+  phpgtk::register_enum(PANGO_TYPE_GRAVITY_HINT, register_class_Gtk4_PangoGravityHint());
+  phpgtk::register_enum(PANGO_TYPE_SCRIPT, register_class_Gtk4_PangoScript());
+  phpgtk::register_enum(PANGO_TYPE_STRETCH, register_class_Gtk4_PangoStretch());
+  phpgtk::register_enum(PANGO_TYPE_STYLE, register_class_Gtk4_PangoStyle());
+  phpgtk::register_enum(PANGO_TYPE_VARIANT, register_class_Gtk4_PangoVariant());
+  phpgtk::register_enum(PANGO_TYPE_WEIGHT, register_class_Gtk4_PangoWeight());
   phpgtk::register_enum(PANGO_TYPE_WRAP_MODE, register_class_Gtk4_PangoWrapMode());
   phpgtk::register_flags(G_TYPE_APPLICATION_FLAGS, register_class_Gtk4_GApplicationFlags());
   phpgtk::register_enum(GDK_TYPE_CROSSING_MODE, register_class_Gtk4_GdkCrossingMode());
@@ -62,6 +71,8 @@
   phpgtk::register_class("GtkAdjustment", ce_GtkAdjustment, GTK_TYPE_ADJUSTMENT);
   zend_class_entry *ce_GtkAlertDialog = register_class_Gtk4_GtkAlertDialog(ce_GObject);
   phpgtk::register_class("GtkAlertDialog", ce_GtkAlertDialog, GTK_TYPE_ALERT_DIALOG);
+  zend_class_entry *ce_GtkColorDialog = register_class_Gtk4_GtkColorDialog(ce_GObject);
+  phpgtk::register_class("GtkColorDialog", ce_GtkColorDialog, GTK_TYPE_COLOR_DIALOG);
   zend_class_entry *ce_GtkEditable = register_class_Gtk4_GtkEditable();
   phpgtk::register_interface("GtkEditable", ce_GtkEditable, GTK_TYPE_EDITABLE);
   zend_class_entry *ce_GtkEditableObject = register_class_Gtk4_GtkEditableObject(ce_GObject, ce_GtkEditable);
@@ -80,8 +91,12 @@
   phpgtk::register_class("GtkEventControllerMotion", ce_GtkEventControllerMotion, GTK_TYPE_EVENT_CONTROLLER_MOTION);
   zend_class_entry *ce_GtkEventControllerScroll = register_class_Gtk4_GtkEventControllerScroll(ce_GtkEventController);
   phpgtk::register_class("GtkEventControllerScroll", ce_GtkEventControllerScroll, GTK_TYPE_EVENT_CONTROLLER_SCROLL);
+  zend_class_entry *ce_GtkFileDialog = register_class_Gtk4_GtkFileDialog(ce_GObject);
+  phpgtk::register_class("GtkFileDialog", ce_GtkFileDialog, GTK_TYPE_FILE_DIALOG);
   zend_class_entry *ce_GtkFilter = register_class_Gtk4_GtkFilter(ce_GObject);
   phpgtk::register_class("GtkFilter", ce_GtkFilter, GTK_TYPE_FILTER);
+  zend_class_entry *ce_GtkFontDialog = register_class_Gtk4_GtkFontDialog(ce_GObject);
+  phpgtk::register_class("GtkFontDialog", ce_GtkFontDialog, GTK_TYPE_FONT_DIALOG);
   zend_class_entry *ce_GtkGesture = register_class_Gtk4_GtkGesture(ce_GtkEventController);
   phpgtk::register_class("GtkGesture", ce_GtkGesture, GTK_TYPE_GESTURE);
   zend_class_entry *ce_GtkGestureRotate = register_class_Gtk4_GtkGestureRotate(ce_GtkGesture);
@@ -124,6 +139,8 @@
   phpgtk::register_class("GtkWidget", ce_GtkWidget, GTK_TYPE_WIDGET);
   zend_class_entry *ce_GtkWindow = register_class_Gtk4_GtkWindow(ce_GtkWidget, ce_GtkRoot);
   phpgtk::register_class("GtkWindow", ce_GtkWindow, GTK_TYPE_WINDOW);
+  zend_class_entry *ce_PangoFontDescription = register_class_Gtk4_PangoFontDescription();
+  phpgtk::register_PangoFontDescription(ce_PangoFontDescription);
   zend_class_entry *ce_GAction = register_class_Gtk4_GAction();
   phpgtk::register_interface("GAction", ce_GAction, G_TYPE_ACTION);
   zend_class_entry *ce_GActionObject = register_class_Gtk4_GActionObject(ce_GObject, ce_GAction);
@@ -166,6 +183,8 @@
   phpgtk::register_interface_fallback(GDK_TYPE_PAINTABLE, ce_GdkPaintableObject);
   zend_class_entry *ce_GdkTexture = register_class_Gtk4_GdkTexture(ce_GObject, ce_GdkPaintable);
   phpgtk::register_class("GdkTexture", ce_GdkTexture, GDK_TYPE_TEXTURE);
+  zend_class_entry *ce_GtkAboutDialog = register_class_Gtk4_GtkAboutDialog(ce_GtkWindow, ce_GtkRoot);
+  phpgtk::register_class("GtkAboutDialog", ce_GtkAboutDialog, GTK_TYPE_ABOUT_DIALOG);
   zend_class_entry *ce_GtkApplication = register_class_Gtk4_GtkApplication(ce_GApplication, ce_GActionGroup, ce_GActionMap);
   phpgtk::register_class("GtkApplication", ce_GtkApplication, GTK_TYPE_APPLICATION);
   zend_class_entry *ce_GtkApplicationWindow = register_class_Gtk4_GtkApplicationWindow(ce_GtkWindow, ce_GActionMap, ce_GtkRoot);
@@ -190,6 +209,8 @@
   phpgtk::register_class("GtkDropDown", ce_GtkDropDown, GTK_TYPE_DROP_DOWN);
   zend_class_entry *ce_GtkEntry = register_class_Gtk4_GtkEntry(ce_GtkWidget, ce_GtkEditable);
   phpgtk::register_class("GtkEntry", ce_GtkEntry, GTK_TYPE_ENTRY);
+  zend_class_entry *ce_GtkFileFilter = register_class_Gtk4_GtkFileFilter(ce_GtkFilter);
+  phpgtk::register_class("GtkFileFilter", ce_GtkFileFilter, GTK_TYPE_FILE_FILTER);
   zend_class_entry *ce_GtkFilterListModel = register_class_Gtk4_GtkFilterListModel(ce_GObject, ce_GListModel);
   phpgtk::register_class("GtkFilterListModel", ce_GtkFilterListModel, GTK_TYPE_FILTER_LIST_MODEL);
   zend_class_entry *ce_GtkFixed = register_class_Gtk4_GtkFixed(ce_GtkWidget);

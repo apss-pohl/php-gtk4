@@ -23,6 +23,6 @@ ZEND_METHOD(Gtk4_GtkNotebookPage, __construct) {
 ZEND_METHOD(Gtk4_GtkNotebookPage, get_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkNotebookPage *self = PHPGTK_SELF(GtkNotebookPage, GTK_TYPE_NOTEBOOK_PAGE);
-  GtkWidget *result = gtk_notebook_page_get_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_notebook_page_get_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }

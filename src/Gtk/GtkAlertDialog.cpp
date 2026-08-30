@@ -143,9 +143,9 @@ ZEND_METHOD(Gtk4_GtkAlertDialog, get_default_button) {
 ZEND_METHOD(Gtk4_GtkAlertDialog, get_detail) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkAlertDialog *self = PHPGTK_SELF(GtkAlertDialog, GTK_TYPE_ALERT_DIALOG);
-  const char *result = gtk_alert_dialog_get_detail(self);
-  if (result == nullptr) RETURN_EMPTY_STRING();
-  RETURN_STRING(result);
+  const char *phpgtk_ret = gtk_alert_dialog_get_detail(self);
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(phpgtk_ret);
 }
 
 /**
@@ -156,9 +156,9 @@ ZEND_METHOD(Gtk4_GtkAlertDialog, get_detail) {
 ZEND_METHOD(Gtk4_GtkAlertDialog, get_message) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkAlertDialog *self = PHPGTK_SELF(GtkAlertDialog, GTK_TYPE_ALERT_DIALOG);
-  const char *result = gtk_alert_dialog_get_message(self);
-  if (result == nullptr) RETURN_EMPTY_STRING();
-  RETURN_STRING(result);
+  const char *phpgtk_ret = gtk_alert_dialog_get_message(self);
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(phpgtk_ret);
 }
 
 /**

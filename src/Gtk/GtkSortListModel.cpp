@@ -72,8 +72,8 @@ ZEND_METHOD(Gtk4_GtkSortListModel, get_incremental) {
 ZEND_METHOD(Gtk4_GtkSortListModel, get_model) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkSortListModel *self = PHPGTK_SELF(GtkSortListModel, GTK_TYPE_SORT_LIST_MODEL);
-  GListModel *result = gtk_sort_list_model_get_model(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GListModel *phpgtk_ret = gtk_sort_list_model_get_model(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -95,8 +95,8 @@ ZEND_METHOD(Gtk4_GtkSortListModel, get_pending) {
 ZEND_METHOD(Gtk4_GtkSortListModel, get_section_sorter) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkSortListModel *self = PHPGTK_SELF(GtkSortListModel, GTK_TYPE_SORT_LIST_MODEL);
-  GtkSorter *result = gtk_sort_list_model_get_section_sorter(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkSorter *phpgtk_ret = gtk_sort_list_model_get_section_sorter(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -107,8 +107,8 @@ ZEND_METHOD(Gtk4_GtkSortListModel, get_section_sorter) {
 ZEND_METHOD(Gtk4_GtkSortListModel, get_sorter) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkSortListModel *self = PHPGTK_SELF(GtkSortListModel, GTK_TYPE_SORT_LIST_MODEL);
-  GtkSorter *result = gtk_sort_list_model_get_sorter(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkSorter *phpgtk_ret = gtk_sort_list_model_get_sorter(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

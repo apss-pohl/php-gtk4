@@ -77,8 +77,8 @@ ZEND_METHOD(Gtk4_GtkEntry, get_alignment) {
 ZEND_METHOD(Gtk4_GtkEntry, get_buffer) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
-  GtkEntryBuffer *result = gtk_entry_get_buffer(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkEntryBuffer *phpgtk_ret = gtk_entry_get_buffer(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -100,8 +100,8 @@ ZEND_METHOD(Gtk4_GtkEntry, get_current_icon_drag_source) {
 ZEND_METHOD(Gtk4_GtkEntry, get_extra_menu) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
-  GMenuModel *result = gtk_entry_get_extra_menu(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GMenuModel *phpgtk_ret = gtk_entry_get_extra_menu(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -198,9 +198,9 @@ ZEND_METHOD(Gtk4_GtkEntry, get_icon_paintable) {
   GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
   gint icon_pos_v = 0;
   if (!enum_from_php(icon_pos, GTK_TYPE_ENTRY_ICON_POSITION, &icon_pos_v)) RETURN_THROWS();
-  GdkPaintable *result =
+  GdkPaintable *phpgtk_ret =
       gtk_entry_get_icon_paintable(self, static_cast<GtkEntryIconPosition>(icon_pos_v));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -250,11 +250,11 @@ ZEND_METHOD(Gtk4_GtkEntry, get_icon_tooltip_markup) {
   GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
   gint icon_pos_v = 0;
   if (!enum_from_php(icon_pos, GTK_TYPE_ENTRY_ICON_POSITION, &icon_pos_v)) RETURN_THROWS();
-  char *result =
+  char *phpgtk_ret =
       gtk_entry_get_icon_tooltip_markup(self, static_cast<GtkEntryIconPosition>(icon_pos_v));
-  if (result == nullptr) RETURN_NULL();
-  RETVAL_STRING(result);
-  g_free(result);
+  if (phpgtk_ret == nullptr) RETURN_NULL();
+  RETVAL_STRING(phpgtk_ret);
+  g_free(phpgtk_ret);
 }
 
 /**
@@ -270,11 +270,11 @@ ZEND_METHOD(Gtk4_GtkEntry, get_icon_tooltip_text) {
   GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
   gint icon_pos_v = 0;
   if (!enum_from_php(icon_pos, GTK_TYPE_ENTRY_ICON_POSITION, &icon_pos_v)) RETURN_THROWS();
-  char *result =
+  char *phpgtk_ret =
       gtk_entry_get_icon_tooltip_text(self, static_cast<GtkEntryIconPosition>(icon_pos_v));
-  if (result == nullptr) RETURN_NULL();
-  RETVAL_STRING(result);
-  g_free(result);
+  if (phpgtk_ret == nullptr) RETURN_NULL();
+  RETVAL_STRING(phpgtk_ret);
+  g_free(phpgtk_ret);
 }
 
 /**

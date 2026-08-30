@@ -140,7 +140,11 @@ final class Demo
         ],
         'Loop' => ['GLib', 'GMainLoop', 'GIOCondition'],
         'Geometry' => ['GtkRequisition'],
-        'Dialogs & async' => ['GtkAlertDialog', 'GCancellable', 'GAsyncResult', 'GTask'],
+        'Dialogs & async' => [
+            'GtkAlertDialog', 'GtkFileDialog', 'GtkFileFilter', 'GtkColorDialog', 'GtkFontDialog',
+            'GtkAboutDialog', 'GtkLicense', 'PangoFontDescription',
+            'GCancellable', 'GAsyncResult', 'GTask',
+        ],
     ];
 
     /**

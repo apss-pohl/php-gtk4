@@ -354,7 +354,14 @@ function phpClass(Node $n): string
 
 function camel(string $snake): string
 {
-    return str_replace('_', '', ucwords($snake, '_'));
+    $name = str_replace('_', '', ucwords($snake, '_'));
+    // A PHP identifier cannot start with a digit, and GIR nicks sometimes do
+    // (GTK_LICENSE_0BSD -> "0bsd"). Moving the digits to the end reads like the case GTK
+    // would have written and like its siblings: Bsd0 next to Bsd3.
+    if (preg_match('/^(\d+)(.+)$/', $name, $m) === 1) {
+        $name = ucfirst($m[2]) . $m[1];
+    }
+    return $name;
 }
 
 /** First paragraph of a GIR doc with gi-docgen links reduced to plain text. */
@@ -2661,6 +2668,23 @@ final class Generator
                 'carg' => "{$name}_b", 'post' => ["g_bytes_unref({$name}_b);"],
             ]);
         }
+        // A GFile is a path or a URI and nothing else a PHP program can use: it is mapped to a
+        // string, like GBytes and GVariant are mapped to values (docs/PLAN.md §2.7). The GIO file
+        // stack (streams, GFileInfo) is not bound and a handle would only carry it around.
+        // g_file_new_for_commandline_arg() takes both spellings.
+        if ($t->name === 'Gio.File') {
+            $arg = $nullable
+                ? "$name != nullptr ? g_file_new_for_commandline_arg(ZSTR_VAL($name)) : nullptr"
+                : "g_file_new_for_commandline_arg(ZSTR_VAL($name))";
+            return array_merge($r, [
+                'phpType' => ($nullable ? '?' : '') . 'string',
+                'decl' => "zend_string *$name" . ($nullable ? ' = nullptr' : '') . ';',
+                'zpp' => 'Z_PARAM_PATH_STR' . ($nullable ? '_OR_NULL' : '') . "($name)",
+                'pre' => ["GFile *{$name}_f = $arg;"],
+                'carg' => "{$name}_f",
+                'post' => ["if ({$name}_f != nullptr) g_object_unref({$name}_f);"],
+            ]);
+        }
         if (self::isStrv($t)) {
             // A nullable string vector (GtkStringList::new(NULL) = an empty list) is ?array.
             return array_merge($r, [
@@ -2793,9 +2817,9 @@ final class Generator
             $macro = $this->typeMacroOf($fnode);
             $unref = self::FUNDAMENTALS[$t->name];
             return ['phpType' => ($f->retNullable ? '?' : '') . phpClass($fnode), 'lines' => fn(string $call) => [
-                "gpointer result = $call;", "wrap_fundamental($macro, result, return_value);",
+                "gpointer phpgtk_ret = $call;", "wrap_fundamental($macro, phpgtk_ret, return_value);",
                 ...($full && $unref !== null
-                    ? ["if (result != nullptr) $unref(static_cast<{$fnode->ctype} *>(result));"] : [])]];
+                    ? ["if (phpgtk_ret != nullptr) $unref(static_cast<{$fnode->ctype} *>(phpgtk_ret));"] : [])]];
         }
 
         // constructors of a boxed record: the handle adopts the allocation (the type's own
@@ -2833,11 +2857,11 @@ final class Generator
                 $full,
                 $recordMacro
             ) {
-                $l = ["gpointer result = $call;"];
-                array_push($l, ...$throwCheck('result == nullptr'));
-                $l[] = "wrap_boxed($recordMacro, result, return_value);";
+                $l = ["gpointer phpgtk_ret = $call;"];
+                array_push($l, ...$throwCheck('phpgtk_ret == nullptr'));
+                $l[] = "wrap_boxed($recordMacro, phpgtk_ret, return_value);";
                 if ($full) {
-                    $l[] = "if (result != nullptr) g_boxed_free($recordMacro, result);";
+                    $l[] = "if (phpgtk_ret != nullptr) g_boxed_free($recordMacro, phpgtk_ret);";
                 }
                 return $l;
             }];
@@ -2933,16 +2957,16 @@ final class Generator
             $nullable = $f->retNullable;
             if ($full) {
                 return ['phpType' => ($nullable ? '?' : '') . 'string', 'lines' => fn(string $call) => [
-                    "char *result = $call;", ...$throwCheck('result == nullptr'),
-                    ...($nullable ? ['if (result == nullptr) RETURN_NULL();'] : []),
-                    'RETVAL_STRING(result);', 'g_free(result);']];
+                    "char *phpgtk_ret = $call;", ...$throwCheck('phpgtk_ret == nullptr'),
+                    ...($nullable ? ['if (phpgtk_ret == nullptr) RETURN_NULL();'] : []),
+                    'RETVAL_STRING(phpgtk_ret);', 'g_free(phpgtk_ret);']];
             }
             return ['phpType' => ($nullable ? '?' : '') . 'string', 'lines' => fn(string $call) => $nullable
                 ? ["PHPGTK_RETURN_STRING_OR_NULL($call);"]
                 // GIR says non-nullable, GTK returns NULL anyway (gtk_alert_dialog_get_detail()
                 // before a detail is set): an empty string, never a crash; the stub type stays.
-                : ["const char *result = $call;", 'if (result == nullptr) RETURN_EMPTY_STRING();',
-                    'RETURN_STRING(result);']];
+                : ["const char *phpgtk_ret = $call;", 'if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();',
+                    'RETURN_STRING(phpgtk_ret);']];
         }
         // Scalar returns of a `throws` function carry no failure marker of their own (a dismissed
         // GtkAlertDialog::choose_finish() is -1 *and* a GError): the GError decides, and dropping
@@ -2960,8 +2984,8 @@ final class Generator
         }
         if ($t->name === 'GLib.Variant') {
             return ['phpType' => 'mixed', 'lines' => fn(string $call) => [
-                "GVariant *result = $call;", 'if (result == nullptr) RETURN_NULL();',
-                'variant_to_php(result, return_value);', ...($full ? ['g_variant_unref(result);'] : [])]];
+                "GVariant *phpgtk_ret = $call;", 'if (phpgtk_ret == nullptr) RETURN_NULL();',
+                'variant_to_php(phpgtk_ret, return_value);', ...($full ? ['g_variant_unref(phpgtk_ret);'] : [])]];
         }
         if ($t->name === 'GLib.VariantType') {
             $nullable = $f->retNullable;
@@ -2972,6 +2996,19 @@ final class Generator
         }
         if (in_array($t->name, ['GObject.GType', 'Gio.GType', 'GLib.GType'], true) || $t->name === 'GType') {
             return ['phpType' => 'string', 'lines' => fn(string $call) => ["RETURN_STRING(g_type_name($call));"]];
+        }
+        if ($t->name === 'Gio.File') {
+            return ['phpType' => ($f->retNullable ? '?' : '') . 'string', 'lines' => fn(string $call) => [
+                "GFile *file = $call;", ...$throwCheck('file == nullptr'),
+                ...($f->retNullable ? ['if (file == nullptr) RETURN_NULL();'] : []),
+                // A local file answers with its path; anything else (a portal URI, sftp://) has
+                // no path and answers with the URI it does have.
+                'char *file_s = g_file_get_path(file);',
+                'if (file_s == nullptr) file_s = g_file_get_uri(file);',
+                ...($full ? ['g_object_unref(file);'] : []),
+                'if (file_s == nullptr) RETURN_EMPTY_STRING();',
+                'RETVAL_STRING(file_s);',
+                'g_free(file_s);']];
         }
         if ($t->name === 'GLib.Bytes') {
             return ['phpType' => ($f->retNullable ? '?' : '') . 'string', 'lines' => fn(string $call) => [
@@ -3038,15 +3075,17 @@ final class Generator
             }
             // g_task_get_source_object() and friends return the object as gpointer
             return ['phpType' => ($f->retNullable ? '?' : '') . $phpT, 'lines' => fn(string $call) => [
-                "{$node->ctype} *result = " . (str_starts_with($t->ctype ?? '', 'gpointer')
-                    ? "static_cast<{$node->ctype} *>($call)" : $call) . ';', ...$throwCheck('result == nullptr'),
-                'wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);',
-                ...($full ? ['if (result != nullptr) g_object_unref(result);  // the handle took its own ref'] : [])]];
+                "{$node->ctype} *phpgtk_ret = " . (str_starts_with($t->ctype ?? '', 'gpointer')
+                    ? "static_cast<{$node->ctype} *>($call)" : $call) . ';', ...$throwCheck('phpgtk_ret == nullptr'),
+                'wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);',
+                ...($full
+                    ? ['if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref']
+                    : [])]];
         }
         if ($node->kind === 'record' && $node->gtypeName !== null && $this->known($t->name)) {
             return ['phpType' => ($f->retNullable ? '?' : '') . phpClass($node), 'lines' => fn(string $call) => [
-                "{$node->ctype} *result = $call;", "wrap_boxed($typeMacro, result, return_value);",
-                ...($full ? ["if (result != nullptr) g_boxed_free($typeMacro, result);"] : [])]];
+                "{$node->ctype} *phpgtk_ret = $call;", "wrap_boxed($typeMacro, phpgtk_ret, return_value);",
+                ...($full ? ["if (phpgtk_ret != nullptr) g_boxed_free($typeMacro, phpgtk_ret);"] : [])]];
         }
         return "return type {$t->name}";
     }

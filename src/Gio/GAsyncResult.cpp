@@ -16,9 +16,9 @@ using namespace phpgtk;
 ZEND_METHOD(Gtk4_GAsyncResult, get_source_object) {
   ZEND_PARSE_PARAMETERS_NONE();
   GAsyncResult *self = PHPGTK_SELF(GAsyncResult, G_TYPE_ASYNC_RESULT);
-  GObject *result = g_async_result_get_source_object(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
-  if (result != nullptr) g_object_unref(result);  // the handle took its own ref
+  GObject *phpgtk_ret = g_async_result_get_source_object(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
 }
 
 /**

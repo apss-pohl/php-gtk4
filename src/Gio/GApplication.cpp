@@ -61,8 +61,8 @@ ZEND_METHOD(Gtk4_GApplication, __construct) {
  */
 ZEND_METHOD(Gtk4_GApplication, get_default) {
   ZEND_PARSE_PARAMETERS_NONE();
-  GApplication *result = g_application_get_default();
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GApplication *phpgtk_ret = g_application_get_default();
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

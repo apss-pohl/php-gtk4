@@ -155,7 +155,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GdkTexture
 
 - `new_for_pixbuf` — parameter `pixbuf` of type GdkPixbuf.Pixbuf
-- `new_from_file` — parameter `file` of type Gio.File
 - `new_from_resource` — skip.txt: g_error()s (aborts the process) on an invalid resource path - not a PHP-safe API
 - `download` — parameter `data` of type array (C array)
 - `__construct` — skip.txt: abstract for GTK's own subclasses only: a texture needs internal state (color state, 4.16+) that only the factories set - no PHP subtypes, no `new`
@@ -197,7 +196,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkCssProvider
 
 - `load_from_data` — deprecated (4.12)
-- `load_from_file` — parameter `file` of type Gio.File
 
 ## GtkDropDown
 
@@ -256,6 +254,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_im_context` — return type Gtk.IMContext (not in the closure)
 - `set_im_context` — parameter `im_context` of type Gtk.IMContext
 
+## GtkFileDialog
+
+- `property initial-file` — property type Gio.File not mappable
+- `property initial-folder` — property type Gio.File not mappable
+
 ## GtkFilterListModel
 
 - `property item-type` — property type Gtk.GType not mappable
@@ -264,6 +267,20 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `get_child_transform` — return type Gsk.Transform
 - `set_child_transform` — parameter `transform` of type Gsk.Transform
+
+## GtkFontDialog
+
+- `choose_face` — parameter `initial_value` of type Pango.FontFace
+- `choose_face_finish` — return type Pango.FontFace (not in the closure)
+- `choose_family` — parameter `initial_value` of type Pango.FontFamily
+- `choose_family_finish` — return type Pango.FontFamily (not in the closure)
+- `choose_font_and_features_finish` — out parameter `font_desc` of type Pango.FontDescription
+- `get_font_map` — return type Pango.FontMap (not in the closure)
+- `get_language` — return type Pango.Language
+- `set_font_map` — parameter `fontmap` of type Pango.FontMap
+- `set_language` — parameter `language` of type Pango.Language
+- `property font-map` — property type Pango.FontMap not mappable
+- `property language` — property type Pango.Language not mappable
 
 ## GtkFrame
 
@@ -313,11 +330,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkPicture
 
-- `new_for_file` — parameter `file` of type Gio.File
 - `new_for_pixbuf` — deprecated (4.12)
-- `get_file` — return type Gio.File (not in the closure)
 - `get_keep_aspect_ratio` — deprecated (4.8)
-- `set_file` — parameter `file` of type Gio.File
 - `set_keep_aspect_ratio` — deprecated (4.8)
 - `set_pixbuf` — deprecated (4.12)
 - `property file` — property type Gio.File not mappable
@@ -438,6 +452,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_group` — return type Gtk.WindowGroup (not in the closure)
 - `present_with_time` — deprecated (4.14)
 
+## PangoFontDescription
+
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+
 ## Overrides in effect
 
 - `Gio.Action`: activate
@@ -449,12 +468,14 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.CustomFilter`: __construct, set_filter_func
 - `Gtk.CustomSorter`: __construct, set_sort_func
 - `Gtk.DrawingArea`: set_draw_func
+- `Gtk.FileFilter`: new_from_gvariant
 - `Gtk.MenuButton`: set_create_popup_func
 - `Gtk.Popover`: popup
 - `Gtk.Scale`: set_format_value_func
 
 ## Emitted files
 
+- `Gtk/GtkAboutDialog.cpp`
 - `Gtk/GtkAdjustment.cpp`
 - `Gtk/GtkAlertDialog.cpp`
 - `Gtk/GtkApplication.cpp`
@@ -463,6 +484,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkButton.cpp`
 - `Gtk/GtkCalendar.cpp`
 - `Gtk/GtkCheckButton.cpp`
+- `Gtk/GtkColorDialog.cpp`
 - `Gtk/GtkCssProvider.cpp`
 - `Gtk/GtkCustomFilter.cpp`
 - `Gtk/GtkCustomSorter.cpp`
@@ -477,9 +499,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkEventControllerLegacy.cpp`
 - `Gtk/GtkEventControllerMotion.cpp`
 - `Gtk/GtkEventControllerScroll.cpp`
+- `Gtk/GtkFileDialog.cpp`
+- `Gtk/GtkFileFilter.cpp`
 - `Gtk/GtkFilter.cpp`
 - `Gtk/GtkFilterListModel.cpp`
 - `Gtk/GtkFixed.cpp`
+- `Gtk/GtkFontDialog.cpp`
 - `Gtk/GtkFrame.cpp`
 - `Gtk/GtkGesture.cpp`
 - `Gtk/GtkGestureClick.cpp`
@@ -532,6 +557,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkWidget.cpp`
 - `Gtk/GtkWindow.cpp`
 - `Gtk/Gtk.stub.php`
+- `Pango/PangoFontDescription.cpp`
 - `Pango/Pango.stub.php`
 - `Gio/GAction.cpp`
 - `Gio/GActionGroup.cpp`
@@ -555,11 +581,13 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `gen_prototypes.h`
 - `gen_arginfo.h`
 - `examples/generated-sections.inc`
+- `tests/Generated/GtkAboutDialogSmokeTest.php`
 - `tests/Generated/GtkAlertDialogSmokeTest.php`
 - `tests/Generated/GtkApplicationSmokeTest.php`
 - `tests/Generated/GtkButtonSmokeTest.php`
 - `tests/Generated/GtkCalendarSmokeTest.php`
 - `tests/Generated/GtkCheckButtonSmokeTest.php`
+- `tests/Generated/GtkColorDialogSmokeTest.php`
 - `tests/Generated/GtkCssProviderSmokeTest.php`
 - `tests/Generated/GtkCustomFilterSmokeTest.php`
 - `tests/Generated/GtkCustomSorterSmokeTest.php`
@@ -573,9 +601,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkEventControllerLegacySmokeTest.php`
 - `tests/Generated/GtkEventControllerMotionSmokeTest.php`
 - `tests/Generated/GtkEventControllerScrollSmokeTest.php`
+- `tests/Generated/GtkFileDialogSmokeTest.php`
+- `tests/Generated/GtkFileFilterSmokeTest.php`
 - `tests/Generated/GtkFilterSmokeTest.php`
 - `tests/Generated/GtkFilterListModelSmokeTest.php`
 - `tests/Generated/GtkFixedSmokeTest.php`
+- `tests/Generated/GtkFontDialogSmokeTest.php`
 - `tests/Generated/GtkFrameSmokeTest.php`
 - `tests/Generated/GtkGestureSmokeTest.php`
 - `tests/Generated/GtkGestureClickSmokeTest.php`

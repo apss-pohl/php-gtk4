@@ -92,10 +92,10 @@ ZEND_METHOD(Gtk4_GtkEditable, get_chars) {
   GtkEditable *self = PHPGTK_SELF(GtkEditable, GTK_TYPE_EDITABLE);
   if (!phpgtk::check_range<int>(start_pos, 1)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(end_pos, 2)) RETURN_THROWS();
-  char *result =
+  char *phpgtk_ret =
       gtk_editable_get_chars(self, static_cast<int>(start_pos), static_cast<int>(end_pos));
-  RETVAL_STRING(result);
-  g_free(result);
+  RETVAL_STRING(phpgtk_ret);
+  g_free(phpgtk_ret);
 }
 
 /**
@@ -106,8 +106,8 @@ ZEND_METHOD(Gtk4_GtkEditable, get_chars) {
 ZEND_METHOD(Gtk4_GtkEditable, get_delegate) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkEditable *self = PHPGTK_SELF(GtkEditable, GTK_TYPE_EDITABLE);
-  GtkEditable *result = gtk_editable_get_delegate(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkEditable *phpgtk_ret = gtk_editable_get_delegate(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -187,9 +187,9 @@ ZEND_METHOD(Gtk4_GtkEditable, get_selection_bounds) {
 ZEND_METHOD(Gtk4_GtkEditable, get_text) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkEditable *self = PHPGTK_SELF(GtkEditable, GTK_TYPE_EDITABLE);
-  const char *result = gtk_editable_get_text(self);
-  if (result == nullptr) RETURN_EMPTY_STRING();
-  RETURN_STRING(result);
+  const char *phpgtk_ret = gtk_editable_get_text(self);
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(phpgtk_ret);
 }
 
 /**

@@ -64,8 +64,8 @@ ZEND_METHOD(Gtk4_GtkText, get_activates_default) {
 ZEND_METHOD(Gtk4_GtkText, get_buffer) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkText *self = PHPGTK_SELF(GtkText, GTK_TYPE_TEXT);
-  GtkEntryBuffer *result = gtk_text_get_buffer(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkEntryBuffer *phpgtk_ret = gtk_text_get_buffer(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -87,8 +87,8 @@ ZEND_METHOD(Gtk4_GtkText, get_enable_emoji_completion) {
 ZEND_METHOD(Gtk4_GtkText, get_extra_menu) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkText *self = PHPGTK_SELF(GtkText, GTK_TYPE_TEXT);
-  GMenuModel *result = gtk_text_get_extra_menu(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GMenuModel *phpgtk_ret = gtk_text_get_extra_menu(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

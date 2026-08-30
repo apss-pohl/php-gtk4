@@ -70,8 +70,8 @@ ZEND_METHOD(Gtk4_GtkPopoverMenuBar, add_child) {
 ZEND_METHOD(Gtk4_GtkPopoverMenuBar, get_menu_model) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkPopoverMenuBar *self = PHPGTK_SELF(GtkPopoverMenuBar, GTK_TYPE_POPOVER_MENU_BAR);
-  GMenuModel *result = gtk_popover_menu_bar_get_menu_model(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GMenuModel *phpgtk_ret = gtk_popover_menu_bar_get_menu_model(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

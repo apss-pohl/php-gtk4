@@ -22,6 +22,339 @@ enum PangoEllipsizeMode: int
 }
 
 /**
+ * A `PangoFontDescription` describes a font in an implementation-independent manner.
+ * @not-serializable
+ */
+final class PangoFontDescription
+{
+    /** Creates a new font description structure with all fields unset. */
+    public function __construct() {}
+
+    /**
+     * Determines if the style attributes of $new_match are a closer match for $desc than those of
+     * $old_match are, or if $old_match is `null`, determines if $new_match is a match at all.
+     */
+    public function better_match(?PangoFontDescription $old_match, PangoFontDescription $new_match): bool {}
+
+    /** Make a copy of a `PangoFontDescription`, but don't duplicate allocated fields. */
+    public function copy_static(): ?PangoFontDescription {}
+
+    /** Compares two font descriptions for equality. */
+    public function equal(PangoFontDescription $desc2): bool {}
+
+    /** Gets the family name field of a font description. */
+    public function get_family(): ?string {}
+
+    /** Gets the gravity field of a font description. */
+    public function get_gravity(): PangoGravity {}
+
+    /** Determines which fields in a font description have been set. */
+    public function get_set_fields(): int {}
+
+    /** Gets the size field of a font description. */
+    public function get_size(): int {}
+
+    /**
+     * Determines whether the size of the font is in points (not absolute) or device units
+     * (absolute).
+     */
+    public function get_size_is_absolute(): bool {}
+
+    /** Gets the stretch field of a font description. */
+    public function get_stretch(): PangoStretch {}
+
+    /** Gets the style field of a `PangoFontDescription`. */
+    public function get_style(): PangoStyle {}
+
+    /** Gets the variant field of a `PangoFontDescription`. */
+    public function get_variant(): PangoVariant {}
+
+    /** Gets the variations field of a font description. */
+    public function get_variations(): ?string {}
+
+    /** Gets the weight field of a font description. */
+    public function get_weight(): PangoWeight {}
+
+    /** Computes a hash of a `PangoFontDescription` structure. */
+    public function hash(): int {}
+
+    /** Merges the fields that are set in $desc_to_merge into the fields in $desc. */
+    public function merge(?PangoFontDescription $desc_to_merge, bool $replace_existing): void {}
+
+    /**
+     * Merges the fields that are set in $desc_to_merge into the fields in $desc, without copying
+     * allocated fields.
+     */
+    public function merge_static(PangoFontDescription $desc_to_merge, bool $replace_existing): void {}
+
+    /** Sets the size field of a font description, in device units. */
+    public function set_absolute_size(float $size): void {}
+
+    /** Sets the family name field of a font description. */
+    public function set_family(string $family): void {}
+
+    /** Sets the family name field of a font description, without copying the string. */
+    public function set_family_static(string $family): void {}
+
+    /** Sets the gravity field of a font description. */
+    public function set_gravity(PangoGravity $gravity): void {}
+
+    /** Sets the size field of a font description in fractional points. */
+    public function set_size(int $size): void {}
+
+    /** Sets the stretch field of a font description. */
+    public function set_stretch(PangoStretch $stretch): void {}
+
+    /** Sets the style field of a `PangoFontDescription`. */
+    public function set_style(PangoStyle $style): void {}
+
+    /** Sets the variant field of a font description. */
+    public function set_variant(PangoVariant $variant): void {}
+
+    /** Sets the variations field of a font description. */
+    public function set_variations(?string $variations): void {}
+
+    /** Sets the variations field of a font description. */
+    public function set_variations_static(string $variations): void {}
+
+    /** Sets the weight field of a font description. */
+    public function set_weight(PangoWeight $weight): void {}
+
+    /** Creates a filename representation of a font description. */
+    public function to_filename(): ?string {}
+
+    /** Creates a string representation of a font description. */
+    public function to_string(): string {}
+
+    /** Unsets some of the fields in a `PangoFontDescription`. */
+    public function unset_fields(int $to_unset): void {}
+
+    /** Creates a new font description from a string representation. */
+    public static function from_string(string $str): PangoFontDescription {}
+}
+
+/**
+ * The bits in a `PangoFontMask` correspond to the set fields in a `PangoFontDescription`.
+ */
+final class PangoFontMask
+{
+    public const int FAMILY = 1;
+    public const int STYLE = 2;
+    public const int VARIANT = 4;
+    public const int WEIGHT = 8;
+    public const int STRETCH = 16;
+    public const int SIZE = 32;
+    public const int GRAVITY = 64;
+    public const int VARIATIONS = 128;
+}
+
+/**
+ * `PangoGravity` represents the orientation of glyphs in a segment of text.
+ */
+enum PangoGravity: int
+{
+    case South = 0;
+    case East = 1;
+    case North = 2;
+    case West = 3;
+    case Auto = 4;
+}
+
+/**
+ * `PangoGravityHint` defines how horizontal scripts should behave in a vertical context.
+ */
+enum PangoGravityHint: int
+{
+    case Natural = 0;
+    case Strong = 1;
+    case Line = 2;
+}
+
+/**
+ * The `PangoScript` enumeration identifies different writing systems.
+ */
+enum PangoScript: int
+{
+    case InvalidCode = -1;
+    case Common = 0;
+    case Inherited = 1;
+    case Arabic = 2;
+    case Armenian = 3;
+    case Bengali = 4;
+    case Bopomofo = 5;
+    case Cherokee = 6;
+    case Coptic = 7;
+    case Cyrillic = 8;
+    case Deseret = 9;
+    case Devanagari = 10;
+    case Ethiopic = 11;
+    case Georgian = 12;
+    case Gothic = 13;
+    case Greek = 14;
+    case Gujarati = 15;
+    case Gurmukhi = 16;
+    case Han = 17;
+    case Hangul = 18;
+    case Hebrew = 19;
+    case Hiragana = 20;
+    case Kannada = 21;
+    case Katakana = 22;
+    case Khmer = 23;
+    case Lao = 24;
+    case Latin = 25;
+    case Malayalam = 26;
+    case Mongolian = 27;
+    case Myanmar = 28;
+    case Ogham = 29;
+    case OldItalic = 30;
+    case Oriya = 31;
+    case Runic = 32;
+    case Sinhala = 33;
+    case Syriac = 34;
+    case Tamil = 35;
+    case Telugu = 36;
+    case Thaana = 37;
+    case Thai = 38;
+    case Tibetan = 39;
+    case CanadianAboriginal = 40;
+    case Yi = 41;
+    case Tagalog = 42;
+    case Hanunoo = 43;
+    case Buhid = 44;
+    case Tagbanwa = 45;
+    case Braille = 46;
+    case Cypriot = 47;
+    case Limbu = 48;
+    case Osmanya = 49;
+    case Shavian = 50;
+    case LinearB = 51;
+    case TaiLe = 52;
+    case Ugaritic = 53;
+    case NewTaiLue = 54;
+    case Buginese = 55;
+    case Glagolitic = 56;
+    case Tifinagh = 57;
+    case SylotiNagri = 58;
+    case OldPersian = 59;
+    case Kharoshthi = 60;
+    case Unknown = 61;
+    case Balinese = 62;
+    case Cuneiform = 63;
+    case Phoenician = 64;
+    case PhagsPa = 65;
+    case Nko = 66;
+    case KayahLi = 67;
+    case Lepcha = 68;
+    case Rejang = 69;
+    case Sundanese = 70;
+    case Saurashtra = 71;
+    case Cham = 72;
+    case OlChiki = 73;
+    case Vai = 74;
+    case Carian = 75;
+    case Lycian = 76;
+    case Lydian = 77;
+    case Batak = 78;
+    case Brahmi = 79;
+    case Mandaic = 80;
+    case Chakma = 81;
+    case MeroiticCursive = 82;
+    case MeroiticHieroglyphs = 83;
+    case Miao = 84;
+    case Sharada = 85;
+    case SoraSompeng = 86;
+    case Takri = 87;
+    case BassaVah = 88;
+    case CaucasianAlbanian = 89;
+    case Duployan = 90;
+    case Elbasan = 91;
+    case Grantha = 92;
+    case Khojki = 93;
+    case Khudawadi = 94;
+    case LinearA = 95;
+    case Mahajani = 96;
+    case Manichaean = 97;
+    case MendeKikakui = 98;
+    case Modi = 99;
+    case Mro = 100;
+    case Nabataean = 101;
+    case OldNorthArabian = 102;
+    case OldPermic = 103;
+    case PahawhHmong = 104;
+    case Palmyrene = 105;
+    case PauCinHau = 106;
+    case PsalterPahlavi = 107;
+    case Siddham = 108;
+    case Tirhuta = 109;
+    case WarangCiti = 110;
+    case Ahom = 111;
+    case AnatolianHieroglyphs = 112;
+    case Hatran = 113;
+    case Multani = 114;
+    case OldHungarian = 115;
+    case Signwriting = 116;
+}
+
+/**
+ * An enumeration specifying the width of the font relative to other designs within a family.
+ */
+enum PangoStretch: int
+{
+    case UltraCondensed = 0;
+    case ExtraCondensed = 1;
+    case Condensed = 2;
+    case SemiCondensed = 3;
+    case Normal = 4;
+    case SemiExpanded = 5;
+    case Expanded = 6;
+    case ExtraExpanded = 7;
+    case UltraExpanded = 8;
+}
+
+/**
+ * An enumeration specifying the various slant styles possible for a font.
+ */
+enum PangoStyle: int
+{
+    case Normal = 0;
+    case Oblique = 1;
+    case Italic = 2;
+}
+
+/**
+ * An enumeration specifying capitalization variant of the font.
+ */
+enum PangoVariant: int
+{
+    case Normal = 0;
+    case SmallCaps = 1;
+    case AllSmallCaps = 2;
+    case PetiteCaps = 3;
+    case AllPetiteCaps = 4;
+    case Unicase = 5;
+    case TitleCaps = 6;
+}
+
+/**
+ * An enumeration specifying the weight (boldness) of a font.
+ */
+enum PangoWeight: int
+{
+    case Thin = 100;
+    case Ultralight = 200;
+    case Light = 300;
+    case Semilight = 350;
+    case Book = 380;
+    case Normal = 400;
+    case Medium = 500;
+    case Semibold = 600;
+    case Bold = 700;
+    case Ultrabold = 800;
+    case Heavy = 900;
+    case Ultraheavy = 1000;
+}
+
+/**
  * `PangoWrapMode` describes how to wrap the lines of a `PangoLayout` to the desired width.
  */
 enum PangoWrapMode: int

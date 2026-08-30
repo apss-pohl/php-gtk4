@@ -43,8 +43,8 @@ ZEND_METHOD(Gtk4_GtkPaned, __construct) {
 ZEND_METHOD(Gtk4_GtkPaned, get_end_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkPaned *self = PHPGTK_SELF(GtkPaned, GTK_TYPE_PANED);
-  GtkWidget *result = gtk_paned_get_end_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_paned_get_end_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -110,8 +110,8 @@ ZEND_METHOD(Gtk4_GtkPaned, get_shrink_start_child) {
 ZEND_METHOD(Gtk4_GtkPaned, get_start_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkPaned *self = PHPGTK_SELF(GtkPaned, GTK_TYPE_PANED);
-  GtkWidget *result = gtk_paned_get_start_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_paned_get_start_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

@@ -23,8 +23,8 @@ ZEND_METHOD(Gtk4_GdkDisplay, __construct) {
  */
 ZEND_METHOD(Gtk4_GdkDisplay, get_default) {
   ZEND_PARSE_PARAMETERS_NONE();
-  GdkDisplay *result = gdk_display_get_default();
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GdkDisplay *phpgtk_ret = gdk_display_get_default();
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -39,8 +39,9 @@ ZEND_METHOD(Gtk4_GdkDisplay, open) {
   Z_PARAM_STR_OR_NULL(display_name)
   ZEND_PARSE_PARAMETERS_END();
   if (display_name != nullptr && !phpgtk::check_utf8(display_name, 1)) RETURN_THROWS();
-  GdkDisplay *result = gdk_display_open(display_name != nullptr ? ZSTR_VAL(display_name) : nullptr);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GdkDisplay *phpgtk_ret =
+      gdk_display_open(display_name != nullptr ? ZSTR_VAL(display_name) : nullptr);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -84,8 +85,8 @@ ZEND_METHOD(Gtk4_GdkDisplay, flush) {
 ZEND_METHOD(Gtk4_GdkDisplay, get_monitors) {
   ZEND_PARSE_PARAMETERS_NONE();
   GdkDisplay *self = PHPGTK_SELF(GdkDisplay, GDK_TYPE_DISPLAY);
-  GListModel *result = gdk_display_get_monitors(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GListModel *phpgtk_ret = gdk_display_get_monitors(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -96,9 +97,9 @@ ZEND_METHOD(Gtk4_GdkDisplay, get_monitors) {
 ZEND_METHOD(Gtk4_GdkDisplay, get_name) {
   ZEND_PARSE_PARAMETERS_NONE();
   GdkDisplay *self = PHPGTK_SELF(GdkDisplay, GDK_TYPE_DISPLAY);
-  const char *result = gdk_display_get_name(self);
-  if (result == nullptr) RETURN_EMPTY_STRING();
-  RETURN_STRING(result);
+  const char *phpgtk_ret = gdk_display_get_name(self);
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(phpgtk_ret);
 }
 
 /**

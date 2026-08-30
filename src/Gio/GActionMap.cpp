@@ -36,8 +36,8 @@ ZEND_METHOD(Gtk4_GActionMap, lookup_action) {
   ZEND_PARSE_PARAMETERS_END();
   GActionMap *self = PHPGTK_SELF(GActionMap, G_TYPE_ACTION_MAP);
   if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
-  GAction *result = g_action_map_lookup_action(self, ZSTR_VAL(action_name));
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GAction *phpgtk_ret = g_action_map_lookup_action(self, ZSTR_VAL(action_name));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

@@ -14,8 +14,8 @@ using namespace phpgtk;
 ZEND_METHOD(Gtk4_GtkScrollable, get_hadjustment) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkScrollable *self = PHPGTK_SELF(GtkScrollable, GTK_TYPE_SCROLLABLE);
-  GtkAdjustment *result = gtk_scrollable_get_hadjustment(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkAdjustment *phpgtk_ret = gtk_scrollable_get_hadjustment(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -37,8 +37,8 @@ ZEND_METHOD(Gtk4_GtkScrollable, get_hscroll_policy) {
 ZEND_METHOD(Gtk4_GtkScrollable, get_vadjustment) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkScrollable *self = PHPGTK_SELF(GtkScrollable, GTK_TYPE_SCROLLABLE);
-  GtkAdjustment *result = gtk_scrollable_get_vadjustment(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkAdjustment *phpgtk_ret = gtk_scrollable_get_vadjustment(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

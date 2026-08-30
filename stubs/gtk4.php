@@ -1382,6 +1382,12 @@ class GdkTexture extends GObject implements GdkPaintable
         return null;
     }
     /** Creates a new texture by loading an image from a file. */
+    public static function new_from_file(string $file): GdkTexture
+    {
+        unset($file);
+        return null;
+    }
+    /** Creates a new texture by loading an image from a file. */
     public static function new_from_filename(string $path): GdkTexture
     {
         unset($path);
@@ -2796,6 +2802,227 @@ class GTask extends GObject implements GAsyncResult
     }
 }
 /**
+ * The `GtkAboutDialog` offers a simple way to display information about a program.
+ *
+ * @property ?array $artists
+ * @property ?array $authors
+ * @property ?string $comments
+ * @property ?string $copyright
+ * @property ?array $documenters
+ * @property ?string $license
+ * @property ?GtkLicense $license_type
+ * @property ?GdkPaintable $logo
+ * @property ?string $logo_icon_name
+ * @property ?string $program_name
+ * @property ?string $system_information
+ * @property ?string $translator_credits
+ * @property ?string $version
+ * @property ?string $website
+ * @property ?string $website_label
+ * @property ?bool $wrap_license
+ */
+class GtkAboutDialog extends GtkWindow implements GtkRoot
+{
+    /** Creates a new `GtkAboutDialog`. */
+    public function __construct()
+    {
+    }
+    /** Creates a new section in the "Credits" page. */
+    public function add_credit_section(string $section_name, array $people): void
+    {
+        unset($section_name);
+        unset($people);
+    }
+    /**
+     * Returns the names of the artists which are displayed in the credits page.
+     *
+     * @return list<string>
+     */
+    public function get_artists(): array
+    {
+        return [];
+    }
+    /**
+     * Returns the names of the authors which are displayed in the credits page.
+     *
+     * @return list<string>
+     */
+    public function get_authors(): array
+    {
+        return [];
+    }
+    /** Returns the comments string. */
+    public function get_comments(): ?string
+    {
+        return null;
+    }
+    /** Returns the copyright string. */
+    public function get_copyright(): ?string
+    {
+        return null;
+    }
+    /**
+     * Returns the name of the documenters which are displayed in the credits page.
+     *
+     * @return list<string>
+     */
+    public function get_documenters(): array
+    {
+        return [];
+    }
+    /** Returns the license information. */
+    public function get_license(): ?string
+    {
+        return null;
+    }
+    /** Retrieves the license type. */
+    public function get_license_type(): GtkLicense
+    {
+        return null;
+    }
+    /** Returns the paintable displayed as logo in the about dialog. */
+    public function get_logo(): ?GdkPaintable
+    {
+        return null;
+    }
+    /** Returns the icon name displayed as logo in the about dialog. */
+    public function get_logo_icon_name(): ?string
+    {
+        return null;
+    }
+    /** Returns the program name displayed in the about dialog. */
+    public function get_program_name(): ?string
+    {
+        return null;
+    }
+    /** Returns the system information that is shown in the about dialog. */
+    public function get_system_information(): ?string
+    {
+        return null;
+    }
+    /** Returns the translator credits string which is displayed in the credits page. */
+    public function get_translator_credits(): ?string
+    {
+        return null;
+    }
+    /** Returns the version string. */
+    public function get_version(): ?string
+    {
+        return null;
+    }
+    /** Returns the website URL. */
+    public function get_website(): ?string
+    {
+        return null;
+    }
+    /** Returns the label used for the website link. */
+    public function get_website_label(): ?string
+    {
+        return null;
+    }
+    /** Returns whether the license text in the about dialog is automatically wrapped. */
+    public function get_wrap_license(): bool
+    {
+        return false;
+    }
+    /** Sets the names of the artists to be displayed in the "Credits" page. */
+    public function set_artists(array $artists): void
+    {
+        unset($artists);
+    }
+    /**
+     * Sets the names of the authors which are displayed in the "Credits" page of the about dialog.
+     */
+    public function set_authors(array $authors): void
+    {
+        unset($authors);
+    }
+    /** Sets the comments string to display in the about dialog. */
+    public function set_comments(?string $comments): void
+    {
+        unset($comments);
+    }
+    /** Sets the copyright string to display in the about dialog. */
+    public function set_copyright(?string $copyright): void
+    {
+        unset($copyright);
+    }
+    /** Sets the names of the documenters which are displayed in the "Credits" page. */
+    public function set_documenters(array $documenters): void
+    {
+        unset($documenters);
+    }
+    /** Sets the license information to be displayed in the about dialog. */
+    public function set_license(?string $license): void
+    {
+        unset($license);
+    }
+    /**
+     * Sets the license of the application showing the about dialog from a list of known licenses.
+     */
+    public function set_license_type(GtkLicense $license_type): void
+    {
+        unset($license_type);
+    }
+    /** Sets the logo in the about dialog. */
+    public function set_logo(?GdkPaintable $logo): void
+    {
+        unset($logo);
+    }
+    /** Sets the icon name to be displayed as logo in the about dialog. */
+    public function set_logo_icon_name(?string $icon_name): void
+    {
+        unset($icon_name);
+    }
+    /** Sets the name to display in the about dialog. */
+    public function set_program_name(?string $name): void
+    {
+        unset($name);
+    }
+    /** Sets the system information to be displayed in the about dialog. */
+    public function set_system_information(?string $system_information): void
+    {
+        unset($system_information);
+    }
+    /** Sets the translator credits string which is displayed in the credits page. */
+    public function set_translator_credits(?string $translator_credits): void
+    {
+        unset($translator_credits);
+    }
+    /** Sets the version string to display in the about dialog. */
+    public function set_version(?string $version): void
+    {
+        unset($version);
+    }
+    /** Sets the URL to use for the website link. */
+    public function set_website(?string $website): void
+    {
+        unset($website);
+    }
+    /** Sets the label to be used for the website link. */
+    public function set_website_label(string $website_label): void
+    {
+        unset($website_label);
+    }
+    /** Sets whether the license text in the about dialog should be automatically wrapped. */
+    public function set_wrap_license(bool $wrap_license): void
+    {
+        unset($wrap_license);
+    }
+    public function get_display(): GdkDisplay
+    {
+        return null;
+    }
+    public function get_focus(): ?GtkWidget
+    {
+        return null;
+    }
+    public function set_focus(?GtkWidget $focus): void
+    {
+        unset($focus);
+    }
+}
+/**
  * The various platform states which can be queried using `get_platform_state`.
  */
 enum GtkAccessiblePlatformState : int
@@ -3721,6 +3948,74 @@ class GtkCheckButton extends GtkWidget
     }
 }
 /**
+ * A `GtkColorDialog` object collects the arguments that are needed to present a color chooser
+ * dialog to the user, such as a title for the dialog and whether it should be modal.
+ *
+ * @property ?bool $modal
+ * @property ?string $title
+ * @property ?bool $with_alpha
+ */
+class GtkColorDialog extends GObject
+{
+    /** Creates a new `GtkColorDialog` object. */
+    public function __construct()
+    {
+    }
+    /**
+     * This function initiates a color choice operation by presenting a color chooser dialog to the
+     * user.
+     */
+    public function choose_rgba(?GtkWindow $parent, ?GdkRGBA $initial_color, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($parent);
+        unset($initial_color);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes the `choose_rgba` call and returns the resulting color. */
+    public function choose_rgba_finish(GAsyncResult $result): ?GdkRGBA
+    {
+        unset($result);
+        return null;
+    }
+    /**
+     * Returns whether the color chooser dialog blocks interaction with the parent window while it
+     * is presented.
+     */
+    public function get_modal(): bool
+    {
+        return false;
+    }
+    /** Returns the title that will be shown on the color chooser dialog. */
+    public function get_title(): string
+    {
+        return '';
+    }
+    /** Returns whether colors may have alpha. */
+    public function get_with_alpha(): bool
+    {
+        return false;
+    }
+    /**
+     * Sets whether the color chooser dialog blocks interaction with the parent window while it is
+     * presented.
+     */
+    public function set_modal(bool $modal): void
+    {
+        unset($modal);
+    }
+    /** Sets the title that will be shown on the color chooser dialog. */
+    public function set_title(string $title): void
+    {
+        unset($title);
+    }
+    /** Sets whether colors may have alpha. */
+    public function set_with_alpha(bool $with_alpha): void
+    {
+        unset($with_alpha);
+    }
+}
+/**
  * Controls how a content should be made to fit inside an allocation.
  */
 enum GtkContentFit : int
@@ -3754,6 +4049,11 @@ class GtkCssProvider extends GObject implements GtkStyleProvider
     public function load_from_bytes(string $data): void
     {
         unset($data);
+    }
+    /** Loads the data contained in $file into $css_provider. */
+    public function load_from_file(string $file): void
+    {
+        unset($file);
     }
     /** Loads the data contained in $path into $css_provider. */
     public function load_from_path(string $path): void
@@ -4849,6 +5149,265 @@ enum GtkEventSequenceState : int
     case Denied = 2;
 }
 /**
+ * A `GtkFileDialog` object collects the arguments that are needed to present a file chooser dialog
+ * to the user, such as a title for the dialog and whether it should be modal.
+ *
+ * @property ?string $accept_label
+ * @property ?GtkFileFilter $default_filter
+ * @property ?GListModel $filters
+ * @property ?string $initial_name
+ * @property ?bool $modal
+ * @property ?string $title
+ */
+class GtkFileDialog extends GObject
+{
+    /** Creates a new `GtkFileDialog` object. */
+    public function __construct()
+    {
+    }
+    public function get_accept_label(): ?string
+    {
+        return null;
+    }
+    /** Gets the filter that will be selected by default in the file chooser dialog. */
+    public function get_default_filter(): ?GtkFileFilter
+    {
+        return null;
+    }
+    /** Gets the filters that will be offered to the user in the file chooser dialog. */
+    public function get_filters(): ?GListModel
+    {
+        return null;
+    }
+    /** Gets the file that will be initially selected in the file chooser dialog. */
+    public function get_initial_file(): ?string
+    {
+        return null;
+    }
+    /** Gets the folder that will be set as the initial folder in the file chooser dialog. */
+    public function get_initial_folder(): ?string
+    {
+        return null;
+    }
+    /** Gets the name for the file that should be initially set. */
+    public function get_initial_name(): ?string
+    {
+        return null;
+    }
+    /**
+     * Returns whether the file chooser dialog blocks interaction with the parent window while it
+     * is presented.
+     */
+    public function get_modal(): bool
+    {
+        return false;
+    }
+    /** Returns the title that will be shown on the file chooser dialog. */
+    public function get_title(): string
+    {
+        return '';
+    }
+    /**
+     * This function initiates a file selection operation by presenting a file chooser dialog to
+     * the user.
+     */
+    public function open(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($parent);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes the `open` call and returns the resulting file. */
+    public function open_finish(GAsyncResult $result): ?string
+    {
+        unset($result);
+        return null;
+    }
+    /**
+     * This function initiates a multi-file selection operation by presenting a file chooser dialog
+     * to the user.
+     */
+    public function open_multiple(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($parent);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes the `open` call and returns the resulting files in a `GListModel`. */
+    public function open_multiple_finish(GAsyncResult $result): ?GListModel
+    {
+        unset($result);
+        return null;
+    }
+    /**
+     * This function initiates a file save operation by presenting a file chooser dialog to the
+     * user.
+     */
+    public function save(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($parent);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes the `save` call and returns the resulting file. */
+    public function save_finish(GAsyncResult $result): ?string
+    {
+        unset($result);
+        return null;
+    }
+    /**
+     * This function initiates a directory selection operation by presenting a file chooser dialog
+     * to the user.
+     */
+    public function select_folder(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($parent);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes the `select_folder` call and returns the resulting file. */
+    public function select_folder_finish(GAsyncResult $result): ?string
+    {
+        unset($result);
+        return null;
+    }
+    /**
+     * This function initiates a multi-directory selection operation by presenting a file chooser
+     * dialog to the user.
+     */
+    public function select_multiple_folders(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($parent);
+        unset($cancellable);
+        unset($callback);
+    }
+    /**
+     * Finishes the `select_multiple_folders` call and returns the resulting files in a
+     * `GListModel`.
+     */
+    public function select_multiple_folders_finish(GAsyncResult $result): ?GListModel
+    {
+        unset($result);
+        return null;
+    }
+    /** Sets the label shown on the file chooser's accept button. */
+    public function set_accept_label(?string $accept_label): void
+    {
+        unset($accept_label);
+    }
+    /** Sets the filter that will be selected by default in the file chooser dialog. */
+    public function set_default_filter(?GtkFileFilter $filter): void
+    {
+        unset($filter);
+    }
+    /** Sets the filters that will be offered to the user in the file chooser dialog. */
+    public function set_filters(?GListModel $filters): void
+    {
+        unset($filters);
+    }
+    /** Sets the file that will be initially selected in the file chooser dialog. */
+    public function set_initial_file(?string $file): void
+    {
+        unset($file);
+    }
+    /** Sets the folder that will be set as the initial folder in the file chooser dialog. */
+    public function set_initial_folder(?string $folder): void
+    {
+        unset($folder);
+    }
+    /**
+     * Sets the name for the file that should be initially set. For saving dialogs, this will
+     * usually be pre-entered into the name field.
+     */
+    public function set_initial_name(?string $name): void
+    {
+        unset($name);
+    }
+    /**
+     * Sets whether the file chooser dialog blocks interaction with the parent window while it is
+     * presented.
+     */
+    public function set_modal(bool $modal): void
+    {
+        unset($modal);
+    }
+    /** Sets the title that will be shown on the file chooser dialog. */
+    public function set_title(string $title): void
+    {
+        unset($title);
+    }
+}
+/**
+ * `GtkFileFilter` filters files by name or mime type.
+ *
+ * @property ?array $mime_types
+ * @property ?string $name
+ * @property ?array $patterns
+ * @property ?array $suffixes
+ */
+class GtkFileFilter extends GtkFilter
+{
+    /** Creates a new `GtkFileFilter` with no rules added to it. */
+    public function __construct()
+    {
+    }
+    /** Adds a rule allowing a given mime type to $filter. */
+    public function add_mime_type(string $mime_type): void
+    {
+        unset($mime_type);
+    }
+    /** Adds a rule allowing a shell style glob to a filter. */
+    public function add_pattern(string $pattern): void
+    {
+        unset($pattern);
+    }
+    /** Adds a rule allowing image files in the formats supported by GdkPixbuf. */
+    public function add_pixbuf_formats(): void
+    {
+    }
+    /** Adds a suffix match rule to a filter. */
+    public function add_suffix(string $suffix): void
+    {
+        unset($suffix);
+    }
+    /**
+     * Gets the attributes that need to be filled in for the `GFileInfo` passed to this filter.
+     *
+     * @return list<string>
+     */
+    public function get_attributes(): array
+    {
+        return [];
+    }
+    /** Gets the human-readable name for the filter. */
+    public function get_name(): ?string
+    {
+        return null;
+    }
+    /** Sets a human-readable name of the filter. */
+    public function set_name(?string $name): void
+    {
+        unset($name);
+    }
+    /** Serialize a file filter to an `a{sv}` variant. */
+    public function to_gvariant(): mixed
+    {
+        return null;
+    }
+    /**
+     * Deserialize a file filter from a GVariant.
+     *
+     * The variant is what to_gvariant() produced: `[name, [[rule, pattern], ...]]`. GTK wants
+     * exactly `(sa(us))` and inference cannot build a tuple from a PHP list, so the type is named
+     * here - without it the filter comes back empty. The argument is required: GTK dereferences it.
+     */
+    public static function new_from_gvariant(mixed $variant): GtkFileFilter
+    {
+        unset($variant);
+        return null;
+    }
+}
+/**
  * A `GtkFilter` object describes the filtering to be performed by a `FilterListModel`.
  */
 class GtkFilter extends GObject
@@ -5025,6 +5584,85 @@ class GtkFixed extends GtkWidget
     public function remove(GtkWidget $widget): void
     {
         unset($widget);
+    }
+}
+/**
+ * A `GtkFontDialog` object collects the arguments that are needed to present a font chooser dialog
+ * to the user, such as a title for the dialog and whether it should be modal.
+ *
+ * @property ?GtkFilter $filter
+ * @property ?bool $modal
+ * @property ?string $title
+ */
+class GtkFontDialog extends GObject
+{
+    /** Creates a new `GtkFontDialog` object. */
+    public function __construct()
+    {
+    }
+    /**
+     * This function initiates a font selection operation by presenting a dialog to the user for
+     * selecting a font.
+     */
+    public function choose_font(?GtkWindow $parent, ?PangoFontDescription $initial_value, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($parent);
+        unset($initial_value);
+        unset($cancellable);
+        unset($callback);
+    }
+    /**
+     * This function initiates a font selection operation by presenting a dialog to the user for
+     * selecting a font and font features.
+     */
+    public function choose_font_and_features(?GtkWindow $parent, ?PangoFontDescription $initial_value, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($parent);
+        unset($initial_value);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes the `choose_font` call and returns the resulting font description. */
+    public function choose_font_finish(GAsyncResult $result): ?PangoFontDescription
+    {
+        unset($result);
+        return null;
+    }
+    /** Returns the filter that decides which fonts to display in the font chooser dialog. */
+    public function get_filter(): ?GtkFilter
+    {
+        return null;
+    }
+    /**
+     * Returns whether the font chooser dialog blocks interaction with the parent window while it
+     * is presented.
+     */
+    public function get_modal(): bool
+    {
+        return false;
+    }
+    /** Returns the title that will be shown on the font chooser dialog. */
+    public function get_title(): string
+    {
+        return '';
+    }
+    /** Adds a filter that decides which fonts to display in the font chooser dialog. */
+    public function set_filter(?GtkFilter $filter): void
+    {
+        unset($filter);
+    }
+    /**
+     * Sets whether the font chooser dialog blocks interaction with the parent window while it is
+     * presented.
+     */
+    public function set_modal(bool $modal): void
+    {
+        unset($modal);
+    }
+    /** Sets the title that will be shown on the font chooser dialog. */
+    public function set_title(string $title): void
+    {
+        unset($title);
     }
 }
 /**
@@ -6029,6 +6667,31 @@ class GtkLabel extends GtkWidget
     }
 }
 /**
+ * The type of license for an application.
+ */
+enum GtkLicense : int
+{
+    case Unknown = 0;
+    case Custom = 1;
+    case Gpl20 = 2;
+    case Gpl30 = 3;
+    case Lgpl21 = 4;
+    case Lgpl30 = 5;
+    case Bsd = 6;
+    case MitX11 = 7;
+    case Artistic = 8;
+    case Gpl20Only = 9;
+    case Gpl30Only = 10;
+    case Lgpl21Only = 11;
+    case Lgpl30Only = 12;
+    case Agpl30 = 13;
+    case Agpl30Only = 14;
+    case Bsd3 = 15;
+    case Apache20 = 16;
+    case Mpl20 = 17;
+    case Bsd0 = 18;
+}
+/**
  * The `GtkMenuButton` widget is used to display a popup when clicked.
  *
  * @property ?bool $active
@@ -6886,6 +7549,12 @@ class GtkPicture extends GtkWidget
     public function __construct()
     {
     }
+    /** Creates a new `GtkPicture` displaying the given $file. */
+    public static function new_for_file(?string $file = null): GtkPicture
+    {
+        unset($file);
+        return null;
+    }
     /** Creates a new `GtkPicture` displaying the file $filename. */
     public static function new_for_filename(?string $filename = null): GtkPicture
     {
@@ -6919,6 +7588,11 @@ class GtkPicture extends GtkWidget
     {
         return null;
     }
+    /** Gets the `GFile` currently displayed if $self is displaying a file. */
+    public function get_file(): ?string
+    {
+        return null;
+    }
     /** Gets the `GdkPaintable` being displayed by the `GtkPicture`. */
     public function get_paintable(): ?GdkPaintable
     {
@@ -6938,6 +7612,11 @@ class GtkPicture extends GtkWidget
     public function set_content_fit(GtkContentFit $content_fit): void
     {
         unset($content_fit);
+    }
+    /** Makes $self load and display $file. */
+    public function set_file(?string $file): void
+    {
+        unset($file);
     }
     /** Makes $self load and display the given $filename. */
     public function set_filename(?string $filename): void
@@ -10768,6 +11447,399 @@ enum PangoEllipsizeMode : int
     case Start = 1;
     case Middle = 2;
     case End = 3;
+}
+/**
+ * A `PangoFontDescription` describes a font in an implementation-independent manner.
+ */
+final class PangoFontDescription
+{
+    /** Creates a new font description structure with all fields unset. */
+    public function __construct()
+    {
+    }
+    /**
+     * Determines if the style attributes of $new_match are a closer match for $desc than those of
+     * $old_match are, or if $old_match is `null`, determines if $new_match is a match at all.
+     */
+    public function better_match(?PangoFontDescription $old_match, PangoFontDescription $new_match): bool
+    {
+        unset($old_match);
+        unset($new_match);
+        return false;
+    }
+    /** Make a copy of a `PangoFontDescription`, but don't duplicate allocated fields. */
+    public function copy_static(): ?PangoFontDescription
+    {
+        return null;
+    }
+    /** Compares two font descriptions for equality. */
+    public function equal(PangoFontDescription $desc2): bool
+    {
+        unset($desc2);
+        return false;
+    }
+    /** Gets the family name field of a font description. */
+    public function get_family(): ?string
+    {
+        return null;
+    }
+    /** Gets the gravity field of a font description. */
+    public function get_gravity(): PangoGravity
+    {
+        return null;
+    }
+    /** Determines which fields in a font description have been set. */
+    public function get_set_fields(): int
+    {
+        return 0;
+    }
+    /** Gets the size field of a font description. */
+    public function get_size(): int
+    {
+        return 0;
+    }
+    /**
+     * Determines whether the size of the font is in points (not absolute) or device units
+     * (absolute).
+     */
+    public function get_size_is_absolute(): bool
+    {
+        return false;
+    }
+    /** Gets the stretch field of a font description. */
+    public function get_stretch(): PangoStretch
+    {
+        return null;
+    }
+    /** Gets the style field of a `PangoFontDescription`. */
+    public function get_style(): PangoStyle
+    {
+        return null;
+    }
+    /** Gets the variant field of a `PangoFontDescription`. */
+    public function get_variant(): PangoVariant
+    {
+        return null;
+    }
+    /** Gets the variations field of a font description. */
+    public function get_variations(): ?string
+    {
+        return null;
+    }
+    /** Gets the weight field of a font description. */
+    public function get_weight(): PangoWeight
+    {
+        return null;
+    }
+    /** Computes a hash of a `PangoFontDescription` structure. */
+    public function hash(): int
+    {
+        return 0;
+    }
+    /** Merges the fields that are set in $desc_to_merge into the fields in $desc. */
+    public function merge(?PangoFontDescription $desc_to_merge, bool $replace_existing): void
+    {
+        unset($desc_to_merge);
+        unset($replace_existing);
+    }
+    /**
+     * Merges the fields that are set in $desc_to_merge into the fields in $desc, without copying
+     * allocated fields.
+     */
+    public function merge_static(PangoFontDescription $desc_to_merge, bool $replace_existing): void
+    {
+        unset($desc_to_merge);
+        unset($replace_existing);
+    }
+    /** Sets the size field of a font description, in device units. */
+    public function set_absolute_size(float $size): void
+    {
+        unset($size);
+    }
+    /** Sets the family name field of a font description. */
+    public function set_family(string $family): void
+    {
+        unset($family);
+    }
+    /** Sets the family name field of a font description, without copying the string. */
+    public function set_family_static(string $family): void
+    {
+        unset($family);
+    }
+    /** Sets the gravity field of a font description. */
+    public function set_gravity(PangoGravity $gravity): void
+    {
+        unset($gravity);
+    }
+    /** Sets the size field of a font description in fractional points. */
+    public function set_size(int $size): void
+    {
+        unset($size);
+    }
+    /** Sets the stretch field of a font description. */
+    public function set_stretch(PangoStretch $stretch): void
+    {
+        unset($stretch);
+    }
+    /** Sets the style field of a `PangoFontDescription`. */
+    public function set_style(PangoStyle $style): void
+    {
+        unset($style);
+    }
+    /** Sets the variant field of a font description. */
+    public function set_variant(PangoVariant $variant): void
+    {
+        unset($variant);
+    }
+    /** Sets the variations field of a font description. */
+    public function set_variations(?string $variations): void
+    {
+        unset($variations);
+    }
+    /** Sets the variations field of a font description. */
+    public function set_variations_static(string $variations): void
+    {
+        unset($variations);
+    }
+    /** Sets the weight field of a font description. */
+    public function set_weight(PangoWeight $weight): void
+    {
+        unset($weight);
+    }
+    /** Creates a filename representation of a font description. */
+    public function to_filename(): ?string
+    {
+        return null;
+    }
+    /** Creates a string representation of a font description. */
+    public function to_string(): string
+    {
+        return '';
+    }
+    /** Unsets some of the fields in a `PangoFontDescription`. */
+    public function unset_fields(int $to_unset): void
+    {
+        unset($to_unset);
+    }
+    /** Creates a new font description from a string representation. */
+    public static function from_string(string $str): PangoFontDescription
+    {
+        unset($str);
+        return null;
+    }
+}
+/**
+ * The bits in a `PangoFontMask` correspond to the set fields in a `PangoFontDescription`.
+ */
+final class PangoFontMask
+{
+    public const int FAMILY = 1;
+    public const int STYLE = 2;
+    public const int VARIANT = 4;
+    public const int WEIGHT = 8;
+    public const int STRETCH = 16;
+    public const int SIZE = 32;
+    public const int GRAVITY = 64;
+    public const int VARIATIONS = 128;
+}
+/**
+ * `PangoGravity` represents the orientation of glyphs in a segment of text.
+ */
+enum PangoGravity : int
+{
+    case South = 0;
+    case East = 1;
+    case North = 2;
+    case West = 3;
+    case Auto = 4;
+}
+/**
+ * `PangoGravityHint` defines how horizontal scripts should behave in a vertical context.
+ */
+enum PangoGravityHint : int
+{
+    case Natural = 0;
+    case Strong = 1;
+    case Line = 2;
+}
+/**
+ * The `PangoScript` enumeration identifies different writing systems.
+ */
+enum PangoScript : int
+{
+    case InvalidCode = -1;
+    case Common = 0;
+    case Inherited = 1;
+    case Arabic = 2;
+    case Armenian = 3;
+    case Bengali = 4;
+    case Bopomofo = 5;
+    case Cherokee = 6;
+    case Coptic = 7;
+    case Cyrillic = 8;
+    case Deseret = 9;
+    case Devanagari = 10;
+    case Ethiopic = 11;
+    case Georgian = 12;
+    case Gothic = 13;
+    case Greek = 14;
+    case Gujarati = 15;
+    case Gurmukhi = 16;
+    case Han = 17;
+    case Hangul = 18;
+    case Hebrew = 19;
+    case Hiragana = 20;
+    case Kannada = 21;
+    case Katakana = 22;
+    case Khmer = 23;
+    case Lao = 24;
+    case Latin = 25;
+    case Malayalam = 26;
+    case Mongolian = 27;
+    case Myanmar = 28;
+    case Ogham = 29;
+    case OldItalic = 30;
+    case Oriya = 31;
+    case Runic = 32;
+    case Sinhala = 33;
+    case Syriac = 34;
+    case Tamil = 35;
+    case Telugu = 36;
+    case Thaana = 37;
+    case Thai = 38;
+    case Tibetan = 39;
+    case CanadianAboriginal = 40;
+    case Yi = 41;
+    case Tagalog = 42;
+    case Hanunoo = 43;
+    case Buhid = 44;
+    case Tagbanwa = 45;
+    case Braille = 46;
+    case Cypriot = 47;
+    case Limbu = 48;
+    case Osmanya = 49;
+    case Shavian = 50;
+    case LinearB = 51;
+    case TaiLe = 52;
+    case Ugaritic = 53;
+    case NewTaiLue = 54;
+    case Buginese = 55;
+    case Glagolitic = 56;
+    case Tifinagh = 57;
+    case SylotiNagri = 58;
+    case OldPersian = 59;
+    case Kharoshthi = 60;
+    case Unknown = 61;
+    case Balinese = 62;
+    case Cuneiform = 63;
+    case Phoenician = 64;
+    case PhagsPa = 65;
+    case Nko = 66;
+    case KayahLi = 67;
+    case Lepcha = 68;
+    case Rejang = 69;
+    case Sundanese = 70;
+    case Saurashtra = 71;
+    case Cham = 72;
+    case OlChiki = 73;
+    case Vai = 74;
+    case Carian = 75;
+    case Lycian = 76;
+    case Lydian = 77;
+    case Batak = 78;
+    case Brahmi = 79;
+    case Mandaic = 80;
+    case Chakma = 81;
+    case MeroiticCursive = 82;
+    case MeroiticHieroglyphs = 83;
+    case Miao = 84;
+    case Sharada = 85;
+    case SoraSompeng = 86;
+    case Takri = 87;
+    case BassaVah = 88;
+    case CaucasianAlbanian = 89;
+    case Duployan = 90;
+    case Elbasan = 91;
+    case Grantha = 92;
+    case Khojki = 93;
+    case Khudawadi = 94;
+    case LinearA = 95;
+    case Mahajani = 96;
+    case Manichaean = 97;
+    case MendeKikakui = 98;
+    case Modi = 99;
+    case Mro = 100;
+    case Nabataean = 101;
+    case OldNorthArabian = 102;
+    case OldPermic = 103;
+    case PahawhHmong = 104;
+    case Palmyrene = 105;
+    case PauCinHau = 106;
+    case PsalterPahlavi = 107;
+    case Siddham = 108;
+    case Tirhuta = 109;
+    case WarangCiti = 110;
+    case Ahom = 111;
+    case AnatolianHieroglyphs = 112;
+    case Hatran = 113;
+    case Multani = 114;
+    case OldHungarian = 115;
+    case Signwriting = 116;
+}
+/**
+ * An enumeration specifying the width of the font relative to other designs within a family.
+ */
+enum PangoStretch : int
+{
+    case UltraCondensed = 0;
+    case ExtraCondensed = 1;
+    case Condensed = 2;
+    case SemiCondensed = 3;
+    case Normal = 4;
+    case SemiExpanded = 5;
+    case Expanded = 6;
+    case ExtraExpanded = 7;
+    case UltraExpanded = 8;
+}
+/**
+ * An enumeration specifying the various slant styles possible for a font.
+ */
+enum PangoStyle : int
+{
+    case Normal = 0;
+    case Oblique = 1;
+    case Italic = 2;
+}
+/**
+ * An enumeration specifying capitalization variant of the font.
+ */
+enum PangoVariant : int
+{
+    case Normal = 0;
+    case SmallCaps = 1;
+    case AllSmallCaps = 2;
+    case PetiteCaps = 3;
+    case AllPetiteCaps = 4;
+    case Unicase = 5;
+    case TitleCaps = 6;
+}
+/**
+ * An enumeration specifying the weight (boldness) of a font.
+ */
+enum PangoWeight : int
+{
+    case Thin = 100;
+    case Ultralight = 200;
+    case Light = 300;
+    case Semilight = 350;
+    case Book = 380;
+    case Normal = 400;
+    case Medium = 500;
+    case Semibold = 600;
+    case Bold = 700;
+    case Ultrabold = 800;
+    case Heavy = 900;
+    case Ultraheavy = 1000;
 }
 /**
  * `PangoWrapMode` describes how to wrap the lines of a `PangoLayout` to the desired width.

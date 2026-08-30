@@ -50,9 +50,9 @@ ZEND_METHOD(Gtk4_GdkPaintable, compute_concrete_size) {
 ZEND_METHOD(Gtk4_GdkPaintable, get_current_image) {
   ZEND_PARSE_PARAMETERS_NONE();
   GdkPaintable *self = PHPGTK_SELF(GdkPaintable, GDK_TYPE_PAINTABLE);
-  GdkPaintable *result = gdk_paintable_get_current_image(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
-  if (result != nullptr) g_object_unref(result);  // the handle took its own ref
+  GdkPaintable *phpgtk_ret = gdk_paintable_get_current_image(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
 }
 
 /**

@@ -49,8 +49,8 @@ ZEND_METHOD(Gtk4_GtkWindow, get_default_icon_name) {
  */
 ZEND_METHOD(Gtk4_GtkWindow, get_toplevels) {
   ZEND_PARSE_PARAMETERS_NONE();
-  GListModel *result = gtk_window_get_toplevels();
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GListModel *phpgtk_ret = gtk_window_get_toplevels();
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -144,8 +144,8 @@ ZEND_METHOD(Gtk4_GtkWindow, fullscreen) {
 ZEND_METHOD(Gtk4_GtkWindow, get_application) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWindow *self = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
-  GtkApplication *result = gtk_window_get_application(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkApplication *phpgtk_ret = gtk_window_get_application(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -156,8 +156,8 @@ ZEND_METHOD(Gtk4_GtkWindow, get_application) {
 ZEND_METHOD(Gtk4_GtkWindow, get_child) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWindow *self = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
-  GtkWidget *result = gtk_window_get_child(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_window_get_child(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -203,8 +203,8 @@ ZEND_METHOD(Gtk4_GtkWindow, get_default_size) {
 ZEND_METHOD(Gtk4_GtkWindow, get_default_widget) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWindow *self = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
-  GtkWidget *result = gtk_window_get_default_widget(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_window_get_default_widget(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -237,8 +237,8 @@ ZEND_METHOD(Gtk4_GtkWindow, get_destroy_with_parent) {
 ZEND_METHOD(Gtk4_GtkWindow, get_focus) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWindow *self = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
-  GtkWidget *result = gtk_window_get_focus(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_window_get_focus(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -337,8 +337,8 @@ ZEND_METHOD(Gtk4_GtkWindow, get_title) {
 ZEND_METHOD(Gtk4_GtkWindow, get_titlebar) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWindow *self = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
-  GtkWidget *result = gtk_window_get_titlebar(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_window_get_titlebar(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -349,8 +349,8 @@ ZEND_METHOD(Gtk4_GtkWindow, get_titlebar) {
 ZEND_METHOD(Gtk4_GtkWindow, get_transient_for) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWindow *self = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
-  GtkWindow *result = gtk_window_get_transient_for(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWindow *phpgtk_ret = gtk_window_get_transient_for(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

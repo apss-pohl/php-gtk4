@@ -11,6 +11,156 @@
 namespace Gtk4;
 
 /**
+ * The `GtkAboutDialog` offers a simple way to display information about a program.
+ *
+ * @property ?array $artists
+ * @property ?array $authors
+ * @property ?string $comments
+ * @property ?string $copyright
+ * @property ?array $documenters
+ * @property ?string $license
+ * @property ?GtkLicense $license_type
+ * @property ?GdkPaintable $logo
+ * @property ?string $logo_icon_name
+ * @property ?string $program_name
+ * @property ?string $system_information
+ * @property ?string $translator_credits
+ * @property ?string $version
+ * @property ?string $website
+ * @property ?string $website_label
+ * @property ?bool $wrap_license
+ */
+class GtkAboutDialog extends GtkWindow implements GtkRoot
+{
+    /** Creates a new `GtkAboutDialog`. */
+    public function __construct() {}
+
+    /** Creates a new section in the "Credits" page. */
+    public function add_credit_section(string $section_name, array $people): void {}
+
+    /**
+     * Returns the names of the artists which are displayed in the credits page.
+     *
+     * @return list<string>
+     */
+    public function get_artists(): array {}
+
+    /**
+     * Returns the names of the authors which are displayed in the credits page.
+     *
+     * @return list<string>
+     */
+    public function get_authors(): array {}
+
+    /** Returns the comments string. */
+    public function get_comments(): ?string {}
+
+    /** Returns the copyright string. */
+    public function get_copyright(): ?string {}
+
+    /**
+     * Returns the name of the documenters which are displayed in the credits page.
+     *
+     * @return list<string>
+     */
+    public function get_documenters(): array {}
+
+    /** Returns the license information. */
+    public function get_license(): ?string {}
+
+    /** Retrieves the license type. */
+    public function get_license_type(): GtkLicense {}
+
+    /** Returns the paintable displayed as logo in the about dialog. */
+    public function get_logo(): ?GdkPaintable {}
+
+    /** Returns the icon name displayed as logo in the about dialog. */
+    public function get_logo_icon_name(): ?string {}
+
+    /** Returns the program name displayed in the about dialog. */
+    public function get_program_name(): ?string {}
+
+    /** Returns the system information that is shown in the about dialog. */
+    public function get_system_information(): ?string {}
+
+    /** Returns the translator credits string which is displayed in the credits page. */
+    public function get_translator_credits(): ?string {}
+
+    /** Returns the version string. */
+    public function get_version(): ?string {}
+
+    /** Returns the website URL. */
+    public function get_website(): ?string {}
+
+    /** Returns the label used for the website link. */
+    public function get_website_label(): ?string {}
+
+    /** Returns whether the license text in the about dialog is automatically wrapped. */
+    public function get_wrap_license(): bool {}
+
+    /** Sets the names of the artists to be displayed in the "Credits" page. */
+    public function set_artists(array $artists): void {}
+
+    /**
+     * Sets the names of the authors which are displayed in the "Credits" page of the about dialog.
+     */
+    public function set_authors(array $authors): void {}
+
+    /** Sets the comments string to display in the about dialog. */
+    public function set_comments(?string $comments): void {}
+
+    /** Sets the copyright string to display in the about dialog. */
+    public function set_copyright(?string $copyright): void {}
+
+    /** Sets the names of the documenters which are displayed in the "Credits" page. */
+    public function set_documenters(array $documenters): void {}
+
+    /** Sets the license information to be displayed in the about dialog. */
+    public function set_license(?string $license): void {}
+
+    /**
+     * Sets the license of the application showing the about dialog from a list of known licenses.
+     */
+    public function set_license_type(GtkLicense $license_type): void {}
+
+    /** Sets the logo in the about dialog. */
+    public function set_logo(?GdkPaintable $logo): void {}
+
+    /** Sets the icon name to be displayed as logo in the about dialog. */
+    public function set_logo_icon_name(?string $icon_name): void {}
+
+    /** Sets the name to display in the about dialog. */
+    public function set_program_name(?string $name): void {}
+
+    /** Sets the system information to be displayed in the about dialog. */
+    public function set_system_information(?string $system_information): void {}
+
+    /** Sets the translator credits string which is displayed in the credits page. */
+    public function set_translator_credits(?string $translator_credits): void {}
+
+    /** Sets the version string to display in the about dialog. */
+    public function set_version(?string $version): void {}
+
+    /** Sets the URL to use for the website link. */
+    public function set_website(?string $website): void {}
+
+    /** Sets the label to be used for the website link. */
+    public function set_website_label(string $website_label): void {}
+
+    /** Sets whether the license text in the about dialog should be automatically wrapped. */
+    public function set_wrap_license(bool $wrap_license): void {}
+
+    /** @implementation-alias Gtk4\GtkRoot::get_display */
+    public function get_display(): GdkDisplay {}
+
+    /** @implementation-alias Gtk4\GtkRoot::get_focus */
+    public function get_focus(): ?GtkWidget {}
+
+    /** @implementation-alias Gtk4\GtkRoot::set_focus */
+    public function set_focus(?GtkWidget $focus): void {}
+}
+
+/**
  * The various platform states which can be queried using `get_platform_state`.
  */
 enum GtkAccessiblePlatformState: int
@@ -649,6 +799,53 @@ class GtkCheckButton extends GtkWidget
 }
 
 /**
+ * A `GtkColorDialog` object collects the arguments that are needed to present a color chooser
+ * dialog to the user, such as a title for the dialog and whether it should be modal.
+ *
+ * @property ?bool $modal
+ * @property ?string $title
+ * @property ?bool $with_alpha
+ */
+class GtkColorDialog extends GObject
+{
+    /** Creates a new `GtkColorDialog` object. */
+    public function __construct() {}
+
+    /**
+     * This function initiates a color choice operation by presenting a color chooser dialog to the
+     * user.
+     */
+    public function choose_rgba(?GtkWindow $parent, ?GdkRGBA $initial_color, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes the `choose_rgba` call and returns the resulting color. */
+    public function choose_rgba_finish(GAsyncResult $result): ?GdkRGBA {}
+
+    /**
+     * Returns whether the color chooser dialog blocks interaction with the parent window while it
+     * is presented.
+     */
+    public function get_modal(): bool {}
+
+    /** Returns the title that will be shown on the color chooser dialog. */
+    public function get_title(): string {}
+
+    /** Returns whether colors may have alpha. */
+    public function get_with_alpha(): bool {}
+
+    /**
+     * Sets whether the color chooser dialog blocks interaction with the parent window while it is
+     * presented.
+     */
+    public function set_modal(bool $modal): void {}
+
+    /** Sets the title that will be shown on the color chooser dialog. */
+    public function set_title(string $title): void {}
+
+    /** Sets whether colors may have alpha. */
+    public function set_with_alpha(bool $with_alpha): void {}
+}
+
+/**
  * Controls how a content should be made to fit inside an allocation.
  */
 enum GtkContentFit: int
@@ -681,6 +878,9 @@ class GtkCssProvider extends GObject implements GtkStyleProvider
 
     /** Loads $data into $css_provider. */
     public function load_from_bytes(string $data): void {}
+
+    /** Loads the data contained in $file into $css_provider. */
+    public function load_from_file(string $file): void {}
 
     /** Loads the data contained in $path into $css_provider. */
     public function load_from_path(string $path): void {}
@@ -1462,6 +1662,178 @@ enum GtkEventSequenceState: int
 }
 
 /**
+ * A `GtkFileDialog` object collects the arguments that are needed to present a file chooser dialog
+ * to the user, such as a title for the dialog and whether it should be modal.
+ *
+ * @property ?string $accept_label
+ * @property ?GtkFileFilter $default_filter
+ * @property ?GListModel $filters
+ * @property ?string $initial_name
+ * @property ?bool $modal
+ * @property ?string $title
+ */
+class GtkFileDialog extends GObject
+{
+    /** Creates a new `GtkFileDialog` object. */
+    public function __construct() {}
+
+    public function get_accept_label(): ?string {}
+
+    /** Gets the filter that will be selected by default in the file chooser dialog. */
+    public function get_default_filter(): ?GtkFileFilter {}
+
+    /** Gets the filters that will be offered to the user in the file chooser dialog. */
+    public function get_filters(): ?GListModel {}
+
+    /** Gets the file that will be initially selected in the file chooser dialog. */
+    public function get_initial_file(): ?string {}
+
+    /** Gets the folder that will be set as the initial folder in the file chooser dialog. */
+    public function get_initial_folder(): ?string {}
+
+    /** Gets the name for the file that should be initially set. */
+    public function get_initial_name(): ?string {}
+
+    /**
+     * Returns whether the file chooser dialog blocks interaction with the parent window while it
+     * is presented.
+     */
+    public function get_modal(): bool {}
+
+    /** Returns the title that will be shown on the file chooser dialog. */
+    public function get_title(): string {}
+
+    /**
+     * This function initiates a file selection operation by presenting a file chooser dialog to
+     * the user.
+     */
+    public function open(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes the `open` call and returns the resulting file. */
+    public function open_finish(GAsyncResult $result): ?string {}
+
+    /**
+     * This function initiates a multi-file selection operation by presenting a file chooser dialog
+     * to the user.
+     */
+    public function open_multiple(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes the `open` call and returns the resulting files in a `GListModel`. */
+    public function open_multiple_finish(GAsyncResult $result): ?GListModel {}
+
+    /**
+     * This function initiates a file save operation by presenting a file chooser dialog to the
+     * user.
+     */
+    public function save(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes the `save` call and returns the resulting file. */
+    public function save_finish(GAsyncResult $result): ?string {}
+
+    /**
+     * This function initiates a directory selection operation by presenting a file chooser dialog
+     * to the user.
+     */
+    public function select_folder(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes the `select_folder` call and returns the resulting file. */
+    public function select_folder_finish(GAsyncResult $result): ?string {}
+
+    /**
+     * This function initiates a multi-directory selection operation by presenting a file chooser
+     * dialog to the user.
+     */
+    public function select_multiple_folders(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /**
+     * Finishes the `select_multiple_folders` call and returns the resulting files in a
+     * `GListModel`.
+     */
+    public function select_multiple_folders_finish(GAsyncResult $result): ?GListModel {}
+
+    /** Sets the label shown on the file chooser's accept button. */
+    public function set_accept_label(?string $accept_label): void {}
+
+    /** Sets the filter that will be selected by default in the file chooser dialog. */
+    public function set_default_filter(?GtkFileFilter $filter): void {}
+
+    /** Sets the filters that will be offered to the user in the file chooser dialog. */
+    public function set_filters(?GListModel $filters): void {}
+
+    /** Sets the file that will be initially selected in the file chooser dialog. */
+    public function set_initial_file(?string $file): void {}
+
+    /** Sets the folder that will be set as the initial folder in the file chooser dialog. */
+    public function set_initial_folder(?string $folder): void {}
+
+    /**
+     * Sets the name for the file that should be initially set. For saving dialogs, this will
+     * usually be pre-entered into the name field.
+     */
+    public function set_initial_name(?string $name): void {}
+
+    /**
+     * Sets whether the file chooser dialog blocks interaction with the parent window while it is
+     * presented.
+     */
+    public function set_modal(bool $modal): void {}
+
+    /** Sets the title that will be shown on the file chooser dialog. */
+    public function set_title(string $title): void {}
+}
+
+/**
+ * `GtkFileFilter` filters files by name or mime type.
+ *
+ * @property ?array $mime_types
+ * @property ?string $name
+ * @property ?array $patterns
+ * @property ?array $suffixes
+ */
+class GtkFileFilter extends GtkFilter
+{
+    /** Creates a new `GtkFileFilter` with no rules added to it. */
+    public function __construct() {}
+
+    /** Adds a rule allowing a given mime type to $filter. */
+    public function add_mime_type(string $mime_type): void {}
+
+    /** Adds a rule allowing a shell style glob to a filter. */
+    public function add_pattern(string $pattern): void {}
+
+    /** Adds a rule allowing image files in the formats supported by GdkPixbuf. */
+    public function add_pixbuf_formats(): void {}
+
+    /** Adds a suffix match rule to a filter. */
+    public function add_suffix(string $suffix): void {}
+
+    /**
+     * Gets the attributes that need to be filled in for the `GFileInfo` passed to this filter.
+     *
+     * @return list<string>
+     */
+    public function get_attributes(): array {}
+
+    /** Gets the human-readable name for the filter. */
+    public function get_name(): ?string {}
+
+    /** Sets a human-readable name of the filter. */
+    public function set_name(?string $name): void {}
+
+    /** Serialize a file filter to an `a{sv}` variant. */
+    public function to_gvariant(): mixed {}
+
+    /**
+     * Deserialize a file filter from a GVariant.
+     *
+     * The variant is what to_gvariant() produced: `[name, [[rule, pattern], ...]]`. GTK wants
+     * exactly `(sa(us))` and inference cannot build a tuple from a PHP list, so the type is named
+     * here - without it the filter comes back empty. The argument is required: GTK dereferences it.
+     */
+    public static function new_from_gvariant(mixed $variant): GtkFileFilter {}
+}
+
+/**
  * A `GtkFilter` object describes the filtering to be performed by a `FilterListModel`.
  */
 class GtkFilter extends GObject
@@ -1589,6 +1961,59 @@ class GtkFixed extends GtkWidget
 
     /** Removes a child from $fixed. */
     public function remove(GtkWidget $widget): void {}
+}
+
+/**
+ * A `GtkFontDialog` object collects the arguments that are needed to present a font chooser dialog
+ * to the user, such as a title for the dialog and whether it should be modal.
+ *
+ * @property ?GtkFilter $filter
+ * @property ?bool $modal
+ * @property ?string $title
+ */
+class GtkFontDialog extends GObject
+{
+    /** Creates a new `GtkFontDialog` object. */
+    public function __construct() {}
+
+    /**
+     * This function initiates a font selection operation by presenting a dialog to the user for
+     * selecting a font.
+     */
+    public function choose_font(?GtkWindow $parent, ?PangoFontDescription $initial_value, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /**
+     * This function initiates a font selection operation by presenting a dialog to the user for
+     * selecting a font and font features.
+     */
+    public function choose_font_and_features(?GtkWindow $parent, ?PangoFontDescription $initial_value, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes the `choose_font` call and returns the resulting font description. */
+    public function choose_font_finish(GAsyncResult $result): ?PangoFontDescription {}
+
+    /** Returns the filter that decides which fonts to display in the font chooser dialog. */
+    public function get_filter(): ?GtkFilter {}
+
+    /**
+     * Returns whether the font chooser dialog blocks interaction with the parent window while it
+     * is presented.
+     */
+    public function get_modal(): bool {}
+
+    /** Returns the title that will be shown on the font chooser dialog. */
+    public function get_title(): string {}
+
+    /** Adds a filter that decides which fonts to display in the font chooser dialog. */
+    public function set_filter(?GtkFilter $filter): void {}
+
+    /**
+     * Sets whether the font chooser dialog blocks interaction with the parent window while it is
+     * presented.
+     */
+    public function set_modal(bool $modal): void {}
+
+    /** Sets the title that will be shown on the font chooser dialog. */
+    public function set_title(string $title): void {}
 }
 
 /**
@@ -2291,6 +2716,32 @@ class GtkLabel extends GtkWidget
 }
 
 /**
+ * The type of license for an application.
+ */
+enum GtkLicense: int
+{
+    case Unknown = 0;
+    case Custom = 1;
+    case Gpl20 = 2;
+    case Gpl30 = 3;
+    case Lgpl21 = 4;
+    case Lgpl30 = 5;
+    case Bsd = 6;
+    case MitX11 = 7;
+    case Artistic = 8;
+    case Gpl20Only = 9;
+    case Gpl30Only = 10;
+    case Lgpl21Only = 11;
+    case Lgpl30Only = 12;
+    case Agpl30 = 13;
+    case Agpl30Only = 14;
+    case Bsd3 = 15;
+    case Apache20 = 16;
+    case Mpl20 = 17;
+    case Bsd0 = 18;
+}
+
+/**
  * The `GtkMenuButton` widget is used to display a popup when clicked.
  *
  * @property ?bool $active
@@ -2891,6 +3342,9 @@ class GtkPicture extends GtkWidget
     /** Creates a new empty `GtkPicture` widget. */
     public function __construct() {}
 
+    /** Creates a new `GtkPicture` displaying the given $file. */
+    public static function new_for_file(?string $file = null): GtkPicture {}
+
     /** Creates a new `GtkPicture` displaying the file $filename. */
     public static function new_for_filename(?string $filename = null): GtkPicture {}
 
@@ -2909,6 +3363,9 @@ class GtkPicture extends GtkWidget
     /** Returns the fit mode for the content of the `GtkPicture`. */
     public function get_content_fit(): GtkContentFit {}
 
+    /** Gets the `GFile` currently displayed if $self is displaying a file. */
+    public function get_file(): ?string {}
+
     /** Gets the `GdkPaintable` being displayed by the `GtkPicture`. */
     public function get_paintable(): ?GdkPaintable {}
 
@@ -2920,6 +3377,9 @@ class GtkPicture extends GtkWidget
 
     /** Sets how the content should be resized to fit the `GtkPicture`. */
     public function set_content_fit(GtkContentFit $content_fit): void {}
+
+    /** Makes $self load and display $file. */
+    public function set_file(?string $file): void {}
 
     /** Makes $self load and display the given $filename. */
     public function set_filename(?string $filename): void {}

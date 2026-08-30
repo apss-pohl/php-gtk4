@@ -61,8 +61,8 @@ ZEND_METHOD(Gtk4_GtkFilterListModel, __construct) {
 ZEND_METHOD(Gtk4_GtkFilterListModel, get_filter) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkFilterListModel *self = PHPGTK_SELF(GtkFilterListModel, GTK_TYPE_FILTER_LIST_MODEL);
-  GtkFilter *result = gtk_filter_list_model_get_filter(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkFilter *phpgtk_ret = gtk_filter_list_model_get_filter(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -84,8 +84,8 @@ ZEND_METHOD(Gtk4_GtkFilterListModel, get_incremental) {
 ZEND_METHOD(Gtk4_GtkFilterListModel, get_model) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkFilterListModel *self = PHPGTK_SELF(GtkFilterListModel, GTK_TYPE_FILTER_LIST_MODEL);
-  GListModel *result = gtk_filter_list_model_get_model(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GListModel *phpgtk_ret = gtk_filter_list_model_get_model(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

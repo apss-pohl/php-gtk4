@@ -150,3 +150,15 @@ Gtk.ArrowType
 # that does not implement the interface the signature promises (security/type review
 # 2026-08-30, TypeDeclarationTest).
 Gtk.Text
+
+# Wave 5 (dialogs, PLAN.md §3): GTK 4.10's async dialog API - no run(), the answer arrives in a
+# GAsyncReadyCallback and *_finish() throws the GError. GtkAlertDialog came with the async
+# machinery in the review wave; these are the rest.
+Gtk.FileDialog
+Gtk.FileFilter
+Gtk.ColorDialog
+Gtk.FontDialog
+Gtk.AboutDialog
+# The font a GtkFontDialog answers with (a boxed record); the face/family/map/language side of
+# that API stays unbound - a description is what an application sets on a widget.
+Pango.FontDescription

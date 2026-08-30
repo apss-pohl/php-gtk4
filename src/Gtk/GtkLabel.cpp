@@ -80,8 +80,8 @@ ZEND_METHOD(Gtk4_GtkLabel, get_ellipsize) {
 ZEND_METHOD(Gtk4_GtkLabel, get_extra_menu) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
-  GMenuModel *result = gtk_label_get_extra_menu(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GMenuModel *phpgtk_ret = gtk_label_get_extra_menu(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -103,9 +103,9 @@ ZEND_METHOD(Gtk4_GtkLabel, get_justify) {
 ZEND_METHOD(Gtk4_GtkLabel, get_label) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
-  const char *result = gtk_label_get_label(self);
-  if (result == nullptr) RETURN_EMPTY_STRING();
-  RETURN_STRING(result);
+  const char *phpgtk_ret = gtk_label_get_label(self);
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(phpgtk_ret);
 }
 
 /**
@@ -173,8 +173,8 @@ ZEND_METHOD(Gtk4_GtkLabel, get_mnemonic_keyval) {
 ZEND_METHOD(Gtk4_GtkLabel, get_mnemonic_widget) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
-  GtkWidget *result = gtk_label_get_mnemonic_widget(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_label_get_mnemonic_widget(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -242,9 +242,9 @@ ZEND_METHOD(Gtk4_GtkLabel, get_single_line_mode) {
 ZEND_METHOD(Gtk4_GtkLabel, get_text) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
-  const char *result = gtk_label_get_text(self);
-  if (result == nullptr) RETURN_EMPTY_STRING();
-  RETURN_STRING(result);
+  const char *phpgtk_ret = gtk_label_get_text(self);
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
+  RETURN_STRING(phpgtk_ret);
 }
 
 /**

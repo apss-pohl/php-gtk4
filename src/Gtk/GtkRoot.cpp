@@ -13,8 +13,8 @@ using namespace phpgtk;
 ZEND_METHOD(Gtk4_GtkRoot, get_display) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkRoot *self = PHPGTK_SELF(GtkRoot, GTK_TYPE_ROOT);
-  GdkDisplay *result = gtk_root_get_display(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GdkDisplay *phpgtk_ret = gtk_root_get_display(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -25,8 +25,8 @@ ZEND_METHOD(Gtk4_GtkRoot, get_display) {
 ZEND_METHOD(Gtk4_GtkRoot, get_focus) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkRoot *self = PHPGTK_SELF(GtkRoot, GTK_TYPE_ROOT);
-  GtkWidget *result = gtk_root_get_focus(self);
-  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+  GtkWidget *phpgtk_ret = gtk_root_get_focus(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
