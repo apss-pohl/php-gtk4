@@ -128,8 +128,9 @@ bool array_is_string_list(HashTable *ht) {
   return true;
 }
 
-// Deeper than any GVariant can be (its own type strings stop at 64) and shallow enough that
-// the C stack is never the thing that gives way first.
+// Levels of *nesting in the PHP value* - resolving a type for the same value (inference, the
+// v/m wrappers) is not one. Deeper than any GVariant can be (its own type strings stop at 64)
+// and shallow enough that the C stack is never the thing that gives way first.
 constexpr int max_depth = 64;
 
 // Marks an array as "being converted" for as long as it is on the stack, so a value that
@@ -192,10 +193,10 @@ static GVariant *php_to_variant_at(zval *value, const GVariantType *type, int de
           return nullptr;
         }
         if (array_is_string_list(ht))
-          return php_to_variant_at(value, G_VARIANT_TYPE_STRING_ARRAY, depth + 1);
+          return php_to_variant_at(value, G_VARIANT_TYPE_STRING_ARRAY, depth);
         if (zend_array_is_list(ht))
-          return php_to_variant_at(value, G_VARIANT_TYPE("av"), depth + 1);
-        return php_to_variant_at(value, G_VARIANT_TYPE_VARDICT, depth + 1);
+          return php_to_variant_at(value, G_VARIANT_TYPE("av"), depth);
+        return php_to_variant_at(value, G_VARIANT_TYPE_VARDICT, depth);
       }
       default:
         return fail(value, nullptr);
@@ -203,13 +204,13 @@ static GVariant *php_to_variant_at(zval *value, const GVariantType *type, int de
   }
 
   if (g_variant_type_is_variant(type)) {
-    GVariant *inner = php_to_variant_at(value, nullptr, depth + 1);
+    GVariant *inner = php_to_variant_at(value, nullptr, depth);
     return inner != nullptr ? g_variant_new_variant(inner) : nullptr;
   }
   if (g_variant_type_is_maybe(type)) {
     if (Z_TYPE_P(value) == IS_NULL)
       return g_variant_new_maybe(g_variant_type_element(type), nullptr);
-    GVariant *inner = php_to_variant_at(value, g_variant_type_element(type), depth + 1);
+    GVariant *inner = php_to_variant_at(value, g_variant_type_element(type), depth);
     return inner != nullptr ? g_variant_new_maybe(nullptr, inner) : nullptr;
   }
   if (g_variant_type_is_basic(type)) {

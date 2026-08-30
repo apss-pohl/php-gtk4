@@ -58,6 +58,10 @@ ZEND_METHOD(Gtk4_GdkRGBA, __construct) {
   Z_PARAM_STR_OR_NULL(css)
   ZEND_PARSE_PARAMETERS_END();
   auto *c = g_new0(GdkRGBA, 1);
+  if (css != nullptr && !check_utf8(css, 1)) {
+    g_free(c);
+    RETURN_THROWS();
+  }
   if (css != nullptr && !gdk_rgba_parse(c, ZSTR_VAL(css))) {
     g_free(c);
     zend_argument_value_error(1, "is not a valid CSS colour");
@@ -78,6 +82,7 @@ ZEND_METHOD(Gtk4_GdkRGBA, parse) {
   ZEND_PARSE_PARAMETERS_END();
   GdkRGBA *self = PHPGTK_BOXED_SELF(GdkRGBA);
   GdkRGBA tmp;
+  if (!check_utf8(css, 1)) RETURN_THROWS();
   if (!gdk_rgba_parse(&tmp, ZSTR_VAL(css))) RETURN_FALSE;
   *self = tmp;
   RETURN_TRUE;

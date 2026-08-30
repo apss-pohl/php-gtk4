@@ -86,6 +86,8 @@ void signal_connect_method(INTERNAL_FUNCTION_PARAMETERS, bool after) {
 
   GObject *obj = self_object(execute_data, G_TYPE_OBJECT, after ? "connect_after" : "connect");
   if (obj == nullptr) RETURN_THROWS();
+  // A name that ends at a NUL would connect to a different, existing signal without saying so.
+  if (!check_utf8(signal, 1)) RETURN_THROWS();
 
   guint signal_id = 0;
   GQuark detail = 0;
@@ -125,6 +127,7 @@ void signal_emit_method(INTERNAL_FUNCTION_PARAMETERS) {
 
   GObject *obj = phpgtk::self_object(execute_data, G_TYPE_OBJECT, "emit");
   if (obj == nullptr) RETURN_THROWS();
+  if (!check_utf8(signal, 1)) RETURN_THROWS();
 
   guint signal_id = 0;
   GQuark detail = 0;

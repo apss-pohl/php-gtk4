@@ -70,6 +70,8 @@ ZEND_METHOD(Gtk4_GObject, handler_disconnect) {
 
 // Look up a GObject property by name or throw ValueError (nullptr returned).
 static GParamSpec *require_property(GObject *obj, zend_string *name) {
+  // A name that ends at a NUL would find a different property, or none, without saying why.
+  if (!check_utf8(name, 1)) return nullptr;
   GParamSpec *spec = g_object_class_find_property(G_OBJECT_GET_CLASS(obj), ZSTR_VAL(name));
   if (spec == nullptr) {
     zend_argument_value_error(1, "no property '%s' on %s", ZSTR_VAL(name), G_OBJECT_TYPE_NAME(obj));

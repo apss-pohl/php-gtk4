@@ -15,6 +15,12 @@ use ReflectionNamedType;
  * TypeError / ArgumentCountError / ValueError - never crash, never succeed
  * silently. Generic on purpose (the generator will add hundreds of methods);
  * runs under ASan in the `asan` stage as well.
+ *
+ * The second sweep is about values of the *right* type that C cannot take: a string
+ * with an embedded NUL or invalid UTF-8, an integer outside the C parameter's range.
+ * Those used to be truncated, silently widened or dropped inside GLib
+ * ({@see ArgumentGuardTest} has the individual cases); this is the net that catches
+ * a method the checks stop reaching.
  */
 final class RobustnessTest extends GtkTestCase
 {
@@ -160,6 +166,62 @@ final class RobustnessTest extends GtkTestCase
             }
         }
         self::assertGreaterThanOrEqual(0, $checks, 'survived every argument combination');
+    }
+
+    /**
+     * Well-typed values C cannot represent. A GLib string ends at the first NUL, so **every**
+     * string parameter has to refuse one (`check_utf8`, or `Z_PARAM_PATH_STR` for a filename):
+     * that is the one invariant that holds across the whole surface, and it is asserted.
+     * Invalid UTF-8 and out-of-range integers are checked for survival only - a `filename` is
+     * bytes and a 64-bit parameter has no upper bound to violate.
+     *
+     * @param class-string $class
+     */
+    #[DataProvider('methods')]
+    public function testHostileValuesOfTheRightTypeAreRefusedOrSurvived(string $class, string $method): void
+    {
+        $rm = new ReflectionMethod($class, $method);
+        $target = $rm->isStatic() ? null : $this->instance($class);
+        if ($target === null && !$rm->isStatic()) {
+            self::markTestSkipped("$class is not instantiable");
+        }
+        $call = fn(array $args) => $rm->isStatic() ? $rm->invokeArgs(null, $args) : $rm->invokeArgs($target, $args);
+        $required = $rm->getNumberOfRequiredParameters();
+
+        foreach ($rm->getParameters() as $i => $param) {
+            $type = $param->getType();
+            if (!$type instanceof ReflectionNamedType) {
+                continue;
+            }
+            $hostile = match ($type->getName()) {
+                'string' => ["a\0b" => true, "\xff\xfe" => false],   // value => must throw
+                'int' => [PHP_INT_MAX => false, PHP_INT_MIN => false, -1 => false],
+                default => [],
+            };
+            foreach ($hostile as $bad => $mustThrow) {
+                $args = [];
+                foreach ($rm->getParameters() as $j => $p) {
+                    $args[$j] = $j === $i ? $bad : self::validValueFor($p);
+                }
+                $args = array_slice($args, 0, max($required, $i + 1));
+                try {
+                    $call($args);
+                    if ($mustThrow) {
+                        self::fail(sprintf(
+                            '%s::%s() accepted a null byte in argument #%d ($%s)',
+                            $class,
+                            $method,
+                            $i + 1,
+                            $param->getName(),
+                        ));
+                    }
+                } catch (\ValueError | \TypeError | \Error | \LogicException | \Gtk4\GError) {
+                    // Refused, which is the point (a native vfunc_*() refuses any direct call
+                    // with a LogicException). A crash would end the process instead.
+                }
+            }
+        }
+        self::assertTrue(true, 'survived every hostile value');
     }
 
     private static function paramSpec(): \Gtk4\GParamSpec

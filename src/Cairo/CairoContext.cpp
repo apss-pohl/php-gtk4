@@ -185,6 +185,7 @@ ZEND_METHOD(Gtk4_CairoContext, show_text) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_STR(text)
   ZEND_PARSE_PARAMETERS_END();
+  if (!check_utf8(text, 1)) RETURN_THROWS();
   SELF_CR;
   cairo_show_text(cr, ZSTR_VAL(text));
 }
