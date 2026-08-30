@@ -144,6 +144,11 @@ draft, hand-write via overrides / promotion where the project needs more.
       and `GtkMenuButton::get/set_direction` are the widget's (the arrow is the `direction`
       property). `new GMenuModel()` is refused (NULL class slots). Skipped: `Gio.Icon` (`set_icon`),
       `Gtk.ShortcutsWindow` (help overlay), the varargs `set_attribute` family (`*_value` exists).
+- [x] **Socket on the main loop** (2026-08-30): `GLib::io_add_watch(resource, GIOCondition, callable)`
+      — a `GIOChannel` watch over PHP's descriptor (`php_stream_cast(PHP_STREAM_AS_SOCKETD)`),
+      callable + stream parked through the callback graveyard, RSHUTDOWN-tracked like timeouts
+      (`IoWatchTest`). ext-sockets users go through `socket_export_stream()`. The runtime item the
+      fastlane port needs to retire its 14 nested `events_pending()/main_iteration()` pumps.
 - [ ] **Waves 3b, 5–8** as listed in PLAN.md §3 (the feature items in §7 below point at their
       wave); each merged only with the full pipeline green and the map's status column regenerated.
       Next: the fastlane port spike (one screen on php-gtk4) before wave 5.

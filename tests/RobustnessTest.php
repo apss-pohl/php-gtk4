@@ -221,7 +221,7 @@ final class RobustnessTest extends GtkTestCase
                 }
             }
         }
-        self::assertTrue(true, 'survived every hostile value');
+        $this->addToAssertionCount(1);  // survived every hostile value
     }
 
     private static function paramSpec(): \Gtk4\GParamSpec

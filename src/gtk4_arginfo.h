@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 018f500f202222d20f1fe3795f7334a968966e40 */
+ * Stub hash: bb42688253c4f857c5769582c3a38ee59d4c54dd */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GObject___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -90,6 +90,12 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GLib_timeout_add, 0, 2, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, interval_ms, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GLib_io_add_watch, 0, 3, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, stream, IS_MIXED, 0)
+	ZEND_ARG_TYPE_INFO(0, condition, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 0)
 ZEND_END_ARG_INFO()
 
@@ -360,6 +366,7 @@ ZEND_METHOD(Gtk4_Gtk, testing_run_dispose);
 #endif
 ZEND_METHOD(Gtk4_GLib, idle_add);
 ZEND_METHOD(Gtk4_GLib, timeout_add);
+ZEND_METHOD(Gtk4_GLib, io_add_watch);
 ZEND_METHOD(Gtk4_GLib, source_remove);
 ZEND_METHOD(Gtk4_GLib, main_context_iteration);
 ZEND_METHOD(Gtk4_GMainLoop, __construct);
@@ -480,6 +487,7 @@ static const zend_function_entry class_Gtk4_Gtk_methods[] = {
 static const zend_function_entry class_Gtk4_GLib_methods[] = {
 	ZEND_ME(Gtk4_GLib, idle_add, arginfo_class_Gtk4_GLib_idle_add, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GLib, timeout_add, arginfo_class_Gtk4_GLib_timeout_add, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GLib, io_add_watch, arginfo_class_Gtk4_GLib_io_add_watch, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GLib, source_remove, arginfo_class_Gtk4_GLib_source_remove, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GLib, main_context_iteration, arginfo_class_Gtk4_GLib_main_context_iteration, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_FE_END
@@ -854,6 +862,52 @@ static zend_class_entry *register_class_Gtk4_GdkEventSequence(void)
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkEventSequence", NULL);
 	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GIOCondition(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GIOCondition", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_IN_value;
+	ZVAL_LONG(&const_IN_value, 1);
+	zend_string *const_IN_name = zend_string_init_interned("IN", sizeof("IN") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_IN_name, &const_IN_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_IN_name);
+
+	zval const_PRI_value;
+	ZVAL_LONG(&const_PRI_value, 2);
+	zend_string *const_PRI_name = zend_string_init_interned("PRI", sizeof("PRI") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_PRI_name, &const_PRI_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_PRI_name);
+
+	zval const_OUT_value;
+	ZVAL_LONG(&const_OUT_value, 4);
+	zend_string *const_OUT_name = zend_string_init_interned("OUT", sizeof("OUT") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_OUT_name, &const_OUT_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_OUT_name);
+
+	zval const_ERR_value;
+	ZVAL_LONG(&const_ERR_value, 8);
+	zend_string *const_ERR_name = zend_string_init_interned("ERR", sizeof("ERR") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_ERR_name, &const_ERR_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_ERR_name);
+
+	zval const_HUP_value;
+	ZVAL_LONG(&const_HUP_value, 16);
+	zend_string *const_HUP_name = zend_string_init_interned("HUP", sizeof("HUP") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_HUP_name, &const_HUP_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_HUP_name);
+
+	zval const_NVAL_value;
+	ZVAL_LONG(&const_NVAL_value, 32);
+	zend_string *const_NVAL_name = zend_string_init_interned("NVAL", sizeof("NVAL") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NVAL_name, &const_NVAL_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NVAL_name);
 
 	return class_entry;
 }

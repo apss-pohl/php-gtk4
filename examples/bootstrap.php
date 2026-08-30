@@ -138,7 +138,7 @@ final class Demo
             'GMenuModel', 'GMenu', 'GMenuItem', 'GtkPopover', 'GtkPopoverMenu', 'GtkPopoverMenuBar', 'GtkMenuButton',
             'GtkHeaderBar', 'GtkApplicationWindow', 'GtkArrowType', 'GtkPopoverMenuFlags',
         ],
-        'Loop' => ['GLib', 'GMainLoop'],
+        'Loop' => ['GLib', 'GMainLoop', 'GIOCondition'],
         'Geometry' => ['GtkRequisition'],
         'Dialogs & async' => ['GtkAlertDialog', 'GCancellable', 'GAsyncResult', 'GTask'],
     ];

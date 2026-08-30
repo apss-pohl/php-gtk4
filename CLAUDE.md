@@ -32,7 +32,8 @@ Hard constraints:
   `configure --with-gtk4=<gvsbuild root>` + `nmake` → `php_gtk4.dll`, GTK 4 from gvsbuild — MSVC,
   same CRT as PHP; `docs/BUILD.md` "Windows"). Whatever changes in `config.m4` (defines, features,
   source dirs) changes in `config.w32` too. The only platform-specific code allowed in `src/` is
-  `pin_gtk_library()` in `src/gtk4.cpp`; everything else compiles unchanged on both. `ci.sh`,
+  `pin_gtk_library()` in `src/gtk4.cpp` and the one `GIOChannel` constructor switch in
+  `GLib::io_add_watch()` (a Windows `SOCKET` is not a C fd); everything else compiles unchanged on both. `ci.sh`,
   `tests/phpt` and the sanitizer/coverage stages are Linux-only; `bin/php-gtk4.cmd` and
   `tests/run.cmd` are the Windows launchers. **No header under `src/` may equal a GLib/GTK header
   path case-insensitively** (a former src/Gio/GListModel.h shadowed `gio/glistmodel.h` on Windows — hence
@@ -437,7 +438,9 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   the trampoline rule in docs/PLAN.md ("Typed C callbacks") — `gen/overrides/Gtk.DrawingArea.cpp`,
   `Gtk.CustomFilter.cpp`, `Gtk.CustomSorter.cpp` are the templates.
 - Main loop: `GtkApplication::run()` (preferred) or `GMainLoop` + `GLib::idle_add/timeout_add`;
-  `GLib::main_context_iteration()` pumps one iteration without handing over control. There is no
+  `GLib::main_context_iteration()` pumps one iteration without handing over control;
+  `GLib::io_add_watch($stream, GIOCondition::IN, fn)` puts a socket on the loop (a `GIOChannel`
+  watch over PHP's own descriptor - PHP keeps and closes it). There is no
   `Gtk::main()`. Rethrow mode leaves the Throwable pending only when the next return lands in
   PHP; inside an *unregistered* nested loop (`g_main_depth()` deeper than the innermost
   registered `run()`) it is **parked** (`core/error.cpp`), handlers keep running, and the next

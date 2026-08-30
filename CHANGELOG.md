@@ -49,6 +49,10 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   commit. `bin/release-notes` groups the commits since the previous release by type and
   `release.yml` appends that to every release body, after the `CHANGELOG.md` section.
 
+- `GLib::io_add_watch($stream, $condition, $callback)` + `GIOCondition`: a socket stream on the
+  default main context - the callback runs with the stream and the condition bits when it is
+  readable/writable/hung up, returning true keeps the watch; `source_remove()` ends it. PHP keeps
+  the descriptor. ext-sockets `\Socket`s join through `socket_export_stream()`.
 - Wave 4 (menus/actions, docs/PLAN.md §3): `GMenuModel`, `GMenu`, `GMenuItem`, `GtkPopover`,
   `GtkPopoverMenu`, `GtkPopoverMenuBar`, `GtkMenuButton` (`set_create_popup_func(callable)`),
   `GtkHeaderBar`, `GtkApplicationWindow`, `GtkApplication::set_menubar()`, `GtkArrowType`,

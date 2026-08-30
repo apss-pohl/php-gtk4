@@ -129,6 +129,7 @@ static PHP_MINIT_FUNCTION(gtk4) {
                             register_class_Gtk4_GdkGrabBrokenEvent(ce_GdkEvent));
   phpgtk::register_GdkEventSequence(register_class_Gtk4_GdkEventSequence());
   register_class_Gtk4_GtkStyleProviderPriority();
+  phpgtk::register_flags(G_TYPE_IO_CONDITION, register_class_Gtk4_GIOCondition());
   // Generated classes (gen/gir.php): enums first, then interfaces and classes parents first.
 #include "gen_minit.inc"
 

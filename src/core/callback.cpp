@@ -31,6 +31,11 @@ void callback_free(gpointer p) {
   efree(cb);
 }
 
+// Park a zval for callback_drain() (takes over the reference).
+void callback_park(zval *zv) {
+  graveyard().push_back(*zv);
+}
+
 // Release parked callables; re-entrant (a release may park more).
 void callback_drain() {
   while (!graveyard().empty()) {

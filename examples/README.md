@@ -109,6 +109,7 @@ drives a window with no `GtkApplication`. Both pass a standalone override to `De
 | ---- | ----- |
 | [GLib.php](GLib.php) | idle and timeout sources, and removing one |
 | [GMainLoop.php](GMainLoop.php) | a window with no `GtkApplication` at all |
+| [GIOCondition.php](GIOCondition.php) | a socket on the main loop: `GLib::io_add_watch()` and the bits it reports |
 | [GtkAlign.php](GtkAlign.php) | every alignment case, applied on a timer |
 | [GtkOrientation.php](GtkOrientation.php) | the two cases, drawn |
 

@@ -226,7 +226,23 @@ final class GLib
     /** @return int Source id for {@see source_remove()} */
     public static function timeout_add(int $interval_ms, callable $callback): int {}
 
-    /** Remove an idle/timeout source; false if it was already gone. */
+    /**
+     * Watch a socket stream on the default main context: `$callback($stream, int $condition)`
+     * runs whenever one of the {@see GIOCondition} bits in $condition is met, and keeps the
+     * watch by returning true. This is how a socket joins the GTK main loop instead of being
+     * polled between manual iterations. $stream is a stream resource over a socket
+     * (`stream_socket_client()`, `stream_socket_pair()`, or an ext-sockets `\Socket` through
+     * `socket_export_stream()`); the descriptor stays PHP's - closing the stream ends the watch
+     * with a `HUP`/`NVAL` condition.
+     *
+     * @param resource $stream
+     * @return int Source id for {@see source_remove()}
+     * @throws \TypeError When $stream is not an open stream resource
+     * @throws \ValueError When the stream has no socket descriptor or $condition has no valid bit
+     */
+    public static function io_add_watch(mixed $stream, int $condition, callable $callback): int {}
+
+    /** Remove an idle/timeout/I/O source; false if it was already gone. */
     public static function source_remove(int $source_id): bool {}
 
     /**
@@ -614,6 +630,28 @@ final class GdkGrabBrokenEvent extends GdkEvent
  */
 final class GdkEventSequence
 {
+}
+
+/**
+ * What an I/O watch ({@see GLib::io_add_watch()}) waits for, and what its callback is told
+ * happened: readable, writable, urgent data, error, hang-up, invalid descriptor. OR-able.
+ *
+ * @link https://docs.gtk.org/glib/flags.IOCondition.html
+ */
+final class GIOCondition
+{
+    /** There is data to read. */
+    public const int IN = 1;
+    /** There is urgent data to read. */
+    public const int PRI = 2;
+    /** Data can be written without blocking. */
+    public const int OUT = 4;
+    /** An error condition. */
+    public const int ERR = 8;
+    /** Hung up (the connection was closed). */
+    public const int HUP = 16;
+    /** Invalid request: the descriptor is not open. */
+    public const int NVAL = 32;
 }
 
 /**
