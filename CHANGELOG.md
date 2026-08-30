@@ -238,6 +238,11 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Changed
 
+- `gen/gir.php` is six files: the loader, the model, the type map, the writer, and the emitters
+  with the CLI that stay in `gir.php` (docs/TODO.md §10). Each step of the split was verified by
+  regenerating - every one of the 178 generated files stayed byte-identical - and the type map is
+  now reachable on its own, which `GeneratorTypeMapTest` uses.
+
 - `./ci.sh` no longer does pointless work: `gen/gir.php` writes a generated file only when its
   content changed (rewriting identical files bumped their mtimes and cost ~50 s of recompiling on
   every run), and clang-tidy remembers what it linted at which content in `.ci/tidy-ok`

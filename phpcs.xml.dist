@@ -28,21 +28,26 @@
         </properties>
     </rule>
 
-    <!-- gen/gir.php: the generator's data model (Type, Param, Func, Node) and the generator are
-         one program; splitting them into files would only spread one script over six. -->
+    <!-- gen/gir.php and gen/gir/*: one program in six files (loader, model, type map, writer,
+         emitters, CLI), not a PSR-4 library - the model's four value objects belong together and
+         the entry point runs on include. There is no autoloader here. -->
     <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
         <exclude-pattern>gen/gir.php</exclude-pattern>
+        <exclude-pattern>gen/gir/*</exclude-pattern>
     </rule>
     <rule ref="PSR1.Files.SideEffects">
         <exclude-pattern>gen/gir.php</exclude-pattern>
+        <exclude-pattern>gen/gir/*</exclude-pattern>
     </rule>
     <!-- PER-CS 2.0 (php-cs-fixer, which rewrites) allows `) {}` on a promoted-property
          constructor; these PSR-12 sniffs predate that. The fixer wins, as for the stub. -->
     <rule ref="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine">
         <exclude-pattern>gen/gir.php</exclude-pattern>
+        <exclude-pattern>gen/gir/*</exclude-pattern>
     </rule>
     <rule ref="Squiz.WhiteSpace.ScopeClosingBrace.ContentBefore">
         <exclude-pattern>gen/gir.php</exclude-pattern>
+        <exclude-pattern>gen/gir/*</exclude-pattern>
     </rule>
 
     <!-- PHP subclasses override GTK virtual methods as vfunc_<name>() (src/core/subtype,

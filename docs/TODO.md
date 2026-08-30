@@ -260,8 +260,14 @@ EXIT-trap cleanup / named asan env / phpt against the default build, `Cairo/Cair
 arguments as `Error`, the comment gate over generated files, generated-sections only when needed,
 identifier-precise include selection. PHP-Parser: vendor-first by design (gen/README.md).
 
-- [ ] `gen/gir.php` split into loader / type map / emitters / writers with golden-file tests; the
-      80-entry `phpstan-baseline-gir.neon` only shrinks.
+- [x] `gen/gir.php` split (2026-08-30) into `gen/gir/{config,model,loader,type-map,writer}.php`
+      plus the emitters and the CLI that stay in `gir.php`: 3 259 lines in one file became 1 890 +
+      1 076 + 218 + 160 + 114 + 23. Verified by regenerating after every step - all 178 generated
+      files stayed byte-identical - and `GeneratorTypeMapTest` now asks the type map directly,
+      which needed no running generator. `phpstan-baseline-gir.neon` holds the same findings,
+      redistributed over the new paths. One bug fell out: `foreach ($this->handwritten as $q)`
+      iterated the values (`true`), so hand-written parents were never pre-marked as defined in
+      the MINIT ordering; it iterates the keys now.
 - [ ] Per-namespace stub naming (`src/Gtk/Gtk.stub.php` next to the hand-written `Gtk.cpp`) stays
       as documented in gen/README.md; renaming would touch every tool's path list for no behaviour.
 - [ ] `upload-artifact@v7` / `download-artifact@v8`: both on the v4+ artifact backend, verified

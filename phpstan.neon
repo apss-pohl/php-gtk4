@@ -20,6 +20,7 @@ parameters:
         - gen/method-comments.php
         - gen/map-status.php
         - gen/gir.php
+        - gen/gir
     scanFiles:
         - stubs/gtk4.php
     tmpDir: .phpstan.cache

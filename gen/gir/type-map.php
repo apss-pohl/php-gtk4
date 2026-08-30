@@ -1,0 +1,1078 @@
+<?php
+
+/**
+ * The type map: what a GIR type becomes on both sides of a binding.
+ *
+ * Everything answering "what does this type look like in PHP, and what has to happen at the
+ * boundary" lives here: the PHP type of a parameter or a return, the ZPP line that reads it, the
+ * conversion before and after the C call, and the same in reverse for a vfunc thunk. It knows the
+ * GIR model and which types are in scope; whether to emit a member at all, and writing anything
+ * down, stays with the generator (gen/gir.php).
+ *
+ * Part of gen/gir.php (docs/PLAN.md milestone 3); gen/README.md describes the flow.
+ * Split out of the 3 200-line original on 2026-08-30.
+ */
+
+declare(strict_types=1);
+
+namespace PhpGtk4\Gen;
+
+/** The types this run has in scope: emitted, or hand-written and usable as a type. */
+final class TypeSet
+{
+    /** @var array<string, true> qualified names emitted as PHP classes/enums */
+    public array $emit = [];
+    /** @var array<string, true> known but hand-written (usable as types, never emitted) */
+    public array $handwritten = [];
+
+    public function __construct(private Gir $gir) {}
+
+    public function known(string $q): bool
+    {
+        return isset($this->emit[$q]) || isset($this->handwritten[$q]);
+    }
+
+    /** The qualified name behind a PHP class name; only a known type has one. */
+    public function qOfPhp(string $php): string
+    {
+        foreach ($this->gir->types as $q => $n) {
+            if (phpClass($n) === $php && $this->known($q)) {
+                return $q;
+            }
+        }
+        throw new \RuntimeException("no known type for $php");
+    }
+}
+
+final class TypeMap
+{
+    /**
+     * @param \Closure(Node, string, string): void $report what to call when a member cannot be
+     *        mapped; the generator turns it into a line of gen/report.md
+     */
+    public function __construct(
+        private Gir $gir,
+        private TypeSet $types,
+        private \Closure $report,
+    ) {}
+
+    /**
+     * Hand-written handles on the fundamental registry (src/core/fundamental) that generated
+     * signatures may take or return: GIR name => the unref function a transfer-full result needs.
+     */
+    public const array FUNDAMENTALS = [
+        'Gdk.Event' => 'gdk_event_unref', 'Gtk.CssSection' => 'gtk_css_section_unref',
+        'Gdk.EventSequence' => null,  // GTK owns sequences; the handle is an identity, never a reference
+    ];
+
+    /** The `GDK_TYPE_EVENT`-style macro of a node, for the emitted C++. */
+    public function typeMacroOf(Node $node): string
+    {
+        return macroParts($this->gir, $node)[0];
+    }
+
+    /**
+     * The C signature of a GIR <callback> as [return Type, list<Param> without the user_data
+     * slot, user_data index], or null when an argument does not convert to a zval.
+     *
+     * @return array{Type, list<Param>, int}|null
+     */
+    public function callbackSignature(Type $t): ?array
+    {
+        $node = $this->gir->types[$t->name] ?? null;
+        if ($node === null || $node->kind !== 'callback' || $node->funcs === []) {
+            return null;
+        }
+        $sig = $node->funcs[0];
+        if ($sig->ret->name !== 'none') {
+            return null;  // returning callbacks (compare funcs) stay overrides
+        }
+        $args = [];
+        $userData = null;
+        foreach ($sig->params as $i => $p) {
+            if (in_array($p->type->name, ['gpointer', 'gconstpointer'], true)) {
+                $userData = $i;
+                continue;
+            }
+            if ($p->direction !== 'in' || $p->type->ctype === null || $this->cToZval($p->type, 'x', 'z') === null) {
+                return null;
+            }
+            $args[] = $p;
+        }
+        if ($userData === null) {
+            return null;
+        }
+        return [$sig->ret, $args, $userData];
+    }
+
+    /**
+     * A callable parameter with scope async/call: parsed with Z_PARAM_FUNC, carried by a
+     * core/callback Callback, invoked by a generated trampoline. The trampoline text rides along
+     * in 'trampoline' and is emitted before the method.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function callbackParam(Node $n, Func $f, Param $p, int $argNum, bool $trailingNullable = false): ?array
+    {
+        $sig = $this->callbackSignature($p->type);
+        if ($sig === null) {
+            return null;
+        }
+        [, $args] = $sig;
+        $cbNode = $this->gir->types[$p->type->name];
+        $name = $p->name;
+        $php = phpClass($n);
+        $phpName = $f->kind === 'constructor' && $f->name === 'new' ? '__construct' : ($f->shadows ?? $f->name);
+        // `__construct` would make a reserved identifier (double underscore): use the GIR name
+        $tramp = 'cb_' . ($phpName === '__construct' ? $f->name : $phpName) . "_{$name}";
+        $cbVar = "cb_$name";
+        $origin = "$php::$phpName";
+        // --- the trampoline
+        $cParams = [];
+        $conv = [];
+        $i = 0;
+        foreach ($cbNode->funcs[0]->params as $cp) {
+            $ct = $cp->type->ctype ?? 'gpointer';
+            $cParams[] = preg_replace('/\*$/', ' *', $ct) . (str_ends_with($ct, '*') ? '' : ' ') . $cp->name;
+        }
+        foreach ($args as $a) {
+            array_push($conv, ...$this->cToZval($a->type, $a->name, "argv[$i]") ?? []);
+            $i++;
+        }
+        $argc = count($args);
+        $userDataName = $cbNode->funcs[0]->params[$sig[2]]->name;
+        $l = [];
+        $l[] = 'namespace {';
+        $l[] = "// {$cbNode->name} trampoline for $origin(): wraps the C arguments, invokes the PHP callable"
+            . ($p->scope === 'async'
+                ? ' once and releases it (async scope).'
+                : ' (call scope: released after the call).');
+        $l[] = "void $tramp(" . implode(', ', $cParams) . ') {';
+        $l[] = "  auto *cb = static_cast<Callback *>($userDataName);";
+        if ($argc > 0) {
+            $l[] = "  std::array<zval, $argc> args{};";
+            $l[] = '  zval *argv = args.data();';
+            foreach ($conv as $c) {
+                $l[] = "  $c";
+            }
+        }
+        $l[] = '  zval ret;';
+        $l[] = "  callback_invoke(cb, $argc, " . ($argc > 0 ? 'argv' : 'nullptr') . ', &ret);';
+        $l[] = '  if (!Z_ISUNDEF(ret)) zval_ptr_dtor(&ret);';
+        if ($argc > 0) {
+            $l[] = '  for (zval &arg : args) zval_ptr_dtor(&arg);';
+        }
+        if ($p->scope === 'async') {
+            $l[] = '  callback_free(cb);';
+            $l[] = '  callback_drain();';
+        }
+        $l[] = '}';
+        $l[] = '}  // namespace';
+        $trampoline = implode("\n", $l) . "\n\n";
+        // --- the parameter
+        $nullable = $p->nullable;
+        $phpArgs = implode(', ', array_map(
+            fn($a) => ($a->nullable ? '?' : '') . ($this->phpType($a->type, false) ?? 'mixed') . ' $' . $a->name,
+            $args,
+        ));
+        return [
+            'phpName' => $name, 'default' => $nullable && $trailingNullable ? 'null' : null,
+            'phpType' => ($nullable ? '?' : '') . 'callable',
+            'docType' => "callable($phpArgs): void",
+            'decl' => "zend_fcall_info fci_$name = empty_fcall_info;\n"
+                . "  zend_fcall_info_cache fcc_$name = empty_fcall_info_cache;",
+            'zpp' => 'Z_PARAM_FUNC' . ($nullable ? '_OR_NULL' : '') . "(fci_$name, fcc_$name)",
+            'pre' => $nullable
+                ? ["Callback *$cbVar = ZEND_FCI_INITIALIZED(fci_$name)"
+                    . " ? callback_new(&fci_$name.function_name, \"$origin\") : nullptr;"]
+                : ["Callback *$cbVar = callback_new(&fci_$name.function_name, \"$origin\");"],
+            'carg' => $nullable ? "$cbVar != nullptr ? $tramp : nullptr" : $tramp,
+            'post' => $p->scope === 'call'
+                ? ["if ($cbVar != nullptr) {", "  callback_free($cbVar);", '  callback_drain();', '}']
+                : [],
+            'cbVar' => $cbVar,
+            'trampoline' => $trampoline,
+        ];
+    }
+
+    /** The *_TYPE_* macro of a known GEnum return type, null otherwise. */
+    public function enumMacroOf(Type $t): ?string
+    {
+        $node = $this->gir->types[$t->name] ?? null;
+        if ($node === null || $node->kind !== 'enum' || $node->gtypeName === null || !$this->types->known($t->name)) {
+            return null;
+        }
+        return macroParts($this->gir, $node)[0];
+    }
+
+    /**
+     * C value -> zval lines for a thunk argument (nullptr: not convertible).
+     *
+     * @return list<string>|null
+     */
+    public function cToZval(Type $t, string $c, string $zv): ?array
+    {
+        if (in_array($t->name, ['utf8', 'filename'], true) && !$t->isArray) {
+            return ["if ($c == nullptr) {", "  ZVAL_NULL(&$zv);", '} else {', "  ZVAL_STRING(&$zv, $c);", '}'];
+        }
+        if ($t->name === 'gboolean') {
+            return ["ZVAL_BOOL(&$zv, $c != FALSE);"];
+        }
+        if (in_array($t->name, ['gfloat', 'gdouble'], true)) {
+            return ["ZVAL_DOUBLE(&$zv, $c);"];
+        }
+        if (preg_match(INT_TYPES, $t->name)) {
+            return ["ZVAL_LONG(&$zv, static_cast<zend_long>($c));"];
+        }
+        if (in_array($t->name, ['GObject.GType', 'Gio.GType', 'GLib.GType', 'GType'], true)) {
+            return ["ZVAL_STRING(&$zv, g_type_name($c));"];
+        }
+        $node = $this->gir->types[$t->name] ?? null;
+        if ($node === null || $t->isArray) {
+            return null;
+        }
+        [$typeMacro] = macroParts($this->gir, $node);
+        if ($node->kind === 'enum' && $node->gtypeName !== null && $this->types->known($t->name)) {
+            return ["enum_to_php($typeMacro, static_cast<gint>($c), &$zv);"];
+        }
+        if ($node->kind === 'enum' || $node->kind === 'bitfield') {
+            return ["ZVAL_LONG(&$zv, static_cast<zend_long>($c));"];
+        }
+        if (in_array($node->kind, ['class', 'interface'], true) && $this->phpTypeOfNode($t->name) !== null) {
+            return ["wrap($c != nullptr ? G_OBJECT($c) : nullptr, &$zv);"];
+        }
+        if ($node->kind === 'record' && $node->gtypeName !== null && $this->types->known($t->name)) {
+            return ["wrap_boxed($typeMacro, $c, &$zv);"];
+        }
+        return null;
+    }
+
+    /**
+     * Return value + out parameters of a thunk from the PHP result (`ret`).
+     *
+     * @param list<array<string, mixed>> $outs
+     * @return array{array{decl: string, default: string}|null, list<string>, string}
+     */
+    public function zvalToC(Func $v, array $outs): array
+    {
+        $t = $v->ret;
+        foreach ($outs as $o) {
+            if (!in_array($o['kind'], ['long', 'bool', 'double'], true)) {
+                return [null, [], ''];  // a thunk can only fill scalar outs
+            }
+        }
+        $outLines = function (string $arrayExpr) use ($outs): array {
+            $l = [];
+            foreach ($outs as $i => $o) {
+                $get = match ($o['kind']) {
+                    'long' => "static_cast<{$o['ctype']}>(zval_get_long(e$i))",
+                    'bool' => "zend_is_true(e$i) ? TRUE : FALSE",
+                    default => "static_cast<{$o['ctype']}>(zval_get_double(e$i))",
+                };
+                $l[] = "if (zval *e$i = zend_hash_index_find(Z_ARRVAL($arrayExpr), $i);"
+                    . " e$i != nullptr && {$o['name']} != nullptr) {";
+                $l[] = "  *{$o['name']} = $get;";
+                $l[] = '}';
+            }
+            return $l;
+        };
+        if ($t->name === 'none') {
+            if ($outs === []) {
+                return [['decl' => '', 'default' => ''], [], ''];
+            }
+            $lines = ['if (Z_TYPE(ret) == IS_ARRAY) {', ...array_map(fn($x) => "  $x", $outLines('ret')), '}'];
+            return [['decl' => '', 'default' => ''], $lines, ''];
+        }
+        $ct = $t->ctype ?? '';
+        if ($t->name === 'gboolean') {
+            if ($outs !== []) {
+                return [['decl' => 'gboolean result = FALSE;', 'default' => 'FALSE'],
+                    ['if (Z_TYPE(ret) == IS_ARRAY) {', '  result = TRUE;',
+                        ...array_map(fn($x) => "  $x", $outLines('ret')), '}'],
+                    'result'];
+            }
+            return [['decl' => 'gboolean result = FALSE;', 'default' => 'FALSE'],
+                ['result = zend_is_true(&ret) ? TRUE : FALSE;'], 'result'];
+        }
+        if ($outs !== []) {
+            return [null, [], ''];
+        }
+        if (in_array($t->name, ['gfloat', 'gdouble'], true)) {
+            $conv = $ct === 'double' ? 'zval_get_double(&ret)' : "static_cast<$ct>(zval_get_double(&ret))";
+            return [['decl' => "$ct result = 0;", 'default' => '0'], ["result = $conv;"], 'result'];
+        }
+        if (preg_match(INT_TYPES, $t->name)) {
+            return [['decl' => "$ct result = 0;", 'default' => '0'],
+                ["result = static_cast<$ct>(zval_get_long(&ret));"], 'result'];
+        }
+        if (in_array($t->name, ['utf8', 'filename'], true) && !$t->isArray && $v->retTransfer === 'full') {
+            return [['decl' => 'char *result = nullptr;', 'default' => 'nullptr'],
+                ['if (Z_TYPE(ret) == IS_STRING) result = g_strdup(Z_STRVAL(ret));'], 'result'];
+        }
+        if (in_array($t->name, ['GObject.GType', 'Gio.GType', 'GLib.GType', 'GType'], true)) {
+            // the PHP side names the type ("GObject", a registered class' GType name)
+            return [['decl' => 'GType result = G_TYPE_OBJECT;', 'default' => 'G_TYPE_OBJECT'],
+                ['if (Z_TYPE(ret) == IS_STRING) {', '  const GType named = g_type_from_name(Z_STRVAL(ret));',
+                    '  if (named != 0) result = named;', '}'], 'result'];
+        }
+        $node = $this->gir->types[$t->name] ?? null;
+        if ($node === null || $t->isArray) {
+            return [null, [], ''];
+        }
+        [$typeMacro, $castMacro] = macroParts($this->gir, $node);
+        if ($node->kind === 'enum' && $node->gtypeName !== null && $this->types->known($t->name)) {
+            return [['decl' => "$ct result = static_cast<$ct>(0);", 'default' => "static_cast<$ct>(0)"],
+                ['gint v = 0;', "if (enum_from_php(&ret, $typeMacro, &v)) result = static_cast<$ct>(v);"], 'result'];
+        }
+        if ($node->kind === 'enum' || $node->kind === 'bitfield') {
+            return [['decl' => "$ct result = static_cast<$ct>(0);", 'default' => "static_cast<$ct>(0)"],
+                ["result = static_cast<$ct>(zval_get_long(&ret));"], 'result'];
+        }
+        if (in_array($node->kind, ['class', 'interface'], true) && $this->phpTypeOfNode($t->name) !== null) {
+            $ref = $v->retTransfer === 'full' ? ['if (result != nullptr) g_object_ref(result);  // transfer full'] : [];
+            return [['decl' => "$ct result = nullptr;", 'default' => 'nullptr'],
+                ['if (Z_TYPE(ret) == IS_OBJECT) {', "  GObject *o = unwrap(&ret, $typeMacro);",
+                    "  result = o != nullptr ? $castMacro(o) : nullptr;",
+                    ...array_map(fn($x) => "  $x", $ref), '}'], 'result'];
+        }
+        return [null, [], ''];
+    }
+
+    /** NULL-terminated char** (GStrv) without a length parameter. */
+    public static function isStrv(Type $t): bool
+    {
+        return $t->isArray && $t->element !== null && $t->element->name === 'utf8' && $t->lengthParam === null;
+    }
+
+    /** PHP type of an out parameter mapping (docblock / single-out return type). */
+    public static function outScalar(array $o): string
+    {
+        return $o['phpType'];
+    }
+
+    public function stubSignature(Node $n, Func $f, string $phpName): ?string
+    {
+        $mapped = $this->mapParams($n, $f);
+        if (is_string($mapped)) {
+            return null;
+        }
+        [$ins, $outs] = $mapped;
+        $retMap = $this->retMapping($n, $f, $outs);
+        if (is_string($retMap)) {
+            return null;
+        }
+        $sigParams = [];
+        foreach ($ins as $p) {
+            $sigParams[] = $p['phpType'] . ' $' . $p['phpName'] . ($p['default'] !== null ? ' = ' . $p['default'] : '');
+        }
+        return "$phpName(" . implode(', ', $sigParams) . '): ' . $retMap['phpType'];
+    }
+
+    /** PHP type of a GIR type for the stub (null = not mappable). */
+    public function phpType(Type $t, bool $nullable): ?string
+    {
+        $base = match (true) {
+            $t->name === 'none' => 'void',
+            in_array($t->name, ['utf8', 'filename'], true) => 'string',
+            $t->name === 'gboolean' => 'bool',
+            in_array($t->name, ['gfloat', 'gdouble'], true) => 'float',
+            (bool) preg_match(INT_TYPES, $t->name) => 'int',
+            $t->name === 'GLib.Variant' => 'mixed',
+            $t->name === 'GLib.Bytes' => 'string',
+            $t->name === 'GLib.VariantType' => 'string',
+            in_array($t->name, ['GObject.GType', 'Gio.GType', 'GLib.GType'], true) => 'string',
+            $t->name === 'cairo.Context' => 'CairoContext',
+            $t->name === 'GObject.ParamSpec' => 'GParamSpec',
+            array_key_exists($t->name, self::FUNDAMENTALS) => phpClass($this->gir->types[$t->name]),
+            $t->name === 'GObject.Object' => 'GObject',
+            $t->isArray => self::isStrv($t) ? 'array' : null,
+            in_array($t->name, ['GLib.List', 'GLib.SList', 'GLib.PtrArray'], true) => 'array',
+            default => $this->phpTypeOfNode($t->name),
+        };
+        if ($base === null) {
+            return null;
+        }
+        if ($base === 'mixed' || $base === 'void') {
+            return $base;
+        }
+        return ($nullable ? '?' : '') . $base;
+    }
+
+    public function phpTypeOfNode(string $q): ?string
+    {
+        $n = $this->gir->types[$q] ?? null;
+        if ($n === null) {
+            return null;
+        }
+        if ($n->kind === 'alias') {
+            return null;
+        }
+        if ($n->kind === 'bitfield') {
+            return 'int';
+        }
+        if ($n->kind === 'enum') {
+            return $this->types->known($q) ? phpClass($n) : 'int';
+        }
+        if (in_array($n->kind, ['class', 'interface', 'record'], true) && $this->types->known($q)) {
+            return phpClass($n);
+        }
+        return null;  // outside the closure: the member is skipped and reported (never a placeholder)
+    }
+
+    /**
+     * @return string|array{list<array>, list<array>} reason, or [ins, outs]
+     */
+    public function mapParams(Node $n, Func $f): string|array
+    {
+        $ins = [];
+        $outs = [];
+        $count = count($f->params);
+        $closures = [];  // user_data index -> Callback variable
+        foreach ($f->params as $i => $p) {
+            if (isset($closures[$i])) {  // the user_data slot of a generated callback: hidden
+                $ins[] = ['phpName' => $p->name, 'hidden' => true, 'default' => null, 'decl' => '', 'zpp' => '',
+                    'pre' => [], 'post' => [], 'carg' => $closures[$i], 'phpType' => ''];
+                continue;
+            }
+            if ($p->name === 'user_data' && in_array($p->type->name, ['gpointer', 'gconstpointer'], true)) {
+                return 'gpointer parameter';
+            }
+            if ($p->direction === 'out') {
+                // Outs are returned, never filled through a by-reference parameter (PLAN.md);
+                // a caller-allocated out (gtk_widget_get_color(&rgba)) is a stack struct here.
+                $o = $this->outMapping($p);
+                if ($o === null) {
+                    return ($p->callerAllocates ? 'caller-allocates ' : '')
+                        . "out parameter `{$p->name}` of type {$p->type->name}";
+                }
+                $outs[] = $o;
+                continue;
+            }
+            if ($p->direction !== 'in') {
+                return "{$p->direction} parameter {$p->name}";
+            }
+            // trailing nullable parameters may be omitted
+            $trailingNullable = $p->nullable;
+            for ($j = $i + 1; $j < $count; $j++) {
+                if (!$f->params[$j]->nullable && $f->params[$j]->direction === 'in') {
+                    $trailingNullable = false;
+                }
+            }
+            if (($this->gir->types[$p->type->name] ?? null)?->kind === 'callback' && $p->closure !== null) {
+                $visibleSoFar = count(array_filter($ins, fn($x) => !($x['hidden'] ?? false)));
+                $cb = $this->callbackParam($n, $f, $p, $visibleSoFar + 1, $trailingNullable && $f->kind !== 'method');
+                if ($cb === null) {
+                    return "callback parameter {$p->name}";
+                }
+                $closures[$p->closure] = $cb['cbVar'];
+                $ins[] = $cb;
+                continue;
+            }
+            $m = $this->inParam($p, $trailingNullable && $f->kind !== 'method', count($ins) + 1);
+            if ($m === null) {
+                return "parameter `{$p->name}` of type {$p->type->name}" . ($p->type->isArray ? ' (C array)' : '');
+            }
+            $ins[] = $m;
+        }
+        return [$ins, $outs];
+    }
+
+    /**
+     * How an out parameter is declared, passed and turned into a PHP value.
+     *
+     * kind: long|bool|double (scalars, also the only kinds a vfunc thunk can fill), string,
+     * object, enum, boxed (caller-allocates struct). `toZval($target)` writes the value into the
+     * zval expression $target; `post` frees what the callee handed over (transfer full).
+     *
+     * @return array{name: string, ctype: string, init: string, kind: string, phpType: string,
+     *               arg: string, add: string, toZval: callable(string): list<string>, post: list<string>}|null
+     */
+    public function outMapping(Param $p): ?array
+    {
+        $t = $p->type;
+        $name = $p->name;
+        $base = ['name' => $name, 'arg' => "&$name", 'post' => [], 'add' => ''];
+        if ($p->callerAllocates) {
+            $node = $this->gir->types[$t->name] ?? null;
+            $isKnownRecord = $node !== null && $node->kind === 'record'
+                && $node->gtypeName !== null && $this->types->known($t->name);
+            if (!$isKnownRecord) {
+                return null;
+            }
+            [$typeMacro] = macroParts($this->gir, $node);
+            return $base + ['ctype' => $node->ctype, 'init' => '{}', 'kind' => 'boxed', 'phpType' => phpClass($node),
+                'toZval' => fn(string $z) => ["wrap_boxed($typeMacro, &$name, $z);"]];
+        }
+        if ($t->name === 'gboolean') {
+            return $base + ['ctype' => 'gboolean', 'init' => 'FALSE', 'kind' => 'bool', 'phpType' => 'bool',
+                'add' => 'add_next_index_bool', 'toZval' => fn(string $z) => ["ZVAL_BOOL($z, $name != FALSE);"]];
+        }
+        if (in_array($t->name, ['gfloat', 'gdouble'], true)) {
+            $ct = $t->name === 'gfloat' ? 'float' : 'double';
+            return $base + ['ctype' => $ct, 'init' => '0', 'kind' => 'double', 'phpType' => 'float',
+                'add' => 'add_next_index_double', 'toZval' => fn(string $z) => ["ZVAL_DOUBLE($z, $name);"]];
+        }
+        if (preg_match(INT_TYPES, $t->name)) {
+            $ct = rtrim($t->ctype ?? 'int', '*');
+            return $base + ['ctype' => $ct, 'init' => '0', 'kind' => 'long', 'phpType' => 'int',
+                'add' => 'add_next_index_long',
+                'toZval' => fn(string $z) => ["ZVAL_LONG($z, static_cast<zend_long>($name));"]];
+        }
+        if (in_array($t->name, ['utf8', 'filename'], true) && !$t->isArray) {
+            return $base + ['ctype' => 'char *', 'init' => 'nullptr', 'kind' => 'string', 'phpType' => '?string',
+                'toZval' => fn(string $z) => ["if ($name == nullptr) {", "  ZVAL_NULL($z);", '} else {',
+                    "  ZVAL_STRING($z, $name);", '}'],
+                'post' => $p->transfer === 'full' ? ["g_free($name);"] : []];
+        }
+        $node = $this->gir->types[$t->name] ?? null;
+        if ($node === null || $t->isArray) {
+            return null;
+        }
+        [$typeMacro] = macroParts($this->gir, $node);
+        if ($node->kind === 'enum' && $node->gtypeName !== null && $this->types->known($t->name)) {
+            return $base + ['ctype' => $node->ctype, 'init' => "static_cast<{$node->ctype}>(0)", 'kind' => 'enum',
+                'phpType' => phpClass($node),
+                'toZval' => fn(string $z) => ["enum_to_php($typeMacro, static_cast<gint>($name), $z);"]];
+        }
+        if (in_array($node->kind, ['class', 'interface'], true) && $this->phpTypeOfNode($t->name) !== null) {
+            return $base + ['ctype' => "{$node->ctype} *", 'init' => 'nullptr', 'kind' => 'object',
+                'phpType' => '?' . $this->phpTypeOfNode($t->name),
+                'toZval' => fn(string $z) => ["wrap($name != nullptr ? G_OBJECT($name) : nullptr, $z);"],
+                'post' => $p->transfer === 'full' ? ["if ($name != nullptr) g_object_unref($name);"] : []];
+        }
+        return null;
+    }
+
+    /** @return array<string, mixed>|null */
+    public function inParam(Param $p, bool $trailingNullable, int $argNum = 0): ?array
+    {
+        $t = $p->type;
+        $name = $p->name;
+        $r = ['phpName' => $name, 'default' => $trailingNullable ? 'null' : null, 'pre' => [], 'post' => []];
+        $nullable = $p->nullable;
+        if (array_key_exists($t->name, self::FUNDAMENTALS)) {
+            // A hand-written fundamental handle (GdkEvent) as an argument: borrowed for the call.
+            $fnode = $this->gir->types[$t->name];
+            $macro = $this->typeMacroOf($fnode);
+            return array_merge($r, [
+                'phpType' => ($nullable ? '?' : '') . phpClass($fnode),
+                'decl' => "zval *$name" . ($nullable ? ' = nullptr' : '') . ';',
+                'zpp' => 'Z_PARAM_OBJECT_OF_CLASS' . ($nullable ? '_OR_NULL' : '')
+                    . "($name, fundamental_class_for_type($macro)->ce)",
+                'pre' => $nullable
+                    ? ["gpointer {$name}_f = nullptr;", "if ($name != nullptr) {",
+                        "  {$name}_f = unwrap_fundamental($name, $macro);",
+                        "  if ({$name}_f == nullptr) RETURN_THROWS();", '}']
+                    : ["gpointer {$name}_f = unwrap_fundamental($name, $macro);",
+                        "if ({$name}_f == nullptr) RETURN_THROWS();"],
+                'carg' => "static_cast<{$fnode->ctype} *>({$name}_f)",
+            ]);
+        }
+        if (in_array($t->name, ['utf8', 'filename'], true) && !$t->isArray) {
+            $zpp = $t->name === 'filename' ? 'Z_PARAM_PATH_STR' : 'Z_PARAM_STR';
+            // A GLib string ends at the first NUL and has to be UTF-8; a PHP string is neither.
+            // Z_PARAM_PATH_STR already refuses the NUL, and a filename is bytes on Linux, so
+            // only utf8 parameters are validated (php_gtk4.h, check_utf8).
+            $utf8Check = [];
+            if ($t->name === 'utf8') {
+                $guard = $nullable ? "$name != nullptr && " : '';
+                $utf8Check = ["if ({$guard}!phpgtk::check_utf8($name, $argNum)) RETURN_THROWS();"];
+            }
+            return array_merge($r, [
+                'phpType' => ($nullable ? '?' : '') . 'string',
+                'decl' => "zend_string *$name" . ($nullable ? ' = nullptr' : '') . ';',
+                'zpp' => $zpp . ($nullable ? '_OR_NULL' : '') . "($name)",
+                'pre' => $utf8Check,
+                // transfer full (gtk_string_list_take): the callee frees the string with g_free(),
+                // so it gets a GLib copy, never Zend's own buffer.
+                'carg' => $p->transfer === 'full'
+                    ? ($nullable
+                        ? "$name != nullptr ? g_strdup(ZSTR_VAL($name)) : nullptr"
+                        : "g_strdup(ZSTR_VAL($name))")
+                    : ($nullable ? "$name != nullptr ? ZSTR_VAL($name) : nullptr" : "ZSTR_VAL($name)"),
+            ]);
+        }
+        if ($t->name === 'gboolean') {
+            return array_merge($r, [
+                'phpType' => 'bool', 'decl' => "bool $name;", 'zpp' => "Z_PARAM_BOOL($name)", 'carg' => $name,
+            ]);
+        }
+        if (in_array($t->name, ['gfloat', 'gdouble'], true)) {
+            return array_merge($r, ['phpType' => 'float', 'decl' => "double $name;", 'zpp' => "Z_PARAM_DOUBLE($name)",
+                'carg' => $t->name === 'gfloat' ? "static_cast<float>($name)" : $name]);
+        }
+        if (preg_match(INT_TYPES, $t->name)) {
+            $ct = $t->ctype ?? 'int';
+            // Without the check a negative value arrives at GTK as a huge unsigned one
+            // ($store->remove(-1) reached g_list_store_remove as 4294967295) and a too-large
+            // one is truncated - both silently. gint64/guint64 need no upper bound: PHP
+            // cannot express one (php_gtk4.h, check_range).
+            // gint64/gssize/goffset are exactly zend_long on both platforms - every value PHP
+            // can express fits. glong is *not* in that list: it is 32 bits on Windows.
+            $range = in_array($ct, ['gint64', 'gssize', 'goffset'], true)
+                ? []
+                : ["if (!phpgtk::check_range<$ct>($name, $argNum)) RETURN_THROWS();"];
+            return array_merge($r, ['phpType' => 'int', 'decl' => "zend_long $name;", 'zpp' => "Z_PARAM_LONG($name)",
+                'pre' => $range, 'carg' => "static_cast<$ct>($name)"]);
+        }
+        if ($t->name === 'GLib.Variant') {
+            return array_merge($r, [
+                'phpType' => 'mixed', 'default' => 'null',
+                'decl' => "zval *$name = nullptr;", 'zpp' => "Z_PARAM_ZVAL($name)",
+                'pre' => ["GVariant *{$name}_v = nullptr;",
+                    "if ($name != nullptr && Z_TYPE_P($name) != IS_NULL) {",
+                    "  {$name}_v = php_to_variant($name, nullptr);",
+                    "  if ({$name}_v == nullptr) RETURN_THROWS();",
+                    "  g_variant_ref_sink({$name}_v);",
+                    '}'],
+                'carg' => "{$name}_v",
+                'post' => ["if ({$name}_v != nullptr) g_variant_unref({$name}_v);"],
+            ]);
+        }
+        if ($t->name === 'GLib.VariantType') {
+            return array_merge($r, [
+                'phpType' => ($nullable ? '?' : '') . 'string',
+                'decl' => "zend_string *$name" . ($nullable ? ' = nullptr' : '') . ';',
+                'zpp' => 'Z_PARAM_STR' . ($nullable ? '_OR_NULL' : '') . "($name)",
+                'pre' => ["GVariantType *{$name}_t = nullptr;",
+                    "if ($name != nullptr) {",
+                    "  if (!g_variant_type_string_is_valid(ZSTR_VAL($name))) {",
+                    "    zend_argument_value_error($argNum, \"must be a valid GVariant type string, "
+                    . "\\\"%s\\\" given\", ZSTR_VAL($name));",
+                    '    RETURN_THROWS();',
+                    '  }',
+                    "  {$name}_t = g_variant_type_new(ZSTR_VAL($name));",
+                    '}'],
+                'carg' => "{$name}_t",
+                'post' => ["if ({$name}_t != nullptr) g_variant_type_free({$name}_t);"],
+            ]);
+        }
+        if ($t->name === 'GLib.Bytes') {
+            return array_merge($r, [
+                'phpType' => 'string', 'decl' => "zend_string *$name;", 'zpp' => "Z_PARAM_STR($name)",
+                'pre' => ["GBytes *{$name}_b = g_bytes_new(ZSTR_VAL($name), ZSTR_LEN($name));"],
+                'carg' => "{$name}_b", 'post' => ["g_bytes_unref({$name}_b);"],
+            ]);
+        }
+        // A GFile is a path or a URI and nothing else a PHP program can use: it is mapped to a
+        // string, like GBytes and GVariant are mapped to values (docs/PLAN.md §2.7). The GIO file
+        // stack (streams, GFileInfo) is not bound and a handle would only carry it around.
+        // g_file_new_for_commandline_arg() takes both spellings.
+        if ($t->name === 'Gio.File') {
+            $arg = $nullable
+                ? "$name != nullptr ? g_file_new_for_commandline_arg(ZSTR_VAL($name)) : nullptr"
+                : "g_file_new_for_commandline_arg(ZSTR_VAL($name))";
+            return array_merge($r, [
+                'phpType' => ($nullable ? '?' : '') . 'string',
+                'decl' => "zend_string *$name" . ($nullable ? ' = nullptr' : '') . ';',
+                'zpp' => 'Z_PARAM_PATH_STR' . ($nullable ? '_OR_NULL' : '') . "($name)",
+                'pre' => ["GFile *{$name}_f = $arg;"],
+                'carg' => "{$name}_f",
+                'post' => ["if ({$name}_f != nullptr) g_object_unref({$name}_f);"],
+            ]);
+        }
+        if (self::isStrv($t)) {
+            // A nullable string vector (GtkStringList::new(NULL) = an empty list) is ?array.
+            return array_merge($r, [
+                'phpType' => ($nullable ? '?' : '') . 'array',
+                'decl' => "zval *$name" . ($nullable ? ' = nullptr' : '') . ';',
+                'zpp' => 'Z_PARAM_ARRAY' . ($nullable ? '_OR_NULL' : '') . "($name)",
+                'pre' => $nullable
+                    ? ["char **{$name}_v = nullptr;", "if ($name != nullptr) {",
+                        "  {$name}_v = strv_from_php($name);", "  if ({$name}_v == nullptr) RETURN_THROWS();", '}']
+                    : ["char **{$name}_v = strv_from_php($name);", "if ({$name}_v == nullptr) RETURN_THROWS();"],
+                'carg' => "const_cast<const char **>({$name}_v)",
+                'post' => [($nullable ? "if ({$name}_v != nullptr) " : '') . "g_strfreev({$name}_v);"],
+            ]);
+        }
+        $node = $this->gir->types[$t->name] ?? null;
+        if ($node === null) {
+            return null;
+        }
+        [$typeMacro, $castMacro] = macroParts($this->gir, $node);
+        if ($node->kind === 'enum' && $node->gtypeName !== null && $this->types->known($t->name)) {
+            return array_merge($r, [
+                'phpType' => phpClass($node), 'decl' => "zval *$name;",
+                'zpp' => "Z_PARAM_OBJECT_OF_CLASS($name, enum_class_for_type($typeMacro))",
+                'pre' => ["gint {$name}_v = 0;", "if (!enum_from_php($name, $typeMacro, &{$name}_v)) RETURN_THROWS();"],
+                'carg' => "static_cast<{$node->ctype}>({$name}_v)",
+            ]);
+        }
+        if ($node->kind === 'bitfield' || $node->kind === 'enum') {
+            // Flags are plain ints (no PHP enum to check them), so the value is checked against
+            // the type's own mask: GLib otherwise takes the assignment, prints a CRITICAL and
+            // carries on with the default (php_gtk4.h, check_flags).
+            $mask = $node->gtypeName !== null
+                ? ["if (!phpgtk::check_flags($typeMacro, $name, $argNum)) RETURN_THROWS();"]
+                : [];
+            return array_merge($r, ['phpType' => 'int', 'decl' => "zend_long $name;", 'zpp' => "Z_PARAM_LONG($name)",
+                'pre' => $mask, 'carg' => "static_cast<{$node->ctype}>($name)"]);
+        }
+        if (in_array($node->kind, ['class', 'interface'], true)) {
+            $phpT = $this->phpTypeOfNode($t->name);
+            if ($phpT === null) {
+                return null;
+            }
+            // The PHP-visible class may be an ancestor (nearest known), the C check is exact.
+            $q = $this->types->qOfPhp($phpT);
+            [$knownMacro] = macroParts($this->gir, $this->gir->types[$q]);
+            $classExpr = $q === 'GObject.Object' ? 'class_for_gtype(G_TYPE_OBJECT)' : "class_for_gtype($knownMacro)";
+            $pre = $nullable
+                ? ["GObject *{$name}_o = nullptr;", "if ($name != nullptr) {",
+                    "  {$name}_o = unwrap($name, $typeMacro);",
+                    "  if ({$name}_o == nullptr) RETURN_THROWS();", '}']
+                : ["GObject *{$name}_o = unwrap($name, $typeMacro);", "if ({$name}_o == nullptr) RETURN_THROWS();"];
+            if ($p->transfer === 'full') {
+                // The callee takes this reference (GIR transfer full); the handle keeps its own.
+                $pre[] = "if ({$name}_o != nullptr) g_object_ref({$name}_o);  // transfer full";
+            }
+            return array_merge($r, [
+                'objectVar' => $p->transfer === 'full' ? "{$name}_o" : null,
+                'phpType' => ($nullable ? '?' : '') . $phpT,
+                'decl' => "zval *$name" . ($nullable ? ' = nullptr' : '') . ';',
+                'zpp' => 'Z_PARAM_OBJECT_OF_CLASS' . ($nullable ? '_OR_NULL' : '') . "($name, $classExpr)",
+                'pre' => $pre,
+                'carg' => $nullable
+                    ? "{$name}_o != nullptr ? $castMacro({$name}_o) : nullptr"
+                    : "$castMacro({$name}_o)",
+            ]);
+        }
+        if ($t->name === 'GLib.Error') {
+            // Gtk4\GError is an exception class (core/gerror), not a boxed handle: a GError is
+            // built from it for the call and freed afterwards unless the callee takes it.
+            $pre = $nullable
+                ? ["GError *{$name}_e = nullptr;", "if ($name != nullptr) {$name}_e = gerror_from_php($name);"]
+                : ["GError *{$name}_e = gerror_from_php($name);"];
+            return array_merge($r, [
+                'phpType' => ($nullable ? '?' : '') . 'GError',
+                'decl' => "zval *$name" . ($nullable ? ' = nullptr' : '') . ';',
+                'zpp' => 'Z_PARAM_OBJECT_OF_CLASS' . ($nullable ? '_OR_NULL' : '') . "($name, ce_GError)",
+                'pre' => $pre,
+                'carg' => "{$name}_e",
+                'post' => $p->transfer === 'full' ? [] : ["if ({$name}_e != nullptr) g_error_free({$name}_e);"],
+            ]);
+        }
+        if ($node->kind === 'record' && $node->gtypeName !== null && $this->types->known($t->name)) {
+            return array_merge($r, [
+                'phpType' => ($nullable ? '?' : '') . phpClass($node),
+                'decl' => "zval *$name" . ($nullable ? ' = nullptr' : '') . ';',
+                'zpp' => 'Z_PARAM_OBJECT_OF_CLASS' . ($nullable ? '_OR_NULL' : '')
+                    . "($name, boxed_class_for_type($typeMacro)->ce)",
+                'pre' => $nullable
+                    ? ["gpointer {$name}_b = nullptr;", "if ($name != nullptr) {",
+                        "  {$name}_b = unwrap_boxed($name, $typeMacro);",
+                        "  if ({$name}_b == nullptr) RETURN_THROWS();", '}']
+                    : ["gpointer {$name}_b = unwrap_boxed($name, $typeMacro);",
+                        "if ({$name}_b == nullptr) RETURN_THROWS();"],
+                'carg' => "static_cast<{$node->ctype} *>({$name}_b)",
+            ]);
+        }
+        return null;
+    }
+
+    /**
+     * @param list<array> $outs
+     * @return string|array{phpType: string, docType?: string, lines: callable, tail?: list<string>}
+     */
+    public function retMapping(Node $n, Func $f, array $outs): string|array
+    {
+        $t = $f->ret;
+        $full = $f->retTransfer === 'full';
+        $throwCheck = fn(string $cond) => $f->throws
+            ? ["if ($cond) {", '  throw_gerror(error);', '  RETURN_THROWS();', '}']
+            : [];
+        $outPosts = array_merge([], ...array_map(fn($o) => $o['post'], $outs));
+        $outLines = function () use ($outs, $outPosts) {
+            $l = ['array_init_size(return_value, ' . count($outs) . ');'];
+            foreach ($outs as $o) {
+                $l[] = '{';
+                $l[] = '  zval item;';
+                array_push($l, ...array_map(fn($x) => "  $x", $o['toZval']('&item')));
+                $l[] = '  add_next_index_zval(return_value, &item);';
+                $l[] = '}';
+            }
+            return [...$l, ...$outPosts];
+        };
+        $singleOut = fn() => [...$outs[0]['toZval']('return_value'), ...$outPosts];
+        $outDoc = 'array{' . implode(', ', array_map(fn($o) => self::outScalar($o), $outs)) . '}';
+
+        if ($outs === [] && array_key_exists($t->name, self::FUNDAMENTALS)) {  // before the record arms
+            // A hand-written fundamental handle (GdkEvent): wrap through its registry entry, which
+            // takes its own reference - a transfer-full result gives up the one it came with.
+            $fnode = $this->gir->types[$t->name];
+            $macro = $this->typeMacroOf($fnode);
+            $unref = self::FUNDAMENTALS[$t->name];
+            return ['phpType' => ($f->retNullable ? '?' : '') . phpClass($fnode), 'lines' => fn(string $call) => [
+                "gpointer phpgtk_ret = $call;", "wrap_fundamental($macro, phpgtk_ret, return_value);",
+                ...($full && $unref !== null
+                    ? ["if (phpgtk_ret != nullptr) $unref(static_cast<{$fnode->ctype} *>(phpgtk_ret));"] : [])]];
+        }
+
+        // constructors of a boxed record: the handle adopts the allocation (the type's own
+        // allocator: GIR constructors return transfer full); factories copy into a new handle
+        if ($f->kind === 'constructor' && $n->kind === 'record') {
+            [$recordMacro] = macroParts($this->gir, $n);
+            if ($f->name === 'new') {
+                return ['phpType' => '', 'lines' => function (
+                    string $call,
+                    bool $isRoot,
+                    ?array $subtype,
+                ) use (
+                    $f,
+                    $throwCheck,
+                    $recordMacro
+                ) {
+                    $l = ["gpointer obj = $call;"];
+                    if ($f->throws) {
+                        array_push($l, ...$throwCheck('obj == nullptr'));
+                    } else {
+                        $l[] = 'if (obj == nullptr) {';
+                        $l[] = '  zend_throw_error(nullptr, "%s(): GTK refused to create the value '
+                            . '(see the CRITICAL above)",';
+                        $l[] = '                   ZSTR_VAL(EX(func)->common.function_name));';
+                        $l[] = '  RETURN_THROWS();';
+                        $l[] = '}';
+                    }
+                    $l[] = "boxed_adopt(boxed_from_zval(ZEND_THIS), $recordMacro, obj);";
+                    return $l;
+                }];
+            }
+            return ['phpType' => phpClass($n), 'lines' => function (string $call) use (
+                $f,
+                $throwCheck,
+                $full,
+                $recordMacro
+            ) {
+                $l = ["gpointer phpgtk_ret = $call;"];
+                array_push($l, ...$throwCheck('phpgtk_ret == nullptr'));
+                $l[] = "wrap_boxed($recordMacro, phpgtk_ret, return_value);";
+                if ($full) {
+                    $l[] = "if (phpgtk_ret != nullptr) g_boxed_free($recordMacro, phpgtk_ret);";
+                }
+                return $l;
+            }];
+        }
+        // constructors
+        if ($f->kind === 'constructor') {
+            if ($f->name === 'new') {
+                return ['phpType' => '', 'lines' => function (
+                    string $call,
+                    bool $isRoot,
+                    ?array $subtype,
+                ) use (
+                    $f,
+                    $throwCheck
+                ) {
+                    if ($subtype === null) {
+                        $l = ["GObject *obj = G_OBJECT($call);"];
+                    } else {
+                        // A PHP subclass gets an instance of its own GType (core/subtype.h); the
+                        // constructor arguments become construct properties.
+                        $l = ["GObject *obj = {$subtype['call']};"];
+                        if ($subtype['post'] !== []) {
+                            $l[] = 'if (obj != nullptr) {';
+                            array_push($l, ...array_map(fn($x) => "  $x", $subtype['post']));
+                            $l[] = '}';
+                        }
+                        $l[] = 'if (obj == nullptr) {';
+                        $l[] = '  if (EG(exception) != nullptr) RETURN_THROWS();';
+                        $l[] = "  obj = G_OBJECT($call);";
+                        $l[] = '}';
+                    }
+                    if ($f->throws) {
+                        array_push($l, ...$throwCheck('obj == nullptr'));
+                    } else {
+                        // g_return_val_if_fail() inside GTK (invalid arguments) yields NULL: never
+                        // leave a dead handle behind, the Gtk-CRITICAL above says what was wrong.
+                        $l[] = 'if (obj == nullptr) {';
+                        $l[] = '  zend_throw_error(nullptr, "%s(): GTK refused to create the object (see the "';
+                        $l[] = '                   "CRITICAL above)",';
+                        $l[] = '                   ZSTR_VAL(EX(func)->common.function_name));';
+                        $l[] = '  RETURN_THROWS();';
+                        $l[] = '}';
+                    }
+                    $l[] = $isRoot
+                        ? '// GtkRoot: GTK\'s toplevel list owns the initial reference (see docs/PLAN.md "Ownership").'
+                        : '';
+                    $l[] = ($isRoot ? 'attach' : 'attach_new') . '(object_from_zval(ZEND_THIS), obj);';
+                    return array_values(array_filter($l, fn($s) => $s !== ''));
+                }];
+            }
+            // other constructors are static factories returning the class
+            $php = phpClass($n);
+            return ['phpType' => $php, 'lines' => function (string $call) use ($f, $throwCheck, $full) {
+                $l = ["GObject *obj = G_OBJECT($call);"];
+                array_push($l, ...$throwCheck('obj == nullptr'));
+                $l[] = 'wrap(obj, return_value);';
+                if ($full) {
+                    $l[] = 'if (obj != nullptr) g_object_unref(obj);  // the handle took its own reference';
+                }
+                return $l;
+            }];
+        }
+
+        if ($t->name === 'none') {
+            if (count($outs) === 1) {  // one out -> that value (PLAN.md "Out parameters")
+                return ['phpType' => $outs[0]['phpType'], 'lines' => fn(string $call) => [
+                    "$call;", ...$throwCheck('error != nullptr'), ...$singleOut()]];
+            }
+            if ($outs !== []) {
+                return ['phpType' => 'array', 'docType' => $outDoc, 'lines' => fn(string $call) => [
+                    "$call;", ...$throwCheck('error != nullptr'), ...$outLines()]];
+            }
+            return ['phpType' => 'void', 'lines' => fn(string $call) => ["$call;", ...$throwCheck('error != nullptr')]];
+        }
+        if ($t->name === 'gboolean') {
+            if (count($outs) === 1) {  // success -> the out, failure -> null
+                $phpT = '?' . ltrim($outs[0]['phpType'], '?');
+                return ['phpType' => $phpT, 'lines' => fn(string $call) => [
+                    "if (!$call) RETURN_NULL();", ...$singleOut()]];
+            }
+            if ($outs !== []) {
+                return ['phpType' => '?array', 'docType' => "$outDoc|null", 'lines' => fn(string $call) => [
+                    "if (!$call) RETURN_NULL();", ...$outLines()]];
+            }
+            return ['phpType' => 'bool', 'lines' => fn(string $call) => $f->throws
+                ? ["const gboolean ok = $call;", ...$throwCheck('!ok'), 'RETURN_BOOL(ok);']
+                : ["RETURN_BOOL($call);"]];
+        }
+        if ($outs !== []) {
+            return "return {$t->name} plus out parameters";
+        }
+        if (in_array($t->name, ['utf8', 'filename'], true) && !$t->isArray) {
+            $nullable = $f->retNullable;
+            if ($full) {
+                return ['phpType' => ($nullable ? '?' : '') . 'string', 'lines' => fn(string $call) => [
+                    "char *phpgtk_ret = $call;", ...$throwCheck('phpgtk_ret == nullptr'),
+                    ...($nullable ? ['if (phpgtk_ret == nullptr) RETURN_NULL();'] : []),
+                    'RETVAL_STRING(phpgtk_ret);', 'g_free(phpgtk_ret);']];
+            }
+            return ['phpType' => ($nullable ? '?' : '') . 'string', 'lines' => fn(string $call) => $nullable
+                ? ["PHPGTK_RETURN_STRING_OR_NULL($call);"]
+                // GIR says non-nullable, GTK returns NULL anyway (gtk_alert_dialog_get_detail()
+                // before a detail is set): an empty string, never a crash; the stub type stays.
+                : ["const char *phpgtk_ret = $call;", 'if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();',
+                    'RETURN_STRING(phpgtk_ret);']];
+        }
+        // Scalar returns of a `throws` function carry no failure marker of their own (a dismissed
+        // GtkAlertDialog::choose_finish() is -1 *and* a GError): the GError decides, and dropping
+        // it would leak it - so the value is taken first and the error checked before returning.
+        if (in_array($t->name, ['gfloat', 'gdouble'], true)) {
+            return ['phpType' => 'float', 'lines' => fn(string $call) => $f->throws
+                ? ["const double value = $call;", ...$throwCheck('error != nullptr'), 'RETURN_DOUBLE(value);']
+                : ["RETURN_DOUBLE($call);"]];
+        }
+        if (preg_match(INT_TYPES, $t->name)) {
+            return ['phpType' => 'int', 'lines' => fn(string $call) => $f->throws
+                ? ["const auto value = static_cast<zend_long>($call);", ...$throwCheck('error != nullptr'),
+                    'RETURN_LONG(value);']
+                : ["RETURN_LONG(static_cast<zend_long>($call));"]];
+        }
+        if ($t->name === 'GLib.Variant') {
+            return ['phpType' => 'mixed', 'lines' => fn(string $call) => [
+                "GVariant *phpgtk_ret = $call;", 'if (phpgtk_ret == nullptr) RETURN_NULL();',
+                'variant_to_php(phpgtk_ret, return_value);', ...($full ? ['g_variant_unref(phpgtk_ret);'] : [])]];
+        }
+        if ($t->name === 'GLib.VariantType') {
+            $nullable = $f->retNullable;
+            return ['phpType' => ($nullable ? '?' : '') . 'string', 'lines' => fn(string $call) => [
+                "const GVariantType *vt = $call;", ...($nullable ? ['if (vt == nullptr) RETURN_NULL();'] : []),
+                'RETVAL_STRINGL(g_variant_type_peek_string(vt), g_variant_type_get_string_length(vt));',
+                ...($full ? ['g_variant_type_free(const_cast<GVariantType *>(vt));'] : [])]];
+        }
+        if (in_array($t->name, ['GObject.GType', 'Gio.GType', 'GLib.GType'], true) || $t->name === 'GType') {
+            return ['phpType' => 'string', 'lines' => fn(string $call) => ["RETURN_STRING(g_type_name($call));"]];
+        }
+        if ($t->name === 'Gio.File') {
+            return ['phpType' => ($f->retNullable ? '?' : '') . 'string', 'lines' => fn(string $call) => [
+                "GFile *file = $call;", ...$throwCheck('file == nullptr'),
+                ...($f->retNullable ? ['if (file == nullptr) RETURN_NULL();'] : []),
+                // A local file answers with its path; anything else (a portal URI, sftp://) has
+                // no path and answers with the URI it does have.
+                'char *file_s = g_file_get_path(file);',
+                'if (file_s == nullptr) file_s = g_file_get_uri(file);',
+                ...($full ? ['g_object_unref(file);'] : []),
+                'if (file_s == nullptr) RETURN_EMPTY_STRING();',
+                'RETVAL_STRING(file_s);',
+                'g_free(file_s);']];
+        }
+        if ($t->name === 'GLib.Bytes') {
+            return ['phpType' => ($f->retNullable ? '?' : '') . 'string', 'lines' => fn(string $call) => [
+                "GBytes *bytes = $call;", ...$throwCheck('bytes == nullptr'),
+                ...($f->retNullable ? ['if (bytes == nullptr) RETURN_NULL();'] : []),
+                'gsize size = 0;', 'const auto *data = static_cast<const char *>(g_bytes_get_data(bytes, &size));',
+                'RETVAL_STRINGL(data, size);', ...($full ? ['g_bytes_unref(bytes);'] : [])]];
+        }
+        if (self::isStrv($t)) {
+            // GTK hands borrowed string vectors out as `const char * const *`; strv_to_php() takes
+            // the mutable form (it frees the transfer-full ones), so cast the borrowed ones.
+            return ['phpType' => 'array', 'docType' => 'list<string>', 'lines' => fn(string $call) => [
+                str_starts_with($t->ctype ?? '', 'const')
+                    ? "strv_to_php($call, return_value);"
+                    : "strv_to_php($call, Transfer::" . ($full ? 'Full' : 'None') . ', return_value);']];
+        }
+        if (in_array($t->name, ['GLib.List', 'GLib.SList', 'GLib.PtrArray'], true)) {
+            $el = $t->element;
+            $elNode = $el !== null ? ($this->gir->types[$el->name] ?? null) : null;
+            $elPhp = $el !== null ? $this->phpType($el, false) : null;
+            if ($el === null || $elPhp === null) {
+                return 'list of ' . ($el?->name ?? '?');
+            }
+            $elType = $el->name === 'utf8'
+                ? 'G_TYPE_STRING'
+                : ($elNode !== null ? macroParts($this->gir, $elNode)[0] : null);
+            if ($elType === null) {
+                return "list of {$el->name}";
+            }
+            $fn = match ($t->name) {
+                'GLib.List' => 'glist_to_php', 'GLib.SList' => 'gslist_to_php', default => 'gptrarray_to_php'
+            };
+            $transfer = match ($f->retTransfer) {
+                'full' => 'Full', 'container' => 'Container', default => 'None'
+            };
+            return ['phpType' => 'array', 'docType' => "list<$elPhp>", 'lines' => fn(string $call) => [
+                "$fn($call, $elType, Transfer::$transfer, return_value);"]];
+        }
+        if ($t->name === 'cairo.Context') {
+            return ['phpType' => ($f->retNullable ? '?' : '') . 'CairoContext', 'lines' => fn(string $call) => [
+                "cairo_t *cr = $call;", 'wrap_cairo(cr, return_value);',
+                ...($full ? ['if (cr != nullptr) cairo_destroy(cr);'] : [])]];
+        }
+        if ($t->name === 'GObject.ParamSpec') {
+            return ['phpType' => ($f->retNullable ? '?' : '') . 'GParamSpec', 'lines' => fn(string $call) => [
+                "wrap_param_spec($call, return_value);"]];
+        }
+        $node = $this->gir->types[$t->name] ?? null;
+        if ($node === null) {
+            return "return type {$t->name}";
+        }
+        [$typeMacro] = macroParts($this->gir, $node);
+        if ($node->kind === 'enum' && $node->gtypeName !== null && $this->types->known($t->name)) {
+            return ['phpType' => phpClass($node), 'lines' => fn(string $call) => [
+                "enum_to_php($typeMacro, $call, return_value);"]];
+        }
+        if ($node->kind === 'enum' || $node->kind === 'bitfield') {
+            return ['phpType' => 'int', 'lines' => fn(string $call) => ["RETURN_LONG(static_cast<zend_long>($call));"]];
+        }
+        if (in_array($node->kind, ['class', 'interface'], true)) {
+            $phpT = $this->phpTypeOfNode($t->name);
+            if ($phpT === null) {
+                return "return type {$t->name} (not in the closure)";
+            }
+            // g_task_get_source_object() and friends return the object as gpointer
+            return ['phpType' => ($f->retNullable ? '?' : '') . $phpT, 'lines' => fn(string $call) => [
+                "{$node->ctype} *phpgtk_ret = " . (str_starts_with($t->ctype ?? '', 'gpointer')
+                    ? "static_cast<{$node->ctype} *>($call)" : $call) . ';', ...$throwCheck('phpgtk_ret == nullptr'),
+                'wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);',
+                ...($full
+                    ? ['if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref']
+                    : [])]];
+        }
+        if ($node->kind === 'record' && $node->gtypeName !== null && $this->types->known($t->name)) {
+            return ['phpType' => ($f->retNullable ? '?' : '') . phpClass($node), 'lines' => fn(string $call) => [
+                "{$node->ctype} *phpgtk_ret = $call;", "wrap_boxed($typeMacro, phpgtk_ret, return_value);",
+                ...($full ? ["if (phpgtk_ret != nullptr) g_boxed_free($typeMacro, phpgtk_ret);"] : [])]];
+        }
+        return "return type {$t->name}";
+    }
+}

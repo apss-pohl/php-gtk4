@@ -16,7 +16,14 @@
   class, `src/Gtk/Gtk.stub.php` the *generated* per-namespace stub (same in `src/Gdk/`); the
   `GENERATED` header is the only distinction. An enum-only namespace (`src/Pango/`) has just the
   stub and its arginfo, no `.cpp`.
-- `gir.php` — the GIR generator (docs/PLAN.md milestone 3). `php gen/gir.php --install` (what
+- `gir.php` — the GIR generator (docs/PLAN.md milestone 3), one program in six files: `gir.php`
+  itself (the emitters and the CLI) plus `gir/config.php` (what is read, what is in scope),
+  `gir/model.php` (`Type`/`Param`/`Func`/`Node` and the naming helpers), `gir/loader.php` (the
+  .gir files parsed into that model, `Gir::locate()`), `gir/type-map.php` (`TypeSet`: what is in
+  scope; `TypeMap`: what a GIR type becomes in PHP, the ZPP line, the conversions both ways) and
+  `gir/writer.php` (clang-format, write-only-on-change, the file list `report.md` prints).
+  `GeneratorTypeMapTest` pins the mappings one at a time; the `gen` stage proves the whole output.
+  `gir.php` is still where a member's *fate* is decided - skip, override, emit. `php gen/gir.php --install` (what
   `./ci.sh --only=gen` runs and checks) reads the installed GIR files (`gir1.2-gtk-4.0`), takes
   `allowlist.txt` (+ parents, and the enums kept signatures use), and writes per GIR namespace
   `src/<Ns>/<Ns>.stub.php` and one `src/<Ns>/<Class>.cpp` per class, `src/gen_minit.inc` (the
