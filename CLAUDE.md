@@ -190,6 +190,29 @@ Every new class, method or constant ships with **all four** in the same change:
    (`GtkWindow.php`, `GParamSpec.php`). `ExampleTest` enforces all of this; `examples/README.md`
    indexes them.
 
+### The declared type is a promise the engine does not keep
+
+PHP verifies neither the return type nor the property type of an *internal* class: a wrong
+declaration is invisible at runtime, and PHPStan believes it anyway. So the type in the stub is
+only as true as the code behind it, and every new element is checked against these:
+
+- **Return an instance of what you declared.** A declared interface (`?GtkEditable`) means every
+  concrete implementation that can come back is bound — `wrap()` answers with the nearest
+  registered *class*, so an unbound one silently yields a value that does not implement it. Fix
+  that by adding the class to `gen/allowlist.txt`, never by weakening the signature.
+  `TypeDeclarationTest` calls every arg-less getter and compares.
+- **Convert at the boundary, do not coerce.** Anything crossing PHP → C goes through the shared
+  checks in `src/php_gtk4.h` — `check_utf8` (no NUL, valid UTF-8; not for `GBytes`, which is
+  binary, nor for a `filename`, which is bytes), `check_range<T>` (a `zend_long` is 64-bit and
+  signed, the C type usually is not), `check_flags` (a flags int must fit the type's mask) — and
+  a property write converts exactly like the equivalent setter's parameter (`core/marshal`,
+  `caller_is_strict()`). The generator emits all of this; hand-written methods must not forget it
+  (`GdkRGBA::parse()` did).
+- **A value PHP can build must not end the process.** Unbounded recursion, a state precondition
+  GLib enforces with an abort — guard it (`gen/overrides`) or refuse the member
+  (`gen/skip.txt`), with the reason. `RobustnessTest` sweeps every method with hostile values of
+  the right type and `ArgumentGuardTest` pins the individual cases.
+
 ## Tests
 
 Two harnesses. **PHPUnit 12** (`tests/*.php`, `composer install` once; `vendor/` is gitignored) is
