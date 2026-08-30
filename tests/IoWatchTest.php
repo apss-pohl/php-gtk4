@@ -13,13 +13,26 @@ use Gtk4\GLib;
  */
 final class IoWatchTest extends GtkTestCase
 {
-    /** @return array{resource, resource} */
+    /**
+     * Two ends of a loopback TCP connection: socketpair() is AF_UNIX-only on Linux and
+     * does not exist on Windows, a real connection works on both.
+     *
+     * @return array{resource, resource}
+     */
     private static function pair(): array
     {
-        // PF_INET: a loopback pair works on Windows too (PF_UNIX pairs do not exist there).
-        $pair = stream_socket_pair(STREAM_PF_INET, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
-        self::assertIsArray($pair);
-        return [$pair[0], $pair[1]];
+        $server = stream_socket_server('tcp://127.0.0.1:0', $errno, $errstr);
+        self::assertIsResource($server, "loopback listener: $errstr");
+        $name = stream_socket_get_name($server, false);
+        self::assertIsString($name);
+        $client = stream_socket_client("tcp://$name", $errno, $errstr, 5);
+        self::assertIsResource($client, "loopback connect: $errstr");
+        $accepted = stream_socket_accept($server, 5);
+        self::assertIsResource($accepted);
+        fclose($server);
+        stream_set_blocking($client, false);
+        stream_set_blocking($accepted, false);
+        return [$accepted, $client];
     }
 
     /** Pump until $until() holds, at most $seconds. */
@@ -91,28 +104,27 @@ final class IoWatchTest extends GtkTestCase
         fclose($b);
     }
 
-    public function testPeerCloseIsAHangUp(): void
+    public function testPeerCloseIsNoticed(): void
     {
+        // A closed peer shows up as HUP, or as "readable" with an empty read (EOF) - which one
+        // comes first depends on the platform and the socket family.
         [$a, $b] = self::pair();
-        $conditions = [];
-        $onEvent = function (mixed $stream, int $condition) use (&$conditions): bool {
-            $conditions[] = $condition;
-            if (is_resource($stream)) {
-                fread($stream, 64);
-            }
-            return ($condition & GIOCondition::HUP) === 0;
+        $events = [];
+        $onEvent = function (mixed $stream, int $condition) use (&$events): bool {
+            $data = is_resource($stream) ? fread($stream, 64) : false;
+            $events[] = [$condition, $data];
+            return ($condition & GIOCondition::HUP) === 0 && $data !== '' && $data !== false;
         };
         GLib::io_add_watch($a, GIOCondition::IN | GIOCondition::HUP, $onEvent);
         fclose($b);
-        self::pump(static fn(): bool => $conditions !== []);
-        self::assertNotEmpty($conditions);
-        $last = end($conditions);
-        self::assertIsInt($last);
-        if (PHP_OS_FAMILY === 'Windows') {  // Winsock reports a closed peer as readable (EOF), not HUP
-            self::assertSame(GIOCondition::IN, $last & GIOCondition::IN);
-        } else {
-            self::assertSame(GIOCondition::HUP, $last & GIOCondition::HUP);
-        }
+        self::pump(static fn(): bool => $events !== []);
+        self::assertNotEmpty($events);
+        [$condition, $data] = end($events) ?: [0, null];
+        self::assertIsInt($condition);
+        self::assertTrue(
+            ($condition & GIOCondition::HUP) !== 0 || $data === '' || $data === false,
+            'the peer closing the connection reached the watch',
+        );
         fclose($a);
     }
 

@@ -51,12 +51,18 @@ return Demo::page(
         };
         $show('waiting - nothing on the socket yet');
 
-        $pair = stream_socket_pair(STREAM_PF_INET, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);  // loopback: Windows too
-        if ($pair === false) {
-            $show('stream_socket_pair() failed');
+        // A loopback connection rather than socketpair(): that one is AF_UNIX-only on Linux
+        // and missing on Windows.
+        $server = stream_socket_server('tcp://127.0.0.1:0');
+        $name = $server === false ? false : stream_socket_get_name($server, false);
+        $writer = $name === false ? false : stream_socket_client("tcp://$name");
+        $reader = $server === false ? false : stream_socket_accept($server, 5);
+        if ($server === false || $writer === false || $reader === false) {
+            $show('could not open a loopback connection');
             return $log;
         }
-        [$reader, $writer] = $pair;
+        fclose($server);
+        stream_set_blocking($reader, false);
         $count = 0;
         $onEvent = function (mixed $stream, int $condition) use (&$count, $decode, $show): bool {
             $count++;
