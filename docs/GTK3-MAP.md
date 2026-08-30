@@ -7,7 +7,7 @@ implements it.
 Source of truth: php-gtk3 class headers (158 headers, ~2400 exported methods) vs.
 `src/gtk4.stub.php` + the MINIT registration block in `src/gtk4.cpp`.
 
-Status column regenerated 2026-08-29 by `gen/map-status.php` (run by `gen/gir.php --install`);
+Status column regenerated 2026-08-30 by `gen/map-status.php` (run by `gen/gir.php --install`);
 the notes are hand-written and may lag.
 
 ## Legend
@@ -45,7 +45,7 @@ is open work.
 
 ---
 
-## Core / GObject layer (`src/G/`)
+## Core / GObject layer (`php-gtk3/src/G/`)
 
 | php-gtk3 class | gtk3 methods | GTK 4 replacement | php-gtk4 | Notes |
 | --- | ---: | --- | :---: | --- |
@@ -56,7 +56,7 @@ is open work.
 | — | — | `GVariant` (as plain PHP values) | ✅ | New: `src/core/variant.cpp`, used by `GSimpleAction`. |
 | — | — | `GAction` / `GActionMap` / `GActionGroup` / `GSimpleAction` | ✅ | New: GTK 4 replaces `GtkAction`/`GtkUIManager` with the `GAction` stack. |
 
-## Gtk top-level (`src/Gtk/Gtk.h`)
+## Gtk top-level (`php-gtk3/src/Gtk/Gtk.h`)
 
 | php-gtk3 method | GTK 4 replacement | php-gtk4 | Notes |
 | --- | --- | :---: | --- |
@@ -76,7 +76,7 @@ is open work.
 | `GtkContainer` | 38 | — | ⛔ | **Removed in GTK 4.** Children are set per-widget (`set_child`) or via container-specific API (`GtkBox::append`, `GtkGrid::attach`). `set_child()` is already on `GtkWindow`/`GtkButton`. |
 | `GtkBin` | 2 | — | ⛔ | Removed; folded into `set_child`/`get_child`. |
 | `GtkBox` | 14 | `GtkBox` | ✅ | `append`, `prepend`, `insert_child_after`, `remove`, `set_spacing`, `set_homogeneous`, `set_orientation`, `get_children`. `pack_start`/`pack_end` are gone, and GTK inserts rather than reparents — move = `remove()` then insert. |
-| `GtkHBox` / `GtkVBox` | 1 + 1 | `GtkBox` w/ orientation | ⛔ | Removed in GTK 3.2 already; use `new GtkBox(Orientation::Horizontal)`. |
+| `GtkHBox` / `GtkVBox` | 1 + 1 | `GtkBox` w/ orientation | ⛔ | Removed in GTK 3.2 already; use `new GtkBox(GtkOrientation::Horizontal, 0)`. |
 | `GtkGrid` | 21 | `GtkGrid` | ✅ | Largely unchanged (`attach`, `attach_next_to`, `insert_row/column`). |
 | `GtkTable` | 15 | `GtkGrid` | ⛔ | Removed; port callers to `GtkGrid`. |
 | `GtkFixed` | 3 | `GtkFixed` | ✅ | `put`/`move` survive; `gtk_fixed_get_children` does not. |

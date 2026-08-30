@@ -9,6 +9,12 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- GitHub issue forms (`.github/ISSUE_TEMPLATE/`): a bug form that requires the versions
+  (`Gtk4\VERSION`/`BUILD_INFO`/`FEATURES`, `php -v`, `pkg-config --modversion gtk4`), the OS, the
+  display server, how the extension was installed, a single-file reproduction script, the expected
+  behaviour and the output; a feature form that requires the GTK symbol, the use case and a
+  documentation link. Blank issues are disabled and `IssueTemplateTest` guards the required fields.
+
 - Debugging the examples with Xdebug: `.vscode/launch.json` (F5 on an example file debugs its page
   through `examples/demo.php`, plus configurations for the whole demo, an arbitrary script, one
   filtered PHPUnit test and a listen-only session), `.vscode/tasks.json` (build, run, `ci.sh`) and

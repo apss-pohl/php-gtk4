@@ -220,7 +220,8 @@ display, and calls `Gtk::init()` once.
   class (`WidgetTest`, `LabelTest`, `ButtonTest`, `BoxTest`, `ActionTest`, `TextureTest`,
   `ListStoreTest`, `FilterSortTest`, `DrawingAreaTest`, `ApplicationTest`, …), and the meta tests
   (`ExtensionTest`, `StubsTest`, `ExampleTest`, `EveryClassTest`, `RobustnessTest`, `DocsTest`,
-  `HeaderNamesTest`, `WorkflowsTest`). Every test that touches GTK extends `GtkTestCase`; the meta
+  `HeaderNamesTest`, `WorkflowsTest`, `CommitLintTest`, `ReleaseNotesTest`,
+  `GeneratorIdempotenceTest`, `VscodeConfigTest`). Every test that touches GTK extends `GtkTestCase`; the meta
   tests that never load a widget extend PHPUnit's `TestCase` directly. Fixtures that subclass GTK
   classes live in `tests/Subclass/` (namespace `PhpGtk4\Tests\Subclass`), script-only ones next to
   their script in `tests/scripts/`. `GtkTestCase`
@@ -339,7 +340,8 @@ and `SHA256SUMS`, with
 build provenance attestation instead of a signed tag. **`VERSION` is the only release trigger; never
 create a tag or a release by hand.** docs/RELEASING.md is the full description.
 `.github/copilot-instructions.md` is a one-liner pointing at this file — keep project-wide
-conventions here only.
+conventions here only. `.github/ISSUE_TEMPLATE/` holds two issue forms (bug, feature) with the
+context fields marked required and blank issues disabled; `IssueTemplateTest` keeps them that way.
 
 ## Architecture
 

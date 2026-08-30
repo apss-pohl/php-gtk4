@@ -14,11 +14,12 @@ build). See `docs/PLAN.md` for the design.
 
 ```php
 <?php
-use Gtk4\{Gtk, GtkApplication, GtkWindow};
+use Gtk4\{GApplicationFlags, GtkApplication, GtkWindow};
 
-$app = new GtkApplication('org.example.Hello');
+$app = new GtkApplication('org.example.Hello', GApplicationFlags::DEFAULT_FLAGS);
 $app->connect('activate', function (GtkApplication $app): void {
-    $win = new GtkWindow($app);
+    $win = new GtkWindow();
+    $win->set_application($app);         // constructors mirror GTK: no extra arguments
     $win->title = 'php-gtk4';            // GObject properties are PHP properties
     $win->set_default_size(300, 200);
     $win->connect('close-request', fn() => false);
@@ -103,7 +104,15 @@ and to the [PHP](https://www.php.net/) project, whose `build/gen_stub.php` this 
 php-gtk3 is LGPL-3.0; php-gtk4 is a from-scratch reimplementation against the native Zend API and
 shares no code with it.
 
-## License
+## License and warranty
 
 [MIT](LICENSE). `gen/gen_stub.php` is vendored from
 [php-src](https://github.com/php/php-src/blob/master/build/gen_stub.php) (PHP License 3.01).
+
+**This software comes with no warranty of any kind.** It is provided *as is*, without warranty
+express or implied, including but not limited to merchantability, fitness for a particular purpose
+and non-infringement; the authors and copyright holders are not liable for any claim, damages or
+other liability arising from it or its use (see [LICENSE](LICENSE) for the binding wording). It
+drives a native toolkit in your process: a bug here can take the whole application down. Version
+0.x means the API can still change between releases — pin a version, run your own tests, and use
+it at your own risk.

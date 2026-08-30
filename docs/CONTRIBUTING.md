@@ -173,6 +173,15 @@ CI checks the **PR title** as well, because `main` takes squash merges and the t
 commit message then. `git commit --fixup` is fine locally; autosquash it away (`git rebase -i
 --autosquash`) before pushing, or CI rejects the branch.
 
+## Reporting a bug
+
+Issues go through the forms in `.github/ISSUE_TEMPLATE` — blank issues are disabled. The bug form
+asks for the things nobody can reconstruct afterwards: `Gtk4\VERSION` / `BUILD_INFO` / `FEATURES`,
+`php -v`, `pkg-config --modversion gtk4`, the OS, the display server (X11, Wayland, headless — GTK
+behaves differently per backend), how the extension was installed, and a **single-file script** that
+reproduces it. `ci.sh` and the test suite are the same tools you would use to answer such a report,
+so a bug that reproduces in a `tests/` case is the most useful shape of all.
+
 ## Pull requests
 
 - Branch from `main`; one topic per PR. `pre-push` has already run `./ci.sh` when you push.
