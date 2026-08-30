@@ -189,5 +189,6 @@ ZEND_METHOD(Gtk4_GtkProgressBar, set_text) {
   Z_PARAM_STR_OR_NULL(text)
   ZEND_PARSE_PARAMETERS_END();
   GtkProgressBar *self = PHPGTK_SELF(GtkProgressBar, GTK_TYPE_PROGRESS_BAR);
+  if (text != nullptr && !phpgtk::check_utf8(text, 1)) RETURN_THROWS();
   gtk_progress_bar_set_text(self, text != nullptr ? ZSTR_VAL(text) : nullptr);
 }

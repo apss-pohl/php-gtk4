@@ -217,8 +217,10 @@ bool to_gvalue(zval *pv, GType t, GValue *out) {
         g_value_set_string(out, nullptr);
       } else {
         zend_string *s = zval_get_string(pv);
-        g_value_set_string(out, ZSTR_VAL(s));
+        const bool ok = check_utf8(s, 0);
+        if (ok) g_value_set_string(out, ZSTR_VAL(s));
         zend_string_release(s);
+        if (!ok) return false;
       }
       return true;
     }

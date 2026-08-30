@@ -38,6 +38,7 @@ ZEND_METHOD(Gtk4_GdkDisplay, open) {
   Z_PARAM_OPTIONAL
   Z_PARAM_STR_OR_NULL(display_name)
   ZEND_PARSE_PARAMETERS_END();
+  if (display_name != nullptr && !phpgtk::check_utf8(display_name, 1)) RETURN_THROWS();
   GdkDisplay *result = gdk_display_open(display_name != nullptr ? ZSTR_VAL(display_name) : nullptr);
   wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
 }

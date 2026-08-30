@@ -174,6 +174,7 @@ ZEND_METHOD(Gtk4_GtkDropDown, set_selected) {
   Z_PARAM_LONG(position)
   ZEND_PARSE_PARAMETERS_END();
   GtkDropDown *self = PHPGTK_SELF(GtkDropDown, GTK_TYPE_DROP_DOWN);
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
   gtk_drop_down_set_selected(self, static_cast<guint>(position));
 }
 

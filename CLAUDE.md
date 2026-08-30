@@ -448,7 +448,15 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
 - Actions: `GSimpleAction` + `GtkApplication::add_action()`; GVariant parameters/states are plain
   PHP values. `has_action/list_actions/activate_action` only work once the app is registered
   (from `startup` on); `add/remove/lookup_action` always. Errors raised *to* PHP from methods use the PHP 8
-  vocabulary, by what went wrong: bad *argument* → `zend_argument_value_error(pos, …)` /
+  vocabulary, by what went wrong. Two argument checks are shared and must not be skipped
+  (`src/php_gtk4.h`, emitted by the generator, applied by `core/marshal` for property writes and
+  signal arguments, and by `core/variant` for GVariant strings): `check_utf8()` — a GLib string
+  ends at the first NUL and has to be valid UTF-8, a PHP string is neither, and both used to fail
+  silently (`GBytes` parameters are binary and are *not* validated); `check_range<T>()` — a
+  `zend_long` is 64-bit and signed, most C parameters are not, and a negative value used to reach
+  GTK as a huge unsigned one. `core/variant` also caps nesting at 64 and refuses an array that
+  contains itself: both used to be a SIGSEGV (`ArgumentGuardTest`). The vocabulary:
+  bad *argument* → `zend_argument_value_error(pos, …)` /
   `zend_argument_type_error` / `zend_argument_count_error` (`ValueError`/`TypeError`/
   `ArgumentCountError`) — always the positional form when the value came in as a parameter, so
   the message names it (`connect(): Argument #1 ($signal) …`); a dead handle passed *as an

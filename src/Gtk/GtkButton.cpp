@@ -39,6 +39,7 @@ ZEND_METHOD(Gtk4_GtkButton, new_from_icon_name) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_STR(icon_name)
   ZEND_PARSE_PARAMETERS_END();
+  if (!phpgtk::check_utf8(icon_name, 1)) RETURN_THROWS();
   GObject *obj = G_OBJECT(gtk_button_new_from_icon_name(ZSTR_VAL(icon_name)));
   wrap(obj, return_value);
 }
@@ -53,6 +54,7 @@ ZEND_METHOD(Gtk4_GtkButton, new_with_label) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_STR(label)
   ZEND_PARSE_PARAMETERS_END();
+  if (!phpgtk::check_utf8(label, 1)) RETURN_THROWS();
   GObject *obj = G_OBJECT(gtk_button_new_with_label(ZSTR_VAL(label)));
   wrap(obj, return_value);
 }
@@ -67,6 +69,7 @@ ZEND_METHOD(Gtk4_GtkButton, new_with_mnemonic) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_STR(label)
   ZEND_PARSE_PARAMETERS_END();
+  if (!phpgtk::check_utf8(label, 1)) RETURN_THROWS();
   GObject *obj = G_OBJECT(gtk_button_new_with_mnemonic(ZSTR_VAL(label)));
   wrap(obj, return_value);
 }
@@ -196,6 +199,7 @@ ZEND_METHOD(Gtk4_GtkButton, set_icon_name) {
   Z_PARAM_STR(icon_name)
   ZEND_PARSE_PARAMETERS_END();
   GtkButton *self = PHPGTK_SELF(GtkButton, GTK_TYPE_BUTTON);
+  if (!phpgtk::check_utf8(icon_name, 1)) RETURN_THROWS();
   gtk_button_set_icon_name(self, ZSTR_VAL(icon_name));
 }
 
@@ -210,6 +214,7 @@ ZEND_METHOD(Gtk4_GtkButton, set_label) {
   Z_PARAM_STR(label)
   ZEND_PARSE_PARAMETERS_END();
   GtkButton *self = PHPGTK_SELF(GtkButton, GTK_TYPE_BUTTON);
+  if (!phpgtk::check_utf8(label, 1)) RETURN_THROWS();
   gtk_button_set_label(self, ZSTR_VAL(label));
 }
 

@@ -35,9 +35,65 @@ extern "C" {
 #define PHPGTK_BUILD_FEATURES "webkit=no"
 #endif
 
+#include <type_traits>
+
 extern zend_module_entry gtk4_module_entry;
 // NOLINTNEXTLINE(readability-identifier-naming) the name Zend's static-build glue expects
 #define phpext_gtk4_ptr &gtk4_module_entry
+
+// ---- argument checks shared by hand-written and generated methods --------------------
+// GLib strings are NUL-terminated UTF-8. A PHP string is neither by definition, and passing
+// one through unchecked meant an embedded NUL silently truncated what GTK stored (PHP saw
+// "a\0b", the window title said "a") while invalid UTF-8 tripped a g_return_if_fail deep
+// inside GLib, where the value was dropped with only a CRITICAL on stderr. Both are argument
+// errors and are reported as such. `arg` is the 1-based argument number, 0 for a value that
+// is not an argument (a property write, a signal argument).
+namespace phpgtk {
+inline bool check_utf8(const zend_string *s, uint32_t arg) {
+  const char *val = ZSTR_VAL(s);
+  const size_t len = ZSTR_LEN(s);
+  if (memchr(val, '\0', len) != nullptr) {
+    if (arg != 0) {
+      zend_argument_value_error(arg, "must not contain a null byte (GTK strings end at one)");
+    } else {
+      zend_value_error("string must not contain a null byte (GTK strings end at one)");
+    }
+    return false;
+  }
+  if (!g_utf8_validate(val, static_cast<gssize>(len), nullptr)) {
+    if (arg != 0) {
+      zend_argument_value_error(arg, "must be valid UTF-8");
+    } else {
+      zend_value_error("string must be valid UTF-8");
+    }
+    return false;
+  }
+  return true;
+}
+
+// PHP integers are 64-bit and signed; most C parameters are neither. Without this a
+// negative value became a huge unsigned one (`$store->remove(-1)` reached GTK as
+// 4294967295) and a too-large one was truncated, in both cases silently.
+template <typename T>
+inline bool check_range(zend_long v, uint32_t arg) {
+  static_assert(std::is_integral_v<T> && sizeof(T) <= sizeof(zend_long), "wider than zend_long");
+  constexpr int bits = static_cast<int>(sizeof(T) * 8);
+  constexpr bool is_signed = std::is_signed_v<T>;
+  // Derived from the width rather than std::numeric_limits<T>, so a one-byte type does not put
+  // a `char` through an integer conversion. An unsigned 64-bit parameter (gsize) keeps
+  // ZEND_LONG_MAX as its ceiling: PHP cannot express more, so the real bound is the floor.
+  constexpr zend_long widest = bits >= 64 ? ZEND_LONG_MAX : (zend_long{1} << bits) - 1;
+  constexpr zend_long signed_max = bits >= 64 ? ZEND_LONG_MAX : (zend_long{1} << (bits - 1)) - 1;
+  constexpr zend_long signed_min = bits >= 64 ? ZEND_LONG_MIN : -(zend_long{1} << (bits - 1));
+  constexpr zend_long lo = is_signed ? signed_min : 0;
+  constexpr zend_long hi = is_signed ? signed_max : widest;
+  if (v < lo || v > hi) {
+    zend_argument_value_error(arg, "must be between " ZEND_LONG_FMT " and " ZEND_LONG_FMT, lo, hi);
+    return false;
+  }
+  return true;
+}
+}  // namespace phpgtk
 
 // `const char *` that may be NULL (transfer none) -> ?string.
 #define PHPGTK_RETURN_STRING_OR_NULL(expr)   \

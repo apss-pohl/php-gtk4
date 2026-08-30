@@ -97,6 +97,7 @@ ZEND_METHOD(Gtk4_GtkDrawingArea, set_content_height) {
   Z_PARAM_LONG(height)
   ZEND_PARSE_PARAMETERS_END();
   GtkDrawingArea *self = PHPGTK_SELF(GtkDrawingArea, GTK_TYPE_DRAWING_AREA);
+  if (!phpgtk::check_range<int>(height, 1)) RETURN_THROWS();
   gtk_drawing_area_set_content_height(self, static_cast<int>(height));
 }
 
@@ -111,6 +112,7 @@ ZEND_METHOD(Gtk4_GtkDrawingArea, set_content_width) {
   Z_PARAM_LONG(width)
   ZEND_PARSE_PARAMETERS_END();
   GtkDrawingArea *self = PHPGTK_SELF(GtkDrawingArea, GTK_TYPE_DRAWING_AREA);
+  if (!phpgtk::check_range<int>(width, 1)) RETURN_THROWS();
   gtk_drawing_area_set_content_width(self, static_cast<int>(width));
 }
 
@@ -195,6 +197,8 @@ ZEND_METHOD(Gtk4_GtkDrawingArea, vfunc_resize) {
   if (klass->resize == nullptr) {
     return;
   }
+  if (!phpgtk::check_range<int>(width, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(height, 2)) RETURN_THROWS();
   klass->resize(self, static_cast<int>(width), static_cast<int>(height));
 }
 

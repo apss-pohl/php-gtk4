@@ -19,6 +19,7 @@ ZEND_METHOD(Gtk4_GSimpleAction, __construct) {
   Z_PARAM_OPTIONAL
   Z_PARAM_STR_OR_NULL(parameter_type)
   ZEND_PARSE_PARAMETERS_END();
+  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   GVariantType *parameter_type_t = nullptr;
   if (parameter_type != nullptr) {
     if (!g_variant_type_string_is_valid(ZSTR_VAL(parameter_type))) {
@@ -57,6 +58,7 @@ ZEND_METHOD(Gtk4_GSimpleAction, new_stateful) {
   Z_PARAM_OPTIONAL
   Z_PARAM_ZVAL(state)
   ZEND_PARSE_PARAMETERS_END();
+  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   GVariantType *parameter_type_t = nullptr;
   if (parameter_type != nullptr) {
     if (!g_variant_type_string_is_valid(ZSTR_VAL(parameter_type))) {

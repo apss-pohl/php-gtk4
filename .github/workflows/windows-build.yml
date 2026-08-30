@@ -41,6 +41,12 @@ env:
   # https://github.com/wingtk/gvsbuild/releases - prebuilt GTK4_Gvsbuild_<ver>_x64.zip.
   # Bump here (the cache key follows); the asset is ~300 MB so it is cached per version.
   GVSBUILD_VERSION: '2026.8.0'
+  # The archive every Windows binary is linked against, pinned by content: a release asset is
+  # mutable by its owner, and this one is cached, so without the hash a replaced upload would be
+  # picked up once and reused for every later build. Bump it with the version (docs/BUILD.md):
+  #   curl -s https://api.github.com/repos/wingtk/gvsbuild/releases/tags/<ver> \
+  #     | jq -r '.assets[] | select(.name | test("GTK4")) | .digest'
+  GVSBUILD_SHA256: '1f95a92d037f5292da05e6ab1037032ff21ddb7b20d4ac8e83e3674c864c07b0'
   GTK4_ROOT: C:\gtk
   # php-src's Windows SDK (phpsdk-vs17-x64.bat, nmake wrappers, deps handling).
   PHP_SDK_REF: master
@@ -93,18 +99,26 @@ jobs:
       - name: PHP SDK binary tools
         run: git clone --depth 1 --branch $env:PHP_SDK_REF https://github.com/php/php-sdk-binary-tools C:\php-sdk
 
+      # The hash is part of the key: bumping the pin can never resolve to the old tree.
       - name: Cache gvsbuild GTK 4
         id: gtk-cache
         uses: actions/cache@v6
         with:
           path: C:\gtk
-          key: gvsbuild-gtk4-${{ env.GVSBUILD_VERSION }}-x64
+          key: gvsbuild-gtk4-${{ env.GVSBUILD_VERSION }}-${{ env.GVSBUILD_SHA256 }}-x64
 
       - name: Download gvsbuild GTK 4 ${{ env.GVSBUILD_VERSION }}
         if: steps.gtk-cache.outputs.cache-hit != 'true'
         run: |
           $zip = "GTK4_Gvsbuild_$env:GVSBUILD_VERSION`_x64.zip"
           Invoke-WebRequest -Uri "https://github.com/wingtk/gvsbuild/releases/download/$env:GVSBUILD_VERSION/$zip" -OutFile $zip
+          # Everything below - and every php_gtk4.dll this repository publishes - trusts this
+          # archive. Verify it before it is unpacked, not after.
+          $got = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
+          if ($got -ne $env:GVSBUILD_SHA256) {
+            throw "gvsbuild archive hash mismatch: got $got, GVSBUILD_SHA256 says $env:GVSBUILD_SHA256"
+          }
+          Write-Host "gvsbuild archive verified: $got"
           Expand-Archive $zip -DestinationPath C:\gtk
           # The asset may carry one wrapping directory; config.w32 wants <root>\include\gtk-4.0.
           if (-not (Test-Path C:\gtk\include\gtk-4.0)) {
@@ -113,7 +127,21 @@ jobs:
             Get-ChildItem $inner.FullName | Move-Item -Destination C:\gtk
             Remove-Item $inner.FullName -Recurse
           }
+          Set-Content -Path C:\gtk\.gvsbuild-sha256 -Value $env:GVSBUILD_SHA256 -NoNewline
           Get-ChildItem C:\gtk
+
+      # A cache entry is not the archive: an Actions cache can be written by other workflow runs
+      # in this repository, so the restored tree has to say which archive it came from.
+      - name: Verify the restored gvsbuild cache
+        if: steps.gtk-cache.outputs.cache-hit == 'true'
+        run: |
+          $stamp = 'C:\gtk\.gvsbuild-sha256'
+          if (-not (Test-Path $stamp)) { throw "restored gvsbuild cache has no $stamp - refusing it" }
+          $got = (Get-Content $stamp -Raw).Trim()
+          if ($got -ne $env:GVSBUILD_SHA256) {
+            throw "restored gvsbuild cache says $got, GVSBUILD_SHA256 says $env:GVSBUILD_SHA256"
+          }
+          Write-Host "gvsbuild cache verified: $got"
 
       # phpize.bat (devel pack) -> configure.js from config.w32 -> configure -> nmake, inside the
       # SDK shell so cl/link/nmake for the VS series PHP was built with are on PATH. The build

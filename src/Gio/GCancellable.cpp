@@ -68,6 +68,7 @@ ZEND_METHOD(Gtk4_GCancellable, disconnect) {
   Z_PARAM_LONG(handler_id)
   ZEND_PARSE_PARAMETERS_END();
   GCancellable *self = PHPGTK_SELF(GCancellable, G_TYPE_CANCELLABLE);
+  if (!phpgtk::check_range<gulong>(handler_id, 1)) RETURN_THROWS();
   g_cancellable_disconnect(self, static_cast<gulong>(handler_id));
 }
 

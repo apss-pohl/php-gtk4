@@ -130,6 +130,7 @@ ZEND_METHOD(Gtk4_GtkEventController, set_name) {
   Z_PARAM_STR_OR_NULL(name)
   ZEND_PARSE_PARAMETERS_END();
   GtkEventController *self = PHPGTK_SELF(GtkEventController, GTK_TYPE_EVENT_CONTROLLER);
+  if (name != nullptr && !phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   gtk_event_controller_set_name(self, name != nullptr ? ZSTR_VAL(name) : nullptr);
 }
 
@@ -176,5 +177,6 @@ ZEND_METHOD(Gtk4_GtkEventController, set_static_name) {
   Z_PARAM_STR_OR_NULL(name)
   ZEND_PARSE_PARAMETERS_END();
   GtkEventController *self = PHPGTK_SELF(GtkEventController, GTK_TYPE_EVENT_CONTROLLER);
+  if (name != nullptr && !phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   gtk_event_controller_set_static_name(self, name != nullptr ? ZSTR_VAL(name) : nullptr);
 }

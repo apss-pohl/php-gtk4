@@ -26,6 +26,7 @@ ZEND_METHOD(Gtk4_GtkSpinButton, __construct) {
     adjustment_o = unwrap(adjustment, GTK_TYPE_ADJUSTMENT);
     if (adjustment_o == nullptr) RETURN_THROWS();
   }
+  if (!phpgtk::check_range<guint>(digits, 3)) RETURN_THROWS();
   GObject *obj = subtype_new(
       ZEND_THIS, "adjustment", adjustment_o != nullptr ? GTK_ADJUSTMENT(adjustment_o) : nullptr,
       "climb-rate", climb_rate, "digits", static_cast<guint>(digits), nullptr);
@@ -83,6 +84,7 @@ ZEND_METHOD(Gtk4_GtkSpinButton, configure) {
     adjustment_o = unwrap(adjustment, GTK_TYPE_ADJUSTMENT);
     if (adjustment_o == nullptr) RETURN_THROWS();
   }
+  if (!phpgtk::check_range<guint>(digits, 3)) RETURN_THROWS();
   gtk_spin_button_configure(self, adjustment_o != nullptr ? GTK_ADJUSTMENT(adjustment_o) : nullptr,
                             climb_rate, static_cast<guint>(digits));
 }
@@ -304,6 +306,7 @@ ZEND_METHOD(Gtk4_GtkSpinButton, set_digits) {
   Z_PARAM_LONG(digits)
   ZEND_PARSE_PARAMETERS_END();
   GtkSpinButton *self = PHPGTK_SELF(GtkSpinButton, GTK_TYPE_SPIN_BUTTON);
+  if (!phpgtk::check_range<guint>(digits, 1)) RETURN_THROWS();
   gtk_spin_button_set_digits(self, static_cast<guint>(digits));
 }
 

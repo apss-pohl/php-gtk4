@@ -311,6 +311,7 @@ ZEND_METHOD(Gtk4_GTask, set_name) {
   Z_PARAM_STR_OR_NULL(name)
   ZEND_PARSE_PARAMETERS_END();
   GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
+  if (name != nullptr && !phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   g_task_set_name(self, name != nullptr ? ZSTR_VAL(name) : nullptr);
 }
 
@@ -325,6 +326,7 @@ ZEND_METHOD(Gtk4_GTask, set_priority) {
   Z_PARAM_LONG(priority)
   ZEND_PARSE_PARAMETERS_END();
   GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
+  if (!phpgtk::check_range<gint>(priority, 1)) RETURN_THROWS();
   g_task_set_priority(self, static_cast<gint>(priority));
 }
 
@@ -354,5 +356,6 @@ ZEND_METHOD(Gtk4_GTask, set_static_name) {
   Z_PARAM_STR_OR_NULL(name)
   ZEND_PARSE_PARAMETERS_END();
   GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
+  if (name != nullptr && !phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   g_task_set_static_name(self, name != nullptr ? ZSTR_VAL(name) : nullptr);
 }

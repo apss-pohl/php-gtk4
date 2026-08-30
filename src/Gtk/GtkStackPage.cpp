@@ -104,6 +104,7 @@ ZEND_METHOD(Gtk4_GtkStackPage, set_icon_name) {
   Z_PARAM_STR(setting)
   ZEND_PARSE_PARAMETERS_END();
   GtkStackPage *self = PHPGTK_SELF(GtkStackPage, GTK_TYPE_STACK_PAGE);
+  if (!phpgtk::check_utf8(setting, 1)) RETURN_THROWS();
   gtk_stack_page_set_icon_name(self, ZSTR_VAL(setting));
 }
 
@@ -118,6 +119,7 @@ ZEND_METHOD(Gtk4_GtkStackPage, set_name) {
   Z_PARAM_STR(setting)
   ZEND_PARSE_PARAMETERS_END();
   GtkStackPage *self = PHPGTK_SELF(GtkStackPage, GTK_TYPE_STACK_PAGE);
+  if (!phpgtk::check_utf8(setting, 1)) RETURN_THROWS();
   gtk_stack_page_set_name(self, ZSTR_VAL(setting));
 }
 
@@ -146,6 +148,7 @@ ZEND_METHOD(Gtk4_GtkStackPage, set_title) {
   Z_PARAM_STR(setting)
   ZEND_PARSE_PARAMETERS_END();
   GtkStackPage *self = PHPGTK_SELF(GtkStackPage, GTK_TYPE_STACK_PAGE);
+  if (!phpgtk::check_utf8(setting, 1)) RETURN_THROWS();
   gtk_stack_page_set_title(self, ZSTR_VAL(setting));
 }
 

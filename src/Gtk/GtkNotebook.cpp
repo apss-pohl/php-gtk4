@@ -196,6 +196,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, get_nth_page) {
   Z_PARAM_LONG(page_num)
   ZEND_PARSE_PARAMETERS_END();
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
+  if (!phpgtk::check_range<int>(page_num, 1)) RETURN_THROWS();
   GtkWidget *result = gtk_notebook_get_nth_page(self, static_cast<int>(page_num));
   wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
 }
@@ -361,6 +362,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, insert_page) {
     tab_label_o = unwrap(tab_label, GTK_TYPE_WIDGET);
     if (tab_label_o == nullptr) RETURN_THROWS();
   }
+  if (!phpgtk::check_range<int>(position, 3)) RETURN_THROWS();
   RETURN_LONG(static_cast<zend_long>(gtk_notebook_insert_page(
       self, GTK_WIDGET(child_o), tab_label_o != nullptr ? GTK_WIDGET(tab_label_o) : nullptr,
       static_cast<int>(position))));
@@ -397,6 +399,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, insert_page_menu) {
     menu_label_o = unwrap(menu_label, GTK_TYPE_WIDGET);
     if (menu_label_o == nullptr) RETURN_THROWS();
   }
+  if (!phpgtk::check_range<int>(position, 4)) RETURN_THROWS();
   RETURN_LONG(static_cast<zend_long>(gtk_notebook_insert_page_menu(
       self, GTK_WIDGET(child_o), tab_label_o != nullptr ? GTK_WIDGET(tab_label_o) : nullptr,
       menu_label_o != nullptr ? GTK_WIDGET(menu_label_o) : nullptr, static_cast<int>(position))));
@@ -530,6 +533,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, remove_page) {
   Z_PARAM_LONG(page_num)
   ZEND_PARSE_PARAMETERS_END();
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
+  if (!phpgtk::check_range<int>(page_num, 1)) RETURN_THROWS();
   gtk_notebook_remove_page(self, static_cast<int>(page_num));
 }
 
@@ -548,6 +552,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, reorder_child) {
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(position, 2)) RETURN_THROWS();
   gtk_notebook_reorder_child(self, GTK_WIDGET(child_o), static_cast<int>(position));
 }
 
@@ -582,6 +587,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, set_current_page) {
   Z_PARAM_LONG(page_num)
   ZEND_PARSE_PARAMETERS_END();
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
+  if (!phpgtk::check_range<int>(page_num, 1)) RETURN_THROWS();
   gtk_notebook_set_current_page(self, static_cast<int>(page_num));
 }
 
@@ -596,6 +602,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, set_group_name) {
   Z_PARAM_STR_OR_NULL(group_name)
   ZEND_PARSE_PARAMETERS_END();
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
+  if (group_name != nullptr && !phpgtk::check_utf8(group_name, 1)) RETURN_THROWS();
   gtk_notebook_set_group_name(self, group_name != nullptr ? ZSTR_VAL(group_name) : nullptr);
 }
 
@@ -638,6 +645,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, set_menu_label_text) {
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_utf8(menu_text, 2)) RETURN_THROWS();
   gtk_notebook_set_menu_label_text(self, GTK_WIDGET(child_o), ZSTR_VAL(menu_text));
 }
 
@@ -741,6 +749,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, set_tab_label_text) {
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_utf8(tab_text, 2)) RETURN_THROWS();
   gtk_notebook_set_tab_label_text(self, GTK_WIDGET(child_o), ZSTR_VAL(tab_text));
 }
 

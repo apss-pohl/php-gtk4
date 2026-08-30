@@ -21,6 +21,7 @@ ZEND_METHOD(Gtk4_GtkBox, __construct) {
   ZEND_PARSE_PARAMETERS_END();
   gint orientation_v = 0;
   if (!enum_from_php(orientation, GTK_TYPE_ORIENTATION, &orientation_v)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(spacing, 2)) RETURN_THROWS();
   GObject *obj = subtype_new(ZEND_THIS, "orientation", static_cast<GtkOrientation>(orientation_v),
                              "spacing", static_cast<int>(spacing), nullptr);
   if (obj == nullptr) {
@@ -189,6 +190,7 @@ ZEND_METHOD(Gtk4_GtkBox, set_baseline_child) {
   Z_PARAM_LONG(child)
   ZEND_PARSE_PARAMETERS_END();
   GtkBox *self = PHPGTK_SELF(GtkBox, GTK_TYPE_BOX);
+  if (!phpgtk::check_range<int>(child, 1)) RETURN_THROWS();
   gtk_box_set_baseline_child(self, static_cast<int>(child));
 }
 
@@ -233,6 +235,7 @@ ZEND_METHOD(Gtk4_GtkBox, set_spacing) {
   Z_PARAM_LONG(spacing)
   ZEND_PARSE_PARAMETERS_END();
   GtkBox *self = PHPGTK_SELF(GtkBox, GTK_TYPE_BOX);
+  if (!phpgtk::check_range<int>(spacing, 1)) RETURN_THROWS();
   gtk_box_set_spacing(self, static_cast<int>(spacing));
 }
 

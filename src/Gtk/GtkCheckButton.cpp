@@ -40,6 +40,7 @@ ZEND_METHOD(Gtk4_GtkCheckButton, new_with_label) {
   Z_PARAM_OPTIONAL
   Z_PARAM_STR_OR_NULL(label)
   ZEND_PARSE_PARAMETERS_END();
+  if (label != nullptr && !phpgtk::check_utf8(label, 1)) RETURN_THROWS();
   GObject *obj =
       G_OBJECT(gtk_check_button_new_with_label(label != nullptr ? ZSTR_VAL(label) : nullptr));
   wrap(obj, return_value);
@@ -56,6 +57,7 @@ ZEND_METHOD(Gtk4_GtkCheckButton, new_with_mnemonic) {
   Z_PARAM_OPTIONAL
   Z_PARAM_STR_OR_NULL(label)
   ZEND_PARSE_PARAMETERS_END();
+  if (label != nullptr && !phpgtk::check_utf8(label, 1)) RETURN_THROWS();
   GObject *obj =
       G_OBJECT(gtk_check_button_new_with_mnemonic(label != nullptr ? ZSTR_VAL(label) : nullptr));
   wrap(obj, return_value);
@@ -194,6 +196,7 @@ ZEND_METHOD(Gtk4_GtkCheckButton, set_label) {
   Z_PARAM_STR_OR_NULL(label)
   ZEND_PARSE_PARAMETERS_END();
   GtkCheckButton *self = PHPGTK_SELF(GtkCheckButton, GTK_TYPE_CHECK_BUTTON);
+  if (label != nullptr && !phpgtk::check_utf8(label, 1)) RETURN_THROWS();
   gtk_check_button_set_label(self, label != nullptr ? ZSTR_VAL(label) : nullptr);
 }
 

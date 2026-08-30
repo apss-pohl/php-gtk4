@@ -21,6 +21,7 @@ ZEND_METHOD(Gtk4_GtkApplication, __construct) {
   Z_PARAM_STR_OR_NULL(application_id)
   Z_PARAM_LONG(flags)
   ZEND_PARSE_PARAMETERS_END();
+  if (application_id != nullptr && !phpgtk::check_utf8(application_id, 1)) RETURN_THROWS();
   GObject *obj = subtype_new(ZEND_THIS, "application-id",
                              application_id != nullptr ? ZSTR_VAL(application_id) : nullptr,
                              "flags", static_cast<GApplicationFlags>(flags), nullptr);
@@ -67,6 +68,7 @@ ZEND_METHOD(Gtk4_GtkApplication, get_accels_for_action) {
   Z_PARAM_STR(detailed_action_name)
   ZEND_PARSE_PARAMETERS_END();
   GtkApplication *self = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
+  if (!phpgtk::check_utf8(detailed_action_name, 1)) RETURN_THROWS();
   strv_to_php(gtk_application_get_accels_for_action(self, ZSTR_VAL(detailed_action_name)),
               Transfer::Full, return_value);
 }
@@ -82,6 +84,7 @@ ZEND_METHOD(Gtk4_GtkApplication, get_actions_for_accel) {
   Z_PARAM_STR(accel)
   ZEND_PARSE_PARAMETERS_END();
   GtkApplication *self = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
+  if (!phpgtk::check_utf8(accel, 1)) RETURN_THROWS();
   strv_to_php(gtk_application_get_actions_for_accel(self, ZSTR_VAL(accel)), Transfer::Full,
               return_value);
 }
@@ -109,6 +112,7 @@ ZEND_METHOD(Gtk4_GtkApplication, get_menu_by_id) {
   Z_PARAM_STR(id)
   ZEND_PARSE_PARAMETERS_END();
   GtkApplication *self = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
+  if (!phpgtk::check_utf8(id, 1)) RETURN_THROWS();
   GMenu *result = gtk_application_get_menu_by_id(self, ZSTR_VAL(id));
   wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
 }
@@ -136,6 +140,7 @@ ZEND_METHOD(Gtk4_GtkApplication, get_window_by_id) {
   Z_PARAM_LONG(id)
   ZEND_PARSE_PARAMETERS_END();
   GtkApplication *self = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
+  if (!phpgtk::check_range<guint>(id, 1)) RETURN_THROWS();
   GtkWindow *result = gtk_application_get_window_by_id(self, static_cast<guint>(id));
   wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
 }
@@ -191,6 +196,7 @@ ZEND_METHOD(Gtk4_GtkApplication, set_accels_for_action) {
   Z_PARAM_ARRAY(accels)
   ZEND_PARSE_PARAMETERS_END();
   GtkApplication *self = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
+  if (!phpgtk::check_utf8(detailed_action_name, 1)) RETURN_THROWS();
   char **accels_v = strv_from_php(accels);
   if (accels_v == nullptr) RETURN_THROWS();
   gtk_application_set_accels_for_action(self, ZSTR_VAL(detailed_action_name),

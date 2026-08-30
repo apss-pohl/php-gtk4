@@ -2577,10 +2577,19 @@ final class Generator
         }
         if (in_array($t->name, ['utf8', 'filename'], true) && !$t->isArray) {
             $zpp = $t->name === 'filename' ? 'Z_PARAM_PATH_STR' : 'Z_PARAM_STR';
+            // A GLib string ends at the first NUL and has to be UTF-8; a PHP string is neither.
+            // Z_PARAM_PATH_STR already refuses the NUL, and a filename is bytes on Linux, so
+            // only utf8 parameters are validated (php_gtk4.h, check_utf8).
+            $utf8Check = [];
+            if ($t->name === 'utf8') {
+                $guard = $nullable ? "$name != nullptr && " : '';
+                $utf8Check = ["if ({$guard}!phpgtk::check_utf8($name, $argNum)) RETURN_THROWS();"];
+            }
             return array_merge($r, [
                 'phpType' => ($nullable ? '?' : '') . 'string',
                 'decl' => "zend_string *$name" . ($nullable ? ' = nullptr' : '') . ';',
                 'zpp' => $zpp . ($nullable ? '_OR_NULL' : '') . "($name)",
+                'pre' => $utf8Check,
                 // transfer full (gtk_string_list_take): the callee frees the string with g_free(),
                 // so it gets a GLib copy, never Zend's own buffer.
                 'carg' => $p->transfer === 'full'
@@ -2601,8 +2610,17 @@ final class Generator
         }
         if (preg_match(INT_TYPES, $t->name)) {
             $ct = $t->ctype ?? 'int';
+            // Without the check a negative value arrives at GTK as a huge unsigned one
+            // ($store->remove(-1) reached g_list_store_remove as 4294967295) and a too-large
+            // one is truncated - both silently. gint64/guint64 need no upper bound: PHP
+            // cannot express one (php_gtk4.h, check_range).
+            // gint64/gssize/goffset are exactly zend_long on both platforms - every value PHP
+            // can express fits. glong is *not* in that list: it is 32 bits on Windows.
+            $range = in_array($ct, ['gint64', 'gssize', 'goffset'], true)
+                ? []
+                : ["if (!phpgtk::check_range<$ct>($name, $argNum)) RETURN_THROWS();"];
             return array_merge($r, ['phpType' => 'int', 'decl' => "zend_long $name;", 'zpp' => "Z_PARAM_LONG($name)",
-                'carg' => "static_cast<$ct>($name)"]);
+                'pre' => $range, 'carg' => "static_cast<$ct>($name)"]);
         }
         if ($t->name === 'GLib.Variant') {
             return array_merge($r, [

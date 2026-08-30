@@ -54,6 +54,7 @@ ZEND_METHOD(Gtk4_GtkImage, new_from_icon_name) {
   Z_PARAM_OPTIONAL
   Z_PARAM_STR_OR_NULL(icon_name)
   ZEND_PARSE_PARAMETERS_END();
+  if (icon_name != nullptr && !phpgtk::check_utf8(icon_name, 1)) RETURN_THROWS();
   GObject *obj =
       G_OBJECT(gtk_image_new_from_icon_name(icon_name != nullptr ? ZSTR_VAL(icon_name) : nullptr));
   wrap(obj, return_value);
@@ -90,6 +91,7 @@ ZEND_METHOD(Gtk4_GtkImage, new_from_resource) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_STR(resource_path)
   ZEND_PARSE_PARAMETERS_END();
+  if (!phpgtk::check_utf8(resource_path, 1)) RETURN_THROWS();
   GObject *obj = G_OBJECT(gtk_image_new_from_resource(ZSTR_VAL(resource_path)));
   wrap(obj, return_value);
 }
@@ -186,6 +188,7 @@ ZEND_METHOD(Gtk4_GtkImage, set_from_icon_name) {
   Z_PARAM_STR_OR_NULL(icon_name)
   ZEND_PARSE_PARAMETERS_END();
   GtkImage *self = PHPGTK_SELF(GtkImage, GTK_TYPE_IMAGE);
+  if (icon_name != nullptr && !phpgtk::check_utf8(icon_name, 1)) RETURN_THROWS();
   gtk_image_set_from_icon_name(self, icon_name != nullptr ? ZSTR_VAL(icon_name) : nullptr);
 }
 
@@ -219,6 +222,7 @@ ZEND_METHOD(Gtk4_GtkImage, set_from_resource) {
   Z_PARAM_STR_OR_NULL(resource_path)
   ZEND_PARSE_PARAMETERS_END();
   GtkImage *self = PHPGTK_SELF(GtkImage, GTK_TYPE_IMAGE);
+  if (resource_path != nullptr && !phpgtk::check_utf8(resource_path, 1)) RETURN_THROWS();
   gtk_image_set_from_resource(self, resource_path != nullptr ? ZSTR_VAL(resource_path) : nullptr);
 }
 
@@ -249,5 +253,6 @@ ZEND_METHOD(Gtk4_GtkImage, set_pixel_size) {
   Z_PARAM_LONG(pixel_size)
   ZEND_PARSE_PARAMETERS_END();
   GtkImage *self = PHPGTK_SELF(GtkImage, GTK_TYPE_IMAGE);
+  if (!phpgtk::check_range<int>(pixel_size, 1)) RETURN_THROWS();
   gtk_image_set_pixel_size(self, static_cast<int>(pixel_size));
 }

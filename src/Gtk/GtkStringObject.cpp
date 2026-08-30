@@ -16,6 +16,7 @@ ZEND_METHOD(Gtk4_GtkStringObject, __construct) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_STR(string)
   ZEND_PARSE_PARAMETERS_END();
+  if (!phpgtk::check_utf8(string, 1)) RETURN_THROWS();
   GObject *obj = subtype_new(ZEND_THIS, "string", ZSTR_VAL(string), nullptr);
   if (obj == nullptr) {
     if (EG(exception) != nullptr) RETURN_THROWS();

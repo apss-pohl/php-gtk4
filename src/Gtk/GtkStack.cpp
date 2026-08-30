@@ -61,6 +61,7 @@ ZEND_METHOD(Gtk4_GtkStack, add_named) {
   GtkStack *self = PHPGTK_SELF(GtkStack, GTK_TYPE_STACK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
+  if (name != nullptr && !phpgtk::check_utf8(name, 2)) RETURN_THROWS();
   GtkStackPage *result =
       gtk_stack_add_named(self, GTK_WIDGET(child_o), name != nullptr ? ZSTR_VAL(name) : nullptr);
   wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
@@ -83,6 +84,8 @@ ZEND_METHOD(Gtk4_GtkStack, add_titled) {
   GtkStack *self = PHPGTK_SELF(GtkStack, GTK_TYPE_STACK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
+  if (name != nullptr && !phpgtk::check_utf8(name, 2)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(title, 3)) RETURN_THROWS();
   GtkStackPage *result = gtk_stack_add_titled(
       self, GTK_WIDGET(child_o), name != nullptr ? ZSTR_VAL(name) : nullptr, ZSTR_VAL(title));
   wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
@@ -99,6 +102,7 @@ ZEND_METHOD(Gtk4_GtkStack, get_child_by_name) {
   Z_PARAM_STR(name)
   ZEND_PARSE_PARAMETERS_END();
   GtkStack *self = PHPGTK_SELF(GtkStack, GTK_TYPE_STACK);
+  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   GtkWidget *result = gtk_stack_get_child_by_name(self, ZSTR_VAL(name));
   wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
 }
@@ -265,6 +269,7 @@ ZEND_METHOD(Gtk4_GtkStack, set_transition_duration) {
   Z_PARAM_LONG(duration)
   ZEND_PARSE_PARAMETERS_END();
   GtkStack *self = PHPGTK_SELF(GtkStack, GTK_TYPE_STACK);
+  if (!phpgtk::check_range<guint>(duration, 1)) RETURN_THROWS();
   gtk_stack_set_transition_duration(self, static_cast<guint>(duration));
 }
 
@@ -327,6 +332,7 @@ ZEND_METHOD(Gtk4_GtkStack, set_visible_child_full) {
   Z_PARAM_OBJECT_OF_CLASS(transition, enum_class_for_type(GTK_TYPE_STACK_TRANSITION_TYPE))
   ZEND_PARSE_PARAMETERS_END();
   GtkStack *self = PHPGTK_SELF(GtkStack, GTK_TYPE_STACK);
+  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   gint transition_v = 0;
   if (!enum_from_php(transition, GTK_TYPE_STACK_TRANSITION_TYPE, &transition_v)) RETURN_THROWS();
   gtk_stack_set_visible_child_full(self, ZSTR_VAL(name),
@@ -344,5 +350,6 @@ ZEND_METHOD(Gtk4_GtkStack, set_visible_child_name) {
   Z_PARAM_STR(name)
   ZEND_PARSE_PARAMETERS_END();
   GtkStack *self = PHPGTK_SELF(GtkStack, GTK_TYPE_STACK);
+  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   gtk_stack_set_visible_child_name(self, ZSTR_VAL(name));
 }

@@ -121,6 +121,7 @@ ZEND_METHOD(Gtk4_GtkHeaderBar, set_decoration_layout) {
   Z_PARAM_STR_OR_NULL(layout)
   ZEND_PARSE_PARAMETERS_END();
   GtkHeaderBar *self = PHPGTK_SELF(GtkHeaderBar, GTK_TYPE_HEADER_BAR);
+  if (layout != nullptr && !phpgtk::check_utf8(layout, 1)) RETURN_THROWS();
   gtk_header_bar_set_decoration_layout(self, layout != nullptr ? ZSTR_VAL(layout) : nullptr);
 }
 

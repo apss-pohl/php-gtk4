@@ -26,10 +26,27 @@ final class WorkflowsTest extends TestCase
         self::assertSame(1, $hit, "windows-build.yml: no GVSBUILD_VERSION: 'YYYY.M.N' pin");
         self::assertStringContainsString('workflow_call', $shared);
 
+        // Every published php_gtk4.dll is linked against that archive, and a GitHub release
+        // asset can be replaced by its owner - so the pin is by content, not by version, and
+        // the workflow has to check it on the download *and* on a restored cache.
+        self::assertSame(
+            1,
+            preg_match("/^\s*GVSBUILD_SHA256: '([0-9a-f]{64})'\s*$/m", $shared),
+            'windows-build.yml: no GVSBUILD_SHA256 pin (64 hex characters)',
+        );
+        self::assertStringContainsString('Get-FileHash $zip -Algorithm SHA256', $shared);
+        self::assertStringContainsString('hash mismatch', $shared, 'the download is not verified');
+        self::assertStringContainsString('.gvsbuild-sha256', $shared, 'the cached tree is not stamped');
+        self::assertStringContainsString(
+            'refusing it',
+            $shared,
+            'a restored cache without the stamp must be refused',
+        );
+
         foreach (['windows.yml', 'release.yml'] as $file) {
             $yml = (string) file_get_contents(self::WORKFLOWS . '/' . $file);
             self::assertDoesNotMatchRegularExpression(
-                '/^\\s*GVSBUILD_VERSION:/m',
+                '/^\\s*GVSBUILD_(VERSION|SHA256):/m',
                 $yml,
                 "$file: the pin is defined in windows-build.yml only",
             );

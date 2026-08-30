@@ -17,6 +17,7 @@ ZEND_METHOD(Gtk4_GtkFrame, __construct) {
   Z_PARAM_OPTIONAL
   Z_PARAM_STR_OR_NULL(label)
   ZEND_PARSE_PARAMETERS_END();
+  if (label != nullptr && !phpgtk::check_utf8(label, 1)) RETURN_THROWS();
   GObject *obj =
       subtype_new(ZEND_THIS, "label", label != nullptr ? ZSTR_VAL(label) : nullptr, nullptr);
   if (obj == nullptr) {
@@ -109,6 +110,7 @@ ZEND_METHOD(Gtk4_GtkFrame, set_label) {
   Z_PARAM_STR_OR_NULL(label)
   ZEND_PARSE_PARAMETERS_END();
   GtkFrame *self = PHPGTK_SELF(GtkFrame, GTK_TYPE_FRAME);
+  if (label != nullptr && !phpgtk::check_utf8(label, 1)) RETURN_THROWS();
   gtk_frame_set_label(self, label != nullptr ? ZSTR_VAL(label) : nullptr);
 }
 

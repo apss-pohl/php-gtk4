@@ -7,6 +7,27 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ## [Unreleased]
 
+### Security
+
+- The PHP -> C argument boundary is checked instead of trusted (security review, 2026-08-30;
+  `check_utf8`/`check_range` in `src/php_gtk4.h`, emitted by the generator into every binding and
+  applied in `core/marshal` for property writes and signal arguments):
+  - **A self-referential or very deeply nested array no longer crashes the process.**
+    `$a = [1]; $a[] = &$a;` passed to an action recursed until the C stack was gone (SIGSEGV), as
+    did 20 000 levels of nesting. `core/variant` now refuses both with a `ValueError` - a cycle
+    guard like Zend's own array walkers use, and a depth cap of 64 (a GVariant cannot be deeper).
+  - **Strings with an embedded NUL or invalid UTF-8 are rejected.** A GLib string ends at the
+    first NUL, so `set_title("safe\0evil")` stored `safe` while PHP still held the whole string;
+    invalid UTF-8 tripped an assertion inside GLib that dropped the value with only a `CRITICAL`
+    on stderr. Both are `ValueError` now. `GBytes` parameters stay binary and are not validated.
+  - **Integer arguments are range-checked.** `$store->remove(-1)` reached
+    `g_list_store_remove()` as 4294967295 and `set_size_request(PHP_INT_MAX, …)` truncated to -1
+    ("natural size"); both are `ValueError`. Signed parameters still take -1.
+- The gvsbuild GTK archive every Windows binary links against is pinned by content
+  (`GVSBUILD_SHA256` in `windows-build.yml`, verified before unpacking and again when the Actions
+  cache serves the tree) - a release asset is mutable by its owner, and the cache made one bad
+  download persistent.
+
 ### Added
 
 - GitHub issue forms (`.github/ISSUE_TEMPLATE/`): a bug form that requires the versions

@@ -40,6 +40,10 @@
     (`Gio.Action.activate.cpp`) it replaces the one shared implementation.
   - `overrides/<Ns>.<Type>.cpp` — the class prelude: includes and file-static helpers (callback
     trampolines) emitted verbatim before the methods (`Gtk.CustomFilter.cpp`).
+  Every emitted parameter carries its argument checks: a `utf8` string gets
+  `phpgtk::check_utf8()` (no embedded NUL, valid UTF-8 - a `filename` does not, it is bytes and
+  `Z_PARAM_PATH_STR` already refuses the NUL), and an integer narrower than `zend_long` or
+  unsigned gets `phpgtk::check_range<T>()`; both throw `ValueError` naming the argument.
   A boxed **record** (`glib:get-type`) in the allow-list becomes a value handle on `core/boxed`:
   public scalar fields are PHP properties (`@property` tags, read/write through the field table),
   GIR methods and constructors are emitted like a class's (`copy`/`free`/`ref`/`unref` are the

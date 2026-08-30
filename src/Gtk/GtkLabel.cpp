@@ -18,6 +18,7 @@ ZEND_METHOD(Gtk4_GtkLabel, __construct) {
   Z_PARAM_OPTIONAL
   Z_PARAM_STR_OR_NULL(str)
   ZEND_PARSE_PARAMETERS_END();
+  if (str != nullptr && !phpgtk::check_utf8(str, 1)) RETURN_THROWS();
   GObject *obj = subtype_new(ZEND_THIS, "label", str != nullptr ? ZSTR_VAL(str) : nullptr, nullptr);
   if (obj == nullptr) {
     if (EG(exception) != nullptr) RETURN_THROWS();
@@ -44,6 +45,7 @@ ZEND_METHOD(Gtk4_GtkLabel, new_with_mnemonic) {
   Z_PARAM_OPTIONAL
   Z_PARAM_STR_OR_NULL(str)
   ZEND_PARSE_PARAMETERS_END();
+  if (str != nullptr && !phpgtk::check_utf8(str, 1)) RETURN_THROWS();
   GObject *obj = G_OBJECT(gtk_label_new_with_mnemonic(str != nullptr ? ZSTR_VAL(str) : nullptr));
   wrap(obj, return_value);
 }
@@ -335,6 +337,8 @@ ZEND_METHOD(Gtk4_GtkLabel, select_region) {
   Z_PARAM_LONG(end_offset)
   ZEND_PARSE_PARAMETERS_END();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  if (!phpgtk::check_range<int>(start_offset, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(end_offset, 2)) RETURN_THROWS();
   gtk_label_select_region(self, static_cast<int>(start_offset), static_cast<int>(end_offset));
 }
 
@@ -400,6 +404,7 @@ ZEND_METHOD(Gtk4_GtkLabel, set_label) {
   Z_PARAM_STR(str)
   ZEND_PARSE_PARAMETERS_END();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  if (!phpgtk::check_utf8(str, 1)) RETURN_THROWS();
   gtk_label_set_label(self, ZSTR_VAL(str));
 }
 
@@ -414,6 +419,7 @@ ZEND_METHOD(Gtk4_GtkLabel, set_lines) {
   Z_PARAM_LONG(lines)
   ZEND_PARSE_PARAMETERS_END();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  if (!phpgtk::check_range<int>(lines, 1)) RETURN_THROWS();
   gtk_label_set_lines(self, static_cast<int>(lines));
 }
 
@@ -428,6 +434,7 @@ ZEND_METHOD(Gtk4_GtkLabel, set_markup) {
   Z_PARAM_STR(str)
   ZEND_PARSE_PARAMETERS_END();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  if (!phpgtk::check_utf8(str, 1)) RETURN_THROWS();
   gtk_label_set_markup(self, ZSTR_VAL(str));
 }
 
@@ -442,6 +449,7 @@ ZEND_METHOD(Gtk4_GtkLabel, set_markup_with_mnemonic) {
   Z_PARAM_STR(str)
   ZEND_PARSE_PARAMETERS_END();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  if (!phpgtk::check_utf8(str, 1)) RETURN_THROWS();
   gtk_label_set_markup_with_mnemonic(self, ZSTR_VAL(str));
 }
 
@@ -456,6 +464,7 @@ ZEND_METHOD(Gtk4_GtkLabel, set_max_width_chars) {
   Z_PARAM_LONG(n_chars)
   ZEND_PARSE_PARAMETERS_END();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  if (!phpgtk::check_range<int>(n_chars, 1)) RETURN_THROWS();
   gtk_label_set_max_width_chars(self, static_cast<int>(n_chars));
 }
 
@@ -533,6 +542,7 @@ ZEND_METHOD(Gtk4_GtkLabel, set_text) {
   Z_PARAM_STR(str)
   ZEND_PARSE_PARAMETERS_END();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  if (!phpgtk::check_utf8(str, 1)) RETURN_THROWS();
   gtk_label_set_text(self, ZSTR_VAL(str));
 }
 
@@ -547,6 +557,7 @@ ZEND_METHOD(Gtk4_GtkLabel, set_text_with_mnemonic) {
   Z_PARAM_STR(str)
   ZEND_PARSE_PARAMETERS_END();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  if (!phpgtk::check_utf8(str, 1)) RETURN_THROWS();
   gtk_label_set_text_with_mnemonic(self, ZSTR_VAL(str));
 }
 
@@ -589,6 +600,7 @@ ZEND_METHOD(Gtk4_GtkLabel, set_width_chars) {
   Z_PARAM_LONG(n_chars)
   ZEND_PARSE_PARAMETERS_END();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  if (!phpgtk::check_range<int>(n_chars, 1)) RETURN_THROWS();
   gtk_label_set_width_chars(self, static_cast<int>(n_chars));
 }
 

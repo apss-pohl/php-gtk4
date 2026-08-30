@@ -70,6 +70,7 @@ ZEND_METHOD(Gtk4_GtkCssProvider, load_from_resource) {
   Z_PARAM_STR(resource_path)
   ZEND_PARSE_PARAMETERS_END();
   GtkCssProvider *self = PHPGTK_SELF(GtkCssProvider, GTK_TYPE_CSS_PROVIDER);
+  if (!phpgtk::check_utf8(resource_path, 1)) RETURN_THROWS();
   gtk_css_provider_load_from_resource(self, ZSTR_VAL(resource_path));
 }
 
@@ -84,6 +85,7 @@ ZEND_METHOD(Gtk4_GtkCssProvider, load_from_string) {
   Z_PARAM_STR(string)
   ZEND_PARSE_PARAMETERS_END();
   GtkCssProvider *self = PHPGTK_SELF(GtkCssProvider, GTK_TYPE_CSS_PROVIDER);
+  if (!phpgtk::check_utf8(string, 1)) RETURN_THROWS();
   gtk_css_provider_load_from_string(self, ZSTR_VAL(string));
 }
 
@@ -100,6 +102,8 @@ ZEND_METHOD(Gtk4_GtkCssProvider, load_named) {
   Z_PARAM_STR_OR_NULL(variant)
   ZEND_PARSE_PARAMETERS_END();
   GtkCssProvider *self = PHPGTK_SELF(GtkCssProvider, GTK_TYPE_CSS_PROVIDER);
+  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
+  if (variant != nullptr && !phpgtk::check_utf8(variant, 2)) RETURN_THROWS();
   gtk_css_provider_load_named(self, ZSTR_VAL(name),
                               variant != nullptr ? ZSTR_VAL(variant) : nullptr);
 }

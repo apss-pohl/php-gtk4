@@ -58,6 +58,7 @@ ZEND_METHOD(Gtk4_GtkPopoverMenuBar, add_child) {
   GtkPopoverMenuBar *self = PHPGTK_SELF(GtkPopoverMenuBar, GTK_TYPE_POPOVER_MENU_BAR);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_utf8(id, 2)) RETURN_THROWS();
   RETURN_BOOL(gtk_popover_menu_bar_add_child(self, GTK_WIDGET(child_o), ZSTR_VAL(id)));
 }
 

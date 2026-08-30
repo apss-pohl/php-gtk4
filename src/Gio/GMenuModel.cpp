@@ -35,6 +35,8 @@ ZEND_METHOD(Gtk4_GMenuModel, get_item_attribute_value) {
   Z_PARAM_STR_OR_NULL(expected_type)
   ZEND_PARSE_PARAMETERS_END();
   GMenuModel *self = PHPGTK_SELF(GMenuModel, G_TYPE_MENU_MODEL);
+  if (!phpgtk::check_range<gint>(item_index, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(attribute, 2)) RETURN_THROWS();
   GVariantType *expected_type_t = nullptr;
   if (expected_type != nullptr) {
     if (!g_variant_type_string_is_valid(ZSTR_VAL(expected_type))) {
@@ -66,6 +68,8 @@ ZEND_METHOD(Gtk4_GMenuModel, get_item_link) {
   Z_PARAM_STR(link)
   ZEND_PARSE_PARAMETERS_END();
   GMenuModel *self = PHPGTK_SELF(GMenuModel, G_TYPE_MENU_MODEL);
+  if (!phpgtk::check_range<gint>(item_index, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(link, 2)) RETURN_THROWS();
   GMenuModel *result =
       g_menu_model_get_item_link(self, static_cast<gint>(item_index), ZSTR_VAL(link));
   wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
@@ -109,6 +113,9 @@ ZEND_METHOD(Gtk4_GMenuModel, items_changed) {
   Z_PARAM_LONG(added)
   ZEND_PARSE_PARAMETERS_END();
   GMenuModel *self = PHPGTK_SELF(GMenuModel, G_TYPE_MENU_MODEL);
+  if (!phpgtk::check_range<gint>(position, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<gint>(removed, 2)) RETURN_THROWS();
+  if (!phpgtk::check_range<gint>(added, 3)) RETURN_THROWS();
   g_menu_model_items_changed(self, static_cast<gint>(position), static_cast<gint>(removed),
                              static_cast<gint>(added));
 }
@@ -245,6 +252,8 @@ ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_item_link) {
   if (klass->get_item_link == nullptr) {
     RETURN_NULL();
   }
+  if (!phpgtk::check_range<gint>(item_index, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(link, 2)) RETURN_THROWS();
   GMenuModel *result = klass->get_item_link(self, static_cast<gint>(item_index), ZSTR_VAL(link));
   wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
   if (result != nullptr) g_object_unref(result);  // the handle took its own ref

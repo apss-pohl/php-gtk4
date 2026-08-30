@@ -198,6 +198,16 @@ fetched once per version). The Windows build
 stays on that GTK until the number is bumped — nothing does it automatically: Dependabot only tracks
 package ecosystems and `uses:` lines, not an `env:` value.
 
+The archive is pinned twice: `GVSBUILD_VERSION` names it and `GVSBUILD_SHA256` says what it must
+contain. A GitHub release asset can be replaced by its owner and the workflow caches the unpacked
+tree, so the hash is verified before unpacking and the cached tree carries a stamp that is checked
+again on a cache hit. Read the hash for a version from the API:
+
+```sh
+curl -s https://api.github.com/repos/wingtk/gvsbuild/releases/tags/2026.8.0 \
+  | jq -r '.assets[] | select(.name | test("GTK4")) | .digest'
+```
+
 To move to a newer GTK on Windows: pick a release from <https://github.com/wingtk/gvsbuild/releases>,
 set it in `windows-build.yml` (`WorkflowsTest` fails if a caller carries its own pin), push, and let
 `windows.yml` prove it. Do it when a newer GTK is needed or when a release is cut (it is on the

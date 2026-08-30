@@ -38,6 +38,7 @@ ZEND_METHOD(Gtk4_GtkToggleButton, new_with_label) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_STR(label)
   ZEND_PARSE_PARAMETERS_END();
+  if (!phpgtk::check_utf8(label, 1)) RETURN_THROWS();
   GObject *obj = G_OBJECT(gtk_toggle_button_new_with_label(ZSTR_VAL(label)));
   wrap(obj, return_value);
 }
@@ -52,6 +53,7 @@ ZEND_METHOD(Gtk4_GtkToggleButton, new_with_mnemonic) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_STR(label)
   ZEND_PARSE_PARAMETERS_END();
+  if (!phpgtk::check_utf8(label, 1)) RETURN_THROWS();
   GObject *obj = G_OBJECT(gtk_toggle_button_new_with_mnemonic(ZSTR_VAL(label)));
   wrap(obj, return_value);
 }

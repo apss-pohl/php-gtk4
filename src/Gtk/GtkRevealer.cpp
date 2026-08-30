@@ -130,6 +130,7 @@ ZEND_METHOD(Gtk4_GtkRevealer, set_transition_duration) {
   Z_PARAM_LONG(duration)
   ZEND_PARSE_PARAMETERS_END();
   GtkRevealer *self = PHPGTK_SELF(GtkRevealer, GTK_TYPE_REVEALER);
+  if (!phpgtk::check_range<guint>(duration, 1)) RETURN_THROWS();
   gtk_revealer_set_transition_duration(self, static_cast<guint>(duration));
 }
 

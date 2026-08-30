@@ -65,8 +65,12 @@ final class FilterSortTest extends GtkTestCase
         self::assertSame('GObject', $model->get_item_type());   // GTK: always GObject
         self::assertSame([5, 3, 8], self::values($model));
         self::assertSame($filter, $model->get_filter());
-        self::assertNull($model->get_item(99));
-        self::assertNull($model->get_item(-1));
+        self::assertNull($model->get_item(99));   // past the end is a position, just an empty one
+        // A negative position is not: it used to reach GTK as 4294967295 (php_gtk4.h,
+        // check_range), which happened to answer null. It is an argument error.
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('must be between 0 and 4294967295');
+        $model->get_item(-1);
     }
 
     public function testFilterChangedReevaluates(): void

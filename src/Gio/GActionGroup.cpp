@@ -21,6 +21,7 @@ ZEND_METHOD(Gtk4_GActionGroup, action_added) {
   Z_PARAM_STR(action_name)
   ZEND_PARSE_PARAMETERS_END();
   GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
   g_action_group_action_added(self, ZSTR_VAL(action_name));
 }
 
@@ -37,6 +38,7 @@ ZEND_METHOD(Gtk4_GActionGroup, action_enabled_changed) {
   Z_PARAM_BOOL(enabled)
   ZEND_PARSE_PARAMETERS_END();
   GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
   g_action_group_action_enabled_changed(self, ZSTR_VAL(action_name), enabled);
 }
 
@@ -51,6 +53,7 @@ ZEND_METHOD(Gtk4_GActionGroup, action_removed) {
   Z_PARAM_STR(action_name)
   ZEND_PARSE_PARAMETERS_END();
   GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
   g_action_group_action_removed(self, ZSTR_VAL(action_name));
 }
 
@@ -68,6 +71,7 @@ ZEND_METHOD(Gtk4_GActionGroup, action_state_changed) {
   Z_PARAM_ZVAL(state)
   ZEND_PARSE_PARAMETERS_END();
   GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
   GVariant *state_v = nullptr;
   if (state != nullptr && Z_TYPE_P(state) != IS_NULL) {
     state_v = php_to_variant(state, nullptr);
@@ -92,6 +96,7 @@ ZEND_METHOD(Gtk4_GActionGroup, change_action_state) {
   Z_PARAM_ZVAL(value)
   ZEND_PARSE_PARAMETERS_END();
   GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
   GVariant *value_v = nullptr;
   if (value != nullptr && Z_TYPE_P(value) != IS_NULL) {
     value_v = php_to_variant(value, nullptr);
@@ -113,6 +118,7 @@ ZEND_METHOD(Gtk4_GActionGroup, get_action_enabled) {
   Z_PARAM_STR(action_name)
   ZEND_PARSE_PARAMETERS_END();
   GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
   RETURN_BOOL(g_action_group_get_action_enabled(self, ZSTR_VAL(action_name)));
 }
 
@@ -128,6 +134,7 @@ ZEND_METHOD(Gtk4_GActionGroup, get_action_parameter_type) {
   Z_PARAM_STR(action_name)
   ZEND_PARSE_PARAMETERS_END();
   GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
   const GVariantType *vt = g_action_group_get_action_parameter_type(self, ZSTR_VAL(action_name));
   if (vt == nullptr) RETURN_NULL();
   RETVAL_STRINGL(g_variant_type_peek_string(vt), g_variant_type_get_string_length(vt));
@@ -144,6 +151,7 @@ ZEND_METHOD(Gtk4_GActionGroup, get_action_state) {
   Z_PARAM_STR(action_name)
   ZEND_PARSE_PARAMETERS_END();
   GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
   GVariant *result = g_action_group_get_action_state(self, ZSTR_VAL(action_name));
   if (result == nullptr) RETURN_NULL();
   variant_to_php(result, return_value);
@@ -162,6 +170,7 @@ ZEND_METHOD(Gtk4_GActionGroup, get_action_state_hint) {
   Z_PARAM_STR(action_name)
   ZEND_PARSE_PARAMETERS_END();
   GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
   GVariant *result = g_action_group_get_action_state_hint(self, ZSTR_VAL(action_name));
   if (result == nullptr) RETURN_NULL();
   variant_to_php(result, return_value);
@@ -179,6 +188,7 @@ ZEND_METHOD(Gtk4_GActionGroup, get_action_state_type) {
   Z_PARAM_STR(action_name)
   ZEND_PARSE_PARAMETERS_END();
   GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
   const GVariantType *vt = g_action_group_get_action_state_type(self, ZSTR_VAL(action_name));
   if (vt == nullptr) RETURN_NULL();
   RETVAL_STRINGL(g_variant_type_peek_string(vt), g_variant_type_get_string_length(vt));
@@ -195,6 +205,7 @@ ZEND_METHOD(Gtk4_GActionGroup, has_action) {
   Z_PARAM_STR(action_name)
   ZEND_PARSE_PARAMETERS_END();
   GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
   RETURN_BOOL(g_action_group_has_action(self, ZSTR_VAL(action_name)));
 }
 

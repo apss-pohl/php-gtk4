@@ -20,6 +20,8 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, __construct) {
   Z_PARAM_STR_OR_NULL(initial_chars)
   Z_PARAM_LONG(n_initial_chars)
   ZEND_PARSE_PARAMETERS_END();
+  if (initial_chars != nullptr && !phpgtk::check_utf8(initial_chars, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(n_initial_chars, 2)) RETURN_THROWS();
   GObject *obj =
       G_OBJECT(gtk_entry_buffer_new(initial_chars != nullptr ? ZSTR_VAL(initial_chars) : nullptr,
                                     static_cast<int>(n_initial_chars)));
@@ -46,6 +48,8 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, delete_text) {
   Z_PARAM_LONG(n_chars)
   ZEND_PARSE_PARAMETERS_END();
   GtkEntryBuffer *self = PHPGTK_SELF(GtkEntryBuffer, GTK_TYPE_ENTRY_BUFFER);
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(n_chars, 2)) RETURN_THROWS();
   RETURN_LONG(static_cast<zend_long>(
       gtk_entry_buffer_delete_text(self, static_cast<guint>(position), static_cast<int>(n_chars))));
 }
@@ -63,6 +67,8 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, emit_deleted_text) {
   Z_PARAM_LONG(n_chars)
   ZEND_PARSE_PARAMETERS_END();
   GtkEntryBuffer *self = PHPGTK_SELF(GtkEntryBuffer, GTK_TYPE_ENTRY_BUFFER);
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<guint>(n_chars, 2)) RETURN_THROWS();
   gtk_entry_buffer_emit_deleted_text(self, static_cast<guint>(position),
                                      static_cast<guint>(n_chars));
 }
@@ -82,6 +88,9 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, emit_inserted_text) {
   Z_PARAM_LONG(n_chars)
   ZEND_PARSE_PARAMETERS_END();
   GtkEntryBuffer *self = PHPGTK_SELF(GtkEntryBuffer, GTK_TYPE_ENTRY_BUFFER);
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(chars, 2)) RETURN_THROWS();
+  if (!phpgtk::check_range<guint>(n_chars, 3)) RETURN_THROWS();
   gtk_entry_buffer_emit_inserted_text(self, static_cast<guint>(position), ZSTR_VAL(chars),
                                       static_cast<guint>(n_chars));
 }
@@ -147,6 +156,9 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, insert_text) {
   Z_PARAM_LONG(n_chars)
   ZEND_PARSE_PARAMETERS_END();
   GtkEntryBuffer *self = PHPGTK_SELF(GtkEntryBuffer, GTK_TYPE_ENTRY_BUFFER);
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(chars, 2)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(n_chars, 3)) RETURN_THROWS();
   RETURN_LONG(static_cast<zend_long>(gtk_entry_buffer_insert_text(
       self, static_cast<guint>(position), ZSTR_VAL(chars), static_cast<int>(n_chars))));
 }
@@ -162,6 +174,7 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, set_max_length) {
   Z_PARAM_LONG(max_length)
   ZEND_PARSE_PARAMETERS_END();
   GtkEntryBuffer *self = PHPGTK_SELF(GtkEntryBuffer, GTK_TYPE_ENTRY_BUFFER);
+  if (!phpgtk::check_range<int>(max_length, 1)) RETURN_THROWS();
   gtk_entry_buffer_set_max_length(self, static_cast<int>(max_length));
 }
 
@@ -178,6 +191,8 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, set_text) {
   Z_PARAM_LONG(n_chars)
   ZEND_PARSE_PARAMETERS_END();
   GtkEntryBuffer *self = PHPGTK_SELF(GtkEntryBuffer, GTK_TYPE_ENTRY_BUFFER);
+  if (!phpgtk::check_utf8(chars, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(n_chars, 2)) RETURN_THROWS();
   gtk_entry_buffer_set_text(self, ZSTR_VAL(chars), static_cast<int>(n_chars));
 }
 
@@ -383,6 +398,8 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, vfunc_delete_text) {
   if (klass->delete_text == nullptr) {
     RETURN_LONG(0);
   }
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<guint>(n_chars, 2)) RETURN_THROWS();
   RETURN_LONG(static_cast<zend_long>(
       klass->delete_text(self, static_cast<guint>(position), static_cast<guint>(n_chars))));
 }
@@ -412,6 +429,8 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, vfunc_deleted_text) {
   if (klass->deleted_text == nullptr) {
     return;
   }
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<guint>(n_chars, 2)) RETURN_THROWS();
   klass->deleted_text(self, static_cast<guint>(position), static_cast<guint>(n_chars));
 }
 
@@ -467,6 +486,9 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, vfunc_insert_text) {
   if (klass->insert_text == nullptr) {
     RETURN_LONG(0);
   }
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(chars, 2)) RETURN_THROWS();
+  if (!phpgtk::check_range<guint>(n_chars, 3)) RETURN_THROWS();
   RETURN_LONG(static_cast<zend_long>(klass->insert_text(
       self, static_cast<guint>(position), ZSTR_VAL(chars), static_cast<guint>(n_chars))));
 }
@@ -498,6 +520,9 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, vfunc_inserted_text) {
   if (klass->inserted_text == nullptr) {
     return;
   }
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(chars, 2)) RETURN_THROWS();
+  if (!phpgtk::check_range<guint>(n_chars, 3)) RETURN_THROWS();
   klass->inserted_text(self, static_cast<guint>(position), ZSTR_VAL(chars),
                        static_cast<guint>(n_chars));
 }

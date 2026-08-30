@@ -278,6 +278,7 @@ ZEND_METHOD(Gtk4_GtkRange, set_round_digits) {
   Z_PARAM_LONG(round_digits)
   ZEND_PARSE_PARAMETERS_END();
   GtkRange *self = PHPGTK_SELF(GtkRange, GTK_TYPE_RANGE);
+  if (!phpgtk::check_range<int>(round_digits, 1)) RETURN_THROWS();
   gtk_range_set_round_digits(self, static_cast<int>(round_digits));
 }
 

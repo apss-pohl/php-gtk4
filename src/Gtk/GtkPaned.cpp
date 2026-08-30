@@ -155,6 +155,7 @@ ZEND_METHOD(Gtk4_GtkPaned, set_position) {
   Z_PARAM_LONG(position)
   ZEND_PARSE_PARAMETERS_END();
   GtkPaned *self = PHPGTK_SELF(GtkPaned, GTK_TYPE_PANED);
+  if (!phpgtk::check_range<int>(position, 1)) RETURN_THROWS();
   gtk_paned_set_position(self, static_cast<int>(position));
 }
 

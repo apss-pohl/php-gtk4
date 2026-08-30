@@ -303,6 +303,7 @@ ZEND_METHOD(Gtk4_GtkScrolledWindow, set_max_content_height) {
   Z_PARAM_LONG(height)
   ZEND_PARSE_PARAMETERS_END();
   GtkScrolledWindow *self = PHPGTK_SELF(GtkScrolledWindow, GTK_TYPE_SCROLLED_WINDOW);
+  if (!phpgtk::check_range<int>(height, 1)) RETURN_THROWS();
   gtk_scrolled_window_set_max_content_height(self, static_cast<int>(height));
 }
 
@@ -317,6 +318,7 @@ ZEND_METHOD(Gtk4_GtkScrolledWindow, set_max_content_width) {
   Z_PARAM_LONG(width)
   ZEND_PARSE_PARAMETERS_END();
   GtkScrolledWindow *self = PHPGTK_SELF(GtkScrolledWindow, GTK_TYPE_SCROLLED_WINDOW);
+  if (!phpgtk::check_range<int>(width, 1)) RETURN_THROWS();
   gtk_scrolled_window_set_max_content_width(self, static_cast<int>(width));
 }
 
@@ -331,6 +333,7 @@ ZEND_METHOD(Gtk4_GtkScrolledWindow, set_min_content_height) {
   Z_PARAM_LONG(height)
   ZEND_PARSE_PARAMETERS_END();
   GtkScrolledWindow *self = PHPGTK_SELF(GtkScrolledWindow, GTK_TYPE_SCROLLED_WINDOW);
+  if (!phpgtk::check_range<int>(height, 1)) RETURN_THROWS();
   gtk_scrolled_window_set_min_content_height(self, static_cast<int>(height));
 }
 
@@ -345,6 +348,7 @@ ZEND_METHOD(Gtk4_GtkScrolledWindow, set_min_content_width) {
   Z_PARAM_LONG(width)
   ZEND_PARSE_PARAMETERS_END();
   GtkScrolledWindow *self = PHPGTK_SELF(GtkScrolledWindow, GTK_TYPE_SCROLLED_WINDOW);
+  if (!phpgtk::check_range<int>(width, 1)) RETURN_THROWS();
   gtk_scrolled_window_set_min_content_width(self, static_cast<int>(width));
 }
 

@@ -67,6 +67,7 @@ ZEND_METHOD(Gtk4_GtkWidget, action_set_enabled) {
   Z_PARAM_BOOL(enabled)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
   gtk_widget_action_set_enabled(self, ZSTR_VAL(action_name), enabled);
 }
 
@@ -97,6 +98,7 @@ ZEND_METHOD(Gtk4_GtkWidget, activate_action) {
   Z_PARAM_ZVAL(args)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   GVariant *args_v = nullptr;
   if (args != nullptr && Z_TYPE_P(args) != IS_NULL) {
     args_v = php_to_variant(args, nullptr);
@@ -147,6 +149,7 @@ ZEND_METHOD(Gtk4_GtkWidget, add_css_class) {
   Z_PARAM_STR(css_class)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_utf8(css_class, 1)) RETURN_THROWS();
   gtk_widget_add_css_class(self, ZSTR_VAL(css_class));
 }
 
@@ -232,6 +235,10 @@ ZEND_METHOD(Gtk4_GtkWidget, drag_check_threshold) {
   Z_PARAM_LONG(current_y)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_range<int>(start_x, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(start_y, 2)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(current_x, 3)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(current_y, 4)) RETURN_THROWS();
   RETURN_BOOL(gtk_drag_check_threshold(self, static_cast<int>(start_x), static_cast<int>(start_y),
                                        static_cast<int>(current_x), static_cast<int>(current_y)));
 }
@@ -838,6 +845,7 @@ ZEND_METHOD(Gtk4_GtkWidget, has_css_class) {
   Z_PARAM_STR(css_class)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_utf8(css_class, 1)) RETURN_THROWS();
   RETURN_BOOL(gtk_widget_has_css_class(self, ZSTR_VAL(css_class)));
 }
 
@@ -909,6 +917,7 @@ ZEND_METHOD(Gtk4_GtkWidget, insert_action_group) {
   Z_PARAM_OBJECT_OF_CLASS_OR_NULL(group, class_for_gtype(G_TYPE_ACTION_GROUP))
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   GObject *group_o = nullptr;
   if (group != nullptr) {
     group_o = unwrap(group, G_TYPE_ACTION_GROUP);
@@ -1080,6 +1089,7 @@ ZEND_METHOD(Gtk4_GtkWidget, measure) {
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
   gint orientation_v = 0;
   if (!enum_from_php(orientation, GTK_TYPE_ORIENTATION, &orientation_v)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(for_size, 2)) RETURN_THROWS();
   int minimum = 0;
   int natural = 0;
   int minimum_baseline = 0;
@@ -1239,6 +1249,7 @@ ZEND_METHOD(Gtk4_GtkWidget, remove_css_class) {
   Z_PARAM_STR(css_class)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_utf8(css_class, 1)) RETURN_THROWS();
   gtk_widget_remove_css_class(self, ZSTR_VAL(css_class));
 }
 
@@ -1269,6 +1280,7 @@ ZEND_METHOD(Gtk4_GtkWidget, remove_tick_callback) {
   Z_PARAM_LONG(id)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_range<guint>(id, 1)) RETURN_THROWS();
   gtk_widget_remove_tick_callback(self, static_cast<guint>(id));
 }
 
@@ -1342,6 +1354,7 @@ ZEND_METHOD(Gtk4_GtkWidget, set_cursor_from_name) {
   Z_PARAM_STR_OR_NULL(name)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (name != nullptr && !phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   gtk_widget_set_cursor_from_name(self, name != nullptr ? ZSTR_VAL(name) : nullptr);
 }
 
@@ -1477,6 +1490,7 @@ ZEND_METHOD(Gtk4_GtkWidget, set_margin_bottom) {
   Z_PARAM_LONG(margin)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_range<int>(margin, 1)) RETURN_THROWS();
   gtk_widget_set_margin_bottom(self, static_cast<int>(margin));
 }
 
@@ -1491,6 +1505,7 @@ ZEND_METHOD(Gtk4_GtkWidget, set_margin_end) {
   Z_PARAM_LONG(margin)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_range<int>(margin, 1)) RETURN_THROWS();
   gtk_widget_set_margin_end(self, static_cast<int>(margin));
 }
 
@@ -1505,6 +1520,7 @@ ZEND_METHOD(Gtk4_GtkWidget, set_margin_start) {
   Z_PARAM_LONG(margin)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_range<int>(margin, 1)) RETURN_THROWS();
   gtk_widget_set_margin_start(self, static_cast<int>(margin));
 }
 
@@ -1519,6 +1535,7 @@ ZEND_METHOD(Gtk4_GtkWidget, set_margin_top) {
   Z_PARAM_LONG(margin)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_range<int>(margin, 1)) RETURN_THROWS();
   gtk_widget_set_margin_top(self, static_cast<int>(margin));
 }
 
@@ -1533,6 +1550,7 @@ ZEND_METHOD(Gtk4_GtkWidget, set_name) {
   Z_PARAM_STR(name)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   gtk_widget_set_name(self, ZSTR_VAL(name));
 }
 
@@ -1624,6 +1642,8 @@ ZEND_METHOD(Gtk4_GtkWidget, set_size_request) {
   Z_PARAM_LONG(height)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_range<int>(width, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(height, 2)) RETURN_THROWS();
   gtk_widget_set_size_request(self, static_cast<int>(width), static_cast<int>(height));
 }
 
@@ -1654,6 +1674,7 @@ ZEND_METHOD(Gtk4_GtkWidget, set_tooltip_markup) {
   Z_PARAM_STR_OR_NULL(markup)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (markup != nullptr && !phpgtk::check_utf8(markup, 1)) RETURN_THROWS();
   gtk_widget_set_tooltip_markup(self, markup != nullptr ? ZSTR_VAL(markup) : nullptr);
 }
 
@@ -1668,6 +1689,7 @@ ZEND_METHOD(Gtk4_GtkWidget, set_tooltip_text) {
   Z_PARAM_STR_OR_NULL(text)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (text != nullptr && !phpgtk::check_utf8(text, 1)) RETURN_THROWS();
   gtk_widget_set_tooltip_text(self, text != nullptr ? ZSTR_VAL(text) : nullptr);
 }
 
@@ -2584,6 +2606,7 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_measure) {
   }
   gint orientation_v = 0;
   if (!enum_from_php(orientation, GTK_TYPE_ORIENTATION, &orientation_v)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(for_size, 2)) RETURN_THROWS();
   int minimum = 0;
   int natural = 0;
   int minimum_baseline = -1;
@@ -2774,6 +2797,9 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_size_allocate) {
   if (klass->size_allocate == nullptr) {
     return;
   }
+  if (!phpgtk::check_range<int>(width, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(height, 2)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(baseline, 3)) RETURN_THROWS();
   klass->size_allocate(self, static_cast<int>(width), static_cast<int>(height),
                        static_cast<int>(baseline));
 }

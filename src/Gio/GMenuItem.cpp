@@ -19,6 +19,8 @@ ZEND_METHOD(Gtk4_GMenuItem, __construct) {
   Z_PARAM_STR_OR_NULL(label)
   Z_PARAM_STR_OR_NULL(detailed_action)
   ZEND_PARSE_PARAMETERS_END();
+  if (label != nullptr && !phpgtk::check_utf8(label, 1)) RETURN_THROWS();
+  if (detailed_action != nullptr && !phpgtk::check_utf8(detailed_action, 2)) RETURN_THROWS();
   GObject *obj =
       G_OBJECT(g_menu_item_new(label != nullptr ? ZSTR_VAL(label) : nullptr,
                                detailed_action != nullptr ? ZSTR_VAL(detailed_action) : nullptr));
@@ -46,6 +48,7 @@ ZEND_METHOD(Gtk4_GMenuItem, new_from_model) {
   ZEND_PARSE_PARAMETERS_END();
   GObject *model_o = unwrap(model, G_TYPE_MENU_MODEL);
   if (model_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_range<gint>(item_index, 2)) RETURN_THROWS();
   GObject *obj =
       G_OBJECT(g_menu_item_new_from_model(G_MENU_MODEL(model_o), static_cast<gint>(item_index)));
   wrap(obj, return_value);
@@ -64,6 +67,7 @@ ZEND_METHOD(Gtk4_GMenuItem, new_section) {
   Z_PARAM_STR_OR_NULL(label)
   Z_PARAM_OBJECT_OF_CLASS(section, class_for_gtype(G_TYPE_MENU_MODEL))
   ZEND_PARSE_PARAMETERS_END();
+  if (label != nullptr && !phpgtk::check_utf8(label, 1)) RETURN_THROWS();
   GObject *section_o = unwrap(section, G_TYPE_MENU_MODEL);
   if (section_o == nullptr) RETURN_THROWS();
   GObject *obj = G_OBJECT(g_menu_item_new_section(label != nullptr ? ZSTR_VAL(label) : nullptr,
@@ -84,6 +88,7 @@ ZEND_METHOD(Gtk4_GMenuItem, new_submenu) {
   Z_PARAM_STR_OR_NULL(label)
   Z_PARAM_OBJECT_OF_CLASS(submenu, class_for_gtype(G_TYPE_MENU_MODEL))
   ZEND_PARSE_PARAMETERS_END();
+  if (label != nullptr && !phpgtk::check_utf8(label, 1)) RETURN_THROWS();
   GObject *submenu_o = unwrap(submenu, G_TYPE_MENU_MODEL);
   if (submenu_o == nullptr) RETURN_THROWS();
   GObject *obj = G_OBJECT(g_menu_item_new_submenu(label != nullptr ? ZSTR_VAL(label) : nullptr,
@@ -105,6 +110,7 @@ ZEND_METHOD(Gtk4_GMenuItem, get_attribute_value) {
   Z_PARAM_STR_OR_NULL(expected_type)
   ZEND_PARSE_PARAMETERS_END();
   GMenuItem *self = PHPGTK_SELF(GMenuItem, G_TYPE_MENU_ITEM);
+  if (!phpgtk::check_utf8(attribute, 1)) RETURN_THROWS();
   GVariantType *expected_type_t = nullptr;
   if (expected_type != nullptr) {
     if (!g_variant_type_string_is_valid(ZSTR_VAL(expected_type))) {
@@ -134,6 +140,7 @@ ZEND_METHOD(Gtk4_GMenuItem, get_link) {
   Z_PARAM_STR(link)
   ZEND_PARSE_PARAMETERS_END();
   GMenuItem *self = PHPGTK_SELF(GMenuItem, G_TYPE_MENU_ITEM);
+  if (!phpgtk::check_utf8(link, 1)) RETURN_THROWS();
   GMenuModel *result = g_menu_item_get_link(self, ZSTR_VAL(link));
   wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
   if (result != nullptr) g_object_unref(result);  // the handle took its own ref
@@ -153,6 +160,7 @@ ZEND_METHOD(Gtk4_GMenuItem, set_action_and_target_value) {
   Z_PARAM_ZVAL(target_value)
   ZEND_PARSE_PARAMETERS_END();
   GMenuItem *self = PHPGTK_SELF(GMenuItem, G_TYPE_MENU_ITEM);
+  if (action != nullptr && !phpgtk::check_utf8(action, 1)) RETURN_THROWS();
   GVariant *target_value_v = nullptr;
   if (target_value != nullptr && Z_TYPE_P(target_value) != IS_NULL) {
     target_value_v = php_to_variant(target_value, nullptr);
@@ -178,6 +186,7 @@ ZEND_METHOD(Gtk4_GMenuItem, set_attribute_value) {
   Z_PARAM_ZVAL(value)
   ZEND_PARSE_PARAMETERS_END();
   GMenuItem *self = PHPGTK_SELF(GMenuItem, G_TYPE_MENU_ITEM);
+  if (!phpgtk::check_utf8(attribute, 1)) RETURN_THROWS();
   GVariant *value_v = nullptr;
   if (value != nullptr && Z_TYPE_P(value) != IS_NULL) {
     value_v = php_to_variant(value, nullptr);
@@ -199,6 +208,7 @@ ZEND_METHOD(Gtk4_GMenuItem, set_detailed_action) {
   Z_PARAM_STR(detailed_action)
   ZEND_PARSE_PARAMETERS_END();
   GMenuItem *self = PHPGTK_SELF(GMenuItem, G_TYPE_MENU_ITEM);
+  if (!phpgtk::check_utf8(detailed_action, 1)) RETURN_THROWS();
   g_menu_item_set_detailed_action(self, ZSTR_VAL(detailed_action));
 }
 
@@ -213,6 +223,7 @@ ZEND_METHOD(Gtk4_GMenuItem, set_label) {
   Z_PARAM_STR_OR_NULL(label)
   ZEND_PARSE_PARAMETERS_END();
   GMenuItem *self = PHPGTK_SELF(GMenuItem, G_TYPE_MENU_ITEM);
+  if (label != nullptr && !phpgtk::check_utf8(label, 1)) RETURN_THROWS();
   g_menu_item_set_label(self, label != nullptr ? ZSTR_VAL(label) : nullptr);
 }
 
@@ -229,6 +240,7 @@ ZEND_METHOD(Gtk4_GMenuItem, set_link) {
   Z_PARAM_OBJECT_OF_CLASS_OR_NULL(model, class_for_gtype(G_TYPE_MENU_MODEL))
   ZEND_PARSE_PARAMETERS_END();
   GMenuItem *self = PHPGTK_SELF(GMenuItem, G_TYPE_MENU_ITEM);
+  if (!phpgtk::check_utf8(link, 1)) RETURN_THROWS();
   GObject *model_o = nullptr;
   if (model != nullptr) {
     model_o = unwrap(model, G_TYPE_MENU_MODEL);

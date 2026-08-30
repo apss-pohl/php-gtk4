@@ -72,6 +72,7 @@ ZEND_METHOD(Gtk4_GListStore, insert) {
   Z_PARAM_OBJECT_OF_CLASS(item, class_for_gtype(G_TYPE_OBJECT))
   ZEND_PARSE_PARAMETERS_END();
   GListStore *self = PHPGTK_SELF(GListStore, G_TYPE_LIST_STORE);
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
   GObject *item_o = unwrap(item, G_TYPE_OBJECT);
   if (item_o == nullptr) RETURN_THROWS();
   g_list_store_insert(self, static_cast<guint>(position), G_OBJECT(item_o));
@@ -89,6 +90,7 @@ ZEND_METHOD(Gtk4_GListStore, remove) {
   Z_PARAM_LONG(position)
   ZEND_PARSE_PARAMETERS_END();
   GListStore *self = PHPGTK_SELF(GListStore, G_TYPE_LIST_STORE);
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
   g_list_store_remove(self, static_cast<guint>(position));
 }
 

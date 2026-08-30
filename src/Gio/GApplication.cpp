@@ -34,6 +34,7 @@ ZEND_METHOD(Gtk4_GApplication, __construct) {
   Z_PARAM_STR_OR_NULL(application_id)
   Z_PARAM_LONG(flags)
   ZEND_PARSE_PARAMETERS_END();
+  if (application_id != nullptr && !phpgtk::check_utf8(application_id, 1)) RETURN_THROWS();
   GObject *obj = subtype_new(ZEND_THIS, "application-id",
                              application_id != nullptr ? ZSTR_VAL(application_id) : nullptr,
                              "flags", static_cast<GApplicationFlags>(flags), nullptr);
@@ -73,6 +74,7 @@ ZEND_METHOD(Gtk4_GApplication, id_is_valid) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_STR(application_id)
   ZEND_PARSE_PARAMETERS_END();
+  if (!phpgtk::check_utf8(application_id, 1)) RETURN_THROWS();
   RETURN_BOOL(g_application_id_is_valid(ZSTR_VAL(application_id)));
 }
 
@@ -109,6 +111,10 @@ ZEND_METHOD(Gtk4_GApplication, add_main_option) {
   Z_PARAM_STR_OR_NULL(arg_description)
   ZEND_PARSE_PARAMETERS_END();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (!phpgtk::check_utf8(long_name, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<char>(short_name, 2)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(description, 5)) RETURN_THROWS();
+  if (arg_description != nullptr && !phpgtk::check_utf8(arg_description, 6)) RETURN_THROWS();
   g_application_add_main_option(self, ZSTR_VAL(long_name), static_cast<char>(short_name),
                                 static_cast<GOptionFlags>(flags), static_cast<GOptionArg>(arg),
                                 ZSTR_VAL(description),
@@ -130,6 +136,7 @@ ZEND_METHOD(Gtk4_GApplication, bind_busy_property) {
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
   GObject *object_o = unwrap(object, G_TYPE_OBJECT);
   if (object_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_utf8(property, 2)) RETURN_THROWS();
   g_application_bind_busy_property(self, G_OBJECT(object_o), ZSTR_VAL(property));
 }
 
@@ -314,6 +321,7 @@ ZEND_METHOD(Gtk4_GApplication, set_application_id) {
   Z_PARAM_STR_OR_NULL(application_id)
   ZEND_PARSE_PARAMETERS_END();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (application_id != nullptr && !phpgtk::check_utf8(application_id, 1)) RETURN_THROWS();
   g_application_set_application_id(self,
                                    application_id != nullptr ? ZSTR_VAL(application_id) : nullptr);
 }
@@ -355,6 +363,7 @@ ZEND_METHOD(Gtk4_GApplication, set_inactivity_timeout) {
   Z_PARAM_LONG(inactivity_timeout)
   ZEND_PARSE_PARAMETERS_END();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (!phpgtk::check_range<guint>(inactivity_timeout, 1)) RETURN_THROWS();
   g_application_set_inactivity_timeout(self, static_cast<guint>(inactivity_timeout));
 }
 
@@ -369,6 +378,7 @@ ZEND_METHOD(Gtk4_GApplication, set_option_context_description) {
   Z_PARAM_STR_OR_NULL(description)
   ZEND_PARSE_PARAMETERS_END();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (description != nullptr && !phpgtk::check_utf8(description, 1)) RETURN_THROWS();
   g_application_set_option_context_description(
       self, description != nullptr ? ZSTR_VAL(description) : nullptr);
 }
@@ -384,6 +394,7 @@ ZEND_METHOD(Gtk4_GApplication, set_option_context_parameter_string) {
   Z_PARAM_STR_OR_NULL(parameter_string)
   ZEND_PARSE_PARAMETERS_END();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (parameter_string != nullptr && !phpgtk::check_utf8(parameter_string, 1)) RETURN_THROWS();
   g_application_set_option_context_parameter_string(
       self, parameter_string != nullptr ? ZSTR_VAL(parameter_string) : nullptr);
 }
@@ -399,6 +410,7 @@ ZEND_METHOD(Gtk4_GApplication, set_option_context_summary) {
   Z_PARAM_STR_OR_NULL(summary)
   ZEND_PARSE_PARAMETERS_END();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (summary != nullptr && !phpgtk::check_utf8(summary, 1)) RETURN_THROWS();
   g_application_set_option_context_summary(self, summary != nullptr ? ZSTR_VAL(summary) : nullptr);
 }
 
@@ -413,6 +425,7 @@ ZEND_METHOD(Gtk4_GApplication, set_resource_base_path) {
   Z_PARAM_STR_OR_NULL(resource_path)
   ZEND_PARSE_PARAMETERS_END();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (resource_path != nullptr && !phpgtk::check_utf8(resource_path, 1)) RETURN_THROWS();
   g_application_set_resource_base_path(
       self, resource_path != nullptr ? ZSTR_VAL(resource_path) : nullptr);
 }
@@ -429,6 +442,7 @@ ZEND_METHOD(Gtk4_GApplication, set_version) {
   Z_PARAM_STR(version)
   ZEND_PARSE_PARAMETERS_END();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (!phpgtk::check_utf8(version, 1)) RETURN_THROWS();
   g_application_set_version(self, ZSTR_VAL(version));
 }
 
@@ -448,6 +462,7 @@ ZEND_METHOD(Gtk4_GApplication, unbind_busy_property) {
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
   GObject *object_o = unwrap(object, G_TYPE_OBJECT);
   if (object_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_utf8(property, 2)) RETURN_THROWS();
   g_application_unbind_busy_property(self, G_OBJECT(object_o), ZSTR_VAL(property));
 }
 
@@ -473,6 +488,7 @@ ZEND_METHOD(Gtk4_GApplication, withdraw_notification) {
   Z_PARAM_STR(id)
   ZEND_PARSE_PARAMETERS_END();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (!phpgtk::check_utf8(id, 1)) RETURN_THROWS();
   g_application_withdraw_notification(self, ZSTR_VAL(id));
 }
 

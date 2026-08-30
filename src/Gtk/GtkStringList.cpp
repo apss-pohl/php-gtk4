@@ -46,6 +46,7 @@ ZEND_METHOD(Gtk4_GtkStringList, append) {
   Z_PARAM_STR(string)
   ZEND_PARSE_PARAMETERS_END();
   GtkStringList *self = PHPGTK_SELF(GtkStringList, GTK_TYPE_STRING_LIST);
+  if (!phpgtk::check_utf8(string, 1)) RETURN_THROWS();
   gtk_string_list_append(self, ZSTR_VAL(string));
 }
 
@@ -60,6 +61,7 @@ ZEND_METHOD(Gtk4_GtkStringList, get_string) {
   Z_PARAM_LONG(position)
   ZEND_PARSE_PARAMETERS_END();
   GtkStringList *self = PHPGTK_SELF(GtkStringList, GTK_TYPE_STRING_LIST);
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
   PHPGTK_RETURN_STRING_OR_NULL(gtk_string_list_get_string(self, static_cast<guint>(position)));
 }
 
@@ -74,6 +76,7 @@ ZEND_METHOD(Gtk4_GtkStringList, remove) {
   Z_PARAM_LONG(position)
   ZEND_PARSE_PARAMETERS_END();
   GtkStringList *self = PHPGTK_SELF(GtkStringList, GTK_TYPE_STRING_LIST);
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
   gtk_string_list_remove(self, static_cast<guint>(position));
 }
 
@@ -92,6 +95,8 @@ ZEND_METHOD(Gtk4_GtkStringList, splice) {
   Z_PARAM_ARRAY_OR_NULL(additions)
   ZEND_PARSE_PARAMETERS_END();
   GtkStringList *self = PHPGTK_SELF(GtkStringList, GTK_TYPE_STRING_LIST);
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<guint>(n_removals, 2)) RETURN_THROWS();
   char **additions_v = nullptr;
   if (additions != nullptr) {
     additions_v = strv_from_php(additions);
@@ -113,5 +118,6 @@ ZEND_METHOD(Gtk4_GtkStringList, take) {
   Z_PARAM_STR(string)
   ZEND_PARSE_PARAMETERS_END();
   GtkStringList *self = PHPGTK_SELF(GtkStringList, GTK_TYPE_STRING_LIST);
+  if (!phpgtk::check_utf8(string, 1)) RETURN_THROWS();
   gtk_string_list_take(self, g_strdup(ZSTR_VAL(string)));
 }

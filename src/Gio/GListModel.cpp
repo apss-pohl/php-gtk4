@@ -41,6 +41,7 @@ ZEND_METHOD(Gtk4_GListModel, get_item) {
   Z_PARAM_LONG(position)
   ZEND_PARSE_PARAMETERS_END();
   GListModel *self = PHPGTK_SELF(GListModel, G_TYPE_LIST_MODEL);
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
   GObject *result = g_list_model_get_object(self, static_cast<guint>(position));
   wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
   if (result != nullptr) g_object_unref(result);  // the handle took its own ref
@@ -61,6 +62,9 @@ ZEND_METHOD(Gtk4_GListModel, items_changed) {
   Z_PARAM_LONG(added)
   ZEND_PARSE_PARAMETERS_END();
   GListModel *self = PHPGTK_SELF(GListModel, G_TYPE_LIST_MODEL);
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<guint>(removed, 2)) RETURN_THROWS();
+  if (!phpgtk::check_range<guint>(added, 3)) RETURN_THROWS();
   g_list_model_items_changed(self, static_cast<guint>(position), static_cast<guint>(removed),
                              static_cast<guint>(added));
 }

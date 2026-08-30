@@ -90,6 +90,7 @@ ZEND_METHOD(Gtk4_GtkGestureSingle, set_button) {
   Z_PARAM_LONG(button)
   ZEND_PARSE_PARAMETERS_END();
   GtkGestureSingle *self = PHPGTK_SELF(GtkGestureSingle, GTK_TYPE_GESTURE_SINGLE);
+  if (!phpgtk::check_range<guint>(button, 1)) RETURN_THROWS();
   gtk_gesture_single_set_button(self, static_cast<guint>(button));
 }
 

@@ -50,6 +50,8 @@ ZEND_METHOD(Gtk4_GtkEditable, delete_text) {
   Z_PARAM_LONG(end_pos)
   ZEND_PARSE_PARAMETERS_END();
   GtkEditable *self = PHPGTK_SELF(GtkEditable, GTK_TYPE_EDITABLE);
+  if (!phpgtk::check_range<int>(start_pos, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(end_pos, 2)) RETURN_THROWS();
   gtk_editable_delete_text(self, static_cast<int>(start_pos), static_cast<int>(end_pos));
 }
 
@@ -88,6 +90,8 @@ ZEND_METHOD(Gtk4_GtkEditable, get_chars) {
   Z_PARAM_LONG(end_pos)
   ZEND_PARSE_PARAMETERS_END();
   GtkEditable *self = PHPGTK_SELF(GtkEditable, GTK_TYPE_EDITABLE);
+  if (!phpgtk::check_range<int>(start_pos, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(end_pos, 2)) RETURN_THROWS();
   char *result =
       gtk_editable_get_chars(self, static_cast<int>(start_pos), static_cast<int>(end_pos));
   RETVAL_STRING(result);
@@ -223,6 +227,8 @@ ZEND_METHOD(Gtk4_GtkEditable, select_region) {
   Z_PARAM_LONG(end_pos)
   ZEND_PARSE_PARAMETERS_END();
   GtkEditable *self = PHPGTK_SELF(GtkEditable, GTK_TYPE_EDITABLE);
+  if (!phpgtk::check_range<int>(start_pos, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(end_pos, 2)) RETURN_THROWS();
   gtk_editable_select_region(self, static_cast<int>(start_pos), static_cast<int>(end_pos));
 }
 
@@ -279,6 +285,7 @@ ZEND_METHOD(Gtk4_GtkEditable, set_max_width_chars) {
   Z_PARAM_LONG(n_chars)
   ZEND_PARSE_PARAMETERS_END();
   GtkEditable *self = PHPGTK_SELF(GtkEditable, GTK_TYPE_EDITABLE);
+  if (!phpgtk::check_range<int>(n_chars, 1)) RETURN_THROWS();
   gtk_editable_set_max_width_chars(self, static_cast<int>(n_chars));
 }
 
@@ -293,6 +300,7 @@ ZEND_METHOD(Gtk4_GtkEditable, set_position) {
   Z_PARAM_LONG(position)
   ZEND_PARSE_PARAMETERS_END();
   GtkEditable *self = PHPGTK_SELF(GtkEditable, GTK_TYPE_EDITABLE);
+  if (!phpgtk::check_range<int>(position, 1)) RETURN_THROWS();
   gtk_editable_set_position(self, static_cast<int>(position));
 }
 
@@ -307,6 +315,7 @@ ZEND_METHOD(Gtk4_GtkEditable, set_text) {
   Z_PARAM_STR(text)
   ZEND_PARSE_PARAMETERS_END();
   GtkEditable *self = PHPGTK_SELF(GtkEditable, GTK_TYPE_EDITABLE);
+  if (!phpgtk::check_utf8(text, 1)) RETURN_THROWS();
   gtk_editable_set_text(self, ZSTR_VAL(text));
 }
 
@@ -321,6 +330,7 @@ ZEND_METHOD(Gtk4_GtkEditable, set_width_chars) {
   Z_PARAM_LONG(n_chars)
   ZEND_PARSE_PARAMETERS_END();
   GtkEditable *self = PHPGTK_SELF(GtkEditable, GTK_TYPE_EDITABLE);
+  if (!phpgtk::check_range<int>(n_chars, 1)) RETURN_THROWS();
   gtk_editable_set_width_chars(self, static_cast<int>(n_chars));
 }
 

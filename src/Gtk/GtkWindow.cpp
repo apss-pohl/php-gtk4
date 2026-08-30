@@ -86,6 +86,7 @@ ZEND_METHOD(Gtk4_GtkWindow, set_default_icon_name) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_STR(name)
   ZEND_PARSE_PARAMETERS_END();
+  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   gtk_window_set_default_icon_name(ZSTR_VAL(name));
 }
 
@@ -506,6 +507,8 @@ ZEND_METHOD(Gtk4_GtkWindow, set_default_size) {
   Z_PARAM_LONG(height)
   ZEND_PARSE_PARAMETERS_END();
   GtkWindow *self = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
+  if (!phpgtk::check_range<int>(width, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(height, 2)) RETURN_THROWS();
   gtk_window_set_default_size(self, static_cast<int>(width), static_cast<int>(height));
 }
 
@@ -647,6 +650,7 @@ ZEND_METHOD(Gtk4_GtkWindow, set_icon_name) {
   Z_PARAM_STR_OR_NULL(name)
   ZEND_PARSE_PARAMETERS_END();
   GtkWindow *self = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
+  if (name != nullptr && !phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   gtk_window_set_icon_name(self, name != nullptr ? ZSTR_VAL(name) : nullptr);
 }
 
@@ -703,6 +707,7 @@ ZEND_METHOD(Gtk4_GtkWindow, set_startup_id) {
   Z_PARAM_STR(startup_id)
   ZEND_PARSE_PARAMETERS_END();
   GtkWindow *self = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
+  if (!phpgtk::check_utf8(startup_id, 1)) RETURN_THROWS();
   gtk_window_set_startup_id(self, ZSTR_VAL(startup_id));
 }
 
@@ -717,6 +722,7 @@ ZEND_METHOD(Gtk4_GtkWindow, set_title) {
   Z_PARAM_STR_OR_NULL(title)
   ZEND_PARSE_PARAMETERS_END();
   GtkWindow *self = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
+  if (title != nullptr && !phpgtk::check_utf8(title, 1)) RETURN_THROWS();
   gtk_window_set_title(self, title != nullptr ? ZSTR_VAL(title) : nullptr);
 }
 

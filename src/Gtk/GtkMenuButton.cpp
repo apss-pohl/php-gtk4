@@ -303,6 +303,7 @@ ZEND_METHOD(Gtk4_GtkMenuButton, set_icon_name) {
   Z_PARAM_STR(icon_name)
   ZEND_PARSE_PARAMETERS_END();
   GtkMenuButton *self = PHPGTK_SELF(GtkMenuButton, GTK_TYPE_MENU_BUTTON);
+  if (!phpgtk::check_utf8(icon_name, 1)) RETURN_THROWS();
   gtk_menu_button_set_icon_name(self, ZSTR_VAL(icon_name));
 }
 
@@ -317,6 +318,7 @@ ZEND_METHOD(Gtk4_GtkMenuButton, set_label) {
   Z_PARAM_STR(label)
   ZEND_PARSE_PARAMETERS_END();
   GtkMenuButton *self = PHPGTK_SELF(GtkMenuButton, GTK_TYPE_MENU_BUTTON);
+  if (!phpgtk::check_utf8(label, 1)) RETURN_THROWS();
   gtk_menu_button_set_label(self, ZSTR_VAL(label));
 }
 

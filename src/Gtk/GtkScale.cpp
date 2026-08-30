@@ -140,6 +140,7 @@ ZEND_METHOD(Gtk4_GtkScale, add_mark) {
   GtkScale *self = PHPGTK_SELF(GtkScale, GTK_TYPE_SCALE);
   gint position_v = 0;
   if (!enum_from_php(position, GTK_TYPE_POSITION_TYPE, &position_v)) RETURN_THROWS();
+  if (markup != nullptr && !phpgtk::check_utf8(markup, 3)) RETURN_THROWS();
   gtk_scale_add_mark(self, value, static_cast<GtkPositionType>(position_v),
                      markup != nullptr ? ZSTR_VAL(markup) : nullptr);
 }
@@ -235,6 +236,7 @@ ZEND_METHOD(Gtk4_GtkScale, set_digits) {
   Z_PARAM_LONG(digits)
   ZEND_PARSE_PARAMETERS_END();
   GtkScale *self = PHPGTK_SELF(GtkScale, GTK_TYPE_SCALE);
+  if (!phpgtk::check_range<int>(digits, 1)) RETURN_THROWS();
   gtk_scale_set_digits(self, static_cast<int>(digits));
 }
 

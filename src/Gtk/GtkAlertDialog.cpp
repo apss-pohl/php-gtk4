@@ -200,6 +200,7 @@ ZEND_METHOD(Gtk4_GtkAlertDialog, set_cancel_button) {
   Z_PARAM_LONG(button)
   ZEND_PARSE_PARAMETERS_END();
   GtkAlertDialog *self = PHPGTK_SELF(GtkAlertDialog, GTK_TYPE_ALERT_DIALOG);
+  if (!phpgtk::check_range<int>(button, 1)) RETURN_THROWS();
   gtk_alert_dialog_set_cancel_button(self, static_cast<int>(button));
 }
 
@@ -214,6 +215,7 @@ ZEND_METHOD(Gtk4_GtkAlertDialog, set_default_button) {
   Z_PARAM_LONG(button)
   ZEND_PARSE_PARAMETERS_END();
   GtkAlertDialog *self = PHPGTK_SELF(GtkAlertDialog, GTK_TYPE_ALERT_DIALOG);
+  if (!phpgtk::check_range<int>(button, 1)) RETURN_THROWS();
   gtk_alert_dialog_set_default_button(self, static_cast<int>(button));
 }
 
@@ -228,6 +230,7 @@ ZEND_METHOD(Gtk4_GtkAlertDialog, set_detail) {
   Z_PARAM_STR(detail)
   ZEND_PARSE_PARAMETERS_END();
   GtkAlertDialog *self = PHPGTK_SELF(GtkAlertDialog, GTK_TYPE_ALERT_DIALOG);
+  if (!phpgtk::check_utf8(detail, 1)) RETURN_THROWS();
   gtk_alert_dialog_set_detail(self, ZSTR_VAL(detail));
 }
 
@@ -242,6 +245,7 @@ ZEND_METHOD(Gtk4_GtkAlertDialog, set_message) {
   Z_PARAM_STR(message)
   ZEND_PARSE_PARAMETERS_END();
   GtkAlertDialog *self = PHPGTK_SELF(GtkAlertDialog, GTK_TYPE_ALERT_DIALOG);
+  if (!phpgtk::check_utf8(message, 1)) RETURN_THROWS();
   gtk_alert_dialog_set_message(self, ZSTR_VAL(message));
 }
 

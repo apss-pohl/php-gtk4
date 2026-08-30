@@ -275,6 +275,8 @@ ZEND_METHOD(Gtk4_GtkPopover, set_offset) {
   Z_PARAM_LONG(y_offset)
   ZEND_PARSE_PARAMETERS_END();
   GtkPopover *self = PHPGTK_SELF(GtkPopover, GTK_TYPE_POPOVER);
+  if (!phpgtk::check_range<int>(x_offset, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(y_offset, 2)) RETURN_THROWS();
   gtk_popover_set_offset(self, static_cast<int>(x_offset), static_cast<int>(y_offset));
 }
 

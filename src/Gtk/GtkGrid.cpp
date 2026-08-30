@@ -50,6 +50,10 @@ ZEND_METHOD(Gtk4_GtkGrid, attach) {
   GtkGrid *self = PHPGTK_SELF(GtkGrid, GTK_TYPE_GRID);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(column, 2)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(row, 3)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(width, 4)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(height, 5)) RETURN_THROWS();
   gtk_grid_attach(self, GTK_WIDGET(child_o), static_cast<int>(column), static_cast<int>(row),
                   static_cast<int>(width), static_cast<int>(height));
 }
@@ -83,6 +87,8 @@ ZEND_METHOD(Gtk4_GtkGrid, attach_next_to) {
   }
   gint side_v = 0;
   if (!enum_from_php(side, GTK_TYPE_POSITION_TYPE, &side_v)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(width, 4)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(height, 5)) RETURN_THROWS();
   gtk_grid_attach_next_to(
       self, GTK_WIDGET(child_o), sibling_o != nullptr ? GTK_WIDGET(sibling_o) : nullptr,
       static_cast<GtkPositionType>(side_v), static_cast<int>(width), static_cast<int>(height));
@@ -112,6 +118,8 @@ ZEND_METHOD(Gtk4_GtkGrid, get_child_at) {
   Z_PARAM_LONG(row)
   ZEND_PARSE_PARAMETERS_END();
   GtkGrid *self = PHPGTK_SELF(GtkGrid, GTK_TYPE_GRID);
+  if (!phpgtk::check_range<int>(column, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(row, 2)) RETURN_THROWS();
   GtkWidget *result = gtk_grid_get_child_at(self, static_cast<int>(column), static_cast<int>(row));
   wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
 }
@@ -149,6 +157,7 @@ ZEND_METHOD(Gtk4_GtkGrid, get_row_baseline_position) {
   Z_PARAM_LONG(row)
   ZEND_PARSE_PARAMETERS_END();
   GtkGrid *self = PHPGTK_SELF(GtkGrid, GTK_TYPE_GRID);
+  if (!phpgtk::check_range<int>(row, 1)) RETURN_THROWS();
   enum_to_php(GTK_TYPE_BASELINE_POSITION,
               gtk_grid_get_row_baseline_position(self, static_cast<int>(row)), return_value);
 }
@@ -186,6 +195,7 @@ ZEND_METHOD(Gtk4_GtkGrid, insert_column) {
   Z_PARAM_LONG(position)
   ZEND_PARSE_PARAMETERS_END();
   GtkGrid *self = PHPGTK_SELF(GtkGrid, GTK_TYPE_GRID);
+  if (!phpgtk::check_range<int>(position, 1)) RETURN_THROWS();
   gtk_grid_insert_column(self, static_cast<int>(position));
 }
 
@@ -220,6 +230,7 @@ ZEND_METHOD(Gtk4_GtkGrid, insert_row) {
   Z_PARAM_LONG(position)
   ZEND_PARSE_PARAMETERS_END();
   GtkGrid *self = PHPGTK_SELF(GtkGrid, GTK_TYPE_GRID);
+  if (!phpgtk::check_range<int>(position, 1)) RETURN_THROWS();
   gtk_grid_insert_row(self, static_cast<int>(position));
 }
 
@@ -291,6 +302,7 @@ ZEND_METHOD(Gtk4_GtkGrid, remove_column) {
   Z_PARAM_LONG(position)
   ZEND_PARSE_PARAMETERS_END();
   GtkGrid *self = PHPGTK_SELF(GtkGrid, GTK_TYPE_GRID);
+  if (!phpgtk::check_range<int>(position, 1)) RETURN_THROWS();
   gtk_grid_remove_column(self, static_cast<int>(position));
 }
 
@@ -305,6 +317,7 @@ ZEND_METHOD(Gtk4_GtkGrid, remove_row) {
   Z_PARAM_LONG(position)
   ZEND_PARSE_PARAMETERS_END();
   GtkGrid *self = PHPGTK_SELF(GtkGrid, GTK_TYPE_GRID);
+  if (!phpgtk::check_range<int>(position, 1)) RETURN_THROWS();
   gtk_grid_remove_row(self, static_cast<int>(position));
 }
 
@@ -319,6 +332,7 @@ ZEND_METHOD(Gtk4_GtkGrid, set_baseline_row) {
   Z_PARAM_LONG(row)
   ZEND_PARSE_PARAMETERS_END();
   GtkGrid *self = PHPGTK_SELF(GtkGrid, GTK_TYPE_GRID);
+  if (!phpgtk::check_range<int>(row, 1)) RETURN_THROWS();
   gtk_grid_set_baseline_row(self, static_cast<int>(row));
 }
 
@@ -347,6 +361,7 @@ ZEND_METHOD(Gtk4_GtkGrid, set_column_spacing) {
   Z_PARAM_LONG(spacing)
   ZEND_PARSE_PARAMETERS_END();
   GtkGrid *self = PHPGTK_SELF(GtkGrid, GTK_TYPE_GRID);
+  if (!phpgtk::check_range<guint>(spacing, 1)) RETURN_THROWS();
   gtk_grid_set_column_spacing(self, static_cast<guint>(spacing));
 }
 
@@ -364,6 +379,7 @@ ZEND_METHOD(Gtk4_GtkGrid, set_row_baseline_position) {
   Z_PARAM_OBJECT_OF_CLASS(pos, enum_class_for_type(GTK_TYPE_BASELINE_POSITION))
   ZEND_PARSE_PARAMETERS_END();
   GtkGrid *self = PHPGTK_SELF(GtkGrid, GTK_TYPE_GRID);
+  if (!phpgtk::check_range<int>(row, 1)) RETURN_THROWS();
   gint pos_v = 0;
   if (!enum_from_php(pos, GTK_TYPE_BASELINE_POSITION, &pos_v)) RETURN_THROWS();
   gtk_grid_set_row_baseline_position(self, static_cast<int>(row),
@@ -395,5 +411,6 @@ ZEND_METHOD(Gtk4_GtkGrid, set_row_spacing) {
   Z_PARAM_LONG(spacing)
   ZEND_PARSE_PARAMETERS_END();
   GtkGrid *self = PHPGTK_SELF(GtkGrid, GTK_TYPE_GRID);
+  if (!phpgtk::check_range<guint>(spacing, 1)) RETURN_THROWS();
   gtk_grid_set_row_spacing(self, static_cast<guint>(spacing));
 }
