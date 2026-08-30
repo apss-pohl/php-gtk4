@@ -7,3 +7,7 @@ Gdk.Texture.__construct abstract for GTK's own subclasses only: a texture needs 
 Gdk.Display.__construct GDK owns displays (GdkDisplay::get_default() / open()); a PHP subtype would have no backend behind it
 Gtk.StackPage.__construct GtkStack creates its pages (add_child()/add_titled(), get_page()); `new` g_error()s "is missing a child widget"
 Gtk.NotebookPage.__construct GtkNotebook creates its pages (get_page()); a page without a notebook has no child
+Gtk.ApplicationWindow.implements:Gio.ActionGroup   GtkWidget::activate_action(string, mixed): bool is incompatible with the interface's activate_action(): void; the window stays a GActionMap (add/lookup/remove_action) and the widget method reaches its actions ("win.x")
+Gtk.MenuButton.get_direction   gtk_menu_button_get_direction (GtkArrowType) clashes with GtkWidget::get_direction (GtkTextDirection) in PHP; the `direction` property still reads the arrow
+Gtk.MenuButton.set_direction   same; `$button->direction = GtkArrowType::Left` sets the arrow
+Gio.MenuModel.__construct   abstract with NULL class-struct slots (get_n_items ...) and vfuncs on GHashTables that cannot be thunked; a PHP subtype would segfault on first use - build menus with GMenu

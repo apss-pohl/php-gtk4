@@ -129,3 +129,18 @@ Gdk.CrossingMode
 Gdk.NotifyType
 Gdk.TouchpadGesturePhase
 Gdk.KeyMatch
+
+# Wave 4 (menus/actions, docs/PLAN.md §3): the GMenuModel stack that replaces GtkMenu -
+# GMenu/GMenuItem models, popovers to show them, the menu button, the header bar, and
+# GtkApplicationWindow (the window that is a GActionMap, with the application menubar).
+Gio.MenuModel
+Gio.Menu
+Gio.MenuItem
+Gtk.Popover
+Gtk.PopoverMenu
+Gtk.PopoverMenuBar
+Gtk.MenuButton
+Gtk.HeaderBar
+Gtk.ApplicationWindow
+Gtk.PopoverMenuFlags
+Gtk.ArrowType

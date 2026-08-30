@@ -81,6 +81,27 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `sort` — callback parameter (needs an override)
 - `splice` — parameter `additions` of type array (C array)
 
+## GMenuItem
+
+- `PHP subclasses` — constructor argument label is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GMenuItem
+- `get_attribute` — varargs
+- `set_action_and_target` — varargs
+- `set_attribute` — varargs
+- `set_icon` — parameter `icon` of type Gio.Icon
+
+## GMenuModel
+
+- `get_item_attribute` — varargs
+- `iterate_item_attributes` — return type Gio.MenuAttributeIter (not in the closure)
+- `iterate_item_links` — return type Gio.MenuLinkIter (not in the closure)
+- `__construct` — skip.txt: abstract with NULL class-struct slots (get_n_items ...) and vfuncs on GHashTables that cannot be thunked; a PHP subtype would segfault on first use - build menus with GMenu
+- `vfunc get_item_attribute_value` — return or argument type not convertible in a thunk
+- `vfunc get_item_attributes` — out parameter `attributes` of type GLib.HashTable
+- `vfunc get_item_links` — out parameter `links` of type GLib.HashTable
+- `vfunc_iterate_item_attributes` — return type Gio.MenuAttributeIter (not in the closure)
+- `vfunc_iterate_item_links` — return type Gio.MenuLinkIter (not in the closure)
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## GTask
 
 - `PHP subclasses` — constructor argument source_object is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GTask
@@ -153,12 +174,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkApplication
 
-- `get_menu_by_id` — return type Gio.Menu (not in the closure)
-- `get_menubar` — return type Gio.MenuModel (not in the closure)
 - `inhibit` — skip.txt: crashes inside GTK when the window has no surface / the app is not registered
-- `set_menubar` — parameter `menubar` of type Gio.MenuModel
 - `uninhibit` — skip.txt: pairs with inhibit
-- `property menubar` — property type Gio.MenuModel not mappable
+
+## GtkApplicationWindow
+
+- `implements Gio.ActionGroup` — skip.txt: GtkWidget::activate_action(string, mixed): bool is incompatible with the interface's activate_action(): void; the window stays a GActionMap (add/lookup/remove_action) and the widget method reaches its actions ("win.x")
+- `get_help_overlay` — return type Gtk.ShortcutsWindow (not in the closure)
+- `set_help_overlay` — parameter `help_overlay` of type Gtk.ShortcutsWindow
+- `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GtkBox
 
@@ -204,18 +228,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `get_attributes` — return type Pango.AttrList
 - `get_completion` — deprecated (4.10)
-- `get_extra_menu` — return type Gio.MenuModel (not in the closure)
 - `get_icon_gicon` — return type Gio.Icon (not in the closure)
 - `get_tabs` — return type Pango.TabArray
 - `set_attributes` — parameter `attrs` of type Pango.AttrList
 - `set_completion` — deprecated (4.10)
-- `set_extra_menu` — parameter `model` of type Gio.MenuModel
 - `set_icon_drag_source` — parameter `provider` of type Gdk.ContentProvider
 - `set_icon_from_gicon` — parameter `icon` of type Gio.Icon
 - `set_tabs` — parameter `tabs` of type Pango.TabArray
 - `property attributes` — property type Pango.AttrList not mappable
 - `property completion` — property type Gtk.EntryCompletion not mappable
-- `property extra-menu` — property type Gio.MenuModel not mappable
 - `property primary-icon-gicon` — property type Gio.Icon not mappable
 - `property secondary-icon-gicon` — property type Gio.Icon not mappable
 - `property tabs` — property type Pango.TabArray not mappable
@@ -268,15 +289,17 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkLabel
 
 - `get_attributes` — return type Pango.AttrList
-- `get_extra_menu` — return type Gio.MenuModel (not in the closure)
 - `get_layout` — return type Pango.Layout (not in the closure)
 - `get_tabs` — return type Pango.TabArray
 - `set_attributes` — parameter `attrs` of type Pango.AttrList
-- `set_extra_menu` — parameter `model` of type Gio.MenuModel
 - `set_tabs` — parameter `tabs` of type Pango.TabArray
 - `property attributes` — property type Pango.AttrList not mappable
-- `property extra-menu` — property type Gio.MenuModel not mappable
 - `property tabs` — property type Pango.TabArray not mappable
+
+## GtkMenuButton
+
+- `get_direction` — skip.txt: gtk_menu_button_get_direction (GtkArrowType) clashes with GtkWidget::get_direction (GtkTextDirection) in PHP; the `direction` property still reads the arrow
+- `set_direction` — skip.txt: same; `$button->direction = GtkArrowType::Left` sets the arrow
 
 ## GtkNotebookPage
 
@@ -286,12 +309,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkPaned
 
 - `smoke test` — no constructor or factory whose parameters can be sampled
-
-## GtkPasswordEntry
-
-- `get_extra_menu` — return type Gio.MenuModel (not in the closure)
-- `set_extra_menu` — parameter `model` of type Gio.MenuModel
-- `property extra-menu` — property type Gio.MenuModel not mappable
 
 ## GtkPicture
 
@@ -421,6 +438,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.CustomFilter`: __construct, set_filter_func
 - `Gtk.CustomSorter`: __construct, set_sort_func
 - `Gtk.DrawingArea`: set_draw_func
+- `Gtk.MenuButton`: set_create_popup_func
 - `Gtk.Scale`: set_format_value_func
 
 ## Emitted files
@@ -428,6 +446,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkAdjustment.cpp`
 - `Gtk/GtkAlertDialog.cpp`
 - `Gtk/GtkApplication.cpp`
+- `Gtk/GtkApplicationWindow.cpp`
 - `Gtk/GtkBox.cpp`
 - `Gtk/GtkButton.cpp`
 - `Gtk/GtkCalendar.cpp`
@@ -460,8 +479,10 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkGestureSwipe.cpp`
 - `Gtk/GtkGestureZoom.cpp`
 - `Gtk/GtkGrid.cpp`
+- `Gtk/GtkHeaderBar.cpp`
 - `Gtk/GtkImage.cpp`
 - `Gtk/GtkLabel.cpp`
+- `Gtk/GtkMenuButton.cpp`
 - `Gtk/GtkNotebook.cpp`
 - `Gtk/GtkNotebookPage.cpp`
 - `Gtk/GtkOrientable.cpp`
@@ -469,6 +490,9 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkPaned.cpp`
 - `Gtk/GtkPasswordEntry.cpp`
 - `Gtk/GtkPicture.cpp`
+- `Gtk/GtkPopover.cpp`
+- `Gtk/GtkPopoverMenu.cpp`
+- `Gtk/GtkPopoverMenuBar.cpp`
 - `Gtk/GtkProgressBar.cpp`
 - `Gtk/GtkRange.cpp`
 - `Gtk/GtkRequisition.cpp`
@@ -504,6 +528,9 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GCancellable.cpp`
 - `Gio/GListModel.cpp`
 - `Gio/GListStore.cpp`
+- `Gio/GMenu.cpp`
+- `Gio/GMenuItem.cpp`
+- `Gio/GMenuModel.cpp`
 - `Gio/GSimpleAction.cpp`
 - `Gio/GTask.cpp`
 - `Gio/Gio.stub.php`
@@ -546,12 +573,17 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkGestureSwipeSmokeTest.php`
 - `tests/Generated/GtkGestureZoomSmokeTest.php`
 - `tests/Generated/GtkGridSmokeTest.php`
+- `tests/Generated/GtkHeaderBarSmokeTest.php`
 - `tests/Generated/GtkImageSmokeTest.php`
 - `tests/Generated/GtkLabelSmokeTest.php`
+- `tests/Generated/GtkMenuButtonSmokeTest.php`
 - `tests/Generated/GtkNotebookSmokeTest.php`
 - `tests/Generated/GtkOverlaySmokeTest.php`
 - `tests/Generated/GtkPasswordEntrySmokeTest.php`
 - `tests/Generated/GtkPictureSmokeTest.php`
+- `tests/Generated/GtkPopoverSmokeTest.php`
+- `tests/Generated/GtkPopoverMenuSmokeTest.php`
+- `tests/Generated/GtkPopoverMenuBarSmokeTest.php`
 - `tests/Generated/GtkProgressBarSmokeTest.php`
 - `tests/Generated/GtkRangeSmokeTest.php`
 - `tests/Generated/GtkRevealerSmokeTest.php`
@@ -572,5 +604,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GApplicationSmokeTest.php`
 - `tests/Generated/GCancellableSmokeTest.php`
 - `tests/Generated/GListStoreSmokeTest.php`
+- `tests/Generated/GMenuSmokeTest.php`
+- `tests/Generated/GMenuItemSmokeTest.php`
 - `tests/Generated/GSimpleActionSmokeTest.php`
 - `tests/Generated/GTaskSmokeTest.php`

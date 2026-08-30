@@ -1069,6 +1069,13 @@ final class Generator
         // an interface's prerequisites that are interfaces become `extends` (GtkSelectionModel: GListModel)
         foreach ($n->kind === 'interface' ? $n->prerequisites : $n->implements as $i) {
             if ($this->known($i) && $this->gir->types[$i]->kind === 'interface') {
+                // skip.txt `<Class>.implements:<Iface>`: the C object still is one, the PHP class does
+                // not say so (an inherited method's signature is incompatible with the interface's).
+                $key = $n->qname() . '.implements:' . $i;
+                if (isset($this->skipList[$key])) {
+                    $this->skip($n, "implements $i", 'skip.txt: ' . $this->skipList[$key]);
+                    continue;
+                }
                 $ifaces[] = phpClass($this->gir->types[$i]);
             }
         }
@@ -1177,6 +1184,11 @@ final class Generator
                 }
                 $phpName = $f->shadows ?? $f->name;
                 if ($f->shadowedBy !== null || isset($seenNames[$phpName]) || !$this->methodEmittable($in, $f)) {
+                    continue;
+                }
+                $aliasKey = $n->qname() . '.' . $phpName;
+                if (isset($this->skipList[$aliasKey])) {  // an alias skipped on this class only
+                    $this->skip($n, $phpName, 'skip.txt: ' . $this->skipList[$aliasKey]);
                     continue;
                 }
                 $seenNames[$phpName] = true;

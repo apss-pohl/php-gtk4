@@ -29,6 +29,18 @@ ZEND_METHOD(Gtk4_GtkPasswordEntry, __construct) {
 }
 
 /**
+ * Gtk4\GtkPasswordEntry::get_extra_menu(): ?GMenuModel
+ *
+ * Gets the menu model set with gtk_password_entry_set_extra_menu().
+ */
+ZEND_METHOD(Gtk4_GtkPasswordEntry, get_extra_menu) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkPasswordEntry *self = PHPGTK_SELF(GtkPasswordEntry, GTK_TYPE_PASSWORD_ENTRY);
+  GMenuModel *result = gtk_password_entry_get_extra_menu(self);
+  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkPasswordEntry::get_show_peek_icon(): bool
  *
  * Returns whether the entry is showing an icon to reveal the contents.
@@ -37,6 +49,25 @@ ZEND_METHOD(Gtk4_GtkPasswordEntry, get_show_peek_icon) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkPasswordEntry *self = PHPGTK_SELF(GtkPasswordEntry, GTK_TYPE_PASSWORD_ENTRY);
   RETURN_BOOL(gtk_password_entry_get_show_peek_icon(self));
+}
+
+/**
+ * Gtk4\GtkPasswordEntry::set_extra_menu(?GMenuModel $model): void
+ *
+ * Sets a menu model to add when constructing the context menu for $entry.
+ */
+ZEND_METHOD(Gtk4_GtkPasswordEntry, set_extra_menu) {
+  zval *model = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(model, class_for_gtype(G_TYPE_MENU_MODEL))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkPasswordEntry *self = PHPGTK_SELF(GtkPasswordEntry, GTK_TYPE_PASSWORD_ENTRY);
+  GObject *model_o = nullptr;
+  if (model != nullptr) {
+    model_o = unwrap(model, G_TYPE_MENU_MODEL);
+    if (model_o == nullptr) RETURN_THROWS();
+  }
+  gtk_password_entry_set_extra_menu(self, model_o != nullptr ? G_MENU_MODEL(model_o) : nullptr);
 }
 
 /**

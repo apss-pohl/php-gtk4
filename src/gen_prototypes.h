@@ -38,6 +38,7 @@ void register_vfuncs_GtkEntryBuffer();
 void register_vfuncs_GtkFilter();
 ZEND_METHOD(Gtk4_GtkOrientable, get_orientation);
 ZEND_METHOD(Gtk4_GtkOrientable, set_orientation);
+void register_vfuncs_GtkPopover();
 void register_vfuncs_GtkRange();
 namespace phpgtk {
 void register_GtkRequisition(zend_class_entry *ce);
@@ -94,6 +95,7 @@ ZEND_METHOD(Gtk4_GListModel, get_item_type);
 ZEND_METHOD(Gtk4_GListModel, get_n_items);
 ZEND_METHOD(Gtk4_GListModel, get_item);
 ZEND_METHOD(Gtk4_GListModel, items_changed);
+void register_vfuncs_GMenuModel();
 void register_vfuncs_GdkPaintable();
 ZEND_METHOD(Gtk4_GdkPaintable, compute_concrete_size);
 ZEND_METHOD(Gtk4_GdkPaintable, get_current_image);

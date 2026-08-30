@@ -24,3 +24,4 @@ Gtk.Entry.set_text          the max_length(1) set just before truncates 'smoke' 
 Gtk.SpinButton.set_text     a numeric spin button parses its text; 'smoke' is not a number
 Gtk.Image.icon_name         the failed `file` assignment just before leaves the image showing the broken-image icon
 Gtk.Image.resource          a resource path that does not exist is cleared by GTK (resource stays null)
+Gtk.PopoverMenu.visible_submenu   names a submenu of the model; there is no submenu called "smoke" (stays null)

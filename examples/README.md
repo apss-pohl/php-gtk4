@@ -255,3 +255,19 @@ drives a window with no `GtkApplication`. Both pass a standalone override to `De
 | [GdkNotifyType.php](GdkNotifyType.php) | how the widget left and the widget entered are related - ancestor, inferior, nonlinear |
 | [GdkTouchpadGesturePhase.php](GdkTouchpadGesturePhase.php) | where in a touchpad gesture an event sits - begin, update, end, cancel |
 | [GdkKeyMatch.php](GdkKeyMatch.php) | how well a key event matches an accelerator - exact, partial or not at all |
+
+## Menus
+
+| File | Shows |
+| ---- | ----- |
+| [GMenuModel.php](GMenuModel.php) | the read side of a menu: items, attributes and links |
+| [GMenu.php](GMenu.php) | the writable menu model |
+| [GMenuItem.php](GMenuItem.php) | one menu entry built by hand |
+| [GtkPopover.php](GtkPopover.php) | a bubble anchored to a widget |
+| [GtkPopoverMenu.php](GtkPopoverMenu.php) | a popover that renders a GMenuModel |
+| [GtkPopoverMenuBar.php](GtkPopoverMenuBar.php) | a menu bar built from a GMenuModel |
+| [GtkMenuButton.php](GtkMenuButton.php) | a button that opens a popover |
+| [GtkHeaderBar.php](GtkHeaderBar.php) | the title bar with widgets in it |
+| [GtkApplicationWindow.php](GtkApplicationWindow.php) | a GtkWindow that is also an action map |
+| [GtkArrowType.php](GtkArrowType.php) | which way a GtkMenuButton arrow points |
+| [GtkPopoverMenuFlags.php](GtkPopoverMenuFlags.php) | how a GtkPopoverMenu opens submenus: sliding or nested |

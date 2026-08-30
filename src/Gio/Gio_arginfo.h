@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 218ce77023fff0946a2012b95bfef0a7ce9dfd9d */
+ * Stub hash: e737fdcfe153666ebb47d79400836380d0bffc7a */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_change_state, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
@@ -376,6 +376,149 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GListStore_items_changed arginfo_class_Gtk4_GListModelObject_items_changed
 
+#define arginfo_class_Gtk4_GMenu___construct arginfo_class_Gtk4_GActionObject___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenu_append, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, label, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, detailed_action, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenu_append_item, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, item, Gtk4\\GMenuItem, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenu_append_section, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, label, IS_STRING, 1)
+	ZEND_ARG_OBJ_INFO(0, section, Gtk4\\GMenuModel, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenu_append_submenu, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, label, IS_STRING, 1)
+	ZEND_ARG_OBJ_INFO(0, submenu, Gtk4\\GMenuModel, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GMenu_freeze arginfo_class_Gtk4_GApplication_activate
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenu_insert, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, position, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, label, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, detailed_action, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenu_insert_item, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, position, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, item, Gtk4\\GMenuItem, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenu_insert_section, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, position, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, label, IS_STRING, 1)
+	ZEND_ARG_OBJ_INFO(0, section, Gtk4\\GMenuModel, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenu_insert_submenu, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, position, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, label, IS_STRING, 1)
+	ZEND_ARG_OBJ_INFO(0, submenu, Gtk4\\GMenuModel, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GMenu_prepend arginfo_class_Gtk4_GMenu_append
+
+#define arginfo_class_Gtk4_GMenu_prepend_item arginfo_class_Gtk4_GMenu_append_item
+
+#define arginfo_class_Gtk4_GMenu_prepend_section arginfo_class_Gtk4_GMenu_append_section
+
+#define arginfo_class_Gtk4_GMenu_prepend_submenu arginfo_class_Gtk4_GMenu_append_submenu
+
+#define arginfo_class_Gtk4_GMenu_remove arginfo_class_Gtk4_GListStore_remove
+
+#define arginfo_class_Gtk4_GMenu_remove_all arginfo_class_Gtk4_GApplication_activate
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GMenuItem___construct, 0, 0, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, label, IS_STRING, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, detailed_action, IS_STRING, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GMenuItem_new_from_model, 0, 2, Gtk4\\GMenuItem, 0)
+	ZEND_ARG_OBJ_INFO(0, model, Gtk4\\GMenuModel, 0)
+	ZEND_ARG_TYPE_INFO(0, item_index, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GMenuItem_new_section, 0, 2, Gtk4\\GMenuItem, 0)
+	ZEND_ARG_TYPE_INFO(0, label, IS_STRING, 1)
+	ZEND_ARG_OBJ_INFO(0, section, Gtk4\\GMenuModel, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GMenuItem_new_submenu, 0, 2, Gtk4\\GMenuItem, 0)
+	ZEND_ARG_TYPE_INFO(0, label, IS_STRING, 1)
+	ZEND_ARG_OBJ_INFO(0, submenu, Gtk4\\GMenuModel, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenuItem_get_attribute_value, 0, 2, IS_MIXED, 0)
+	ZEND_ARG_TYPE_INFO(0, attribute, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, expected_type, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GMenuItem_get_link, 0, 1, Gtk4\\GMenuModel, 1)
+	ZEND_ARG_TYPE_INFO(0, link, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenuItem_set_action_and_target_value, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, action, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, target_value, IS_MIXED, 0, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenuItem_set_attribute_value, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, attribute, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenuItem_set_detailed_action, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, detailed_action, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenuItem_set_label, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, label, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenuItem_set_link, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, link, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, model, Gtk4\\GMenuModel, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenuItem_set_section, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, section, Gtk4\\GMenuModel, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenuItem_set_submenu, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, submenu, Gtk4\\GMenuModel, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GMenuModel___construct arginfo_class_Gtk4_GActionObject___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenuModel_get_item_attribute_value, 0, 3, IS_MIXED, 0)
+	ZEND_ARG_TYPE_INFO(0, item_index, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, attribute, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, expected_type, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GMenuModel_get_item_link, 0, 2, Gtk4\\GMenuModel, 1)
+	ZEND_ARG_TYPE_INFO(0, item_index, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, link, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GMenuModel_get_n_items arginfo_class_Gtk4_GApplication_get_flags
+
+#define arginfo_class_Gtk4_GMenuModel_is_mutable arginfo_class_Gtk4_GAction_get_enabled
+
+#define arginfo_class_Gtk4_GMenuModel_items_changed arginfo_class_Gtk4_GListModelObject_items_changed
+
+#define arginfo_class_Gtk4_GMenuModel_vfunc_get_item_link arginfo_class_Gtk4_GMenuModel_get_item_link
+
+#define arginfo_class_Gtk4_GMenuModel_vfunc_get_n_items arginfo_class_Gtk4_GApplication_get_flags
+
+#define arginfo_class_Gtk4_GMenuModel_vfunc_is_mutable arginfo_class_Gtk4_GAction_get_enabled
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GSimpleAction___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameter_type, IS_STRING, 1, "null")
@@ -544,6 +687,44 @@ ZEND_METHOD(Gtk4_GListStore, insert);
 ZEND_METHOD(Gtk4_GListStore, remove);
 ZEND_METHOD(Gtk4_GListStore, remove_all);
 ZEND_METHOD(Gtk4_GListStore, __construct);
+ZEND_METHOD(Gtk4_GMenu, __construct);
+ZEND_METHOD(Gtk4_GMenu, append);
+ZEND_METHOD(Gtk4_GMenu, append_item);
+ZEND_METHOD(Gtk4_GMenu, append_section);
+ZEND_METHOD(Gtk4_GMenu, append_submenu);
+ZEND_METHOD(Gtk4_GMenu, freeze);
+ZEND_METHOD(Gtk4_GMenu, insert);
+ZEND_METHOD(Gtk4_GMenu, insert_item);
+ZEND_METHOD(Gtk4_GMenu, insert_section);
+ZEND_METHOD(Gtk4_GMenu, insert_submenu);
+ZEND_METHOD(Gtk4_GMenu, prepend);
+ZEND_METHOD(Gtk4_GMenu, prepend_item);
+ZEND_METHOD(Gtk4_GMenu, prepend_section);
+ZEND_METHOD(Gtk4_GMenu, prepend_submenu);
+ZEND_METHOD(Gtk4_GMenu, remove);
+ZEND_METHOD(Gtk4_GMenu, remove_all);
+ZEND_METHOD(Gtk4_GMenuItem, __construct);
+ZEND_METHOD(Gtk4_GMenuItem, new_from_model);
+ZEND_METHOD(Gtk4_GMenuItem, new_section);
+ZEND_METHOD(Gtk4_GMenuItem, new_submenu);
+ZEND_METHOD(Gtk4_GMenuItem, get_attribute_value);
+ZEND_METHOD(Gtk4_GMenuItem, get_link);
+ZEND_METHOD(Gtk4_GMenuItem, set_action_and_target_value);
+ZEND_METHOD(Gtk4_GMenuItem, set_attribute_value);
+ZEND_METHOD(Gtk4_GMenuItem, set_detailed_action);
+ZEND_METHOD(Gtk4_GMenuItem, set_label);
+ZEND_METHOD(Gtk4_GMenuItem, set_link);
+ZEND_METHOD(Gtk4_GMenuItem, set_section);
+ZEND_METHOD(Gtk4_GMenuItem, set_submenu);
+ZEND_METHOD(Gtk4_GMenuModel, __construct);
+ZEND_METHOD(Gtk4_GMenuModel, get_item_attribute_value);
+ZEND_METHOD(Gtk4_GMenuModel, get_item_link);
+ZEND_METHOD(Gtk4_GMenuModel, get_n_items);
+ZEND_METHOD(Gtk4_GMenuModel, is_mutable);
+ZEND_METHOD(Gtk4_GMenuModel, items_changed);
+ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_item_link);
+ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_n_items);
+ZEND_METHOD(Gtk4_GMenuModel, vfunc_is_mutable);
 ZEND_METHOD(Gtk4_GSimpleAction, __construct);
 ZEND_METHOD(Gtk4_GSimpleAction, new_stateful);
 ZEND_METHOD(Gtk4_GSimpleAction, set_enabled);
@@ -760,6 +941,56 @@ static const zend_function_entry class_Gtk4_GListStore_methods[] = {
 	ZEND_RAW_FENTRY("get_n_items", zim_Gtk4_GListModel_get_n_items, arginfo_class_Gtk4_GListStore_get_n_items, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("get_item", zim_Gtk4_GListModel_get_item, arginfo_class_Gtk4_GListStore_get_item, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("items_changed", zim_Gtk4_GListModel_items_changed, arginfo_class_Gtk4_GListStore_items_changed, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GMenu_methods[] = {
+	ZEND_ME(Gtk4_GMenu, __construct, arginfo_class_Gtk4_GMenu___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenu, append, arginfo_class_Gtk4_GMenu_append, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenu, append_item, arginfo_class_Gtk4_GMenu_append_item, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenu, append_section, arginfo_class_Gtk4_GMenu_append_section, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenu, append_submenu, arginfo_class_Gtk4_GMenu_append_submenu, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenu, freeze, arginfo_class_Gtk4_GMenu_freeze, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenu, insert, arginfo_class_Gtk4_GMenu_insert, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenu, insert_item, arginfo_class_Gtk4_GMenu_insert_item, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenu, insert_section, arginfo_class_Gtk4_GMenu_insert_section, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenu, insert_submenu, arginfo_class_Gtk4_GMenu_insert_submenu, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenu, prepend, arginfo_class_Gtk4_GMenu_prepend, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenu, prepend_item, arginfo_class_Gtk4_GMenu_prepend_item, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenu, prepend_section, arginfo_class_Gtk4_GMenu_prepend_section, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenu, prepend_submenu, arginfo_class_Gtk4_GMenu_prepend_submenu, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenu, remove, arginfo_class_Gtk4_GMenu_remove, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenu, remove_all, arginfo_class_Gtk4_GMenu_remove_all, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GMenuItem_methods[] = {
+	ZEND_ME(Gtk4_GMenuItem, __construct, arginfo_class_Gtk4_GMenuItem___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuItem, new_from_model, arginfo_class_Gtk4_GMenuItem_new_from_model, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GMenuItem, new_section, arginfo_class_Gtk4_GMenuItem_new_section, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GMenuItem, new_submenu, arginfo_class_Gtk4_GMenuItem_new_submenu, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GMenuItem, get_attribute_value, arginfo_class_Gtk4_GMenuItem_get_attribute_value, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuItem, get_link, arginfo_class_Gtk4_GMenuItem_get_link, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuItem, set_action_and_target_value, arginfo_class_Gtk4_GMenuItem_set_action_and_target_value, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuItem, set_attribute_value, arginfo_class_Gtk4_GMenuItem_set_attribute_value, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuItem, set_detailed_action, arginfo_class_Gtk4_GMenuItem_set_detailed_action, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuItem, set_label, arginfo_class_Gtk4_GMenuItem_set_label, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuItem, set_link, arginfo_class_Gtk4_GMenuItem_set_link, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuItem, set_section, arginfo_class_Gtk4_GMenuItem_set_section, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuItem, set_submenu, arginfo_class_Gtk4_GMenuItem_set_submenu, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GMenuModel_methods[] = {
+	ZEND_ME(Gtk4_GMenuModel, __construct, arginfo_class_Gtk4_GMenuModel___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GMenuModel, get_item_attribute_value, arginfo_class_Gtk4_GMenuModel_get_item_attribute_value, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuModel, get_item_link, arginfo_class_Gtk4_GMenuModel_get_item_link, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuModel, get_n_items, arginfo_class_Gtk4_GMenuModel_get_n_items, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuModel, is_mutable, arginfo_class_Gtk4_GMenuModel_is_mutable, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuModel, items_changed, arginfo_class_Gtk4_GMenuModel_items_changed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuModel, vfunc_get_item_link, arginfo_class_Gtk4_GMenuModel_vfunc_get_item_link, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuModel, vfunc_get_n_items, arginfo_class_Gtk4_GMenuModel_vfunc_get_n_items, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuModel, vfunc_is_mutable, arginfo_class_Gtk4_GMenuModel_vfunc_is_mutable, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -1009,6 +1240,36 @@ static zend_class_entry *register_class_Gtk4_GListStore(zend_class_entry *class_
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GListStore", class_Gtk4_GListStore_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
 	zend_class_implements(class_entry, 1, class_entry_Gtk4_GListModel);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GMenu(zend_class_entry *class_entry_Gtk4_GMenuModel)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GMenu", class_Gtk4_GMenu_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GMenuModel, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GMenuItem(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GMenuItem", class_Gtk4_GMenuItem_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GMenuModel(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GMenuModel", class_Gtk4_GMenuModel_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
 
 	return class_entry;
 }

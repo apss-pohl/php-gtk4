@@ -179,6 +179,7 @@ enum GtkAlign: int
  * `GtkApplication` is a high-level API for writing applications.
  *
  * @property-read ?GtkWindow $active_window
+ * @property ?GMenuModel $menubar
  * @property ?bool $register_session
  * @property-read ?bool $screensaver_active
  */
@@ -207,6 +208,12 @@ class GtkApplication extends GApplication implements GActionGroup, GActionMap
     /** Gets the “active” window for the application. */
     public function get_active_window(): ?GtkWindow {}
 
+    /** Gets a menu from automatically loaded resources. */
+    public function get_menu_by_id(string $id): ?GMenu {}
+
+    /** Returns the menu model that has been set with `set_menubar`. */
+    public function get_menubar(): ?GMenuModel {}
+
     /** Returns the `ApplicationWindow` with the given ID. */
     public function get_window_by_id(int $id): ?GtkWindow {}
 
@@ -229,6 +236,9 @@ class GtkApplication extends GApplication implements GActionGroup, GActionMap
 
     /** Sets zero or more keyboard accelerators that will trigger the given action. */
     public function set_accels_for_action(string $detailed_action_name, array $accels): void {}
+
+    /** Sets or unsets the menubar for windows of `application`. */
+    public function set_menubar(?GMenuModel $menubar): void {}
 
     /** @implementation-alias Gtk4\GActionGroup::action_added */
     public function action_added(string $action_name): void {}
@@ -303,6 +313,56 @@ final class GtkApplicationInhibitFlags
     public const int SWITCH = 2;
     public const int SUSPEND = 4;
     public const int IDLE = 8;
+}
+
+/**
+ * `GtkApplicationWindow` is a `GtkWindow` subclass that integrates with `GtkApplication`.
+ *
+ * @property ?bool $show_menubar
+ */
+class GtkApplicationWindow extends GtkWindow implements GActionMap, GtkRoot
+{
+    /** Creates a new `GtkApplicationWindow`. */
+    public function __construct(GtkApplication $application) {}
+
+    /** Returns the unique ID of the window. */
+    public function get_id(): int {}
+
+    /** Returns whether the window will display a menubar for the app menu and menubar as needed. */
+    public function get_show_menubar(): bool {}
+
+    /** Sets whether the window will display a menubar for the app menu and menubar as needed. */
+    public function set_show_menubar(bool $show_menubar): void {}
+
+    /** @implementation-alias Gtk4\GActionMap::add_action */
+    public function add_action(GAction $action): void {}
+
+    /** @implementation-alias Gtk4\GActionMap::lookup_action */
+    public function lookup_action(string $action_name): ?GAction {}
+
+    /** @implementation-alias Gtk4\GActionMap::remove_action */
+    public function remove_action(string $action_name): void {}
+
+    /** @implementation-alias Gtk4\GtkRoot::get_display */
+    public function get_display(): GdkDisplay {}
+
+    /** @implementation-alias Gtk4\GtkRoot::get_focus */
+    public function get_focus(): ?GtkWidget {}
+
+    /** @implementation-alias Gtk4\GtkRoot::set_focus */
+    public function set_focus(?GtkWidget $focus): void {}
+}
+
+/**
+ * Used to indicate the direction in which an arrow should point.
+ */
+enum GtkArrowType: int
+{
+    case Up = 0;
+    case Down = 1;
+    case Left = 2;
+    case Right = 3;
+    case None = 4;
 }
 
 /**
@@ -894,6 +954,7 @@ final class GtkEditableObject extends GObject implements GtkEditable
  * @property ?bool $activates_default
  * @property ?GtkEntryBuffer $buffer
  * @property ?bool $enable_emoji_completion
+ * @property ?GMenuModel $extra_menu
  * @property ?bool $has_frame
  * @property ?string $im_module
  * @property ?int $input_hints
@@ -944,6 +1005,9 @@ class GtkEntry extends GtkWidget implements GtkEditable
 
     /** Returns the index of the icon which is the source of the current DND operation, or -1. */
     public function get_current_icon_drag_source(): int {}
+
+    /** Gets the menu model set with gtk_entry_set_extra_menu(). */
+    public function get_extra_menu(): ?GMenuModel {}
 
     /** Gets the value set by gtk_entry_set_has_frame(). */
     public function get_has_frame(): bool {}
@@ -1025,6 +1089,9 @@ class GtkEntry extends GtkWidget implements GtkEditable
 
     /** Set the `GtkEntryBuffer` object which holds the text for this widget. */
     public function set_buffer(GtkEntryBuffer $buffer): void {}
+
+    /** Sets a menu model to add when constructing the context menu for $entry. */
+    public function set_extra_menu(?GMenuModel $model): void {}
 
     /** Sets whether the entry has a beveled frame around it. */
     public function set_has_frame(bool $setting): void {}
@@ -1877,6 +1944,46 @@ class GtkGrid extends GtkWidget implements GtkOrientable
 }
 
 /**
+ * `GtkHeaderBar` is a widget for creating custom title bars for windows.
+ *
+ * @property ?string $decoration_layout
+ * @property ?bool $show_title_buttons
+ * @property ?GtkWidget $title_widget
+ */
+class GtkHeaderBar extends GtkWidget
+{
+    /** Creates a new `GtkHeaderBar` widget. */
+    public function __construct() {}
+
+    /** Gets the decoration layout of the `GtkHeaderBar`. */
+    public function get_decoration_layout(): ?string {}
+
+    /** Returns whether this header bar shows the standard window title buttons. */
+    public function get_show_title_buttons(): bool {}
+
+    /** Retrieves the title widget of the header. */
+    public function get_title_widget(): ?GtkWidget {}
+
+    /** Adds $child to $bar, packed with reference to the end of the $bar. */
+    public function pack_end(GtkWidget $child): void {}
+
+    /** Adds $child to $bar, packed with reference to the start of the $bar. */
+    public function pack_start(GtkWidget $child): void {}
+
+    /** Removes a child from the `GtkHeaderBar`. */
+    public function remove(GtkWidget $child): void {}
+
+    /** Sets the decoration layout for this header bar. */
+    public function set_decoration_layout(?string $layout): void {}
+
+    /** Sets whether this header bar shows the standard window title buttons. */
+    public function set_show_title_buttons(bool $setting): void {}
+
+    /** Sets the title for the `GtkHeaderBar`. */
+    public function set_title_widget(?GtkWidget $title_widget): void {}
+}
+
+/**
  * Built-in icon sizes.
  */
 enum GtkIconSize: int
@@ -2016,6 +2123,7 @@ enum GtkJustification: int
  * The `GtkLabel` widget displays a small amount of text.
  *
  * @property ?PangoEllipsizeMode $ellipsize
+ * @property ?GMenuModel $extra_menu
  * @property ?GtkJustification $justify
  * @property ?string $label
  * @property ?int $lines
@@ -2046,6 +2154,9 @@ class GtkLabel extends GtkWidget
 
     /** Returns the ellipsizing position of the label. */
     public function get_ellipsize(): PangoEllipsizeMode {}
+
+    /** Gets the extra menu model of $label. */
+    public function get_extra_menu(): ?GMenuModel {}
 
     /** Returns the justification of the label. */
     public function get_justify(): GtkJustification {}
@@ -2118,6 +2229,9 @@ class GtkLabel extends GtkWidget
     /** Sets the mode used to ellipsize the text. */
     public function set_ellipsize(PangoEllipsizeMode $mode): void {}
 
+    /** Sets a menu model to add when constructing the context menu for $label. */
+    public function set_extra_menu(?GMenuModel $model): void {}
+
     /** Sets the alignment of the lines in the text of the label relative to each other. */
     public function set_justify(GtkJustification $jtype): void {}
 
@@ -2174,6 +2288,106 @@ class GtkLabel extends GtkWidget
 
     /** Sets the `yalign` of the label. */
     public function set_yalign(float $yalign): void {}
+}
+
+/**
+ * The `GtkMenuButton` widget is used to display a popup when clicked.
+ *
+ * @property ?bool $active
+ * @property ?bool $always_show_arrow
+ * @property ?bool $can_shrink
+ * @property ?GtkWidget $child
+ * @property ?GtkArrowType $direction
+ * @property ?bool $has_frame
+ * @property ?string $icon_name
+ * @property ?string $label
+ * @property ?GMenuModel $menu_model
+ * @property ?GtkPopover $popover
+ * @property ?bool $primary
+ * @property ?bool $use_underline
+ */
+class GtkMenuButton extends GtkWidget
+{
+    /** Creates a new `GtkMenuButton` widget with downwards-pointing arrow as the only child. */
+    public function __construct() {}
+
+    /** Returns whether the menu button is active. */
+    public function get_active(): bool {}
+
+    /** Gets whether to show a dropdown arrow even when using an icon or a custom child. */
+    public function get_always_show_arrow(): bool {}
+
+    /** Retrieves whether the button can be smaller than the natural size of its contents. */
+    public function get_can_shrink(): bool {}
+
+    /** Gets the child widget of $menu_button. */
+    public function get_child(): ?GtkWidget {}
+
+    /** Returns whether the button has a frame. */
+    public function get_has_frame(): bool {}
+
+    /** Gets the name of the icon shown in the button. */
+    public function get_icon_name(): ?string {}
+
+    /** Gets the label shown in the button */
+    public function get_label(): ?string {}
+
+    /** Returns the `GMenuModel` used to generate the popup. */
+    public function get_menu_model(): ?GMenuModel {}
+
+    /** Returns the `GtkPopover` that pops out of the button. */
+    public function get_popover(): ?GtkPopover {}
+
+    /** Returns whether the menu button acts as a primary menu. */
+    public function get_primary(): bool {}
+
+    /** Returns whether an embedded underline in the text indicates a mnemonic. */
+    public function get_use_underline(): bool {}
+
+    /** Dismiss the menu. */
+    public function popdown(): void {}
+
+    /** Pop up the menu. */
+    public function popup(): void {}
+
+    /** Sets whether the menu button is active. */
+    public function set_active(bool $active): void {}
+
+    /** Sets whether to show a dropdown arrow even when using an icon or a custom child. */
+    public function set_always_show_arrow(bool $always_show_arrow): void {}
+
+    /** Sets whether the button size can be smaller than the natural size of its contents. */
+    public function set_can_shrink(bool $can_shrink): void {}
+
+    /** Sets the child widget of $menu_button. */
+    public function set_child(?GtkWidget $child): void {}
+
+    /** Sets the style of the button. */
+    public function set_has_frame(bool $has_frame): void {}
+
+    /** Sets the name of an icon to show inside the menu button. */
+    public function set_icon_name(string $icon_name): void {}
+
+    /** Sets the label to show inside the menu button. */
+    public function set_label(string $label): void {}
+
+    /** Sets the `GMenuModel` from which the popup will be constructed. */
+    public function set_menu_model(?GMenuModel $menu_model): void {}
+
+    /** Sets the `GtkPopover` that will be popped up when the $menu_button is clicked. */
+    public function set_popover(?GtkWidget $popover): void {}
+
+    /** Sets whether menu button acts as a primary menu. */
+    public function set_primary(bool $primary): void {}
+
+    /** If true, an underline in the text indicates a mnemonic. */
+    public function set_use_underline(bool $use_underline): void {}
+
+    /**
+     * A callable run right before the popup is shown - `function (GtkMenuButton $button): void` -
+     * so the popover or menu model can be built lazily; null removes it.
+     */
+    public function set_create_popup_func(?callable $func): void {}
 }
 
 /**
@@ -2562,6 +2776,7 @@ class GtkPaned extends GtkWidget implements GtkOrientable
  * `GtkPasswordEntry` is an entry that has been tailored for entering secrets.
  *
  * @property ?bool $activates_default
+ * @property ?GMenuModel $extra_menu
  * @property ?string $placeholder_text
  * @property ?bool $show_peek_icon
  */
@@ -2570,8 +2785,14 @@ class GtkPasswordEntry extends GtkWidget implements GtkEditable
     /** Creates a `GtkPasswordEntry`. */
     public function __construct() {}
 
+    /** Gets the menu model set with gtk_password_entry_set_extra_menu(). */
+    public function get_extra_menu(): ?GMenuModel {}
+
     /** Returns whether the entry is showing an icon to reveal the contents. */
     public function get_show_peek_icon(): bool {}
+
+    /** Sets a menu model to add when constructing the context menu for $entry. */
+    public function set_extra_menu(?GMenuModel $model): void {}
 
     /** Sets whether the entry should have a clickable icon to reveal the contents. */
     public function set_show_peek_icon(bool $show_peek_icon): void {}
@@ -2720,6 +2941,177 @@ enum GtkPolicyType: int
     case Automatic = 1;
     case Never = 2;
     case External = 3;
+}
+
+/**
+ * `GtkPopover` is a bubble-like context popup.
+ *
+ * @property ?bool $autohide
+ * @property ?bool $cascade_popdown
+ * @property ?GtkWidget $child
+ * @property ?GtkWidget $default_widget
+ * @property ?bool $has_arrow
+ * @property ?bool $mnemonics_visible
+ * @property ?GdkRectangle $pointing_to
+ * @property ?GtkPositionType $position
+ */
+class GtkPopover extends GtkWidget
+{
+    /** Creates a new `GtkPopover`. */
+    public function __construct() {}
+
+    /** Returns whether the popover is modal. */
+    public function get_autohide(): bool {}
+
+    /** Returns whether the popover will close after a modal child is closed. */
+    public function get_cascade_popdown(): bool {}
+
+    /** Gets the child widget of $popover. */
+    public function get_child(): ?GtkWidget {}
+
+    /**
+     * Gets whether this popover is showing an arrow pointing at the widget that it is relative to.
+     */
+    public function get_has_arrow(): bool {}
+
+    /** Gets whether mnemonics are visible. */
+    public function get_mnemonics_visible(): bool {}
+
+    /**
+     * Gets the offset previous set with [method@Gtk.Popover.set_offset()].
+     *
+     * @return array{int, int}
+     */
+    public function get_offset(): array {}
+
+    /** Gets the rectangle that the popover points to. */
+    public function get_pointing_to(): ?GdkRectangle {}
+
+    /** Returns the preferred position of $popover. */
+    public function get_position(): GtkPositionType {}
+
+    /** Pops $popover down. */
+    public function popdown(): void {}
+
+    /** Pops $popover up. */
+    public function popup(): void {}
+
+    /** Allocate a size for the `GtkPopover`. */
+    public function present(): void {}
+
+    /** Sets whether $popover is modal. */
+    public function set_autohide(bool $autohide): void {}
+
+    /**
+     * If $cascade_popdown is `true`, the popover will be closed when a child modal popover is
+     * closed.
+     */
+    public function set_cascade_popdown(bool $cascade_popdown): void {}
+
+    /** Sets the child widget of $popover. */
+    public function set_child(?GtkWidget $child): void {}
+
+    /** Sets the default widget of a `GtkPopover`. */
+    public function set_default_widget(?GtkWidget $widget): void {}
+
+    /** Sets whether this popover should draw an arrow pointing at the widget it is relative to. */
+    public function set_has_arrow(bool $has_arrow): void {}
+
+    /** Sets whether mnemonics should be visible. */
+    public function set_mnemonics_visible(bool $mnemonics_visible): void {}
+
+    /** Sets the offset to use when calculating the position of the popover. */
+    public function set_offset(int $x_offset, int $y_offset): void {}
+
+    /** Sets the rectangle that $popover points to. */
+    public function set_pointing_to(?GdkRectangle $rect): void {}
+
+    /** Sets the preferred position for $popover to appear. */
+    public function set_position(GtkPositionType $position): void {}
+
+    /**
+     * Native `activate_default` (PopoverClass.activate_default): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_activate_default()` from an override.
+     */
+    public function vfunc_activate_default(): void {}
+
+    /**
+     * Native `closed` (PopoverClass.closed): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_closed()` from an override.
+     */
+    public function vfunc_closed(): void {}
+}
+
+/**
+ * `GtkPopoverMenu` is a subclass of `GtkPopover` that implements menu behavior.
+ *
+ * @property ?int $flags
+ * @property ?GMenuModel $menu_model
+ * @property ?string $visible_submenu
+ */
+class GtkPopoverMenu extends GtkPopover
+{
+    /** A GtkPopoverMenu with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct() {}
+
+    /** Creates a `GtkPopoverMenu` and populates it according to $model. */
+    public static function new_from_model(?GMenuModel $model = null): GtkPopoverMenu {}
+
+    /** Creates a `GtkPopoverMenu` and populates it according to $model. */
+    public static function new_from_model_full(GMenuModel $model, int $flags): GtkPopoverMenu {}
+
+    /** Adds a custom widget to a generated menu. */
+    public function add_child(GtkWidget $child, string $id): bool {}
+
+    /** Returns the flags that $popover uses to create/display a menu from its model. */
+    public function get_flags(): int {}
+
+    /** Returns the menu model used to populate the popover. */
+    public function get_menu_model(): ?GMenuModel {}
+
+    /** Removes a widget that has previously been added with [method@Gtk.PopoverMenu.add_child()] */
+    public function remove_child(GtkWidget $child): bool {}
+
+    /** Sets the flags that $popover uses to create/display a menu from its model. */
+    public function set_flags(int $flags): void {}
+
+    /** Sets a new menu model on $popover. */
+    public function set_menu_model(?GMenuModel $model): void {}
+}
+
+/**
+ * `GtkPopoverMenuBar` presents a horizontal bar of items that pop up popover menus when clicked.
+ *
+ * @property ?GMenuModel $menu_model
+ */
+class GtkPopoverMenuBar extends GtkWidget
+{
+    /** A GtkPopoverMenuBar with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct() {}
+
+    /** Creates a `GtkPopoverMenuBar` from a `GMenuModel`. */
+    public static function new_from_model(?GMenuModel $model = null): GtkPopoverMenuBar {}
+
+    /** Adds a custom widget to a generated menubar. */
+    public function add_child(GtkWidget $child, string $id): bool {}
+
+    /** Returns the model from which the contents of $bar are taken. */
+    public function get_menu_model(): ?GMenuModel {}
+
+    /** Removes a widget that has previously been added with gtk_popover_menu_bar_add_child(). */
+    public function remove_child(GtkWidget $child): bool {}
+
+    /** Sets a menu model from which $bar should take its contents. */
+    public function set_menu_model(?GMenuModel $model): void {}
+}
+
+/**
+ * Flags that affect how `PopoverMenu` widgets built from a `MenuModel` are created and displayed.
+ */
+final class GtkPopoverMenuFlags
+{
+    public const int SLIDING = 0;
+    public const int NESTED = 1;
 }
 
 /**

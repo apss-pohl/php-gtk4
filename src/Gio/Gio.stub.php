@@ -669,6 +669,184 @@ class GListStore extends GObject implements GListModel
 }
 
 /**
+ * `GMenu` is a simple implementation of `MenuModel`. You populate a `GMenu` by adding `MenuItem`
+ * instances to it.
+ */
+class GMenu extends GMenuModel
+{
+    /** Creates a new #GMenu. */
+    public function __construct() {}
+
+    /**
+     * Convenience function for appending a normal menu item to the end of $menu. Combine
+     * g_menu_item_new() and g_menu_insert_item() for a more flexible alternative.
+     */
+    public function append(?string $label, ?string $detailed_action): void {}
+
+    /** Appends $item to the end of $menu. */
+    public function append_item(GMenuItem $item): void {}
+
+    /**
+     * Convenience function for appending a section menu item to the end of $menu. Combine
+     * g_menu_item_new_section() and g_menu_insert_item() for a more flexible alternative.
+     */
+    public function append_section(?string $label, GMenuModel $section): void {}
+
+    /**
+     * Convenience function for appending a submenu menu item to the end of $menu. Combine
+     * g_menu_item_new_submenu() and g_menu_insert_item() for a more flexible alternative.
+     */
+    public function append_submenu(?string $label, GMenuModel $submenu): void {}
+
+    /** Marks $menu as frozen. */
+    public function freeze(): void {}
+
+    /**
+     * Convenience function for inserting a normal menu item into $menu. Combine g_menu_item_new()
+     * and g_menu_insert_item() for a more flexible alternative.
+     */
+    public function insert(int $position, ?string $label, ?string $detailed_action): void {}
+
+    /** Inserts $item into $menu. */
+    public function insert_item(int $position, GMenuItem $item): void {}
+
+    /**
+     * Convenience function for inserting a section menu item into $menu. Combine
+     * g_menu_item_new_section() and g_menu_insert_item() for a more flexible alternative.
+     */
+    public function insert_section(int $position, ?string $label, GMenuModel $section): void {}
+
+    /**
+     * Convenience function for inserting a submenu menu item into $menu. Combine
+     * g_menu_item_new_submenu() and g_menu_insert_item() for a more flexible alternative.
+     */
+    public function insert_submenu(int $position, ?string $label, GMenuModel $submenu): void {}
+
+    /**
+     * Convenience function for prepending a normal menu item to the start of $menu. Combine
+     * g_menu_item_new() and g_menu_insert_item() for a more flexible alternative.
+     */
+    public function prepend(?string $label, ?string $detailed_action): void {}
+
+    /** Prepends $item to the start of $menu. */
+    public function prepend_item(GMenuItem $item): void {}
+
+    /**
+     * Convenience function for prepending a section menu item to the start of $menu. Combine
+     * g_menu_item_new_section() and g_menu_insert_item() for a more flexible alternative.
+     */
+    public function prepend_section(?string $label, GMenuModel $section): void {}
+
+    /**
+     * Convenience function for prepending a submenu menu item to the start of $menu. Combine
+     * g_menu_item_new_submenu() and g_menu_insert_item() for a more flexible alternative.
+     */
+    public function prepend_submenu(?string $label, GMenuModel $submenu): void {}
+
+    /** Removes an item from the menu. */
+    public function remove(int $position): void {}
+
+    /** Removes all items in the menu. */
+    public function remove_all(): void {}
+}
+
+/**
+ * #GMenuItem is an opaque structure type. You must access it using the functions below.
+ */
+class GMenuItem extends GObject
+{
+    /** Creates a new #GMenuItem. */
+    public function __construct(?string $label = null, ?string $detailed_action = null) {}
+
+    /** Creates a #GMenuItem as an exact copy of an existing menu item in a #GMenuModel. */
+    public static function new_from_model(GMenuModel $model, int $item_index): GMenuItem {}
+
+    /** Creates a new #GMenuItem representing a section. */
+    public static function new_section(?string $label, GMenuModel $section): GMenuItem {}
+
+    /** Creates a new #GMenuItem representing a submenu. */
+    public static function new_submenu(?string $label, GMenuModel $submenu): GMenuItem {}
+
+    /** Queries the named $attribute on $menu_item. */
+    public function get_attribute_value(string $attribute, ?string $expected_type): mixed {}
+
+    /** Queries the named $link on $menu_item. */
+    public function get_link(string $link): ?GMenuModel {}
+
+    /** Sets or unsets the "action" and "target" attributes of $menu_item. */
+    public function set_action_and_target_value(?string $action, mixed $target_value = null): void {}
+
+    /** Sets or unsets an attribute on $menu_item. */
+    public function set_attribute_value(string $attribute, mixed $value = null): void {}
+
+    /** Sets the "action" and possibly the "target" attribute of $menu_item. */
+    public function set_detailed_action(string $detailed_action): void {}
+
+    /** Sets or unsets the "label" attribute of $menu_item. */
+    public function set_label(?string $label): void {}
+
+    /** Creates a link from $menu_item to $model if non-`null`, or unsets it. */
+    public function set_link(string $link, ?GMenuModel $model): void {}
+
+    /** Sets or unsets the "section" link of $menu_item to $section. */
+    public function set_section(?GMenuModel $section): void {}
+
+    /** Sets or unsets the "submenu" link of $menu_item to $submenu. */
+    public function set_submenu(?GMenuModel $submenu): void {}
+}
+
+/**
+ * `GMenuModel` represents the contents of a menu — an ordered list of menu items. The items are
+ * associated with actions, which can be activated through them. Items can be grouped in sections,
+ * and may have submenus associated with them. Both items and sections usually have some
+ * representation data, such as labels or icons. The type of the associated action (ie whether it
+ * is stateful, and what kind of state it has) can influence the representation of the item.
+ */
+class GMenuModel extends GObject
+{
+    /** GMenuModel is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /**
+     * Queries the item at position $item_index in $model for the attribute specified by
+     * $attribute.
+     */
+    public function get_item_attribute_value(int $item_index, string $attribute, ?string $expected_type): mixed {}
+
+    /** Queries the item at position $item_index in $model for the link specified by $link. */
+    public function get_item_link(int $item_index, string $link): ?GMenuModel {}
+
+    /** Query the number of items in $model. */
+    public function get_n_items(): int {}
+
+    /** Queries if $model is mutable. */
+    public function is_mutable(): bool {}
+
+    /** Requests emission of the #GMenuModel::items-changed signal on $model. */
+    public function items_changed(int $position, int $removed, int $added): void {}
+
+    /**
+     * Native `get_item_link` (MenuModelClass.get_item_link): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_get_item_link()` from an override. Queries the item at position
+     * $item_index in $model for the link specified by $link.
+     */
+    public function vfunc_get_item_link(int $item_index, string $link): ?GMenuModel {}
+
+    /**
+     * Native `get_n_items` (MenuModelClass.get_n_items): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_get_n_items()` from an override. Query the number of items in
+     * $model.
+     */
+    public function vfunc_get_n_items(): int {}
+
+    /**
+     * Native `is_mutable` (MenuModelClass.is_mutable): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_is_mutable()` from an override. Queries if $model is mutable.
+     */
+    public function vfunc_is_mutable(): bool {}
+}
+
+/**
  * A `GSimpleAction` is the obvious simple implementation of the `Action` interface. This is the
  * easiest way to create an action for purposes of adding it to a `SimpleActionGroup`.
  *

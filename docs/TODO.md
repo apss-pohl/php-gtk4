@@ -136,9 +136,17 @@ draft, hand-write via overrides / promotion where the project needs more.
       closures (gen/report.md; `Gdk.EventSequence` followed on 2026-08-30): `Gdk.Device`,
       `Gtk.IMContext`, `Gtk.ShortcutController` (accels already go through
       `GtkApplication::set_accels_for_action()`).
-- [ ] **Waves 3b–8** as listed in PLAN.md §3 (the feature items in §7 below point at their wave);
-      each merged only with the full pipeline green and the map's status column regenerated.
-      Next: wave 4 (menus/actions) - what the fastlane port needs before 3b (drag and drop).
+- [x] **Wave 4** (2026-08-30) — menus/actions: `GMenuModel`/`GMenu`/`GMenuItem`, `GtkPopover`,
+      `GtkPopoverMenu`(+`Bar`), `GtkMenuButton` (`set_create_popup_func` override), `GtkHeaderBar`,
+      `GtkApplicationWindow`, `GtkApplication::set_menubar`. Two PHP-level clashes resolved in
+      gen/skip.txt: `GtkApplicationWindow` does not declare `GActionGroup` (its `activate_action`
+      would be incompatible with `GtkWidget`'s — the skip key `<Class>.implements:<Iface>` is new)
+      and `GtkMenuButton::get/set_direction` are the widget's (the arrow is the `direction`
+      property). `new GMenuModel()` is refused (NULL class slots). Skipped: `Gio.Icon` (`set_icon`),
+      `Gtk.ShortcutsWindow` (help overlay), the varargs `set_attribute` family (`*_value` exists).
+- [ ] **Waves 3b, 5–8** as listed in PLAN.md §3 (the feature items in §7 below point at their
+      wave); each merged only with the full pipeline green and the map's status column regenerated.
+      Next: the fastlane port spike (one screen on php-gtk4) before wave 5.
 
 ## 7. GTK4 feature surface (what the binding still has to expose to deliver GTK4's benefits)
 

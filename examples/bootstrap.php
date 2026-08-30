@@ -134,6 +134,10 @@ final class Demo
             'GdkEventType',
             'GdkScrollDirection', 'GdkCrossingMode', 'GdkNotifyType', 'GdkTouchpadGesturePhase', 'GdkKeyMatch',
         ],
+        'Menus' => [
+            'GMenuModel', 'GMenu', 'GMenuItem', 'GtkPopover', 'GtkPopoverMenu', 'GtkPopoverMenuBar', 'GtkMenuButton',
+            'GtkHeaderBar', 'GtkApplicationWindow', 'GtkArrowType', 'GtkPopoverMenuFlags',
+        ],
         'Loop' => ['GLib', 'GMainLoop'],
         'Geometry' => ['GtkRequisition'],
         'Dialogs & async' => ['GtkAlertDialog', 'GCancellable', 'GAsyncResult', 'GTask'],

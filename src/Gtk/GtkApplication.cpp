@@ -99,6 +99,33 @@ ZEND_METHOD(Gtk4_GtkApplication, get_active_window) {
 }
 
 /**
+ * Gtk4\GtkApplication::get_menu_by_id(string $id): ?GMenu
+ *
+ * Gets a menu from automatically loaded resources.
+ */
+ZEND_METHOD(Gtk4_GtkApplication, get_menu_by_id) {
+  zend_string *id;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_STR(id)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkApplication *self = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
+  GMenu *result = gtk_application_get_menu_by_id(self, ZSTR_VAL(id));
+  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+}
+
+/**
+ * Gtk4\GtkApplication::get_menubar(): ?GMenuModel
+ *
+ * Returns the menu model that has been set with `set_menubar`.
+ */
+ZEND_METHOD(Gtk4_GtkApplication, get_menubar) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkApplication *self = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
+  GMenuModel *result = gtk_application_get_menubar(self);
+  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkApplication::get_window_by_id(int $id): ?GtkWindow
  *
  * Returns the `ApplicationWindow` with the given ID.
@@ -169,6 +196,25 @@ ZEND_METHOD(Gtk4_GtkApplication, set_accels_for_action) {
   gtk_application_set_accels_for_action(self, ZSTR_VAL(detailed_action_name),
                                         const_cast<const char **>(accels_v));
   g_strfreev(accels_v);
+}
+
+/**
+ * Gtk4\GtkApplication::set_menubar(?GMenuModel $menubar): void
+ *
+ * Sets or unsets the menubar for windows of `application`.
+ */
+ZEND_METHOD(Gtk4_GtkApplication, set_menubar) {
+  zval *menubar = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(menubar, class_for_gtype(G_TYPE_MENU_MODEL))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkApplication *self = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
+  GObject *menubar_o = nullptr;
+  if (menubar != nullptr) {
+    menubar_o = unwrap(menubar, G_TYPE_MENU_MODEL);
+    if (menubar_o == nullptr) RETURN_THROWS();
+  }
+  gtk_application_set_menubar(self, menubar_o != nullptr ? G_MENU_MODEL(menubar_o) : nullptr);
 }
 
 // vfunc thunks and installers: file-local, installed by class_init of a PHP subtype

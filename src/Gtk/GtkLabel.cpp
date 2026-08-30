@@ -71,6 +71,18 @@ ZEND_METHOD(Gtk4_GtkLabel, get_ellipsize) {
 }
 
 /**
+ * Gtk4\GtkLabel::get_extra_menu(): ?GMenuModel
+ *
+ * Gets the extra menu model of $label.
+ */
+ZEND_METHOD(Gtk4_GtkLabel, get_extra_menu) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  GMenuModel *result = gtk_label_get_extra_menu(self);
+  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkLabel::get_justify(): GtkJustification
  *
  * Returns the justification of the label.
@@ -340,6 +352,25 @@ ZEND_METHOD(Gtk4_GtkLabel, set_ellipsize) {
   gint mode_v = 0;
   if (!enum_from_php(mode, PANGO_TYPE_ELLIPSIZE_MODE, &mode_v)) RETURN_THROWS();
   gtk_label_set_ellipsize(self, static_cast<PangoEllipsizeMode>(mode_v));
+}
+
+/**
+ * Gtk4\GtkLabel::set_extra_menu(?GMenuModel $model): void
+ *
+ * Sets a menu model to add when constructing the context menu for $label.
+ */
+ZEND_METHOD(Gtk4_GtkLabel, set_extra_menu) {
+  zval *model = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(model, class_for_gtype(G_TYPE_MENU_MODEL))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  GObject *model_o = nullptr;
+  if (model != nullptr) {
+    model_o = unwrap(model, G_TYPE_MENU_MODEL);
+    if (model_o == nullptr) RETURN_THROWS();
+  }
+  gtk_label_set_extra_menu(self, model_o != nullptr ? G_MENU_MODEL(model_o) : nullptr);
 }
 
 /**

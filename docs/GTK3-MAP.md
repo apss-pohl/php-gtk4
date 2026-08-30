@@ -24,9 +24,9 @@ the notes are hand-written and may lag.
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 45 | — |
+| ✅ implemented | 48 | — |
 | 🟡 partial | 2 | — |
-| ❌ to port (GTK 4 equivalent exists) | 47 | ~1750 |
+| ❌ to port (GTK 4 equivalent exists) | 44 | ~1750 |
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 5 | ~130 |
 
@@ -100,7 +100,7 @@ is open work.
 | `GtkNotebook` | 40 | `GtkNotebook` | ✅ | `set_tab_label`, `append_page` etc. survive. |
 | `GtkExpander` | 18 | `GtkExpander` | ❌ | |
 | `GtkActionBar` | 5 | `GtkActionBar` | ❌ | |
-| `GtkHeaderBar` | 15 | `GtkHeaderBar` | ❌ | `pack_start`/`pack_end`/`set_title_widget`; `set_title`/`set_subtitle` removed. |
+| `GtkHeaderBar` | 15 | `GtkHeaderBar` | ✅ | `pack_start`/`pack_end`/`set_title_widget`; `set_title`/`set_subtitle` removed. |
 | `GtkEventBox` | 5 | — | ⛔ | Removed; every `GtkWidget` takes event controllers now (`GtkGestureClick`, `GtkEventControllerMotion`). |
 | `GtkSizeGroup` | 6 | `GtkSizeGroup` | ✅ | |
 | `GtkSeparator` | 1 | `GtkSeparator` | ✅ | |
@@ -112,7 +112,7 @@ is open work.
 | php-gtk3 class | gtk3 methods | GTK 4 replacement | php-gtk4 | Notes |
 | --- | ---: | --- | :---: | --- |
 | `GtkWindow` | 85 | `GtkWindow` | ✅ | Generated (wave 0): 58 methods (title, sizes, modal/resizable/decorated/deletable, fullscreen/maximize, transient-for, default widget, focus, hide-on-close, …). **Removed in GTK 4:** `move`/`resize`/`get_position`/`get_size`, `set_position`, `set_type_hint`, `iconify`/`stick`/`set_keep_above`, `set_icon*`, `get_screen`, `add_accel_group`. |
-| `GtkApplicationWindow` | 2 | `GtkApplicationWindow` | ❌ | Not registered yet; `GtkWindow` takes the application in its constructor instead. |
+| `GtkApplicationWindow` | 2 | `GtkApplicationWindow` | ✅ | Not registered yet; `GtkWindow` takes the application in its constructor instead. |
 | `GtkButton` | 29 | `GtkButton` | ✅ | Generated (wave 0): 16 methods (label, child, icon name, has-frame, use-underline, static `new_with_label`/`new_with_mnemonic`/`new_from_icon_name`). **Removed:** `set_image`/`set_always_show_image`/`set_relief`/`set_alignment`/`set_use_stock`/`get_event_window`, `enter`/`leave`/`pressed`/`released` signals. |
 | `GtkToggleButton` | 10 | `GtkToggleButton` | ✅ | `set_inconsistent` kept; `set_mode` removed → use `GtkCheckButton`. |
 | `GtkCheckButton` | 6 | `GtkCheckButton` | ✅ | GTK 4 merges `GtkRadioButton` in via `set_group`. |
@@ -120,7 +120,7 @@ is open work.
 | `GtkColorButton` | 13 | `GtkColorButton` (dep. 4.10 → `GtkColorDialogButton`) | ❌ | Prefer `GtkColorDialogButton` on 4.10+, guarded by `GTK_CHECK_VERSION`. |
 | `GtkFontButton` | 16 | `GtkFontButton` (dep. 4.10 → `GtkFontDialogButton`) | ❌ | Same caveat. |
 | `GtkAppChooserButton` | 11 | `GtkAppChooserButton` (dep. 4.10) | ❌ | |
-| `GtkMenuButton` | 2 | `GtkMenuButton` | ❌ | Takes a `GMenuModel` popover, not a `GtkMenu`. |
+| `GtkMenuButton` | 2 | `GtkMenuButton` | ✅ | Takes a `GMenuModel` popover, not a `GtkMenu`. |
 | `GtkLabel` | 43 | `GtkLabel` | ✅ | Generated (wave 0): 44 methods (text/markup/mnemonic, `set_use_markup`, ellipsize, justify, wrap (`set_line_wrap` renamed), lines, width chars, xalign/yalign, mnemonic widget, selection, `get_current_uri`). `set_angle`/`set_pattern`/`get_layout` are GTK 3-only or Pango-dependent. |
 | `GtkEntry` | 41 | `GtkEntry` (+ `GtkText`) | 🟡 | Text handling moved into `GtkEditable`/`GtkText`; `set_icon_from_pixbuf` etc. use `GdkPaintable` now. |
 | `GtkEntryBuffer` | 9 | `GtkEntryBuffer` | ✅ | Unchanged. |

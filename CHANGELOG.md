@@ -28,6 +28,13 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   commit. `bin/release-notes` groups the commits since the previous release by type and
   `release.yml` appends that to every release body, after the `CHANGELOG.md` section.
 
+- Wave 4 (menus/actions, docs/PLAN.md §3): `GMenuModel`, `GMenu`, `GMenuItem`, `GtkPopover`,
+  `GtkPopoverMenu`, `GtkPopoverMenuBar`, `GtkMenuButton` (`set_create_popup_func(callable)`),
+  `GtkHeaderBar`, `GtkApplicationWindow`, `GtkApplication::set_menubar()`, `GtkArrowType`,
+  `GtkPopoverMenuFlags` — generated, `MenuTest`. A menu is a `GMenu` of detailed action names
+  (`app.quit`, `win.save`) shown by a popover menu bar, a menu button or a popover; the actions
+  are `GSimpleAction`s on the application or the application window; `set_menubar()` works once
+  the application is registered (from `startup` on), like the action queries.
 - `wrap()` falls back to a generated `<Interface>Object` class (`GListModelObject`, ...) for a
   GTK-private class whose only registered face is an interface: `GtkNotebook::get_pages()` is a
   usable list instead of a bare `GObject`. Fundamental handles keep

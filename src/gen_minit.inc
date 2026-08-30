@@ -4,6 +4,7 @@
   phpgtk::register_enum(GTK_TYPE_ACCESSIBLE_PLATFORM_STATE, register_class_Gtk4_GtkAccessiblePlatformState());
   phpgtk::register_enum(GTK_TYPE_ALIGN, register_class_Gtk4_GtkAlign());
   phpgtk::register_flags(GTK_TYPE_APPLICATION_INHIBIT_FLAGS, register_class_Gtk4_GtkApplicationInhibitFlags());
+  phpgtk::register_enum(GTK_TYPE_ARROW_TYPE, register_class_Gtk4_GtkArrowType());
   phpgtk::register_enum(GTK_TYPE_BASELINE_POSITION, register_class_Gtk4_GtkBaselinePosition());
   phpgtk::register_enum(GTK_TYPE_CONTENT_FIT, register_class_Gtk4_GtkContentFit());
   phpgtk::register_enum(GTK_TYPE_CORNER_TYPE, register_class_Gtk4_GtkCornerType());
@@ -26,6 +27,7 @@
   phpgtk::register_enum(GTK_TYPE_PAN_DIRECTION, register_class_Gtk4_GtkPanDirection());
   phpgtk::register_flags(GTK_TYPE_PICK_FLAGS, register_class_Gtk4_GtkPickFlags());
   phpgtk::register_enum(GTK_TYPE_POLICY_TYPE, register_class_Gtk4_GtkPolicyType());
+  phpgtk::register_flags(GTK_TYPE_POPOVER_MENU_FLAGS, register_class_Gtk4_GtkPopoverMenuFlags());
   phpgtk::register_enum(GTK_TYPE_POSITION_TYPE, register_class_Gtk4_GtkPositionType());
   phpgtk::register_enum(GTK_TYPE_PROPAGATION_LIMIT, register_class_Gtk4_GtkPropagationLimit());
   phpgtk::register_enum(GTK_TYPE_PROPAGATION_PHASE, register_class_Gtk4_GtkPropagationPhase());
@@ -148,6 +150,10 @@
   phpgtk::register_interface_fallback(G_TYPE_LIST_MODEL, ce_GListModelObject);
   zend_class_entry *ce_GListStore = register_class_Gtk4_GListStore(ce_GObject, ce_GListModel);
   phpgtk::register_class("GListStore", ce_GListStore, G_TYPE_LIST_STORE);
+  zend_class_entry *ce_GMenuItem = register_class_Gtk4_GMenuItem(ce_GObject);
+  phpgtk::register_class("GMenuItem", ce_GMenuItem, G_TYPE_MENU_ITEM);
+  zend_class_entry *ce_GMenuModel = register_class_Gtk4_GMenuModel(ce_GObject);
+  phpgtk::register_class("GMenuModel", ce_GMenuModel, G_TYPE_MENU_MODEL);
   zend_class_entry *ce_GSimpleAction = register_class_Gtk4_GSimpleAction(ce_GObject, ce_GAction);
   phpgtk::register_class("GSimpleAction", ce_GSimpleAction, G_TYPE_SIMPLE_ACTION);
   zend_class_entry *ce_GTask = register_class_Gtk4_GTask(ce_GObject, ce_GAsyncResult);
@@ -162,6 +168,8 @@
   phpgtk::register_class("GdkTexture", ce_GdkTexture, GDK_TYPE_TEXTURE);
   zend_class_entry *ce_GtkApplication = register_class_Gtk4_GtkApplication(ce_GApplication, ce_GActionGroup, ce_GActionMap);
   phpgtk::register_class("GtkApplication", ce_GtkApplication, GTK_TYPE_APPLICATION);
+  zend_class_entry *ce_GtkApplicationWindow = register_class_Gtk4_GtkApplicationWindow(ce_GtkWindow, ce_GActionMap, ce_GtkRoot);
+  phpgtk::register_class("GtkApplicationWindow", ce_GtkApplicationWindow, GTK_TYPE_APPLICATION_WINDOW);
   zend_class_entry *ce_GtkBox = register_class_Gtk4_GtkBox(ce_GtkWidget, ce_GtkOrientable);
   phpgtk::register_class("GtkBox", ce_GtkBox, GTK_TYPE_BOX);
   zend_class_entry *ce_GtkButton = register_class_Gtk4_GtkButton(ce_GtkWidget);
@@ -198,10 +206,14 @@
   phpgtk::register_class("GtkGesturePan", ce_GtkGesturePan, GTK_TYPE_GESTURE_PAN);
   zend_class_entry *ce_GtkGrid = register_class_Gtk4_GtkGrid(ce_GtkWidget, ce_GtkOrientable);
   phpgtk::register_class("GtkGrid", ce_GtkGrid, GTK_TYPE_GRID);
+  zend_class_entry *ce_GtkHeaderBar = register_class_Gtk4_GtkHeaderBar(ce_GtkWidget);
+  phpgtk::register_class("GtkHeaderBar", ce_GtkHeaderBar, GTK_TYPE_HEADER_BAR);
   zend_class_entry *ce_GtkImage = register_class_Gtk4_GtkImage(ce_GtkWidget);
   phpgtk::register_class("GtkImage", ce_GtkImage, GTK_TYPE_IMAGE);
   zend_class_entry *ce_GtkLabel = register_class_Gtk4_GtkLabel(ce_GtkWidget);
   phpgtk::register_class("GtkLabel", ce_GtkLabel, GTK_TYPE_LABEL);
+  zend_class_entry *ce_GtkMenuButton = register_class_Gtk4_GtkMenuButton(ce_GtkWidget);
+  phpgtk::register_class("GtkMenuButton", ce_GtkMenuButton, GTK_TYPE_MENU_BUTTON);
   zend_class_entry *ce_GtkNotebook = register_class_Gtk4_GtkNotebook(ce_GtkWidget);
   phpgtk::register_class("GtkNotebook", ce_GtkNotebook, GTK_TYPE_NOTEBOOK);
   zend_class_entry *ce_GtkOverlay = register_class_Gtk4_GtkOverlay(ce_GtkWidget);
@@ -212,6 +224,12 @@
   phpgtk::register_class("GtkPasswordEntry", ce_GtkPasswordEntry, GTK_TYPE_PASSWORD_ENTRY);
   zend_class_entry *ce_GtkPicture = register_class_Gtk4_GtkPicture(ce_GtkWidget);
   phpgtk::register_class("GtkPicture", ce_GtkPicture, GTK_TYPE_PICTURE);
+  zend_class_entry *ce_GtkPopover = register_class_Gtk4_GtkPopover(ce_GtkWidget);
+  phpgtk::register_class("GtkPopover", ce_GtkPopover, GTK_TYPE_POPOVER);
+  zend_class_entry *ce_GtkPopoverMenu = register_class_Gtk4_GtkPopoverMenu(ce_GtkPopover);
+  phpgtk::register_class("GtkPopoverMenu", ce_GtkPopoverMenu, GTK_TYPE_POPOVER_MENU);
+  zend_class_entry *ce_GtkPopoverMenuBar = register_class_Gtk4_GtkPopoverMenuBar(ce_GtkWidget);
+  phpgtk::register_class("GtkPopoverMenuBar", ce_GtkPopoverMenuBar, GTK_TYPE_POPOVER_MENU_BAR);
   zend_class_entry *ce_GtkProgressBar = register_class_Gtk4_GtkProgressBar(ce_GtkWidget, ce_GtkOrientable);
   phpgtk::register_class("GtkProgressBar", ce_GtkProgressBar, GTK_TYPE_PROGRESS_BAR);
   zend_class_entry *ce_GtkRange = register_class_Gtk4_GtkRange(ce_GtkWidget, ce_GtkOrientable);
@@ -242,6 +260,8 @@
   phpgtk::register_class("GtkToggleButton", ce_GtkToggleButton, GTK_TYPE_TOGGLE_BUTTON);
   zend_class_entry *ce_GtkViewport = register_class_Gtk4_GtkViewport(ce_GtkWidget, ce_GtkScrollable);
   phpgtk::register_class("GtkViewport", ce_GtkViewport, GTK_TYPE_VIEWPORT);
+  zend_class_entry *ce_GMenu = register_class_Gtk4_GMenu(ce_GMenuModel);
+  phpgtk::register_class("GMenu", ce_GMenu, G_TYPE_MENU);
 // --- vfunc thunks for PHP subclasses (core/subtype.h)
   register_vfuncs_GtkAdjustment();
   register_vfuncs_GtkApplication();
@@ -252,6 +272,7 @@
   register_vfuncs_GtkEntry();
   register_vfuncs_GtkEntryBuffer();
   register_vfuncs_GtkFilter();
+  register_vfuncs_GtkPopover();
   register_vfuncs_GtkRange();
   register_vfuncs_GtkScale();
   register_vfuncs_GtkSorter();
@@ -264,4 +285,5 @@
   register_vfuncs_GAsyncResult();
   register_vfuncs_GCancellable();
   register_vfuncs_GListModel();
+  register_vfuncs_GMenuModel();
   register_vfuncs_GdkPaintable();

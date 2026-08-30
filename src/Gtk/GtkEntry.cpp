@@ -93,6 +93,18 @@ ZEND_METHOD(Gtk4_GtkEntry, get_current_icon_drag_source) {
 }
 
 /**
+ * Gtk4\GtkEntry::get_extra_menu(): ?GMenuModel
+ *
+ * Gets the menu model set with gtk_entry_set_extra_menu().
+ */
+ZEND_METHOD(Gtk4_GtkEntry, get_extra_menu) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
+  GMenuModel *result = gtk_entry_get_extra_menu(self);
+  wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkEntry::get_has_frame(): bool
  *
  * Gets the value set by gtk_entry_set_has_frame().
@@ -449,6 +461,25 @@ ZEND_METHOD(Gtk4_GtkEntry, set_buffer) {
   GObject *buffer_o = unwrap(buffer, GTK_TYPE_ENTRY_BUFFER);
   if (buffer_o == nullptr) RETURN_THROWS();
   gtk_entry_set_buffer(self, GTK_ENTRY_BUFFER(buffer_o));
+}
+
+/**
+ * Gtk4\GtkEntry::set_extra_menu(?GMenuModel $model): void
+ *
+ * Sets a menu model to add when constructing the context menu for $entry.
+ */
+ZEND_METHOD(Gtk4_GtkEntry, set_extra_menu) {
+  zval *model = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(model, class_for_gtype(G_TYPE_MENU_MODEL))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
+  GObject *model_o = nullptr;
+  if (model != nullptr) {
+    model_o = unwrap(model, G_TYPE_MENU_MODEL);
+    if (model_o == nullptr) RETURN_THROWS();
+  }
+  gtk_entry_set_extra_menu(self, model_o != nullptr ? G_MENU_MODEL(model_o) : nullptr);
 }
 
 /**
