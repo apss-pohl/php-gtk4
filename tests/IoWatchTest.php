@@ -16,7 +16,8 @@ final class IoWatchTest extends GtkTestCase
     /** @return array{resource, resource} */
     private static function pair(): array
     {
-        $pair = stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
+        // PF_INET: a loopback pair works on Windows too (PF_UNIX pairs do not exist there).
+        $pair = stream_socket_pair(STREAM_PF_INET, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
         self::assertIsArray($pair);
         return [$pair[0], $pair[1]];
     }
@@ -107,7 +108,11 @@ final class IoWatchTest extends GtkTestCase
         self::assertNotEmpty($conditions);
         $last = end($conditions);
         self::assertIsInt($last);
-        self::assertSame(GIOCondition::HUP, $last & GIOCondition::HUP);
+        if (PHP_OS_FAMILY === 'Windows') {  // Winsock reports a closed peer as readable (EOF), not HUP
+            self::assertSame(GIOCondition::IN, $last & GIOCondition::IN);
+        } else {
+            self::assertSame(GIOCondition::HUP, $last & GIOCondition::HUP);
+        }
         fclose($a);
     }
 
@@ -189,7 +194,7 @@ final class IoWatchTest extends GtkTestCase
         if (!function_exists('socket_create_pair')) {
             self::markTestSkipped('ext-sockets not loaded');
         }
-        $ok = socket_create_pair(AF_UNIX, SOCK_STREAM, 0, $pair);
+        $ok = socket_create_pair(PHP_OS_FAMILY === 'Windows' ? AF_INET : AF_UNIX, SOCK_STREAM, 0, $pair);
         self::assertTrue($ok);
         self::assertIsArray($pair);
         [$sa, $sb] = $pair;

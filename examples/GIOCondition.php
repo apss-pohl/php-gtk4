@@ -51,7 +51,7 @@ return Demo::page(
         };
         $show('waiting - nothing on the socket yet');
 
-        $pair = stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
+        $pair = stream_socket_pair(STREAM_PF_INET, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);  // loopback: Windows too
         if ($pair === false) {
             $show('stream_socket_pair() failed');
             return $log;
