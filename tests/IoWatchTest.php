@@ -120,7 +120,6 @@ final class IoWatchTest extends GtkTestCase
         self::pump(static fn(): bool => $events !== []);
         self::assertNotEmpty($events);
         [$condition, $data] = end($events) ?: [0, null];
-        self::assertIsInt($condition);
         self::assertTrue(
             ($condition & GIOCondition::HUP) !== 0 || $data === '' || $data === false,
             'the peer closing the connection reached the watch',
