@@ -630,6 +630,7 @@ ZEND_METHOD(Gtk4_GtkEntry, set_input_hints) {
   Z_PARAM_LONG(hints)
   ZEND_PARSE_PARAMETERS_END();
   GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
+  if (!phpgtk::check_flags(GTK_TYPE_INPUT_HINTS, hints, 1)) RETURN_THROWS();
   gtk_entry_set_input_hints(self, static_cast<GtkInputHints>(hints));
 }
 

@@ -1174,6 +1174,7 @@ ZEND_METHOD(Gtk4_GtkWidget, pick) {
   Z_PARAM_LONG(flags)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_flags(GTK_TYPE_PICK_FLAGS, flags, 3)) RETURN_THROWS();
   GtkWidget *result = gtk_widget_pick(self, x, y, static_cast<GtkPickFlags>(flags));
   wrap(result != nullptr ? G_OBJECT(result) : nullptr, return_value);
 }
@@ -1660,6 +1661,7 @@ ZEND_METHOD(Gtk4_GtkWidget, set_state_flags) {
   Z_PARAM_BOOL(clear)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_flags(GTK_TYPE_STATE_FLAGS, flags, 1)) RETURN_THROWS();
   gtk_widget_set_state_flags(self, static_cast<GtkStateFlags>(flags), clear);
 }
 
@@ -1817,6 +1819,7 @@ ZEND_METHOD(Gtk4_GtkWidget, unset_state_flags) {
   Z_PARAM_LONG(flags)
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_flags(GTK_TYPE_STATE_FLAGS, flags, 1)) RETURN_THROWS();
   gtk_widget_unset_state_flags(self, static_cast<GtkStateFlags>(flags));
 }
 
@@ -2828,6 +2831,7 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_state_flags_changed) {
   if (klass->state_flags_changed == nullptr) {
     return;
   }
+  if (!phpgtk::check_flags(GTK_TYPE_STATE_FLAGS, previous_state_flags, 1)) RETURN_THROWS();
   klass->state_flags_changed(self, static_cast<GtkStateFlags>(previous_state_flags));
 }
 
@@ -2855,6 +2859,7 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_system_setting_changed) {
   if (klass->system_setting_changed == nullptr) {
     return;
   }
+  if (!phpgtk::check_flags(GTK_TYPE_SYSTEM_SETTING, settings, 1)) RETURN_THROWS();
   klass->system_setting_changed(self, static_cast<GtkSystemSetting>(settings));
 }
 

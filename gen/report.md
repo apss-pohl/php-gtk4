@@ -67,6 +67,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `connect` — callback parameter (needs an override)
 - `make_pollfd` — parameter `pollfd` of type GLib.PollFD
+- `release_fd` — skip.txt: aborts the process (GLib-GIO:ERROR "priv->fd_refcount > 0") unless get_fd() was called first, and the refcount is not observable from here
 - `source_new` — return type GLib.Source
 
 ## GListModel
@@ -366,6 +367,16 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `property item-type` — property type Gtk.GType not mappable
 
+## GtkText
+
+- `compute_cursor_extents` — caller-allocates out parameter `strong` of type Graphene.Rect
+- `get_attributes` — return type Pango.AttrList
+- `get_tabs` — return type Pango.TabArray
+- `set_attributes` — parameter `attrs` of type Pango.AttrList
+- `set_tabs` — parameter `tabs` of type Pango.TabArray
+- `property attributes` — property type Pango.AttrList not mappable
+- `property tabs` — property type Pango.TabArray not mappable
+
 ## GtkToggleButton
 
 - `toggled` — deprecated (4.10)
@@ -439,6 +450,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.CustomSorter`: __construct, set_sort_func
 - `Gtk.DrawingArea`: set_draw_func
 - `Gtk.MenuButton`: set_create_popup_func
+- `Gtk.Popover`: popup
 - `Gtk.Scale`: set_format_value_func
 
 ## Emitted files
@@ -514,6 +526,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkStringList.cpp`
 - `Gtk/GtkStringObject.cpp`
 - `Gtk/GtkStyleProvider.cpp`
+- `Gtk/GtkText.cpp`
 - `Gtk/GtkToggleButton.cpp`
 - `Gtk/GtkViewport.cpp`
 - `Gtk/GtkWidget.cpp`
@@ -597,6 +610,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkStackSwitcherSmokeTest.php`
 - `tests/Generated/GtkStringListSmokeTest.php`
 - `tests/Generated/GtkStringObjectSmokeTest.php`
+- `tests/Generated/GtkTextSmokeTest.php`
 - `tests/Generated/GtkToggleButtonSmokeTest.php`
 - `tests/Generated/GtkViewportSmokeTest.php`
 - `tests/Generated/GtkWidgetSmokeTest.php`

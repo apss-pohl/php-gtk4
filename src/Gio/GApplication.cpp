@@ -35,6 +35,7 @@ ZEND_METHOD(Gtk4_GApplication, __construct) {
   Z_PARAM_LONG(flags)
   ZEND_PARSE_PARAMETERS_END();
   if (application_id != nullptr && !phpgtk::check_utf8(application_id, 1)) RETURN_THROWS();
+  if (!phpgtk::check_flags(G_TYPE_APPLICATION_FLAGS, flags, 2)) RETURN_THROWS();
   GObject *obj = subtype_new(ZEND_THIS, "application-id",
                              application_id != nullptr ? ZSTR_VAL(application_id) : nullptr,
                              "flags", static_cast<GApplicationFlags>(flags), nullptr);
@@ -349,6 +350,7 @@ ZEND_METHOD(Gtk4_GApplication, set_flags) {
   Z_PARAM_LONG(flags)
   ZEND_PARSE_PARAMETERS_END();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (!phpgtk::check_flags(G_TYPE_APPLICATION_FLAGS, flags, 1)) RETURN_THROWS();
   g_application_set_flags(self, static_cast<GApplicationFlags>(flags));
 }
 

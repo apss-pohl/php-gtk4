@@ -17,6 +17,7 @@ ZEND_METHOD(Gtk4_GtkEventControllerScroll, __construct) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_LONG(flags)
   ZEND_PARSE_PARAMETERS_END();
+  if (!phpgtk::check_flags(GTK_TYPE_EVENT_CONTROLLER_SCROLL_FLAGS, flags, 1)) RETURN_THROWS();
   GObject *obj =
       subtype_new(ZEND_THIS, "flags", static_cast<GtkEventControllerScrollFlags>(flags), nullptr);
   if (obj == nullptr) {
@@ -70,5 +71,6 @@ ZEND_METHOD(Gtk4_GtkEventControllerScroll, set_flags) {
   ZEND_PARSE_PARAMETERS_END();
   GtkEventControllerScroll *self =
       PHPGTK_SELF(GtkEventControllerScroll, GTK_TYPE_EVENT_CONTROLLER_SCROLL);
+  if (!phpgtk::check_flags(GTK_TYPE_EVENT_CONTROLLER_SCROLL_FLAGS, flags, 1)) RETURN_THROWS();
   gtk_event_controller_scroll_set_flags(self, static_cast<GtkEventControllerScrollFlags>(flags));
 }

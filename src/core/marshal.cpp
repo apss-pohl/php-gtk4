@@ -152,37 +152,123 @@ void to_php(const GValue *v, zval *rv) {
   }
 }
 
+// A property write and a signal argument get the same conversion rules a typed parameter
+// gets - strict_types honoured where the assignment is written, weak coercion otherwise -
+// and then the C type's range. Before this, `$win->default_width = 'garbage'` stored 0 and
+// PHP_INT_MAX stored -1, while $win->set_default_size() rejected both.
+// Whether the code doing the assignment declared strict_types. ZEND_ARG_USES_STRICT_TYPES()
+// answers that for an internal *call* frame; a property write does not push one, so the frame
+// to ask is the one currently executing.
+bool caller_is_strict() {
+  const zend_execute_data *ex = EG(current_execute_data);
+  return ex != nullptr && ex->func != nullptr && ZEND_CALL_USES_STRICT_TYPES(ex);
+}
+
+// What PHP's weak mode accepts for a string parameter: scalars, and objects that can say
+// what they are. An array or a resource cannot become a string here either.
+bool weak_to_string_ok(const zval *pv) {
+  switch (Z_TYPE_P(pv)) {
+    case IS_LONG:
+    case IS_DOUBLE:
+    case IS_TRUE:
+    case IS_FALSE:
+    case IS_STRING:
+      return true;
+    case IS_OBJECT:
+      return Z_OBJCE_P(pv)->__tostring != nullptr;
+    default:
+      return false;
+  }
+}
+
+// An integer: exactly like a typed parameter, then the C type's range (set_or_unset below).
+bool as_long(zval *pv, GType t, zend_long *out) {
+  if (Z_TYPE_P(pv) == IS_LONG) {
+    *out = Z_LVAL_P(pv);
+    return true;
+  }
+  if (caller_is_strict() || !zend_parse_arg_long_weak(pv, out, 0)) {
+    zend_type_error("cannot assign %s to a value of type %s", zend_zval_value_name(pv),
+                    g_type_name(t));
+    return false;
+  }
+  return true;
+}
+
+// Same for a float, where int -> float is allowed even under strict_types.
+bool as_double(zval *pv, GType t, double *out) {
+  if (Z_TYPE_P(pv) == IS_DOUBLE) {
+    *out = Z_DVAL_P(pv);
+    return true;
+  }
+  // int -> float is a widening conversion, allowed even under strict_types.
+  if (Z_TYPE_P(pv) == IS_LONG) {
+    *out = static_cast<double>(Z_LVAL_P(pv));
+    return true;
+  }
+  if (caller_is_strict() || !zend_parse_arg_double_weak(pv, out, 0)) {
+    zend_type_error("cannot assign %s to a value of type %s", zend_zval_value_name(pv),
+                    g_type_name(t));
+    return false;
+  }
+  return true;
+}
+
+// Same for a boolean: strict mode takes true/false, weak mode what PHP's rules allow.
+bool as_bool(zval *pv, GType t, bool *out) {
+  if (Z_TYPE_P(pv) == IS_TRUE || Z_TYPE_P(pv) == IS_FALSE) {
+    *out = Z_TYPE_P(pv) == IS_TRUE;
+    return true;
+  }
+  if (caller_is_strict() || !zend_parse_arg_bool_weak(pv, out, 0)) {
+    zend_type_error("cannot assign %s to a value of type %s", zend_zval_value_name(pv),
+                    g_type_name(t));
+    return false;
+  }
+  return true;
+}
+
+template <typename T, typename Setter>
+// The integer arms differ only in the C type the value has to fit and the setter they call.
+bool set_or_unset(zval *pv, GType t, GValue *out, Setter set) {
+  zend_long v = 0;
+  if (!as_long(pv, t, &v) || !check_range<T>(v, 0)) {
+    g_value_unset(out);
+    return false;
+  }
+  set(out, static_cast<T>(v));
+  return true;
+}
+
 // zval -> GValue of type `t`. Returns false (TypeError thrown, *out unset) on failure.
 bool to_gvalue(zval *pv, GType t, GValue *out) {
   g_value_init(out, t);
   switch (G_TYPE_FUNDAMENTAL(t)) {
     case G_TYPE_CHAR:
-      g_value_set_schar(out, static_cast<gint8>(zval_get_long(pv)));
-      return true;
+      return set_or_unset<gint8>(pv, t, out, g_value_set_schar);
     case G_TYPE_UCHAR:
-      g_value_set_uchar(out, static_cast<guchar>(zval_get_long(pv)));
+      return set_or_unset<guchar>(pv, t, out, g_value_set_uchar);
+    case G_TYPE_BOOLEAN: {
+      bool b = false;
+      if (!as_bool(pv, t, &b)) {
+        g_value_unset(out);
+        return false;
+      }
+      g_value_set_boolean(out, static_cast<gboolean>(b));
       return true;
-    case G_TYPE_BOOLEAN:
-      g_value_set_boolean(out, zend_is_true(pv));
-      return true;
+    }
     case G_TYPE_INT:
-      g_value_set_int(out, static_cast<gint>(zval_get_long(pv)));
-      return true;
+      return set_or_unset<gint>(pv, t, out, g_value_set_int);
     case G_TYPE_UINT:
-      g_value_set_uint(out, static_cast<guint>(zval_get_long(pv)));
-      return true;
+      return set_or_unset<guint>(pv, t, out, g_value_set_uint);
     case G_TYPE_LONG:
-      g_value_set_long(out, static_cast<glong>(zval_get_long(pv)));
-      return true;
+      return set_or_unset<glong>(pv, t, out, g_value_set_long);
     case G_TYPE_ULONG:
-      g_value_set_ulong(out, static_cast<gulong>(zval_get_long(pv)));
-      return true;
+      return set_or_unset<gulong>(pv, t, out, g_value_set_ulong);
     case G_TYPE_INT64:
-      g_value_set_int64(out, zval_get_long(pv));
-      return true;
+      return set_or_unset<gint64>(pv, t, out, g_value_set_int64);
     case G_TYPE_UINT64:
-      g_value_set_uint64(out, static_cast<guint64>(zval_get_long(pv)));
-      return true;
+      return set_or_unset<guint64>(pv, t, out, g_value_set_uint64);
     case G_TYPE_ENUM: {
       gint e = 0;
       if (!enum_from_php(pv, t, &e)) {
@@ -193,34 +279,53 @@ bool to_gvalue(zval *pv, GType t, GValue *out) {
       return true;
     }
     case G_TYPE_FLAGS: {
-      const zend_long bits = zval_get_long(pv);
-      auto *klass = static_cast<GFlagsClass *>(g_type_class_ref(t));
-      const guint mask = klass->mask;
-      g_type_class_unref(klass);
-      if (bits < 0 || (static_cast<guint64>(bits) & ~static_cast<guint64>(mask)) != 0) {
+      zend_long bits = 0;
+      if (!as_long(pv, t, &bits) || !check_flags(t, bits, 0)) {
         g_value_unset(out);
-        zend_value_error("%s: invalid flags value %ld (mask 0x%x)", g_type_name(t),
-                         static_cast<long>(bits), mask);
         return false;
       }
       g_value_set_flags(out, static_cast<guint>(bits));
       return true;
     }
-    case G_TYPE_FLOAT:
-      g_value_set_float(out, static_cast<gfloat>(zval_get_double(pv)));
+    case G_TYPE_FLOAT: {
+      double d = 0;
+      if (!as_double(pv, t, &d)) {
+        g_value_unset(out);
+        return false;
+      }
+      g_value_set_float(out, static_cast<gfloat>(d));
       return true;
-    case G_TYPE_DOUBLE:
-      g_value_set_double(out, zval_get_double(pv));
+    }
+    case G_TYPE_DOUBLE: {
+      double d = 0;
+      if (!as_double(pv, t, &d)) {
+        g_value_unset(out);
+        return false;
+      }
+      g_value_set_double(out, d);
       return true;
+    }
     case G_TYPE_STRING: {
       if (Z_TYPE_P(pv) == IS_NULL) {
         g_value_set_string(out, nullptr);
       } else {
+        // Weak mode converts what PHP would convert for a string parameter (scalars and
+        // __toString); strict mode takes a string and nothing else. zval_get_string() is what
+        // does the conversion either way, so the reference it returns is released below.
+        if (Z_TYPE_P(pv) != IS_STRING && (caller_is_strict() || !weak_to_string_ok(pv))) {
+          g_value_unset(out);
+          zend_type_error("cannot assign %s to a value of type %s", zend_zval_value_name(pv),
+                          g_type_name(t));
+          return false;
+        }
         zend_string *s = zval_get_string(pv);
         const bool ok = check_utf8(s, 0);
         if (ok) g_value_set_string(out, ZSTR_VAL(s));
         zend_string_release(s);
-        if (!ok) return false;
+        if (!ok) {
+          g_value_unset(out);
+          return false;
+        }
       }
       return true;
     }

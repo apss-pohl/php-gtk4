@@ -419,7 +419,14 @@ build_variant() {  # build_variant <output.so> [configure args...]
     # Incremental: the same configure arguments as last time and a Makefile newer than
     # config.m4 -> just make (edit-build-test loop); anything else reconfigures from clean.
     local want="$PHP_CONFIG $*"
-    if [[ -f Makefile && -f .ci/configure.args && "$(cat .ci/configure.args)" == "$want" && Makefile -nt config.m4 ]]; then
+    # config.m4 globs src/**/*.cpp at configure time and bakes the list into the Makefile, so a
+    # file the generator just added is not compiled until configure runs again - the extension
+    # then fails to load with an undefined zim_* symbol. Compare the list, not just the mtimes.
+    local sources_now sources_built=""
+    sources_now=$(find src -name '*.cpp' | LC_ALL=C sort | tr '\n' ' ')
+    [[ -f .ci/sources.list ]] && sources_built=$(cat .ci/sources.list)
+    if [[ -f Makefile && -f .ci/configure.args && "$(cat .ci/configure.args)" == "$want" \
+          && "$sources_now" == "$sources_built" && Makefile -nt config.m4 ]]; then
         echo "  incremental (configure args unchanged: $want)"
     else
         local stash; stash=$(mktemp -d)
@@ -430,6 +437,7 @@ build_variant() {  # build_variant <output.so> [configure args...]
         "$PHPIZE" >/dev/null || fail "phpize"
         ./configure --with-php-config="$PHP_CONFIG" "$@" > .ci/configure.log 2>&1 || { rm -f .ci/configure.args; tail -20 .ci/configure.log; fail "configure"; }
         printf '%s' "$want" > .ci/configure.args
+        printf '%s' "$sources_now" > .ci/sources.list
     fi
     make -j"$JOBS" > .ci/make.log 2>&1 || { grep -E 'error|warning' .ci/make.log | head -40; fail "make"; }
     # only warnings in our sources fail the build, not ones from GTK/PHP system headers

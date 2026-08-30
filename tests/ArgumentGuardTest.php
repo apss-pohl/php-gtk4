@@ -10,6 +10,7 @@ use Gtk4\GSimpleAction;
 use Gtk4\GtkLabel;
 use Gtk4\GtkWindow;
 use Gtk4\PhpValue;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * The PHP -> C argument boundary (`check_utf8` / `check_range` in src/php_gtk4.h, the depth
@@ -112,6 +113,52 @@ final class ArgumentGuardTest extends GtkTestCase
     {
         $texture = GdkTexture::new_from_bytes(PngFixture::red(1, 1));
         self::assertSame(1, $texture->get_width());
+    }
+
+    // ---------------------------------------------------------------- property writes
+
+    /**
+     * `$win->title = 'x'` is the idiom the README teaches, and it used to be the one API
+     * surface with no type checking at all: `$win->default_width = 'garbage'` stored 0,
+     * PHP_INT_MAX stored -1 and strict_types was ignored. It now converts exactly like the
+     * equivalent setter's parameter does.
+     *
+     * @return iterable<string, array{string, mixed, class-string<\Throwable>}>
+     */
+    public static function refusedPropertyWrites(): iterable
+    {
+        yield 'non-numeric string into int' => ['default_width', 'garbage', \TypeError::class];
+        yield 'float into int (strict)' => ['default_width', 3.7, \TypeError::class];
+        yield 'bool into int (strict)' => ['default_width', true, \TypeError::class];
+        yield 'out of range for gint' => ['default_width', PHP_INT_MAX, \ValueError::class];
+        yield 'non-numeric string into double' => ['opacity', 'x', \TypeError::class];
+        yield 'int into string (strict)' => ['title', 42, \TypeError::class];
+        yield 'string into bool (strict)' => ['resizable', 'yes', \TypeError::class];
+    }
+
+    /** @param class-string<\Throwable> $expected */
+    #[DataProvider('refusedPropertyWrites')]
+    public function testPropertyWritesConvertLikeAParameter(
+        string $property,
+        mixed $value,
+        string $expected,
+    ): void {
+        $window = $this->window();
+        $this->expectException($expected);
+        $window->{$property} = $value;
+    }
+
+    public function testPropertyWritesStillTakeWhatTheTypeAllows(): void
+    {
+        $window = $this->window();
+        $window->default_width = 320;          // int into gint
+        $window->opacity = 1;                  // int into gdouble is a widening conversion
+        $window->title = 'plain';
+        $window->resizable = false;
+        self::assertSame(320, $window->default_width);
+        self::assertEqualsWithDelta(1.0, $window->opacity, 1e-9);
+        self::assertSame('plain', $window->title);
+        self::assertFalse($window->resizable);
     }
 
     // ---------------------------------------------------------------- integers

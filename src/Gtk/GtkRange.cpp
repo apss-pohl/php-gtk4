@@ -498,6 +498,7 @@ ZEND_METHOD(Gtk4_GtkRange, vfunc_change_value) {
   if (klass->change_value == nullptr) {
     RETURN_FALSE;
   }
+  if (!phpgtk::check_flags(GTK_TYPE_SCROLL_TYPE, scroll, 1)) RETURN_THROWS();
   RETURN_BOOL(klass->change_value(self, static_cast<GtkScrollType>(scroll), new_value));
 }
 
@@ -524,6 +525,7 @@ ZEND_METHOD(Gtk4_GtkRange, vfunc_move_slider) {
   if (klass->move_slider == nullptr) {
     return;
   }
+  if (!phpgtk::check_flags(GTK_TYPE_SCROLL_TYPE, scroll, 1)) RETURN_THROWS();
   klass->move_slider(self, static_cast<GtkScrollType>(scroll));
 }
 

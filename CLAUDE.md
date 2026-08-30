@@ -300,6 +300,10 @@ ZTS builds are supported: all per-request state is in the module globals (`src/c
 process-wide statics allowed. GTK itself stays single-threaded (`assert_gui_thread()`); CI builds
 and tests NTS and ZTS on both platforms. Coverage has a floor
 (`COVERAGE_MIN_LINES`, default 80). `RobustnessTest` calls every method with garbage arguments;
+`TypeDeclarationTest` calls every arg-less getter and asserts the value matches the declared
+type (PHP never verifies an internal function's return type, so a wrong declaration is
+invisible: `get_delegate(): ?GtkEditable` once answered with a bare `GtkWidget` because
+the concrete class was unbound — bind the class, never weaken the signature);
 `DocsTest` guards CLAUDE.md sections and doc-mentioned paths; `CommitLintTest` and
 `ReleaseNotesTest` pin every accepted/rejected commit shape and the grouping of the release body.
 `CHANGELOG.md` has the release
@@ -355,7 +359,10 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   → `zend_class_entry` registry; `wrap()`/`unwrap()`/
   `PHPGTK_SELF`; when no class up the parent chain is registered but a registered *interface* is,
   `wrap()` uses that interface's generated `Gtk4\<Interface>Object` fallback class, most derived
-  interface first), `marshal` (the single `GValue` ↔ `zval` bridge), `gsignal` (`connect()` via a
+  interface first), `marshal` (the single `GValue` ↔ `zval` bridge; a property write or signal argument converts
+  like a typed parameter - `caller_is_strict()` honours the assigning file's `strict_types`,
+  weak coercion otherwise - and then `check_range`/`check_flags`/`check_utf8` from
+  `php_gtk4.h`), `gsignal` (`connect()` via a
   `GClosure` with a GValue-array marshaller, callable resolved with `zend_fcall_info_init` and
   invoked with `zend_call_function`), `error` (the exception boundary:
   `report_pending_exception()` takes `EG(exception)`, hands the real `Throwable` to

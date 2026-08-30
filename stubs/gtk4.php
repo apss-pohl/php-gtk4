@@ -2138,13 +2138,6 @@ class GCancellable extends GObject
     public function push_current(): void
     {
     }
-    /**
-     * Releases a resources previously allocated by g_cancellable_get_fd() or
-     * g_cancellable_make_pollfd().
-     */
-    public function release_fd(): void
-    {
-    }
     /** Resets $cancellable to its uncancelled state. */
     public function reset(): void
     {
@@ -7041,10 +7034,6 @@ class GtkPopover extends GtkWidget
     public function popdown(): void
     {
     }
-    /** Pops $popover up. */
-    public function popup(): void
-    {
-    }
     /** Allocate a size for the `GtkPopover`. */
     public function present(): void
     {
@@ -7097,6 +7086,17 @@ class GtkPopover extends GtkWidget
     public function set_position(GtkPositionType $position): void
     {
         unset($position);
+    }
+    /**
+     * Pop the popover up.
+     *
+     * A popover needs a parent widget: without one GTK asks GDK for a popup surface whose
+     * parent is NULL and crashes there ("gdk_surface_new_popup: assertion 'GDK_IS_SURFACE
+     * (parent)' failed", then SIGSEGV). Set the parent first - GtkMenuButton and
+     * GtkWidget::set_parent() both do it.
+     */
+    public function popup(): void
+    {
     }
     /**
      * Native `activate_default` (PopoverClass.activate_default): the GTK implementation below any
@@ -9052,6 +9052,283 @@ final class GtkStyleProviderObject extends GObject implements GtkStyleProvider
     /** Never called: these handles only come from wrap(). */
     private function __construct()
     {
+    }
+}
+/**
+ * The `GtkText` widget is a single-line text entry widget.
+ *
+ * @property ?bool $activates_default
+ * @property ?GtkEntryBuffer $buffer
+ * @property ?bool $enable_emoji_completion
+ * @property ?GMenuModel $extra_menu
+ * @property ?string $im_module
+ * @property ?int $input_hints
+ * @property ?GtkInputPurpose $input_purpose
+ * @property ?int $invisible_char
+ * @property ?bool $invisible_char_set
+ * @property ?int $max_length
+ * @property ?bool $overwrite_mode
+ * @property ?string $placeholder_text
+ * @property ?bool $propagate_text_width
+ * @property-read ?int $scroll_offset
+ * @property ?bool $truncate_multiline
+ * @property ?bool $visibility
+ */
+class GtkText extends GtkWidget implements GtkEditable
+{
+    /** Creates a new `GtkText`. */
+    public function __construct()
+    {
+    }
+    /** Creates a new `GtkText` with the specified text buffer. */
+    public static function new_with_buffer(GtkEntryBuffer $buffer): GtkText
+    {
+        unset($buffer);
+        return null;
+    }
+    /**
+     * Returns whether pressing Enter will activate the default widget for the window containing
+     * $self.
+     */
+    public function get_activates_default(): bool
+    {
+        return false;
+    }
+    /** Get the `GtkEntryBuffer` object which holds the text for this widget. */
+    public function get_buffer(): GtkEntryBuffer
+    {
+        return null;
+    }
+    /** Returns whether Emoji completion is enabled for this `GtkText` widget. */
+    public function get_enable_emoji_completion(): bool
+    {
+        return false;
+    }
+    /** Gets the menu model for extra items in the context menu. */
+    public function get_extra_menu(): ?GMenuModel
+    {
+        return null;
+    }
+    /** Gets the input hints of the `GtkText`. */
+    public function get_input_hints(): int
+    {
+        return 0;
+    }
+    /** Gets the input purpose of the `GtkText`. */
+    public function get_input_purpose(): GtkInputPurpose
+    {
+        return null;
+    }
+    /** Retrieves the character displayed when visibility is set to false. */
+    public function get_invisible_char(): int
+    {
+        return 0;
+    }
+    /** Retrieves the maximum allowed length of the text in $self. */
+    public function get_max_length(): int
+    {
+        return 0;
+    }
+    /** Gets whether text is overwritten when typing in the `GtkText`. */
+    public function get_overwrite_mode(): bool
+    {
+        return false;
+    }
+    /** Retrieves the text that will be displayed when $self is empty and unfocused */
+    public function get_placeholder_text(): ?string
+    {
+        return null;
+    }
+    /** Returns whether the `GtkText` will grow and shrink with the content. */
+    public function get_propagate_text_width(): bool
+    {
+        return false;
+    }
+    /** Retrieves the current length of the text in $self. */
+    public function get_text_length(): int
+    {
+        return 0;
+    }
+    /** Returns whether the `GtkText` will truncate multi-line text that is pasted into the widget */
+    public function get_truncate_multiline(): bool
+    {
+        return false;
+    }
+    /** Retrieves whether the text in $self is visible. */
+    public function get_visibility(): bool
+    {
+        return false;
+    }
+    /** Causes $self to have keyboard focus. */
+    public function grab_focus_without_selecting(): bool
+    {
+        return false;
+    }
+    /**
+     * If $activates is `true`, pressing Enter will activate the default widget for the window
+     * containing $self.
+     */
+    public function set_activates_default(bool $activates): void
+    {
+        unset($activates);
+    }
+    /** Set the `GtkEntryBuffer` object which holds the text for this widget. */
+    public function set_buffer(GtkEntryBuffer $buffer): void
+    {
+        unset($buffer);
+    }
+    /** Sets whether Emoji completion is enabled. */
+    public function set_enable_emoji_completion(bool $enable_emoji_completion): void
+    {
+        unset($enable_emoji_completion);
+    }
+    /** Sets a menu model to add when constructing the context menu for $self. */
+    public function set_extra_menu(?GMenuModel $model): void
+    {
+        unset($model);
+    }
+    /** Sets input hints that allow input methods to fine-tune their behaviour. */
+    public function set_input_hints(int $hints): void
+    {
+        unset($hints);
+    }
+    /** Sets the input purpose of the `GtkText`. */
+    public function set_input_purpose(GtkInputPurpose $purpose): void
+    {
+        unset($purpose);
+    }
+    /** Sets the character to use when in “password mode”. */
+    public function set_invisible_char(int $ch): void
+    {
+        unset($ch);
+    }
+    /** Sets the maximum allowed length of the contents of the widget. */
+    public function set_max_length(int $length): void
+    {
+        unset($length);
+    }
+    /** Sets whether the text is overwritten when typing in the `GtkText`. */
+    public function set_overwrite_mode(bool $overwrite): void
+    {
+        unset($overwrite);
+    }
+    /** Sets text to be displayed in $self when it is empty. */
+    public function set_placeholder_text(?string $text): void
+    {
+        unset($text);
+    }
+    /** Sets whether the `GtkText` should grow and shrink with the content. */
+    public function set_propagate_text_width(bool $propagate_text_width): void
+    {
+        unset($propagate_text_width);
+    }
+    /** Sets whether the `GtkText` should truncate multi-line text that is pasted into the widget. */
+    public function set_truncate_multiline(bool $truncate_multiline): void
+    {
+        unset($truncate_multiline);
+    }
+    /** Sets whether the contents of the `GtkText` are visible or not. */
+    public function set_visibility(bool $visible): void
+    {
+        unset($visible);
+    }
+    /** Unsets the invisible char. */
+    public function unset_invisible_char(): void
+    {
+    }
+    public function delegate_get_accessible_platform_state(GtkAccessiblePlatformState $state): bool
+    {
+        unset($state);
+        return false;
+    }
+    public function delete_selection(): void
+    {
+    }
+    public function delete_text(int $start_pos, int $end_pos): void
+    {
+        unset($start_pos);
+        unset($end_pos);
+    }
+    public function finish_delegate(): void
+    {
+    }
+    public function get_alignment(): float
+    {
+        return 0.0;
+    }
+    public function get_chars(int $start_pos, int $end_pos): string
+    {
+        unset($start_pos);
+        unset($end_pos);
+        return '';
+    }
+    public function get_delegate(): ?GtkEditable
+    {
+        return null;
+    }
+    public function get_editable(): bool
+    {
+        return false;
+    }
+    public function get_enable_undo(): bool
+    {
+        return false;
+    }
+    public function get_max_width_chars(): int
+    {
+        return 0;
+    }
+    public function get_position(): int
+    {
+        return 0;
+    }
+    public function get_selection_bounds(): ?array
+    {
+        return null;
+    }
+    public function get_text(): string
+    {
+        return '';
+    }
+    public function get_width_chars(): int
+    {
+        return 0;
+    }
+    public function init_delegate(): void
+    {
+    }
+    public function select_region(int $start_pos, int $end_pos): void
+    {
+        unset($start_pos);
+        unset($end_pos);
+    }
+    public function set_alignment(float $xalign): void
+    {
+        unset($xalign);
+    }
+    public function set_editable(bool $is_editable): void
+    {
+        unset($is_editable);
+    }
+    public function set_enable_undo(bool $enable_undo): void
+    {
+        unset($enable_undo);
+    }
+    public function set_max_width_chars(int $n_chars): void
+    {
+        unset($n_chars);
+    }
+    public function set_position(int $position): void
+    {
+        unset($position);
+    }
+    public function set_text(string $text): void
+    {
+        unset($text);
+    }
+    public function set_width_chars(int $n_chars): void
+    {
+        unset($n_chars);
     }
 }
 /**

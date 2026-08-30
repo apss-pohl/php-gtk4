@@ -120,18 +120,6 @@ ZEND_METHOD(Gtk4_GCancellable, push_current) {
 }
 
 /**
- * Gtk4\GCancellable::release_fd(): void
- *
- * Releases a resources previously allocated by g_cancellable_get_fd() or
- * g_cancellable_make_pollfd().
- */
-ZEND_METHOD(Gtk4_GCancellable, release_fd) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GCancellable *self = PHPGTK_SELF(GCancellable, G_TYPE_CANCELLABLE);
-  g_cancellable_release_fd(self);
-}
-
-/**
  * Gtk4\GCancellable::reset(): void
  *
  * Resets $cancellable to its uncancelled state.

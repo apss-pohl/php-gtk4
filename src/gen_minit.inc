@@ -256,6 +256,8 @@
   phpgtk::register_class("GtkStackSwitcher", ce_GtkStackSwitcher, GTK_TYPE_STACK_SWITCHER);
   zend_class_entry *ce_GtkStringList = register_class_Gtk4_GtkStringList(ce_GObject, ce_GListModel);
   phpgtk::register_class("GtkStringList", ce_GtkStringList, GTK_TYPE_STRING_LIST);
+  zend_class_entry *ce_GtkText = register_class_Gtk4_GtkText(ce_GtkWidget, ce_GtkEditable);
+  phpgtk::register_class("GtkText", ce_GtkText, GTK_TYPE_TEXT);
   zend_class_entry *ce_GtkToggleButton = register_class_Gtk4_GtkToggleButton(ce_GtkButton);
   phpgtk::register_class("GtkToggleButton", ce_GtkToggleButton, GTK_TYPE_TOGGLE_BUTTON);
   zend_class_entry *ce_GtkViewport = register_class_Gtk4_GtkViewport(ce_GtkWidget, ce_GtkScrollable);

@@ -9,6 +9,27 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Security
 
+- Type review of 2026-08-30, the second half of the argument-boundary work:
+  - **Property writes are typed.** `$win->title = 'x'` was the one API surface with no type
+    checking at all: `$win->default_width = 'garbage'` stored 0, `PHP_INT_MAX` stored -1, and
+    `declare(strict_types=1)` had no effect. `core/marshal` now converts exactly like the
+    equivalent setter's parameter - strict where the assignment is written, weak coercion
+    otherwise - and applies the C type's range. `$win->set_default_size('garbage', 1)` and
+    `$win->default_width = 'garbage'` finally agree.
+  - **`GtkPopover::popup()` on an unparented popover** asked GDK for a popup surface with a
+    NULL parent and segfaulted; it is a `LogicException` now (`gen/overrides`).
+    `GCancellable::release_fd()` aborted the process unless `get_fd()` was called first and the
+    refcount is not observable from PHP, so it is in `gen/skip.txt`.
+  - **Flags arguments are checked against their own mask** (`check_flags`): `new
+    GtkApplication($id, 1 << 30)` was accepted, printed a GLib `CRITICAL` and ran with default
+    flags. The property path already did this.
+  - **`GtkEntry`/`GtkPasswordEntry`/`GtkSpinButton::get_delegate()` broke their own signature**:
+    they declare `?GtkEditable` and returned a plain `GtkWidget`, because `GtkText` was unbound
+    and `wrap()` stops at the nearest registered *class*. PHP does not verify the return types
+    of internal functions, so nothing caught it. `Gtk.Text` is bound now and
+    `TypeDeclarationTest` calls every arg-less getter and compares what came back with what was
+    declared.
+
 - The PHP -> C argument boundary is checked instead of trusted (security review, 2026-08-30;
   `check_utf8`/`check_range` in `src/php_gtk4.h`, emitted by the generator into every binding and
   applied in `core/marshal` for property writes and signal arguments):

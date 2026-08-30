@@ -24,8 +24,8 @@ the notes are hand-written and may lag.
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 48 | — |
-| 🟡 partial | 2 | — |
+| ✅ implemented | 49 | — |
+| 🟡 partial | 1 | — |
 | ❌ to port (GTK 4 equivalent exists) | 44 | ~1750 |
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 5 | ~130 |
@@ -122,7 +122,7 @@ is open work.
 | `GtkAppChooserButton` | 11 | `GtkAppChooserButton` (dep. 4.10) | ❌ | |
 | `GtkMenuButton` | 2 | `GtkMenuButton` | ✅ | Takes a `GMenuModel` popover, not a `GtkMenu`. |
 | `GtkLabel` | 43 | `GtkLabel` | ✅ | Generated (wave 0): 44 methods (text/markup/mnemonic, `set_use_markup`, ellipsize, justify, wrap (`set_line_wrap` renamed), lines, width chars, xalign/yalign, mnemonic widget, selection, `get_current_uri`). `set_angle`/`set_pattern`/`get_layout` are GTK 3-only or Pango-dependent. |
-| `GtkEntry` | 41 | `GtkEntry` (+ `GtkText`) | 🟡 | Text handling moved into `GtkEditable`/`GtkText`; `set_icon_from_pixbuf` etc. use `GdkPaintable` now. |
+| `GtkEntry` | 41 | `GtkEntry` (+ `GtkText`) | ✅ | Text handling moved into `GtkEditable`/`GtkText`; `set_icon_from_pixbuf` etc. use `GdkPaintable` now. |
 | `GtkEntryBuffer` | 9 | `GtkEntryBuffer` | ✅ | Unchanged. |
 | `GtkEntryCompletion` | 27 | `GtkEntryCompletion` (dep. 4.10) | ❌ | Deprecated in GTK 4.10; consider not porting. |
 | `GtkComboBox` | 40 | `GtkComboBox` (dep. 4.10 → `GtkDropDown`) | 🟡 | Port to `GtkDropDown`. |

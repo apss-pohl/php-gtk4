@@ -144,3 +144,9 @@ Gtk.HeaderBar
 Gtk.ApplicationWindow
 Gtk.PopoverMenuFlags
 Gtk.ArrowType
+
+# The widget behind GtkEntry/GtkPasswordEntry/GtkSpinButton: their get_delegate() declares
+# GtkEditable, and without GtkText bound wrap() answered with a plain GtkWidget - a value
+# that does not implement the interface the signature promises (security/type review
+# 2026-08-30, TypeDeclarationTest).
+Gtk.Text

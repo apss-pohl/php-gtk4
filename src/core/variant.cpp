@@ -194,8 +194,7 @@ static GVariant *php_to_variant_at(zval *value, const GVariantType *type, int de
         }
         if (array_is_string_list(ht))
           return php_to_variant_at(value, G_VARIANT_TYPE_STRING_ARRAY, depth);
-        if (zend_array_is_list(ht))
-          return php_to_variant_at(value, G_VARIANT_TYPE("av"), depth);
+        if (zend_array_is_list(ht)) return php_to_variant_at(value, G_VARIANT_TYPE("av"), depth);
         return php_to_variant_at(value, G_VARIANT_TYPE_VARDICT, depth);
       }
       default:

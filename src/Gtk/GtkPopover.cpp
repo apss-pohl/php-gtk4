@@ -147,17 +147,6 @@ ZEND_METHOD(Gtk4_GtkPopover, popdown) {
 }
 
 /**
- * Gtk4\GtkPopover::popup(): void
- *
- * Pops $popover up.
- */
-ZEND_METHOD(Gtk4_GtkPopover, popup) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GtkPopover *self = PHPGTK_SELF(GtkPopover, GTK_TYPE_POPOVER);
-  gtk_popover_popup(self);
-}
-
-/**
  * Gtk4\GtkPopover::present(): void
  *
  * Allocate a size for the `GtkPopover`.
@@ -313,6 +302,26 @@ ZEND_METHOD(Gtk4_GtkPopover, set_position) {
   gint position_v = 0;
   if (!enum_from_php(position, GTK_TYPE_POSITION_TYPE, &position_v)) RETURN_THROWS();
   gtk_popover_set_position(self, static_cast<GtkPositionType>(position_v));
+}
+
+/**
+ * public function popup(): void
+ * Pop the popover up.
+ *
+ * A popover needs a parent widget: without one GTK asks GDK for a popup surface whose
+ * parent is NULL and crashes there ("gdk_surface_new_popup: assertion 'GDK_IS_SURFACE
+ * (parent)' failed", then SIGSEGV). Set the parent first - GtkMenuButton and
+ * GtkWidget::set_parent() both do it.
+ */
+ZEND_METHOD(Gtk4_GtkPopover, popup) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkPopover *self = PHPGTK_SELF(GtkPopover, GTK_TYPE_POPOVER);
+  if (gtk_widget_get_parent(GTK_WIDGET(self)) == nullptr) {
+    zend_throw_exception(spl_ce_LogicException,
+                         "Gtk4\\GtkPopover::popup(): the popover has no parent widget yet", 0);
+    RETURN_THROWS();
+  }
+  gtk_popover_popup(self);
 }
 
 // vfunc thunks and installers: file-local, installed by class_init of a PHP subtype

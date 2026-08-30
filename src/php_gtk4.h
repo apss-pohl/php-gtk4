@@ -88,10 +88,35 @@ inline bool check_range(zend_long v, uint32_t arg) {
   constexpr zend_long lo = is_signed ? signed_min : 0;
   constexpr zend_long hi = is_signed ? signed_max : widest;
   if (v < lo || v > hi) {
-    zend_argument_value_error(arg, "must be between " ZEND_LONG_FMT " and " ZEND_LONG_FMT, lo, hi);
+    if (arg != 0) {
+      zend_argument_value_error(arg, "must be between " ZEND_LONG_FMT " and " ZEND_LONG_FMT, lo,
+                                hi);
+    } else {
+      zend_value_error("value must be between " ZEND_LONG_FMT " and " ZEND_LONG_FMT, lo, hi);
+    }
     return false;
   }
   return true;
+}
+
+// A flags value must be a combination of the type's own bits: GLib otherwise rejects the
+// whole assignment with a CRITICAL and carries on with the default, telling PHP nothing.
+inline bool check_flags(GType type, zend_long bits, uint32_t arg) {
+  auto *klass = static_cast<GFlagsClass *>(g_type_class_ref(type));
+  const guint mask = klass->mask;
+  g_type_class_unref(klass);
+  if (bits >= 0 && (static_cast<guint64>(bits) & ~static_cast<guint64>(mask)) == 0) {
+    return true;
+  }
+  if (arg != 0) {
+    zend_argument_value_error(arg,
+                              "must be a combination of %s (mask 0x%x), " ZEND_LONG_FMT " given",
+                              g_type_name(type), mask, bits);
+  } else {
+    zend_value_error("%s: invalid flags value " ZEND_LONG_FMT " (mask 0x%x)", g_type_name(type),
+                     bits, mask);
+  }
+  return false;
 }
 }  // namespace phpgtk
 

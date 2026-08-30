@@ -57,6 +57,7 @@ ZEND_METHOD(Gtk4_GtkPopoverMenu, new_from_model_full) {
   ZEND_PARSE_PARAMETERS_END();
   GObject *model_o = unwrap(model, G_TYPE_MENU_MODEL);
   if (model_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_flags(GTK_TYPE_POPOVER_MENU_FLAGS, flags, 2)) RETURN_THROWS();
   GObject *obj = G_OBJECT(gtk_popover_menu_new_from_model_full(
       G_MENU_MODEL(model_o), static_cast<GtkPopoverMenuFlags>(flags)));
   wrap(obj, return_value);
@@ -131,6 +132,7 @@ ZEND_METHOD(Gtk4_GtkPopoverMenu, set_flags) {
   Z_PARAM_LONG(flags)
   ZEND_PARSE_PARAMETERS_END();
   GtkPopoverMenu *self = PHPGTK_SELF(GtkPopoverMenu, GTK_TYPE_POPOVER_MENU);
+  if (!phpgtk::check_flags(GTK_TYPE_POPOVER_MENU_FLAGS, flags, 1)) RETURN_THROWS();
   gtk_popover_menu_set_flags(self, static_cast<GtkPopoverMenuFlags>(flags));
 }
 

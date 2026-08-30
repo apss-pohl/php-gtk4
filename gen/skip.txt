@@ -11,3 +11,4 @@ Gtk.ApplicationWindow.implements:Gio.ActionGroup   GtkWidget::activate_action(st
 Gtk.MenuButton.get_direction   gtk_menu_button_get_direction (GtkArrowType) clashes with GtkWidget::get_direction (GtkTextDirection) in PHP; the `direction` property still reads the arrow
 Gtk.MenuButton.set_direction   same; `$button->direction = GtkArrowType::Left` sets the arrow
 Gio.MenuModel.__construct   abstract with NULL class-struct slots (get_n_items ...) and vfuncs on GHashTables that cannot be thunked; a PHP subtype would segfault on first use - build menus with GMenu
+Gio.Cancellable.release_fd   aborts the process (GLib-GIO:ERROR "priv->fd_refcount > 0") unless get_fd() was called first, and the refcount is not observable from here

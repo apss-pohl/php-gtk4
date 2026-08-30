@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: e737fdcfe153666ebb47d79400836380d0bffc7a */
+ * Stub hash: d6feed6176de0e8b332688e63b9212b5515925af */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_change_state, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
@@ -314,8 +314,6 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GCancellable_pop_current arginfo_class_Gtk4_GApplication_activate
 
 #define arginfo_class_Gtk4_GCancellable_push_current arginfo_class_Gtk4_GApplication_activate
-
-#define arginfo_class_Gtk4_GCancellable_release_fd arginfo_class_Gtk4_GApplication_activate
 
 #define arginfo_class_Gtk4_GCancellable_reset arginfo_class_Gtk4_GApplication_activate
 
@@ -675,7 +673,6 @@ ZEND_METHOD(Gtk4_GCancellable, get_fd);
 ZEND_METHOD(Gtk4_GCancellable, is_cancelled);
 ZEND_METHOD(Gtk4_GCancellable, pop_current);
 ZEND_METHOD(Gtk4_GCancellable, push_current);
-ZEND_METHOD(Gtk4_GCancellable, release_fd);
 ZEND_METHOD(Gtk4_GCancellable, reset);
 ZEND_METHOD(Gtk4_GCancellable, set_error_if_cancelled);
 ZEND_METHOD(Gtk4_GCancellable, vfunc_cancelled);
@@ -907,7 +904,6 @@ static const zend_function_entry class_Gtk4_GCancellable_methods[] = {
 	ZEND_ME(Gtk4_GCancellable, is_cancelled, arginfo_class_Gtk4_GCancellable_is_cancelled, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GCancellable, pop_current, arginfo_class_Gtk4_GCancellable_pop_current, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GCancellable, push_current, arginfo_class_Gtk4_GCancellable_push_current, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GCancellable, release_fd, arginfo_class_Gtk4_GCancellable_release_fd, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GCancellable, reset, arginfo_class_Gtk4_GCancellable_reset, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GCancellable, set_error_if_cancelled, arginfo_class_Gtk4_GCancellable_set_error_if_cancelled, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GCancellable, vfunc_cancelled, arginfo_class_Gtk4_GCancellable_vfunc_cancelled, ZEND_ACC_PUBLIC)

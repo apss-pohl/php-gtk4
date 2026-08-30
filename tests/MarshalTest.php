@@ -15,7 +15,9 @@ final class MarshalTest extends GtkTestCase
         yield 'string'          => ['title', 'hello', 'hello'];
         yield 'string null'     => ['title', null, null];
         yield 'int'             => ['default-width', 321, 321];
-        yield 'int from float'  => ['default-width', 12.9, 12];
+        // set_property() takes `mixed`, so the marshaller applies PHP's weak rules; a float
+        // that would lose precision is E_DEPRECATED there, as it is for any int parameter.
+        yield 'int from float'  => ['default-width', 12.0, 12];
         yield 'bool true'       => ['resizable', true, true];
         yield 'bool false'      => ['resizable', false, false];
         yield 'bool from int'   => ['resizable', 0, false];

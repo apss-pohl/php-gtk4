@@ -2689,8 +2689,14 @@ final class Generator
             ]);
         }
         if ($node->kind === 'bitfield' || $node->kind === 'enum') {
+            // Flags are plain ints (no PHP enum to check them), so the value is checked against
+            // the type's own mask: GLib otherwise takes the assignment, prints a CRITICAL and
+            // carries on with the default (php_gtk4.h, check_flags).
+            $mask = $node->gtypeName !== null
+                ? ["if (!phpgtk::check_flags($typeMacro, $name, $argNum)) RETURN_THROWS();"]
+                : [];
             return array_merge($r, ['phpType' => 'int', 'decl' => "zend_long $name;", 'zpp' => "Z_PARAM_LONG($name)",
-                'carg' => "static_cast<{$node->ctype}>($name)"]);
+                'pre' => $mask, 'carg' => "static_cast<{$node->ctype}>($name)"]);
         }
         if (in_array($node->kind, ['class', 'interface'], true)) {
             $phpT = $this->phpTypeOfNode($t->name);

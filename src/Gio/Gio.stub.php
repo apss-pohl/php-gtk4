@@ -552,12 +552,6 @@ class GCancellable extends GObject
      */
     public function push_current(): void {}
 
-    /**
-     * Releases a resources previously allocated by g_cancellable_get_fd() or
-     * g_cancellable_make_pollfd().
-     */
-    public function release_fd(): void {}
-
     /** Resets $cancellable to its uncancelled state. */
     public function reset(): void {}
 

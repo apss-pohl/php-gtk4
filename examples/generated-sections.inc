@@ -8,5 +8,6 @@ declare(strict_types=1);
 return [
     'Generated' => [
         'GdkModifierType',
+        'GtkText',
     ],
 ];
