@@ -352,7 +352,9 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   PHP subclass' state survives the script dropping its reference, released in the toggle notify
   and in RSHUTDOWN (`object_release_holds()`, or Zend reports the handle as a leak); the GType-name
   → `zend_class_entry` registry; `wrap()`/`unwrap()`/
-  `PHPGTK_SELF`), `marshal` (the single `GValue` ↔ `zval` bridge), `gsignal` (`connect()` via a
+  `PHPGTK_SELF`; when no class up the parent chain is registered but a registered *interface* is,
+  `wrap()` uses that interface's generated `Gtk4\<Interface>Object` fallback class, most derived
+  interface first), `marshal` (the single `GValue` ↔ `zval` bridge), `gsignal` (`connect()` via a
   `GClosure` with a GValue-array marshaller, callable resolved with `zend_fcall_info_init` and
   invoked with `zend_call_function`), `error` (the exception boundary:
   `report_pending_exception()` takes `EG(exception)`, hands the real `Throwable` to
@@ -374,7 +376,9 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   have a *public* constructor that refuses the native class and works on a subclass —
   docs/PLAN.md §2.6), `fundamental` (registry-driven handles for refcounted non-GObject types: `GParamSpec`,
   `CairoContext` (cairo_t via cairo-gobject; marshal's boxed arm falls back to this registry),
-  `GtkCssSection`, `GdkEvent` etc. later; `new X()` on them throws), `enums` (GEnum ↔ int-backed PHP
+  `GtkCssSection`, `GdkEvent` + subclasses, `GdkEventSequence` as a ref-less identity; `new X()` on
+  them throws; the same instance wraps to the same handle while PHP holds it —
+  `GTK4_G(fundamental_handles)`), `enums` (GEnum ↔ int-backed PHP
   enum via a GType
   registry; cases declared literally in the stub
   and verified against the `GEnumClass` at RINIT — a mismatch is fatal; GFlags stay ints with

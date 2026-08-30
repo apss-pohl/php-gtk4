@@ -246,6 +246,43 @@ interface GdkPaintable
 }
 
 /**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GdkPaintable} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GdkPaintable} with a body.
+ *
+ * @not-serializable
+ */
+final class GdkPaintableObject extends GObject implements GdkPaintable
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct() {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::compute_concrete_size */
+    public function compute_concrete_size(float $specified_width, float $specified_height, float $default_width, float $default_height): array {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::get_current_image */
+    public function get_current_image(): GdkPaintable {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::get_flags */
+    public function get_flags(): int {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::get_intrinsic_aspect_ratio */
+    public function get_intrinsic_aspect_ratio(): float {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::get_intrinsic_height */
+    public function get_intrinsic_height(): int {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::get_intrinsic_width */
+    public function get_intrinsic_width(): int {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::invalidate_contents */
+    public function invalidate_contents(): void {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::invalidate_size */
+    public function invalidate_size(): void {}
+}
+
+/**
  * Flags about a paintable object.
  */
 final class GdkPaintableFlags

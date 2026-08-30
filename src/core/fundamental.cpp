@@ -1,5 +1,7 @@
 #include "fundamental.h"
 
+#include "globals.h"
+
 #include <unordered_map>
 
 namespace phpgtk {
@@ -33,10 +35,13 @@ zend_function *get_constructor(zend_object *o) {
   return nullptr;
 }
 
-// free_obj handler: drop our reference through the type's unref.
+// free_obj handler: forget the identity entry, then drop our reference through the type's unref.
 void free_obj(zend_object *o) {
   Fundamental *self = fundamental_from_zend(o);
   if (self->instance != nullptr) {
+    auto &handles = GTK4_G(fundamental_handles);
+    auto it = handles.find(self->instance);
+    if (it != handles.end() && it->second == o) handles.erase(it);
     const FundamentalClass *info = fundamental_class_for_type(self->type);
     if (info != nullptr) info->unref(self->instance);
   }
@@ -70,10 +75,19 @@ const FundamentalClass *fundamental_class_for_type(GType type) {
   return nullptr;
 }
 
-// C -> PHP: new handle with its own reference.
+// C -> PHP: the live handle of this instance (`===` holds while PHP keeps it, like GObject
+// handles do through their qdata), else a new one with its own reference. The map is keyed by
+// the instance pointer; a handle owns a reference, so the pointer cannot be reused behind it -
+// except for types without a refcount (GdkEventSequence: GTK frees the sequence when the touch
+// ends and may hand the address out again; a stale handle then names the new sequence).
 void wrap_fundamental(GType type, gpointer instance, zval *rv) {
   if (instance == nullptr) {
     ZVAL_NULL(rv);
+    return;
+  }
+  auto &handles = GTK4_G(fundamental_handles);
+  if (auto it = handles.find(instance); it != handles.end()) {
+    ZVAL_OBJ_COPY(rv, it->second);
     return;
   }
   // An instantiatable fundamental (GdkEvent) knows its real type: a GdkKeyEvent handed over as
@@ -89,6 +103,7 @@ void wrap_fundamental(GType type, gpointer instance, zval *rv) {
   Fundamental *self = fundamental_from_zval(rv);
   self->type = type;
   self->instance = info->ref(instance);
+  handles[instance] = Z_OBJ_P(rv);
 }
 
 // PHP -> C: borrowed instance of exactly `expected`.

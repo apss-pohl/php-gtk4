@@ -82,3 +82,12 @@ void vfunc_install_get_source_object(gpointer klass) {
 void register_vfuncs_GAsyncResult() {
   register_iface_vfunc(G_TYPE_ASYNC_RESULT, "get_source_object", vfunc_install_get_source_object);
 }
+
+/**
+ * Gtk4\GAsyncResultObject::__construct()
+ *
+ * Never called: these handles only come from wrap().
+ */
+ZEND_METHOD(Gtk4_GAsyncResultObject, __construct) {
+  ZEND_PARSE_PARAMETERS_NONE();
+}

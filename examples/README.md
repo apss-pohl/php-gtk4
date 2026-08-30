@@ -248,6 +248,7 @@ drives a window with no `GtkApplication`. Both pass a standalone override to `De
 | [GdkTouchpadEvent.php](GdkTouchpadEvent.php) | a multi-finger touchpad gesture - phase, fingers, deltas, pinch scale and angle |
 | [GdkPadEvent.php](GdkPadEvent.php) | a drawing-tablet pad button, ring or strip - button, axis value, group and mode |
 | [GdkGrabBrokenEvent.php](GdkGrabBrokenEvent.php) | a pointer or keyboard grab was taken away - get_implicit() |
+| [GdkEventSequence.php](GdkEventSequence.php) | one handle per finger - the key every per-touch gesture method takes |
 | [GdkEventType.php](GdkEventType.php) | which kind of event a GdkEvent is - the case of every real event as it arrives |
 | [GdkScrollDirection.php](GdkScrollDirection.php) | which way a scroll event goes - wheel clicks versus smooth deltas |
 | [GdkCrossingMode.php](GdkCrossingMode.php) | why the pointer entered or left - motion, grabs, state changes, touch, device switch |

@@ -28,6 +28,11 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   commit. `bin/release-notes` groups the commits since the previous release by type and
   `release.yml` appends that to every release body, after the `CHANGELOG.md` section.
 
+- `wrap()` falls back to a generated `<Interface>Object` class (`GListModelObject`, ...) for a
+  GTK-private class whose only registered face is an interface: `GtkNotebook::get_pages()` is a
+  usable list instead of a bare `GObject`. Fundamental handles keep
+  identity (`===` for the same `GdkEvent`/`GParamSpec` while PHP holds it), and `GdkEventSequence`
+  is bound as an opaque identity, which unlocks every per-sequence `GtkGesture` method.
 - Wave 3 (event controllers, docs/PLAN.md §3): `GtkEventController`, `GtkEventControllerKey`,
   `GtkEventControllerMotion`, `GtkEventControllerScroll`, `GtkEventControllerFocus`,
   `GtkEventControllerLegacy`, `GtkGesture`, `GtkGestureSingle`, `GtkGestureClick`, `GtkGestureDrag`,

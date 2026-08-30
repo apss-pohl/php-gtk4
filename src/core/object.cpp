@@ -361,6 +361,35 @@ void register_interface(const char *gtype_name, zend_class_entry *ce, GType type
   classes()[type] = ce;
 }
 
+namespace {
+// Interface GType -> the concrete class wrap() falls back to (MINIT-filled).
+std::unordered_map<GType, zend_class_entry *> &fallbacks() {
+  static std::unordered_map<GType, zend_class_entry *> map;
+  return map;
+}
+
+// The fallback class for an object whose own classes are all unregistered: the most derived
+// registered interface it implements (GtkSelectionModel over its GListModel prerequisite), or
+// nullptr. That is how a GTK-private class (GtkNotebookPages) still gets get_n_items().
+zend_class_entry *fallback_for(GType type) {
+  guint n = 0;
+  GType *ifaces = g_type_interfaces(type, &n);
+  GType best = 0;
+  for (guint i = 0; i < n; i++) {
+    if (!fallbacks().contains(ifaces[i])) continue;
+    if (best == 0 || g_type_is_a(ifaces[i], best)) best = ifaces[i];
+  }
+  g_free(ifaces);
+  return best == 0 ? nullptr : fallbacks()[best];
+}
+}  // namespace
+
+// MINIT: the class wrap() uses for an unregistered GObject class implementing `iface`.
+void register_interface_fallback(GType iface, zend_class_entry *ce) {
+  fallbacks()[iface] = ce;
+  gtypes()[ce] = iface;
+}
+
 // Registry lookup by GType value.
 zend_class_entry *class_for_gtype(GType type) {
   auto it = classes().find(type);
@@ -397,6 +426,9 @@ void wrap(GObject *obj, zval *rv) {
   for (GType t = G_OBJECT_TYPE(obj); t != 0; t = g_type_parent(t)) {
     zend_class_entry *ce =
         is_php_type(t) ? subtype_class_for_gtype(t) : class_for_gtype_name(g_type_name(t));
+    if (t == G_TYPE_OBJECT && ce != nullptr) {  // nothing more specific: an interface's class?
+      if (zend_class_entry *fb = fallback_for(G_OBJECT_TYPE(obj))) ce = fb;
+    }
     if (ce != nullptr) {
       if (object_init_ex(rv, ce) == FAILURE) {  // abstract/uninstantiable class: Error is pending
         ZVAL_NULL(rv);

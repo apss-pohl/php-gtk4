@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use Gtk4\GObject;
 use Gtk4\GParamSpec;
 use Gtk4\GtkApplication;
 use Gtk4\GtkButton;
@@ -89,5 +90,32 @@ final class FoundationTest extends GtkTestCase
     {
         $this->expectException(\TypeError::class);
         new GtkButton()->set_css_classes(['ok', ['nested']]);
+    }
+
+    public function testFundamentalHandlesKeepIdentity(): void
+    {
+        // notify hands out the same GParamSpec twice: same C instance -> same handle (===),
+        // like GObject handles; a released handle is forgotten and a later wrap makes a new one.
+        $w = $this->window();
+        $specs = [];
+        $w->connect('notify::title', function (GObject $o, GParamSpec $spec) use (&$specs): void {
+            $specs[] = $spec;
+        });
+        /** @return list<mixed> what the handler collected so far (by reference, so read it here) */
+        $collected = function () use (&$specs): array {
+            return $specs;
+        };
+        $w->set_title('a');
+        $w->set_title('b');
+        self::assertCount(2, $specs);
+        self::assertSame($specs[0], $specs[1], 'the property\'s GParamSpec is one handle');
+        self::assertSame('title', $specs[0]->get_name());
+        $weak = \WeakReference::create($specs[0]);
+        $specs = [];
+        self::assertNull($weak->get(), 'released with the last reference; the identity entry goes with it');
+        $w->set_title('c');
+        $fresh = $collected()[0] ?? null;
+        self::assertInstanceOf(GParamSpec::class, $fresh, 'a fresh handle serves the next emission');
+        self::assertSame('title', $fresh->get_name());
     }
 }

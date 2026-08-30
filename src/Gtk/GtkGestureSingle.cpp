@@ -2,6 +2,7 @@
 // Gtk4\GtkGestureSingle
 #include "php_gtk4.h"
 #include "core/object.h"
+#include "core/fundamental.h"
 #include "core/subtype.h"
 
 using namespace phpgtk;
@@ -42,6 +43,18 @@ ZEND_METHOD(Gtk4_GtkGestureSingle, get_current_button) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkGestureSingle *self = PHPGTK_SELF(GtkGestureSingle, GTK_TYPE_GESTURE_SINGLE);
   RETURN_LONG(static_cast<zend_long>(gtk_gesture_single_get_current_button(self)));
+}
+
+/**
+ * Gtk4\GtkGestureSingle::get_current_sequence(): ?GdkEventSequence
+ *
+ * Returns the event sequence currently interacting with $gesture.
+ */
+ZEND_METHOD(Gtk4_GtkGestureSingle, get_current_sequence) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkGestureSingle *self = PHPGTK_SELF(GtkGestureSingle, GTK_TYPE_GESTURE_SINGLE);
+  gpointer result = gtk_gesture_single_get_current_sequence(self);
+  wrap_fundamental(GDK_TYPE_EVENT_SEQUENCE, result, return_value);
 }
 
 /**

@@ -396,7 +396,10 @@ final class Generator
      * Hand-written handles on the fundamental registry (src/core/fundamental) that generated
      * signatures may take or return: GIR name => the unref function a transfer-full result needs.
      */
-    private const array FUNDAMENTALS = ['Gdk.Event' => 'gdk_event_unref', 'Gtk.CssSection' => 'gtk_css_section_unref'];
+    private const array FUNDAMENTALS = [
+        'Gdk.Event' => 'gdk_event_unref', 'Gtk.CssSection' => 'gtk_css_section_unref',
+        'Gdk.EventSequence' => null,  // GTK owns sequences; the handle is an identity, never a reference
+    ];
 
     /** The `GDK_TYPE_EVENT`-style macro of a node, for the emitted C++. */
     private function typeMacroOf(Node $node): string
@@ -1286,6 +1289,34 @@ final class Generator
                     $protos[] = "ZEND_METHOD({$this->ceName($php)}, " . ($f->shadows ?? $f->name) . ');';
                 }
             }
+            // The fallback class (core/object.cpp fallback_for): what wrap() hands out for a
+            // GTK-private class whose only registered face is this interface (GtkNotebookPages
+            // -> GListModelObject). Every interface method, aliased; never constructed.
+            $fb = $php . 'Object';
+            $fbCe = 'ce_' . $fb;
+            $minit[] = "  zend_class_entry *$fbCe = register_class_{$this->ceName($fb)}(ce_GObject, $ce);";
+            $minit[] = "  phpgtk::register_interface_fallback($typeMacro, $fbCe);";
+            $fbMethods = ["    /** Never called: these handles only come from wrap(). */\n"
+                . "    private function __construct() {}\n"];
+            foreach ($n->funcs as $f) {
+                if ($f->kind !== 'method' || $f->shadowedBy !== null || !$this->methodEmittable($n, $f)) {
+                    continue;
+                }
+                $phpName = $f->shadows ?? $f->name;
+                $sig = $this->stubSignature($n, $f, $phpName);
+                if ($sig === null) {
+                    continue;
+                }
+                $fbMethods[] = "    /** @implementation-alias Gtk4\\$php::$phpName */\n    public function $sig {}\n";
+            }
+            $stub .= "\n/**\n * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only\n"
+                . " * registered interface is {@see $php} - a private list model behind a `get_pages()`, for\n"
+                . " * instance. Not a GType of its own and never constructed; it is {@see $php} with a body.\n"
+                . " *\n * @not-serializable\n */\n"
+                . "final class $fb extends GObject implements $php\n{\n" . implode("\n", $fbMethods) . "}\n";
+            $cpp .= "\n/**\n * Gtk4\\$fb::__construct()\n *\n"
+                . " * Never called: these handles only come from wrap().\n */\n"
+                . "ZEND_METHOD({$this->ceName($fb)}, __construct) {\n  ZEND_PARSE_PARAMETERS_NONE();\n}\n";
         } else {
             $minit[] = "  zend_class_entry *$ce = register_class_{$this->ceName($php)}(" . implode(', ', $args) . ');';
             $minit[] = "  phpgtk::register_class(\"$php\", $ce, $typeMacro);";
@@ -2349,7 +2380,7 @@ final class Generator
             in_array($t->name, ['GObject.GType', 'Gio.GType', 'GLib.GType'], true) => 'string',
             $t->name === 'cairo.Context' => 'CairoContext',
             $t->name === 'GObject.ParamSpec' => 'GParamSpec',
-            isset(self::FUNDAMENTALS[$t->name]) => phpClass($this->gir->types[$t->name]),
+            array_key_exists($t->name, self::FUNDAMENTALS) => phpClass($this->gir->types[$t->name]),
             $t->name === 'GObject.Object' => 'GObject',
             $t->isArray => self::isStrv($t) ? 'array' : null,
             in_array($t->name, ['GLib.List', 'GLib.SList', 'GLib.PtrArray'], true) => 'array',
@@ -2514,6 +2545,24 @@ final class Generator
         $name = $p->name;
         $r = ['phpName' => $name, 'default' => $trailingNullable ? 'null' : null, 'pre' => [], 'post' => []];
         $nullable = $p->nullable;
+        if (array_key_exists($t->name, self::FUNDAMENTALS)) {
+            // A hand-written fundamental handle (GdkEvent) as an argument: borrowed for the call.
+            $fnode = $this->gir->types[$t->name];
+            $macro = $this->typeMacroOf($fnode);
+            return array_merge($r, [
+                'phpType' => ($nullable ? '?' : '') . phpClass($fnode),
+                'decl' => "zval *$name" . ($nullable ? ' = nullptr' : '') . ';',
+                'zpp' => 'Z_PARAM_OBJECT_OF_CLASS' . ($nullable ? '_OR_NULL' : '')
+                    . "($name, fundamental_class_for_type($macro)->ce)",
+                'pre' => $nullable
+                    ? ["gpointer {$name}_f = nullptr;", "if ($name != nullptr) {",
+                        "  {$name}_f = unwrap_fundamental($name, $macro);",
+                        "  if ({$name}_f == nullptr) RETURN_THROWS();", '}']
+                    : ["gpointer {$name}_f = unwrap_fundamental($name, $macro);",
+                        "if ({$name}_f == nullptr) RETURN_THROWS();"],
+                'carg' => "static_cast<{$fnode->ctype} *>({$name}_f)",
+            ]);
+        }
         if (in_array($t->name, ['utf8', 'filename'], true) && !$t->isArray) {
             $zpp = $t->name === 'filename' ? 'Z_PARAM_PATH_STR' : 'Z_PARAM_STR';
             return array_merge($r, [
@@ -2642,24 +2691,6 @@ final class Generator
                     : "$castMacro({$name}_o)",
             ]);
         }
-        if (isset(self::FUNDAMENTALS[$t->name])) {
-            // A hand-written fundamental handle (GdkEvent) as an argument: borrowed for the call.
-            $fnode = $this->gir->types[$t->name];
-            $macro = $this->typeMacroOf($fnode);
-            return array_merge($r, [
-                'phpType' => ($nullable ? '?' : '') . phpClass($fnode),
-                'decl' => "zval *$name" . ($nullable ? ' = nullptr' : '') . ';',
-                'zpp' => 'Z_PARAM_OBJECT_OF_CLASS' . ($nullable ? '_OR_NULL' : '')
-                    . "($name, fundamental_class_for_type($macro)->ce)",
-                'pre' => $nullable
-                    ? ["gpointer {$name}_f = nullptr;", "if ($name != nullptr) {",
-                        "  {$name}_f = unwrap_fundamental($name, $macro);",
-                        "  if ({$name}_f == nullptr) RETURN_THROWS();", '}']
-                    : ["gpointer {$name}_f = unwrap_fundamental($name, $macro);",
-                        "if ({$name}_f == nullptr) RETURN_THROWS();"],
-                'carg' => "static_cast<{$fnode->ctype} *>({$name}_f)",
-            ]);
-        }
         if ($t->name === 'GLib.Error') {
             // Gtk4\GError is an exception class (core/gerror), not a boxed handle: a GError is
             // built from it for the call and freed afterwards unless the callee takes it.
@@ -2718,6 +2749,18 @@ final class Generator
         };
         $singleOut = fn() => [...$outs[0]['toZval']('return_value'), ...$outPosts];
         $outDoc = 'array{' . implode(', ', array_map(fn($o) => self::outScalar($o), $outs)) . '}';
+
+        if ($outs === [] && array_key_exists($t->name, self::FUNDAMENTALS)) {  // before the record arms
+            // A hand-written fundamental handle (GdkEvent): wrap through its registry entry, which
+            // takes its own reference - a transfer-full result gives up the one it came with.
+            $fnode = $this->gir->types[$t->name];
+            $macro = $this->typeMacroOf($fnode);
+            $unref = self::FUNDAMENTALS[$t->name];
+            return ['phpType' => ($f->retNullable ? '?' : '') . phpClass($fnode), 'lines' => fn(string $call) => [
+                "gpointer result = $call;", "wrap_fundamental($macro, result, return_value);",
+                ...($full && $unref !== null
+                    ? ["if (result != nullptr) $unref(static_cast<{$fnode->ctype} *>(result));"] : [])]];
+        }
 
         // constructors of a boxed record: the handle adopts the allocation (the type's own
         // allocator: GIR constructors return transfer full); factories copy into a new handle
@@ -2939,16 +2982,6 @@ final class Generator
         if ($t->name === 'GObject.ParamSpec') {
             return ['phpType' => ($f->retNullable ? '?' : '') . 'GParamSpec', 'lines' => fn(string $call) => [
                 "wrap_param_spec($call, return_value);"]];
-        }
-        if (isset(self::FUNDAMENTALS[$t->name])) {
-            // A hand-written fundamental handle (GdkEvent): wrap through its registry entry, which
-            // takes its own reference - a transfer-full result gives up the one it came with.
-            $fnode = $this->gir->types[$t->name];
-            $macro = $this->typeMacroOf($fnode);
-            $unref = self::FUNDAMENTALS[$t->name];
-            return ['phpType' => ($f->retNullable ? '?' : '') . phpClass($fnode), 'lines' => fn(string $call) => [
-                "gpointer result = $call;", "wrap_fundamental($macro, result, return_value);",
-                ...($full ? ["if (result != nullptr) $unref(static_cast<{$fnode->ctype} *>(result));"] : [])]];
         }
         $node = $this->gir->types[$t->name] ?? null;
         if ($node === null) {

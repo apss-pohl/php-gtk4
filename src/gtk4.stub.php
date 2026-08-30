@@ -604,6 +604,19 @@ final class GdkGrabBrokenEvent extends GdkEvent
 }
 
 /**
+ * The identity of one touch point (or the pointer: null) for the duration of a gesture -
+ * what {@see GtkGesture::get_point()}, {@see GtkGesture::get_last_event()} and the gesture
+ * signals take and hand out. Opaque and compared by identity: the same sequence is the same
+ * handle (`===`) while PHP holds it. Never constructed.
+ *
+ * @link https://docs.gtk.org/gdk4/struct.EventSequence.html
+ * @not-serializable
+ */
+final class GdkEventSequence
+{
+}
+
+/**
  * A cairo drawing context, as handed to {@see GtkDrawingArea::set_draw_func()}
  * callbacks. Only valid during the callback. Minimal surface for now; grows
  * with the generator.

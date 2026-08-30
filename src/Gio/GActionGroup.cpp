@@ -438,3 +438,12 @@ void register_vfuncs_GActionGroup() {
   register_iface_vfunc(G_TYPE_ACTION_GROUP, "get_action_enabled", vfunc_install_get_action_enabled);
   register_iface_vfunc(G_TYPE_ACTION_GROUP, "has_action", vfunc_install_has_action);
 }
+
+/**
+ * Gtk4\GActionGroupObject::__construct()
+ *
+ * Never called: these handles only come from wrap().
+ */
+ZEND_METHOD(Gtk4_GActionGroupObject, __construct) {
+  ZEND_PARSE_PARAMETERS_NONE();
+}

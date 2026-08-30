@@ -123,3 +123,12 @@ ZEND_METHOD(Gtk4_GtkScrollable, set_vscroll_policy) {
   if (!enum_from_php(policy, GTK_TYPE_SCROLLABLE_POLICY, &policy_v)) RETURN_THROWS();
   gtk_scrollable_set_vscroll_policy(self, static_cast<GtkScrollablePolicy>(policy_v));
 }
+
+/**
+ * Gtk4\GtkScrollableObject::__construct()
+ *
+ * Never called: these handles only come from wrap().
+ */
+ZEND_METHOD(Gtk4_GtkScrollableObject, __construct) {
+  ZEND_PARSE_PARAMETERS_NONE();
+}

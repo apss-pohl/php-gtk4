@@ -250,21 +250,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkGesture
 
 - `get_device` — return type Gdk.Device (not in the closure)
-- `get_last_event` — parameter `sequence` of type Gdk.EventSequence
-- `get_last_updated_sequence` — return type Gdk.EventSequence
-- `get_point` — parameter `sequence` of type Gdk.EventSequence
-- `get_sequence_state` — parameter `sequence` of type Gdk.EventSequence
-- `get_sequences` — list of Gdk.EventSequence
-- `handles_sequence` — parameter `sequence` of type Gdk.EventSequence
 - `set_sequence_state` — deprecated (4.10.)
 
 ## GtkGesturePan
 
 - `smoke test` — no constructor or factory whose parameters can be sampled
-
-## GtkGestureSingle
-
-- `get_current_sequence` — return type Gdk.EventSequence
 
 ## GtkImage
 

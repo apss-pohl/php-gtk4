@@ -805,6 +805,17 @@ final class GdkGrabBrokenEvent extends GdkEvent
     }
 }
 /**
+ * The identity of one touch point (or the pointer: null) for the duration of a gesture -
+ * what {@see GtkGesture::get_point()}, {@see GtkGesture::get_last_event()} and the gesture
+ * signals take and hand out. Opaque and compared by identity: the same sequence is the same
+ * handle (`===`) while PHP holds it. Never constructed.
+ *
+ * @link https://docs.gtk.org/gdk4/struct.EventSequence.html
+ */
+final class GdkEventSequence
+{
+}
+/**
  * A cairo drawing context, as handed to {@see GtkDrawingArea::set_draw_func()}
  * callbacks. Only valid during the callback. Minimal surface for now; grows
  * with the generator.
@@ -1237,6 +1248,53 @@ interface GdkPaintable
     public function get_intrinsic_width(): int;
 }
 /**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GdkPaintable} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GdkPaintable} with a body.
+ *
+ */
+final class GdkPaintableObject extends GObject implements GdkPaintable
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct()
+    {
+    }
+    public function compute_concrete_size(float $specified_width, float $specified_height, float $default_width, float $default_height): array
+    {
+        unset($specified_width);
+        unset($specified_height);
+        unset($default_width);
+        unset($default_height);
+        return [];
+    }
+    public function get_current_image(): GdkPaintable
+    {
+        return null;
+    }
+    public function get_flags(): int
+    {
+        return 0;
+    }
+    public function get_intrinsic_aspect_ratio(): float
+    {
+        return 0.0;
+    }
+    public function get_intrinsic_height(): int
+    {
+        return 0;
+    }
+    public function get_intrinsic_width(): int
+    {
+        return 0;
+    }
+    public function invalidate_contents(): void
+    {
+    }
+    public function invalidate_size(): void
+    {
+    }
+}
+/**
  * Flags about a paintable object.
  */
 final class GdkPaintableFlags
@@ -1402,6 +1460,51 @@ interface GAction
     public function activate(mixed $parameter = null): void;
 }
 /**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GAction} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GAction} with a body.
+ *
+ */
+final class GActionObject extends GObject implements GAction
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct()
+    {
+    }
+    public function activate(mixed $parameter = null): void
+    {
+        unset($parameter);
+    }
+    public function change_state(mixed $value = null): void
+    {
+        unset($value);
+    }
+    public function get_enabled(): bool
+    {
+        return false;
+    }
+    public function get_name(): string
+    {
+        return '';
+    }
+    public function get_parameter_type(): ?string
+    {
+        return null;
+    }
+    public function get_state(): mixed
+    {
+        return null;
+    }
+    public function get_state_hint(): mixed
+    {
+        return null;
+    }
+    public function get_state_type(): ?string
+    {
+        return null;
+    }
+}
+/**
  * `GActionGroup` represents a group of actions.
  */
 interface GActionGroup
@@ -1448,6 +1551,81 @@ interface GActionGroup
     public function activate_action(string $action_name, mixed $parameter = null): void;
 }
 /**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GActionGroup} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GActionGroup} with a body.
+ *
+ */
+final class GActionGroupObject extends GObject implements GActionGroup
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct()
+    {
+    }
+    public function action_added(string $action_name): void
+    {
+        unset($action_name);
+    }
+    public function action_enabled_changed(string $action_name, bool $enabled): void
+    {
+        unset($action_name);
+        unset($enabled);
+    }
+    public function action_removed(string $action_name): void
+    {
+        unset($action_name);
+    }
+    public function action_state_changed(string $action_name, mixed $state = null): void
+    {
+        unset($action_name);
+        unset($state);
+    }
+    public function activate_action(string $action_name, mixed $parameter = null): void
+    {
+        unset($action_name);
+        unset($parameter);
+    }
+    public function change_action_state(string $action_name, mixed $value = null): void
+    {
+        unset($action_name);
+        unset($value);
+    }
+    public function get_action_enabled(string $action_name): bool
+    {
+        unset($action_name);
+        return false;
+    }
+    public function get_action_parameter_type(string $action_name): ?string
+    {
+        unset($action_name);
+        return null;
+    }
+    public function get_action_state(string $action_name): mixed
+    {
+        unset($action_name);
+        return null;
+    }
+    public function get_action_state_hint(string $action_name): mixed
+    {
+        unset($action_name);
+        return null;
+    }
+    public function get_action_state_type(string $action_name): ?string
+    {
+        unset($action_name);
+        return null;
+    }
+    public function has_action(string $action_name): bool
+    {
+        unset($action_name);
+        return false;
+    }
+    public function list_actions(): array
+    {
+        return [];
+    }
+}
+/**
  * `GActionMap` is an interface for action containers.
  */
 interface GActionMap
@@ -1458,6 +1636,32 @@ interface GActionMap
     public function lookup_action(string $action_name): ?GAction;
     /** Removes the named action from the action map. */
     public function remove_action(string $action_name): void;
+}
+/**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GActionMap} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GActionMap} with a body.
+ *
+ */
+final class GActionMapObject extends GObject implements GActionMap
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct()
+    {
+    }
+    public function add_action(GAction $action): void
+    {
+        unset($action);
+    }
+    public function lookup_action(string $action_name): ?GAction
+    {
+        unset($action_name);
+        return null;
+    }
+    public function remove_action(string $action_name): void
+    {
+        unset($action_name);
+    }
 }
 /**
  * `GApplication` is the core class for application support.
@@ -1812,6 +2016,27 @@ interface GAsyncResult
     public function get_source_object(): ?GObject;
 }
 /**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GAsyncResult} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GAsyncResult} with a body.
+ *
+ */
+final class GAsyncResultObject extends GObject implements GAsyncResult
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct()
+    {
+    }
+    public function get_source_object(): ?GObject
+    {
+        return null;
+    }
+    public function legacy_propagate_error(): bool
+    {
+        return false;
+    }
+}
+/**
  * `GCancellable` allows operations to be cancelled.
  */
 class GCancellable extends GObject
@@ -1910,6 +2135,38 @@ interface GListModel
     public function get_n_items(): int;
     /** Get the item at $position. */
     public function get_item(int $position): ?GObject;
+}
+/**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GListModel} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GListModel} with a body.
+ *
+ */
+final class GListModelObject extends GObject implements GListModel
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct()
+    {
+    }
+    public function get_item_type(): string
+    {
+        return '';
+    }
+    public function get_n_items(): int
+    {
+        return 0;
+    }
+    public function get_item(int $position): ?GObject
+    {
+        unset($position);
+        return null;
+    }
+    public function items_changed(int $position, int $removed, int $added): void
+    {
+        unset($position);
+        unset($removed);
+        unset($added);
+    }
 }
 /**
  * `GListStore` is a simple implementation of `ListModel` that stores all items in memory.
@@ -3336,6 +3593,113 @@ interface GtkEditable
     public function get_text(): string;
 }
 /**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GtkEditable} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GtkEditable} with a body.
+ *
+ */
+final class GtkEditableObject extends GObject implements GtkEditable
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct()
+    {
+    }
+    public function delegate_get_accessible_platform_state(GtkAccessiblePlatformState $state): bool
+    {
+        unset($state);
+        return false;
+    }
+    public function delete_selection(): void
+    {
+    }
+    public function delete_text(int $start_pos, int $end_pos): void
+    {
+        unset($start_pos);
+        unset($end_pos);
+    }
+    public function finish_delegate(): void
+    {
+    }
+    public function get_alignment(): float
+    {
+        return 0.0;
+    }
+    public function get_chars(int $start_pos, int $end_pos): string
+    {
+        unset($start_pos);
+        unset($end_pos);
+        return '';
+    }
+    public function get_delegate(): ?GtkEditable
+    {
+        return null;
+    }
+    public function get_editable(): bool
+    {
+        return false;
+    }
+    public function get_enable_undo(): bool
+    {
+        return false;
+    }
+    public function get_max_width_chars(): int
+    {
+        return 0;
+    }
+    public function get_position(): int
+    {
+        return 0;
+    }
+    public function get_selection_bounds(): ?array
+    {
+        return null;
+    }
+    public function get_text(): string
+    {
+        return '';
+    }
+    public function get_width_chars(): int
+    {
+        return 0;
+    }
+    public function init_delegate(): void
+    {
+    }
+    public function select_region(int $start_pos, int $end_pos): void
+    {
+        unset($start_pos);
+        unset($end_pos);
+    }
+    public function set_alignment(float $xalign): void
+    {
+        unset($xalign);
+    }
+    public function set_editable(bool $is_editable): void
+    {
+        unset($is_editable);
+    }
+    public function set_enable_undo(bool $enable_undo): void
+    {
+        unset($enable_undo);
+    }
+    public function set_max_width_chars(int $n_chars): void
+    {
+        unset($n_chars);
+    }
+    public function set_position(int $position): void
+    {
+        unset($position);
+    }
+    public function set_text(string $text): void
+    {
+        unset($text);
+    }
+    public function set_width_chars(int $n_chars): void
+    {
+        unset($n_chars);
+    }
+}
+/**
  * `GtkEntry` is a single line text entry widget.
  *
  * @property ?bool $activates_default
@@ -4345,10 +4709,53 @@ class GtkGesture extends GtkEventController
     {
         return [];
     }
+    /** Returns the last event that was processed for $sequence. */
+    public function get_last_event(?GdkEventSequence $sequence): ?GdkEvent
+    {
+        unset($sequence);
+        return null;
+    }
+    /** Returns the `GdkEventSequence` that was last updated on $gesture. */
+    public function get_last_updated_sequence(): ?GdkEventSequence
+    {
+        return null;
+    }
+    /**
+     * If $sequence is currently being interpreted by $gesture, returns `true` and fills in $x and
+     * $y with the last coordinates stored for that event sequence.
+     *
+     * @return array{float, float}|null
+     */
+    public function get_point(?GdkEventSequence $sequence): ?array
+    {
+        unset($sequence);
+        return null;
+    }
+    /** Returns the $sequence state, as seen by $gesture. */
+    public function get_sequence_state(GdkEventSequence $sequence): GtkEventSequenceState
+    {
+        unset($sequence);
+        return null;
+    }
+    /**
+     * Returns the list of `GdkEventSequences` currently being interpreted by $gesture.
+     *
+     * @return list<GdkEventSequence>
+     */
+    public function get_sequences(): array
+    {
+        return [];
+    }
     /** Adds $gesture to the same group than $group_gesture. */
     public function group(GtkGesture $gesture): void
     {
         unset($gesture);
+    }
+    /** Returns `true` if $gesture is currently handling events corresponding to $sequence. */
+    public function handles_sequence(?GdkEventSequence $sequence): bool
+    {
+        unset($sequence);
+        return false;
     }
     /** Returns `true` if the gesture is currently active. */
     public function is_active(): bool
@@ -4497,6 +4904,11 @@ class GtkGestureSingle extends GtkGesture
     public function get_current_button(): int
     {
         return 0;
+    }
+    /** Returns the event sequence currently interacting with $gesture. */
+    public function get_current_sequence(): ?GdkEventSequence
+    {
+        return null;
     }
     /** Gets whether a gesture is exclusive. */
     public function get_exclusive(): bool
@@ -5468,6 +5880,27 @@ interface GtkOrientable
     public function set_orientation(GtkOrientation $orientation): void;
 }
 /**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GtkOrientable} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GtkOrientable} with a body.
+ *
+ */
+final class GtkOrientableObject extends GObject implements GtkOrientable
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct()
+    {
+    }
+    public function get_orientation(): GtkOrientation
+    {
+        return null;
+    }
+    public function set_orientation(GtkOrientation $orientation): void
+    {
+        unset($orientation);
+    }
+}
+/**
  * Represents the orientation of widgets and other objects.
  */
 enum GtkOrientation : int
@@ -6315,6 +6748,31 @@ interface GtkRoot
     public function set_focus(?GtkWidget $focus): void;
 }
 /**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GtkRoot} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GtkRoot} with a body.
+ *
+ */
+final class GtkRootObject extends GObject implements GtkRoot
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct()
+    {
+    }
+    public function get_display(): GdkDisplay
+    {
+        return null;
+    }
+    public function get_focus(): ?GtkWidget
+    {
+        return null;
+    }
+    public function set_focus(?GtkWidget $focus): void
+    {
+        unset($focus);
+    }
+}
+/**
  * A `GtkScale` is a slider control used to select a numeric value.
  *
  * @property ?int $digits
@@ -6438,6 +6896,51 @@ class GtkScale extends GtkRange implements GtkOrientable
  */
 interface GtkScrollable
 {
+}
+/**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GtkScrollable} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GtkScrollable} with a body.
+ *
+ */
+final class GtkScrollableObject extends GObject implements GtkScrollable
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct()
+    {
+    }
+    public function get_hadjustment(): ?GtkAdjustment
+    {
+        return null;
+    }
+    public function get_hscroll_policy(): GtkScrollablePolicy
+    {
+        return null;
+    }
+    public function get_vadjustment(): ?GtkAdjustment
+    {
+        return null;
+    }
+    public function get_vscroll_policy(): GtkScrollablePolicy
+    {
+        return null;
+    }
+    public function set_hadjustment(?GtkAdjustment $hadjustment): void
+    {
+        unset($hadjustment);
+    }
+    public function set_hscroll_policy(GtkScrollablePolicy $policy): void
+    {
+        unset($policy);
+    }
+    public function set_vadjustment(?GtkAdjustment $vadjustment): void
+    {
+        unset($vadjustment);
+    }
+    public function set_vscroll_policy(GtkScrollablePolicy $policy): void
+    {
+        unset($policy);
+    }
 }
 /**
  * Defines the policy to be used in a scrollable widget when updating the scrolled window
@@ -7639,6 +8142,19 @@ class GtkStringObject extends GObject
  */
 interface GtkStyleProvider
 {
+}
+/**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GtkStyleProvider} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GtkStyleProvider} with a body.
+ *
+ */
+final class GtkStyleProviderObject extends GObject implements GtkStyleProvider
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct()
+    {
+    }
 }
 /**
  * Reading directions for text.

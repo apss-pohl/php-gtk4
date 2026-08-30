@@ -183,3 +183,12 @@ void vfunc_install_get_enabled(gpointer klass) {
 void register_vfuncs_GAction() {
   register_iface_vfunc(G_TYPE_ACTION, "get_enabled", vfunc_install_get_enabled);
 }
+
+/**
+ * Gtk4\GActionObject::__construct()
+ *
+ * Never called: these handles only come from wrap().
+ */
+ZEND_METHOD(Gtk4_GActionObject, __construct) {
+  ZEND_PARSE_PARAMETERS_NONE();
+}

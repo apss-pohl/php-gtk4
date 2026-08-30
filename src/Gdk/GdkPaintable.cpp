@@ -293,3 +293,12 @@ void register_vfuncs_GdkPaintable() {
   register_iface_vfunc(GDK_TYPE_PAINTABLE, "get_intrinsic_width",
                        vfunc_install_get_intrinsic_width);
 }
+
+/**
+ * Gtk4\GdkPaintableObject::__construct()
+ *
+ * Never called: these handles only come from wrap().
+ */
+ZEND_METHOD(Gtk4_GdkPaintableObject, __construct) {
+  ZEND_PARSE_PARAMETERS_NONE();
+}

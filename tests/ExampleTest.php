@@ -27,8 +27,27 @@ final class ExampleTest extends TestCase
     {
         foreach (new ReflectionExtension('gtk4')->getClasses() as $class) {
             $name = $class->getName();
+            if (self::isInterfaceFallback($class)) {
+                continue;  // Gtk4\GListModelObject is GListModel with a body: its page is the interface's
+            }
             yield $name => [substr($name, strrpos($name, '\\') + 1)];
         }
+    }
+
+    /**
+     * The generated `<Interface>Object` classes wrap() falls back to for GTK-private classes
+     * (core/object.cpp fallback_for): not constructible, no API of their own.
+     *
+     * @param \ReflectionClass<object> $class
+     */
+    private static function isInterfaceFallback(\ReflectionClass $class): bool
+    {
+        $name = $class->getName();
+        if (!str_ends_with($name, 'Object') || $class->isInstantiable()) {
+            return false;
+        }
+        $iface = substr($name, 0, -strlen('Object'));
+        return interface_exists($iface) && $class->implementsInterface($iface);
     }
 
     /** @return iterable<string, array{string}> */

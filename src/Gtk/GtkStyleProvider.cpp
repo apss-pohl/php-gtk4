@@ -4,3 +4,12 @@
 #include "core/object.h"
 
 using namespace phpgtk;
+
+/**
+ * Gtk4\GtkStyleProviderObject::__construct()
+ *
+ * Never called: these handles only come from wrap().
+ */
+ZEND_METHOD(Gtk4_GtkStyleProviderObject, __construct) {
+  ZEND_PARSE_PARAMETERS_NONE();
+}

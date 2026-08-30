@@ -16,4 +16,6 @@ void register_GdkRectangle(zend_class_entry *ce);   // boxed (Gdk/GdkRectangle.c
 void register_GtkCssSection(zend_class_entry *ce);  // fundamental (Gtk/GtkCssSection.cpp)
 void register_GdkEvent(GType type,
                        zend_class_entry *ce);  // fundamental, per event GType (Gdk/GdkEvent.cpp)
+void register_GdkEventSequence(
+    zend_class_entry *ce);  // fundamental, identity only (Gdk/GdkEventSequence.cpp)
 }  // namespace phpgtk

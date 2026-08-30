@@ -130,7 +130,8 @@ final class Demo
         ],
         'Events' => [
             'GdkEvent', 'GdkKeyEvent', 'GdkButtonEvent', 'GdkScrollEvent', 'GdkCrossingEvent', 'GdkFocusEvent',
-            'GdkTouchEvent', 'GdkTouchpadEvent', 'GdkPadEvent', 'GdkGrabBrokenEvent', 'GdkEventType',
+            'GdkTouchEvent', 'GdkTouchpadEvent', 'GdkPadEvent', 'GdkGrabBrokenEvent', 'GdkEventSequence',
+            'GdkEventType',
             'GdkScrollDirection', 'GdkCrossingMode', 'GdkNotifyType', 'GdkTouchpadGesturePhase', 'GdkKeyMatch',
         ],
         'Loop' => ['GLib', 'GMainLoop'],

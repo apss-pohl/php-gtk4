@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 034b38c1b5ec2fbe443c3c2ab37e6cc127ec1139 */
+ * Stub hash: 018f500f202222d20f1fe3795f7334a968966e40 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GObject___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -844,6 +844,16 @@ static zend_class_entry *register_class_Gtk4_GdkGrabBrokenEvent(zend_class_entry
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkGrabBrokenEvent", class_Gtk4_GdkGrabBrokenEvent_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GdkEvent, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkEventSequence(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkEventSequence", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
 
 	return class_entry;
 }

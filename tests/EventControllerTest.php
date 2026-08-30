@@ -240,6 +240,43 @@ final class EventControllerTest extends GtkTestCase
         self::assertSame(0, $click->get_current_button());
     }
 
+    public function testSequenceApiThroughThePointerAndEventIdentity(): void
+    {
+        $this->show();
+        $drag = new GtkGestureDrag();
+        $seen = null;
+        $drag->connect('drag-begin', function (GtkGestureDrag $g) use (&$seen): void {
+            // The pointer's sequence is null; every per-sequence method accepts it.
+            $seen = [
+                $g->get_current_sequence(),
+                $g->get_sequences(),
+                $g->get_point(null),
+                $g->get_last_event(null),
+                $g->handles_sequence(null),
+                $g->get_last_updated_sequence(),
+                $g->get_current_event(),
+            ];
+        });
+        $this->area->add_controller($drag);
+        XInput::move(40, 30);
+        XInput::press(1);
+        self::pump(2.0, static fn(): bool => $seen !== null);
+        XInput::release(1);
+        self::pump(0.3);
+        self::assertNotNull($seen);
+        [$current, $sequences, $point, $last, $handles, $updated, $event] = $seen;
+        self::assertNull($current, 'a mouse has no sequence');
+        self::assertSame([null], $sequences, 'get_sequences() lists the pointer as null');
+        self::assertSame([40.0, 30.0], $point);
+        self::assertInstanceOf(GdkButtonEvent::class, $last);
+        self::assertTrue($handles);
+        self::assertNull($updated);
+        // Fundamental handles keep identity while PHP holds them: the event the controller
+        // reports and the one the gesture stored are one object.
+        self::assertSame($last, $event);
+        self::assertSame(1, $last->get_button());
+    }
+
     public function testDragGestureReportsOffsets(): void
     {
         $this->show();

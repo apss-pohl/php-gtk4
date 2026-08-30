@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace PhpGtk4\Tests;
 
 use Gtk4\GLib;
-use Gtk4\GObject;
+use Gtk4\GListModel;
+use Gtk4\GListModelObject;
 use Gtk4\GtkAdjustment;
 use Gtk4\GtkBaselinePosition;
 use Gtk4\GtkBox;
@@ -125,11 +126,14 @@ final class LayoutTest extends GtkTestCase
         $page = $nb->get_page($second);
         self::assertInstanceOf(GtkNotebookPage::class, $page);
         self::assertSame($second, $page->get_child());
-        // get_pages() is a GListModel, but its concrete class (GtkNotebookPages) is GTK-private:
-        // wrap() has no registered class for it and falls back to GObject (docs/TODO.md §7, the
-        // list-model wave needs an interface fallback). The handle itself is fine.
-        self::assertInstanceOf(GObject::class, $nb->get_pages());
-        self::assertSame($nb->get_pages(), $nb->get_pages());
+        // get_pages() is a GListModel whose concrete class (GtkNotebookPages) is GTK-private:
+        // wrap() falls back to the interface's generated class, so the list is usable.
+        $pages = $nb->get_pages();
+        self::assertInstanceOf(GListModelObject::class, $pages);
+        self::assertInstanceOf(GListModel::class, $pages);
+        self::assertSame(2, $pages->get_n_items());
+        self::assertSame($page, $pages->get_item(1), 'the same page object GTK created');
+        self::assertSame($pages, $nb->get_pages());
 
         $nb->set_tab_pos(GtkPositionType::Left);
         self::assertSame(GtkPositionType::Left, $nb->get_tab_pos());

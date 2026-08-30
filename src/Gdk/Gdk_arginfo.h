@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 34a131a9910059dfdb783d849bd90aa13934f4bb */
+ * Stub hash: b79d5c48fb73792f0dfbed5f402b73d6d35d053f */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkDisplay___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -52,6 +52,29 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkPaintable_get_intrinsic_width arginfo_class_Gtk4_GdkPaintable_get_flags
 
+#define arginfo_class_Gtk4_GdkPaintableObject___construct arginfo_class_Gtk4_GdkDisplay___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkPaintableObject_compute_concrete_size, 0, 4, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, specified_width, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, specified_height, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, default_width, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, default_height, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkPaintableObject_get_current_image arginfo_class_Gtk4_GdkPaintable_get_current_image
+
+#define arginfo_class_Gtk4_GdkPaintableObject_get_flags arginfo_class_Gtk4_GdkPaintable_get_flags
+
+#define arginfo_class_Gtk4_GdkPaintableObject_get_intrinsic_aspect_ratio arginfo_class_Gtk4_GdkPaintable_get_intrinsic_aspect_ratio
+
+#define arginfo_class_Gtk4_GdkPaintableObject_get_intrinsic_height arginfo_class_Gtk4_GdkPaintable_get_flags
+
+#define arginfo_class_Gtk4_GdkPaintableObject_get_intrinsic_width arginfo_class_Gtk4_GdkPaintable_get_flags
+
+#define arginfo_class_Gtk4_GdkPaintableObject_invalidate_contents arginfo_class_Gtk4_GdkDisplay_beep
+
+#define arginfo_class_Gtk4_GdkPaintableObject_invalidate_size arginfo_class_Gtk4_GdkDisplay_beep
+
 #define arginfo_class_Gtk4_GdkTexture___construct arginfo_class_Gtk4_GdkDisplay___construct
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkTexture_new_from_bytes, 0, 1, Gtk4\\GdkTexture, 0)
@@ -79,12 +102,7 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkTexture_save_to_tiff_bytes arginfo_class_Gtk4_GdkDisplay_get_name
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkTexture_compute_concrete_size, 0, 4, IS_ARRAY, 0)
-	ZEND_ARG_TYPE_INFO(0, specified_width, IS_DOUBLE, 0)
-	ZEND_ARG_TYPE_INFO(0, specified_height, IS_DOUBLE, 0)
-	ZEND_ARG_TYPE_INFO(0, default_width, IS_DOUBLE, 0)
-	ZEND_ARG_TYPE_INFO(0, default_height, IS_DOUBLE, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_GdkTexture_compute_concrete_size arginfo_class_Gtk4_GdkPaintableObject_compute_concrete_size
 
 #define arginfo_class_Gtk4_GdkTexture_get_current_image arginfo_class_Gtk4_GdkPaintable_get_current_image
 
@@ -115,6 +133,10 @@ ZEND_METHOD(Gtk4_GdkDisplay, prepare_gl);
 ZEND_METHOD(Gtk4_GdkDisplay, supports_input_shapes);
 ZEND_METHOD(Gtk4_GdkDisplay, supports_shadow_width);
 ZEND_METHOD(Gtk4_GdkDisplay, sync);
+ZEND_METHOD(Gtk4_GdkPaintableObject, __construct);
+ZEND_METHOD(Gtk4_GdkPaintable, compute_concrete_size);
+ZEND_METHOD(Gtk4_GdkPaintable, invalidate_contents);
+ZEND_METHOD(Gtk4_GdkPaintable, invalidate_size);
 ZEND_METHOD(Gtk4_GdkTexture, __construct);
 ZEND_METHOD(Gtk4_GdkTexture, new_from_bytes);
 ZEND_METHOD(Gtk4_GdkTexture, new_from_filename);
@@ -125,9 +147,6 @@ ZEND_METHOD(Gtk4_GdkTexture, save_to_png);
 ZEND_METHOD(Gtk4_GdkTexture, save_to_png_bytes);
 ZEND_METHOD(Gtk4_GdkTexture, save_to_tiff);
 ZEND_METHOD(Gtk4_GdkTexture, save_to_tiff_bytes);
-ZEND_METHOD(Gtk4_GdkPaintable, compute_concrete_size);
-ZEND_METHOD(Gtk4_GdkPaintable, invalidate_contents);
-ZEND_METHOD(Gtk4_GdkPaintable, invalidate_size);
 
 static const zend_function_entry class_Gtk4_GdkDisplay_methods[] = {
 	ZEND_ME(Gtk4_GdkDisplay, __construct, arginfo_class_Gtk4_GdkDisplay___construct, ZEND_ACC_PRIVATE)
@@ -154,6 +173,19 @@ static const zend_function_entry class_Gtk4_GdkPaintable_methods[] = {
 	ZEND_RAW_FENTRY("get_intrinsic_aspect_ratio", NULL, arginfo_class_Gtk4_GdkPaintable_get_intrinsic_aspect_ratio, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("get_intrinsic_height", NULL, arginfo_class_Gtk4_GdkPaintable_get_intrinsic_height, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("get_intrinsic_width", NULL, arginfo_class_Gtk4_GdkPaintable_get_intrinsic_width, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkPaintableObject_methods[] = {
+	ZEND_ME(Gtk4_GdkPaintableObject, __construct, arginfo_class_Gtk4_GdkPaintableObject___construct, ZEND_ACC_PRIVATE)
+	ZEND_RAW_FENTRY("compute_concrete_size", zim_Gtk4_GdkPaintable_compute_concrete_size, arginfo_class_Gtk4_GdkPaintableObject_compute_concrete_size, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_current_image", zim_Gtk4_GdkPaintable_get_current_image, arginfo_class_Gtk4_GdkPaintableObject_get_current_image, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_flags", zim_Gtk4_GdkPaintable_get_flags, arginfo_class_Gtk4_GdkPaintableObject_get_flags, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_intrinsic_aspect_ratio", zim_Gtk4_GdkPaintable_get_intrinsic_aspect_ratio, arginfo_class_Gtk4_GdkPaintableObject_get_intrinsic_aspect_ratio, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_intrinsic_height", zim_Gtk4_GdkPaintable_get_intrinsic_height, arginfo_class_Gtk4_GdkPaintableObject_get_intrinsic_height, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_intrinsic_width", zim_Gtk4_GdkPaintable_get_intrinsic_width, arginfo_class_Gtk4_GdkPaintableObject_get_intrinsic_width, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("invalidate_contents", zim_Gtk4_GdkPaintable_invalidate_contents, arginfo_class_Gtk4_GdkPaintableObject_invalidate_contents, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("invalidate_size", zim_Gtk4_GdkPaintable_invalidate_size, arginfo_class_Gtk4_GdkPaintableObject_invalidate_size, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_FE_END
 };
 
@@ -680,6 +712,17 @@ static zend_class_entry *register_class_Gtk4_GdkPaintable(void)
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkPaintable", class_Gtk4_GdkPaintable_methods);
 	class_entry = zend_register_internal_interface(&ce);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkPaintableObject(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_GdkPaintable)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkPaintableObject", class_Gtk4_GdkPaintableObject_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_GdkPaintable);
 
 	return class_entry;
 }

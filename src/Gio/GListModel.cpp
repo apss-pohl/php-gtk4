@@ -173,3 +173,12 @@ void register_vfuncs_GListModel() {
   register_iface_vfunc(G_TYPE_LIST_MODEL, "get_item_type", vfunc_install_get_item_type);
   register_iface_vfunc(G_TYPE_LIST_MODEL, "get_n_items", vfunc_install_get_n_items);
 }
+
+/**
+ * Gtk4\GListModelObject::__construct()
+ *
+ * Never called: these handles only come from wrap().
+ */
+ZEND_METHOD(Gtk4_GListModelObject, __construct) {
+  ZEND_PARSE_PARAMETERS_NONE();
+}

@@ -5,6 +5,7 @@
 #include "core/enums.h"
 #include "core/collections.h"
 #include "core/boxed.h"
+#include "core/fundamental.h"
 #include "core/subtype.h"
 
 using namespace phpgtk;
@@ -78,6 +79,102 @@ ZEND_METHOD(Gtk4_GtkGesture, get_group) {
 }
 
 /**
+ * Gtk4\GtkGesture::get_last_event(?GdkEventSequence $sequence): ?GdkEvent
+ *
+ * Returns the last event that was processed for $sequence.
+ */
+ZEND_METHOD(Gtk4_GtkGesture, get_last_event) {
+  zval *sequence = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(sequence, fundamental_class_for_type(GDK_TYPE_EVENT_SEQUENCE)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkGesture *self = PHPGTK_SELF(GtkGesture, GTK_TYPE_GESTURE);
+  gpointer sequence_f = nullptr;
+  if (sequence != nullptr) {
+    sequence_f = unwrap_fundamental(sequence, GDK_TYPE_EVENT_SEQUENCE);
+    if (sequence_f == nullptr) RETURN_THROWS();
+  }
+  gpointer result = gtk_gesture_get_last_event(self, static_cast<GdkEventSequence *>(sequence_f));
+  wrap_fundamental(GDK_TYPE_EVENT, result, return_value);
+}
+
+/**
+ * Gtk4\GtkGesture::get_last_updated_sequence(): ?GdkEventSequence
+ *
+ * Returns the `GdkEventSequence` that was last updated on $gesture.
+ */
+ZEND_METHOD(Gtk4_GtkGesture, get_last_updated_sequence) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkGesture *self = PHPGTK_SELF(GtkGesture, GTK_TYPE_GESTURE);
+  gpointer result = gtk_gesture_get_last_updated_sequence(self);
+  wrap_fundamental(GDK_TYPE_EVENT_SEQUENCE, result, return_value);
+}
+
+/**
+ * Gtk4\GtkGesture::get_point(?GdkEventSequence $sequence): ?array
+ *
+ * If $sequence is currently being interpreted by $gesture, returns `true` and fills in $x and $y
+ * with the last coordinates stored for that event sequence.
+ */
+ZEND_METHOD(Gtk4_GtkGesture, get_point) {
+  zval *sequence = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(sequence, fundamental_class_for_type(GDK_TYPE_EVENT_SEQUENCE)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkGesture *self = PHPGTK_SELF(GtkGesture, GTK_TYPE_GESTURE);
+  gpointer sequence_f = nullptr;
+  if (sequence != nullptr) {
+    sequence_f = unwrap_fundamental(sequence, GDK_TYPE_EVENT_SEQUENCE);
+    if (sequence_f == nullptr) RETURN_THROWS();
+  }
+  double x = 0;
+  double y = 0;
+  if (!gtk_gesture_get_point(self, static_cast<GdkEventSequence *>(sequence_f), &x, &y))
+    RETURN_NULL();
+  array_init_size(return_value, 2);
+  {
+    zval item;
+    ZVAL_DOUBLE(&item, x);
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_DOUBLE(&item, y);
+    add_next_index_zval(return_value, &item);
+  }
+}
+
+/**
+ * Gtk4\GtkGesture::get_sequence_state(GdkEventSequence $sequence): GtkEventSequenceState
+ *
+ * Returns the $sequence state, as seen by $gesture.
+ */
+ZEND_METHOD(Gtk4_GtkGesture, get_sequence_state) {
+  zval *sequence;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(sequence, fundamental_class_for_type(GDK_TYPE_EVENT_SEQUENCE)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkGesture *self = PHPGTK_SELF(GtkGesture, GTK_TYPE_GESTURE);
+  gpointer sequence_f = unwrap_fundamental(sequence, GDK_TYPE_EVENT_SEQUENCE);
+  if (sequence_f == nullptr) RETURN_THROWS();
+  enum_to_php(GTK_TYPE_EVENT_SEQUENCE_STATE,
+              gtk_gesture_get_sequence_state(self, static_cast<GdkEventSequence *>(sequence_f)),
+              return_value);
+}
+
+/**
+ * Gtk4\GtkGesture::get_sequences(): array
+ *
+ * Returns the list of `GdkEventSequences` currently being interpreted by $gesture.
+ */
+ZEND_METHOD(Gtk4_GtkGesture, get_sequences) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkGesture *self = PHPGTK_SELF(GtkGesture, GTK_TYPE_GESTURE);
+  glist_to_php(gtk_gesture_get_sequences(self), GDK_TYPE_EVENT_SEQUENCE, Transfer::Container,
+               return_value);
+}
+
+/**
  * Gtk4\GtkGesture::group(GtkGesture $gesture): void
  *
  * Adds $gesture to the same group than $group_gesture.
@@ -91,6 +188,25 @@ ZEND_METHOD(Gtk4_GtkGesture, group) {
   GObject *gesture_o = unwrap(gesture, GTK_TYPE_GESTURE);
   if (gesture_o == nullptr) RETURN_THROWS();
   gtk_gesture_group(self, GTK_GESTURE(gesture_o));
+}
+
+/**
+ * Gtk4\GtkGesture::handles_sequence(?GdkEventSequence $sequence): bool
+ *
+ * Returns `true` if $gesture is currently handling events corresponding to $sequence.
+ */
+ZEND_METHOD(Gtk4_GtkGesture, handles_sequence) {
+  zval *sequence = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(sequence, fundamental_class_for_type(GDK_TYPE_EVENT_SEQUENCE)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkGesture *self = PHPGTK_SELF(GtkGesture, GTK_TYPE_GESTURE);
+  gpointer sequence_f = nullptr;
+  if (sequence != nullptr) {
+    sequence_f = unwrap_fundamental(sequence, GDK_TYPE_EVENT_SEQUENCE);
+    if (sequence_f == nullptr) RETURN_THROWS();
+  }
+  RETURN_BOOL(gtk_gesture_handles_sequence(self, static_cast<GdkEventSequence *>(sequence_f)));
 }
 
 /**

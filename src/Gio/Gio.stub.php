@@ -51,6 +51,43 @@ interface GAction
 }
 
 /**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GAction} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GAction} with a body.
+ *
+ * @not-serializable
+ */
+final class GActionObject extends GObject implements GAction
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct() {}
+
+    /** @implementation-alias Gtk4\GAction::activate */
+    public function activate(mixed $parameter = null): void {}
+
+    /** @implementation-alias Gtk4\GAction::change_state */
+    public function change_state(mixed $value = null): void {}
+
+    /** @implementation-alias Gtk4\GAction::get_enabled */
+    public function get_enabled(): bool {}
+
+    /** @implementation-alias Gtk4\GAction::get_name */
+    public function get_name(): string {}
+
+    /** @implementation-alias Gtk4\GAction::get_parameter_type */
+    public function get_parameter_type(): ?string {}
+
+    /** @implementation-alias Gtk4\GAction::get_state */
+    public function get_state(): mixed {}
+
+    /** @implementation-alias Gtk4\GAction::get_state_hint */
+    public function get_state_hint(): mixed {}
+
+    /** @implementation-alias Gtk4\GAction::get_state_type */
+    public function get_state_type(): ?string {}
+}
+
+/**
  * `GActionGroup` represents a group of actions.
  */
 interface GActionGroup
@@ -110,6 +147,58 @@ interface GActionGroup
 }
 
 /**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GActionGroup} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GActionGroup} with a body.
+ *
+ * @not-serializable
+ */
+final class GActionGroupObject extends GObject implements GActionGroup
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct() {}
+
+    /** @implementation-alias Gtk4\GActionGroup::action_added */
+    public function action_added(string $action_name): void {}
+
+    /** @implementation-alias Gtk4\GActionGroup::action_enabled_changed */
+    public function action_enabled_changed(string $action_name, bool $enabled): void {}
+
+    /** @implementation-alias Gtk4\GActionGroup::action_removed */
+    public function action_removed(string $action_name): void {}
+
+    /** @implementation-alias Gtk4\GActionGroup::action_state_changed */
+    public function action_state_changed(string $action_name, mixed $state = null): void {}
+
+    /** @implementation-alias Gtk4\GActionGroup::activate_action */
+    public function activate_action(string $action_name, mixed $parameter = null): void {}
+
+    /** @implementation-alias Gtk4\GActionGroup::change_action_state */
+    public function change_action_state(string $action_name, mixed $value = null): void {}
+
+    /** @implementation-alias Gtk4\GActionGroup::get_action_enabled */
+    public function get_action_enabled(string $action_name): bool {}
+
+    /** @implementation-alias Gtk4\GActionGroup::get_action_parameter_type */
+    public function get_action_parameter_type(string $action_name): ?string {}
+
+    /** @implementation-alias Gtk4\GActionGroup::get_action_state */
+    public function get_action_state(string $action_name): mixed {}
+
+    /** @implementation-alias Gtk4\GActionGroup::get_action_state_hint */
+    public function get_action_state_hint(string $action_name): mixed {}
+
+    /** @implementation-alias Gtk4\GActionGroup::get_action_state_type */
+    public function get_action_state_type(string $action_name): ?string {}
+
+    /** @implementation-alias Gtk4\GActionGroup::has_action */
+    public function has_action(string $action_name): bool {}
+
+    /** @implementation-alias Gtk4\GActionGroup::list_actions */
+    public function list_actions(): array {}
+}
+
+/**
  * `GActionMap` is an interface for action containers.
  */
 interface GActionMap
@@ -122,6 +211,28 @@ interface GActionMap
 
     /** Removes the named action from the action map. */
     public function remove_action(string $action_name): void;
+}
+
+/**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GActionMap} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GActionMap} with a body.
+ *
+ * @not-serializable
+ */
+final class GActionMapObject extends GObject implements GActionMap
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct() {}
+
+    /** @implementation-alias Gtk4\GActionMap::add_action */
+    public function add_action(GAction $action): void {}
+
+    /** @implementation-alias Gtk4\GActionMap::lookup_action */
+    public function lookup_action(string $action_name): ?GAction {}
+
+    /** @implementation-alias Gtk4\GActionMap::remove_action */
+    public function remove_action(string $action_name): void {}
 }
 
 /**
@@ -375,6 +486,25 @@ interface GAsyncResult
 }
 
 /**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GAsyncResult} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GAsyncResult} with a body.
+ *
+ * @not-serializable
+ */
+final class GAsyncResultObject extends GObject implements GAsyncResult
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct() {}
+
+    /** @implementation-alias Gtk4\GAsyncResult::get_source_object */
+    public function get_source_object(): ?GObject {}
+
+    /** @implementation-alias Gtk4\GAsyncResult::legacy_propagate_error */
+    public function legacy_propagate_error(): bool {}
+}
+
+/**
  * `GCancellable` allows operations to be cancelled.
  */
 class GCancellable extends GObject
@@ -458,6 +588,31 @@ interface GListModel
 
     /** Get the item at $position. */
     public function get_item(int $position): ?GObject;
+}
+
+/**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GListModel} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GListModel} with a body.
+ *
+ * @not-serializable
+ */
+final class GListModelObject extends GObject implements GListModel
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct() {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item_type */
+    public function get_item_type(): string {}
+
+    /** @implementation-alias Gtk4\GListModel::get_n_items */
+    public function get_n_items(): int {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item */
+    public function get_item(int $position): ?GObject {}
+
+    /** @implementation-alias Gtk4\GListModel::items_changed */
+    public function items_changed(int $position, int $removed, int $added): void {}
 }
 
 /**

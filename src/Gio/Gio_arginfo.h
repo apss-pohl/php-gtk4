@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 16398f7e33d55a7de5194a85c6d4d81c89f8fdd6 */
+ * Stub hash: 218ce77023fff0946a2012b95bfef0a7ce9dfd9d */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_change_state, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
@@ -24,6 +24,25 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_activate, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameter, IS_MIXED, 0, "null")
 ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GActionObject___construct, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GActionObject_activate arginfo_class_Gtk4_GAction_activate
+
+#define arginfo_class_Gtk4_GActionObject_change_state arginfo_class_Gtk4_GAction_change_state
+
+#define arginfo_class_Gtk4_GActionObject_get_enabled arginfo_class_Gtk4_GAction_get_enabled
+
+#define arginfo_class_Gtk4_GActionObject_get_name arginfo_class_Gtk4_GAction_get_name
+
+#define arginfo_class_Gtk4_GActionObject_get_parameter_type arginfo_class_Gtk4_GAction_get_parameter_type
+
+#define arginfo_class_Gtk4_GActionObject_get_state arginfo_class_Gtk4_GAction_get_state
+
+#define arginfo_class_Gtk4_GActionObject_get_state_hint arginfo_class_Gtk4_GAction_get_state
+
+#define arginfo_class_Gtk4_GActionObject_get_state_type arginfo_class_Gtk4_GAction_get_parameter_type
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GActionGroup_action_added, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, action_name, IS_STRING, 0)
@@ -72,6 +91,34 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GActionGroup_activate
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameter, IS_MIXED, 0, "null")
 ZEND_END_ARG_INFO()
 
+#define arginfo_class_Gtk4_GActionGroupObject___construct arginfo_class_Gtk4_GActionObject___construct
+
+#define arginfo_class_Gtk4_GActionGroupObject_action_added arginfo_class_Gtk4_GActionGroup_action_added
+
+#define arginfo_class_Gtk4_GActionGroupObject_action_enabled_changed arginfo_class_Gtk4_GActionGroup_action_enabled_changed
+
+#define arginfo_class_Gtk4_GActionGroupObject_action_removed arginfo_class_Gtk4_GActionGroup_action_added
+
+#define arginfo_class_Gtk4_GActionGroupObject_action_state_changed arginfo_class_Gtk4_GActionGroup_action_state_changed
+
+#define arginfo_class_Gtk4_GActionGroupObject_activate_action arginfo_class_Gtk4_GActionGroup_activate_action
+
+#define arginfo_class_Gtk4_GActionGroupObject_change_action_state arginfo_class_Gtk4_GActionGroup_change_action_state
+
+#define arginfo_class_Gtk4_GActionGroupObject_get_action_enabled arginfo_class_Gtk4_GActionGroup_get_action_enabled
+
+#define arginfo_class_Gtk4_GActionGroupObject_get_action_parameter_type arginfo_class_Gtk4_GActionGroup_get_action_parameter_type
+
+#define arginfo_class_Gtk4_GActionGroupObject_get_action_state arginfo_class_Gtk4_GActionGroup_get_action_state
+
+#define arginfo_class_Gtk4_GActionGroupObject_get_action_state_hint arginfo_class_Gtk4_GActionGroup_get_action_state
+
+#define arginfo_class_Gtk4_GActionGroupObject_get_action_state_type arginfo_class_Gtk4_GActionGroup_get_action_parameter_type
+
+#define arginfo_class_Gtk4_GActionGroupObject_has_action arginfo_class_Gtk4_GActionGroup_get_action_enabled
+
+#define arginfo_class_Gtk4_GActionGroupObject_list_actions arginfo_class_Gtk4_GActionGroup_list_actions
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GActionMap_add_action, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, action, Gtk4\\GAction, 0)
 ZEND_END_ARG_INFO()
@@ -81,6 +128,14 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GActionMap_lookup_acti
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GActionMap_remove_action arginfo_class_Gtk4_GActionGroup_action_added
+
+#define arginfo_class_Gtk4_GActionMapObject___construct arginfo_class_Gtk4_GActionObject___construct
+
+#define arginfo_class_Gtk4_GActionMapObject_add_action arginfo_class_Gtk4_GActionMap_add_action
+
+#define arginfo_class_Gtk4_GActionMapObject_lookup_action arginfo_class_Gtk4_GActionMap_lookup_action
+
+#define arginfo_class_Gtk4_GActionMapObject_remove_action arginfo_class_Gtk4_GActionGroup_action_added
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GApplication___construct, 0, 0, 2)
 	ZEND_ARG_TYPE_INFO(0, application_id, IS_STRING, 1)
@@ -235,8 +290,13 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GAsyncResult_get_source_object, 0, 0, Gtk4\\GObject, 1)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GCancellable___construct, 0, 0, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_GAsyncResultObject___construct arginfo_class_Gtk4_GActionObject___construct
+
+#define arginfo_class_Gtk4_GAsyncResultObject_get_source_object arginfo_class_Gtk4_GAsyncResult_get_source_object
+
+#define arginfo_class_Gtk4_GAsyncResultObject_legacy_propagate_error arginfo_class_Gtk4_GAction_get_enabled
+
+#define arginfo_class_Gtk4_GCancellable___construct arginfo_class_Gtk4_GActionObject___construct
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GCancellable_get_current, 0, 0, Gtk4\\GCancellable, 1)
 ZEND_END_ARG_INFO()
@@ -271,6 +331,20 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GListModel_get_item, 0
 	ZEND_ARG_TYPE_INFO(0, position, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
+#define arginfo_class_Gtk4_GListModelObject___construct arginfo_class_Gtk4_GActionObject___construct
+
+#define arginfo_class_Gtk4_GListModelObject_get_item_type arginfo_class_Gtk4_GAction_get_name
+
+#define arginfo_class_Gtk4_GListModelObject_get_n_items arginfo_class_Gtk4_GApplication_get_flags
+
+#define arginfo_class_Gtk4_GListModelObject_get_item arginfo_class_Gtk4_GListModel_get_item
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GListModelObject_items_changed, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, position, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, removed, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, added, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GListStore_append, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, item, Gtk4\\GObject, 0)
 ZEND_END_ARG_INFO()
@@ -300,11 +374,7 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GListStore_get_item arginfo_class_Gtk4_GListModel_get_item
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GListStore_items_changed, 0, 3, IS_VOID, 0)
-	ZEND_ARG_TYPE_INFO(0, position, IS_LONG, 0)
-	ZEND_ARG_TYPE_INFO(0, removed, IS_LONG, 0)
-	ZEND_ARG_TYPE_INFO(0, added, IS_LONG, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_GListStore_items_changed arginfo_class_Gtk4_GListModelObject_items_changed
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GSimpleAction___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
@@ -410,6 +480,9 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GTask_legacy_propagate_error arginfo_class_Gtk4_GAction_get_enabled
 
+ZEND_METHOD(Gtk4_GActionObject, __construct);
+ZEND_METHOD(Gtk4_GActionGroupObject, __construct);
+ZEND_METHOD(Gtk4_GActionMapObject, __construct);
 ZEND_METHOD(Gtk4_GApplication, __construct);
 ZEND_METHOD(Gtk4_GApplication, get_default);
 ZEND_METHOD(Gtk4_GApplication, id_is_valid);
@@ -449,6 +522,8 @@ ZEND_METHOD(Gtk4_GApplication, vfunc_quit_mainloop);
 ZEND_METHOD(Gtk4_GApplication, vfunc_run_mainloop);
 ZEND_METHOD(Gtk4_GApplication, vfunc_shutdown);
 ZEND_METHOD(Gtk4_GApplication, vfunc_startup);
+ZEND_METHOD(Gtk4_GAsyncResultObject, __construct);
+ZEND_METHOD(Gtk4_GAsyncResult, legacy_propagate_error);
 ZEND_METHOD(Gtk4_GCancellable, __construct);
 ZEND_METHOD(Gtk4_GCancellable, get_current);
 ZEND_METHOD(Gtk4_GCancellable, cancel);
@@ -461,13 +536,14 @@ ZEND_METHOD(Gtk4_GCancellable, release_fd);
 ZEND_METHOD(Gtk4_GCancellable, reset);
 ZEND_METHOD(Gtk4_GCancellable, set_error_if_cancelled);
 ZEND_METHOD(Gtk4_GCancellable, vfunc_cancelled);
+ZEND_METHOD(Gtk4_GListModelObject, __construct);
+ZEND_METHOD(Gtk4_GListModel, items_changed);
 ZEND_METHOD(Gtk4_GListStore, append);
 ZEND_METHOD(Gtk4_GListStore, find);
 ZEND_METHOD(Gtk4_GListStore, insert);
 ZEND_METHOD(Gtk4_GListStore, remove);
 ZEND_METHOD(Gtk4_GListStore, remove_all);
 ZEND_METHOD(Gtk4_GListStore, __construct);
-ZEND_METHOD(Gtk4_GListModel, items_changed);
 ZEND_METHOD(Gtk4_GSimpleAction, __construct);
 ZEND_METHOD(Gtk4_GSimpleAction, new_stateful);
 ZEND_METHOD(Gtk4_GSimpleAction, set_enabled);
@@ -494,7 +570,6 @@ ZEND_METHOD(Gtk4_GTask, set_name);
 ZEND_METHOD(Gtk4_GTask, set_priority);
 ZEND_METHOD(Gtk4_GTask, set_return_on_cancel);
 ZEND_METHOD(Gtk4_GTask, set_static_name);
-ZEND_METHOD(Gtk4_GAsyncResult, legacy_propagate_error);
 
 static const zend_function_entry class_Gtk4_GAction_methods[] = {
 	ZEND_RAW_FENTRY("change_state", NULL, arginfo_class_Gtk4_GAction_change_state, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
@@ -505,6 +580,19 @@ static const zend_function_entry class_Gtk4_GAction_methods[] = {
 	ZEND_RAW_FENTRY("get_state_hint", NULL, arginfo_class_Gtk4_GAction_get_state_hint, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("get_state_type", NULL, arginfo_class_Gtk4_GAction_get_state_type, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("activate", NULL, arginfo_class_Gtk4_GAction_activate, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GActionObject_methods[] = {
+	ZEND_ME(Gtk4_GActionObject, __construct, arginfo_class_Gtk4_GActionObject___construct, ZEND_ACC_PRIVATE)
+	ZEND_RAW_FENTRY("activate", zim_Gtk4_GAction_activate, arginfo_class_Gtk4_GActionObject_activate, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("change_state", zim_Gtk4_GAction_change_state, arginfo_class_Gtk4_GActionObject_change_state, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_enabled", zim_Gtk4_GAction_get_enabled, arginfo_class_Gtk4_GActionObject_get_enabled, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_name", zim_Gtk4_GAction_get_name, arginfo_class_Gtk4_GActionObject_get_name, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_parameter_type", zim_Gtk4_GAction_get_parameter_type, arginfo_class_Gtk4_GActionObject_get_parameter_type, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_state", zim_Gtk4_GAction_get_state, arginfo_class_Gtk4_GActionObject_get_state, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_state_hint", zim_Gtk4_GAction_get_state_hint, arginfo_class_Gtk4_GActionObject_get_state_hint, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_state_type", zim_Gtk4_GAction_get_state_type, arginfo_class_Gtk4_GActionObject_get_state_type, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_FE_END
 };
 
@@ -525,10 +613,36 @@ static const zend_function_entry class_Gtk4_GActionGroup_methods[] = {
 	ZEND_FE_END
 };
 
+static const zend_function_entry class_Gtk4_GActionGroupObject_methods[] = {
+	ZEND_ME(Gtk4_GActionGroupObject, __construct, arginfo_class_Gtk4_GActionGroupObject___construct, ZEND_ACC_PRIVATE)
+	ZEND_RAW_FENTRY("action_added", zim_Gtk4_GActionGroup_action_added, arginfo_class_Gtk4_GActionGroupObject_action_added, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("action_enabled_changed", zim_Gtk4_GActionGroup_action_enabled_changed, arginfo_class_Gtk4_GActionGroupObject_action_enabled_changed, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("action_removed", zim_Gtk4_GActionGroup_action_removed, arginfo_class_Gtk4_GActionGroupObject_action_removed, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("action_state_changed", zim_Gtk4_GActionGroup_action_state_changed, arginfo_class_Gtk4_GActionGroupObject_action_state_changed, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("activate_action", zim_Gtk4_GActionGroup_activate_action, arginfo_class_Gtk4_GActionGroupObject_activate_action, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("change_action_state", zim_Gtk4_GActionGroup_change_action_state, arginfo_class_Gtk4_GActionGroupObject_change_action_state, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_action_enabled", zim_Gtk4_GActionGroup_get_action_enabled, arginfo_class_Gtk4_GActionGroupObject_get_action_enabled, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_action_parameter_type", zim_Gtk4_GActionGroup_get_action_parameter_type, arginfo_class_Gtk4_GActionGroupObject_get_action_parameter_type, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_action_state", zim_Gtk4_GActionGroup_get_action_state, arginfo_class_Gtk4_GActionGroupObject_get_action_state, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_action_state_hint", zim_Gtk4_GActionGroup_get_action_state_hint, arginfo_class_Gtk4_GActionGroupObject_get_action_state_hint, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_action_state_type", zim_Gtk4_GActionGroup_get_action_state_type, arginfo_class_Gtk4_GActionGroupObject_get_action_state_type, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("has_action", zim_Gtk4_GActionGroup_has_action, arginfo_class_Gtk4_GActionGroupObject_has_action, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("list_actions", zim_Gtk4_GActionGroup_list_actions, arginfo_class_Gtk4_GActionGroupObject_list_actions, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
 static const zend_function_entry class_Gtk4_GActionMap_methods[] = {
 	ZEND_RAW_FENTRY("add_action", NULL, arginfo_class_Gtk4_GActionMap_add_action, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("lookup_action", NULL, arginfo_class_Gtk4_GActionMap_lookup_action, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("remove_action", NULL, arginfo_class_Gtk4_GActionMap_remove_action, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GActionMapObject_methods[] = {
+	ZEND_ME(Gtk4_GActionMapObject, __construct, arginfo_class_Gtk4_GActionMapObject___construct, ZEND_ACC_PRIVATE)
+	ZEND_RAW_FENTRY("add_action", zim_Gtk4_GActionMap_add_action, arginfo_class_Gtk4_GActionMapObject_add_action, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("lookup_action", zim_Gtk4_GActionMap_lookup_action, arginfo_class_Gtk4_GActionMapObject_lookup_action, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("remove_action", zim_Gtk4_GActionMap_remove_action, arginfo_class_Gtk4_GActionMapObject_remove_action, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_FE_END
 };
 
@@ -596,6 +710,13 @@ static const zend_function_entry class_Gtk4_GAsyncResult_methods[] = {
 	ZEND_FE_END
 };
 
+static const zend_function_entry class_Gtk4_GAsyncResultObject_methods[] = {
+	ZEND_ME(Gtk4_GAsyncResultObject, __construct, arginfo_class_Gtk4_GAsyncResultObject___construct, ZEND_ACC_PRIVATE)
+	ZEND_RAW_FENTRY("get_source_object", zim_Gtk4_GAsyncResult_get_source_object, arginfo_class_Gtk4_GAsyncResultObject_get_source_object, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("legacy_propagate_error", zim_Gtk4_GAsyncResult_legacy_propagate_error, arginfo_class_Gtk4_GAsyncResultObject_legacy_propagate_error, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
 static const zend_function_entry class_Gtk4_GCancellable_methods[] = {
 	ZEND_ME(Gtk4_GCancellable, __construct, arginfo_class_Gtk4_GCancellable___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GCancellable, get_current, arginfo_class_Gtk4_GCancellable_get_current, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
@@ -616,6 +737,15 @@ static const zend_function_entry class_Gtk4_GListModel_methods[] = {
 	ZEND_RAW_FENTRY("get_item_type", NULL, arginfo_class_Gtk4_GListModel_get_item_type, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("get_n_items", NULL, arginfo_class_Gtk4_GListModel_get_n_items, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("get_item", NULL, arginfo_class_Gtk4_GListModel_get_item, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GListModelObject_methods[] = {
+	ZEND_ME(Gtk4_GListModelObject, __construct, arginfo_class_Gtk4_GListModelObject___construct, ZEND_ACC_PRIVATE)
+	ZEND_RAW_FENTRY("get_item_type", zim_Gtk4_GListModel_get_item_type, arginfo_class_Gtk4_GListModelObject_get_item_type, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_n_items", zim_Gtk4_GListModel_get_n_items, arginfo_class_Gtk4_GListModelObject_get_n_items, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_item", zim_Gtk4_GListModel_get_item, arginfo_class_Gtk4_GListModelObject_get_item, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("items_changed", zim_Gtk4_GListModel_items_changed, arginfo_class_Gtk4_GListModelObject_items_changed, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_FE_END
 };
 
@@ -686,6 +816,17 @@ static zend_class_entry *register_class_Gtk4_GAction(void)
 	return class_entry;
 }
 
+static zend_class_entry *register_class_Gtk4_GActionObject(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_GAction)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GActionObject", class_Gtk4_GActionObject_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_GAction);
+
+	return class_entry;
+}
+
 static zend_class_entry *register_class_Gtk4_GActionGroup(void)
 {
 	zend_class_entry ce, *class_entry;
@@ -696,12 +837,34 @@ static zend_class_entry *register_class_Gtk4_GActionGroup(void)
 	return class_entry;
 }
 
+static zend_class_entry *register_class_Gtk4_GActionGroupObject(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_GActionGroup)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GActionGroupObject", class_Gtk4_GActionGroupObject_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_GActionGroup);
+
+	return class_entry;
+}
+
 static zend_class_entry *register_class_Gtk4_GActionMap(void)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GActionMap", class_Gtk4_GActionMap_methods);
 	class_entry = zend_register_internal_interface(&ce);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GActionMapObject(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_GActionMap)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GActionMapObject", class_Gtk4_GActionMapObject_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_GActionMap);
 
 	return class_entry;
 }
@@ -797,6 +960,17 @@ static zend_class_entry *register_class_Gtk4_GAsyncResult(void)
 	return class_entry;
 }
 
+static zend_class_entry *register_class_Gtk4_GAsyncResultObject(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_GAsyncResult)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GAsyncResultObject", class_Gtk4_GAsyncResultObject_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_GAsyncResult);
+
+	return class_entry;
+}
+
 static zend_class_entry *register_class_Gtk4_GCancellable(zend_class_entry *class_entry_Gtk4_GObject)
 {
 	zend_class_entry ce, *class_entry;
@@ -813,6 +987,17 @@ static zend_class_entry *register_class_Gtk4_GListModel(void)
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GListModel", class_Gtk4_GListModel_methods);
 	class_entry = zend_register_internal_interface(&ce);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GListModelObject(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_GListModel)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GListModelObject", class_Gtk4_GListModelObject_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_GListModel);
 
 	return class_entry;
 }

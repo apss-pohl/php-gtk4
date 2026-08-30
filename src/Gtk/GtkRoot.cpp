@@ -48,3 +48,12 @@ ZEND_METHOD(Gtk4_GtkRoot, set_focus) {
   }
   gtk_root_set_focus(self, focus_o != nullptr ? GTK_WIDGET(focus_o) : nullptr);
 }
+
+/**
+ * Gtk4\GtkRootObject::__construct()
+ *
+ * Never called: these handles only come from wrap().
+ */
+ZEND_METHOD(Gtk4_GtkRootObject, __construct) {
+  ZEND_PARSE_PARAMETERS_NONE();
+}

@@ -32,3 +32,12 @@ ZEND_METHOD(Gtk4_GtkOrientable, set_orientation) {
   if (!enum_from_php(orientation, GTK_TYPE_ORIENTATION, &orientation_v)) RETURN_THROWS();
   gtk_orientable_set_orientation(self, static_cast<GtkOrientation>(orientation_v));
 }
+
+/**
+ * Gtk4\GtkOrientableObject::__construct()
+ *
+ * Never called: these handles only come from wrap().
+ */
+ZEND_METHOD(Gtk4_GtkOrientableObject, __construct) {
+  ZEND_PARSE_PARAMETERS_NONE();
+}

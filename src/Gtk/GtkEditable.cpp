@@ -524,3 +524,12 @@ void register_vfuncs_GtkEditable() {
   register_iface_vfunc(GTK_TYPE_EDITABLE, "set_selection_bounds",
                        vfunc_install_set_selection_bounds);
 }
+
+/**
+ * Gtk4\GtkEditableObject::__construct()
+ *
+ * Never called: these handles only come from wrap().
+ */
+ZEND_METHOD(Gtk4_GtkEditableObject, __construct) {
+  ZEND_PARSE_PARAMETERS_NONE();
+}

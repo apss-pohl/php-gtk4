@@ -9,3 +9,4 @@ Gdk.Rectangle
 cairo.Context
 Gtk.CssSection
 Gdk.Event
+Gdk.EventSequence

@@ -164,3 +164,12 @@ void register_vfuncs_GActionMap() {
   register_iface_vfunc(G_TYPE_ACTION_MAP, "lookup_action", vfunc_install_lookup_action);
   register_iface_vfunc(G_TYPE_ACTION_MAP, "remove_action", vfunc_install_remove_action);
 }
+
+/**
+ * Gtk4\GActionMapObject::__construct()
+ *
+ * Never called: these handles only come from wrap().
+ */
+ZEND_METHOD(Gtk4_GActionMapObject, __construct) {
+  ZEND_PARSE_PARAMETERS_NONE();
+}

@@ -807,6 +807,88 @@ interface GtkEditable
 }
 
 /**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GtkEditable} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GtkEditable} with a body.
+ *
+ * @not-serializable
+ */
+final class GtkEditableObject extends GObject implements GtkEditable
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct() {}
+
+    /** @implementation-alias Gtk4\GtkEditable::delegate_get_accessible_platform_state */
+    public function delegate_get_accessible_platform_state(GtkAccessiblePlatformState $state): bool {}
+
+    /** @implementation-alias Gtk4\GtkEditable::delete_selection */
+    public function delete_selection(): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::delete_text */
+    public function delete_text(int $start_pos, int $end_pos): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::finish_delegate */
+    public function finish_delegate(): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_alignment */
+    public function get_alignment(): float {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_chars */
+    public function get_chars(int $start_pos, int $end_pos): string {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_delegate */
+    public function get_delegate(): ?GtkEditable {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_editable */
+    public function get_editable(): bool {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_enable_undo */
+    public function get_enable_undo(): bool {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_max_width_chars */
+    public function get_max_width_chars(): int {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_position */
+    public function get_position(): int {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_selection_bounds */
+    public function get_selection_bounds(): ?array {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_text */
+    public function get_text(): string {}
+
+    /** @implementation-alias Gtk4\GtkEditable::get_width_chars */
+    public function get_width_chars(): int {}
+
+    /** @implementation-alias Gtk4\GtkEditable::init_delegate */
+    public function init_delegate(): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::select_region */
+    public function select_region(int $start_pos, int $end_pos): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_alignment */
+    public function set_alignment(float $xalign): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_editable */
+    public function set_editable(bool $is_editable): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_enable_undo */
+    public function set_enable_undo(bool $enable_undo): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_max_width_chars */
+    public function set_max_width_chars(int $n_chars): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_position */
+    public function set_position(int $position): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_text */
+    public function set_text(string $text): void {}
+
+    /** @implementation-alias Gtk4\GtkEditable::set_width_chars */
+    public function set_width_chars(int $n_chars): void {}
+}
+
+/**
  * `GtkEntry` is a single line text entry widget.
  *
  * @property ?bool $activates_default
@@ -1511,8 +1593,35 @@ class GtkGesture extends GtkEventController
      */
     public function get_group(): array {}
 
+    /** Returns the last event that was processed for $sequence. */
+    public function get_last_event(?GdkEventSequence $sequence): ?GdkEvent {}
+
+    /** Returns the `GdkEventSequence` that was last updated on $gesture. */
+    public function get_last_updated_sequence(): ?GdkEventSequence {}
+
+    /**
+     * If $sequence is currently being interpreted by $gesture, returns `true` and fills in $x and
+     * $y with the last coordinates stored for that event sequence.
+     *
+     * @return array{float, float}|null
+     */
+    public function get_point(?GdkEventSequence $sequence): ?array {}
+
+    /** Returns the $sequence state, as seen by $gesture. */
+    public function get_sequence_state(GdkEventSequence $sequence): GtkEventSequenceState {}
+
+    /**
+     * Returns the list of `GdkEventSequences` currently being interpreted by $gesture.
+     *
+     * @return list<GdkEventSequence>
+     */
+    public function get_sequences(): array {}
+
     /** Adds $gesture to the same group than $group_gesture. */
     public function group(GtkGesture $gesture): void {}
+
+    /** Returns `true` if $gesture is currently handling events corresponding to $sequence. */
+    public function handles_sequence(?GdkEventSequence $sequence): bool {}
 
     /** Returns `true` if the gesture is currently active. */
     public function is_active(): bool {}
@@ -1625,6 +1734,9 @@ class GtkGestureSingle extends GtkGesture
 
     /** Returns the button number currently interacting with $gesture, or 0 if there is none. */
     public function get_current_button(): int {}
+
+    /** Returns the event sequence currently interacting with $gesture. */
+    public function get_current_sequence(): ?GdkEventSequence {}
 
     /** Gets whether a gesture is exclusive. */
     public function get_exclusive(): bool {}
@@ -2279,6 +2391,25 @@ interface GtkOrientable
 }
 
 /**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GtkOrientable} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GtkOrientable} with a body.
+ *
+ * @not-serializable
+ */
+final class GtkOrientableObject extends GObject implements GtkOrientable
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct() {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::get_orientation */
+    public function get_orientation(): GtkOrientation {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
+    public function set_orientation(GtkOrientation $orientation): void {}
+}
+
+/**
  * Represents the orientation of widgets and other objects.
  */
 enum GtkOrientation: int
@@ -2899,6 +3030,28 @@ interface GtkRoot
 }
 
 /**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GtkRoot} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GtkRoot} with a body.
+ *
+ * @not-serializable
+ */
+final class GtkRootObject extends GObject implements GtkRoot
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct() {}
+
+    /** @implementation-alias Gtk4\GtkRoot::get_display */
+    public function get_display(): GdkDisplay {}
+
+    /** @implementation-alias Gtk4\GtkRoot::get_focus */
+    public function get_focus(): ?GtkWidget {}
+
+    /** @implementation-alias Gtk4\GtkRoot::set_focus */
+    public function set_focus(?GtkWidget $focus): void {}
+}
+
+/**
  * A `GtkScale` is a slider control used to select a numeric value.
  *
  * @property ?int $digits
@@ -2984,6 +3137,43 @@ class GtkScale extends GtkRange implements GtkOrientable
  */
 interface GtkScrollable
 {
+}
+
+/**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GtkScrollable} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GtkScrollable} with a body.
+ *
+ * @not-serializable
+ */
+final class GtkScrollableObject extends GObject implements GtkScrollable
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct() {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_hadjustment */
+    public function get_hadjustment(): ?GtkAdjustment {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_hscroll_policy */
+    public function get_hscroll_policy(): GtkScrollablePolicy {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_vadjustment */
+    public function get_vadjustment(): ?GtkAdjustment {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_vscroll_policy */
+    public function get_vscroll_policy(): GtkScrollablePolicy {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_hadjustment */
+    public function set_hadjustment(?GtkAdjustment $hadjustment): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_hscroll_policy */
+    public function set_hscroll_policy(GtkScrollablePolicy $policy): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_vadjustment */
+    public function set_vadjustment(?GtkAdjustment $vadjustment): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_vscroll_policy */
+    public function set_vscroll_policy(GtkScrollablePolicy $policy): void {}
 }
 
 /**
@@ -3856,6 +4046,19 @@ class GtkStringObject extends GObject
  */
 interface GtkStyleProvider
 {
+}
+
+/**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GtkStyleProvider} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GtkStyleProvider} with a body.
+ *
+ * @not-serializable
+ */
+final class GtkStyleProviderObject extends GObject implements GtkStyleProvider
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct() {}
 }
 
 /**

@@ -133,8 +133,7 @@ draft, hand-write via overrides / promotion where the project needs more.
       registry (`src/Gdk/GdkEvent.cpp`: `GdkEvent` + 9 typed subclasses; the generator emits
       `get_current_event()` etc. through a `FUNDAMENTALS` arm; marshal handles GdkEvent GValues).
       Tests fake real X input through ext-ffi + libXtst (`tests/XInput.php`). Skipped for later
-      closures (gen/report.md): `Gdk.EventSequence` (every `GtkGesture` per-sequence method -
-      needs an opaque handle that keeps pointer identity, not a boxed copy), `Gdk.Device`,
+      closures (gen/report.md; `Gdk.EventSequence` followed on 2026-08-30): `Gdk.Device`,
       `Gtk.IMContext`, `Gtk.ShortcutController` (accels already go through
       `GtkApplication::set_accels_for_action()`).
 - [ ] **Waves 3b–8** as listed in PLAN.md §3 (the feature items in §7 below point at their wave);
@@ -163,13 +162,15 @@ GTK4 GIR only). Every open item here is generator output and is ticked when its 
       this tree and on 5cd0eae), no core (apport keeps one report per binary). Same family as the
       warm-up-thread crash `pin_gtk_library()` fixed; next step when it recurs: run the phpt stage
       with `ulimit -c unlimited` after clearing `/var/crash/_usr_bin_php8.4.*` and take the core.
-- [ ] **Interface-only handles** (found in wave 1): `GtkNotebook::get_pages()` / `GtkStack::get_pages()`
-      return GTK-private classes (`GtkNotebookPages`) whose only PHP-visible face is an interface
-      (`GListModel`/`GtkSelectionModel`); `wrap()` resolves by class and falls back to a bare
-      `GObject`, so the list cannot be iterated from PHP. Needs a per-interface fallback class
-      (a hidden `final class` implementing the interface's methods via the shared
-      `ZEND_METHOD(Gtk4_<Interface>, m)`) that `wrap()` picks when no registered class matches
-      but a registered interface does — design in PLAN.md §9, land with wave 7.
+- [x] **Interface-only handles** (2026-08-30): `wrap()` falls back to a generated
+      `Gtk4\<Interface>Object` class (private constructor, every interface method aliased) when an
+      object's own classes are unregistered but a registered interface matches - most derived first
+      (`GtkSelectionModel` over `GListModel`). `GtkNotebook::get_pages()` is a usable list now
+      (`LayoutTest`); `ExampleTest` treats those classes as covered by their interface's page.
+- [x] **Fundamental handle identity** (2026-08-30): `wrap_fundamental()` returns the live handle of
+      an instance (`===` holds while PHP keeps it, `FoundationTest`, `EventControllerTest`); the
+      entry is dropped with the handle. `GdkEventSequence` rides on it as an opaque identity
+      (no ref/unref: GTK owns the sequence), so every per-sequence `GtkGesture` method is bound.
 - [ ] **List views** → wave 7: `GtkStringList`, selection models, `GtkListView`/`GtkColumnView`/
       `GtkGridView`, `GtkSignalListItemFactory` (`setup`/`bind`), `GtkListItem`. Done 2026-08-26:
       `Gtk4\PhpValue` (GType `PhpValue`, a GObject carrying a zval), `GListModel`, `GListStore`,
