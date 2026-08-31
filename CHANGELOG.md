@@ -51,6 +51,12 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- Three `tests/phpt` cases for runtime paths the PHPUnit suite structurally cannot reach: the
+  origin a throw inside an **async callback** is blamed on (stderr only), and what request
+  shutdown does with a **live PHP subclass** in a widget tree and with an **armed I/O watch**
+  (including one whose stream PHP closed under it) - both crash shapes that would take the
+  PHPUnit runner down with them rather than failing a test.
+
 - Wave 5 — **dialogs** (docs/PLAN.md §3): `GtkFileDialog`, `GtkFileFilter`, `GtkColorDialog`,
   `GtkFontDialog` and `GtkAboutDialog`, with `PangoFontDescription` (a boxed value: clone copies,
   `equal()` compares), `GtkLicense` and the Pango enums a description uses. GTK 4.10's dialogs are

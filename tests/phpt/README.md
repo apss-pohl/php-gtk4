@@ -22,3 +22,14 @@ scanned ini dir and re-adding only `modules/gtk4.so`, so php-gtk3 is filtered ou
 here without `bin/php-gtk4` (`extension-isolation.phpt` guards that).
 
 Tests that need a display carry a `--SKIPIF--` guard on `DISPLAY`.
+
+What is here, by the rule above:
+
+| test | the thing PHPUnit cannot reach |
+| ---- | ------------------------------ |
+| `error-log-signal`, `error-log-callback`, `error-log-async-callback`, `error-handler-throws` | the `g_critical` text, including which method an exception is blamed on |
+| `error-rethrow-fatal`, `error-rethrow-mainloop` | a Throwable that escapes, and the exit code it leaves |
+| `shutdown-teardown`, `shutdown-subtype`, `shutdown-io-watch` | what request shutdown does with closures, a live PHP subclass and an armed I/O watch |
+| `variant-recursion-guard` | two inputs that used to be a SIGSEGV |
+| `init-no-display`, `ini-directives`, `extension-isolation` | startup that depends on `--INI--`/`--ENV--` or on no display at all |
+| `debug-info-boxed` | `var_dump()` output of a handle |
