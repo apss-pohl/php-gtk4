@@ -99,6 +99,7 @@ drives a window with no `GtkApplication`. Both pass a standalone override to `De
 | [GtkStyleProviderPriority.php](GtkStyleProviderPriority.php) | two providers, one class, who wins |
 | [GtkCssSection.php](GtkCssSection.php) | broken CSS reporting itself through `parsing-error` |
 | [GdkDisplay.php](GdkDisplay.php) | the display everything above is attached to |
+| [GdkMonitor.php](GdkMonitor.php) | one physical output of the display |
 
 ## Lists
 
@@ -179,6 +180,18 @@ drives a window with no `GtkApplication`. Both pass a standalone override to `De
 | [GtkInputPurpose.php](GtkInputPurpose.php) | what kind of text an entry is for - digits, email, phone, password … |
 | [GtkImageType.php](GtkImageType.php) | where an image's pixels come from - empty, icon name, GIcon or paintable |
 | [GtkAccessiblePlatformState.php](GtkAccessiblePlatformState.php) | Focusable / Focused / Active - what an entry tells the accessibility backend |
+
+## Text view
+
+| File | Shows |
+| ---- | ----- |
+| [GtkTextView.php](GtkTextView.php) | a scrolling console over a GtkTextBuffer |
+| [GtkTextBuffer.php](GtkTextBuffer.php) | the text model: characters, lines, selection, undo |
+| [GtkTextIter.php](GtkTextIter.php) | a position in a buffer, as a boxed value |
+| [GtkTextMark.php](GtkTextMark.php) | a position that survives edits |
+| [GtkTextTag.php](GtkTextTag.php) | formatting applied to ranges of a buffer |
+| [GtkTextTagTable.php](GtkTextTagTable.php) | the registry of tags a buffer can use |
+| [GtkWrapMode.php](GtkWrapMode.php) | how a GtkTextView breaks long lines |
 
 ## Buttons & ranges
 

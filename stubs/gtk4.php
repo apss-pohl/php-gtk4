@@ -1262,6 +1262,95 @@ final class GdkModifierType
     public const int META_MASK = 268435456;
 }
 /**
+ * `GdkMonitor` objects represent the individual outputs that are associated with a `GdkDisplay`.
+ *
+ * @property-read ?string $connector
+ * @property-read ?string $description
+ * @property ?GdkDisplay $display
+ * @property-read ?GdkRectangle $geometry
+ * @property-read ?int $height_mm
+ * @property-read ?string $manufacturer
+ * @property-read ?string $model
+ * @property-read ?int $refresh_rate
+ * @property-read ?float $scale
+ * @property-read ?int $scale_factor
+ * @property-read ?GdkSubpixelLayout $subpixel_layout
+ * @property-read ?bool $valid
+ * @property-read ?int $width_mm
+ */
+class GdkMonitor extends GObject
+{
+    /** GdkMonitor has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Gets the name of the monitor's connector, if available. */
+    public function get_connector(): ?string
+    {
+        return null;
+    }
+    /** Gets a string describing the monitor, if available. */
+    public function get_description(): ?string
+    {
+        return null;
+    }
+    /** Gets the display that this monitor belongs to. */
+    public function get_display(): GdkDisplay
+    {
+        return null;
+    }
+    /** Retrieves the size and position of the monitor within the display coordinate space. */
+    public function get_geometry(): GdkRectangle
+    {
+        return null;
+    }
+    /** Gets the height in millimeters of the monitor. */
+    public function get_height_mm(): int
+    {
+        return 0;
+    }
+    /** Gets the name or PNP ID of the monitor's manufacturer. */
+    public function get_manufacturer(): ?string
+    {
+        return null;
+    }
+    /** Gets the string identifying the monitor model, if available. */
+    public function get_model(): ?string
+    {
+        return null;
+    }
+    /** Gets the refresh rate of the monitor, if available. */
+    public function get_refresh_rate(): int
+    {
+        return 0;
+    }
+    /** Gets the internal scale factor that maps from monitor coordinates to device pixels. */
+    public function get_scale(): float
+    {
+        return 0.0;
+    }
+    /** Gets the internal scale factor that maps from monitor coordinates to device pixels. */
+    public function get_scale_factor(): int
+    {
+        return 0;
+    }
+    /** Gets information about the layout of red, green and blue primaries for pixels. */
+    public function get_subpixel_layout(): GdkSubpixelLayout
+    {
+        return null;
+    }
+    /** Gets the width in millimeters of the monitor. */
+    public function get_width_mm(): int
+    {
+        return 0;
+    }
+    /** Returns `true` if the $monitor object corresponds to a physical monitor. */
+    public function is_valid(): bool
+    {
+        return false;
+    }
+}
+/**
  * Specifies the kind of crossing for enter and leave events.
  */
 enum GdkNotifyType : int
@@ -1362,6 +1451,19 @@ enum GdkScrollUnit : int
 {
     case Wheel = 0;
     case Surface = 1;
+}
+/**
+ * This enumeration describes how the red, green and blue components of physical pixels on an
+ * output device are laid out.
+ */
+enum GdkSubpixelLayout : int
+{
+    case Unknown = 0;
+    case None = 1;
+    case HorizontalRgb = 2;
+    case HorizontalBgr = 3;
+    case VerticalRgb = 4;
+    case VerticalBgr = 5;
 }
 /**
  * `GdkTexture` is the basic element used to refer to pixel data.
@@ -10011,6 +10113,546 @@ class GtkText extends GtkWidget implements GtkEditable
     }
 }
 /**
+ * Stores text and attributes for display in a `GtkTextView`.
+ *
+ * @property-read ?bool $can_redo
+ * @property-read ?bool $can_undo
+ * @property-read ?int $cursor_position
+ * @property ?bool $enable_undo
+ * @property-read ?bool $has_selection
+ * @property ?GtkTextTagTable $tag_table
+ * @property ?string $text
+ */
+class GtkTextBuffer extends GObject
+{
+    /** Creates a new text buffer. */
+    public function __construct(?GtkTextTagTable $table = null)
+    {
+        unset($table);
+    }
+    /** Adds the mark at position $where. */
+    public function add_mark(GtkTextMark $mark, GtkTextIter $where): void
+    {
+        unset($mark);
+        unset($where);
+    }
+    /** Emits the “apply-tag” signal on $buffer. */
+    public function apply_tag(GtkTextTag $tag, GtkTextIter $start, GtkTextIter $end): void
+    {
+        unset($tag);
+        unset($start);
+        unset($end);
+    }
+    /** Emits the “apply-tag” signal on $buffer. */
+    public function apply_tag_by_name(string $name, GtkTextIter $start, GtkTextIter $end): void
+    {
+        unset($name);
+        unset($start);
+        unset($end);
+    }
+    /**
+     * Performs the appropriate action as if the user hit the delete key with the cursor at the
+     * position specified by $iter.
+     */
+    public function backspace(GtkTextIter $iter, bool $interactive, bool $default_editable): bool
+    {
+        unset($iter);
+        unset($interactive);
+        unset($default_editable);
+        return false;
+    }
+    /** Denotes the beginning of an action that may not be undone. */
+    public function begin_irreversible_action(): void
+    {
+    }
+    /**
+     * Called to indicate that the buffer operations between here and a call to
+     * gtk_text_buffer_end_user_action() are part of a single user-visible operation.
+     */
+    public function begin_user_action(): void
+    {
+    }
+    /** Creates a mark at position $where. */
+    public function create_mark(?string $mark_name, GtkTextIter $where, bool $left_gravity): GtkTextMark
+    {
+        unset($mark_name);
+        unset($where);
+        unset($left_gravity);
+        return null;
+    }
+    /** Deletes text between $start and $end. */
+    public function delete(GtkTextIter $start, GtkTextIter $end): void
+    {
+        unset($start);
+        unset($end);
+    }
+    /** Deletes all editable text in the given range. */
+    public function delete_interactive(GtkTextIter $start_iter, GtkTextIter $end_iter, bool $default_editable): bool
+    {
+        unset($start_iter);
+        unset($end_iter);
+        unset($default_editable);
+        return false;
+    }
+    /** Deletes $mark, so that it’s no longer located anywhere in the buffer. */
+    public function delete_mark(GtkTextMark $mark): void
+    {
+        unset($mark);
+    }
+    /** Deletes the mark named $name; the mark must exist. */
+    public function delete_mark_by_name(string $name): void
+    {
+        unset($name);
+    }
+    /**
+     * Deletes the range between the “insert” and “selection_bound” marks, that is, the
+     * currently-selected text.
+     */
+    public function delete_selection(bool $interactive, bool $default_editable): bool
+    {
+        unset($interactive);
+        unset($default_editable);
+        return false;
+    }
+    /** Denotes the end of an action that may not be undone. */
+    public function end_irreversible_action(): void
+    {
+    }
+    /** Ends a user-visible operation. */
+    public function end_user_action(): void
+    {
+    }
+    /**
+     * Retrieves the first and last iterators in the buffer, i.e. the entire buffer lies within the
+     * range [$start,$end).
+     *
+     * @return array{GtkTextIter, GtkTextIter}
+     */
+    public function get_bounds(): array
+    {
+        return [];
+    }
+    /** Gets whether there is a redoable action in the history. */
+    public function get_can_redo(): bool
+    {
+        return false;
+    }
+    /** Gets whether there is an undoable action in the history. */
+    public function get_can_undo(): bool
+    {
+        return false;
+    }
+    /** Gets the number of characters in the buffer. */
+    public function get_char_count(): int
+    {
+        return 0;
+    }
+    /**
+     * Gets whether the buffer is saving modifications to the buffer to allow for undo and redo
+     * actions.
+     */
+    public function get_enable_undo(): bool
+    {
+        return false;
+    }
+    /**
+     * Initializes $iter with the “end iterator,” one past the last valid character in the text
+     * buffer.
+     */
+    public function get_end_iter(): GtkTextIter
+    {
+        return null;
+    }
+    /** Indicates whether the buffer has some text currently selected. */
+    public function get_has_selection(): bool
+    {
+        return false;
+    }
+    /** Returns the mark that represents the cursor (insertion point). */
+    public function get_insert(): GtkTextMark
+    {
+        return null;
+    }
+    /** Initializes $iter to the start of the given line. */
+    public function get_iter_at_line(int $line_number): ?GtkTextIter
+    {
+        unset($line_number);
+        return null;
+    }
+    /** Obtains an iterator pointing to $byte_index within the given line. */
+    public function get_iter_at_line_index(int $line_number, int $byte_index): ?GtkTextIter
+    {
+        unset($line_number);
+        unset($byte_index);
+        return null;
+    }
+    /** Obtains an iterator pointing to $char_offset within the given line. */
+    public function get_iter_at_line_offset(int $line_number, int $char_offset): ?GtkTextIter
+    {
+        unset($line_number);
+        unset($char_offset);
+        return null;
+    }
+    /** Initializes $iter with the current position of $mark. */
+    public function get_iter_at_mark(GtkTextMark $mark): GtkTextIter
+    {
+        unset($mark);
+        return null;
+    }
+    /** Initializes $iter to a position $char_offset chars from the start of the entire buffer. */
+    public function get_iter_at_offset(int $char_offset): GtkTextIter
+    {
+        unset($char_offset);
+        return null;
+    }
+    /** Obtains the number of lines in the buffer. */
+    public function get_line_count(): int
+    {
+        return 0;
+    }
+    /**
+     * Returns the mark named $name in buffer $buffer, or `null` if no such mark exists in the
+     * buffer.
+     */
+    public function get_mark(string $name): ?GtkTextMark
+    {
+        unset($name);
+        return null;
+    }
+    /** Gets the maximum number of undo levels to perform. */
+    public function get_max_undo_levels(): int
+    {
+        return 0;
+    }
+    /**
+     * Indicates whether the buffer has been modified since the last call to `set_modified` set the
+     * modification flag to `false`.
+     */
+    public function get_modified(): bool
+    {
+        return false;
+    }
+    /** Returns the mark that represents the selection bound. */
+    public function get_selection_bound(): GtkTextMark
+    {
+        return null;
+    }
+    /**
+     * Returns `true` if some text is selected; places the bounds of the selection in $start and
+     * $end.
+     *
+     * @return array{GtkTextIter, GtkTextIter}|null
+     */
+    public function get_selection_bounds(): ?array
+    {
+        return null;
+    }
+    /** Returns the text in the range [$start,$end). */
+    public function get_slice(GtkTextIter $start, GtkTextIter $end, bool $include_hidden_chars): string
+    {
+        unset($start);
+        unset($end);
+        unset($include_hidden_chars);
+        return '';
+    }
+    /** Initialized $iter with the first position in the text buffer. */
+    public function get_start_iter(): GtkTextIter
+    {
+        return null;
+    }
+    /** Get the `GtkTextTagTable` associated with this buffer. */
+    public function get_tag_table(): GtkTextTagTable
+    {
+        return null;
+    }
+    /** Returns the text in the range [$start,$end). */
+    public function get_text(GtkTextIter $start, GtkTextIter $end, bool $include_hidden_chars): string
+    {
+        unset($start);
+        unset($end);
+        unset($include_hidden_chars);
+        return '';
+    }
+    /** Inserts an image into the text buffer at $iter. */
+    public function insert_paintable(GtkTextIter $iter, GdkPaintable $paintable): void
+    {
+        unset($iter);
+        unset($paintable);
+    }
+    /** Copies text, tags, and paintables between $start and $end and inserts the copy at $iter. */
+    public function insert_range(GtkTextIter $iter, GtkTextIter $start, GtkTextIter $end): void
+    {
+        unset($iter);
+        unset($start);
+        unset($end);
+    }
+    /** Copies text, tags, and paintables between $start and $end and inserts the copy at $iter. */
+    public function insert_range_interactive(GtkTextIter $iter, GtkTextIter $start, GtkTextIter $end, bool $default_editable): bool
+    {
+        unset($iter);
+        unset($start);
+        unset($end);
+        unset($default_editable);
+        return false;
+    }
+    /** Moves $mark to the new location $where. */
+    public function move_mark(GtkTextMark $mark, GtkTextIter $where): void
+    {
+        unset($mark);
+        unset($where);
+    }
+    /** Moves the mark named $name (which must exist) to location $where. */
+    public function move_mark_by_name(string $name, GtkTextIter $where): void
+    {
+        unset($name);
+        unset($where);
+    }
+    /** This function moves the “insert” and “selection_bound” marks simultaneously. */
+    public function place_cursor(GtkTextIter $where): void
+    {
+        unset($where);
+    }
+    /** Redoes the next redoable action on the buffer, if there is one. */
+    public function redo(): void
+    {
+    }
+    /** Removes all tags in the range between $start and $end. */
+    public function remove_all_tags(GtkTextIter $start, GtkTextIter $end): void
+    {
+        unset($start);
+        unset($end);
+    }
+    /** Emits the “remove-tag” signal. */
+    public function remove_tag(GtkTextTag $tag, GtkTextIter $start, GtkTextIter $end): void
+    {
+        unset($tag);
+        unset($start);
+        unset($end);
+    }
+    /** Emits the “remove-tag” signal. */
+    public function remove_tag_by_name(string $name, GtkTextIter $start, GtkTextIter $end): void
+    {
+        unset($name);
+        unset($start);
+        unset($end);
+    }
+    /** This function moves the “insert” and “selection_bound” marks simultaneously. */
+    public function select_range(GtkTextIter $ins, GtkTextIter $bound): void
+    {
+        unset($ins);
+        unset($bound);
+    }
+    /** Sets whether or not to enable undoable actions in the text buffer. */
+    public function set_enable_undo(bool $enable_undo): void
+    {
+        unset($enable_undo);
+    }
+    /** Sets the maximum number of undo levels to perform. */
+    public function set_max_undo_levels(int $max_undo_levels): void
+    {
+        unset($max_undo_levels);
+    }
+    /**
+     * Used to keep track of whether the buffer has been modified since the last time it was saved.
+     */
+    public function set_modified(bool $setting): void
+    {
+        unset($setting);
+    }
+    /** Undoes the last undoable action on the buffer, if there is one. */
+    public function undo(): void
+    {
+    }
+    /**
+     * Inserts $len bytes of $text at position $iter (-1, the default, inserts all of it; a
+     * given count must end on a UTF-8 character boundary). Emits the "insert-text" signal;
+     * $iter is revalidated to point to the end of the inserted text.
+     */
+    public function insert(GtkTextIter $iter, string $text, int $len = -1): void
+    {
+        unset($iter);
+        unset($text);
+        unset($len);
+    }
+    /**
+     * Inserts $len bytes of $text at the cursor (-1, the default, inserts all of it; a given
+     * count must end on a UTF-8 character boundary). Calls `insert`, using the current cursor
+     * position as the insertion point.
+     */
+    public function insert_at_cursor(string $text, int $len = -1): void
+    {
+        unset($text);
+        unset($len);
+    }
+    /**
+     * Inserts $len bytes of $text at $iter like `insert`, but only if the location is
+     * editable ($default_editable decides where no tag says). Pass -1 for all of $text; a
+     * given count must end on a UTF-8 character boundary.
+     */
+    public function insert_interactive(GtkTextIter $iter, string $text, int $len, bool $default_editable): bool
+    {
+        unset($iter);
+        unset($text);
+        unset($len);
+        unset($default_editable);
+        return false;
+    }
+    /**
+     * Inserts $len bytes of $text at the cursor like `insert_interactive`, but only if the
+     * cursor position is editable. Pass -1 for all of $text; a given count must end on a
+     * UTF-8 character boundary.
+     */
+    public function insert_interactive_at_cursor(string $text, int $len, bool $default_editable): bool
+    {
+        unset($text);
+        unset($len);
+        unset($default_editable);
+        return false;
+    }
+    /**
+     * Inserts $len bytes of Pango markup at position $iter (-1, the default, inserts all of
+     * it; a given count must end on a UTF-8 character boundary). $iter is revalidated to
+     * point to the end of the inserted text.
+     */
+    public function insert_markup(GtkTextIter $iter, string $markup, int $len = -1): void
+    {
+        unset($iter);
+        unset($markup);
+        unset($len);
+    }
+    /**
+     * Deletes the current contents of the buffer and inserts $text instead. $len is a byte
+     * count into $text (-1, the default, inserts all of it) and must end on a UTF-8 character
+     * boundary. This is automatically marked as an irreversible action in the undo stack.
+     */
+    public function set_text(string $text, int $len = -1): void
+    {
+        unset($text);
+        unset($len);
+    }
+    /**
+     * Native `apply_tag` (TextBufferClass.apply_tag): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_apply_tag()` from an override. Emits the “apply-tag” signal
+     * on $buffer.
+     */
+    public function vfunc_apply_tag(GtkTextTag $tag, GtkTextIter $start, GtkTextIter $end): void
+    {
+        unset($tag);
+        unset($start);
+        unset($end);
+    }
+    /**
+     * Native `begin_user_action` (TextBufferClass.begin_user_action): the GTK implementation below
+     * any PHP subclass, for `parent::vfunc_begin_user_action()` from an override. Called to
+     * indicate that the buffer operations between here and a call to
+     * gtk_text_buffer_end_user_action() are part of a single user-visible operation.
+     */
+    public function vfunc_begin_user_action(): void
+    {
+    }
+    /**
+     * Native `changed` (TextBufferClass.changed): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_changed()` from an override. The class handler for the
+     * `GtkTextBuffer::changed` signal.
+     */
+    public function vfunc_changed(): void
+    {
+    }
+    /**
+     * Native `delete_range` (TextBufferClass.delete_range): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_delete_range()` from an override. The class handler for the
+     * `GtkTextBuffer::delete-range` signal.
+     */
+    public function vfunc_delete_range(GtkTextIter $start, GtkTextIter $end): void
+    {
+        unset($start);
+        unset($end);
+    }
+    /**
+     * Native `end_user_action` (TextBufferClass.end_user_action): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_end_user_action()` from an override. Ends a user-visible
+     * operation.
+     */
+    public function vfunc_end_user_action(): void
+    {
+    }
+    /**
+     * Native `insert_paintable` (TextBufferClass.insert_paintable): the GTK implementation below
+     * any PHP subclass, for `parent::vfunc_insert_paintable()` from an override. Inserts an image
+     * into the text buffer at $iter.
+     */
+    public function vfunc_insert_paintable(GtkTextIter $iter, GdkPaintable $paintable): void
+    {
+        unset($iter);
+        unset($paintable);
+    }
+    /**
+     * Native `insert_text` (TextBufferClass.insert_text): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_insert_text()` from an override. The class handler for the
+     * `GtkTextBuffer::insert-text` signal.
+     */
+    public function vfunc_insert_text(GtkTextIter $pos, string $new_text, int $new_text_length): void
+    {
+        unset($pos);
+        unset($new_text);
+        unset($new_text_length);
+    }
+    /**
+     * Native `mark_deleted` (TextBufferClass.mark_deleted): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_mark_deleted()` from an override. The class handler for the
+     * `GtkTextBuffer::mark-deleted` signal.
+     */
+    public function vfunc_mark_deleted(GtkTextMark $mark): void
+    {
+        unset($mark);
+    }
+    /**
+     * Native `mark_set` (TextBufferClass.mark_set): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_mark_set()` from an override. The class handler for the
+     * `GtkTextBuffer::mark-set` signal.
+     */
+    public function vfunc_mark_set(GtkTextIter $location, GtkTextMark $mark): void
+    {
+        unset($location);
+        unset($mark);
+    }
+    /**
+     * Native `modified_changed` (TextBufferClass.modified_changed): the GTK implementation below
+     * any PHP subclass, for `parent::vfunc_modified_changed()` from an override. The class handler
+     * for the `GtkTextBuffer::modified-changed` signal.
+     */
+    public function vfunc_modified_changed(): void
+    {
+    }
+    /**
+     * Native `redo` (TextBufferClass.redo): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_redo()` from an override. Redoes the next redoable action on the buffer, if
+     * there is one.
+     */
+    public function vfunc_redo(): void
+    {
+    }
+    /**
+     * Native `remove_tag` (TextBufferClass.remove_tag): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_remove_tag()` from an override. Emits the “remove-tag”
+     * signal.
+     */
+    public function vfunc_remove_tag(GtkTextTag $tag, GtkTextIter $start, GtkTextIter $end): void
+    {
+        unset($tag);
+        unset($start);
+        unset($end);
+    }
+    /**
+     * Native `undo` (TextBufferClass.undo): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_undo()` from an override. Undoes the last undoable action on the buffer, if
+     * there is one.
+     */
+    public function vfunc_undo(): void
+    {
+    }
+}
+/**
  * Reading directions for text.
  */
 enum GtkTextDirection : int
@@ -10018,6 +10660,1356 @@ enum GtkTextDirection : int
     case None = 0;
     case Ltr = 1;
     case Rtl = 2;
+}
+/**
+ * An iterator for the contents of a `GtkTextBuffer`.
+ */
+final class GtkTextIter
+{
+    /** GtkTextIter values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Assigns the value of $other to $iter. */
+    public function assign(GtkTextIter $other): void
+    {
+        unset($other);
+    }
+    /** Moves backward by one character offset. */
+    public function backward_char(): bool
+    {
+        return false;
+    }
+    /** Moves $count characters backward, if possible. */
+    public function backward_chars(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /** Like `forward_cursor_position`, but moves backward. */
+    public function backward_cursor_position(): bool
+    {
+        return false;
+    }
+    /** Moves up to $count cursor positions. */
+    public function backward_cursor_positions(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /** Moves $iter to the start of the previous line. */
+    public function backward_line(): bool
+    {
+        return false;
+    }
+    /** Moves $count lines backward, if possible. */
+    public function backward_lines(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /**
+     * Same as `forward_search`, but moves backward.
+     *
+     * @return array{GtkTextIter, GtkTextIter}|null
+     */
+    public function backward_search(string $str, int $flags, ?GtkTextIter $limit): ?array
+    {
+        unset($str);
+        unset($flags);
+        unset($limit);
+        return null;
+    }
+    /** Moves backward to the previous sentence start. */
+    public function backward_sentence_start(): bool
+    {
+        return false;
+    }
+    /** Calls `backward_sentence_start` up to $count times. */
+    public function backward_sentence_starts(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /**
+     * Moves backward to the next toggle (on or off) of the $tag, or to the next toggle of any tag
+     * if $tag is `null`.
+     */
+    public function backward_to_tag_toggle(?GtkTextTag $tag): bool
+    {
+        unset($tag);
+        return false;
+    }
+    /** Moves $iter backward to the previous visible cursor position. */
+    public function backward_visible_cursor_position(): bool
+    {
+        return false;
+    }
+    /** Moves up to $count visible cursor positions. */
+    public function backward_visible_cursor_positions(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /** Moves $iter to the start of the previous visible line. */
+    public function backward_visible_line(): bool
+    {
+        return false;
+    }
+    /** Moves $count visible lines backward, if possible. */
+    public function backward_visible_lines(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /** Moves backward to the previous visible word start. */
+    public function backward_visible_word_start(): bool
+    {
+        return false;
+    }
+    /** Calls `backward_visible_word_start` up to $count times. */
+    public function backward_visible_word_starts(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /** Moves backward to the previous word start. */
+    public function backward_word_start(): bool
+    {
+        return false;
+    }
+    /** Calls `backward_word_start` up to $count times. */
+    public function backward_word_starts(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /**
+     * Considering the default editability of the buffer, and tags that affect editability,
+     * determines whether text inserted at $iter would be editable.
+     */
+    public function can_insert(bool $default_editability): bool
+    {
+        unset($default_editability);
+        return false;
+    }
+    /**
+     * A qsort()-style function that returns negative if $lhs is less than $rhs, positive if $lhs
+     * is greater than $rhs, and 0 if they’re equal.
+     */
+    public function compare(GtkTextIter $rhs): int
+    {
+        unset($rhs);
+        return 0;
+    }
+    /** Returns whether the character at $iter is within an editable region of text. */
+    public function editable(bool $default_setting): bool
+    {
+        unset($default_setting);
+        return false;
+    }
+    /**
+     * Returns `true` if $iter points to the start of the paragraph delimiter characters for a
+     * line.
+     */
+    public function ends_line(): bool
+    {
+        return false;
+    }
+    /** Determines whether $iter ends a sentence. */
+    public function ends_sentence(): bool
+    {
+        return false;
+    }
+    /** Returns `true` if $tag is toggled off at exactly this point. */
+    public function ends_tag(?GtkTextTag $tag): bool
+    {
+        unset($tag);
+        return false;
+    }
+    /** Determines whether $iter ends a natural-language word. */
+    public function ends_word(): bool
+    {
+        return false;
+    }
+    /** Tests whether two iterators are equal, using the fastest possible mechanism. */
+    public function equal(GtkTextIter $rhs): bool
+    {
+        unset($rhs);
+        return false;
+    }
+    /** Moves $iter forward by one character offset. */
+    public function forward_char(): bool
+    {
+        return false;
+    }
+    /** Moves $count characters if possible. */
+    public function forward_chars(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /** Moves $iter forward by a single cursor position. */
+    public function forward_cursor_position(): bool
+    {
+        return false;
+    }
+    /** Moves up to $count cursor positions. */
+    public function forward_cursor_positions(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /** Moves $iter to the start of the next line. */
+    public function forward_line(): bool
+    {
+        return false;
+    }
+    /** Moves $count lines forward, if possible. */
+    public function forward_lines(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /**
+     * Searches forward for $str.
+     *
+     * @return array{GtkTextIter, GtkTextIter}|null
+     */
+    public function forward_search(string $str, int $flags, ?GtkTextIter $limit): ?array
+    {
+        unset($str);
+        unset($flags);
+        unset($limit);
+        return null;
+    }
+    /** Moves forward to the next sentence end. */
+    public function forward_sentence_end(): bool
+    {
+        return false;
+    }
+    /** Calls `forward_sentence_end` $count times. */
+    public function forward_sentence_ends(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /**
+     * Moves $iter forward to the “end iterator”, which points one past the last valid
+     * character in the buffer.
+     */
+    public function forward_to_end(): void
+    {
+    }
+    /** Moves the iterator to point to the paragraph delimiter characters. */
+    public function forward_to_line_end(): bool
+    {
+        return false;
+    }
+    /**
+     * Moves forward to the next toggle (on or off) of the $tag, or to the next toggle of any tag
+     * if $tag is `null`.
+     */
+    public function forward_to_tag_toggle(?GtkTextTag $tag): bool
+    {
+        unset($tag);
+        return false;
+    }
+    /** Moves $iter forward to the next visible cursor position. */
+    public function forward_visible_cursor_position(): bool
+    {
+        return false;
+    }
+    /** Moves up to $count visible cursor positions. */
+    public function forward_visible_cursor_positions(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /** Moves $iter to the start of the next visible line. */
+    public function forward_visible_line(): bool
+    {
+        return false;
+    }
+    /** Moves $count visible lines forward, if possible. */
+    public function forward_visible_lines(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /** Moves forward to the next visible word end. */
+    public function forward_visible_word_end(): bool
+    {
+        return false;
+    }
+    /** Calls `forward_visible_word_end` up to $count times. */
+    public function forward_visible_word_ends(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /** Moves forward to the next word end. */
+    public function forward_word_end(): bool
+    {
+        return false;
+    }
+    /** Calls `forward_word_end` up to $count times. */
+    public function forward_word_ends(int $count): bool
+    {
+        unset($count);
+        return false;
+    }
+    /** Returns the `GtkTextBuffer` this iterator is associated with. */
+    public function get_buffer(): GtkTextBuffer
+    {
+        return null;
+    }
+    /**
+     * Returns the number of bytes in the line containing $iter, including the paragraph
+     * delimiters.
+     */
+    public function get_bytes_in_line(): int
+    {
+        return 0;
+    }
+    /** The Unicode character at this iterator is returned. */
+    public function get_char(): int
+    {
+        return 0;
+    }
+    /**
+     * Returns the number of characters in the line containing $iter, including the paragraph
+     * delimiters.
+     */
+    public function get_chars_in_line(): int
+    {
+        return 0;
+    }
+    /** Returns the line number containing the iterator. */
+    public function get_line(): int
+    {
+        return 0;
+    }
+    /**
+     * Returns the byte index of the iterator, counting from the start of a newline-terminated
+     * line.
+     */
+    public function get_line_index(): int
+    {
+        return 0;
+    }
+    /**
+     * Returns the character offset of the iterator, counting from the start of a
+     * newline-terminated line.
+     */
+    public function get_line_offset(): int
+    {
+        return 0;
+    }
+    /**
+     * Returns a list of all `GtkTextMark` at this location.
+     *
+     * @return list<GtkTextMark>
+     */
+    public function get_marks(): array
+    {
+        return [];
+    }
+    /** Returns the character offset of an iterator. */
+    public function get_offset(): int
+    {
+        return 0;
+    }
+    /** If the element at $iter is a paintable, the paintable is returned. */
+    public function get_paintable(): ?GdkPaintable
+    {
+        return null;
+    }
+    /** Returns the text in the given range. */
+    public function get_slice(GtkTextIter $end): string
+    {
+        unset($end);
+        return '';
+    }
+    /**
+     * Returns a list of tags that apply to $iter, in ascending order of priority.
+     *
+     * @return list<GtkTextTag>
+     */
+    public function get_tags(): array
+    {
+        return [];
+    }
+    /** Returns text in the given range. */
+    public function get_text(GtkTextIter $end): string
+    {
+        unset($end);
+        return '';
+    }
+    /**
+     * Returns a list of `GtkTextTag` that are toggled on or off at this point.
+     *
+     * @return list<GtkTextTag>
+     */
+    public function get_toggled_tags(bool $toggled_on): array
+    {
+        unset($toggled_on);
+        return [];
+    }
+    /**
+     * Returns the number of bytes from the start of the line to the given $iter, not counting
+     * bytes that are invisible due to tags with the “invisible” flag toggled on.
+     */
+    public function get_visible_line_index(): int
+    {
+        return 0;
+    }
+    /**
+     * Returns the offset in characters from the start of the line to the given $iter, not counting
+     * characters that are invisible due to tags with the “invisible” flag toggled on.
+     */
+    public function get_visible_line_offset(): int
+    {
+        return 0;
+    }
+    /** Returns visible text in the given range. */
+    public function get_visible_slice(GtkTextIter $end): string
+    {
+        unset($end);
+        return '';
+    }
+    /** Returns visible text in the given range. */
+    public function get_visible_text(GtkTextIter $end): string
+    {
+        unset($end);
+        return '';
+    }
+    /** Returns `true` if $iter points to a character that is part of a range tagged with $tag. */
+    public function has_tag(GtkTextTag $tag): bool
+    {
+        unset($tag);
+        return false;
+    }
+    /** Checks whether $iter falls in the range [$start, $end). */
+    public function in_range(GtkTextIter $start, GtkTextIter $end): bool
+    {
+        unset($start);
+        unset($end);
+        return false;
+    }
+    /**
+     * Determines whether $iter is inside a sentence (as opposed to in between two sentences, e.g.
+     * after a period and before the first letter of the next sentence).
+     */
+    public function inside_sentence(): bool
+    {
+        return false;
+    }
+    /**
+     * Determines whether the character pointed by $iter is part of a natural-language word (as
+     * opposed to say inside some whitespace).
+     */
+    public function inside_word(): bool
+    {
+        return false;
+    }
+    /** Determine if $iter is at a cursor position. */
+    public function is_cursor_position(): bool
+    {
+        return false;
+    }
+    /** Returns `true` if $iter is the end iterator. */
+    public function is_end(): bool
+    {
+        return false;
+    }
+    /** Returns `true` if $iter is the first iterator in the buffer. */
+    public function is_start(): bool
+    {
+        return false;
+    }
+    /** Swaps the value of $first and $second if $second comes before $first in the buffer. */
+    public function order(GtkTextIter $second): void
+    {
+        unset($second);
+    }
+    /** Moves iterator $iter to the start of the line $line_number. */
+    public function set_line(int $line_number): void
+    {
+        unset($line_number);
+    }
+    /**
+     * Same as `set_line_offset`, but works with a byte index. The given byte index must be at the
+     * start of a character, it can’t be in the middle of a UTF-8 encoded character.
+     */
+    public function set_line_index(int $byte_on_line): void
+    {
+        unset($byte_on_line);
+    }
+    /** Moves $iter within a line, to a new character (not byte) offset. */
+    public function set_line_offset(int $char_on_line): void
+    {
+        unset($char_on_line);
+    }
+    /** Sets $iter to point to $char_offset. */
+    public function set_offset(int $char_offset): void
+    {
+        unset($char_offset);
+    }
+    /**
+     * Like `set_line_index`, but the index is in visible bytes, i.e. text with a tag making it
+     * invisible is not counted in the index.
+     */
+    public function set_visible_line_index(int $byte_on_line): void
+    {
+        unset($byte_on_line);
+    }
+    /**
+     * Like `set_line_offset`, but the offset is in visible characters, i.e. text with a tag making
+     * it invisible is not counted in the offset.
+     */
+    public function set_visible_line_offset(int $char_on_line): void
+    {
+        unset($char_on_line);
+    }
+    /** Returns `true` if $iter begins a paragraph. */
+    public function starts_line(): bool
+    {
+        return false;
+    }
+    /** Determines whether $iter begins a sentence. */
+    public function starts_sentence(): bool
+    {
+        return false;
+    }
+    /** Returns `true` if $tag is toggled on at exactly this point. */
+    public function starts_tag(?GtkTextTag $tag): bool
+    {
+        unset($tag);
+        return false;
+    }
+    /** Determines whether $iter begins a natural-language word. */
+    public function starts_word(): bool
+    {
+        return false;
+    }
+    /** Gets whether a range with $tag applied to it begins or ends at $iter. */
+    public function toggles_tag(?GtkTextTag $tag): bool
+    {
+        unset($tag);
+        return false;
+    }
+}
+/**
+ * A `GtkTextMark` is a position in a `GtkTextbuffer` that is preserved across modifications.
+ *
+ * @property ?bool $left_gravity
+ * @property ?string $name
+ */
+class GtkTextMark extends GObject
+{
+    /** Creates a text mark. */
+    public function __construct(?string $name, bool $left_gravity)
+    {
+        unset($name);
+        unset($left_gravity);
+    }
+    /** Gets the buffer this mark is located inside. */
+    public function get_buffer(): ?GtkTextBuffer
+    {
+        return null;
+    }
+    /** Returns `true` if the mark has been removed from its buffer. */
+    public function get_deleted(): bool
+    {
+        return false;
+    }
+    /** Determines whether the mark has left gravity. */
+    public function get_left_gravity(): bool
+    {
+        return false;
+    }
+    /** Returns the mark name. */
+    public function get_name(): ?string
+    {
+        return null;
+    }
+    /** Returns `true` if the mark is visible. */
+    public function get_visible(): bool
+    {
+        return false;
+    }
+    public function set_visible(bool $setting): void
+    {
+        unset($setting);
+    }
+}
+/**
+ * Flags affecting how a search is done.
+ */
+final class GtkTextSearchFlags
+{
+    public const int VISIBLE_ONLY = 1;
+    public const int TEXT_ONLY = 2;
+    public const int CASE_INSENSITIVE = 4;
+}
+/**
+ * A tag that can be applied to text contained in a `GtkTextBuffer`.
+ *
+ * @property ?bool $accumulative_margin
+ * @property ?bool $allow_breaks
+ * @property ?bool $allow_breaks_set
+ * @property ?string $background
+ * @property ?bool $background_full_height
+ * @property ?bool $background_full_height_set
+ * @property ?GdkRGBA $background_rgba
+ * @property ?bool $background_set
+ * @property ?GtkTextDirection $direction
+ * @property ?bool $editable
+ * @property ?bool $editable_set
+ * @property ?bool $fallback
+ * @property ?bool $fallback_set
+ * @property ?string $family
+ * @property ?bool $family_set
+ * @property ?string $font
+ * @property ?PangoFontDescription $font_desc
+ * @property ?string $font_features
+ * @property ?bool $font_features_set
+ * @property ?string $foreground
+ * @property ?GdkRGBA $foreground_rgba
+ * @property ?bool $foreground_set
+ * @property ?int $indent
+ * @property ?bool $indent_set
+ * @property ?bool $insert_hyphens
+ * @property ?bool $insert_hyphens_set
+ * @property ?bool $invisible
+ * @property ?bool $invisible_set
+ * @property ?GtkJustification $justification
+ * @property ?bool $justification_set
+ * @property ?string $language
+ * @property ?bool $language_set
+ * @property ?int $left_margin
+ * @property ?bool $left_margin_set
+ * @property ?int $letter_spacing
+ * @property ?bool $letter_spacing_set
+ * @property ?float $line_height
+ * @property ?bool $line_height_set
+ * @property ?string $name
+ * @property ?int $overline
+ * @property ?GdkRGBA $overline_rgba
+ * @property ?bool $overline_rgba_set
+ * @property ?bool $overline_set
+ * @property ?string $paragraph_background
+ * @property ?GdkRGBA $paragraph_background_rgba
+ * @property ?bool $paragraph_background_set
+ * @property ?int $pixels_above_lines
+ * @property ?bool $pixels_above_lines_set
+ * @property ?int $pixels_below_lines
+ * @property ?bool $pixels_below_lines_set
+ * @property ?int $pixels_inside_wrap
+ * @property ?bool $pixels_inside_wrap_set
+ * @property ?int $right_margin
+ * @property ?bool $right_margin_set
+ * @property ?int $rise
+ * @property ?bool $rise_set
+ * @property ?float $scale
+ * @property ?bool $scale_set
+ * @property ?bool $sentence
+ * @property ?bool $sentence_set
+ * @property ?int $show_spaces
+ * @property ?bool $show_spaces_set
+ * @property ?int $size
+ * @property ?float $size_points
+ * @property ?bool $size_set
+ * @property ?PangoStretch $stretch
+ * @property ?bool $stretch_set
+ * @property ?bool $strikethrough
+ * @property ?GdkRGBA $strikethrough_rgba
+ * @property ?bool $strikethrough_rgba_set
+ * @property ?bool $strikethrough_set
+ * @property ?PangoStyle $style
+ * @property ?bool $style_set
+ * @property ?bool $tabs_set
+ * @property ?int $text_transform
+ * @property ?bool $text_transform_set
+ * @property ?int $underline
+ * @property ?GdkRGBA $underline_rgba
+ * @property ?bool $underline_rgba_set
+ * @property ?bool $underline_set
+ * @property ?PangoVariant $variant
+ * @property ?bool $variant_set
+ * @property ?int $weight
+ * @property ?bool $weight_set
+ * @property ?bool $word
+ * @property ?bool $word_set
+ * @property ?GtkWrapMode $wrap_mode
+ * @property ?bool $wrap_mode_set
+ */
+class GtkTextTag extends GObject
+{
+    /** Creates a `GtkTextTag`. */
+    public function __construct(?string $name = null)
+    {
+        unset($name);
+    }
+    /**
+     * Emits the [signal@Gtk.TextTagTable::tag-changed] signal on the `GtkTextTagTable` where the
+     * tag is included.
+     */
+    public function changed(bool $size_changed): void
+    {
+        unset($size_changed);
+    }
+    /** Get the tag priority. */
+    public function get_priority(): int
+    {
+        return 0;
+    }
+    /** Sets the priority of a `GtkTextTag`. */
+    public function set_priority(int $priority): void
+    {
+        unset($priority);
+    }
+}
+/**
+ * The collection of tags in a `GtkTextBuffer`
+ */
+class GtkTextTagTable extends GObject
+{
+    /** Creates a new `GtkTextTagTable`. */
+    public function __construct()
+    {
+    }
+    /** Add a tag to the table. */
+    public function add(GtkTextTag $tag): bool
+    {
+        unset($tag);
+        return false;
+    }
+    /** Calls $func on each tag in $table, with user data $data. */
+    public function foreach(callable $func): void
+    {
+        unset($func);
+    }
+    /** Returns the size of the table (number of tags) */
+    public function get_size(): int
+    {
+        return 0;
+    }
+    /** Look up a named tag. */
+    public function lookup(string $name): ?GtkTextTag
+    {
+        unset($name);
+        return null;
+    }
+    /** Remove a tag from the table. */
+    public function remove(GtkTextTag $tag): void
+    {
+        unset($tag);
+    }
+}
+/**
+ * A widget that displays the contents of a `TextBuffer`.
+ *
+ * @property ?bool $accepts_tab
+ * @property ?int $bottom_margin
+ * @property ?GtkTextBuffer $buffer
+ * @property ?bool $cursor_visible
+ * @property ?bool $editable
+ * @property ?GMenuModel $extra_menu
+ * @property ?string $im_module
+ * @property ?int $indent
+ * @property ?int $input_hints
+ * @property ?GtkInputPurpose $input_purpose
+ * @property ?GtkJustification $justification
+ * @property ?int $left_margin
+ * @property ?bool $monospace
+ * @property ?bool $overwrite
+ * @property ?int $pixels_above_lines
+ * @property ?int $pixels_below_lines
+ * @property ?int $pixels_inside_wrap
+ * @property ?int $right_margin
+ * @property ?int $top_margin
+ * @property ?GtkWrapMode $wrap_mode
+ */
+class GtkTextView extends GtkWidget implements GtkScrollable
+{
+    /** Creates a new `GtkTextView`. */
+    public function __construct()
+    {
+    }
+    /** Creates a new `GtkTextView` widget displaying the buffer $buffer. */
+    public static function new_with_buffer(GtkTextBuffer $buffer): GtkTextView
+    {
+        unset($buffer);
+        return null;
+    }
+    /** Adds $child at a fixed coordinate in the `GtkTextView`'s text window. */
+    public function add_overlay(GtkWidget $child, int $xpos, int $ypos): void
+    {
+        unset($child);
+        unset($xpos);
+        unset($ypos);
+    }
+    /** Moves the given $iter backward by one display (wrapped) line. */
+    public function backward_display_line(GtkTextIter $iter): bool
+    {
+        unset($iter);
+        return false;
+    }
+    /** Moves the given $iter backward to the next display line start. */
+    public function backward_display_line_start(GtkTextIter $iter): bool
+    {
+        unset($iter);
+        return false;
+    }
+    /**
+     * Converts buffer coordinates to window coordinates.
+     *
+     * @return array{int, int}
+     */
+    public function buffer_to_window_coords(GtkTextWindowType $win, int $buffer_x, int $buffer_y): array
+    {
+        unset($win);
+        unset($buffer_x);
+        unset($buffer_y);
+        return [];
+    }
+    /** Moves the given $iter forward by one display (wrapped) line. */
+    public function forward_display_line(GtkTextIter $iter): bool
+    {
+        unset($iter);
+        return false;
+    }
+    /** Moves the given $iter forward to the next display line end. */
+    public function forward_display_line_end(GtkTextIter $iter): bool
+    {
+        unset($iter);
+        return false;
+    }
+    /** Returns whether pressing the <kbd>Tab</kbd> key inserts a tab characters. */
+    public function get_accepts_tab(): bool
+    {
+        return false;
+    }
+    /** Gets the bottom margin for text in the $text_view. */
+    public function get_bottom_margin(): int
+    {
+        return 0;
+    }
+    /** Returns the `GtkTextBuffer` being displayed by this text view. */
+    public function get_buffer(): GtkTextBuffer
+    {
+        return null;
+    }
+    /**
+     * Determine the positions of the strong and weak cursors if the insertion point is at $iter.
+     *
+     * @return array{GdkRectangle, GdkRectangle}
+     */
+    public function get_cursor_locations(?GtkTextIter $iter): array
+    {
+        unset($iter);
+        return [];
+    }
+    /** Find out whether the cursor should be displayed. */
+    public function get_cursor_visible(): bool
+    {
+        return false;
+    }
+    /** Returns the default editability of the `GtkTextView`. */
+    public function get_editable(): bool
+    {
+        return false;
+    }
+    /** Gets a `GtkWidget` that has previously been set as gutter. */
+    public function get_gutter(GtkTextWindowType $win): ?GtkWidget
+    {
+        unset($win);
+        return null;
+    }
+    /** Gets the default indentation of paragraphs in $text_view. */
+    public function get_indent(): int
+    {
+        return 0;
+    }
+    /** Gets the `input-hints` of the `GtkTextView`. */
+    public function get_input_hints(): int
+    {
+        return 0;
+    }
+    /** Gets the `input-purpose` of the `GtkTextView`. */
+    public function get_input_purpose(): GtkInputPurpose
+    {
+        return null;
+    }
+    /** Retrieves the iterator at buffer coordinates $x and $y. */
+    public function get_iter_at_location(int $x, int $y): ?GtkTextIter
+    {
+        unset($x);
+        unset($y);
+        return null;
+    }
+    /**
+     * Retrieves the iterator pointing to the character at buffer coordinates $x and $y.
+     *
+     * @return array{GtkTextIter, int}|null
+     */
+    public function get_iter_at_position(int $x, int $y): ?array
+    {
+        unset($x);
+        unset($y);
+        return null;
+    }
+    /** Gets a rectangle which roughly contains the character at $iter. */
+    public function get_iter_location(GtkTextIter $iter): GdkRectangle
+    {
+        unset($iter);
+        return null;
+    }
+    /** Gets the default justification of paragraphs in $text_view. */
+    public function get_justification(): GtkJustification
+    {
+        return null;
+    }
+    /** Gets the default left margin size of paragraphs in the $text_view. */
+    public function get_left_margin(): int
+    {
+        return 0;
+    }
+    /**
+     * Gets the `GtkTextIter` at the start of the line containing the coordinate $y.
+     *
+     * @return array{GtkTextIter, int}
+     */
+    public function get_line_at_y(int $y): array
+    {
+        unset($y);
+        return [];
+    }
+    /**
+     * Gets the y coordinate of the top of the line containing $iter, and the height of the line.
+     *
+     * @return array{int, int}
+     */
+    public function get_line_yrange(GtkTextIter $iter): array
+    {
+        unset($iter);
+        return [];
+    }
+    /** Gets whether the `GtkTextView` uses monospace styling. */
+    public function get_monospace(): bool
+    {
+        return false;
+    }
+    /** Returns whether the `GtkTextView` is in overwrite mode or not. */
+    public function get_overwrite(): bool
+    {
+        return false;
+    }
+    /** Gets the default number of pixels to put above paragraphs. */
+    public function get_pixels_above_lines(): int
+    {
+        return 0;
+    }
+    /** Gets the default number of pixels to put below paragraphs. */
+    public function get_pixels_below_lines(): int
+    {
+        return 0;
+    }
+    /** Gets the default number of pixels to put between wrapped lines inside a paragraph. */
+    public function get_pixels_inside_wrap(): int
+    {
+        return 0;
+    }
+    /** Gets the default right margin for text in $text_view. */
+    public function get_right_margin(): int
+    {
+        return 0;
+    }
+    /** Gets the top margin for text in the $text_view. */
+    public function get_top_margin(): int
+    {
+        return 0;
+    }
+    /**
+     * Fills $visible_rect with the currently-visible region of the buffer, in buffer coordinates.
+     */
+    public function get_visible_rect(): GdkRectangle
+    {
+        return null;
+    }
+    /** Gets the line wrapping for the view. */
+    public function get_wrap_mode(): GtkWrapMode
+    {
+        return null;
+    }
+    /** Allow the `GtkTextView` input method to internally handle key press and release events. */
+    public function im_context_filter_keypress(GdkEvent $event): bool
+    {
+        unset($event);
+        return false;
+    }
+    /**
+     * Moves a mark within the buffer so that it's located within the currently-visible text area.
+     */
+    public function move_mark_onscreen(GtkTextMark $mark): bool
+    {
+        unset($mark);
+        return false;
+    }
+    /** Updates the position of a child. */
+    public function move_overlay(GtkWidget $child, int $xpos, int $ypos): void
+    {
+        unset($child);
+        unset($xpos);
+        unset($ypos);
+    }
+    /**
+     * Move the iterator a given number of characters visually, treating it as the strong cursor
+     * position.
+     */
+    public function move_visually(GtkTextIter $iter, int $count): bool
+    {
+        unset($iter);
+        unset($count);
+        return false;
+    }
+    /** Moves the cursor to the currently visible region of the buffer. */
+    public function place_cursor_onscreen(): bool
+    {
+        return false;
+    }
+    /** Removes a child widget from $text_view. */
+    public function remove(GtkWidget $child): void
+    {
+        unset($child);
+    }
+    /** Ensures that the cursor is shown. */
+    public function reset_cursor_blink(): void
+    {
+    }
+    /** Reset the input method context of the text view if needed. */
+    public function reset_im_context(): void
+    {
+    }
+    /**
+     * Scrolls $text_view the minimum distance such that $mark is contained within the visible area
+     * of the widget.
+     */
+    public function scroll_mark_onscreen(GtkTextMark $mark): void
+    {
+        unset($mark);
+    }
+    /**
+     * Scrolls $text_view so that $iter is on the screen in the position indicated by $xalign and
+     * $yalign.
+     */
+    public function scroll_to_iter(GtkTextIter $iter, float $within_margin, bool $use_align, float $xalign, float $yalign): bool
+    {
+        unset($iter);
+        unset($within_margin);
+        unset($use_align);
+        unset($xalign);
+        unset($yalign);
+        return false;
+    }
+    /**
+     * Scrolls $text_view so that $mark is on the screen in the position indicated by $xalign and
+     * $yalign.
+     */
+    public function scroll_to_mark(GtkTextMark $mark, float $within_margin, bool $use_align, float $xalign, float $yalign): void
+    {
+        unset($mark);
+        unset($within_margin);
+        unset($use_align);
+        unset($xalign);
+        unset($yalign);
+    }
+    /** Sets the behavior of the text widget when the <kbd>Tab</kbd> key is pressed. */
+    public function set_accepts_tab(bool $accepts_tab): void
+    {
+        unset($accepts_tab);
+    }
+    /** Sets the bottom margin for text in $text_view. */
+    public function set_bottom_margin(int $bottom_margin): void
+    {
+        unset($bottom_margin);
+    }
+    /** Sets $buffer as the buffer being displayed by $text_view. */
+    public function set_buffer(?GtkTextBuffer $buffer): void
+    {
+        unset($buffer);
+    }
+    /** Toggles whether the insertion point should be displayed. */
+    public function set_cursor_visible(bool $setting): void
+    {
+        unset($setting);
+    }
+    /** Sets the default editability of the `GtkTextView`. */
+    public function set_editable(bool $setting): void
+    {
+        unset($setting);
+    }
+    /** Sets a menu model to add when constructing the context menu for $text_view. */
+    public function set_extra_menu(?GMenuModel $model): void
+    {
+        unset($model);
+    }
+    /** Places $widget into the gutter specified by $win. */
+    public function set_gutter(GtkTextWindowType $win, ?GtkWidget $widget): void
+    {
+        unset($win);
+        unset($widget);
+    }
+    /** Sets the default indentation for paragraphs in $text_view. */
+    public function set_indent(int $indent): void
+    {
+        unset($indent);
+    }
+    /** Sets the `input-hints` of the `GtkTextView`. */
+    public function set_input_hints(int $hints): void
+    {
+        unset($hints);
+    }
+    /** Sets the `input-purpose` of the `GtkTextView`. */
+    public function set_input_purpose(GtkInputPurpose $purpose): void
+    {
+        unset($purpose);
+    }
+    /** Sets the default justification of text in $text_view. */
+    public function set_justification(GtkJustification $justification): void
+    {
+        unset($justification);
+    }
+    /** Sets the default left margin for text in $text_view. */
+    public function set_left_margin(int $left_margin): void
+    {
+        unset($left_margin);
+    }
+    /** Sets whether the `GtkTextView` should display text in monospace styling. */
+    public function set_monospace(bool $monospace): void
+    {
+        unset($monospace);
+    }
+    /** Changes the `GtkTextView` overwrite mode. */
+    public function set_overwrite(bool $overwrite): void
+    {
+        unset($overwrite);
+    }
+    /** Sets the default number of blank pixels above paragraphs in $text_view. */
+    public function set_pixels_above_lines(int $pixels_above_lines): void
+    {
+        unset($pixels_above_lines);
+    }
+    /** Sets the default number of pixels of blank space to put below paragraphs in $text_view. */
+    public function set_pixels_below_lines(int $pixels_below_lines): void
+    {
+        unset($pixels_below_lines);
+    }
+    /**
+     * Sets the default number of pixels of blank space to leave between display/wrapped lines
+     * within a paragraph.
+     */
+    public function set_pixels_inside_wrap(int $pixels_inside_wrap): void
+    {
+        unset($pixels_inside_wrap);
+    }
+    /** Sets the default right margin for text in the text view. */
+    public function set_right_margin(int $right_margin): void
+    {
+        unset($right_margin);
+    }
+    /** Sets the top margin for text in $text_view. */
+    public function set_top_margin(int $top_margin): void
+    {
+        unset($top_margin);
+    }
+    /** Sets the line wrapping for the view. */
+    public function set_wrap_mode(GtkWrapMode $wrap_mode): void
+    {
+        unset($wrap_mode);
+    }
+    /** Determines whether $iter is at the start of a display line. */
+    public function starts_display_line(GtkTextIter $iter): bool
+    {
+        unset($iter);
+        return false;
+    }
+    /**
+     * Converts coordinates on the window identified by $win to buffer coordinates.
+     *
+     * @return array{int, int}
+     */
+    public function window_to_buffer_coords(GtkTextWindowType $win, int $window_x, int $window_y): array
+    {
+        unset($win);
+        unset($window_x);
+        unset($window_y);
+        return [];
+    }
+    /**
+     * Gets the menu model added to the context menu, or `null` if none has been set. (GTK's
+     * documentation says "or NULL" but the 4.14 GIR annotation misses the nullable; declared
+     * here so the type stays true.)
+     */
+    public function get_extra_menu(): ?GMenuModel
+    {
+        return null;
+    }
+    public function get_hadjustment(): ?GtkAdjustment
+    {
+        return null;
+    }
+    public function get_hscroll_policy(): GtkScrollablePolicy
+    {
+        return null;
+    }
+    public function get_vadjustment(): ?GtkAdjustment
+    {
+        return null;
+    }
+    public function get_vscroll_policy(): GtkScrollablePolicy
+    {
+        return null;
+    }
+    public function set_hadjustment(?GtkAdjustment $hadjustment): void
+    {
+        unset($hadjustment);
+    }
+    public function set_hscroll_policy(GtkScrollablePolicy $policy): void
+    {
+        unset($policy);
+    }
+    public function set_vadjustment(?GtkAdjustment $vadjustment): void
+    {
+        unset($vadjustment);
+    }
+    public function set_vscroll_policy(GtkScrollablePolicy $policy): void
+    {
+        unset($policy);
+    }
+    /**
+     * Native `backspace` (TextViewClass.backspace): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_backspace()` from an override. The class handler for the
+     * `GtkTextView::backspace` keybinding signal.
+     */
+    public function vfunc_backspace(): void
+    {
+    }
+    /**
+     * Native `copy_clipboard` (TextViewClass.copy_clipboard): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_copy_clipboard()` from an override. The class handler for the
+     * `GtkTextView::copy-clipboard` keybinding signal.
+     */
+    public function vfunc_copy_clipboard(): void
+    {
+    }
+    /**
+     * Native `create_buffer` (TextViewClass.create_buffer): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_create_buffer()` from an override. The create_buffer vfunc is
+     * called to create a `GtkTextBuffer` for the text view. The default implementation is to just
+     * call gtk_text_buffer_new().
+     */
+    public function vfunc_create_buffer(): GtkTextBuffer
+    {
+        return null;
+    }
+    /**
+     * Native `cut_clipboard` (TextViewClass.cut_clipboard): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_cut_clipboard()` from an override. The class handler for the
+     * `GtkTextView::cut-clipboard` keybinding signal
+     */
+    public function vfunc_cut_clipboard(): void
+    {
+    }
+    /**
+     * Native `delete_from_cursor` (TextViewClass.delete_from_cursor): the GTK implementation below
+     * any PHP subclass, for `parent::vfunc_delete_from_cursor()` from an override. The class
+     * handler for the `GtkTextView::delete-from-cursor` keybinding signal.
+     */
+    public function vfunc_delete_from_cursor(int $type, int $count): void
+    {
+        unset($type);
+        unset($count);
+    }
+    /**
+     * Native `extend_selection` (TextViewClass.extend_selection): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_extend_selection()` from an override. The class handler for
+     * the `GtkTextView::extend-selection` signal.
+     */
+    public function vfunc_extend_selection(int $granularity, GtkTextIter $location, GtkTextIter $start, GtkTextIter $end): bool
+    {
+        unset($granularity);
+        unset($location);
+        unset($start);
+        unset($end);
+        return false;
+    }
+    /**
+     * Native `insert_at_cursor` (TextViewClass.insert_at_cursor): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_insert_at_cursor()` from an override. The class handler for
+     * the `GtkTextView::insert-at-cursor` keybinding signal.
+     */
+    public function vfunc_insert_at_cursor(string $str): void
+    {
+        unset($str);
+    }
+    /**
+     * Native `insert_emoji` (TextViewClass.insert_emoji): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_insert_emoji()` from an override. The class handler for the
+     * `GtkTextView::insert-emoji` signal.
+     */
+    public function vfunc_insert_emoji(): void
+    {
+    }
+    /**
+     * Native `move_cursor` (TextViewClass.move_cursor): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_move_cursor()` from an override. The class handler for the
+     * `GtkTextView::move-cursor` keybinding signal.
+     */
+    public function vfunc_move_cursor(int $step, int $count, bool $extend_selection): void
+    {
+        unset($step);
+        unset($count);
+        unset($extend_selection);
+    }
+    /**
+     * Native `paste_clipboard` (TextViewClass.paste_clipboard): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_paste_clipboard()` from an override. The class handler for
+     * the `GtkTextView::paste-clipboard` keybinding signal.
+     */
+    public function vfunc_paste_clipboard(): void
+    {
+    }
+    /**
+     * Native `set_anchor` (TextViewClass.set_anchor): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_set_anchor()` from an override. The class handler for the
+     * `GtkTextView::set-anchor` keybinding signal.
+     */
+    public function vfunc_set_anchor(): void
+    {
+    }
+    /**
+     * Native `toggle_overwrite` (TextViewClass.toggle_overwrite): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_toggle_overwrite()` from an override. The class handler for
+     * the `GtkTextView::toggle-overwrite` keybinding signal.
+     */
+    public function vfunc_toggle_overwrite(): void
+    {
+    }
+}
+/**
+ * Used to reference the parts of `GtkTextView`.
+ */
+enum GtkTextWindowType : int
+{
+    case Widget = 1;
+    case Text = 2;
+    case Left = 3;
+    case Right = 4;
+    case Top = 5;
+    case Bottom = 6;
 }
 /**
  * A `GtkToggleButton` is a button which remains “pressed-in” when clicked.
@@ -11132,6 +13124,11 @@ class GtkWindow extends GtkWidget implements GtkRoot
     public function fullscreen(): void
     {
     }
+    /** Asks to place $window in the fullscreen state on the given $monitor. */
+    public function fullscreen_on_monitor(GdkMonitor $monitor): void
+    {
+        unset($monitor);
+    }
     /** Gets the `GtkApplication` associated with the window. */
     public function get_application(): ?GtkApplication
     {
@@ -11437,6 +13434,16 @@ class GtkWindow extends GtkWidget implements GtkRoot
     public function vfunc_keys_changed(): void
     {
     }
+}
+/**
+ * Describes a type of line wrapping.
+ */
+enum GtkWrapMode : int
+{
+    case None = 0;
+    case Char = 1;
+    case Word = 2;
+    case WordChar = 3;
 }
 /**
  * `PangoEllipsizeMode` describes what sort of ellipsization should be applied to text.

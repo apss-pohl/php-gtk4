@@ -9,6 +9,7 @@ use Gtk4\GObject;
 use Gtk4\Gtk;
 use Gtk4\GtkBox;
 use Gtk4\GtkButton;
+use Gtk4\GtkDropDown;
 use Gtk4\GtkOrientation;
 use Gtk4\GtkWindow;
 use PhpGtk4\Tests\Subclass\DestructCountingButton;
@@ -36,14 +37,15 @@ final class WrapTest extends GtkTestCase
 
     public function testUnregisteredTypeFallsBackToGObject(): void
     {
-        // GdkMonitor is not bound: the nearest registered ancestor is GObject itself,
+        // GtkListItemFactory (a GtkDropDown's default factory) is not bound and implements
+        // no registered interface: the nearest registered ancestor is GObject itself,
         // which is a handle like any other - not an exception.
-        $display = GdkDisplay::get_default();
-        self::assertInstanceOf(GdkDisplay::class, $display);
-        $monitor = $display->get_monitors()->get_item(0);
-        self::assertInstanceOf(GObject::class, $monitor);
-        self::assertSame(GObject::class, $monitor::class);
-        self::assertIsInt($monitor->get_property('width-mm'), 'a GObject handle still reads properties');
+        $factory = new GtkDropDown()->get_property('factory');
+        self::assertInstanceOf(GObject::class, $factory);
+        self::assertSame(GObject::class, $factory::class);
+        $dd = new GtkDropDown();
+        $dd->set_property('factory', $factory);
+        self::assertSame($factory, $dd->get_property('factory'), 'a GObject handle still round-trips');
     }
 
     public function testNullObjectProperty(): void

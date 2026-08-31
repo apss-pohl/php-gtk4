@@ -12,7 +12,8 @@ namespace phpgtk {
 
 struct Boxed {
   GType type;
-  gpointer data;  // owned copy, never nullptr once constructed
+  gpointer data;   // owned copy, never nullptr once constructed
+  GObject *owner;  // the object the value points into (BoxedClass::owner), ref held; or nullptr
   zend_object std;
 };
 
@@ -28,13 +29,18 @@ inline Boxed *boxed_from_zval(const zval *zv) {
 // Field access for a boxed class: return false for an unknown field.
 using BoxedReader = bool (*)(gpointer data, const char *field, zval *rv);
 using BoxedWriter = bool (*)(gpointer data, const char *field, zval *value);
+// The GObject a live value points into (a GtkTextIter's buffer): called at wrap/clone time
+// on valid data, and the handle refs the result so the value cannot dangle when the script
+// drops the owner. nullptr for self-contained values (GdkRGBA).
+using BoxedOwner = GObject *(*)(gpointer data);
 
 struct BoxedClass {
-  GType type;
-  zend_class_entry *ce;
-  const char *const *fields;  // nullptr-terminated, for var_dump()
-  BoxedReader read;
-  BoxedWriter write;
+  GType type{};
+  zend_class_entry *ce{};
+  const char *const *fields{};  // nullptr-terminated, for var_dump()
+  BoxedReader read{};
+  BoxedWriter write{};
+  BoxedOwner owner = nullptr;
 };
 
 void boxed_handlers_init();

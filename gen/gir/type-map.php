@@ -431,7 +431,7 @@ final class TypeMap
         foreach ($f->params as $i => $p) {
             if (isset($closures[$i])) {  // the user_data slot of a generated callback: hidden
                 $ins[] = ['phpName' => $p->name, 'hidden' => true, 'default' => null, 'decl' => '', 'zpp' => '',
-                    'pre' => [], 'post' => [], 'carg' => $closures[$i], 'phpType' => ''];
+                    'pre' => [], 'post' => [], 'carg' => $closures[$i], 'phpType' => '', 'pos' => $i];
                 continue;
             }
             if ($p->name === 'user_data' && in_array($p->type->name, ['gpointer', 'gconstpointer'], true)) {
@@ -445,6 +445,7 @@ final class TypeMap
                     return ($p->callerAllocates ? 'caller-allocates ' : '')
                         . "out parameter `{$p->name}` of type {$p->type->name}";
                 }
+                $o['pos'] = $i;
                 $outs[] = $o;
                 continue;
             }
@@ -465,6 +466,7 @@ final class TypeMap
                     return "callback parameter {$p->name}";
                 }
                 $closures[$p->closure] = $cb['cbVar'];
+                $cb['pos'] = $i;
                 $ins[] = $cb;
                 continue;
             }
@@ -472,6 +474,7 @@ final class TypeMap
             if ($m === null) {
                 return "parameter `{$p->name}` of type {$p->type->name}" . ($p->type->isArray ? ' (C array)' : '');
             }
+            $m['pos'] = $i;
             $ins[] = $m;
         }
         return [$ins, $outs];

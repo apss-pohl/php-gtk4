@@ -8,7 +8,10 @@ declare(strict_types=1);
 return [
     'Generated' => [
         'GdkModifierType',
+        'GdkSubpixelLayout',
         'GtkText',
+        'GtkTextSearchFlags',
+        'GtkTextWindowType',
         'PangoFontMask',
         'PangoGravity',
         'PangoGravityHint',

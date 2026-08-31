@@ -25,6 +25,7 @@ zend_object *create_object(zend_class_entry *ce) {
   auto *self = static_cast<Boxed *>(zend_object_alloc(sizeof(Boxed), ce));
   self->type = 0;
   self->data = nullptr;
+  self->owner = nullptr;
   zend_object_std_init(&self->std, ce);
   object_properties_init(&self->std, ce);
   self->std.handlers = &handlers;
@@ -41,10 +42,11 @@ zend_function *get_constructor(zend_object *o) {
   return nullptr;
 }
 
-// free_obj handler: releases the owned copy with g_boxed_free().
+// free_obj handler: releases the owned copy with g_boxed_free(), then the owner ref.
 void free_obj(zend_object *o) {
   Boxed *self = boxed_from_zend(o);
   if (self->data != nullptr) g_boxed_free(self->type, self->data);
+  if (self->owner != nullptr) g_object_unref(self->owner);
   zend_object_std_dtor(o);
 }
 
@@ -55,6 +57,8 @@ zend_object *clone_obj(zend_object *o) {
   Boxed *other = boxed_from_zend(copy);
   other->type = self->type;
   other->data = self->data != nullptr ? g_boxed_copy(self->type, self->data) : nullptr;
+  other->owner = self->owner;
+  if (other->owner != nullptr) g_object_ref(other->owner);
   zend_objects_clone_members(copy, o);
   return copy;
 }
@@ -190,8 +194,12 @@ const BoxedClass *boxed_class_for_type(GType type) {
 // Constructor helper: give a fresh handle its (already allocated) data.
 void boxed_adopt(Boxed *self, GType type, gpointer data) {
   if (self->data != nullptr) g_boxed_free(self->type, self->data);
+  if (self->owner != nullptr) g_object_unref(self->owner);
   self->type = type;
   self->data = data;
+  const BoxedClass *info = boxed_class_for_type(type);
+  self->owner = info != nullptr && info->owner != nullptr ? info->owner(data) : nullptr;
+  if (self->owner != nullptr) g_object_ref(self->owner);
 }
 
 // C -> PHP: new handle holding a copy of `data`; null for nullptr, TypeError for unregistered
@@ -211,6 +219,8 @@ void wrap_boxed(GType type, gconstpointer data, zval *rv) {
   Boxed *self = boxed_from_zval(rv);
   self->type = type;
   self->data = g_boxed_copy(type, data);
+  self->owner = info->owner != nullptr ? info->owner(self->data) : nullptr;
+  if (self->owner != nullptr) g_object_ref(self->owner);
 }
 
 // PHP -> C: borrowed data pointer of a handle of exactly `expected`, else TypeError + nullptr.

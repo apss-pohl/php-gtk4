@@ -24,9 +24,9 @@ the notes are hand-written and may lag.
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 54 | — |
+| ✅ implemented | 62 | — |
 | 🟡 partial | 1 | — |
-| ❌ to port (GTK 4 equivalent exists) | 39 | ~1750 |
+| ❌ to port (GTK 4 equivalent exists) | 31 | ~1750 |
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 5 | ~130 |
 
@@ -171,13 +171,13 @@ is open work.
 
 | php-gtk3 class | gtk3 methods | GTK 4 replacement | php-gtk4 | Notes |
 | --- | ---: | --- | :---: | --- |
-| `GtkTextView` | 63 | `GtkTextView` | ❌ | Largely unchanged; `GdkEvent`-based methods and `add_child_in_window` differ. |
-| `GtkTextBuffer` | 69 | `GtkTextBuffer` | ❌ | Unchanged, except pixbuf inserts → `GdkPaintable`. |
-| `GtkTextIter` | 83 | `GtkTextIter` | ❌ | Boxed type — port via `src/core/boxed.cpp`. |
-| `GtkTextMark` | 7 | `GtkTextMark` | ❌ | |
-| `GtkTextTag` | 6 | `GtkTextTag` | ❌ | |
-| `GtkTextTagTable` | 6 | `GtkTextTagTable` | ❌ | |
-| `GtkWrapMode` | 0 | `GtkWrapMode` enum | ❌ | Becomes a PHP enum in the stub. |
+| `GtkTextView` | 63 | `GtkTextView` | ✅ | Largely unchanged; `GdkEvent`-based methods and `add_child_in_window` differ. |
+| `GtkTextBuffer` | 69 | `GtkTextBuffer` | ✅ | Unchanged, except pixbuf inserts → `GdkPaintable`. |
+| `GtkTextIter` | 83 | `GtkTextIter` | ✅ | Boxed type — port via `src/core/boxed.cpp`. |
+| `GtkTextMark` | 7 | `GtkTextMark` | ✅ | |
+| `GtkTextTag` | 6 | `GtkTextTag` | ✅ | |
+| `GtkTextTagTable` | 6 | `GtkTextTagTable` | ✅ | |
+| `GtkWrapMode` | 0 | `GtkWrapMode` enum | ✅ | Becomes a PHP enum in the stub. |
 
 ## Tree / list model stack
 
@@ -220,7 +220,7 @@ is open work.
 | `GdkRGBA` | 4 | `GdkRGBA` | ✅ | Boxed type with `parse`, `to_string`, `equal`, `is_opaque` + `r/g/b/a` fields. Richer than php-gtk3's. |
 | — | — | `GdkRectangle` | ✅ | New in php-gtk4 (`intersect`, `union`, `contains_point`, `equal`). |
 | `GdkDisplay` | 5 | `GdkDisplay` | ✅ | `get_monitors()` returns a `GListModel` in GTK 4. |
-| `GdkMonitor` | 5 | `GdkMonitor` | ❌ | `get_geometry`, `get_width_mm`; `get_workarea` removed in GTK 4. |
+| `GdkMonitor` | 5 | `GdkMonitor` | ✅ | `get_geometry`, `get_width_mm`; `get_workarea` removed in GTK 4. |
 | `GdkScreen` | 4 | — | ⛔ | Removed in GTK 4; use `GdkDisplay`. |
 | `GdkVisual` | 6 | — | ⛔ | Removed in GTK 4. |
 | `GdkWindow` | 10 | `GdkSurface` | ❌ | Much smaller API; most methods (`maximize`, `get_children`, `get_default_root_window`) are gone. |

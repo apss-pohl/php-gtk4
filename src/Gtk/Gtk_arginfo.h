@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: d0c35c46ae23be61b8cea8ecf032b0f3e31e2c58 */
+ * Stub hash: 79e2bf5d2e0f15ecaacde4163b1e0f6a1e49b4c4 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -3031,6 +3031,780 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkText_set_width_chars arginfo_class_Gtk4_GtkEditableObject_set_max_width_chars
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer___construct, 0, 0, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, table, Gtk4\\GtkTextTagTable, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_add_mark, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, mark, Gtk4\\GtkTextMark, 0)
+	ZEND_ARG_OBJ_INFO(0, where, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_apply_tag, 0, 3, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, tag, Gtk4\\GtkTextTag, 0)
+	ZEND_ARG_OBJ_INFO(0, start, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, end, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_apply_tag_by_name, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, start, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, end, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_backspace, 0, 3, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_TYPE_INFO(0, interactive, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, default_editable, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextBuffer_begin_irreversible_action arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextBuffer_begin_user_action arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_create_mark, 0, 3, Gtk4\\GtkTextMark, 0)
+	ZEND_ARG_TYPE_INFO(0, mark_name, IS_STRING, 1)
+	ZEND_ARG_OBJ_INFO(0, where, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_TYPE_INFO(0, left_gravity, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_delete, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, start, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, end, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_delete_interactive, 0, 3, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, start_iter, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, end_iter, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_TYPE_INFO(0, default_editable, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_delete_mark, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, mark, Gtk4\\GtkTextMark, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextBuffer_delete_mark_by_name arginfo_class_Gtk4_GtkStack_set_visible_child_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_delete_selection, 0, 2, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, interactive, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, default_editable, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextBuffer_end_irreversible_action arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextBuffer_end_user_action arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextBuffer_get_bounds arginfo_class_Gtk4_GtkAboutDialog_get_artists
+
+#define arginfo_class_Gtk4_GtkTextBuffer_get_can_redo arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextBuffer_get_can_undo arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextBuffer_get_char_count arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextBuffer_get_enable_undo arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_end_iter, 0, 0, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextBuffer_get_has_selection arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_insert, 0, 0, Gtk4\\GtkTextMark, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_line, 0, 1, Gtk4\\GtkTextIter, 1)
+	ZEND_ARG_TYPE_INFO(0, line_number, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_line_index, 0, 2, Gtk4\\GtkTextIter, 1)
+	ZEND_ARG_TYPE_INFO(0, line_number, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, byte_index, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_line_offset, 0, 2, Gtk4\\GtkTextIter, 1)
+	ZEND_ARG_TYPE_INFO(0, line_number, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, char_offset, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_mark, 0, 1, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, mark, Gtk4\\GtkTextMark, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_offset, 0, 1, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_TYPE_INFO(0, char_offset, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextBuffer_get_line_count arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_mark, 0, 1, Gtk4\\GtkTextMark, 1)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextBuffer_get_max_undo_levels arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextBuffer_get_modified arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextBuffer_get_selection_bound arginfo_class_Gtk4_GtkTextBuffer_get_insert
+
+#define arginfo_class_Gtk4_GtkTextBuffer_get_selection_bounds arginfo_class_Gtk4_GtkEditable_get_selection_bounds
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_slice, 0, 3, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, start, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, end, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_TYPE_INFO(0, include_hidden_chars, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextBuffer_get_start_iter arginfo_class_Gtk4_GtkTextBuffer_get_end_iter
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_tag_table, 0, 0, Gtk4\\GtkTextTagTable, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextBuffer_get_text arginfo_class_Gtk4_GtkTextBuffer_get_slice
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_insert_paintable, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, paintable, Gtk4\\GdkPaintable, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_insert_range, 0, 3, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, start, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, end, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_insert_range_interactive, 0, 4, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, start, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, end, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_TYPE_INFO(0, default_editable, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextBuffer_move_mark arginfo_class_Gtk4_GtkTextBuffer_add_mark
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_move_mark_by_name, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, where, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_place_cursor, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, where, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextBuffer_redo arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextBuffer_remove_all_tags arginfo_class_Gtk4_GtkTextBuffer_delete
+
+#define arginfo_class_Gtk4_GtkTextBuffer_remove_tag arginfo_class_Gtk4_GtkTextBuffer_apply_tag
+
+#define arginfo_class_Gtk4_GtkTextBuffer_remove_tag_by_name arginfo_class_Gtk4_GtkTextBuffer_apply_tag_by_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_select_range, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, ins, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, bound, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextBuffer_set_enable_undo arginfo_class_Gtk4_GtkEditableObject_set_enable_undo
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_set_max_undo_levels, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, max_undo_levels, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextBuffer_set_modified arginfo_class_Gtk4_GtkCheckButton_set_active
+
+#define arginfo_class_Gtk4_GtkTextBuffer_undo arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_insert, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_TYPE_INFO(0, text, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, len, IS_LONG, 0, "-1")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_insert_at_cursor, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, text, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, len, IS_LONG, 0, "-1")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_insert_interactive, 0, 4, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_TYPE_INFO(0, text, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, len, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, default_editable, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_insert_interactive_at_cursor, 0, 3, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, text, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, len, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, default_editable, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_insert_markup, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_TYPE_INFO(0, markup, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, len, IS_LONG, 0, "-1")
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextBuffer_set_text arginfo_class_Gtk4_GtkTextBuffer_insert_at_cursor
+
+#define arginfo_class_Gtk4_GtkTextBuffer_vfunc_apply_tag arginfo_class_Gtk4_GtkTextBuffer_apply_tag
+
+#define arginfo_class_Gtk4_GtkTextBuffer_vfunc_begin_user_action arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextBuffer_vfunc_changed arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextBuffer_vfunc_delete_range arginfo_class_Gtk4_GtkTextBuffer_delete
+
+#define arginfo_class_Gtk4_GtkTextBuffer_vfunc_end_user_action arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextBuffer_vfunc_insert_paintable arginfo_class_Gtk4_GtkTextBuffer_insert_paintable
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_vfunc_insert_text, 0, 3, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, pos, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_TYPE_INFO(0, new_text, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, new_text_length, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextBuffer_vfunc_mark_deleted arginfo_class_Gtk4_GtkTextBuffer_delete_mark
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_vfunc_mark_set, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, location, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, mark, Gtk4\\GtkTextMark, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextBuffer_vfunc_modified_changed arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextBuffer_vfunc_redo arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextBuffer_vfunc_remove_tag arginfo_class_Gtk4_GtkTextBuffer_apply_tag
+
+#define arginfo_class_Gtk4_GtkTextBuffer_vfunc_undo arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextIter___construct arginfo_class_Gtk4_GtkAboutDialog___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_assign, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, other, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextIter_backward_char arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_backward_chars, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, count, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextIter_backward_cursor_position arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_backward_cursor_positions arginfo_class_Gtk4_GtkTextIter_backward_chars
+
+#define arginfo_class_Gtk4_GtkTextIter_backward_line arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_backward_lines arginfo_class_Gtk4_GtkTextIter_backward_chars
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_backward_search, 0, 3, IS_ARRAY, 1)
+	ZEND_ARG_TYPE_INFO(0, str, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, flags, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, limit, Gtk4\\GtkTextIter, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextIter_backward_sentence_start arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_backward_sentence_starts arginfo_class_Gtk4_GtkTextIter_backward_chars
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_backward_to_tag_toggle, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, tag, Gtk4\\GtkTextTag, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextIter_backward_visible_cursor_position arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_backward_visible_cursor_positions arginfo_class_Gtk4_GtkTextIter_backward_chars
+
+#define arginfo_class_Gtk4_GtkTextIter_backward_visible_line arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_backward_visible_lines arginfo_class_Gtk4_GtkTextIter_backward_chars
+
+#define arginfo_class_Gtk4_GtkTextIter_backward_visible_word_start arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_backward_visible_word_starts arginfo_class_Gtk4_GtkTextIter_backward_chars
+
+#define arginfo_class_Gtk4_GtkTextIter_backward_word_start arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_backward_word_starts arginfo_class_Gtk4_GtkTextIter_backward_chars
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_can_insert, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, default_editability, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_compare, 0, 1, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, rhs, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_editable, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, default_setting, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextIter_ends_line arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_ends_sentence arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_ends_tag arginfo_class_Gtk4_GtkTextIter_backward_to_tag_toggle
+
+#define arginfo_class_Gtk4_GtkTextIter_ends_word arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_equal, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, rhs, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_char arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_chars arginfo_class_Gtk4_GtkTextIter_backward_chars
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_cursor_position arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_cursor_positions arginfo_class_Gtk4_GtkTextIter_backward_chars
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_line arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_lines arginfo_class_Gtk4_GtkTextIter_backward_chars
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_search arginfo_class_Gtk4_GtkTextIter_backward_search
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_sentence_end arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_sentence_ends arginfo_class_Gtk4_GtkTextIter_backward_chars
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_to_end arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_to_line_end arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_to_tag_toggle arginfo_class_Gtk4_GtkTextIter_backward_to_tag_toggle
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_visible_cursor_position arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_visible_cursor_positions arginfo_class_Gtk4_GtkTextIter_backward_chars
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_visible_line arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_visible_lines arginfo_class_Gtk4_GtkTextIter_backward_chars
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_visible_word_end arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_visible_word_ends arginfo_class_Gtk4_GtkTextIter_backward_chars
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_word_end arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_forward_word_ends arginfo_class_Gtk4_GtkTextIter_backward_chars
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextIter_get_buffer, 0, 0, Gtk4\\GtkTextBuffer, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextIter_get_bytes_in_line arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextIter_get_char arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextIter_get_chars_in_line arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextIter_get_line arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextIter_get_line_index arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextIter_get_line_offset arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextIter_get_marks arginfo_class_Gtk4_GtkAboutDialog_get_artists
+
+#define arginfo_class_Gtk4_GtkTextIter_get_offset arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextIter_get_paintable arginfo_class_Gtk4_GtkAboutDialog_get_logo
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_get_slice, 0, 1, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, end, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextIter_get_tags arginfo_class_Gtk4_GtkAboutDialog_get_artists
+
+#define arginfo_class_Gtk4_GtkTextIter_get_text arginfo_class_Gtk4_GtkTextIter_get_slice
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_get_toggled_tags, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, toggled_on, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextIter_get_visible_line_index arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextIter_get_visible_line_offset arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextIter_get_visible_slice arginfo_class_Gtk4_GtkTextIter_get_slice
+
+#define arginfo_class_Gtk4_GtkTextIter_get_visible_text arginfo_class_Gtk4_GtkTextIter_get_slice
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_has_tag, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, tag, Gtk4\\GtkTextTag, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_in_range, 0, 2, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, start, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, end, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextIter_inside_sentence arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_inside_word arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_is_cursor_position arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_is_end arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_is_start arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_order, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, second, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_set_line, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, line_number, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_set_line_index, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, byte_on_line, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_set_line_offset, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, char_on_line, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextIter_set_offset, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, char_offset, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextIter_set_visible_line_index arginfo_class_Gtk4_GtkTextIter_set_line_index
+
+#define arginfo_class_Gtk4_GtkTextIter_set_visible_line_offset arginfo_class_Gtk4_GtkTextIter_set_line_offset
+
+#define arginfo_class_Gtk4_GtkTextIter_starts_line arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_starts_sentence arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_starts_tag arginfo_class_Gtk4_GtkTextIter_backward_to_tag_toggle
+
+#define arginfo_class_Gtk4_GtkTextIter_starts_word arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextIter_toggles_tag arginfo_class_Gtk4_GtkTextIter_backward_to_tag_toggle
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkTextMark___construct, 0, 0, 2)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, left_gravity, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextMark_get_buffer, 0, 0, Gtk4\\GtkTextBuffer, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextMark_get_deleted arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextMark_get_left_gravity arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextMark_get_name arginfo_class_Gtk4_GtkAboutDialog_get_comments
+
+#define arginfo_class_Gtk4_GtkTextMark_get_visible arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextMark_set_visible arginfo_class_Gtk4_GtkCheckButton_set_active
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkTextTag___construct, 0, 0, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, name, IS_STRING, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextTag_changed, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, size_changed, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextTag_get_priority arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextTag_set_priority, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, priority, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextTagTable___construct arginfo_class_Gtk4_GtkAboutDialog___construct
+
+#define arginfo_class_Gtk4_GtkTextTagTable_add arginfo_class_Gtk4_GtkTextIter_has_tag
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextTagTable_foreach, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, func, IS_CALLABLE, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextTagTable_get_size arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextTagTable_lookup, 0, 1, Gtk4\\GtkTextTag, 1)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextTagTable_remove, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, tag, Gtk4\\GtkTextTag, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView___construct arginfo_class_Gtk4_GtkAboutDialog___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextView_new_with_buffer, 0, 1, Gtk4\\GtkTextView, 0)
+	ZEND_ARG_OBJ_INFO(0, buffer, Gtk4\\GtkTextBuffer, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_add_overlay, 0, 3, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, child, Gtk4\\GtkWidget, 0)
+	ZEND_ARG_TYPE_INFO(0, xpos, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, ypos, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_backward_display_line, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView_backward_display_line_start arginfo_class_Gtk4_GtkTextView_backward_display_line
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_buffer_to_window_coords, 0, 3, IS_ARRAY, 0)
+	ZEND_ARG_OBJ_INFO(0, win, Gtk4\\GtkTextWindowType, 0)
+	ZEND_ARG_TYPE_INFO(0, buffer_x, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, buffer_y, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView_forward_display_line arginfo_class_Gtk4_GtkTextView_backward_display_line
+
+#define arginfo_class_Gtk4_GtkTextView_forward_display_line_end arginfo_class_Gtk4_GtkTextView_backward_display_line
+
+#define arginfo_class_Gtk4_GtkTextView_get_accepts_tab arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextView_get_bottom_margin arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextView_get_buffer arginfo_class_Gtk4_GtkTextIter_get_buffer
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_get_cursor_locations, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView_get_cursor_visible arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextView_get_editable arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextView_get_gutter, 0, 1, Gtk4\\GtkWidget, 1)
+	ZEND_ARG_OBJ_INFO(0, win, Gtk4\\GtkTextWindowType, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView_get_indent arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextView_get_input_hints arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextView_get_input_purpose arginfo_class_Gtk4_GtkEntry_get_input_purpose
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextView_get_iter_at_location, 0, 2, Gtk4\\GtkTextIter, 1)
+	ZEND_ARG_TYPE_INFO(0, x, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, y, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_get_iter_at_position, 0, 2, IS_ARRAY, 1)
+	ZEND_ARG_TYPE_INFO(0, x, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, y, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextView_get_iter_location, 0, 1, Gtk4\\GdkRectangle, 0)
+	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView_get_justification arginfo_class_Gtk4_GtkLabel_get_justify
+
+#define arginfo_class_Gtk4_GtkTextView_get_left_margin arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_get_line_at_y, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, y, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_get_line_yrange, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView_get_monospace arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextView_get_overwrite arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextView_get_pixels_above_lines arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextView_get_pixels_below_lines arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextView_get_pixels_inside_wrap arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextView_get_right_margin arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextView_get_top_margin arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+#define arginfo_class_Gtk4_GtkTextView_get_visible_rect arginfo_class_Gtk4_GtkRange_get_range_rect
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextView_get_wrap_mode, 0, 0, Gtk4\\GtkWrapMode, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_im_context_filter_keypress, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, event, Gtk4\\GdkEvent, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_move_mark_onscreen, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, mark, Gtk4\\GtkTextMark, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView_move_overlay arginfo_class_Gtk4_GtkTextView_add_overlay
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_move_visually, 0, 2, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_TYPE_INFO(0, count, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView_place_cursor_onscreen arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkTextView_remove arginfo_class_Gtk4_GtkBox_append
+
+#define arginfo_class_Gtk4_GtkTextView_reset_cursor_blink arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextView_reset_im_context arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextView_scroll_mark_onscreen arginfo_class_Gtk4_GtkTextBuffer_delete_mark
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_scroll_to_iter, 0, 5, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_TYPE_INFO(0, within_margin, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, use_align, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, xalign, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, yalign, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_scroll_to_mark, 0, 5, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, mark, Gtk4\\GtkTextMark, 0)
+	ZEND_ARG_TYPE_INFO(0, within_margin, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, use_align, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, xalign, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, yalign, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_set_accepts_tab, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, accepts_tab, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_set_bottom_margin, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, bottom_margin, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_set_buffer, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, buffer, Gtk4\\GtkTextBuffer, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView_set_cursor_visible arginfo_class_Gtk4_GtkCheckButton_set_active
+
+#define arginfo_class_Gtk4_GtkTextView_set_editable arginfo_class_Gtk4_GtkCheckButton_set_active
+
+#define arginfo_class_Gtk4_GtkTextView_set_extra_menu arginfo_class_Gtk4_GtkEntry_set_extra_menu
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_set_gutter, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, win, Gtk4\\GtkTextWindowType, 0)
+	ZEND_ARG_OBJ_INFO(0, widget, Gtk4\\GtkWidget, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_set_indent, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, indent, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView_set_input_hints arginfo_class_Gtk4_GtkEntry_set_input_hints
+
+#define arginfo_class_Gtk4_GtkTextView_set_input_purpose arginfo_class_Gtk4_GtkEntry_set_input_purpose
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_set_justification, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, justification, Gtk4\\GtkJustification, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_set_left_margin, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, left_margin, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_set_monospace, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, monospace, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView_set_overwrite arginfo_class_Gtk4_GtkEntry_set_overwrite_mode
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_set_pixels_above_lines, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, pixels_above_lines, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_set_pixels_below_lines, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, pixels_below_lines, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_set_pixels_inside_wrap, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, pixels_inside_wrap, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_set_right_margin, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, right_margin, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_set_top_margin, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, top_margin, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_set_wrap_mode, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, wrap_mode, Gtk4\\GtkWrapMode, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView_starts_display_line arginfo_class_Gtk4_GtkTextView_backward_display_line
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_window_to_buffer_coords, 0, 3, IS_ARRAY, 0)
+	ZEND_ARG_OBJ_INFO(0, win, Gtk4\\GtkTextWindowType, 0)
+	ZEND_ARG_TYPE_INFO(0, window_x, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, window_y, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView_get_extra_menu arginfo_class_Gtk4_GtkApplication_get_menubar
+
+#define arginfo_class_Gtk4_GtkTextView_get_hadjustment arginfo_class_Gtk4_GtkScrollableObject_get_hadjustment
+
+#define arginfo_class_Gtk4_GtkTextView_get_hscroll_policy arginfo_class_Gtk4_GtkScrollableObject_get_hscroll_policy
+
+#define arginfo_class_Gtk4_GtkTextView_get_vadjustment arginfo_class_Gtk4_GtkScrollableObject_get_hadjustment
+
+#define arginfo_class_Gtk4_GtkTextView_get_vscroll_policy arginfo_class_Gtk4_GtkScrollableObject_get_hscroll_policy
+
+#define arginfo_class_Gtk4_GtkTextView_set_hadjustment arginfo_class_Gtk4_GtkScrollableObject_set_hadjustment
+
+#define arginfo_class_Gtk4_GtkTextView_set_hscroll_policy arginfo_class_Gtk4_GtkScrollableObject_set_hscroll_policy
+
+#define arginfo_class_Gtk4_GtkTextView_set_vadjustment arginfo_class_Gtk4_GtkScrollableObject_set_vadjustment
+
+#define arginfo_class_Gtk4_GtkTextView_set_vscroll_policy arginfo_class_Gtk4_GtkScrollableObject_set_hscroll_policy
+
+#define arginfo_class_Gtk4_GtkTextView_vfunc_backspace arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextView_vfunc_copy_clipboard arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextView_vfunc_create_buffer arginfo_class_Gtk4_GtkTextIter_get_buffer
+
+#define arginfo_class_Gtk4_GtkTextView_vfunc_cut_clipboard arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_vfunc_delete_from_cursor, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, type, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, count, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_vfunc_extend_selection, 0, 4, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, granularity, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, location, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, start, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, end, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView_vfunc_insert_at_cursor arginfo_class_Gtk4_GtkLabel_set_label
+
+#define arginfo_class_Gtk4_GtkTextView_vfunc_insert_emoji arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_vfunc_move_cursor, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, step, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, count, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, extend_selection, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkTextView_vfunc_paste_clipboard arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextView_vfunc_set_anchor arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+#define arginfo_class_Gtk4_GtkTextView_vfunc_toggle_overwrite arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
 #define arginfo_class_Gtk4_GtkToggleButton___construct arginfo_class_Gtk4_GtkAboutDialog___construct
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkToggleButton_new_with_label, 0, 1, Gtk4\\GtkToggleButton, 0)
@@ -3503,6 +4277,10 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GtkWindow_destroy arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
 
 #define arginfo_class_Gtk4_GtkWindow_fullscreen arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWindow_fullscreen_on_monitor, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, monitor, Gtk4\\GdkMonitor, 0)
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkWindow_get_application, 0, 0, Gtk4\\GtkApplication, 1)
 ZEND_END_ARG_INFO()
@@ -4587,6 +5365,260 @@ ZEND_METHOD(Gtk4_GtkText, set_propagate_text_width);
 ZEND_METHOD(Gtk4_GtkText, set_truncate_multiline);
 ZEND_METHOD(Gtk4_GtkText, set_visibility);
 ZEND_METHOD(Gtk4_GtkText, unset_invisible_char);
+ZEND_METHOD(Gtk4_GtkTextBuffer, __construct);
+ZEND_METHOD(Gtk4_GtkTextBuffer, add_mark);
+ZEND_METHOD(Gtk4_GtkTextBuffer, apply_tag);
+ZEND_METHOD(Gtk4_GtkTextBuffer, apply_tag_by_name);
+ZEND_METHOD(Gtk4_GtkTextBuffer, backspace);
+ZEND_METHOD(Gtk4_GtkTextBuffer, begin_irreversible_action);
+ZEND_METHOD(Gtk4_GtkTextBuffer, begin_user_action);
+ZEND_METHOD(Gtk4_GtkTextBuffer, create_mark);
+ZEND_METHOD(Gtk4_GtkTextBuffer, delete);
+ZEND_METHOD(Gtk4_GtkTextBuffer, delete_interactive);
+ZEND_METHOD(Gtk4_GtkTextBuffer, delete_mark);
+ZEND_METHOD(Gtk4_GtkTextBuffer, delete_mark_by_name);
+ZEND_METHOD(Gtk4_GtkTextBuffer, delete_selection);
+ZEND_METHOD(Gtk4_GtkTextBuffer, end_irreversible_action);
+ZEND_METHOD(Gtk4_GtkTextBuffer, end_user_action);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_bounds);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_can_redo);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_can_undo);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_char_count);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_enable_undo);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_end_iter);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_has_selection);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_insert);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_iter_at_line);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_iter_at_line_index);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_iter_at_line_offset);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_iter_at_mark);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_iter_at_offset);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_line_count);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_mark);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_max_undo_levels);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_modified);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_selection_bound);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_selection_bounds);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_slice);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_start_iter);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_tag_table);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_text);
+ZEND_METHOD(Gtk4_GtkTextBuffer, insert_paintable);
+ZEND_METHOD(Gtk4_GtkTextBuffer, insert_range);
+ZEND_METHOD(Gtk4_GtkTextBuffer, insert_range_interactive);
+ZEND_METHOD(Gtk4_GtkTextBuffer, move_mark);
+ZEND_METHOD(Gtk4_GtkTextBuffer, move_mark_by_name);
+ZEND_METHOD(Gtk4_GtkTextBuffer, place_cursor);
+ZEND_METHOD(Gtk4_GtkTextBuffer, redo);
+ZEND_METHOD(Gtk4_GtkTextBuffer, remove_all_tags);
+ZEND_METHOD(Gtk4_GtkTextBuffer, remove_tag);
+ZEND_METHOD(Gtk4_GtkTextBuffer, remove_tag_by_name);
+ZEND_METHOD(Gtk4_GtkTextBuffer, select_range);
+ZEND_METHOD(Gtk4_GtkTextBuffer, set_enable_undo);
+ZEND_METHOD(Gtk4_GtkTextBuffer, set_max_undo_levels);
+ZEND_METHOD(Gtk4_GtkTextBuffer, set_modified);
+ZEND_METHOD(Gtk4_GtkTextBuffer, undo);
+ZEND_METHOD(Gtk4_GtkTextBuffer, insert);
+ZEND_METHOD(Gtk4_GtkTextBuffer, insert_at_cursor);
+ZEND_METHOD(Gtk4_GtkTextBuffer, insert_interactive);
+ZEND_METHOD(Gtk4_GtkTextBuffer, insert_interactive_at_cursor);
+ZEND_METHOD(Gtk4_GtkTextBuffer, insert_markup);
+ZEND_METHOD(Gtk4_GtkTextBuffer, set_text);
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_apply_tag);
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_begin_user_action);
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_changed);
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_delete_range);
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_end_user_action);
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_insert_paintable);
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_insert_text);
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_mark_deleted);
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_mark_set);
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_modified_changed);
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_redo);
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_remove_tag);
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_undo);
+ZEND_METHOD(Gtk4_GtkTextIter, __construct);
+ZEND_METHOD(Gtk4_GtkTextIter, assign);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_char);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_chars);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_cursor_position);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_cursor_positions);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_line);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_lines);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_search);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_sentence_start);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_sentence_starts);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_to_tag_toggle);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_visible_cursor_position);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_visible_cursor_positions);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_visible_line);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_visible_lines);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_visible_word_start);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_visible_word_starts);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_word_start);
+ZEND_METHOD(Gtk4_GtkTextIter, backward_word_starts);
+ZEND_METHOD(Gtk4_GtkTextIter, can_insert);
+ZEND_METHOD(Gtk4_GtkTextIter, compare);
+ZEND_METHOD(Gtk4_GtkTextIter, editable);
+ZEND_METHOD(Gtk4_GtkTextIter, ends_line);
+ZEND_METHOD(Gtk4_GtkTextIter, ends_sentence);
+ZEND_METHOD(Gtk4_GtkTextIter, ends_tag);
+ZEND_METHOD(Gtk4_GtkTextIter, ends_word);
+ZEND_METHOD(Gtk4_GtkTextIter, equal);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_char);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_chars);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_cursor_position);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_cursor_positions);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_line);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_lines);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_search);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_sentence_end);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_sentence_ends);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_to_end);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_to_line_end);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_to_tag_toggle);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_visible_cursor_position);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_visible_cursor_positions);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_visible_line);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_visible_lines);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_visible_word_end);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_visible_word_ends);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_word_end);
+ZEND_METHOD(Gtk4_GtkTextIter, forward_word_ends);
+ZEND_METHOD(Gtk4_GtkTextIter, get_buffer);
+ZEND_METHOD(Gtk4_GtkTextIter, get_bytes_in_line);
+ZEND_METHOD(Gtk4_GtkTextIter, get_char);
+ZEND_METHOD(Gtk4_GtkTextIter, get_chars_in_line);
+ZEND_METHOD(Gtk4_GtkTextIter, get_line);
+ZEND_METHOD(Gtk4_GtkTextIter, get_line_index);
+ZEND_METHOD(Gtk4_GtkTextIter, get_line_offset);
+ZEND_METHOD(Gtk4_GtkTextIter, get_marks);
+ZEND_METHOD(Gtk4_GtkTextIter, get_offset);
+ZEND_METHOD(Gtk4_GtkTextIter, get_paintable);
+ZEND_METHOD(Gtk4_GtkTextIter, get_slice);
+ZEND_METHOD(Gtk4_GtkTextIter, get_tags);
+ZEND_METHOD(Gtk4_GtkTextIter, get_text);
+ZEND_METHOD(Gtk4_GtkTextIter, get_toggled_tags);
+ZEND_METHOD(Gtk4_GtkTextIter, get_visible_line_index);
+ZEND_METHOD(Gtk4_GtkTextIter, get_visible_line_offset);
+ZEND_METHOD(Gtk4_GtkTextIter, get_visible_slice);
+ZEND_METHOD(Gtk4_GtkTextIter, get_visible_text);
+ZEND_METHOD(Gtk4_GtkTextIter, has_tag);
+ZEND_METHOD(Gtk4_GtkTextIter, in_range);
+ZEND_METHOD(Gtk4_GtkTextIter, inside_sentence);
+ZEND_METHOD(Gtk4_GtkTextIter, inside_word);
+ZEND_METHOD(Gtk4_GtkTextIter, is_cursor_position);
+ZEND_METHOD(Gtk4_GtkTextIter, is_end);
+ZEND_METHOD(Gtk4_GtkTextIter, is_start);
+ZEND_METHOD(Gtk4_GtkTextIter, order);
+ZEND_METHOD(Gtk4_GtkTextIter, set_line);
+ZEND_METHOD(Gtk4_GtkTextIter, set_line_index);
+ZEND_METHOD(Gtk4_GtkTextIter, set_line_offset);
+ZEND_METHOD(Gtk4_GtkTextIter, set_offset);
+ZEND_METHOD(Gtk4_GtkTextIter, set_visible_line_index);
+ZEND_METHOD(Gtk4_GtkTextIter, set_visible_line_offset);
+ZEND_METHOD(Gtk4_GtkTextIter, starts_line);
+ZEND_METHOD(Gtk4_GtkTextIter, starts_sentence);
+ZEND_METHOD(Gtk4_GtkTextIter, starts_tag);
+ZEND_METHOD(Gtk4_GtkTextIter, starts_word);
+ZEND_METHOD(Gtk4_GtkTextIter, toggles_tag);
+ZEND_METHOD(Gtk4_GtkTextMark, __construct);
+ZEND_METHOD(Gtk4_GtkTextMark, get_buffer);
+ZEND_METHOD(Gtk4_GtkTextMark, get_deleted);
+ZEND_METHOD(Gtk4_GtkTextMark, get_left_gravity);
+ZEND_METHOD(Gtk4_GtkTextMark, get_name);
+ZEND_METHOD(Gtk4_GtkTextMark, get_visible);
+ZEND_METHOD(Gtk4_GtkTextMark, set_visible);
+ZEND_METHOD(Gtk4_GtkTextTag, __construct);
+ZEND_METHOD(Gtk4_GtkTextTag, changed);
+ZEND_METHOD(Gtk4_GtkTextTag, get_priority);
+ZEND_METHOD(Gtk4_GtkTextTag, set_priority);
+ZEND_METHOD(Gtk4_GtkTextTagTable, __construct);
+ZEND_METHOD(Gtk4_GtkTextTagTable, add);
+ZEND_METHOD(Gtk4_GtkTextTagTable, foreach);
+ZEND_METHOD(Gtk4_GtkTextTagTable, get_size);
+ZEND_METHOD(Gtk4_GtkTextTagTable, lookup);
+ZEND_METHOD(Gtk4_GtkTextTagTable, remove);
+ZEND_METHOD(Gtk4_GtkTextView, __construct);
+ZEND_METHOD(Gtk4_GtkTextView, new_with_buffer);
+ZEND_METHOD(Gtk4_GtkTextView, add_overlay);
+ZEND_METHOD(Gtk4_GtkTextView, backward_display_line);
+ZEND_METHOD(Gtk4_GtkTextView, backward_display_line_start);
+ZEND_METHOD(Gtk4_GtkTextView, buffer_to_window_coords);
+ZEND_METHOD(Gtk4_GtkTextView, forward_display_line);
+ZEND_METHOD(Gtk4_GtkTextView, forward_display_line_end);
+ZEND_METHOD(Gtk4_GtkTextView, get_accepts_tab);
+ZEND_METHOD(Gtk4_GtkTextView, get_bottom_margin);
+ZEND_METHOD(Gtk4_GtkTextView, get_buffer);
+ZEND_METHOD(Gtk4_GtkTextView, get_cursor_locations);
+ZEND_METHOD(Gtk4_GtkTextView, get_cursor_visible);
+ZEND_METHOD(Gtk4_GtkTextView, get_editable);
+ZEND_METHOD(Gtk4_GtkTextView, get_gutter);
+ZEND_METHOD(Gtk4_GtkTextView, get_indent);
+ZEND_METHOD(Gtk4_GtkTextView, get_input_hints);
+ZEND_METHOD(Gtk4_GtkTextView, get_input_purpose);
+ZEND_METHOD(Gtk4_GtkTextView, get_iter_at_location);
+ZEND_METHOD(Gtk4_GtkTextView, get_iter_at_position);
+ZEND_METHOD(Gtk4_GtkTextView, get_iter_location);
+ZEND_METHOD(Gtk4_GtkTextView, get_justification);
+ZEND_METHOD(Gtk4_GtkTextView, get_left_margin);
+ZEND_METHOD(Gtk4_GtkTextView, get_line_at_y);
+ZEND_METHOD(Gtk4_GtkTextView, get_line_yrange);
+ZEND_METHOD(Gtk4_GtkTextView, get_monospace);
+ZEND_METHOD(Gtk4_GtkTextView, get_overwrite);
+ZEND_METHOD(Gtk4_GtkTextView, get_pixels_above_lines);
+ZEND_METHOD(Gtk4_GtkTextView, get_pixels_below_lines);
+ZEND_METHOD(Gtk4_GtkTextView, get_pixels_inside_wrap);
+ZEND_METHOD(Gtk4_GtkTextView, get_right_margin);
+ZEND_METHOD(Gtk4_GtkTextView, get_top_margin);
+ZEND_METHOD(Gtk4_GtkTextView, get_visible_rect);
+ZEND_METHOD(Gtk4_GtkTextView, get_wrap_mode);
+ZEND_METHOD(Gtk4_GtkTextView, im_context_filter_keypress);
+ZEND_METHOD(Gtk4_GtkTextView, move_mark_onscreen);
+ZEND_METHOD(Gtk4_GtkTextView, move_overlay);
+ZEND_METHOD(Gtk4_GtkTextView, move_visually);
+ZEND_METHOD(Gtk4_GtkTextView, place_cursor_onscreen);
+ZEND_METHOD(Gtk4_GtkTextView, remove);
+ZEND_METHOD(Gtk4_GtkTextView, reset_cursor_blink);
+ZEND_METHOD(Gtk4_GtkTextView, reset_im_context);
+ZEND_METHOD(Gtk4_GtkTextView, scroll_mark_onscreen);
+ZEND_METHOD(Gtk4_GtkTextView, scroll_to_iter);
+ZEND_METHOD(Gtk4_GtkTextView, scroll_to_mark);
+ZEND_METHOD(Gtk4_GtkTextView, set_accepts_tab);
+ZEND_METHOD(Gtk4_GtkTextView, set_bottom_margin);
+ZEND_METHOD(Gtk4_GtkTextView, set_buffer);
+ZEND_METHOD(Gtk4_GtkTextView, set_cursor_visible);
+ZEND_METHOD(Gtk4_GtkTextView, set_editable);
+ZEND_METHOD(Gtk4_GtkTextView, set_extra_menu);
+ZEND_METHOD(Gtk4_GtkTextView, set_gutter);
+ZEND_METHOD(Gtk4_GtkTextView, set_indent);
+ZEND_METHOD(Gtk4_GtkTextView, set_input_hints);
+ZEND_METHOD(Gtk4_GtkTextView, set_input_purpose);
+ZEND_METHOD(Gtk4_GtkTextView, set_justification);
+ZEND_METHOD(Gtk4_GtkTextView, set_left_margin);
+ZEND_METHOD(Gtk4_GtkTextView, set_monospace);
+ZEND_METHOD(Gtk4_GtkTextView, set_overwrite);
+ZEND_METHOD(Gtk4_GtkTextView, set_pixels_above_lines);
+ZEND_METHOD(Gtk4_GtkTextView, set_pixels_below_lines);
+ZEND_METHOD(Gtk4_GtkTextView, set_pixels_inside_wrap);
+ZEND_METHOD(Gtk4_GtkTextView, set_right_margin);
+ZEND_METHOD(Gtk4_GtkTextView, set_top_margin);
+ZEND_METHOD(Gtk4_GtkTextView, set_wrap_mode);
+ZEND_METHOD(Gtk4_GtkTextView, starts_display_line);
+ZEND_METHOD(Gtk4_GtkTextView, window_to_buffer_coords);
+ZEND_METHOD(Gtk4_GtkTextView, get_extra_menu);
+ZEND_METHOD(Gtk4_GtkTextView, vfunc_backspace);
+ZEND_METHOD(Gtk4_GtkTextView, vfunc_copy_clipboard);
+ZEND_METHOD(Gtk4_GtkTextView, vfunc_create_buffer);
+ZEND_METHOD(Gtk4_GtkTextView, vfunc_cut_clipboard);
+ZEND_METHOD(Gtk4_GtkTextView, vfunc_delete_from_cursor);
+ZEND_METHOD(Gtk4_GtkTextView, vfunc_extend_selection);
+ZEND_METHOD(Gtk4_GtkTextView, vfunc_insert_at_cursor);
+ZEND_METHOD(Gtk4_GtkTextView, vfunc_insert_emoji);
+ZEND_METHOD(Gtk4_GtkTextView, vfunc_move_cursor);
+ZEND_METHOD(Gtk4_GtkTextView, vfunc_paste_clipboard);
+ZEND_METHOD(Gtk4_GtkTextView, vfunc_set_anchor);
+ZEND_METHOD(Gtk4_GtkTextView, vfunc_toggle_overwrite);
 ZEND_METHOD(Gtk4_GtkToggleButton, __construct);
 ZEND_METHOD(Gtk4_GtkToggleButton, new_with_label);
 ZEND_METHOD(Gtk4_GtkToggleButton, new_with_mnemonic);
@@ -4757,6 +5789,7 @@ ZEND_METHOD(Gtk4_GtkWindow, set_interactive_debugging);
 ZEND_METHOD(Gtk4_GtkWindow, close);
 ZEND_METHOD(Gtk4_GtkWindow, destroy);
 ZEND_METHOD(Gtk4_GtkWindow, fullscreen);
+ZEND_METHOD(Gtk4_GtkWindow, fullscreen_on_monitor);
 ZEND_METHOD(Gtk4_GtkWindow, get_application);
 ZEND_METHOD(Gtk4_GtkWindow, get_child);
 ZEND_METHOD(Gtk4_GtkWindow, get_decorated);
@@ -6224,6 +7257,292 @@ static const zend_function_entry class_Gtk4_GtkText_methods[] = {
 	ZEND_FE_END
 };
 
+static const zend_function_entry class_Gtk4_GtkTextBuffer_methods[] = {
+	ZEND_ME(Gtk4_GtkTextBuffer, __construct, arginfo_class_Gtk4_GtkTextBuffer___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, add_mark, arginfo_class_Gtk4_GtkTextBuffer_add_mark, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, apply_tag, arginfo_class_Gtk4_GtkTextBuffer_apply_tag, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, apply_tag_by_name, arginfo_class_Gtk4_GtkTextBuffer_apply_tag_by_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, backspace, arginfo_class_Gtk4_GtkTextBuffer_backspace, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, begin_irreversible_action, arginfo_class_Gtk4_GtkTextBuffer_begin_irreversible_action, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, begin_user_action, arginfo_class_Gtk4_GtkTextBuffer_begin_user_action, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, create_mark, arginfo_class_Gtk4_GtkTextBuffer_create_mark, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, delete, arginfo_class_Gtk4_GtkTextBuffer_delete, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, delete_interactive, arginfo_class_Gtk4_GtkTextBuffer_delete_interactive, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, delete_mark, arginfo_class_Gtk4_GtkTextBuffer_delete_mark, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, delete_mark_by_name, arginfo_class_Gtk4_GtkTextBuffer_delete_mark_by_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, delete_selection, arginfo_class_Gtk4_GtkTextBuffer_delete_selection, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, end_irreversible_action, arginfo_class_Gtk4_GtkTextBuffer_end_irreversible_action, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, end_user_action, arginfo_class_Gtk4_GtkTextBuffer_end_user_action, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_bounds, arginfo_class_Gtk4_GtkTextBuffer_get_bounds, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_can_redo, arginfo_class_Gtk4_GtkTextBuffer_get_can_redo, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_can_undo, arginfo_class_Gtk4_GtkTextBuffer_get_can_undo, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_char_count, arginfo_class_Gtk4_GtkTextBuffer_get_char_count, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_enable_undo, arginfo_class_Gtk4_GtkTextBuffer_get_enable_undo, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_end_iter, arginfo_class_Gtk4_GtkTextBuffer_get_end_iter, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_has_selection, arginfo_class_Gtk4_GtkTextBuffer_get_has_selection, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_insert, arginfo_class_Gtk4_GtkTextBuffer_get_insert, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_iter_at_line, arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_line, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_iter_at_line_index, arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_line_index, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_iter_at_line_offset, arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_line_offset, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_iter_at_mark, arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_mark, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_iter_at_offset, arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_offset, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_line_count, arginfo_class_Gtk4_GtkTextBuffer_get_line_count, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_mark, arginfo_class_Gtk4_GtkTextBuffer_get_mark, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_max_undo_levels, arginfo_class_Gtk4_GtkTextBuffer_get_max_undo_levels, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_modified, arginfo_class_Gtk4_GtkTextBuffer_get_modified, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_selection_bound, arginfo_class_Gtk4_GtkTextBuffer_get_selection_bound, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_selection_bounds, arginfo_class_Gtk4_GtkTextBuffer_get_selection_bounds, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_slice, arginfo_class_Gtk4_GtkTextBuffer_get_slice, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_start_iter, arginfo_class_Gtk4_GtkTextBuffer_get_start_iter, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_tag_table, arginfo_class_Gtk4_GtkTextBuffer_get_tag_table, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_text, arginfo_class_Gtk4_GtkTextBuffer_get_text, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, insert_paintable, arginfo_class_Gtk4_GtkTextBuffer_insert_paintable, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, insert_range, arginfo_class_Gtk4_GtkTextBuffer_insert_range, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, insert_range_interactive, arginfo_class_Gtk4_GtkTextBuffer_insert_range_interactive, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, move_mark, arginfo_class_Gtk4_GtkTextBuffer_move_mark, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, move_mark_by_name, arginfo_class_Gtk4_GtkTextBuffer_move_mark_by_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, place_cursor, arginfo_class_Gtk4_GtkTextBuffer_place_cursor, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, redo, arginfo_class_Gtk4_GtkTextBuffer_redo, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, remove_all_tags, arginfo_class_Gtk4_GtkTextBuffer_remove_all_tags, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, remove_tag, arginfo_class_Gtk4_GtkTextBuffer_remove_tag, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, remove_tag_by_name, arginfo_class_Gtk4_GtkTextBuffer_remove_tag_by_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, select_range, arginfo_class_Gtk4_GtkTextBuffer_select_range, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, set_enable_undo, arginfo_class_Gtk4_GtkTextBuffer_set_enable_undo, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, set_max_undo_levels, arginfo_class_Gtk4_GtkTextBuffer_set_max_undo_levels, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, set_modified, arginfo_class_Gtk4_GtkTextBuffer_set_modified, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, undo, arginfo_class_Gtk4_GtkTextBuffer_undo, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, insert, arginfo_class_Gtk4_GtkTextBuffer_insert, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, insert_at_cursor, arginfo_class_Gtk4_GtkTextBuffer_insert_at_cursor, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, insert_interactive, arginfo_class_Gtk4_GtkTextBuffer_insert_interactive, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, insert_interactive_at_cursor, arginfo_class_Gtk4_GtkTextBuffer_insert_interactive_at_cursor, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, insert_markup, arginfo_class_Gtk4_GtkTextBuffer_insert_markup, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, set_text, arginfo_class_Gtk4_GtkTextBuffer_set_text, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_apply_tag, arginfo_class_Gtk4_GtkTextBuffer_vfunc_apply_tag, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_begin_user_action, arginfo_class_Gtk4_GtkTextBuffer_vfunc_begin_user_action, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_changed, arginfo_class_Gtk4_GtkTextBuffer_vfunc_changed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_delete_range, arginfo_class_Gtk4_GtkTextBuffer_vfunc_delete_range, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_end_user_action, arginfo_class_Gtk4_GtkTextBuffer_vfunc_end_user_action, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_insert_paintable, arginfo_class_Gtk4_GtkTextBuffer_vfunc_insert_paintable, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_insert_text, arginfo_class_Gtk4_GtkTextBuffer_vfunc_insert_text, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_mark_deleted, arginfo_class_Gtk4_GtkTextBuffer_vfunc_mark_deleted, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_mark_set, arginfo_class_Gtk4_GtkTextBuffer_vfunc_mark_set, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_modified_changed, arginfo_class_Gtk4_GtkTextBuffer_vfunc_modified_changed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_redo, arginfo_class_Gtk4_GtkTextBuffer_vfunc_redo, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_remove_tag, arginfo_class_Gtk4_GtkTextBuffer_vfunc_remove_tag, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_undo, arginfo_class_Gtk4_GtkTextBuffer_vfunc_undo, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkTextIter_methods[] = {
+	ZEND_ME(Gtk4_GtkTextIter, __construct, arginfo_class_Gtk4_GtkTextIter___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GtkTextIter, assign, arginfo_class_Gtk4_GtkTextIter_assign, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_char, arginfo_class_Gtk4_GtkTextIter_backward_char, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_chars, arginfo_class_Gtk4_GtkTextIter_backward_chars, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_cursor_position, arginfo_class_Gtk4_GtkTextIter_backward_cursor_position, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_cursor_positions, arginfo_class_Gtk4_GtkTextIter_backward_cursor_positions, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_line, arginfo_class_Gtk4_GtkTextIter_backward_line, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_lines, arginfo_class_Gtk4_GtkTextIter_backward_lines, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_search, arginfo_class_Gtk4_GtkTextIter_backward_search, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_sentence_start, arginfo_class_Gtk4_GtkTextIter_backward_sentence_start, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_sentence_starts, arginfo_class_Gtk4_GtkTextIter_backward_sentence_starts, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_to_tag_toggle, arginfo_class_Gtk4_GtkTextIter_backward_to_tag_toggle, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_visible_cursor_position, arginfo_class_Gtk4_GtkTextIter_backward_visible_cursor_position, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_visible_cursor_positions, arginfo_class_Gtk4_GtkTextIter_backward_visible_cursor_positions, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_visible_line, arginfo_class_Gtk4_GtkTextIter_backward_visible_line, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_visible_lines, arginfo_class_Gtk4_GtkTextIter_backward_visible_lines, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_visible_word_start, arginfo_class_Gtk4_GtkTextIter_backward_visible_word_start, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_visible_word_starts, arginfo_class_Gtk4_GtkTextIter_backward_visible_word_starts, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_word_start, arginfo_class_Gtk4_GtkTextIter_backward_word_start, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, backward_word_starts, arginfo_class_Gtk4_GtkTextIter_backward_word_starts, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, can_insert, arginfo_class_Gtk4_GtkTextIter_can_insert, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, compare, arginfo_class_Gtk4_GtkTextIter_compare, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, editable, arginfo_class_Gtk4_GtkTextIter_editable, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, ends_line, arginfo_class_Gtk4_GtkTextIter_ends_line, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, ends_sentence, arginfo_class_Gtk4_GtkTextIter_ends_sentence, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, ends_tag, arginfo_class_Gtk4_GtkTextIter_ends_tag, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, ends_word, arginfo_class_Gtk4_GtkTextIter_ends_word, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, equal, arginfo_class_Gtk4_GtkTextIter_equal, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_char, arginfo_class_Gtk4_GtkTextIter_forward_char, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_chars, arginfo_class_Gtk4_GtkTextIter_forward_chars, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_cursor_position, arginfo_class_Gtk4_GtkTextIter_forward_cursor_position, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_cursor_positions, arginfo_class_Gtk4_GtkTextIter_forward_cursor_positions, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_line, arginfo_class_Gtk4_GtkTextIter_forward_line, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_lines, arginfo_class_Gtk4_GtkTextIter_forward_lines, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_search, arginfo_class_Gtk4_GtkTextIter_forward_search, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_sentence_end, arginfo_class_Gtk4_GtkTextIter_forward_sentence_end, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_sentence_ends, arginfo_class_Gtk4_GtkTextIter_forward_sentence_ends, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_to_end, arginfo_class_Gtk4_GtkTextIter_forward_to_end, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_to_line_end, arginfo_class_Gtk4_GtkTextIter_forward_to_line_end, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_to_tag_toggle, arginfo_class_Gtk4_GtkTextIter_forward_to_tag_toggle, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_visible_cursor_position, arginfo_class_Gtk4_GtkTextIter_forward_visible_cursor_position, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_visible_cursor_positions, arginfo_class_Gtk4_GtkTextIter_forward_visible_cursor_positions, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_visible_line, arginfo_class_Gtk4_GtkTextIter_forward_visible_line, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_visible_lines, arginfo_class_Gtk4_GtkTextIter_forward_visible_lines, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_visible_word_end, arginfo_class_Gtk4_GtkTextIter_forward_visible_word_end, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_visible_word_ends, arginfo_class_Gtk4_GtkTextIter_forward_visible_word_ends, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_word_end, arginfo_class_Gtk4_GtkTextIter_forward_word_end, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, forward_word_ends, arginfo_class_Gtk4_GtkTextIter_forward_word_ends, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_buffer, arginfo_class_Gtk4_GtkTextIter_get_buffer, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_bytes_in_line, arginfo_class_Gtk4_GtkTextIter_get_bytes_in_line, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_char, arginfo_class_Gtk4_GtkTextIter_get_char, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_chars_in_line, arginfo_class_Gtk4_GtkTextIter_get_chars_in_line, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_line, arginfo_class_Gtk4_GtkTextIter_get_line, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_line_index, arginfo_class_Gtk4_GtkTextIter_get_line_index, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_line_offset, arginfo_class_Gtk4_GtkTextIter_get_line_offset, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_marks, arginfo_class_Gtk4_GtkTextIter_get_marks, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_offset, arginfo_class_Gtk4_GtkTextIter_get_offset, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_paintable, arginfo_class_Gtk4_GtkTextIter_get_paintable, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_slice, arginfo_class_Gtk4_GtkTextIter_get_slice, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_tags, arginfo_class_Gtk4_GtkTextIter_get_tags, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_text, arginfo_class_Gtk4_GtkTextIter_get_text, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_toggled_tags, arginfo_class_Gtk4_GtkTextIter_get_toggled_tags, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_visible_line_index, arginfo_class_Gtk4_GtkTextIter_get_visible_line_index, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_visible_line_offset, arginfo_class_Gtk4_GtkTextIter_get_visible_line_offset, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_visible_slice, arginfo_class_Gtk4_GtkTextIter_get_visible_slice, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_visible_text, arginfo_class_Gtk4_GtkTextIter_get_visible_text, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, has_tag, arginfo_class_Gtk4_GtkTextIter_has_tag, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, in_range, arginfo_class_Gtk4_GtkTextIter_in_range, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, inside_sentence, arginfo_class_Gtk4_GtkTextIter_inside_sentence, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, inside_word, arginfo_class_Gtk4_GtkTextIter_inside_word, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, is_cursor_position, arginfo_class_Gtk4_GtkTextIter_is_cursor_position, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, is_end, arginfo_class_Gtk4_GtkTextIter_is_end, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, is_start, arginfo_class_Gtk4_GtkTextIter_is_start, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, order, arginfo_class_Gtk4_GtkTextIter_order, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, set_line, arginfo_class_Gtk4_GtkTextIter_set_line, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, set_line_index, arginfo_class_Gtk4_GtkTextIter_set_line_index, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, set_line_offset, arginfo_class_Gtk4_GtkTextIter_set_line_offset, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, set_offset, arginfo_class_Gtk4_GtkTextIter_set_offset, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, set_visible_line_index, arginfo_class_Gtk4_GtkTextIter_set_visible_line_index, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, set_visible_line_offset, arginfo_class_Gtk4_GtkTextIter_set_visible_line_offset, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, starts_line, arginfo_class_Gtk4_GtkTextIter_starts_line, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, starts_sentence, arginfo_class_Gtk4_GtkTextIter_starts_sentence, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, starts_tag, arginfo_class_Gtk4_GtkTextIter_starts_tag, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, starts_word, arginfo_class_Gtk4_GtkTextIter_starts_word, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, toggles_tag, arginfo_class_Gtk4_GtkTextIter_toggles_tag, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkTextMark_methods[] = {
+	ZEND_ME(Gtk4_GtkTextMark, __construct, arginfo_class_Gtk4_GtkTextMark___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextMark, get_buffer, arginfo_class_Gtk4_GtkTextMark_get_buffer, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextMark, get_deleted, arginfo_class_Gtk4_GtkTextMark_get_deleted, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextMark, get_left_gravity, arginfo_class_Gtk4_GtkTextMark_get_left_gravity, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextMark, get_name, arginfo_class_Gtk4_GtkTextMark_get_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextMark, get_visible, arginfo_class_Gtk4_GtkTextMark_get_visible, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextMark, set_visible, arginfo_class_Gtk4_GtkTextMark_set_visible, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkTextTag_methods[] = {
+	ZEND_ME(Gtk4_GtkTextTag, __construct, arginfo_class_Gtk4_GtkTextTag___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextTag, changed, arginfo_class_Gtk4_GtkTextTag_changed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextTag, get_priority, arginfo_class_Gtk4_GtkTextTag_get_priority, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextTag, set_priority, arginfo_class_Gtk4_GtkTextTag_set_priority, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkTextTagTable_methods[] = {
+	ZEND_ME(Gtk4_GtkTextTagTable, __construct, arginfo_class_Gtk4_GtkTextTagTable___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextTagTable, add, arginfo_class_Gtk4_GtkTextTagTable_add, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextTagTable, foreach, arginfo_class_Gtk4_GtkTextTagTable_foreach, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextTagTable, get_size, arginfo_class_Gtk4_GtkTextTagTable_get_size, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextTagTable, lookup, arginfo_class_Gtk4_GtkTextTagTable_lookup, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextTagTable, remove, arginfo_class_Gtk4_GtkTextTagTable_remove, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkTextView_methods[] = {
+	ZEND_ME(Gtk4_GtkTextView, __construct, arginfo_class_Gtk4_GtkTextView___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, new_with_buffer, arginfo_class_Gtk4_GtkTextView_new_with_buffer, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GtkTextView, add_overlay, arginfo_class_Gtk4_GtkTextView_add_overlay, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, backward_display_line, arginfo_class_Gtk4_GtkTextView_backward_display_line, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, backward_display_line_start, arginfo_class_Gtk4_GtkTextView_backward_display_line_start, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, buffer_to_window_coords, arginfo_class_Gtk4_GtkTextView_buffer_to_window_coords, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, forward_display_line, arginfo_class_Gtk4_GtkTextView_forward_display_line, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, forward_display_line_end, arginfo_class_Gtk4_GtkTextView_forward_display_line_end, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_accepts_tab, arginfo_class_Gtk4_GtkTextView_get_accepts_tab, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_bottom_margin, arginfo_class_Gtk4_GtkTextView_get_bottom_margin, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_buffer, arginfo_class_Gtk4_GtkTextView_get_buffer, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_cursor_locations, arginfo_class_Gtk4_GtkTextView_get_cursor_locations, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_cursor_visible, arginfo_class_Gtk4_GtkTextView_get_cursor_visible, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_editable, arginfo_class_Gtk4_GtkTextView_get_editable, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_gutter, arginfo_class_Gtk4_GtkTextView_get_gutter, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_indent, arginfo_class_Gtk4_GtkTextView_get_indent, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_input_hints, arginfo_class_Gtk4_GtkTextView_get_input_hints, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_input_purpose, arginfo_class_Gtk4_GtkTextView_get_input_purpose, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_iter_at_location, arginfo_class_Gtk4_GtkTextView_get_iter_at_location, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_iter_at_position, arginfo_class_Gtk4_GtkTextView_get_iter_at_position, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_iter_location, arginfo_class_Gtk4_GtkTextView_get_iter_location, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_justification, arginfo_class_Gtk4_GtkTextView_get_justification, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_left_margin, arginfo_class_Gtk4_GtkTextView_get_left_margin, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_line_at_y, arginfo_class_Gtk4_GtkTextView_get_line_at_y, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_line_yrange, arginfo_class_Gtk4_GtkTextView_get_line_yrange, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_monospace, arginfo_class_Gtk4_GtkTextView_get_monospace, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_overwrite, arginfo_class_Gtk4_GtkTextView_get_overwrite, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_pixels_above_lines, arginfo_class_Gtk4_GtkTextView_get_pixels_above_lines, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_pixels_below_lines, arginfo_class_Gtk4_GtkTextView_get_pixels_below_lines, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_pixels_inside_wrap, arginfo_class_Gtk4_GtkTextView_get_pixels_inside_wrap, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_right_margin, arginfo_class_Gtk4_GtkTextView_get_right_margin, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_top_margin, arginfo_class_Gtk4_GtkTextView_get_top_margin, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_visible_rect, arginfo_class_Gtk4_GtkTextView_get_visible_rect, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_wrap_mode, arginfo_class_Gtk4_GtkTextView_get_wrap_mode, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, im_context_filter_keypress, arginfo_class_Gtk4_GtkTextView_im_context_filter_keypress, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, move_mark_onscreen, arginfo_class_Gtk4_GtkTextView_move_mark_onscreen, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, move_overlay, arginfo_class_Gtk4_GtkTextView_move_overlay, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, move_visually, arginfo_class_Gtk4_GtkTextView_move_visually, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, place_cursor_onscreen, arginfo_class_Gtk4_GtkTextView_place_cursor_onscreen, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, remove, arginfo_class_Gtk4_GtkTextView_remove, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, reset_cursor_blink, arginfo_class_Gtk4_GtkTextView_reset_cursor_blink, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, reset_im_context, arginfo_class_Gtk4_GtkTextView_reset_im_context, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, scroll_mark_onscreen, arginfo_class_Gtk4_GtkTextView_scroll_mark_onscreen, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, scroll_to_iter, arginfo_class_Gtk4_GtkTextView_scroll_to_iter, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, scroll_to_mark, arginfo_class_Gtk4_GtkTextView_scroll_to_mark, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_accepts_tab, arginfo_class_Gtk4_GtkTextView_set_accepts_tab, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_bottom_margin, arginfo_class_Gtk4_GtkTextView_set_bottom_margin, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_buffer, arginfo_class_Gtk4_GtkTextView_set_buffer, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_cursor_visible, arginfo_class_Gtk4_GtkTextView_set_cursor_visible, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_editable, arginfo_class_Gtk4_GtkTextView_set_editable, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_extra_menu, arginfo_class_Gtk4_GtkTextView_set_extra_menu, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_gutter, arginfo_class_Gtk4_GtkTextView_set_gutter, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_indent, arginfo_class_Gtk4_GtkTextView_set_indent, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_input_hints, arginfo_class_Gtk4_GtkTextView_set_input_hints, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_input_purpose, arginfo_class_Gtk4_GtkTextView_set_input_purpose, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_justification, arginfo_class_Gtk4_GtkTextView_set_justification, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_left_margin, arginfo_class_Gtk4_GtkTextView_set_left_margin, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_monospace, arginfo_class_Gtk4_GtkTextView_set_monospace, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_overwrite, arginfo_class_Gtk4_GtkTextView_set_overwrite, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_pixels_above_lines, arginfo_class_Gtk4_GtkTextView_set_pixels_above_lines, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_pixels_below_lines, arginfo_class_Gtk4_GtkTextView_set_pixels_below_lines, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_pixels_inside_wrap, arginfo_class_Gtk4_GtkTextView_set_pixels_inside_wrap, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_right_margin, arginfo_class_Gtk4_GtkTextView_set_right_margin, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_top_margin, arginfo_class_Gtk4_GtkTextView_set_top_margin, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, set_wrap_mode, arginfo_class_Gtk4_GtkTextView_set_wrap_mode, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, starts_display_line, arginfo_class_Gtk4_GtkTextView_starts_display_line, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, window_to_buffer_coords, arginfo_class_Gtk4_GtkTextView_window_to_buffer_coords, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, get_extra_menu, arginfo_class_Gtk4_GtkTextView_get_extra_menu, ZEND_ACC_PUBLIC)
+	ZEND_RAW_FENTRY("get_hadjustment", zim_Gtk4_GtkScrollable_get_hadjustment, arginfo_class_Gtk4_GtkTextView_get_hadjustment, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_hscroll_policy", zim_Gtk4_GtkScrollable_get_hscroll_policy, arginfo_class_Gtk4_GtkTextView_get_hscroll_policy, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_vadjustment", zim_Gtk4_GtkScrollable_get_vadjustment, arginfo_class_Gtk4_GtkTextView_get_vadjustment, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_vscroll_policy", zim_Gtk4_GtkScrollable_get_vscroll_policy, arginfo_class_Gtk4_GtkTextView_get_vscroll_policy, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("set_hadjustment", zim_Gtk4_GtkScrollable_set_hadjustment, arginfo_class_Gtk4_GtkTextView_set_hadjustment, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("set_hscroll_policy", zim_Gtk4_GtkScrollable_set_hscroll_policy, arginfo_class_Gtk4_GtkTextView_set_hscroll_policy, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("set_vadjustment", zim_Gtk4_GtkScrollable_set_vadjustment, arginfo_class_Gtk4_GtkTextView_set_vadjustment, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("set_vscroll_policy", zim_Gtk4_GtkScrollable_set_vscroll_policy, arginfo_class_Gtk4_GtkTextView_set_vscroll_policy, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_ME(Gtk4_GtkTextView, vfunc_backspace, arginfo_class_Gtk4_GtkTextView_vfunc_backspace, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, vfunc_copy_clipboard, arginfo_class_Gtk4_GtkTextView_vfunc_copy_clipboard, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, vfunc_create_buffer, arginfo_class_Gtk4_GtkTextView_vfunc_create_buffer, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, vfunc_cut_clipboard, arginfo_class_Gtk4_GtkTextView_vfunc_cut_clipboard, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, vfunc_delete_from_cursor, arginfo_class_Gtk4_GtkTextView_vfunc_delete_from_cursor, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, vfunc_extend_selection, arginfo_class_Gtk4_GtkTextView_vfunc_extend_selection, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, vfunc_insert_at_cursor, arginfo_class_Gtk4_GtkTextView_vfunc_insert_at_cursor, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, vfunc_insert_emoji, arginfo_class_Gtk4_GtkTextView_vfunc_insert_emoji, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, vfunc_move_cursor, arginfo_class_Gtk4_GtkTextView_vfunc_move_cursor, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, vfunc_paste_clipboard, arginfo_class_Gtk4_GtkTextView_vfunc_paste_clipboard, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, vfunc_set_anchor, arginfo_class_Gtk4_GtkTextView_vfunc_set_anchor, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextView, vfunc_toggle_overwrite, arginfo_class_Gtk4_GtkTextView_vfunc_toggle_overwrite, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
 static const zend_function_entry class_Gtk4_GtkToggleButton_methods[] = {
 	ZEND_ME(Gtk4_GtkToggleButton, __construct, arginfo_class_Gtk4_GtkToggleButton___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkToggleButton, new_with_label, arginfo_class_Gtk4_GtkToggleButton_new_with_label, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
@@ -6415,6 +7734,7 @@ static const zend_function_entry class_Gtk4_GtkWindow_methods[] = {
 	ZEND_ME(Gtk4_GtkWindow, close, arginfo_class_Gtk4_GtkWindow_close, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWindow, destroy, arginfo_class_Gtk4_GtkWindow_destroy, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWindow, fullscreen, arginfo_class_Gtk4_GtkWindow_fullscreen, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkWindow, fullscreen_on_monitor, arginfo_class_Gtk4_GtkWindow_fullscreen_on_monitor, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWindow, get_application, arginfo_class_Gtk4_GtkWindow_get_application, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWindow, get_child, arginfo_class_Gtk4_GtkWindow_get_child, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWindow, get_decorated, arginfo_class_Gtk4_GtkWindow_get_decorated, ZEND_ACC_PUBLIC)
@@ -8589,6 +9909,16 @@ static zend_class_entry *register_class_Gtk4_GtkText(zend_class_entry *class_ent
 	return class_entry;
 }
 
+static zend_class_entry *register_class_Gtk4_GtkTextBuffer(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkTextBuffer", class_Gtk4_GtkTextBuffer_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
 static zend_class_entry *register_class_Gtk4_GtkTextDirection(void)
 {
 	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GtkTextDirection", IS_LONG, NULL);
@@ -8604,6 +9934,116 @@ static zend_class_entry *register_class_Gtk4_GtkTextDirection(void)
 	zval enum_case_Rtl_value;
 	ZVAL_LONG(&enum_case_Rtl_value, 2);
 	zend_enum_add_case_cstr(class_entry, "Rtl", &enum_case_Rtl_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkTextIter(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkTextIter", class_Gtk4_GtkTextIter_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkTextMark(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkTextMark", class_Gtk4_GtkTextMark_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkTextSearchFlags(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkTextSearchFlags", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_VISIBLE_ONLY_value;
+	ZVAL_LONG(&const_VISIBLE_ONLY_value, 1);
+	zend_string *const_VISIBLE_ONLY_name = zend_string_init_interned("VISIBLE_ONLY", sizeof("VISIBLE_ONLY") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_VISIBLE_ONLY_name, &const_VISIBLE_ONLY_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_VISIBLE_ONLY_name);
+
+	zval const_TEXT_ONLY_value;
+	ZVAL_LONG(&const_TEXT_ONLY_value, 2);
+	zend_string *const_TEXT_ONLY_name = zend_string_init_interned("TEXT_ONLY", sizeof("TEXT_ONLY") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_TEXT_ONLY_name, &const_TEXT_ONLY_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_TEXT_ONLY_name);
+
+	zval const_CASE_INSENSITIVE_value;
+	ZVAL_LONG(&const_CASE_INSENSITIVE_value, 4);
+	zend_string *const_CASE_INSENSITIVE_name = zend_string_init_interned("CASE_INSENSITIVE", sizeof("CASE_INSENSITIVE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_CASE_INSENSITIVE_name, &const_CASE_INSENSITIVE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_CASE_INSENSITIVE_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkTextTag(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkTextTag", class_Gtk4_GtkTextTag_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkTextTagTable(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkTextTagTable", class_Gtk4_GtkTextTagTable_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkTextView(zend_class_entry *class_entry_Gtk4_GtkWidget, zend_class_entry *class_entry_Gtk4_GtkScrollable)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkTextView", class_Gtk4_GtkTextView_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkWidget, 0);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_GtkScrollable);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkTextWindowType(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GtkTextWindowType", IS_LONG, NULL);
+
+	zval enum_case_Widget_value;
+	ZVAL_LONG(&enum_case_Widget_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Widget", &enum_case_Widget_value);
+
+	zval enum_case_Text_value;
+	ZVAL_LONG(&enum_case_Text_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Text", &enum_case_Text_value);
+
+	zval enum_case_Left_value;
+	ZVAL_LONG(&enum_case_Left_value, 3);
+	zend_enum_add_case_cstr(class_entry, "Left", &enum_case_Left_value);
+
+	zval enum_case_Right_value;
+	ZVAL_LONG(&enum_case_Right_value, 4);
+	zend_enum_add_case_cstr(class_entry, "Right", &enum_case_Right_value);
+
+	zval enum_case_Top_value;
+	ZVAL_LONG(&enum_case_Top_value, 5);
+	zend_enum_add_case_cstr(class_entry, "Top", &enum_case_Top_value);
+
+	zval enum_case_Bottom_value;
+	ZVAL_LONG(&enum_case_Bottom_value, 6);
+	zend_enum_add_case_cstr(class_entry, "Bottom", &enum_case_Bottom_value);
 
 	return class_entry;
 }
@@ -8646,6 +10086,29 @@ static zend_class_entry *register_class_Gtk4_GtkWindow(zend_class_entry *class_e
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkWindow", class_Gtk4_GtkWindow_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkWidget, 0);
 	zend_class_implements(class_entry, 1, class_entry_Gtk4_GtkRoot);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkWrapMode(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GtkWrapMode", IS_LONG, NULL);
+
+	zval enum_case_None_value;
+	ZVAL_LONG(&enum_case_None_value, 0);
+	zend_enum_add_case_cstr(class_entry, "None", &enum_case_None_value);
+
+	zval enum_case_Char_value;
+	ZVAL_LONG(&enum_case_Char_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Char", &enum_case_Char_value);
+
+	zval enum_case_Word_value;
+	ZVAL_LONG(&enum_case_Word_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Word", &enum_case_Word_value);
+
+	zval enum_case_WordChar_value;
+	ZVAL_LONG(&enum_case_WordChar_value, 3);
+	zend_enum_add_case_cstr(class_entry, "WordChar", &enum_case_WordChar_value);
 
 	return class_entry;
 }

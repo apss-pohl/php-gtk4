@@ -1041,6 +1041,7 @@ final class Generator
 
     /**
      * @param list<string> $vfuncPre lines for a native vfunc_<name>() method (after `self`)
+     * @param list<array>|null $presetOuts out mappings replacing the mapped ones
      * @return array{string, string, string}|null php name, stub method, cpp method
      */
     private function method(
@@ -1144,13 +1145,22 @@ final class Generator
             foreach ($p['pre'] as $l) {
                 $lines[] = '  ' . $l;
             }
-            $callArgs[] = $p['carg'];
         }
         foreach ($outs as $o) {
             $lines[] = $o['kind'] === 'boxed'
                 ? "  {$o['ctype']} {$o['name']}{};"
                 : "  {$o['ctype']} {$o['name']} = {$o['init']};";
-            $callArgs[] = $o['arg'];
+        }
+        // The C call keeps GIR's parameter order: out parameters are not necessarily
+        // trailing (gtk_text_view_get_iter_at_position(self, &iter, &trailing, x, y)).
+        // Entries without a position (a vfunc's presetOuts) stay behind the ins.
+        $ordered = array_merge(
+            array_map(fn($p) => ['pos' => $p['pos'] ?? PHP_INT_MAX, 'carg' => $p['carg']], $ins),
+            array_map(fn($o) => ['pos' => $o['pos'] ?? PHP_INT_MAX, 'carg' => $o['arg']], $outs),
+        );
+        usort($ordered, fn($a, $b) => $a['pos'] <=> $b['pos']);
+        foreach ($ordered as $e) {
+            $callArgs[] = $e['carg'];
         }
         if ($f->throws) {
             $lines[] = '  GError *error = nullptr;';
@@ -1368,10 +1378,15 @@ final class Generator
                 ? "  auto *value = static_cast<$ctype *>(data);\n" . implode("\n", $writes) . "\n"
                 : "  (void)data;\n  (void)field;\n  (void)v;\n")
             . "  return false;\n}\n\n}  // namespace\n\n";
+        // A record whose values point into a GObject (BOXED_OWNERS): the handle refs that
+        // owner so the value cannot dangle when the script drops it (core/boxed).
+        $ownerFn = \PhpGtk4\Gen\BOXED_OWNERS[$n->qname()] ?? null;
+        $owner = $ownerFn === null ? '' : ",\n      .owner = [](gpointer d) {"
+            . " return reinterpret_cast<GObject *>($ownerFn(static_cast<$ctype *>(d))); }";
         $registration = "namespace phpgtk {\n// MINIT: bind the PHP class to $typeMacro with its field table.\n"
             . "void register_{$php}(zend_class_entry *ce) {\n"
             . "  register_boxed(BoxedClass{.type = $typeMacro, .ce = ce, .fields = fields, .read = read,"
-            . " .write = write});\n"
+            . " .write = write$owner});\n"
             . "}\n}  // namespace phpgtk\n";
 
         // ---- stub
@@ -1392,6 +1407,8 @@ final class Generator
         foreach (
             ['enum_' => '"core/enums.h"', 'throw_gerror' => '"core/gerror.h"',
                 'gerror_from_php' => '"core/gerror.h"', 'strv_' => '"core/collections.h"',
+                'glist_to_php' => '"core/collections.h"', 'gslist_to_php' => '"core/collections.h"',
+                'gptrarray_to_php' => '"core/collections.h"',
                 'variant' => '"core/variant.h"', 'std::array' => '<array>'] as $needle => $inc
         ) {
             if (str_contains($code, $needle) && !in_array($inc, $includes, true)) {

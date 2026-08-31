@@ -56,6 +56,11 @@ ZEND_METHOD(Gtk4_GtkScrollable, set_hscroll_policy);
 ZEND_METHOD(Gtk4_GtkScrollable, set_vadjustment);
 ZEND_METHOD(Gtk4_GtkScrollable, set_vscroll_policy);
 void register_vfuncs_GtkSorter();
+void register_vfuncs_GtkTextBuffer();
+namespace phpgtk {
+void register_GtkTextIter(zend_class_entry *ce);
+}  // namespace phpgtk
+void register_vfuncs_GtkTextView();
 void register_vfuncs_GtkWidget();
 void register_vfuncs_GtkWindow();
 namespace phpgtk {

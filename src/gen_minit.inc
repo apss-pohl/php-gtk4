@@ -44,6 +44,9 @@
   phpgtk::register_flags(GTK_TYPE_STATE_FLAGS, register_class_Gtk4_GtkStateFlags());
   phpgtk::register_enum(GTK_TYPE_STRING_FILTER_MATCH_MODE, register_class_Gtk4_GtkStringFilterMatchMode());
   phpgtk::register_enum(GTK_TYPE_TEXT_DIRECTION, register_class_Gtk4_GtkTextDirection());
+  phpgtk::register_flags(GTK_TYPE_TEXT_SEARCH_FLAGS, register_class_Gtk4_GtkTextSearchFlags());
+  phpgtk::register_enum(GTK_TYPE_TEXT_WINDOW_TYPE, register_class_Gtk4_GtkTextWindowType());
+  phpgtk::register_enum(GTK_TYPE_WRAP_MODE, register_class_Gtk4_GtkWrapMode());
   phpgtk::register_enum(PANGO_TYPE_ELLIPSIZE_MODE, register_class_Gtk4_PangoEllipsizeMode());
   phpgtk::register_flags(PANGO_TYPE_FONT_MASK, register_class_Gtk4_PangoFontMask());
   phpgtk::register_enum(PANGO_TYPE_GRAVITY, register_class_Gtk4_PangoGravity());
@@ -65,6 +68,7 @@
   phpgtk::register_flags(GDK_TYPE_PAINTABLE_FLAGS, register_class_Gtk4_GdkPaintableFlags());
   phpgtk::register_enum(GDK_TYPE_SCROLL_DIRECTION, register_class_Gtk4_GdkScrollDirection());
   phpgtk::register_enum(GDK_TYPE_SCROLL_UNIT, register_class_Gtk4_GdkScrollUnit());
+  phpgtk::register_enum(GDK_TYPE_SUBPIXEL_LAYOUT, register_class_Gtk4_GdkSubpixelLayout());
   phpgtk::register_enum(GDK_TYPE_TOUCHPAD_GESTURE_PHASE, register_class_Gtk4_GdkTouchpadGesturePhase());
 // --- interfaces and classes, parents first
   zend_class_entry *ce_GtkAdjustment = register_class_Gtk4_GtkAdjustment(ce_GObject);
@@ -135,6 +139,16 @@
   phpgtk::register_interface("GtkStyleProvider", ce_GtkStyleProvider, GTK_TYPE_STYLE_PROVIDER);
   zend_class_entry *ce_GtkStyleProviderObject = register_class_Gtk4_GtkStyleProviderObject(ce_GObject, ce_GtkStyleProvider);
   phpgtk::register_interface_fallback(GTK_TYPE_STYLE_PROVIDER, ce_GtkStyleProviderObject);
+  zend_class_entry *ce_GtkTextBuffer = register_class_Gtk4_GtkTextBuffer(ce_GObject);
+  phpgtk::register_class("GtkTextBuffer", ce_GtkTextBuffer, GTK_TYPE_TEXT_BUFFER);
+  zend_class_entry *ce_GtkTextIter = register_class_Gtk4_GtkTextIter();
+  phpgtk::register_GtkTextIter(ce_GtkTextIter);
+  zend_class_entry *ce_GtkTextMark = register_class_Gtk4_GtkTextMark(ce_GObject);
+  phpgtk::register_class("GtkTextMark", ce_GtkTextMark, GTK_TYPE_TEXT_MARK);
+  zend_class_entry *ce_GtkTextTag = register_class_Gtk4_GtkTextTag(ce_GObject);
+  phpgtk::register_class("GtkTextTag", ce_GtkTextTag, GTK_TYPE_TEXT_TAG);
+  zend_class_entry *ce_GtkTextTagTable = register_class_Gtk4_GtkTextTagTable(ce_GObject);
+  phpgtk::register_class("GtkTextTagTable", ce_GtkTextTagTable, GTK_TYPE_TEXT_TAG_TABLE);
   zend_class_entry *ce_GtkWidget = register_class_Gtk4_GtkWidget(ce_GObject);
   phpgtk::register_class("GtkWidget", ce_GtkWidget, GTK_TYPE_WIDGET);
   zend_class_entry *ce_GtkWindow = register_class_Gtk4_GtkWindow(ce_GtkWidget, ce_GtkRoot);
@@ -177,6 +191,8 @@
   phpgtk::register_class("GTask", ce_GTask, G_TYPE_TASK);
   zend_class_entry *ce_GdkDisplay = register_class_Gtk4_GdkDisplay(ce_GObject);
   phpgtk::register_class("GdkDisplay", ce_GdkDisplay, GDK_TYPE_DISPLAY);
+  zend_class_entry *ce_GdkMonitor = register_class_Gtk4_GdkMonitor(ce_GObject);
+  phpgtk::register_class("GdkMonitor", ce_GdkMonitor, GDK_TYPE_MONITOR);
   zend_class_entry *ce_GdkPaintable = register_class_Gtk4_GdkPaintable();
   phpgtk::register_interface("GdkPaintable", ce_GdkPaintable, GDK_TYPE_PAINTABLE);
   zend_class_entry *ce_GdkPaintableObject = register_class_Gtk4_GdkPaintableObject(ce_GObject, ce_GdkPaintable);
@@ -279,6 +295,8 @@
   phpgtk::register_class("GtkStringList", ce_GtkStringList, GTK_TYPE_STRING_LIST);
   zend_class_entry *ce_GtkText = register_class_Gtk4_GtkText(ce_GtkWidget, ce_GtkEditable);
   phpgtk::register_class("GtkText", ce_GtkText, GTK_TYPE_TEXT);
+  zend_class_entry *ce_GtkTextView = register_class_Gtk4_GtkTextView(ce_GtkWidget, ce_GtkScrollable);
+  phpgtk::register_class("GtkTextView", ce_GtkTextView, GTK_TYPE_TEXT_VIEW);
   zend_class_entry *ce_GtkToggleButton = register_class_Gtk4_GtkToggleButton(ce_GtkButton);
   phpgtk::register_class("GtkToggleButton", ce_GtkToggleButton, GTK_TYPE_TOGGLE_BUTTON);
   zend_class_entry *ce_GtkViewport = register_class_Gtk4_GtkViewport(ce_GtkWidget, ce_GtkScrollable);
@@ -299,6 +317,8 @@
   register_vfuncs_GtkRange();
   register_vfuncs_GtkScale();
   register_vfuncs_GtkSorter();
+  register_vfuncs_GtkTextBuffer();
+  register_vfuncs_GtkTextView();
   register_vfuncs_GtkWidget();
   register_vfuncs_GtkWindow();
   register_vfuncs_GAction();

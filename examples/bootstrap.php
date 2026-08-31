@@ -91,7 +91,7 @@ final class Demo
         ],
         'Styling' => [
             'GtkCssProvider', 'GtkStyleProvider', 'GtkStyleProviderPriority', 'GtkCssSection',
-            'GdkDisplay',
+            'GdkDisplay', 'GdkMonitor',
         ],
         'Layout' => [
             'GtkGrid', 'GtkPaned', 'GtkFrame', 'GtkOverlay', 'GtkRevealer', 'GtkRevealerTransitionType',
@@ -108,6 +108,10 @@ final class Demo
         'Text input' => [
             'GtkEntry', 'GtkEditable', 'GtkEntryBuffer', 'GtkPasswordEntry', 'GtkEntryIconPosition',
             'GtkInputHints', 'GtkInputPurpose', 'GtkImageType', 'GtkAccessiblePlatformState',
+        ],
+        'Text view' => [
+            'GtkTextView', 'GtkTextBuffer', 'GtkTextIter', 'GtkTextMark', 'GtkTextTag',
+            'GtkTextTagTable', 'GtkWrapMode',
         ],
         'Buttons & ranges' => [
             'GtkCheckButton', 'GtkToggleButton', 'GtkSpinButton', 'GtkSpinButtonUpdatePolicy', 'GtkSpinType',

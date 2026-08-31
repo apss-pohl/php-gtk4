@@ -3,3 +3,4 @@
 #   Ns.Type.param property
 # Everything else matches by name (`_` -> `-`); gen/report.md lists what does not match.
 Gtk.Label.str label
+Gtk.TextBuffer.table tag-table

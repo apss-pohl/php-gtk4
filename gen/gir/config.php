@@ -17,6 +17,15 @@ const GTK_FLOOR = '4.14';           // API newer than this is skipped in this wa
 const PHP_NAMESPACE = 'Gtk4';
 const INT_TYPES = '/^g(u?int(8|16|32|64)?|size|ssize|u?long|u?short|unichar|u?char)$/';
 
+/**
+ * Boxed records whose values point into a GObject: qname -> the C accessor for that owner.
+ * The generated registration hands it to core/boxed, and the handle refs the owner for its
+ * lifetime - a GtkTextIter whose buffer the script dropped dangled into freed memory.
+ */
+const BOXED_OWNERS = [
+    'Gtk.TextIter' => 'gtk_text_iter_get_buffer',
+];
+
 const NS_GIR = 'http://www.gtk.org/introspection/core/1.0';
 const NS_C = 'http://www.gtk.org/introspection/c/1.0';
 const NS_GLIB = 'http://www.gtk.org/introspection/glib/1.0';

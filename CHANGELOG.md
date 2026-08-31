@@ -57,6 +57,21 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   (including one whose stream PHP closed under it) - both crash shapes that would take the
   PHPUnit runner down with them rather than failing a test.
 
+- Wave 6 — **text** (docs/PLAN.md §3): `GtkTextView`, `GtkTextBuffer`, `GtkTextIter`,
+  `GtkTextMark`, `GtkTextTag`, `GtkTextTagTable` and `GtkWrapMode` (+ the search-flags and
+  window-type enums the signatures name). `GtkTextIter` is the first boxed record with a real
+  method surface, and it **holds its buffer**: a boxed handle may now own a reference to the object
+  it points into (`BOXED_OWNERS` in `gen/gir/config.php`), because an iter kept after the script
+  dropped the buffer read freed memory. The insert family (`insert()`, `insert_at_cursor()`,
+  `insert_markup()`, `set_text()` and the interactive pair) takes a **byte count that must lie
+  inside the string and end on a UTF-8 character boundary** — GTK reads exactly `len` bytes and
+  trusts them — defaulting to -1, the whole string, wherever the count is the trailing parameter.
+  `GtkTextView::get_extra_menu()` is declared `?GMenuModel`: the 4.14 GIR omits the nullable its
+  own documentation states.
+- `GdkMonitor` (wave 8, pulled in by the above): `GdkDisplay::get_monitors()` items wrap to real
+  monitors — geometry, scale, refresh rate, connector, `GdkSubpixelLayout` — and
+  `GtkWindow::fullscreen_on_monitor()` left the skip list.
+
 - Wave 5 — **dialogs** (docs/PLAN.md §3): `GtkFileDialog`, `GtkFileFilter`, `GtkColorDialog`,
   `GtkFontDialog` and `GtkAboutDialog`, with `PangoFontDescription` (a boxed value: clone copies,
   `equal()` compares), `GtkLicense` and the Pango enums a description uses. GTK 4.10's dialogs are

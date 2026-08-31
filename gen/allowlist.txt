@@ -162,3 +162,19 @@ Gtk.AboutDialog
 # The font a GtkFontDialog answers with (a boxed record); the face/family/map/language side of
 # that API stays unbound - a description is what an application sets on a widget.
 Pango.FontDescription
+
+# Wave 6 (text, PLAN.md §3): the multi-line text stack - GtkTextView over a GtkTextBuffer,
+# positions as GtkTextIter (a boxed record with many methods, core/boxed), stable positions
+# as GtkTextMark, formatting as GtkTextTag in a GtkTextTagTable. GtkWrapMode is the view's
+# wrap policy; the other enums its signatures keep are pulled in automatically.
+Gtk.TextView
+Gtk.TextBuffer
+Gtk.TextIter
+Gtk.TextMark
+Gtk.TextTag
+Gtk.TextTagTable
+Gtk.WrapMode
+
+# Wave 8 (Gdk, partial): the monitor behind GdkDisplay::get_monitors() - geometry and
+# identity of each output, and the type GtkWindow::fullscreen_on_monitor() needs in scope.
+Gdk.Monitor

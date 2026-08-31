@@ -159,9 +159,26 @@ draft, hand-write via overrides / promotion where the project needs more.
       Generator fixes it forced: an enum case may not start with a digit (`GTK_LICENSE_0BSD` →
       `Bsd0`), the emitted return local is `phpgtk_ret` (a parameter called `$result` collided),
       and `ci.sh` reconfigures when the source list changes.
-- [ ] **Waves 3b, 6–8** as listed in PLAN.md §3 (the feature items in §7 below point at their
+- [x] **Wave 6 — text** (2026-08-31): `GtkTextView`, `GtkTextBuffer`, `GtkTextIter` (the first
+      boxed record with a real method surface), `GtkTextMark`, `GtkTextTag`, `GtkTextTagTable`,
+      `GtkWrapMode` (+ the search-flags/window-type enums the signatures keep). Three decisions:
+      **a boxed handle can hold its owner** — `BoxedClass::owner` (gen/gir/config.php
+      `BOXED_OWNERS`) refs the iter's buffer for the handle's lifetime, because a kept iter
+      dangled into freed memory once the script dropped the buffer (a *stale* iter over a live
+      buffer is only GTK's g_warning and survives); the insert family's **byte counts are
+      guarded** (`gen/overrides/Gtk.TextBuffer.*`: `$len = -1` default where trailing, and a
+      given count must lie inside the string on a UTF-8 character boundary — GTK reads exactly
+      `len` bytes and trusts them); and `GtkTextView::get_extra_menu()` is declared
+      `?GMenuModel` in an override (the 4.14 GIR misses the nullable its own doc states).
+      Generator fixes it forced: the emitted C call keeps **GIR's parameter order** (out
+      parameters are not necessarily trailing — `gtk_text_view_get_iter_at_position(self, &iter,
+      &trailing, x, y)` was called with the ins first), and the boxed emitter includes the
+      collection converters (`GtkTextIter::get_marks()` is a `GSList`). `GdkMonitor` (wave 8)
+      came along: `GdkDisplay::get_monitors()` items wrap to real monitors and
+      `GtkWindow::fullscreen_on_monitor()` fell out of the skip list.
+- [ ] **Waves 3b, 7–8** as listed in PLAN.md §3 (the feature items in §7 below point at their
       wave); each merged only with the full pipeline green and the map's status column regenerated.
-      Next: the fastlane port spike (one screen on php-gtk4) before wave 5.
+      Next: the fastlane port spike (one screen on php-gtk4).
 
 ## 7. GTK4 feature surface (what the binding still has to expose to deliver GTK4's benefits)
 

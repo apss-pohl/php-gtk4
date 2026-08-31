@@ -146,6 +146,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `property dmabuf-formats` — property type Gdk.DmabufFormats not mappable
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## GdkMonitor
+
+- `__construct` — skip.txt: GDK owns monitors (GdkDisplay::get_monitors()); one made with `new` has no backend behind it and its non-null get_display() would lie
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## GdkPaintable
 
 - `new_empty` — static function on an interface (PHP interfaces have no bodies)
@@ -391,6 +396,46 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `property attributes` — property type Pango.AttrList not mappable
 - `property tabs` — property type Pango.TabArray not mappable
 
+## GtkTextBuffer
+
+- `add_selection_clipboard` — parameter `clipboard` of type Gdk.Clipboard
+- `copy_clipboard` — parameter `clipboard` of type Gdk.Clipboard
+- `create_child_anchor` — return type Gtk.TextChildAnchor (not in the closure)
+- `create_tag` — varargs
+- `cut_clipboard` — parameter `clipboard` of type Gdk.Clipboard
+- `get_iter_at_child_anchor` — parameter `anchor` of type Gtk.TextChildAnchor
+- `get_selection_content` — return type Gdk.ContentProvider (not in the closure)
+- `insert_child_anchor` — parameter `anchor` of type Gtk.TextChildAnchor
+- `insert_with_tags` — varargs
+- `insert_with_tags_by_name` — varargs
+- `paste_clipboard` — parameter `clipboard` of type Gdk.Clipboard
+- `remove_selection_clipboard` — parameter `clipboard` of type Gdk.Clipboard
+- `vfunc insert_child_anchor` — parameter `anchor` of type Gtk.TextChildAnchor
+- `vfunc paste_done` — parameter `clipboard` of type Gdk.Clipboard
+
+## GtkTextIter
+
+- `backward_find_char` — callback parameter (needs an override)
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `forward_find_char` — callback parameter (needs an override)
+- `free` — memory management belongs to the handle (clone / destructor)
+- `get_child_anchor` — return type Gtk.TextChildAnchor (not in the closure)
+- `get_language` — return type Pango.Language
+
+## GtkTextTag
+
+- `property tabs` — property type Pango.TabArray not mappable
+
+## GtkTextView
+
+- `add_child_at_anchor` — parameter `anchor` of type Gtk.TextChildAnchor
+- `get_ltr_context` — return type Pango.Context (not in the closure)
+- `get_rtl_context` — return type Pango.Context (not in the closure)
+- `get_tabs` — return type Pango.TabArray
+- `set_tabs` — parameter `tabs` of type Pango.TabArray
+- `vfunc snapshot_layer` — parameter `snapshot` of type Gtk.Snapshot
+- `property tabs` — property type Pango.TabArray not mappable
+
 ## GtkToggleButton
 
 - `toggled` — deprecated (4.10)
@@ -448,7 +493,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkWindow
 
-- `fullscreen_on_monitor` — parameter `monitor` of type Gdk.Monitor
 - `get_group` — return type Gtk.WindowGroup (not in the closure)
 - `present_with_time` — deprecated (4.14)
 
@@ -472,6 +516,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.MenuButton`: set_create_popup_func
 - `Gtk.Popover`: popup
 - `Gtk.Scale`: set_format_value_func
+- `Gtk.TextBuffer`: insert, insert_at_cursor, insert_interactive, insert_interactive_at_cursor, insert_markup, set_text
+- `Gtk.TextView`: get_extra_menu
 
 ## Emitted files
 
@@ -552,6 +598,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkStringObject.cpp`
 - `Gtk/GtkStyleProvider.cpp`
 - `Gtk/GtkText.cpp`
+- `Gtk/GtkTextBuffer.cpp`
+- `Gtk/GtkTextIter.cpp`
+- `Gtk/GtkTextMark.cpp`
+- `Gtk/GtkTextTag.cpp`
+- `Gtk/GtkTextTagTable.cpp`
+- `Gtk/GtkTextView.cpp`
 - `Gtk/GtkToggleButton.cpp`
 - `Gtk/GtkViewport.cpp`
 - `Gtk/GtkWidget.cpp`
@@ -574,6 +626,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GTask.cpp`
 - `Gio/Gio.stub.php`
 - `Gdk/GdkDisplay.cpp`
+- `Gdk/GdkMonitor.cpp`
 - `Gdk/GdkPaintable.cpp`
 - `Gdk/GdkTexture.cpp`
 - `Gdk/Gdk.stub.php`
@@ -642,6 +695,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkStringListSmokeTest.php`
 - `tests/Generated/GtkStringObjectSmokeTest.php`
 - `tests/Generated/GtkTextSmokeTest.php`
+- `tests/Generated/GtkTextBufferSmokeTest.php`
+- `tests/Generated/GtkTextMarkSmokeTest.php`
+- `tests/Generated/GtkTextTagSmokeTest.php`
+- `tests/Generated/GtkTextTagTableSmokeTest.php`
+- `tests/Generated/GtkTextViewSmokeTest.php`
 - `tests/Generated/GtkToggleButtonSmokeTest.php`
 - `tests/Generated/GtkViewportSmokeTest.php`
 - `tests/Generated/GtkWidgetSmokeTest.php`
