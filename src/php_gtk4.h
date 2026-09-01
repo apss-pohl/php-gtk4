@@ -82,9 +82,13 @@ inline bool check_range(zend_long v, uint32_t arg) {
   // Derived from the width rather than std::numeric_limits<T>, so a one-byte type does not put
   // a `char` through an integer conversion. An unsigned 64-bit parameter (gsize) keeps
   // ZEND_LONG_MAX as its ceiling: PHP cannot express more, so the real bound is the floor.
-  constexpr zend_long widest = bits >= 64 ? ZEND_LONG_MAX : (zend_long{1} << bits) - 1;
-  constexpr zend_long signed_max = bits >= 64 ? ZEND_LONG_MAX : (zend_long{1} << (bits - 1)) - 1;
-  constexpr zend_long signed_min = bits >= 64 ? ZEND_LONG_MIN : -(zend_long{1} << (bits - 1));
+  // A 64-bit T takes the ZEND_LONG bounds and never uses `shift`, but both arms of a ?: are
+  // still compiled, so the shift count has to stay in range for it too - MSVC diagnoses the
+  // discarded `1 << 64` and `1 << 63` (C4293/C4307) and /W3 is a gate on Windows.
+  constexpr int shift = bits >= 64 ? 1 : bits;
+  constexpr zend_long widest = bits >= 64 ? ZEND_LONG_MAX : (zend_long{1} << shift) - 1;
+  constexpr zend_long signed_max = bits >= 64 ? ZEND_LONG_MAX : (zend_long{1} << (shift - 1)) - 1;
+  constexpr zend_long signed_min = bits >= 64 ? ZEND_LONG_MIN : -(zend_long{1} << (shift - 1));
   constexpr zend_long lo = is_signed ? signed_min : 0;
   constexpr zend_long hi = is_signed ? signed_max : widest;
   if (v < lo || v > hi) {
