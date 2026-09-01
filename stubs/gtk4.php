@@ -1262,95 +1262,6 @@ final class GdkModifierType
     public const int META_MASK = 268435456;
 }
 /**
- * `GdkMonitor` objects represent the individual outputs that are associated with a `GdkDisplay`.
- *
- * @property-read ?string $connector
- * @property-read ?string $description
- * @property ?GdkDisplay $display
- * @property-read ?GdkRectangle $geometry
- * @property-read ?int $height_mm
- * @property-read ?string $manufacturer
- * @property-read ?string $model
- * @property-read ?int $refresh_rate
- * @property-read ?float $scale
- * @property-read ?int $scale_factor
- * @property-read ?GdkSubpixelLayout $subpixel_layout
- * @property-read ?bool $valid
- * @property-read ?int $width_mm
- */
-class GdkMonitor extends GObject
-{
-    /** GdkMonitor has no constructor in GTK: instances come from GTK, never from `new`. */
-    private function __construct()
-    {
-    }
-    /** Gets the name of the monitor's connector, if available. */
-    public function get_connector(): ?string
-    {
-        return null;
-    }
-    /** Gets a string describing the monitor, if available. */
-    public function get_description(): ?string
-    {
-        return null;
-    }
-    /** Gets the display that this monitor belongs to. */
-    public function get_display(): GdkDisplay
-    {
-        return null;
-    }
-    /** Retrieves the size and position of the monitor within the display coordinate space. */
-    public function get_geometry(): GdkRectangle
-    {
-        return null;
-    }
-    /** Gets the height in millimeters of the monitor. */
-    public function get_height_mm(): int
-    {
-        return 0;
-    }
-    /** Gets the name or PNP ID of the monitor's manufacturer. */
-    public function get_manufacturer(): ?string
-    {
-        return null;
-    }
-    /** Gets the string identifying the monitor model, if available. */
-    public function get_model(): ?string
-    {
-        return null;
-    }
-    /** Gets the refresh rate of the monitor, if available. */
-    public function get_refresh_rate(): int
-    {
-        return 0;
-    }
-    /** Gets the internal scale factor that maps from monitor coordinates to device pixels. */
-    public function get_scale(): float
-    {
-        return 0.0;
-    }
-    /** Gets the internal scale factor that maps from monitor coordinates to device pixels. */
-    public function get_scale_factor(): int
-    {
-        return 0;
-    }
-    /** Gets information about the layout of red, green and blue primaries for pixels. */
-    public function get_subpixel_layout(): GdkSubpixelLayout
-    {
-        return null;
-    }
-    /** Gets the width in millimeters of the monitor. */
-    public function get_width_mm(): int
-    {
-        return 0;
-    }
-    /** Returns `true` if the $monitor object corresponds to a physical monitor. */
-    public function is_valid(): bool
-    {
-        return false;
-    }
-}
-/**
  * Specifies the kind of crossing for enter and leave events.
  */
 enum GdkNotifyType : int
@@ -1451,19 +1362,6 @@ enum GdkScrollUnit : int
 {
     case Wheel = 0;
     case Surface = 1;
-}
-/**
- * This enumeration describes how the red, green and blue components of physical pixels on an
- * output device are laid out.
- */
-enum GdkSubpixelLayout : int
-{
-    case Unknown = 0;
-    case None = 1;
-    case HorizontalRgb = 2;
-    case HorizontalBgr = 3;
-    case VerticalRgb = 4;
-    case VerticalBgr = 5;
 }
 /**
  * `GdkTexture` is the basic element used to refer to pixel data.
@@ -13123,11 +13021,6 @@ class GtkWindow extends GtkWidget implements GtkRoot
     /** Asks to place $window in the fullscreen state. */
     public function fullscreen(): void
     {
-    }
-    /** Asks to place $window in the fullscreen state on the given $monitor. */
-    public function fullscreen_on_monitor(GdkMonitor $monitor): void
-    {
-        unset($monitor);
     }
     /** Gets the `GtkApplication` associated with the window. */
     public function get_application(): ?GtkApplication

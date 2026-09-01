@@ -212,68 +212,6 @@ final class GdkModifierType
 }
 
 /**
- * `GdkMonitor` objects represent the individual outputs that are associated with a `GdkDisplay`.
- *
- * @property-read ?string $connector
- * @property-read ?string $description
- * @property ?GdkDisplay $display
- * @property-read ?GdkRectangle $geometry
- * @property-read ?int $height_mm
- * @property-read ?string $manufacturer
- * @property-read ?string $model
- * @property-read ?int $refresh_rate
- * @property-read ?float $scale
- * @property-read ?int $scale_factor
- * @property-read ?GdkSubpixelLayout $subpixel_layout
- * @property-read ?bool $valid
- * @property-read ?int $width_mm
- */
-class GdkMonitor extends GObject
-{
-    /** GdkMonitor has no constructor in GTK: instances come from GTK, never from `new`. */
-    private function __construct() {}
-
-    /** Gets the name of the monitor's connector, if available. */
-    public function get_connector(): ?string {}
-
-    /** Gets a string describing the monitor, if available. */
-    public function get_description(): ?string {}
-
-    /** Gets the display that this monitor belongs to. */
-    public function get_display(): GdkDisplay {}
-
-    /** Retrieves the size and position of the monitor within the display coordinate space. */
-    public function get_geometry(): GdkRectangle {}
-
-    /** Gets the height in millimeters of the monitor. */
-    public function get_height_mm(): int {}
-
-    /** Gets the name or PNP ID of the monitor's manufacturer. */
-    public function get_manufacturer(): ?string {}
-
-    /** Gets the string identifying the monitor model, if available. */
-    public function get_model(): ?string {}
-
-    /** Gets the refresh rate of the monitor, if available. */
-    public function get_refresh_rate(): int {}
-
-    /** Gets the internal scale factor that maps from monitor coordinates to device pixels. */
-    public function get_scale(): float {}
-
-    /** Gets the internal scale factor that maps from monitor coordinates to device pixels. */
-    public function get_scale_factor(): int {}
-
-    /** Gets information about the layout of red, green and blue primaries for pixels. */
-    public function get_subpixel_layout(): GdkSubpixelLayout {}
-
-    /** Gets the width in millimeters of the monitor. */
-    public function get_width_mm(): int {}
-
-    /** Returns `true` if the $monitor object corresponds to a physical monitor. */
-    public function is_valid(): bool {}
-}
-
-/**
  * Specifies the kind of crossing for enter and leave events.
  */
 enum GdkNotifyType: int
@@ -372,20 +310,6 @@ enum GdkScrollUnit: int
 {
     case Wheel = 0;
     case Surface = 1;
-}
-
-/**
- * This enumeration describes how the red, green and blue components of physical pixels on an
- * output device are laid out.
- */
-enum GdkSubpixelLayout: int
-{
-    case Unknown = 0;
-    case None = 1;
-    case HorizontalRgb = 2;
-    case HorizontalBgr = 3;
-    case VerticalRgb = 4;
-    case VerticalBgr = 5;
 }
 
 /**

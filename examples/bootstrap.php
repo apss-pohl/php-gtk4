@@ -91,7 +91,7 @@ final class Demo
         ],
         'Styling' => [
             'GtkCssProvider', 'GtkStyleProvider', 'GtkStyleProviderPriority', 'GtkCssSection',
-            'GdkDisplay', 'GdkMonitor',
+            'GdkDisplay',
         ],
         'Layout' => [
             'GtkGrid', 'GtkPaned', 'GtkFrame', 'GtkOverlay', 'GtkRevealer', 'GtkRevealerTransitionType',

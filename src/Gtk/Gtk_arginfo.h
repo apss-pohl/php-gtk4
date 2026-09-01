@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 79e2bf5d2e0f15ecaacde4163b1e0f6a1e49b4c4 */
+ * Stub hash: a733f2c8668d3e7bed813d972b2b4aebcc5ceb78 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -4278,10 +4278,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkWindow_fullscreen arginfo_class_Gtk4_GtkAdjustment_vfunc_changed
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWindow_fullscreen_on_monitor, 0, 1, IS_VOID, 0)
-	ZEND_ARG_OBJ_INFO(0, monitor, Gtk4\\GdkMonitor, 0)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkWindow_get_application, 0, 0, Gtk4\\GtkApplication, 1)
 ZEND_END_ARG_INFO()
 
@@ -5789,7 +5785,6 @@ ZEND_METHOD(Gtk4_GtkWindow, set_interactive_debugging);
 ZEND_METHOD(Gtk4_GtkWindow, close);
 ZEND_METHOD(Gtk4_GtkWindow, destroy);
 ZEND_METHOD(Gtk4_GtkWindow, fullscreen);
-ZEND_METHOD(Gtk4_GtkWindow, fullscreen_on_monitor);
 ZEND_METHOD(Gtk4_GtkWindow, get_application);
 ZEND_METHOD(Gtk4_GtkWindow, get_child);
 ZEND_METHOD(Gtk4_GtkWindow, get_decorated);
@@ -7734,7 +7729,6 @@ static const zend_function_entry class_Gtk4_GtkWindow_methods[] = {
 	ZEND_ME(Gtk4_GtkWindow, close, arginfo_class_Gtk4_GtkWindow_close, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWindow, destroy, arginfo_class_Gtk4_GtkWindow_destroy, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWindow, fullscreen, arginfo_class_Gtk4_GtkWindow_fullscreen, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GtkWindow, fullscreen_on_monitor, arginfo_class_Gtk4_GtkWindow_fullscreen_on_monitor, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWindow, get_application, arginfo_class_Gtk4_GtkWindow_get_application, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWindow, get_child, arginfo_class_Gtk4_GtkWindow_get_child, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWindow, get_decorated, arginfo_class_Gtk4_GtkWindow_get_decorated, ZEND_ACC_PUBLIC)

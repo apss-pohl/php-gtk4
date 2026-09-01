@@ -173,9 +173,7 @@ draft, hand-write via overrides / promotion where the project needs more.
       Generator fixes it forced: the emitted C call keeps **GIR's parameter order** (out
       parameters are not necessarily trailing — `gtk_text_view_get_iter_at_position(self, &iter,
       &trailing, x, y)` was called with the ins first), and the boxed emitter includes the
-      collection converters (`GtkTextIter::get_marks()` is a `GSList`). `GdkMonitor` (wave 8)
-      came along: `GdkDisplay::get_monitors()` items wrap to real monitors and
-      `GtkWindow::fullscreen_on_monitor()` fell out of the skip list.
+      collection converters (`GtkTextIter::get_marks()` is a `GSList`).
 - [ ] **Waves 3b, 7–8** as listed in PLAN.md §3 (the feature items in §7 below point at their
       wave); each merged only with the full pipeline green and the map's status column regenerated.
       Next: the fastlane port spike (one screen on php-gtk4).

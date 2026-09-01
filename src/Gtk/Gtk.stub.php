@@ -7118,9 +7118,6 @@ class GtkWindow extends GtkWidget implements GtkRoot
     /** Asks to place $window in the fullscreen state. */
     public function fullscreen(): void {}
 
-    /** Asks to place $window in the fullscreen state on the given $monitor. */
-    public function fullscreen_on_monitor(GdkMonitor $monitor): void {}
-
     /** Gets the `GtkApplication` associated with the window. */
     public function get_application(): ?GtkApplication {}
 

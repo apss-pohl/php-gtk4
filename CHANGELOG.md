@@ -68,10 +68,6 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   trusts them — defaulting to -1, the whole string, wherever the count is the trailing parameter.
   `GtkTextView::get_extra_menu()` is declared `?GMenuModel`: the 4.14 GIR omits the nullable its
   own documentation states.
-- `GdkMonitor` (wave 8, pulled in by the above): `GdkDisplay::get_monitors()` items wrap to real
-  monitors — geometry, scale, refresh rate, connector, `GdkSubpixelLayout` — and
-  `GtkWindow::fullscreen_on_monitor()` left the skip list.
-
 - Wave 5 — **dialogs** (docs/PLAN.md §3): `GtkFileDialog`, `GtkFileFilter`, `GtkColorDialog`,
   `GtkFontDialog` and `GtkAboutDialog`, with `PangoFontDescription` (a boxed value: clone copies,
   `equal()` compares), `GtkLicense` and the Pango enums a description uses. GTK 4.10's dialogs are

@@ -174,7 +174,3 @@ Gtk.TextMark
 Gtk.TextTag
 Gtk.TextTagTable
 Gtk.WrapMode
-
-# Wave 8 (Gdk, partial): the monitor behind GdkDisplay::get_monitors() - geometry and
-# identity of each output, and the type GtkWindow::fullscreen_on_monitor() needs in scope.
-Gdk.Monitor

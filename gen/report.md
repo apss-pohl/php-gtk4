@@ -146,11 +146,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `property dmabuf-formats` — property type Gdk.DmabufFormats not mappable
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
-## GdkMonitor
-
-- `__construct` — skip.txt: GDK owns monitors (GdkDisplay::get_monitors()); one made with `new` has no backend behind it and its non-null get_display() would lie
-- `smoke test` — no constructor or factory whose parameters can be sampled
-
 ## GdkPaintable
 
 - `new_empty` — static function on an interface (PHP interfaces have no bodies)
@@ -493,6 +488,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkWindow
 
+- `fullscreen_on_monitor` — parameter `monitor` of type Gdk.Monitor
 - `get_group` — return type Gtk.WindowGroup (not in the closure)
 - `present_with_time` — deprecated (4.14)
 
@@ -626,7 +622,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GTask.cpp`
 - `Gio/Gio.stub.php`
 - `Gdk/GdkDisplay.cpp`
-- `Gdk/GdkMonitor.cpp`
 - `Gdk/GdkPaintable.cpp`
 - `Gdk/GdkTexture.cpp`
 - `Gdk/Gdk.stub.php`

@@ -7,7 +7,7 @@ implements it.
 Source of truth: php-gtk3 class headers (158 headers, ~2400 exported methods) vs.
 `src/gtk4.stub.php` + the MINIT registration block in `src/gtk4.cpp`.
 
-Status column regenerated 2026-08-31 by `gen/map-status.php` (run by `gen/gir.php --install`);
+Status column regenerated 2026-09-01 by `gen/map-status.php` (run by `gen/gir.php --install`);
 the notes are hand-written and may lag.
 
 ## Legend
@@ -24,9 +24,9 @@ the notes are hand-written and may lag.
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 62 | — |
+| ✅ implemented | 61 | — |
 | 🟡 partial | 1 | — |
-| ❌ to port (GTK 4 equivalent exists) | 31 | ~1750 |
+| ❌ to port (GTK 4 equivalent exists) | 32 | ~1750 |
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 5 | ~130 |
 
@@ -220,7 +220,7 @@ is open work.
 | `GdkRGBA` | 4 | `GdkRGBA` | ✅ | Boxed type with `parse`, `to_string`, `equal`, `is_opaque` + `r/g/b/a` fields. Richer than php-gtk3's. |
 | — | — | `GdkRectangle` | ✅ | New in php-gtk4 (`intersect`, `union`, `contains_point`, `equal`). |
 | `GdkDisplay` | 5 | `GdkDisplay` | ✅ | `get_monitors()` returns a `GListModel` in GTK 4. |
-| `GdkMonitor` | 5 | `GdkMonitor` | ✅ | `get_geometry`, `get_width_mm`; `get_workarea` removed in GTK 4. |
+| `GdkMonitor` | 5 | `GdkMonitor` | ❌ | `get_geometry`, `get_width_mm`; `get_workarea` removed in GTK 4. |
 | `GdkScreen` | 4 | — | ⛔ | Removed in GTK 4; use `GdkDisplay`. |
 | `GdkVisual` | 6 | — | ⛔ | Removed in GTK 4. |
 | `GdkWindow` | 10 | `GdkSurface` | ❌ | Much smaller API; most methods (`maximize`, `get_children`, `get_default_root_window`) are gone. |

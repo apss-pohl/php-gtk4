@@ -68,7 +68,6 @@
   phpgtk::register_flags(GDK_TYPE_PAINTABLE_FLAGS, register_class_Gtk4_GdkPaintableFlags());
   phpgtk::register_enum(GDK_TYPE_SCROLL_DIRECTION, register_class_Gtk4_GdkScrollDirection());
   phpgtk::register_enum(GDK_TYPE_SCROLL_UNIT, register_class_Gtk4_GdkScrollUnit());
-  phpgtk::register_enum(GDK_TYPE_SUBPIXEL_LAYOUT, register_class_Gtk4_GdkSubpixelLayout());
   phpgtk::register_enum(GDK_TYPE_TOUCHPAD_GESTURE_PHASE, register_class_Gtk4_GdkTouchpadGesturePhase());
 // --- interfaces and classes, parents first
   zend_class_entry *ce_GtkAdjustment = register_class_Gtk4_GtkAdjustment(ce_GObject);
@@ -191,8 +190,6 @@
   phpgtk::register_class("GTask", ce_GTask, G_TYPE_TASK);
   zend_class_entry *ce_GdkDisplay = register_class_Gtk4_GdkDisplay(ce_GObject);
   phpgtk::register_class("GdkDisplay", ce_GdkDisplay, GDK_TYPE_DISPLAY);
-  zend_class_entry *ce_GdkMonitor = register_class_Gtk4_GdkMonitor(ce_GObject);
-  phpgtk::register_class("GdkMonitor", ce_GdkMonitor, GDK_TYPE_MONITOR);
   zend_class_entry *ce_GdkPaintable = register_class_Gtk4_GdkPaintable();
   phpgtk::register_interface("GdkPaintable", ce_GdkPaintable, GDK_TYPE_PAINTABLE);
   zend_class_entry *ce_GdkPaintableObject = register_class_Gtk4_GdkPaintableObject(ce_GObject, ce_GdkPaintable);

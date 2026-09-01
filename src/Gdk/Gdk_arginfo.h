@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 41f5bbb95db6b03ccb1e8270b99ac0361dce30c2 */
+ * Stub hash: 30dcdeda044a753ad64e05ae3dc5a959f26af528 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkDisplay___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -39,50 +39,18 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkDisplay_sync arginfo_class_Gtk4_GdkDisplay_beep
 
-#define arginfo_class_Gtk4_GdkMonitor___construct arginfo_class_Gtk4_GdkDisplay___construct
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkMonitor_get_connector, 0, 0, IS_STRING, 1)
-ZEND_END_ARG_INFO()
-
-#define arginfo_class_Gtk4_GdkMonitor_get_description arginfo_class_Gtk4_GdkMonitor_get_connector
-
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkMonitor_get_display, 0, 0, Gtk4\\GdkDisplay, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkMonitor_get_geometry, 0, 0, Gtk4\\GdkRectangle, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkMonitor_get_height_mm, 0, 0, IS_LONG, 0)
-ZEND_END_ARG_INFO()
-
-#define arginfo_class_Gtk4_GdkMonitor_get_manufacturer arginfo_class_Gtk4_GdkMonitor_get_connector
-
-#define arginfo_class_Gtk4_GdkMonitor_get_model arginfo_class_Gtk4_GdkMonitor_get_connector
-
-#define arginfo_class_Gtk4_GdkMonitor_get_refresh_rate arginfo_class_Gtk4_GdkMonitor_get_height_mm
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkMonitor_get_scale, 0, 0, IS_DOUBLE, 0)
-ZEND_END_ARG_INFO()
-
-#define arginfo_class_Gtk4_GdkMonitor_get_scale_factor arginfo_class_Gtk4_GdkMonitor_get_height_mm
-
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkMonitor_get_subpixel_layout, 0, 0, Gtk4\\GdkSubpixelLayout, 0)
-ZEND_END_ARG_INFO()
-
-#define arginfo_class_Gtk4_GdkMonitor_get_width_mm arginfo_class_Gtk4_GdkMonitor_get_height_mm
-
-#define arginfo_class_Gtk4_GdkMonitor_is_valid arginfo_class_Gtk4_GdkDisplay_is_closed
-
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkPaintable_get_current_image, 0, 0, Gtk4\\GdkPaintable, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_Gtk4_GdkPaintable_get_flags arginfo_class_Gtk4_GdkMonitor_get_height_mm
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkPaintable_get_flags, 0, 0, IS_LONG, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_Gtk4_GdkPaintable_get_intrinsic_aspect_ratio arginfo_class_Gtk4_GdkMonitor_get_scale
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkPaintable_get_intrinsic_aspect_ratio, 0, 0, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_Gtk4_GdkPaintable_get_intrinsic_height arginfo_class_Gtk4_GdkMonitor_get_height_mm
+#define arginfo_class_Gtk4_GdkPaintable_get_intrinsic_height arginfo_class_Gtk4_GdkPaintable_get_flags
 
-#define arginfo_class_Gtk4_GdkPaintable_get_intrinsic_width arginfo_class_Gtk4_GdkMonitor_get_height_mm
+#define arginfo_class_Gtk4_GdkPaintable_get_intrinsic_width arginfo_class_Gtk4_GdkPaintable_get_flags
 
 #define arginfo_class_Gtk4_GdkPaintableObject___construct arginfo_class_Gtk4_GdkDisplay___construct
 
@@ -95,13 +63,13 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkPaintableObject_get_current_image arginfo_class_Gtk4_GdkPaintable_get_current_image
 
-#define arginfo_class_Gtk4_GdkPaintableObject_get_flags arginfo_class_Gtk4_GdkMonitor_get_height_mm
+#define arginfo_class_Gtk4_GdkPaintableObject_get_flags arginfo_class_Gtk4_GdkPaintable_get_flags
 
-#define arginfo_class_Gtk4_GdkPaintableObject_get_intrinsic_aspect_ratio arginfo_class_Gtk4_GdkMonitor_get_scale
+#define arginfo_class_Gtk4_GdkPaintableObject_get_intrinsic_aspect_ratio arginfo_class_Gtk4_GdkPaintable_get_intrinsic_aspect_ratio
 
-#define arginfo_class_Gtk4_GdkPaintableObject_get_intrinsic_height arginfo_class_Gtk4_GdkMonitor_get_height_mm
+#define arginfo_class_Gtk4_GdkPaintableObject_get_intrinsic_height arginfo_class_Gtk4_GdkPaintable_get_flags
 
-#define arginfo_class_Gtk4_GdkPaintableObject_get_intrinsic_width arginfo_class_Gtk4_GdkMonitor_get_height_mm
+#define arginfo_class_Gtk4_GdkPaintableObject_get_intrinsic_width arginfo_class_Gtk4_GdkPaintable_get_flags
 
 #define arginfo_class_Gtk4_GdkPaintableObject_invalidate_contents arginfo_class_Gtk4_GdkDisplay_beep
 
@@ -124,9 +92,9 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkTexture_get_format, 0, 0, Gtk4\\GdkMemoryFormat, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_Gtk4_GdkTexture_get_height arginfo_class_Gtk4_GdkMonitor_get_height_mm
+#define arginfo_class_Gtk4_GdkTexture_get_height arginfo_class_Gtk4_GdkPaintable_get_flags
 
-#define arginfo_class_Gtk4_GdkTexture_get_width arginfo_class_Gtk4_GdkMonitor_get_height_mm
+#define arginfo_class_Gtk4_GdkTexture_get_width arginfo_class_Gtk4_GdkPaintable_get_flags
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkTexture_save_to_png, 0, 1, _IS_BOOL, 0)
 	ZEND_ARG_TYPE_INFO(0, filename, IS_STRING, 0)
@@ -142,13 +110,13 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkTexture_get_current_image arginfo_class_Gtk4_GdkPaintable_get_current_image
 
-#define arginfo_class_Gtk4_GdkTexture_get_flags arginfo_class_Gtk4_GdkMonitor_get_height_mm
+#define arginfo_class_Gtk4_GdkTexture_get_flags arginfo_class_Gtk4_GdkPaintable_get_flags
 
-#define arginfo_class_Gtk4_GdkTexture_get_intrinsic_aspect_ratio arginfo_class_Gtk4_GdkMonitor_get_scale
+#define arginfo_class_Gtk4_GdkTexture_get_intrinsic_aspect_ratio arginfo_class_Gtk4_GdkPaintable_get_intrinsic_aspect_ratio
 
-#define arginfo_class_Gtk4_GdkTexture_get_intrinsic_height arginfo_class_Gtk4_GdkMonitor_get_height_mm
+#define arginfo_class_Gtk4_GdkTexture_get_intrinsic_height arginfo_class_Gtk4_GdkPaintable_get_flags
 
-#define arginfo_class_Gtk4_GdkTexture_get_intrinsic_width arginfo_class_Gtk4_GdkMonitor_get_height_mm
+#define arginfo_class_Gtk4_GdkTexture_get_intrinsic_width arginfo_class_Gtk4_GdkPaintable_get_flags
 
 #define arginfo_class_Gtk4_GdkTexture_invalidate_contents arginfo_class_Gtk4_GdkDisplay_beep
 
@@ -169,20 +137,6 @@ ZEND_METHOD(Gtk4_GdkDisplay, prepare_gl);
 ZEND_METHOD(Gtk4_GdkDisplay, supports_input_shapes);
 ZEND_METHOD(Gtk4_GdkDisplay, supports_shadow_width);
 ZEND_METHOD(Gtk4_GdkDisplay, sync);
-ZEND_METHOD(Gtk4_GdkMonitor, __construct);
-ZEND_METHOD(Gtk4_GdkMonitor, get_connector);
-ZEND_METHOD(Gtk4_GdkMonitor, get_description);
-ZEND_METHOD(Gtk4_GdkMonitor, get_display);
-ZEND_METHOD(Gtk4_GdkMonitor, get_geometry);
-ZEND_METHOD(Gtk4_GdkMonitor, get_height_mm);
-ZEND_METHOD(Gtk4_GdkMonitor, get_manufacturer);
-ZEND_METHOD(Gtk4_GdkMonitor, get_model);
-ZEND_METHOD(Gtk4_GdkMonitor, get_refresh_rate);
-ZEND_METHOD(Gtk4_GdkMonitor, get_scale);
-ZEND_METHOD(Gtk4_GdkMonitor, get_scale_factor);
-ZEND_METHOD(Gtk4_GdkMonitor, get_subpixel_layout);
-ZEND_METHOD(Gtk4_GdkMonitor, get_width_mm);
-ZEND_METHOD(Gtk4_GdkMonitor, is_valid);
 ZEND_METHOD(Gtk4_GdkPaintableObject, __construct);
 ZEND_METHOD(Gtk4_GdkPaintable, compute_concrete_size);
 ZEND_METHOD(Gtk4_GdkPaintable, invalidate_contents);
@@ -215,24 +169,6 @@ static const zend_function_entry class_Gtk4_GdkDisplay_methods[] = {
 	ZEND_ME(Gtk4_GdkDisplay, supports_input_shapes, arginfo_class_Gtk4_GdkDisplay_supports_input_shapes, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, supports_shadow_width, arginfo_class_Gtk4_GdkDisplay_supports_shadow_width, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, sync, arginfo_class_Gtk4_GdkDisplay_sync, ZEND_ACC_PUBLIC)
-	ZEND_FE_END
-};
-
-static const zend_function_entry class_Gtk4_GdkMonitor_methods[] = {
-	ZEND_ME(Gtk4_GdkMonitor, __construct, arginfo_class_Gtk4_GdkMonitor___construct, ZEND_ACC_PRIVATE)
-	ZEND_ME(Gtk4_GdkMonitor, get_connector, arginfo_class_Gtk4_GdkMonitor_get_connector, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GdkMonitor, get_description, arginfo_class_Gtk4_GdkMonitor_get_description, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GdkMonitor, get_display, arginfo_class_Gtk4_GdkMonitor_get_display, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GdkMonitor, get_geometry, arginfo_class_Gtk4_GdkMonitor_get_geometry, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GdkMonitor, get_height_mm, arginfo_class_Gtk4_GdkMonitor_get_height_mm, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GdkMonitor, get_manufacturer, arginfo_class_Gtk4_GdkMonitor_get_manufacturer, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GdkMonitor, get_model, arginfo_class_Gtk4_GdkMonitor_get_model, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GdkMonitor, get_refresh_rate, arginfo_class_Gtk4_GdkMonitor_get_refresh_rate, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GdkMonitor, get_scale, arginfo_class_Gtk4_GdkMonitor_get_scale, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GdkMonitor, get_scale_factor, arginfo_class_Gtk4_GdkMonitor_get_scale_factor, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GdkMonitor, get_subpixel_layout, arginfo_class_Gtk4_GdkMonitor_get_subpixel_layout, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GdkMonitor, get_width_mm, arginfo_class_Gtk4_GdkMonitor_get_width_mm, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GdkMonitor, is_valid, arginfo_class_Gtk4_GdkMonitor_is_valid, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -745,16 +681,6 @@ static zend_class_entry *register_class_Gtk4_GdkModifierType(void)
 	return class_entry;
 }
 
-static zend_class_entry *register_class_Gtk4_GdkMonitor(zend_class_entry *class_entry_Gtk4_GObject)
-{
-	zend_class_entry ce, *class_entry;
-
-	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkMonitor", class_Gtk4_GdkMonitor_methods);
-	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
-
-	return class_entry;
-}
-
 static zend_class_entry *register_class_Gtk4_GdkNotifyType(void)
 {
 	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GdkNotifyType", IS_LONG, NULL);
@@ -867,37 +793,6 @@ static zend_class_entry *register_class_Gtk4_GdkScrollUnit(void)
 	zval enum_case_Surface_value;
 	ZVAL_LONG(&enum_case_Surface_value, 1);
 	zend_enum_add_case_cstr(class_entry, "Surface", &enum_case_Surface_value);
-
-	return class_entry;
-}
-
-static zend_class_entry *register_class_Gtk4_GdkSubpixelLayout(void)
-{
-	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GdkSubpixelLayout", IS_LONG, NULL);
-
-	zval enum_case_Unknown_value;
-	ZVAL_LONG(&enum_case_Unknown_value, 0);
-	zend_enum_add_case_cstr(class_entry, "Unknown", &enum_case_Unknown_value);
-
-	zval enum_case_None_value;
-	ZVAL_LONG(&enum_case_None_value, 1);
-	zend_enum_add_case_cstr(class_entry, "None", &enum_case_None_value);
-
-	zval enum_case_HorizontalRgb_value;
-	ZVAL_LONG(&enum_case_HorizontalRgb_value, 2);
-	zend_enum_add_case_cstr(class_entry, "HorizontalRgb", &enum_case_HorizontalRgb_value);
-
-	zval enum_case_HorizontalBgr_value;
-	ZVAL_LONG(&enum_case_HorizontalBgr_value, 3);
-	zend_enum_add_case_cstr(class_entry, "HorizontalBgr", &enum_case_HorizontalBgr_value);
-
-	zval enum_case_VerticalRgb_value;
-	ZVAL_LONG(&enum_case_VerticalRgb_value, 4);
-	zend_enum_add_case_cstr(class_entry, "VerticalRgb", &enum_case_VerticalRgb_value);
-
-	zval enum_case_VerticalBgr_value;
-	ZVAL_LONG(&enum_case_VerticalBgr_value, 5);
-	zend_enum_add_case_cstr(class_entry, "VerticalBgr", &enum_case_VerticalBgr_value);
 
 	return class_entry;
 }
