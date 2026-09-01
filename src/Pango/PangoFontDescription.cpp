@@ -462,6 +462,7 @@ ZEND_METHOD(Gtk4_PangoFontDescription, to_string) {
   ZEND_PARSE_PARAMETERS_NONE();
   PangoFontDescription *self = PHPGTK_BOXED_SELF(PangoFontDescription);
   char *phpgtk_ret = pango_font_description_to_string(self);
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
   RETVAL_STRING(phpgtk_ret);
   g_free(phpgtk_ret);
 }
@@ -504,6 +505,11 @@ void register_PangoFontDescription(zend_class_entry *ce) {
                             .ce = ce,
                             .fields = fields,
                             .read = read,
-                            .write = write});
+                            .write = write,
+                            .equal = [](gconstpointer a, gconstpointer b) {
+                              return pango_font_description_equal(
+                                         static_cast<const PangoFontDescription *>(a),
+                                         static_cast<const PangoFontDescription *>(b)) != FALSE;
+                            }});
 }
 }  // namespace phpgtk

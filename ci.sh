@@ -515,7 +515,7 @@ stage_coverage() {
     step "coverage: report (gcovr)"
     command -v gcovr >/dev/null || fail "gcovr not installed"
     mkdir -p coverage
-    gcovr -r . -f 'src/' -e 'src/gtk4_arginfo.h' --gcov-ignore-parse-errors=negative_hits.warn \
+    gcovr -r . -f 'src/' -e '.*_arginfo\.h' --gcov-ignore-parse-errors=negative_hits.warn \
           --fail-under-line "${COVERAGE_MIN_LINES:-80}" \
           --html-details coverage/index.html --print-summary || fail "gcovr (line coverage below ${COVERAGE_MIN_LINES:-80}%?)"
 }

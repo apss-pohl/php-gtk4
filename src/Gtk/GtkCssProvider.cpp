@@ -133,6 +133,7 @@ ZEND_METHOD(Gtk4_GtkCssProvider, to_string) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkCssProvider *self = PHPGTK_SELF(GtkCssProvider, GTK_TYPE_CSS_PROVIDER);
   char *phpgtk_ret = gtk_css_provider_to_string(self);
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
   RETVAL_STRING(phpgtk_ret);
   g_free(phpgtk_ret);
 }

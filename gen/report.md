@@ -184,6 +184,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `set_help_overlay` — parameter `help_overlay` of type Gtk.ShortcutsWindow
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## GtkBitset
+
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
 ## GtkBox
 
 - `smoke test` — no constructor or factory whose parameters can be sampled
@@ -201,17 +207,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `new` — parameter `expression` of type Gtk.Expression
 - `get_expression` — return type Gtk.Expression (not in the closure)
-- `get_factory` — return type Gtk.ListItemFactory (not in the closure)
-- `get_header_factory` — return type Gtk.ListItemFactory (not in the closure)
-- `get_list_factory` — return type Gtk.ListItemFactory (not in the closure)
 - `set_expression` — parameter `expression` of type Gtk.Expression
-- `set_factory` — parameter `factory` of type Gtk.ListItemFactory
-- `set_header_factory` — parameter `factory` of type Gtk.ListItemFactory
-- `set_list_factory` — parameter `factory` of type Gtk.ListItemFactory
 - `property expression` — property type Gtk.Expression not mappable
-- `property factory` — property type Gtk.ListItemFactory not mappable
-- `property header-factory` — property type Gtk.ListItemFactory not mappable
-- `property list-factory` — property type Gtk.ListItemFactory not mappable
 
 ## GtkEditable
 
@@ -314,10 +311,23 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `property attributes` — property type Pango.AttrList not mappable
 - `property tabs` — property type Pango.TabArray not mappable
 
+## GtkListItem
+
+- `__construct` — skip.txt: a list item belongs to the factory that created it (the setup/bind handlers get it); a standalone one has no item and no position
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## GtkMenuButton
 
 - `get_direction` — skip.txt: gtk_menu_button_get_direction (GtkArrowType) clashes with GtkWidget::get_direction (GtkTextDirection) in PHP; the `direction` property still reads the arrow
 - `set_direction` — skip.txt: same; `$button->direction = GtkArrowType::Left` sets the arrow
+
+## GtkMultiSelection
+
+- `property item-type` — property type Gtk.GType not mappable
+
+## GtkNoSelection
+
+- `property item-type` — property type Gtk.GType not mappable
 
 ## GtkNotebookPage
 
@@ -350,14 +360,27 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_layout` — return type Pango.Layout (not in the closure)
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## GtkScrollInfo
+
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
 ## GtkScrollable
 
 - `get_border` — caller-allocates out parameter `border` of type Gtk.Border
 - `vfunc get_border` — caller-allocates out parameter `border` of type Gtk.Border
 
+## GtkSelectionModel
+
+- `vfunc get_selection_in_range` — return or argument type not convertible in a thunk
+
 ## GtkSeparator
 
 - `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GtkSingleSelection
+
+- `property item-type` — property type Gtk.GType not mappable
 
 ## GtkSizeGroup
 
@@ -366,11 +389,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkSortListModel
 
 - `property item-type` — property type Gtk.GType not mappable
-
-## GtkStack
-
-- `get_pages` — return type Gtk.SelectionModel (not in the closure)
-- `property pages` — property type Gtk.SelectionModel not mappable
 
 ## GtkStackPage
 
@@ -436,9 +454,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `toggled` — deprecated (4.10)
 - `vfunc toggled` — deprecated (4.10)
 
-## GtkViewport
+## GtkTreeListModel
 
-- `scroll_to` — parameter `scroll` of type Gtk.ScrollInfo
+- `property item-type` — property type Gtk.GType not mappable
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GtkTreeListRow
+
+- `__construct` — skip.txt: GtkTreeListModel creates its rows (get_row()/get_child_row()); a row without a model has nothing to expand
+- `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GtkWidget
 
@@ -513,7 +537,9 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.Popover`: popup
 - `Gtk.Scale`: set_format_value_func
 - `Gtk.TextBuffer`: insert, insert_at_cursor, insert_interactive, insert_interactive_at_cursor, insert_markup, set_text
+- `Gtk.TextIter`: set_line_index, set_line_offset
 - `Gtk.TextView`: get_extra_menu
+- `Gtk.TreeListModel`: __construct
 
 ## Emitted files
 
@@ -522,11 +548,14 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkAlertDialog.cpp`
 - `Gtk/GtkApplication.cpp`
 - `Gtk/GtkApplicationWindow.cpp`
+- `Gtk/GtkBitset.cpp`
 - `Gtk/GtkBox.cpp`
 - `Gtk/GtkButton.cpp`
 - `Gtk/GtkCalendar.cpp`
 - `Gtk/GtkCheckButton.cpp`
 - `Gtk/GtkColorDialog.cpp`
+- `Gtk/GtkColumnView.cpp`
+- `Gtk/GtkColumnViewColumn.cpp`
 - `Gtk/GtkCssProvider.cpp`
 - `Gtk/GtkCustomFilter.cpp`
 - `Gtk/GtkCustomSorter.cpp`
@@ -558,10 +587,16 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkGestureSwipe.cpp`
 - `Gtk/GtkGestureZoom.cpp`
 - `Gtk/GtkGrid.cpp`
+- `Gtk/GtkGridView.cpp`
 - `Gtk/GtkHeaderBar.cpp`
 - `Gtk/GtkImage.cpp`
 - `Gtk/GtkLabel.cpp`
+- `Gtk/GtkListItem.cpp`
+- `Gtk/GtkListItemFactory.cpp`
+- `Gtk/GtkListView.cpp`
 - `Gtk/GtkMenuButton.cpp`
+- `Gtk/GtkMultiSelection.cpp`
+- `Gtk/GtkNoSelection.cpp`
 - `Gtk/GtkNotebook.cpp`
 - `Gtk/GtkNotebookPage.cpp`
 - `Gtk/GtkOrientable.cpp`
@@ -578,9 +613,13 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkRevealer.cpp`
 - `Gtk/GtkRoot.cpp`
 - `Gtk/GtkScale.cpp`
+- `Gtk/GtkScrollInfo.cpp`
 - `Gtk/GtkScrollable.cpp`
 - `Gtk/GtkScrolledWindow.cpp`
+- `Gtk/GtkSelectionModel.cpp`
 - `Gtk/GtkSeparator.cpp`
+- `Gtk/GtkSignalListItemFactory.cpp`
+- `Gtk/GtkSingleSelection.cpp`
 - `Gtk/GtkSizeGroup.cpp`
 - `Gtk/GtkSortListModel.cpp`
 - `Gtk/GtkSorter.cpp`
@@ -601,6 +640,9 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkTextTagTable.cpp`
 - `Gtk/GtkTextView.cpp`
 - `Gtk/GtkToggleButton.cpp`
+- `Gtk/GtkTreeExpander.cpp`
+- `Gtk/GtkTreeListModel.cpp`
+- `Gtk/GtkTreeListRow.cpp`
 - `Gtk/GtkViewport.cpp`
 - `Gtk/GtkWidget.cpp`
 - `Gtk/GtkWindow.cpp`
@@ -636,6 +678,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkCalendarSmokeTest.php`
 - `tests/Generated/GtkCheckButtonSmokeTest.php`
 - `tests/Generated/GtkColorDialogSmokeTest.php`
+- `tests/Generated/GtkColumnViewSmokeTest.php`
+- `tests/Generated/GtkColumnViewColumnSmokeTest.php`
 - `tests/Generated/GtkCssProviderSmokeTest.php`
 - `tests/Generated/GtkCustomFilterSmokeTest.php`
 - `tests/Generated/GtkCustomSorterSmokeTest.php`
@@ -665,10 +709,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkGestureSwipeSmokeTest.php`
 - `tests/Generated/GtkGestureZoomSmokeTest.php`
 - `tests/Generated/GtkGridSmokeTest.php`
+- `tests/Generated/GtkGridViewSmokeTest.php`
 - `tests/Generated/GtkHeaderBarSmokeTest.php`
 - `tests/Generated/GtkImageSmokeTest.php`
 - `tests/Generated/GtkLabelSmokeTest.php`
+- `tests/Generated/GtkListItemFactorySmokeTest.php`
+- `tests/Generated/GtkListViewSmokeTest.php`
 - `tests/Generated/GtkMenuButtonSmokeTest.php`
+- `tests/Generated/GtkMultiSelectionSmokeTest.php`
+- `tests/Generated/GtkNoSelectionSmokeTest.php`
 - `tests/Generated/GtkNotebookSmokeTest.php`
 - `tests/Generated/GtkOverlaySmokeTest.php`
 - `tests/Generated/GtkPasswordEntrySmokeTest.php`
@@ -680,6 +729,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkRangeSmokeTest.php`
 - `tests/Generated/GtkRevealerSmokeTest.php`
 - `tests/Generated/GtkScrolledWindowSmokeTest.php`
+- `tests/Generated/GtkSignalListItemFactorySmokeTest.php`
+- `tests/Generated/GtkSingleSelectionSmokeTest.php`
 - `tests/Generated/GtkSortListModelSmokeTest.php`
 - `tests/Generated/GtkSorterSmokeTest.php`
 - `tests/Generated/GtkSpinButtonSmokeTest.php`
@@ -696,6 +747,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkTextTagTableSmokeTest.php`
 - `tests/Generated/GtkTextViewSmokeTest.php`
 - `tests/Generated/GtkToggleButtonSmokeTest.php`
+- `tests/Generated/GtkTreeExpanderSmokeTest.php`
 - `tests/Generated/GtkViewportSmokeTest.php`
 - `tests/Generated/GtkWidgetSmokeTest.php`
 - `tests/Generated/GtkWindowSmokeTest.php`

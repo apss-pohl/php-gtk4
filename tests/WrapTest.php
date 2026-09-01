@@ -9,7 +9,7 @@ use Gtk4\GObject;
 use Gtk4\Gtk;
 use Gtk4\GtkBox;
 use Gtk4\GtkButton;
-use Gtk4\GtkDropDown;
+use Gtk4\GtkFixed;
 use Gtk4\GtkOrientation;
 use Gtk4\GtkWindow;
 use PhpGtk4\Tests\Subclass\DestructCountingButton;
@@ -37,15 +37,15 @@ final class WrapTest extends GtkTestCase
 
     public function testUnregisteredTypeFallsBackToGObject(): void
     {
-        // GtkListItemFactory (a GtkDropDown's default factory) is not bound and implements
-        // no registered interface: the nearest registered ancestor is GObject itself,
-        // which is a handle like any other - not an exception.
-        $factory = new GtkDropDown()->get_property('factory');
-        self::assertInstanceOf(GObject::class, $factory);
-        self::assertSame(GObject::class, $factory::class);
-        $dd = new GtkDropDown();
-        $dd->set_property('factory', $factory);
-        self::assertSame($factory, $dd->get_property('factory'), 'a GObject handle still round-trips');
+        // GtkFixedLayout (the layout manager a GtkFixed has) is not bound and implements no
+        // registered interface: the nearest registered ancestor is GObject itself, which is a
+        // handle like any other - not an exception.
+        $layout = new GtkFixed()->get_property('layout-manager');
+        self::assertInstanceOf(GObject::class, $layout);
+        self::assertSame(GObject::class, $layout::class);
+        $fixed = new GtkFixed();
+        $fixed->set_property('layout-manager', $layout);
+        self::assertSame($layout, $fixed->get_property('layout-manager'), 'a GObject handle still round-trips');
     }
 
     public function testNullObjectProperty(): void

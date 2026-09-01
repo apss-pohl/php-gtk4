@@ -12,16 +12,28 @@ declare(strict_types=1);
 
 use Gtk4\ExceptionMode;
 use Gtk4\GLib;
+use Gtk4\GListModel;
 use Gtk4\GMainLoop;
 use Gtk4\GObject;
 use Gtk4\Gtk;
 use Gtk4\GtkApplication;
+use Gtk4\GtkBitset;
 use Gtk4\GtkBox;
 use Gtk4\GtkButton;
 use Gtk4\GtkCssProvider;
 use Gtk4\GtkCssSection;
+use Gtk4\GtkLabel;
+use Gtk4\GtkListItem;
+use Gtk4\GtkListScrollFlags;
+use Gtk4\GtkListView;
 use Gtk4\GtkOrientation;
+use Gtk4\GtkScrollInfo;
+use Gtk4\GtkSignalListItemFactory;
+use Gtk4\GtkSingleSelection;
+use Gtk4\GtkStringList;
+use Gtk4\GtkStringObject;
 use Gtk4\GtkStyleProviderPriority;
+use Gtk4\GtkTreeListModel;
 use Gtk4\GtkWindow;
 use PhpGtk4\Tests\Scripts\StressSquare;
 
@@ -112,6 +124,42 @@ for ($i = 0; $i < $rounds; $i++) {
     } else {
         $keep[] = $css;       // outlives the loop
     }
+
+    // list views: a selection model over a store, rows built by a factory, and a tree whose
+    // create function is a PHP callable GTK owns (notified scope + the qdata teardown hook).
+    $strings = new GtkStringList(["a$i", "b$i", 'leaf']);
+    $selection = new GtkSingleSelection($strings);
+    $selection->select_item(1, true);
+    $factory = new GtkSignalListItemFactory();
+    $factory->connect('setup', function (GtkSignalListItemFactory $f, GtkListItem $item): void {
+        $item->set_child(new GtkLabel());
+    });
+    $factory->connect('bind', function (GtkSignalListItemFactory $f, GtkListItem $item): void {
+        $child = $item->get_child();
+        $object = $item->get_item();
+        if ($child instanceof GtkLabel && $object instanceof GtkStringObject) {
+            $child->set_text($object->get_string());
+        }
+    });
+    $list = new GtkListView($selection, $factory);
+    $list->scroll_to(0, GtkListScrollFlags::SELECT, new GtkScrollInfo());
+    $set = $selection->get_selection();
+    $union = clone $set;
+    $union->union(GtkBitset::new_range(0, 3));
+    $tree = new GtkTreeListModel(
+        $strings,
+        false,
+        $i % 2 === 0,
+        // Children for the roots only: with autoexpand on, a tree that keeps answering with
+        // children would unfold forever.
+        fn(GObject $item): ?GListModel => $item instanceof GtkStringObject
+            && str_starts_with($item->get_string(), 'a') ? new GtkStringList(['leaf']) : null,
+    );
+    $tree->get_row(0)?->set_expanded(true);
+    if ($i % 2 === 0) {
+        $keep[] = $tree;     // outlives the loop: its create func is released at shutdown
+    }
+    unset($list, $factory, $selection, $tree, $strings, $set, $union);
 
     // identity + object property round trip
     $other = new GtkWindow();

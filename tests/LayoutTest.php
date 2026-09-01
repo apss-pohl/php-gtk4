@@ -6,7 +6,6 @@ namespace PhpGtk4\Tests;
 
 use Gtk4\GLib;
 use Gtk4\GListModel;
-use Gtk4\GListModelObject;
 use Gtk4\GtkAdjustment;
 use Gtk4\GtkBaselinePosition;
 use Gtk4\GtkBox;
@@ -29,6 +28,7 @@ use Gtk4\GtkRevealerTransitionType;
 use Gtk4\GtkScrollable;
 use Gtk4\GtkScrollablePolicy;
 use Gtk4\GtkScrolledWindow;
+use Gtk4\GtkSelectionModelObject;
 use Gtk4\GtkSeparator;
 use Gtk4\GtkSizeGroup;
 use Gtk4\GtkSizeGroupMode;
@@ -127,9 +127,10 @@ final class LayoutTest extends GtkTestCase
         self::assertInstanceOf(GtkNotebookPage::class, $page);
         self::assertSame($second, $page->get_child());
         // get_pages() is a GListModel whose concrete class (GtkNotebookPages) is GTK-private:
-        // wrap() falls back to the interface's generated class, so the list is usable.
+        // wrap() falls back to the most derived interface's generated class - the pages are a
+        // GtkSelectionModel (which is a GListModel), so the list is usable.
         $pages = $nb->get_pages();
-        self::assertInstanceOf(GListModelObject::class, $pages);
+        self::assertInstanceOf(GtkSelectionModelObject::class, $pages);
         self::assertInstanceOf(GListModel::class, $pages);
         self::assertSame(2, $pages->get_n_items());
         self::assertSame($page, $pages->get_item(1), 'the same page object GTK created');

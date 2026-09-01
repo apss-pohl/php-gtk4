@@ -264,7 +264,7 @@ examples → CI → commit):
 | 4 | menus/actions: `GMenu`, `GMenuItem`, `GtkPopoverMenu(Bar)`, `GtkMenuButton`, `GtkHeaderBar`, `GtkApplicationWindow`, accels | `GMenuModel` |
 | 5 | dialogs (4.10 async API): `GtkAlertDialog`, `GtkFileDialog`, `GtkColorDialog`, `GtkFontDialog`, `GtkAboutDialog`, `GtkFileFilter` | `GAsyncReadyCallback` scope (async) + `*_finish` → `GError` throws |
 | 6 | text: `GtkTextView`, `GtkTextBuffer`, `GtkTextIter` (boxed), `GtkTextMark/Tag/TagTable` | boxed with many methods (`GtkTextIter`) |
-| 7 | list models/views: `GtkStringList`, `GtkSingleSelection`, `GtkMultiSelection`, `GtkListView`, `GtkColumnView(+Column)`, `GtkSignalListItemFactory`, `GtkTreeListModel` | `GtkListItemFactory` promoted |
+| 7 | list models/views: `GtkStringList`, `GtkSingleSelection`, `GtkMultiSelection`, `GtkListView`, `GtkColumnView(+Column)`, `GtkSignalListItemFactory`, `GtkTreeListModel` | `GtkListItemFactory` promoted; done 2026-09-01 (+ `GtkGridView`, `GtkNoSelection`, `GtkBitset`, `GtkTreeExpander`, `GtkScrollInfo`) |
 | 8 | styling/builder/Gdk: `GtkCssProvider`, `GtkBuilder`, `GtkIconTheme`, `GdkDisplay`, `GdkMonitor`, `GdkSurface`, `GdkCursor`, `GdkClipboard` | CSS + `GdkDisplay` done 2026-08-28, `GdkMonitor` 2026-08-31; `GtkBuilder` scope promoted |
 | later | printing, `GdkPixbuf*` (prefer `GdkTexture`), WebKitGTK 6 | — |
 

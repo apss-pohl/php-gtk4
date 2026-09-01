@@ -24,9 +24,9 @@ the notes are hand-written and may lag.
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 61 | — |
+| ✅ implemented | 65 | — |
 | 🟡 partial | 1 | — |
-| ❌ to port (GTK 4 equivalent exists) | 32 | ~1750 |
+| ❌ to port (GTK 4 equivalent exists) | 28 | ~1750 |
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 5 | ~130 |
 
@@ -183,13 +183,13 @@ is open work.
 
 | php-gtk3 class | gtk3 methods | GTK 4 replacement | php-gtk4 | Notes |
 | --- | ---: | --- | :---: | --- |
-| `GtkTreeView` | 38 | `GtkColumnView` / `GtkListView` | ❌ | `GtkTreeView` still exists in 4.x but is **deprecated since 4.10**. Recommendation: bind the list-model stack instead. |
-| `GtkTreeViewColumn` | 28 | `GtkColumnViewColumn` | ❌ | |
+| `GtkTreeView` | 38 | `GtkColumnView` / `GtkListView` | ✅ | `GtkTreeView` still exists in 4.x but is **deprecated since 4.10**. Recommendation: bind the list-model stack instead. |
+| `GtkTreeViewColumn` | 28 | `GtkColumnViewColumn` | ✅ | |
 | `GtkTreeModel` | 6 | `GListModel` | ✅ | |
 | `GtkListStore` | 25 | `GListStore` / `GtkStringList` | ✅ | |
-| `GtkTreeStore` | 17 | `GtkTreeListModel` | ❌ | |
+| `GtkTreeStore` | 17 | `GtkTreeListModel` | ✅ | |
 | `GtkTreeIter` | 1 | — | ⛔ | No iterator concept in `GListModel`. |
-| `GtkTreeSelection` | 20 | `GtkSelectionModel` (`GtkSingleSelection`, `GtkMultiSelection`) | ❌ | |
+| `GtkTreeSelection` | 20 | `GtkSelectionModel` (`GtkSingleSelection`, `GtkMultiSelection`) | ✅ | |
 | `GtkTreeSortable` | 4 | `GtkSortListModel` + `GtkSorter` | ✅ | |
 | `GtkCellRenderer` (+ `Text`, `Toggle`, `Pixbuf`, `Combo`) | 3 + 2 + 7 + 1 + 1 | `GtkListItemFactory` (`GtkSignalListItemFactory`, `GtkBuilderListItemFactory`) | ⛔ | Cell renderers are deprecated in 4.10; the factory model replaces them. |
 

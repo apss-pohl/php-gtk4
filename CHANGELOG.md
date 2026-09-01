@@ -9,6 +9,18 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Security
 
+- Two more ways a well-typed PHP value ended the process, both found by widening
+  `RobustnessTest` (see *Added*) to sweep the classes it used to skip:
+  - **`GtkEditable::get_chars()` with `end < start`** - and every other method returning an
+    owned string GIR marks non-nullable - read GTK's NULL result as a PHP string: SIGSEGV.
+    The generator emits the same NULL guard the borrowed-string path already had, so a failed
+    GTK precondition yields `''`. `GtkEntry`, `GtkText`, `GtkTextBuffer`, `GtkTextIter`,
+    `GtkCssProvider` and `PangoFontDescription` were all reachable this way.
+  - **`GtkTextIter::set_line_index(-1)` / `set_line_offset(-1)`** is a `g_error()` inside GTK
+    ("Byte index -1 is off the end of the line"), which aborts. Both are guarded by hand
+    (`gen/overrides/Gtk.TextIter.set_line_*.cpp`) and refuse a negative index with a
+    `ValueError`; one past the end of the line is GTK's own business and still clamps.
+
 - Type review of 2026-08-30, the second half of the argument-boundary work:
   - **Property writes are typed.** `$win->title = 'x'` was the one API surface with no type
     checking at all: `$win->default_width = 'garbage'` stored 0, `PHP_INT_MAX` stored -1, and
@@ -56,6 +68,41 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   shutdown does with a **live PHP subclass** in a widget tree and with an **armed I/O watch**
   (including one whose stream PHP closed under it) - both crash shapes that would take the
   PHPUnit runner down with them rather than failing a test.
+
+- **`RobustnessTest` sweeps the whole surface, not the handful of classes it could name.** It
+  used to skip any class its hand-written instance map did not list - 3262 of its 4174 cases,
+  including all of `GtkTextIter`, `GtkSpinButton`, `GtkBitset` and `GApplication`. It now builds
+  an instance of anything with a no-argument constructor, takes the GTK-owned handles from their
+  owner (a `GtkTextIter` from its buffer, a `GtkStackPage` from its stack) and fills the
+  arguments it is not attacking with a real value of the declared type, so the method bodies run.
+  That is 6.5 points of C++ line coverage and the two crashes above.
+
+- Wave 7 — **list models and views** (docs/PLAN.md §3): `GtkListView`, `GtkGridView`,
+  `GtkColumnView` (+ `GtkColumnViewColumn`), the factories that build their rows
+  (`GtkListItemFactory`, `GtkSignalListItemFactory`, `GtkListItem`), the selection models
+  (`GtkSelectionModel` + `GtkSingleSelection`, `GtkMultiSelection`, `GtkNoSelection`) with
+  `GtkBitset` as the set of selected positions, and the tree stack (`GtkTreeListModel`,
+  `GtkTreeListRow`, `GtkTreeExpander`) — GTK 4's replacement for `GtkTreeView` and
+  `GtkCellRenderer`. `GtkScrollInfo` came with them and unlocked `scroll_to()` on the views and
+  on `GtkViewport`.
+- **A tree unfolds through a PHP callable.** `new GtkTreeListModel($root, $passthrough,
+  $autoexpand, $createFunc)` (`gen/overrides/Gtk.TreeListModel.*`) asks
+  `function (GObject $item): ?GListModel` for an item's children, null for a leaf; anything else
+  is a `TypeError` through the exception boundary and the row stays a leaf. The model has no API
+  to take the callable back, so it also keeps it as qdata and request teardown releases it there.
+- **A transfer-full boxed argument is copied, not handed over.** `scroll_to($pos, $flags, $info)`
+  passed the handle's own `GtkScrollInfo` to GTK, which unreffed it — the next use of the handle
+  read freed memory and the process aborted at shutdown. The generator now emits a
+  `g_boxed_copy()` for every boxed parameter GIR marks `transfer full`.
+- **`clone` and `==` on an opaque boxed record mean something.** A refcounted record registers
+  `ref()` as its boxed copy, so `clone $bitset` used to alias the original; such a type now clones
+  through its own `copy()` (`BoxedClass::copy`). Comparison goes through the type's own equality
+  where it has one (`BoxedClass::equal`: `GtkBitset::equals`, `GtkTextIter::equal`,
+  `PangoFontDescription::equal`) — two iterators at different offsets used to compare equal
+  because neither has public fields — and by identity for a record with neither.
+- The generated fallback class for an interface (`wrap()`'s answer for a GTK-private
+  implementation) now also implements the methods the interface *inherits*: without them
+  `GtkSelectionModelObject` was abstract and `GtkNotebook::get_pages()` could not be wrapped at all.
 
 - Wave 6 — **text** (docs/PLAN.md §3): `GtkTextView`, `GtkTextBuffer`, `GtkTextIter`,
   `GtkTextMark`, `GtkTextTag`, `GtkTextTagTable` and `GtkWrapMode` (+ the search-flags and

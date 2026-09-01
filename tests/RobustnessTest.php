@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace PhpGtk4\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionClass;
+use ReflectionEnum;
 use ReflectionExtension;
 use ReflectionMethod;
 use ReflectionNamedType;
@@ -24,6 +26,19 @@ use ReflectionNamedType;
  */
 final class RobustnessTest extends GtkTestCase
 {
+    /**
+     * String parameters that carry *bytes*, not text: a `GBytes` is binary, so an embedded
+     * NUL is data and `check_utf8()` deliberately does not run on it (CLAUDE.md, "Convert at
+     * the boundary"). Everything else has to refuse one. Keyed by method, valued with the
+     * zero-based argument positions that are exempt.
+     *
+     * @var array<string, list<int>>
+     */
+    private const BINARY_ARGUMENTS = [
+        \Gtk4\GtkCssProvider::class . '::load_from_bytes' => [0],
+        \Gtk4\GdkTexture::class . '::new_from_bytes' => [0],
+    ];
+
     private string $cwd = '';
     private string $scratch = '';
 
@@ -96,8 +111,65 @@ final class RobustnessTest extends GtkTestCase
             \Gtk4\GParamSpec::class => self::paramSpec(),
             \Gtk4\GdkRGBA::class, \Gtk4\GdkRectangle::class, \Gtk4\GMainLoop::class,
             \Gtk4\GtkButton::class, \Gtk4\GtkLabel::class => new $class(),
-            default => null,  // abstract / non-instantiable: static methods only
+            \Gtk4\GApplication::class => new \Gtk4\GApplication(null, 1 << 5),
+            \Gtk4\GtkApplicationWindow::class => new \Gtk4\GtkApplicationWindow(
+                new \Gtk4\GtkApplication(null, 1 << 5),
+            ),
+            \Gtk4\GtkBox::class => new \Gtk4\GtkBox(\Gtk4\GtkOrientation::Horizontal, 0),
+            \Gtk4\GtkPaned::class => new \Gtk4\GtkPaned(\Gtk4\GtkOrientation::Horizontal),
+            \Gtk4\GtkScale::class => new \Gtk4\GtkScale(\Gtk4\GtkOrientation::Horizontal),
+            \Gtk4\GtkAdjustment::class => new \Gtk4\GtkAdjustment(0.0, 0.0, 100.0, 1.0, 10.0, 0.0),
+            \Gtk4\GtkSpinButton::class => new \Gtk4\GtkSpinButton(null, 1.0, 0),
+            \Gtk4\GtkEntryBuffer::class => new \Gtk4\GtkEntryBuffer('abc', -1),
+            \Gtk4\GtkBitset::class => \Gtk4\GtkBitset::new_range(0, 4),
+            // Abstract bases, exercised through the plainest concrete subclass.
+            \Gtk4\GtkGesture::class => new \Gtk4\GtkGestureClick(),
+            \Gtk4\GtkEventController::class => new \Gtk4\GtkEventControllerKey(),
+            // Handles GTK hands out but never lets PHP build - they come from their owner,
+            // and the handle is what keeps that owner alive (BOXED_OWNERS for the iter, a
+            // plain reference for the page).
+            \Gtk4\GtkTextIter::class => new \Gtk4\GtkTextBuffer()->get_start_iter(),
+            \Gtk4\GtkStackPage::class => new \Gtk4\GtkStack()->add_child(new \Gtk4\GtkButton()),
+            \Gtk4\GdkDisplay::class => \Gtk4\GdkDisplay::get_default(),
+            \Gtk4\GtkTreeListModel::class => self::treeListModel(),
+            \Gtk4\GtkTreeListRow::class => self::treeListModel()->get_child_row(0),
+            default => self::construct($class),
         };
+    }
+
+
+    private static function treeListModel(): \Gtk4\GtkTreeListModel
+    {
+        return new \Gtk4\GtkTreeListModel(
+            new \Gtk4\GtkStringList(['a', 'b']),
+            false,
+            false,
+            static fn(): ?\Gtk4\GListModel => null,
+        );
+    }
+
+    /**
+     * Everything the map above does not name: any class that takes no required
+     * constructor argument is swept through a plain instance, so a newly bound
+     * class is covered the day it lands. What is left over - abstract classes,
+     * handles GTK only ever creates itself (`new` throws), constructors that
+     * need an argument - has its static methods swept and nothing else.
+     *
+     * @param class-string $class
+     */
+    private static function construct(string $class): ?object
+    {
+        $rc = new ReflectionClass($class);
+        $ctor = $rc->getConstructor();
+        if (!$rc->isInstantiable() || ($ctor !== null && $ctor->getNumberOfRequiredParameters() > 0)) {
+            return null;
+        }
+
+        try {
+            return $rc->newInstance();
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     /**
@@ -199,6 +271,8 @@ final class RobustnessTest extends GtkTestCase
                 default => [],
             };
             foreach ($hostile as $bad => $mustThrow) {
+                $mustThrow = $mustThrow
+                    && !in_array($i, self::BINARY_ARGUMENTS["$class::$method"] ?? [], true);
                 $args = [];
                 foreach ($rm->getParameters() as $j => $p) {
                     $args[$j] = $j === $i ? $bad : self::validValueFor($p);
@@ -258,7 +332,20 @@ final class RobustnessTest extends GtkTestCase
             \Gtk4\ExceptionMode::class => \Gtk4\ExceptionMode::Log,
             \Gtk4\GtkAlign::class => \Gtk4\GtkAlign::Fill,
             \Gtk4\GtkOrientation::class => \Gtk4\GtkOrientation::Horizontal,
-            default => null,
+            // Any other bound type: the first case of an enum, an instance of a class that
+            // takes no required constructor argument. Without one the hostile sweep stops at
+            // the first parameter it cannot fill and never reaches the method body.
+            default => self::sampleOf($name),
         };
+    }
+
+    /** Sample value for a bound class or enum, or null when neither can be built. */
+    private static function sampleOf(string $name): ?object
+    {
+        if (enum_exists($name)) {
+            return (new ReflectionEnum($name)->getCases()[0] ?? null)?->getValue();
+        }
+
+        return class_exists($name) ? self::construct($name) : null;
     }
 }

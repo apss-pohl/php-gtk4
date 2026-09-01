@@ -636,6 +636,7 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, get_slice) {
   char *phpgtk_ret =
       gtk_text_buffer_get_slice(self, static_cast<GtkTextIter *>(start_b),
                                 static_cast<GtkTextIter *>(end_b), include_hidden_chars);
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
   RETVAL_STRING(phpgtk_ret);
   g_free(phpgtk_ret);
 }
@@ -688,6 +689,7 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, get_text) {
   char *phpgtk_ret =
       gtk_text_buffer_get_text(self, static_cast<GtkTextIter *>(start_b),
                                static_cast<GtkTextIter *>(end_b), include_hidden_chars);
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
   RETVAL_STRING(phpgtk_ret);
   g_free(phpgtk_ret);
 }

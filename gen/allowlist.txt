@@ -174,3 +174,26 @@ Gtk.TextMark
 Gtk.TextTag
 Gtk.TextTagTable
 Gtk.WrapMode
+
+# Wave 7 (list models/views, PLAN.md §3): GTK 4's replacement for GtkTreeView - a GListModel
+# behind a selection model, rendered by a widget through a GtkListItemFactory.
+Gtk.ListView
+Gtk.GridView
+Gtk.ColumnView
+Gtk.ColumnViewColumn
+Gtk.ListItem
+Gtk.ListItemFactory
+Gtk.SignalListItemFactory
+Gtk.SelectionModel
+Gtk.SingleSelection
+Gtk.MultiSelection
+Gtk.NoSelection
+Gtk.TreeListModel
+Gtk.TreeListRow
+# The widget that draws a tree row's triangle and indent - without it a tree list model
+# has no expanders in the view.
+Gtk.TreeExpander
+# The set of positions a selection model answers with, and the scroll target of the views'
+# scroll_to() (which unlocks GtkViewport::scroll_to() too).
+Gtk.Bitset
+Gtk.ScrollInfo

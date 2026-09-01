@@ -33,6 +33,14 @@ using BoxedWriter = bool (*)(gpointer data, const char *field, zval *value);
 // on valid data, and the handle refs the result so the value cannot dangle when the script
 // drops the owner. nullptr for self-contained values (GdkRGBA).
 using BoxedOwner = GObject *(*)(gpointer data);
+// How `clone $value` duplicates the data. nullptr means g_boxed_copy(), which is right for a
+// plain struct - but a refcounted record registers its ref() as the boxed copy, and cloning
+// one of those has to call its real copy function instead (GtkBitset).
+using BoxedCopy = gpointer (*)(gconstpointer data);
+// Whether two values of the type are the same value, for `==` and `<=>`. nullptr means the
+// comparison goes by the public fields (a plain struct); a record with neither fields nor an
+// equal() of its own can only compare by identity.
+using BoxedEqual = bool (*)(gconstpointer a, gconstpointer b);
 
 struct BoxedClass {
   GType type{};
@@ -41,6 +49,8 @@ struct BoxedClass {
   BoxedReader read{};
   BoxedWriter write{};
   BoxedOwner owner = nullptr;
+  BoxedCopy copy = nullptr;
+  BoxedEqual equal = nullptr;
 };
 
 void boxed_handlers_init();

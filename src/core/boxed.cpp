@@ -50,13 +50,19 @@ void free_obj(zend_object *o) {
   zend_object_std_dtor(o);
 }
 
-// clone_obj handler: boxed values are copyable - `clone $rgba` is an independent g_boxed_copy().
+// clone_obj handler: boxed values are copyable - `clone $rgba` is an independent copy
+// (BoxedClass::copy where the type's boxed copy only takes a reference).
 zend_object *clone_obj(zend_object *o) {
   Boxed *self = boxed_from_zend(o);
+  const BoxedClass *info = info_of(self);
   zend_object *copy = create_object(o->ce);
   Boxed *other = boxed_from_zend(copy);
   other->type = self->type;
-  other->data = self->data != nullptr ? g_boxed_copy(self->type, self->data) : nullptr;
+  other->data = nullptr;
+  if (self->data != nullptr) {
+    other->data = info != nullptr && info->copy != nullptr ? info->copy(self->data)
+                                                           : g_boxed_copy(self->type, self->data);
+  }
   other->owner = self->owner;
   if (other->owner != nullptr) g_object_ref(other->owner);
   zend_objects_clone_members(copy, o);
@@ -140,12 +146,20 @@ HashTable *get_debug_info(zend_object *o, int *is_temp) {
   return ht;
 }
 
-// compare handler: same type and equal fields -> 0 (so == and <=> work by value).
+// compare handler: two values of the same type are 0 (equal) when the type's own equal()
+// says so, else when their public fields match - so == and <=> work by value. An opaque
+// record with neither (a GtkScrollInfo) can only answer for the very same value.
 int compare_objects(zval *a, zval *b) {
   ZEND_COMPARE_OBJECTS_FALLBACK(a, b);
   Boxed *x = boxed_from_zval(a);
   Boxed *y = boxed_from_zval(b);
   if (x->type != y->type) return 1;
+  const BoxedClass *info = info_of(x);
+  if (info != nullptr && info->equal != nullptr) {
+    if (x->data == nullptr || y->data == nullptr) return x->data == y->data ? 0 : 1;
+    return info->equal(x->data, y->data) ? 0 : 1;
+  }
+  if (info != nullptr && *info->fields == nullptr) return x->data == y->data ? 0 : 1;
   // Compare through the debug view: field by field.
   int ta = 0;
   int tb = 0;

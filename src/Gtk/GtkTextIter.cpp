@@ -860,6 +860,7 @@ ZEND_METHOD(Gtk4_GtkTextIter, get_slice) {
   gpointer end_b = unwrap_boxed(end, GTK_TYPE_TEXT_ITER);
   if (end_b == nullptr) RETURN_THROWS();
   char *phpgtk_ret = gtk_text_iter_get_slice(self, static_cast<GtkTextIter *>(end_b));
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
   RETVAL_STRING(phpgtk_ret);
   g_free(phpgtk_ret);
 }
@@ -889,6 +890,7 @@ ZEND_METHOD(Gtk4_GtkTextIter, get_text) {
   gpointer end_b = unwrap_boxed(end, GTK_TYPE_TEXT_ITER);
   if (end_b == nullptr) RETURN_THROWS();
   char *phpgtk_ret = gtk_text_iter_get_text(self, static_cast<GtkTextIter *>(end_b));
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
   RETVAL_STRING(phpgtk_ret);
   g_free(phpgtk_ret);
 }
@@ -946,6 +948,7 @@ ZEND_METHOD(Gtk4_GtkTextIter, get_visible_slice) {
   gpointer end_b = unwrap_boxed(end, GTK_TYPE_TEXT_ITER);
   if (end_b == nullptr) RETURN_THROWS();
   char *phpgtk_ret = gtk_text_iter_get_visible_slice(self, static_cast<GtkTextIter *>(end_b));
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
   RETVAL_STRING(phpgtk_ret);
   g_free(phpgtk_ret);
 }
@@ -964,6 +967,7 @@ ZEND_METHOD(Gtk4_GtkTextIter, get_visible_text) {
   gpointer end_b = unwrap_boxed(end, GTK_TYPE_TEXT_ITER);
   if (end_b == nullptr) RETURN_THROWS();
   char *phpgtk_ret = gtk_text_iter_get_visible_text(self, static_cast<GtkTextIter *>(end_b));
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
   RETVAL_STRING(phpgtk_ret);
   g_free(phpgtk_ret);
 }
@@ -1094,37 +1098,6 @@ ZEND_METHOD(Gtk4_GtkTextIter, set_line) {
 }
 
 /**
- * Gtk4\GtkTextIter::set_line_index(int $byte_on_line): void
- *
- * Same as `set_line_offset`, but works with a byte index. The given byte index must be at the
- * start of a character, it can’t be in the middle of a UTF-8 encoded character.
- */
-ZEND_METHOD(Gtk4_GtkTextIter, set_line_index) {
-  zend_long byte_on_line;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_LONG(byte_on_line)
-  ZEND_PARSE_PARAMETERS_END();
-  GtkTextIter *self = PHPGTK_BOXED_SELF(GtkTextIter);
-  if (!phpgtk::check_range<int>(byte_on_line, 1)) RETURN_THROWS();
-  gtk_text_iter_set_line_index(self, static_cast<int>(byte_on_line));
-}
-
-/**
- * Gtk4\GtkTextIter::set_line_offset(int $char_on_line): void
- *
- * Moves $iter within a line, to a new character (not byte) offset.
- */
-ZEND_METHOD(Gtk4_GtkTextIter, set_line_offset) {
-  zend_long char_on_line;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_LONG(char_on_line)
-  ZEND_PARSE_PARAMETERS_END();
-  GtkTextIter *self = PHPGTK_BOXED_SELF(GtkTextIter);
-  if (!phpgtk::check_range<int>(char_on_line, 1)) RETURN_THROWS();
-  gtk_text_iter_set_line_offset(self, static_cast<int>(char_on_line));
-}
-
-/**
  * Gtk4\GtkTextIter::set_offset(int $char_offset): void
  *
  * Sets $iter to point to $char_offset.
@@ -1242,6 +1215,45 @@ ZEND_METHOD(Gtk4_GtkTextIter, toggles_tag) {
   RETURN_BOOL(gtk_text_iter_toggles_tag(self, tag_o != nullptr ? GTK_TEXT_TAG(tag_o) : nullptr));
 }
 
+/**
+ * public function set_line_index(int $byte_on_line): void
+ * Moves $iter within its line, to the given byte index. The index counts from the start of
+ * the line and must land on a UTF-8 character boundary; one past the end of the line is
+ * clamped by GTK, a negative one is a `g_error()` that would end the process.
+ */
+ZEND_METHOD(Gtk4_GtkTextIter, set_line_index) {
+  zend_long byte_on_line;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_LONG(byte_on_line)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkTextIter *self = PHPGTK_BOXED_SELF(GtkTextIter);
+  if (!phpgtk::check_range<int>(byte_on_line, 1)) RETURN_THROWS();
+  if (byte_on_line < 0) {
+    zend_argument_value_error(1, "must be greater than or equal to 0");
+    RETURN_THROWS();
+  }
+  gtk_text_iter_set_line_index(self, static_cast<int>(byte_on_line));
+}
+
+/**
+ * public function set_line_offset(int $char_on_line): void
+ * Moves $iter within its line, to the given character offset. One past the end of the line
+ * is clamped by GTK, a negative offset is a `g_error()` that would end the process.
+ */
+ZEND_METHOD(Gtk4_GtkTextIter, set_line_offset) {
+  zend_long char_on_line;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_LONG(char_on_line)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkTextIter *self = PHPGTK_BOXED_SELF(GtkTextIter);
+  if (!phpgtk::check_range<int>(char_on_line, 1)) RETURN_THROWS();
+  if (char_on_line < 0) {
+    zend_argument_value_error(1, "must be greater than or equal to 0");
+    RETURN_THROWS();
+  }
+  gtk_text_iter_set_line_offset(self, static_cast<int>(char_on_line));
+}
+
 namespace phpgtk {
 // MINIT: bind the PHP class to GTK_TYPE_TEXT_ITER with its field table.
 void register_GtkTextIter(zend_class_entry *ce) {
@@ -1250,9 +1262,16 @@ void register_GtkTextIter(zend_class_entry *ce) {
                             .fields = fields,
                             .read = read,
                             .write = write,
-                            .owner = [](gpointer d) {
-                              return reinterpret_cast<GObject *>(
-                                  gtk_text_iter_get_buffer(static_cast<GtkTextIter *>(d)));
-                            }});
+                            .owner =
+                                [](gpointer d) {
+                                  return reinterpret_cast<GObject *>(
+                                      gtk_text_iter_get_buffer(static_cast<GtkTextIter *>(d)));
+                                },
+                            .equal =
+                                [](gconstpointer a, gconstpointer b) {
+                                  return gtk_text_iter_equal(static_cast<const GtkTextIter *>(a),
+                                                             static_cast<const GtkTextIter *>(b)) !=
+                                         FALSE;
+                                }});
 }
 }  // namespace phpgtk

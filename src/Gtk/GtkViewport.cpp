@@ -2,6 +2,7 @@
 // Gtk4\GtkViewport
 #include "php_gtk4.h"
 #include "core/object.h"
+#include "core/boxed.h"
 #include "core/subtype.h"
 
 using namespace phpgtk;
@@ -70,6 +71,30 @@ ZEND_METHOD(Gtk4_GtkViewport, get_scroll_to_focus) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkViewport *self = PHPGTK_SELF(GtkViewport, GTK_TYPE_VIEWPORT);
   RETURN_BOOL(gtk_viewport_get_scroll_to_focus(self));
+}
+
+/**
+ * Gtk4\GtkViewport::scroll_to(GtkWidget $descendant, ?GtkScrollInfo $scroll): void
+ *
+ * Scrolls a descendant of the viewport into view.
+ */
+ZEND_METHOD(Gtk4_GtkViewport, scroll_to) {
+  zval *descendant;
+  zval *scroll = nullptr;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(descendant, class_for_gtype(GTK_TYPE_WIDGET))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(scroll, boxed_class_for_type(GTK_TYPE_SCROLL_INFO)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkViewport *self = PHPGTK_SELF(GtkViewport, GTK_TYPE_VIEWPORT);
+  GObject *descendant_o = unwrap(descendant, GTK_TYPE_WIDGET);
+  if (descendant_o == nullptr) RETURN_THROWS();
+  gpointer scroll_b = nullptr;
+  if (scroll != nullptr) {
+    scroll_b = unwrap_boxed(scroll, GTK_TYPE_SCROLL_INFO);
+    if (scroll_b == nullptr) RETURN_THROWS();
+  }
+  if (scroll_b != nullptr) scroll_b = g_boxed_copy(GTK_TYPE_SCROLL_INFO, scroll_b);
+  gtk_viewport_scroll_to(self, GTK_WIDGET(descendant_o), static_cast<GtkScrollInfo *>(scroll_b));
 }
 
 /**

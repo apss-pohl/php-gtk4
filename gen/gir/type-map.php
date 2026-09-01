@@ -761,12 +761,16 @@ final class TypeMap
                 'decl' => "zval *$name" . ($nullable ? ' = nullptr' : '') . ';',
                 'zpp' => 'Z_PARAM_OBJECT_OF_CLASS' . ($nullable ? '_OR_NULL' : '')
                     . "($name, boxed_class_for_type($typeMacro)->ce)",
-                'pre' => $nullable
+                'pre' => array_merge($nullable
                     ? ["gpointer {$name}_b = nullptr;", "if ($name != nullptr) {",
                         "  {$name}_b = unwrap_boxed($name, $typeMacro);",
                         "  if ({$name}_b == nullptr) RETURN_THROWS();", '}']
                     : ["gpointer {$name}_b = unwrap_boxed($name, $typeMacro);",
-                        "if ({$name}_b == nullptr) RETURN_THROWS();"],
+                        "if ({$name}_b == nullptr) RETURN_THROWS();"], $p->transfer === 'full'
+                        // The callee consumes this value (a ref for a refcounted record, the
+                        // struct itself otherwise); the handle keeps what it owns.
+                        ? ["if ({$name}_b != nullptr) {$name}_b = g_boxed_copy($typeMacro, {$name}_b);"]
+                        : []),
                 'carg' => "static_cast<{$node->ctype} *>({$name}_b)",
             ]);
         }
@@ -947,7 +951,13 @@ final class TypeMap
             if ($full) {
                 return ['phpType' => ($nullable ? '?' : '') . 'string', 'lines' => fn(string $call) => [
                     "char *phpgtk_ret = $call;", ...$throwCheck('phpgtk_ret == nullptr'),
-                    ...($nullable ? ['if (phpgtk_ret == nullptr) RETURN_NULL();'] : []),
+                    // Same as the transfer-none arm below: GIR says non-nullable, GTK hands back
+                    // NULL anyway - for an unset value (GtkEntry::get_icon_tooltip_text()) and
+                    // after a failed precondition (GtkEditable::get_chars() with end < start,
+                    // which used to be a SIGSEGV) - so an empty string, never a crash.
+                    ...($nullable
+                        ? ['if (phpgtk_ret == nullptr) RETURN_NULL();']
+                        : ['if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();']),
                     'RETVAL_STRING(phpgtk_ret);', 'g_free(phpgtk_ret);']];
             }
             return ['phpType' => ($nullable ? '?' : '') . 'string', 'lines' => fn(string $call) => $nullable

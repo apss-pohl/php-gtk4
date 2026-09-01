@@ -812,8 +812,24 @@ final class Generator
                     . '  ' . ($isRoot ? 'attach' : 'attach_new') . "(object_from_zval(ZEND_THIS), obj);\n}\n\n");
             }
         }
-        // Interface methods: one implementation per interface, aliased into the class.
-        foreach ($ifaces as $iface) {
+        // Interface methods: one implementation per interface, aliased into the class - the
+        // interfaces it implements and everything those require (a GtkSelectionModel is a
+        // GListModel). An interface itself declares nothing of its prerequisites: PHP inherits
+        // those through `extends`, and a body in an interface is not even valid PHP.
+        $aliasIfaces = $n->kind === 'interface' ? [] : $ifaces;
+        for ($ai = 0; $ai < count($aliasIfaces); $ai++) {
+            $prereqs = $this->gir->types[$this->types->qOfPhp($aliasIfaces[$ai])]->prerequisites;
+            foreach ($prereqs as $q) {
+                if (!$this->types->known($q) || $this->gir->types[$q]->kind !== 'interface') {
+                    continue;
+                }
+                $prereqPhp = phpClass($this->gir->types[$q]);
+                if (!in_array($prereqPhp, $aliasIfaces, true)) {
+                    $aliasIfaces[] = $prereqPhp;
+                }
+            }
+        }
+        foreach ($aliasIfaces as $iface) {
             $in = $this->gir->types[$this->types->qOfPhp($iface)];
             foreach ($in->funcs as $f) {
                 if ($f->kind !== 'method') {
@@ -947,16 +963,36 @@ final class Generator
             $minit[] = "  phpgtk::register_interface_fallback($typeMacro, $fbCe);";
             $fbMethods = ["    /** Never called: these handles only come from wrap(). */\n"
                 . "    private function __construct() {}\n"];
-            foreach ($n->funcs as $f) {
-                if ($f->kind !== 'method' || $f->shadowedBy !== null || !$this->methodEmittable($n, $f)) {
-                    continue;
+            // Every method the class has to have a body for: this interface's, plus the ones it
+            // inherits from its prerequisites (GtkSelectionModel extends GListModel). A missing
+            // one would leave the class abstract, and wrap() cannot instantiate that.
+            $fbSeen = [];
+            $fbSources = [$n];
+            for ($i = 0; $i < count($fbSources); $i++) {
+                foreach ($fbSources[$i]->prerequisites as $q) {
+                    if ($this->types->known($q) && $this->gir->types[$q]->kind === 'interface') {
+                        $fbSources[] = $this->gir->types[$q];
+                    }
                 }
-                $phpName = $f->shadows ?? $f->name;
-                $sig = $this->typeMap->stubSignature($n, $f, $phpName);
-                if ($sig === null) {
-                    continue;
+            }
+            foreach ($fbSources as $fbSource) {
+                $fbPhp = phpClass($fbSource);
+                foreach ($fbSource->funcs as $f) {
+                    if (
+                        $f->kind !== 'method' || $f->shadowedBy !== null
+                        || !$this->methodEmittable($fbSource, $f)
+                    ) {
+                        continue;
+                    }
+                    $phpName = $f->shadows ?? $f->name;
+                    $sig = $this->typeMap->stubSignature($fbSource, $f, $phpName);
+                    if ($sig === null || isset($fbSeen[$phpName])) {
+                        continue;
+                    }
+                    $fbSeen[$phpName] = true;
+                    $fbMethods[] = "    /** @implementation-alias Gtk4\\$fbPhp::$phpName */\n"
+                        . "    public function $sig {}\n";
                 }
-                $fbMethods[] = "    /** @implementation-alias Gtk4\\$php::$phpName */\n    public function $sig {}\n";
             }
             $stub .= "\n/**\n * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only\n"
                 . " * registered interface is {@see $php} - a private list model behind a `get_pages()`, for\n"
@@ -1383,10 +1419,25 @@ final class Generator
         $ownerFn = \PhpGtk4\Gen\BOXED_OWNERS[$n->qname()] ?? null;
         $owner = $ownerFn === null ? '' : ",\n      .owner = [](gpointer d) {"
             . " return reinterpret_cast<GObject *>($ownerFn(static_cast<$ctype *>(d))); }";
+        // A refcounted record registers ref() as its boxed copy, so g_boxed_copy() would make
+        // `clone` an alias: such a type clones through its own copy() instead (GtkBitset).
+        $byName = [];
+        foreach ($n->funcs as $f) {
+            $byName[$f->name] = $f;
+        }
+        $copy = isset($byName['copy'], $byName['ref']) ? ",\n      .copy = [](gconstpointer d) {"
+            . " return static_cast<gpointer>({$byName['copy']->cid}("
+            . "static_cast<const $ctype *>(d))); }" : '';
+        // `==` on an opaque record goes through the type's own equality (GtkTextIter::equal,
+        // GtkBitset::equals); without one it can only compare the public fields.
+        $equalFn = $byName['equal'] ?? $byName['equals'] ?? null;
+        $equal = $equalFn === null ? '' : ",\n      .equal = [](gconstpointer a, gconstpointer b) {"
+            . " return {$equalFn->cid}(static_cast<const $ctype *>(a),"
+            . " static_cast<const $ctype *>(b)) != FALSE; }";
         $registration = "namespace phpgtk {\n// MINIT: bind the PHP class to $typeMacro with its field table.\n"
             . "void register_{$php}(zend_class_entry *ce) {\n"
             . "  register_boxed(BoxedClass{.type = $typeMacro, .ce = ce, .fields = fields, .read = read,"
-            . " .write = write$owner});\n"
+            . " .write = write$owner$copy$equal});\n"
             . "}\n}  // namespace phpgtk\n";
 
         // ---- stub

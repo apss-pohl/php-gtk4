@@ -113,6 +113,15 @@ final class Demo
             'GtkTextView', 'GtkTextBuffer', 'GtkTextIter', 'GtkTextMark', 'GtkTextTag',
             'GtkTextTagTable', 'GtkWrapMode',
         ],
+        'List views' => [
+            'GtkListView', 'GtkGridView', 'GtkColumnView', 'GtkColumnViewColumn', 'GtkListItem',
+            'GtkListItemFactory', 'GtkSignalListItemFactory', 'GtkListScrollFlags',
+            'GtkListTabBehavior', 'GtkSortType', 'GtkScrollInfo',
+        ],
+        'Selections & trees' => [
+            'GtkSelectionModel', 'GtkSingleSelection', 'GtkMultiSelection', 'GtkNoSelection',
+            'GtkBitset', 'GtkTreeListModel', 'GtkTreeListRow', 'GtkTreeExpander',
+        ],
         'Buttons & ranges' => [
             'GtkCheckButton', 'GtkToggleButton', 'GtkSpinButton', 'GtkSpinButtonUpdatePolicy', 'GtkSpinType',
             'GtkRange', 'GtkScale', 'GtkProgressBar', 'GtkSpinner',

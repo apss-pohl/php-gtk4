@@ -193,6 +193,35 @@ drives a window with no `GtkApplication`. Both pass a standalone override to `De
 | [GtkTextTagTable.php](GtkTextTagTable.php) | the registry of tags a buffer can use |
 | [GtkWrapMode.php](GtkWrapMode.php) | how a GtkTextView breaks long lines |
 
+## List views
+
+| File | Shows |
+| ---- | ----- |
+| [GtkListView.php](GtkListView.php) | one widget per visible row, over a list model of any size |
+| [GtkGridView.php](GtkGridView.php) | the same list, laid out in a grid of equal cells |
+| [GtkColumnView.php](GtkColumnView.php) | the same list model, shown as a table |
+| [GtkColumnViewColumn.php](GtkColumnViewColumn.php) | one column of a GtkColumnView: title, factory, sorter |
+| [GtkListItem.php](GtkListItem.php) | the row a factory fills in: child, item, position, selectable |
+| [GtkListItemFactory.php](GtkListItemFactory.php) | the type every list widget asks for its rows |
+| [GtkSignalListItemFactory.php](GtkSignalListItemFactory.php) | rows built by four PHP handlers: setup, bind, unbind, teardown |
+| [GtkListScrollFlags.php](GtkListScrollFlags.php) | what scroll_to() does besides scrolling |
+| [GtkListTabBehavior.php](GtkListTabBehavior.php) | where the Tab key goes inside a list |
+| [GtkSortType.php](GtkSortType.php) | ascending or descending, the direction a column sorts in |
+| [GtkScrollInfo.php](GtkScrollInfo.php) | which axes a scroll_to() is allowed to move |
+
+## Selections & trees
+
+| File | Shows |
+| ---- | ----- |
+| [GtkSelectionModel.php](GtkSelectionModel.php) | the list model a list widget can select in |
+| [GtkSingleSelection.php](GtkSingleSelection.php) | one selected item, as a position and as an object |
+| [GtkMultiSelection.php](GtkMultiSelection.php) | any number of selected items, read back as a GtkBitset |
+| [GtkNoSelection.php](GtkNoSelection.php) | a list that cannot be selected in |
+| [GtkBitset.php](GtkBitset.php) | a set of positions, as a value |
+| [GtkTreeListModel.php](GtkTreeListModel.php) | a tree, flattened into a list |
+| [GtkTreeListRow.php](GtkTreeListRow.php) | one node of a tree: item, depth, children, expanded |
+| [GtkTreeExpander.php](GtkTreeExpander.php) | the triangle and the indent of a tree row |
+
 ## Buttons & ranges
 
 | File | Shows |

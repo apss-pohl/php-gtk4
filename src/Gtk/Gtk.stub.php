@@ -526,6 +526,109 @@ enum GtkBaselinePosition: int
 }
 
 /**
+ * A `GtkBitset` represents a set of unsigned integers.
+ * @not-serializable
+ */
+final class GtkBitset
+{
+    /** GtkBitset values come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Creates a new empty bitset. */
+    public static function new_empty(): GtkBitset {}
+
+    /** Creates a bitset with the given range set. */
+    public static function new_range(int $start, int $n_items): GtkBitset {}
+
+    /** Adds $value to $self if it wasn't part of it before. */
+    public function add(int $value): bool {}
+
+    /** Adds all values from $start (inclusive) to $start + $n_items (exclusive) in $self. */
+    public function add_range(int $start, int $n_items): void {}
+
+    /**
+     * Adds the closed range [$first, $last], so $first, $last and all values in between. $first
+     * must be smaller than $last.
+     */
+    public function add_range_closed(int $first, int $last): void {}
+
+    /**
+     * Interprets the values as a 2-dimensional boolean grid with the given $stride and inside that
+     * grid, adds a rectangle with the given $width and $height.
+     */
+    public function add_rectangle(int $start, int $width, int $height, int $stride): void {}
+
+    /** Checks if the given $value has been added to $self */
+    public function contains(int $value): bool {}
+
+    /** Sets $self to be the symmetric difference of $self and $other. */
+    public function difference(GtkBitset $other): void {}
+
+    /** Returns `true` if $self and $other contain the same values. */
+    public function equals(GtkBitset $other): bool {}
+
+    /** Returns the largest value in $self. */
+    public function get_maximum(): int {}
+
+    /** Returns the smallest value in $self. */
+    public function get_minimum(): int {}
+
+    /** Returns the value of the $nth item in self. */
+    public function get_nth(int $nth): int {}
+
+    /** Gets the number of values that were added to the set. */
+    public function get_size(): int {}
+
+    /** Gets the number of values that are part of the set from $first to $last (inclusive). */
+    public function get_size_in_range(int $first, int $last): int {}
+
+    /** Sets $self to be the intersection of $self and $other. */
+    public function intersect(GtkBitset $other): void {}
+
+    /** Check if no value is contained in bitset. */
+    public function is_empty(): bool {}
+
+    /** Removes $value from $self if it was part of it before. */
+    public function remove(int $value): bool {}
+
+    /** Removes all values from the bitset so that it is empty again. */
+    public function remove_all(): void {}
+
+    /** Removes all values from $start (inclusive) to $start + $n_items (exclusive) in $self. */
+    public function remove_range(int $start, int $n_items): void {}
+
+    /**
+     * Removes the closed range [$first, $last], so $first, $last and all values in between. $first
+     * must be smaller than $last.
+     */
+    public function remove_range_closed(int $first, int $last): void {}
+
+    /**
+     * Interprets the values as a 2-dimensional boolean grid with the given $stride and inside that
+     * grid, removes a rectangle with the given $width and $height.
+     */
+    public function remove_rectangle(int $start, int $width, int $height, int $stride): void {}
+
+    /** Shifts all values in $self to the left by $amount. */
+    public function shift_left(int $amount): void {}
+
+    /** Shifts all values in $self to the right by $amount. */
+    public function shift_right(int $amount): void {}
+
+    /**
+     * This is a support function for `GListModel` handling, by mirroring the
+     * `GlistModel::items-changed` signal.
+     */
+    public function splice(int $position, int $removed, int $added): void {}
+
+    /** Sets $self to be the subtraction of $other from $self. */
+    public function subtract(GtkBitset $other): void {}
+
+    /** Sets $self to be the union of $self and $other. */
+    public function union(GtkBitset $other): void {}
+}
+
+/**
  * The `GtkBox` widget arranges child widgets into a single row or column.
  *
  * @property ?int $baseline_child
@@ -846,6 +949,215 @@ class GtkColorDialog extends GObject
 }
 
 /**
+ * `GtkColumnView` presents a large dynamic list of items using multiple columns with headers.
+ *
+ * @property-read ?GListModel $columns
+ * @property ?bool $enable_rubberband
+ * @property ?GtkListItemFactory $header_factory
+ * @property ?GtkSelectionModel $model
+ * @property ?bool $reorderable
+ * @property ?GtkListItemFactory $row_factory
+ * @property ?bool $show_column_separators
+ * @property ?bool $show_row_separators
+ * @property ?bool $single_click_activate
+ * @property-read ?GtkSorter $sorter
+ * @property ?GtkListTabBehavior $tab_behavior
+ */
+class GtkColumnView extends GtkWidget implements GtkScrollable
+{
+    /** Creates a new `GtkColumnView`. */
+    public function __construct(?GtkSelectionModel $model = null) {}
+
+    /** Appends the $column to the end of the columns in $self. */
+    public function append_column(GtkColumnViewColumn $column): void {}
+
+    /** Gets the list of columns in this column view. */
+    public function get_columns(): GListModel {}
+
+    /** Returns whether rows can be selected by dragging with the mouse. */
+    public function get_enable_rubberband(): bool {}
+
+    /** Gets the factory that's currently used to populate section headers. */
+    public function get_header_factory(): ?GtkListItemFactory {}
+
+    /** Gets the model that's currently used to read the items displayed. */
+    public function get_model(): ?GtkSelectionModel {}
+
+    /** Returns whether columns are reorderable. */
+    public function get_reorderable(): bool {}
+
+    /** Gets the factory set via `set_row_factory`. */
+    public function get_row_factory(): ?GtkListItemFactory {}
+
+    /** Returns whether the list should show separators between columns. */
+    public function get_show_column_separators(): bool {}
+
+    /** Returns whether the list should show separators between rows. */
+    public function get_show_row_separators(): bool {}
+
+    /** Returns whether rows will be activated on single click and selected on hover. */
+    public function get_single_click_activate(): bool {}
+
+    /** Returns a special sorter that reflects the users sorting choices in the column view. */
+    public function get_sorter(): ?GtkSorter {}
+
+    /** Gets the behavior set for the <kbd>Tab</kbd> key. */
+    public function get_tab_behavior(): GtkListTabBehavior {}
+
+    /** Inserts a column at the given position in the columns of $self. */
+    public function insert_column(int $position, GtkColumnViewColumn $column): void {}
+
+    /** Removes the $column from the list of columns of $self. */
+    public function remove_column(GtkColumnViewColumn $column): void {}
+
+    /**
+     * Scroll to the row at the given position - or cell if a column is given - and performs the
+     * actions specified in $flags.
+     */
+    public function scroll_to(int $pos, ?GtkColumnViewColumn $column, int $flags, ?GtkScrollInfo $scroll): void {}
+
+    /** Sets whether selections can be changed by dragging with the mouse. */
+    public function set_enable_rubberband(bool $enable_rubberband): void {}
+
+    /**
+     * Sets the `GtkListItemFactory` to use for populating the `ListHeader` objects used in section
+     * headers.
+     */
+    public function set_header_factory(?GtkListItemFactory $factory): void {}
+
+    /** Sets the model to use. */
+    public function set_model(?GtkSelectionModel $model): void {}
+
+    /** Sets whether columns should be reorderable by dragging. */
+    public function set_reorderable(bool $reorderable): void {}
+
+    /**
+     * Sets the factory used for configuring rows. The factory must be for configuring
+     * `ColumnViewRow` objects.
+     */
+    public function set_row_factory(?GtkListItemFactory $factory): void {}
+
+    /** Sets whether the list should show separators between columns. */
+    public function set_show_column_separators(bool $show_column_separators): void {}
+
+    /** Sets whether the list should show separators between rows. */
+    public function set_show_row_separators(bool $show_row_separators): void {}
+
+    /** Sets whether rows should be activated on single click and selected on hover. */
+    public function set_single_click_activate(bool $single_click_activate): void {}
+
+    /** Sets the behavior of the <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> keys. */
+    public function set_tab_behavior(GtkListTabBehavior $tab_behavior): void {}
+
+    /** Sets the sorting of the view. */
+    public function sort_by_column(?GtkColumnViewColumn $column, GtkSortType $direction): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_hadjustment */
+    public function get_hadjustment(): ?GtkAdjustment {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_hscroll_policy */
+    public function get_hscroll_policy(): GtkScrollablePolicy {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_vadjustment */
+    public function get_vadjustment(): ?GtkAdjustment {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_vscroll_policy */
+    public function get_vscroll_policy(): GtkScrollablePolicy {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_hadjustment */
+    public function set_hadjustment(?GtkAdjustment $hadjustment): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_hscroll_policy */
+    public function set_hscroll_policy(GtkScrollablePolicy $policy): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_vadjustment */
+    public function set_vadjustment(?GtkAdjustment $vadjustment): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_vscroll_policy */
+    public function set_vscroll_policy(GtkScrollablePolicy $policy): void {}
+}
+
+/**
+ * `GtkColumnViewColumn` represents the columns being added to a `GtkColumnView`.
+ *
+ * @property-read ?GtkColumnView $column_view
+ * @property ?bool $expand
+ * @property ?GtkListItemFactory $factory
+ * @property ?int $fixed_width
+ * @property ?GMenuModel $header_menu
+ * @property ?string $id
+ * @property ?bool $resizable
+ * @property ?GtkSorter $sorter
+ * @property ?string $title
+ * @property ?bool $visible
+ */
+class GtkColumnViewColumn extends GObject
+{
+    /**
+     * Creates a new `GtkColumnViewColumn` that uses the given $factory for mapping items to
+     * widgets.
+     */
+    public function __construct(?string $title = null, ?GtkListItemFactory $factory = null) {}
+
+    /** Gets the column view that's currently displaying this column. */
+    public function get_column_view(): ?GtkColumnView {}
+
+    /** Returns whether this column should expand. */
+    public function get_expand(): bool {}
+
+    /** Gets the factory that's currently used to populate list items for this column. */
+    public function get_factory(): ?GtkListItemFactory {}
+
+    /** Gets the fixed width of the column. */
+    public function get_fixed_width(): int {}
+
+    /** Gets the menu model that is used to create the context menu for the column header. */
+    public function get_header_menu(): ?GMenuModel {}
+
+    /** Returns the ID set with gtk_column_view_column_set_id(). */
+    public function get_id(): ?string {}
+
+    /** Returns whether this column is resizable. */
+    public function get_resizable(): bool {}
+
+    /** Returns the sorter that is associated with the column. */
+    public function get_sorter(): ?GtkSorter {}
+
+    /** Returns the title set with gtk_column_view_column_set_title(). */
+    public function get_title(): ?string {}
+
+    /** Returns whether this column is visible. */
+    public function get_visible(): bool {}
+
+    /** Sets the column to take available extra space. */
+    public function set_expand(bool $expand): void {}
+
+    /** Sets the `GtkListItemFactory` to use for populating list items for this column. */
+    public function set_factory(?GtkListItemFactory $factory): void {}
+
+    /** If $fixed_width is not -1, sets the fixed width of $column; otherwise unsets it. */
+    public function set_fixed_width(int $fixed_width): void {}
+
+    /** Sets the menu model that is used to create the context menu for the column header. */
+    public function set_header_menu(?GMenuModel $menu): void {}
+
+    /** Sets the id of this column. */
+    public function set_id(?string $id): void {}
+
+    /** Sets whether this column should be resizable by dragging. */
+    public function set_resizable(bool $resizable): void {}
+
+    /** Associates a sorter with the column. */
+    public function set_sorter(?GtkSorter $sorter): void {}
+
+    /** Sets the title of this column. */
+    public function set_title(?string $title): void {}
+
+    /** Sets whether this column should be visible in views. */
+    public function set_visible(bool $visible): void {}
+}
+
+/**
  * Controls how a content should be made to fit inside an allocation.
  */
 enum GtkContentFit: int
@@ -984,6 +1296,9 @@ class GtkDrawingArea extends GtkWidget
  * `GtkDropDown` is a widget that allows the user to choose an item from a list of options.
  *
  * @property ?bool $enable_search
+ * @property ?GtkListItemFactory $factory
+ * @property ?GtkListItemFactory $header_factory
+ * @property ?GtkListItemFactory $list_factory
  * @property ?GListModel $model
  * @property ?GtkStringFilterMatchMode $search_match_mode
  * @property ?int $selected
@@ -1000,6 +1315,15 @@ class GtkDropDown extends GtkWidget
 
     /** Returns whether search is enabled. */
     public function get_enable_search(): bool {}
+
+    /** Gets the factory that's currently used to populate list items. */
+    public function get_factory(): ?GtkListItemFactory {}
+
+    /** Gets the factory that's currently used to create header widgets for the popup. */
+    public function get_header_factory(): ?GtkListItemFactory {}
+
+    /** Gets the factory that's currently used to populate list items in the popup. */
+    public function get_list_factory(): ?GtkListItemFactory {}
 
     /** Gets the model that provides the displayed items. */
     public function get_model(): ?GListModel {}
@@ -1021,6 +1345,15 @@ class GtkDropDown extends GtkWidget
      * the list.
      */
     public function set_enable_search(bool $enable_search): void {}
+
+    /** Sets the `GtkListItemFactory` to use for populating list items. */
+    public function set_factory(?GtkListItemFactory $factory): void {}
+
+    /** Sets the `GtkListItemFactory` to use for creating header widgets for the popup. */
+    public function set_header_factory(?GtkListItemFactory $factory): void {}
+
+    /** Sets the `GtkListItemFactory` to use for populating list items in the popup. */
+    public function set_list_factory(?GtkListItemFactory $factory): void {}
 
     /** Sets the `GListModel` to use. */
     public function set_model(?GListModel $model): void {}
@@ -2369,6 +2702,98 @@ class GtkGrid extends GtkWidget implements GtkOrientable
 }
 
 /**
+ * `GtkGridView` presents a large dynamic grid of items.
+ *
+ * @property ?bool $enable_rubberband
+ * @property ?GtkListItemFactory $factory
+ * @property ?int $max_columns
+ * @property ?int $min_columns
+ * @property ?GtkSelectionModel $model
+ * @property ?bool $single_click_activate
+ * @property ?GtkListTabBehavior $tab_behavior
+ */
+class GtkGridView extends GtkWidget implements GtkOrientable, GtkScrollable
+{
+    /** Creates a new `GtkGridView` that uses the given $factory for mapping items to widgets. */
+    public function __construct(?GtkSelectionModel $model = null, ?GtkListItemFactory $factory = null) {}
+
+    /** Returns whether rows can be selected by dragging with the mouse. */
+    public function get_enable_rubberband(): bool {}
+
+    /** Gets the factory that's currently used to populate list items. */
+    public function get_factory(): ?GtkListItemFactory {}
+
+    /** Gets the maximum number of columns that the grid will use. */
+    public function get_max_columns(): int {}
+
+    /** Gets the minimum number of columns that the grid will use. */
+    public function get_min_columns(): int {}
+
+    /** Gets the model that's currently used to read the items displayed. */
+    public function get_model(): ?GtkSelectionModel {}
+
+    /** Returns whether items will be activated on single click and selected on hover. */
+    public function get_single_click_activate(): bool {}
+
+    /** Gets the behavior set for the <kbd>Tab</kbd> key. */
+    public function get_tab_behavior(): GtkListTabBehavior {}
+
+    /** Scrolls to the item at the given position and performs the actions specified in $flags. */
+    public function scroll_to(int $pos, int $flags, ?GtkScrollInfo $scroll): void {}
+
+    /** Sets whether selections can be changed by dragging with the mouse. */
+    public function set_enable_rubberband(bool $enable_rubberband): void {}
+
+    /** Sets the `GtkListItemFactory` to use for populating list items. */
+    public function set_factory(?GtkListItemFactory $factory): void {}
+
+    /** Sets the maximum number of columns to use. */
+    public function set_max_columns(int $max_columns): void {}
+
+    /** Sets the minimum number of columns to use. */
+    public function set_min_columns(int $min_columns): void {}
+
+    /** Sets the model to use. */
+    public function set_model(?GtkSelectionModel $model): void {}
+
+    /** Sets whether items should be activated on single click and selected on hover. */
+    public function set_single_click_activate(bool $single_click_activate): void {}
+
+    /** Sets the behavior of the <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> keys. */
+    public function set_tab_behavior(GtkListTabBehavior $tab_behavior): void {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::get_orientation */
+    public function get_orientation(): GtkOrientation {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
+    public function set_orientation(GtkOrientation $orientation): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_hadjustment */
+    public function get_hadjustment(): ?GtkAdjustment {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_hscroll_policy */
+    public function get_hscroll_policy(): GtkScrollablePolicy {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_vadjustment */
+    public function get_vadjustment(): ?GtkAdjustment {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_vscroll_policy */
+    public function get_vscroll_policy(): GtkScrollablePolicy {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_hadjustment */
+    public function set_hadjustment(?GtkAdjustment $hadjustment): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_hscroll_policy */
+    public function set_hscroll_policy(GtkScrollablePolicy $policy): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_vadjustment */
+    public function set_vadjustment(?GtkAdjustment $vadjustment): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_vscroll_policy */
+    public function set_vscroll_policy(GtkScrollablePolicy $policy): void {}
+}
+
+/**
  * `GtkHeaderBar` is a widget for creating custom title bars for windows.
  *
  * @property ?string $decoration_layout
@@ -2742,6 +3167,197 @@ enum GtkLicense: int
 }
 
 /**
+ * `GtkListItem` is used by list widgets to represent items in a `ListModel`.
+ *
+ * @property ?string $accessible_description
+ * @property ?string $accessible_label
+ * @property ?bool $activatable
+ * @property ?GtkWidget $child
+ * @property ?bool $focusable
+ * @property-read ?GObject $item
+ * @property-read ?int $position
+ * @property ?bool $selectable
+ * @property-read ?bool $selected
+ */
+class GtkListItem extends GObject
+{
+    /** GtkListItem has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Gets the accessible description of $self. */
+    public function get_accessible_description(): string {}
+
+    /** Gets the accessible label of $self. */
+    public function get_accessible_label(): string {}
+
+    /** Checks if a list item has been set to be activatable via gtk_list_item_set_activatable(). */
+    public function get_activatable(): bool {}
+
+    /** Gets the child previously set via gtk_list_item_set_child() or `null` if none was set. */
+    public function get_child(): ?GtkWidget {}
+
+    /** Checks if a list item has been set to be focusable via gtk_list_item_set_focusable(). */
+    public function get_focusable(): bool {}
+
+    /** Gets the model item that associated with $self. */
+    public function get_item(): ?GObject {}
+
+    /** Gets the position in the model that $self currently displays. */
+    public function get_position(): int {}
+
+    /** Checks if a list item has been set to be selectable via gtk_list_item_set_selectable(). */
+    public function get_selectable(): bool {}
+
+    /** Checks if the item is displayed as selected. */
+    public function get_selected(): bool {}
+
+    /**
+     * Sets the accessible description for the list item, which may be used by e.g. screen readers.
+     */
+    public function set_accessible_description(string $description): void {}
+
+    /** Sets the accessible label for the list item, which may be used by e.g. screen readers. */
+    public function set_accessible_label(string $label): void {}
+
+    /** Sets $self to be activatable. */
+    public function set_activatable(bool $activatable): void {}
+
+    /** Sets the child to be used for this listitem. */
+    public function set_child(?GtkWidget $child): void {}
+
+    /** Sets $self to be focusable. */
+    public function set_focusable(bool $focusable): void {}
+
+    /** Sets $self to be selectable. */
+    public function set_selectable(bool $selectable): void {}
+}
+
+/**
+ * A `GtkListItemFactory` creates widgets for the items taken from a `GListModel`.
+ */
+class GtkListItemFactory extends GObject
+{
+    /** A GtkListItemFactory with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct() {}
+}
+
+/**
+ * List of actions to perform when scrolling to items in a list widget.
+ */
+final class GtkListScrollFlags
+{
+    public const int NONE = 0;
+    public const int FOCUS = 1;
+    public const int SELECT = 2;
+}
+
+/**
+ * Used to configure the focus behavior in the `GTK_DIR_TAB_FORWARD` and `GTK_DIR_TAB_BACKWARD`
+ * direction, like the <kbd>Tab</kbd> key in a `ListView`.
+ */
+enum GtkListTabBehavior: int
+{
+    case All = 0;
+    case Item = 1;
+    case Cell = 2;
+}
+
+/**
+ * `GtkListView` presents a large dynamic list of items.
+ *
+ * @property ?bool $enable_rubberband
+ * @property ?GtkListItemFactory $factory
+ * @property ?GtkListItemFactory $header_factory
+ * @property ?GtkSelectionModel $model
+ * @property ?bool $show_separators
+ * @property ?bool $single_click_activate
+ * @property ?GtkListTabBehavior $tab_behavior
+ */
+class GtkListView extends GtkWidget implements GtkOrientable, GtkScrollable
+{
+    /** Creates a new `GtkListView` that uses the given $factory for mapping items to widgets. */
+    public function __construct(?GtkSelectionModel $model = null, ?GtkListItemFactory $factory = null) {}
+
+    /** Returns whether rows can be selected by dragging with the mouse. */
+    public function get_enable_rubberband(): bool {}
+
+    /** Gets the factory that's currently used to populate list items. */
+    public function get_factory(): ?GtkListItemFactory {}
+
+    /** Gets the factory that's currently used to populate section headers. */
+    public function get_header_factory(): ?GtkListItemFactory {}
+
+    /** Gets the model that's currently used to read the items displayed. */
+    public function get_model(): ?GtkSelectionModel {}
+
+    /** Returns whether the list box should show separators between rows. */
+    public function get_show_separators(): bool {}
+
+    /** Returns whether rows will be activated on single click and selected on hover. */
+    public function get_single_click_activate(): bool {}
+
+    /** Gets the behavior set for the <kbd>Tab</kbd> key. */
+    public function get_tab_behavior(): GtkListTabBehavior {}
+
+    /** Scrolls to the item at the given position and performs the actions specified in $flags. */
+    public function scroll_to(int $pos, int $flags, ?GtkScrollInfo $scroll): void {}
+
+    /** Sets whether selections can be changed by dragging with the mouse. */
+    public function set_enable_rubberband(bool $enable_rubberband): void {}
+
+    /** Sets the `GtkListItemFactory` to use for populating list items. */
+    public function set_factory(?GtkListItemFactory $factory): void {}
+
+    /**
+     * Sets the `GtkListItemFactory` to use for populating the `ListHeader` objects used in section
+     * headers.
+     */
+    public function set_header_factory(?GtkListItemFactory $factory): void {}
+
+    /** Sets the model to use. */
+    public function set_model(?GtkSelectionModel $model): void {}
+
+    /** Sets whether the list box should show separators between rows. */
+    public function set_show_separators(bool $show_separators): void {}
+
+    /** Sets whether rows should be activated on single click and selected on hover. */
+    public function set_single_click_activate(bool $single_click_activate): void {}
+
+    /** Sets the behavior of the <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> keys. */
+    public function set_tab_behavior(GtkListTabBehavior $tab_behavior): void {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::get_orientation */
+    public function get_orientation(): GtkOrientation {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
+    public function set_orientation(GtkOrientation $orientation): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_hadjustment */
+    public function get_hadjustment(): ?GtkAdjustment {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_hscroll_policy */
+    public function get_hscroll_policy(): GtkScrollablePolicy {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_vadjustment */
+    public function get_vadjustment(): ?GtkAdjustment {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::get_vscroll_policy */
+    public function get_vscroll_policy(): GtkScrollablePolicy {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_hadjustment */
+    public function set_hadjustment(?GtkAdjustment $hadjustment): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_hscroll_policy */
+    public function set_hscroll_policy(GtkScrollablePolicy $policy): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_vadjustment */
+    public function set_vadjustment(?GtkAdjustment $vadjustment): void {}
+
+    /** @implementation-alias Gtk4\GtkScrollable::set_vscroll_policy */
+    public function set_vscroll_policy(GtkScrollablePolicy $policy): void {}
+}
+
+/**
  * The `GtkMenuButton` widget is used to display a popup when clicked.
  *
  * @property ?bool $active
@@ -2842,6 +3458,69 @@ class GtkMenuButton extends GtkWidget
 }
 
 /**
+ * `GtkMultiSelection` is a `GtkSelectionModel` that allows selecting multiple elements.
+ *
+ * @property ?GListModel $model
+ * @property-read ?int $n_items
+ */
+class GtkMultiSelection extends GObject implements GListModel, GtkSelectionModel
+{
+    /** Creates a new selection to handle $model. */
+    public function __construct(?GListModel $model = null) {}
+
+    /** Returns the underlying model of $self. */
+    public function get_model(): ?GListModel {}
+
+    /** Sets the model that $self should wrap. */
+    public function set_model(?GListModel $model): void {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item_type */
+    public function get_item_type(): string {}
+
+    /** @implementation-alias Gtk4\GListModel::get_n_items */
+    public function get_n_items(): int {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item */
+    public function get_item(int $position): ?GObject {}
+
+    /** @implementation-alias Gtk4\GListModel::items_changed */
+    public function items_changed(int $position, int $removed, int $added): void {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::get_selection */
+    public function get_selection(): GtkBitset {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::get_selection_in_range */
+    public function get_selection_in_range(int $position, int $n_items): GtkBitset {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::is_selected */
+    public function is_selected(int $position): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::select_all */
+    public function select_all(): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::select_item */
+    public function select_item(int $position, bool $unselect_rest): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::select_range */
+    public function select_range(int $position, int $n_items, bool $unselect_rest): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::selection_changed */
+    public function selection_changed(int $position, int $n_items): void {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::set_selection */
+    public function set_selection(GtkBitset $selected, GtkBitset $mask): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::unselect_all */
+    public function unselect_all(): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::unselect_item */
+    public function unselect_item(int $position): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::unselect_range */
+    public function unselect_range(int $position, int $n_items): bool {}
+}
+
+/**
  * Options for selecting a different wrap mode for natural size requests.
  */
 enum GtkNaturalWrapMode: int
@@ -2849,6 +3528,69 @@ enum GtkNaturalWrapMode: int
     case Inherit = 0;
     case None = 1;
     case Word = 2;
+}
+
+/**
+ * `GtkNoSelection` is a `GtkSelectionModel` that does not allow selecting anything.
+ *
+ * @property ?GListModel $model
+ * @property-read ?int $n_items
+ */
+class GtkNoSelection extends GObject implements GListModel, GtkSelectionModel
+{
+    /** Creates a new selection to handle $model. */
+    public function __construct(?GListModel $model = null) {}
+
+    /** Gets the model that $self is wrapping. */
+    public function get_model(): ?GListModel {}
+
+    /** Sets the model that $self should wrap. */
+    public function set_model(?GListModel $model): void {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item_type */
+    public function get_item_type(): string {}
+
+    /** @implementation-alias Gtk4\GListModel::get_n_items */
+    public function get_n_items(): int {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item */
+    public function get_item(int $position): ?GObject {}
+
+    /** @implementation-alias Gtk4\GListModel::items_changed */
+    public function items_changed(int $position, int $removed, int $added): void {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::get_selection */
+    public function get_selection(): GtkBitset {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::get_selection_in_range */
+    public function get_selection_in_range(int $position, int $n_items): GtkBitset {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::is_selected */
+    public function is_selected(int $position): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::select_all */
+    public function select_all(): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::select_item */
+    public function select_item(int $position, bool $unselect_rest): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::select_range */
+    public function select_range(int $position, int $n_items, bool $unselect_rest): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::selection_changed */
+    public function selection_changed(int $position, int $n_items): void {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::set_selection */
+    public function set_selection(GtkBitset $selected, GtkBitset $mask): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::unselect_all */
+    public function unselect_all(): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::unselect_item */
+    public function unselect_item(int $position): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::unselect_range */
+    public function unselect_range(int $position, int $n_items): bool {}
 }
 
 /**
@@ -3987,6 +4729,29 @@ class GtkScale extends GtkRange implements GtkOrientable
 }
 
 /**
+ * The `GtkScrollInfo` can be used to provide more accurate data on how a scroll operation should
+ * be performed.
+ * @not-serializable
+ */
+final class GtkScrollInfo
+{
+    /** Creates a new scroll info for scrolling an element into view. */
+    public function __construct() {}
+
+    /** Checks if horizontal scrolling is enabled. */
+    public function get_enable_horizontal(): bool {}
+
+    /** Checks if vertical scrolling is enabled. */
+    public function get_enable_vertical(): bool {}
+
+    /** Turns horizontal scrolling on or off. */
+    public function set_enable_horizontal(bool $horizontal): void {}
+
+    /** Turns vertical scrolling on or off. */
+    public function set_enable_vertical(bool $vertical): void {}
+}
+
+/**
  * `GtkScrollable` is an interface for widgets with native scrolling ability.
  *
  * @property ?GtkAdjustment $hadjustment
@@ -4180,6 +4945,97 @@ class GtkScrolledWindow extends GtkWidget
 }
 
 /**
+ * `GtkSelectionModel` is an interface that add support for selection to list models.
+ */
+interface GtkSelectionModel extends GListModel
+{
+    /** Gets the set of selected items in a range. */
+    public function get_selection_in_range(int $position, int $n_items): GtkBitset;
+
+    /** Checks if the given item is selected. */
+    public function is_selected(int $position): bool;
+
+    /** Requests to select all items in the model. */
+    public function select_all(): bool;
+
+    /** Requests to select an item in the model. */
+    public function select_item(int $position, bool $unselect_rest): bool;
+
+    /** Requests to select a range of items in the model. */
+    public function select_range(int $position, int $n_items, bool $unselect_rest): bool;
+
+    /** Make selection changes. */
+    public function set_selection(GtkBitset $selected, GtkBitset $mask): bool;
+
+    /** Requests to unselect all items in the model. */
+    public function unselect_all(): bool;
+
+    /** Requests to unselect an item in the model. */
+    public function unselect_item(int $position): bool;
+
+    /** Requests to unselect a range of items in the model. */
+    public function unselect_range(int $position, int $n_items): bool;
+}
+
+/**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GtkSelectionModel} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GtkSelectionModel} with a body.
+ *
+ * @not-serializable
+ */
+final class GtkSelectionModelObject extends GObject implements GtkSelectionModel
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct() {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::get_selection */
+    public function get_selection(): GtkBitset {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::get_selection_in_range */
+    public function get_selection_in_range(int $position, int $n_items): GtkBitset {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::is_selected */
+    public function is_selected(int $position): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::select_all */
+    public function select_all(): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::select_item */
+    public function select_item(int $position, bool $unselect_rest): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::select_range */
+    public function select_range(int $position, int $n_items, bool $unselect_rest): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::selection_changed */
+    public function selection_changed(int $position, int $n_items): void {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::set_selection */
+    public function set_selection(GtkBitset $selected, GtkBitset $mask): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::unselect_all */
+    public function unselect_all(): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::unselect_item */
+    public function unselect_item(int $position): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::unselect_range */
+    public function unselect_range(int $position, int $n_items): bool {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item_type */
+    public function get_item_type(): string {}
+
+    /** @implementation-alias Gtk4\GListModel::get_n_items */
+    public function get_n_items(): int {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item */
+    public function get_item(int $position): ?GObject {}
+
+    /** @implementation-alias Gtk4\GListModel::items_changed */
+    public function items_changed(int $position, int $removed, int $added): void {}
+}
+
+/**
  * `GtkSeparator` is a horizontal or vertical separator widget.
  */
 class GtkSeparator extends GtkWidget implements GtkOrientable
@@ -4192,6 +5048,111 @@ class GtkSeparator extends GtkWidget implements GtkOrientable
 
     /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
     public function set_orientation(GtkOrientation $orientation): void {}
+}
+
+/**
+ * `GtkSignalListItemFactory` is a `GtkListItemFactory` that emits signals to manage listitems.
+ */
+class GtkSignalListItemFactory extends GtkListItemFactory
+{
+    /** Creates a new `GtkSignalListItemFactory`. */
+    public function __construct() {}
+}
+
+/**
+ * `GtkSingleSelection` is a `GtkSelectionModel` that allows selecting a single item.
+ *
+ * @property ?bool $autoselect
+ * @property ?bool $can_unselect
+ * @property ?GListModel $model
+ * @property-read ?int $n_items
+ * @property ?int $selected
+ * @property-read ?GObject $selected_item
+ */
+class GtkSingleSelection extends GObject implements GListModel, GtkSelectionModel
+{
+    /** Creates a new selection to handle $model. */
+    public function __construct(?GListModel $model = null) {}
+
+    /**
+     * Checks if autoselect has been enabled or disabled via gtk_single_selection_set_autoselect().
+     */
+    public function get_autoselect(): bool {}
+
+    /**
+     * If `true`, gtk_selection_model_unselect_item() is supported and allows unselecting the
+     * selected item.
+     */
+    public function get_can_unselect(): bool {}
+
+    /** Gets the model that $self is wrapping. */
+    public function get_model(): ?GListModel {}
+
+    /** Gets the position of the selected item. */
+    public function get_selected(): int {}
+
+    /** Gets the selected item. */
+    public function get_selected_item(): ?GObject {}
+
+    /** Enables or disables autoselect. */
+    public function set_autoselect(bool $autoselect): void {}
+
+    /**
+     * If `true`, unselecting the current item via gtk_selection_model_unselect_item() is
+     * supported.
+     */
+    public function set_can_unselect(bool $can_unselect): void {}
+
+    /** Sets the model that $self should wrap. */
+    public function set_model(?GListModel $model): void {}
+
+    /** Selects the item at the given position. */
+    public function set_selected(int $position): void {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item_type */
+    public function get_item_type(): string {}
+
+    /** @implementation-alias Gtk4\GListModel::get_n_items */
+    public function get_n_items(): int {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item */
+    public function get_item(int $position): ?GObject {}
+
+    /** @implementation-alias Gtk4\GListModel::items_changed */
+    public function items_changed(int $position, int $removed, int $added): void {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::get_selection */
+    public function get_selection(): GtkBitset {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::get_selection_in_range */
+    public function get_selection_in_range(int $position, int $n_items): GtkBitset {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::is_selected */
+    public function is_selected(int $position): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::select_all */
+    public function select_all(): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::select_item */
+    public function select_item(int $position, bool $unselect_rest): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::select_range */
+    public function select_range(int $position, int $n_items, bool $unselect_rest): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::selection_changed */
+    public function selection_changed(int $position, int $n_items): void {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::set_selection */
+    public function set_selection(GtkBitset $selected, GtkBitset $mask): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::unselect_all */
+    public function unselect_all(): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::unselect_item */
+    public function unselect_item(int $position): bool {}
+
+    /** @implementation-alias Gtk4\GtkSelectionModel::unselect_range */
+    public function unselect_range(int $position, int $n_items): bool {}
 }
 
 /**
@@ -4299,6 +5260,15 @@ class GtkSortListModel extends GObject implements GListModel
 
     /** @implementation-alias Gtk4\GListModel::items_changed */
     public function items_changed(int $position, int $removed, int $added): void {}
+}
+
+/**
+ * Determines the direction of a sort.
+ */
+enum GtkSortType: int
+{
+    case Ascending = 0;
+    case Descending = 1;
 }
 
 /**
@@ -4603,6 +5573,7 @@ class GtkSpinner extends GtkWidget
  *
  * @property ?bool $hhomogeneous
  * @property ?bool $interpolate_size
+ * @property-read ?GtkSelectionModel $pages
  * @property ?int $transition_duration
  * @property-read ?bool $transition_running
  * @property ?GtkStackTransitionType $transition_type
@@ -4638,6 +5609,9 @@ class GtkStack extends GtkWidget
 
     /** Returns the `GtkStackPage` object for $child. */
     public function get_page(GtkWidget $child): GtkStackPage {}
+
+    /** Returns a `GListModel` that contains the pages of the stack. */
+    public function get_pages(): GtkSelectionModel {}
 
     /**
      * Returns the amount of time (in milliseconds) that transitions between pages in $stack will
@@ -5754,15 +6728,6 @@ final class GtkTextIter
     /** Moves iterator $iter to the start of the line $line_number. */
     public function set_line(int $line_number): void {}
 
-    /**
-     * Same as `set_line_offset`, but works with a byte index. The given byte index must be at the
-     * start of a character, it can’t be in the middle of a UTF-8 encoded character.
-     */
-    public function set_line_index(int $byte_on_line): void {}
-
-    /** Moves $iter within a line, to a new character (not byte) offset. */
-    public function set_line_offset(int $char_on_line): void {}
-
     /** Sets $iter to point to $char_offset. */
     public function set_offset(int $char_offset): void {}
 
@@ -5792,6 +6757,19 @@ final class GtkTextIter
 
     /** Gets whether a range with $tag applied to it begins or ends at $iter. */
     public function toggles_tag(?GtkTextTag $tag): bool {}
+
+    /**
+     * Moves $iter within its line, to the given byte index. The index counts from the start of
+     * the line and must land on a UTF-8 character boundary; one past the end of the line is
+     * clamped by GTK, a negative one is a `g_error()` that would end the process.
+     */
+    public function set_line_index(int $byte_on_line): void {}
+
+    /**
+     * Moves $iter within its line, to the given character offset. One past the end of the line
+     * is clamped by GTK, a negative offset is a `g_error()` that would end the process.
+     */
+    public function set_line_offset(int $char_on_line): void {}
 }
 
 /**
@@ -6395,6 +7373,151 @@ class GtkToggleButton extends GtkButton
 }
 
 /**
+ * `GtkTreeExpander` is a widget that provides an expander for a list.
+ *
+ * @property ?GtkWidget $child
+ * @property ?bool $hide_expander
+ * @property ?bool $indent_for_depth
+ * @property ?bool $indent_for_icon
+ * @property-read ?GObject $item
+ * @property ?GtkTreeListRow $list_row
+ */
+class GtkTreeExpander extends GtkWidget
+{
+    /** Creates a new `GtkTreeExpander` */
+    public function __construct() {}
+
+    /** Gets the child widget displayed by $self. */
+    public function get_child(): ?GtkWidget {}
+
+    /** Gets whether the TreeExpander should be hidden in a GtkTreeListRow. */
+    public function get_hide_expander(): bool {}
+
+    /** TreeExpander indents each level of depth with an additional indent. */
+    public function get_indent_for_depth(): bool {}
+
+    /** TreeExpander indents the child by the width of an expander-icon if it is not expandable. */
+    public function get_indent_for_icon(): bool {}
+
+    /** Forwards the item set on the `GtkTreeListRow` that $self is managing. */
+    public function get_item(): ?GObject {}
+
+    /** Gets the list row managed by $self. */
+    public function get_list_row(): ?GtkTreeListRow {}
+
+    /** Sets the content widget to display. */
+    public function set_child(?GtkWidget $child): void {}
+
+    /** Sets whether the expander icon should be visible in a GtkTreeListRow. */
+    public function set_hide_expander(bool $hide_expander): void {}
+
+    /** Sets if the TreeExpander should indent the child according to its depth. */
+    public function set_indent_for_depth(bool $indent_for_depth): void {}
+
+    /**
+     * Sets if the TreeExpander should indent the child by the width of an expander-icon when it is
+     * not expandable.
+     */
+    public function set_indent_for_icon(bool $indent_for_icon): void {}
+
+    /** Sets the tree list row that this expander should manage. */
+    public function set_list_row(?GtkTreeListRow $list_row): void {}
+}
+
+/**
+ * `GtkTreeListModel` is a list model that can create child models on demand.
+ *
+ * @property ?bool $autoexpand
+ * @property-read ?GListModel $model
+ * @property-read ?int $n_items
+ * @property ?bool $passthrough
+ */
+class GtkTreeListModel extends GObject implements GListModel
+{
+    /** Gets whether the model is set to automatically expand new rows that get added. */
+    public function get_autoexpand(): bool {}
+
+    /** Gets the row item corresponding to the child at index $position for $self's root model. */
+    public function get_child_row(int $position): ?GtkTreeListRow {}
+
+    /** Gets the root model that $self was created with. */
+    public function get_model(): GListModel {}
+
+    /** Gets whether the model is passing through original row items. */
+    public function get_passthrough(): bool {}
+
+    /** Gets the row object for the given row. */
+    public function get_row(int $position): ?GtkTreeListRow {}
+
+    /** Sets whether the model should autoexpand. */
+    public function set_autoexpand(bool $autoexpand): void {}
+
+    /**
+     * A tree over $root: `function (GObject $item): ?GListModel` answers with an item's children,
+     * null for a leaf. $passthrough decides whether the model hands out the items themselves or
+     * their {@see GtkTreeListRow}s; $autoexpand keeps every row expanded.
+     */
+    public function __construct(GListModel $root, bool $passthrough, bool $autoexpand, callable $create_func) {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item_type */
+    public function get_item_type(): string {}
+
+    /** @implementation-alias Gtk4\GListModel::get_n_items */
+    public function get_n_items(): int {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item */
+    public function get_item(int $position): ?GObject {}
+
+    /** @implementation-alias Gtk4\GListModel::items_changed */
+    public function items_changed(int $position, int $removed, int $added): void {}
+}
+
+/**
+ * `GtkTreeListRow` is used by `GtkTreeListModel` to represent items.
+ *
+ * @property-read ?GListModel $children
+ * @property-read ?int $depth
+ * @property-read ?bool $expandable
+ * @property ?bool $expanded
+ * @property-read ?GObject $item
+ */
+class GtkTreeListRow extends GObject
+{
+    /** GtkTreeListRow has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /**
+     * If $self is not expanded or $position is greater than the number of children, `null` is
+     * returned.
+     */
+    public function get_child_row(int $position): ?GtkTreeListRow {}
+
+    /** If the row is expanded, gets the model holding the children of $self. */
+    public function get_children(): ?GListModel {}
+
+    /** Gets the depth of this row. */
+    public function get_depth(): int {}
+
+    /** Gets if a row is currently expanded. */
+    public function get_expanded(): bool {}
+
+    /** Gets the item corresponding to this row, */
+    public function get_item(): ?GObject {}
+
+    /** Gets the row representing the parent for $self. */
+    public function get_parent(): ?GtkTreeListRow {}
+
+    /** Returns the position in the `GtkTreeListModel` that $self occupies at the moment. */
+    public function get_position(): int {}
+
+    /** Checks if a row can be expanded. */
+    public function is_expandable(): bool {}
+
+    /** Expands or collapses a row. */
+    public function set_expanded(bool $expanded): void {}
+}
+
+/**
  * `GtkViewport` implements scrollability for widgets that lack their own scrolling capabilities.
  *
  * @property ?GtkWidget $child
@@ -6410,6 +7533,9 @@ class GtkViewport extends GtkWidget implements GtkScrollable
 
     /** Gets whether the viewport is scrolling to keep the focused child in view. */
     public function get_scroll_to_focus(): bool {}
+
+    /** Scrolls a descendant of the viewport into view. */
+    public function scroll_to(GtkWidget $descendant, ?GtkScrollInfo $scroll): void {}
 
     /** Sets the child widget of $viewport. */
     public function set_child(?GtkWidget $child): void {}

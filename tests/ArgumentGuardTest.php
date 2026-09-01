@@ -7,7 +7,10 @@ namespace PhpGtk4\Tests;
 use Gtk4\GdkTexture;
 use Gtk4\GListStore;
 use Gtk4\GSimpleAction;
+use Gtk4\GtkEntry;
 use Gtk4\GtkLabel;
+use Gtk4\GtkTextBuffer;
+use Gtk4\GtkTextIter;
 use Gtk4\GtkWindow;
 use Gtk4\PhpValue;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -189,6 +192,59 @@ final class ArgumentGuardTest extends GtkTestCase
         $label = new GtkLabel('x');
         $label->set_size_request(-1, -1);
         self::assertSame([-1, -1], $label->get_size_request());
+    }
+
+    // ---------------------------------------------------------------- GtkTextIter
+
+    /**
+     * A negative index is `g_error("Byte index -1 is off the end of the line")` inside GTK,
+     * which aborts the process - the two methods that take one are guarded by hand
+     * (gen/overrides/Gtk.TextIter.set_line_index.cpp and .set_line_offset.cpp).
+     *
+     * @param callable(\Gtk4\GtkTextIter): void $call
+     */
+    #[DataProvider('negativeIterIndexes')]
+    public function testNegativeLineIndexIsRejected(callable $call): void
+    {
+        $buffer = new GtkTextBuffer();
+        $buffer->set_text('hello world', -1);
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('must be greater than or equal to 0');
+        $call($buffer->get_start_iter());
+    }
+
+    /** @return iterable<string, array{callable(\Gtk4\GtkTextIter): void}> */
+    public static function negativeIterIndexes(): iterable
+    {
+        yield 'set_line_index' => [static fn(GtkTextIter $i) => $i->set_line_index(-1)];
+        yield 'set_line_offset' => [static fn(GtkTextIter $i) => $i->set_line_offset(-1)];
+    }
+
+    /** The guard is on negative values only; the end of the line stays reachable. */
+    public function testLineIndexWithinTheLineStillPasses(): void
+    {
+        $buffer = new GtkTextBuffer();
+        $buffer->set_text('hello world', -1);
+        $iter = $buffer->get_start_iter();
+
+        $iter->set_line_index(5);
+        self::assertSame(5, $iter->get_offset());
+        $iter->set_line_offset(0);
+        self::assertSame(0, $iter->get_offset());
+    }
+
+    /**
+     * GTK refuses `end < start` with a precondition and returns NULL; the declared return
+     * type is `string`, and reading that NULL back was a SIGSEGV.
+     */
+    public function testReversedRangeReturnsAnEmptyStringInsteadOfCrashing(): void
+    {
+        $entry = new GtkEntry();
+        $entry->set_text('hello');
+
+        self::assertSame('hello', $entry->get_chars(0, -1));
+        self::assertSame('', $entry->get_chars(1, 0));
     }
 
     public function testWindowTitleRoundTripIsUnaffected(): void

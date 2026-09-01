@@ -174,7 +174,25 @@ draft, hand-write via overrides / promotion where the project needs more.
       parameters are not necessarily trailing — `gtk_text_view_get_iter_at_position(self, &iter,
       &trailing, x, y)` was called with the ins first), and the boxed emitter includes the
       collection converters (`GtkTextIter::get_marks()` is a `GSList`).
-- [ ] **Waves 3b, 7–8** as listed in PLAN.md §3 (the feature items in §7 below point at their
+- [x] **Wave 7 — list models/views** (2026-09-01): `GtkListView`, `GtkGridView`, `GtkColumnView`
+      (+ `GtkColumnViewColumn`), `GtkListItemFactory`/`GtkSignalListItemFactory`/`GtkListItem`,
+      the selection models (`GtkSelectionModel`, `GtkSingleSelection`, `GtkMultiSelection`,
+      `GtkNoSelection`) with `GtkBitset`, and `GtkTreeListModel`/`GtkTreeListRow`/
+      `GtkTreeExpander`. `GtkScrollInfo` came along (it is what `scroll_to()` takes, on
+      `GtkViewport` too). Decisions: the tree's **create function is an override**
+      (`gen/overrides/Gtk.TreeListModel.*`) — `function (GObject $item): ?GListModel`, a wrong
+      return type is a TypeError through the boundary and the row stays a leaf; because the model
+      has no setter to take the callable back, the Callback is also qdata on the model and the
+      teardown hook releases the callable there. `GtkListItem`/`GtkTreeListRow` constructors are
+      in gen/skip.txt (GTK creates them). Three generator/runtime fixes it forced: a **boxed
+      parameter marked `transfer full` is `g_boxed_copy()`d** (`scroll_to()` handed GTK the
+      handle's own `GtkScrollInfo`, which unreffed it — a double free that aborted the process),
+      **`clone`/`==` on an opaque record** go through the type's own `copy()`/`equal()`
+      (`BoxedClass::copy`/`::equal`; cloning a refcounted record used to alias it, and two
+      `GtkTextIter`s always compared equal), and an **interface fallback class implements the
+      methods it inherits** (`GtkSelectionModelObject` was abstract, so `GtkNotebook::get_pages()`
+      could not be wrapped).
+- [ ] **Waves 3b and 8** as listed in PLAN.md §3 (the feature items in §7 below point at their
       wave); each merged only with the full pipeline green and the map's status column regenerated.
       Next: the fastlane port spike (one screen on php-gtk4).
 
@@ -209,10 +227,12 @@ GTK4 GIR only). Every open item here is generator output and is ticked when its 
       an instance (`===` holds while PHP keeps it, `FoundationTest`, `EventControllerTest`); the
       entry is dropped with the handle. `GdkEventSequence` rides on it as an opaque identity
       (no ref/unref: GTK owns the sequence), so every per-sequence `GtkGesture` method is bound.
-- [ ] **List views** → wave 7: `GtkStringList`, selection models, `GtkListView`/`GtkColumnView`/
-      `GtkGridView`, `GtkSignalListItemFactory` (`setup`/`bind`), `GtkListItem`. Done 2026-08-26:
+- [x] **List views** → wave 7 (2026-09-01): selection models, `GtkListView`/`GtkColumnView`/
+      `GtkGridView`, `GtkSignalListItemFactory` (`setup`/`bind`/`unbind`/`teardown`),
+      `GtkListItem`, `GtkTreeListModel` + `GtkTreeExpander`. Done 2026-08-26:
       `Gtk4\PhpValue` (GType `PhpValue`, a GObject carrying a zval), `GListModel`, `GListStore`,
-      `GtkFilterListModel`/`GtkCustomFilter`, `GtkSortListModel`/`GtkCustomSorter`.
+      `GtkFilterListModel`/`GtkCustomFilter`, `GtkSortListModel`/`GtkCustomSorter`;
+      `GtkStringList` came with wave 2.
 - [x] **CSS** (2026-08-28) — `GtkCssProvider`, `GtkStyleProvider`, `GtkCssSection` (the
       `parsing-error` argument, a refcounted boxed type on the fundamental registry),
       `GtkStyleProviderPriority` and `Gtk::add_provider_for_display()` /

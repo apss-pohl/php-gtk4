@@ -94,6 +94,7 @@ ZEND_METHOD(Gtk4_GtkEditable, get_chars) {
   if (!phpgtk::check_range<int>(end_pos, 2)) RETURN_THROWS();
   char *phpgtk_ret =
       gtk_editable_get_chars(self, static_cast<int>(start_pos), static_cast<int>(end_pos));
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
   RETVAL_STRING(phpgtk_ret);
   g_free(phpgtk_ret);
 }

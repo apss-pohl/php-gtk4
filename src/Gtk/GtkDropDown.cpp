@@ -54,6 +54,42 @@ ZEND_METHOD(Gtk4_GtkDropDown, get_enable_search) {
 }
 
 /**
+ * Gtk4\GtkDropDown::get_factory(): ?GtkListItemFactory
+ *
+ * Gets the factory that's currently used to populate list items.
+ */
+ZEND_METHOD(Gtk4_GtkDropDown, get_factory) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkDropDown *self = PHPGTK_SELF(GtkDropDown, GTK_TYPE_DROP_DOWN);
+  GtkListItemFactory *phpgtk_ret = gtk_drop_down_get_factory(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
+ * Gtk4\GtkDropDown::get_header_factory(): ?GtkListItemFactory
+ *
+ * Gets the factory that's currently used to create header widgets for the popup.
+ */
+ZEND_METHOD(Gtk4_GtkDropDown, get_header_factory) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkDropDown *self = PHPGTK_SELF(GtkDropDown, GTK_TYPE_DROP_DOWN);
+  GtkListItemFactory *phpgtk_ret = gtk_drop_down_get_header_factory(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
+ * Gtk4\GtkDropDown::get_list_factory(): ?GtkListItemFactory
+ *
+ * Gets the factory that's currently used to populate list items in the popup.
+ */
+ZEND_METHOD(Gtk4_GtkDropDown, get_list_factory) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkDropDown *self = PHPGTK_SELF(GtkDropDown, GTK_TYPE_DROP_DOWN);
+  GtkListItemFactory *phpgtk_ret = gtk_drop_down_get_list_factory(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkDropDown::get_model(): ?GListModel
  *
  * Gets the model that provides the displayed items.
@@ -124,6 +160,66 @@ ZEND_METHOD(Gtk4_GtkDropDown, set_enable_search) {
   ZEND_PARSE_PARAMETERS_END();
   GtkDropDown *self = PHPGTK_SELF(GtkDropDown, GTK_TYPE_DROP_DOWN);
   gtk_drop_down_set_enable_search(self, enable_search);
+}
+
+/**
+ * Gtk4\GtkDropDown::set_factory(?GtkListItemFactory $factory): void
+ *
+ * Sets the `GtkListItemFactory` to use for populating list items.
+ */
+ZEND_METHOD(Gtk4_GtkDropDown, set_factory) {
+  zval *factory = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(factory, class_for_gtype(GTK_TYPE_LIST_ITEM_FACTORY))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkDropDown *self = PHPGTK_SELF(GtkDropDown, GTK_TYPE_DROP_DOWN);
+  GObject *factory_o = nullptr;
+  if (factory != nullptr) {
+    factory_o = unwrap(factory, GTK_TYPE_LIST_ITEM_FACTORY);
+    if (factory_o == nullptr) RETURN_THROWS();
+  }
+  gtk_drop_down_set_factory(self,
+                            factory_o != nullptr ? GTK_LIST_ITEM_FACTORY(factory_o) : nullptr);
+}
+
+/**
+ * Gtk4\GtkDropDown::set_header_factory(?GtkListItemFactory $factory): void
+ *
+ * Sets the `GtkListItemFactory` to use for creating header widgets for the popup.
+ */
+ZEND_METHOD(Gtk4_GtkDropDown, set_header_factory) {
+  zval *factory = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(factory, class_for_gtype(GTK_TYPE_LIST_ITEM_FACTORY))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkDropDown *self = PHPGTK_SELF(GtkDropDown, GTK_TYPE_DROP_DOWN);
+  GObject *factory_o = nullptr;
+  if (factory != nullptr) {
+    factory_o = unwrap(factory, GTK_TYPE_LIST_ITEM_FACTORY);
+    if (factory_o == nullptr) RETURN_THROWS();
+  }
+  gtk_drop_down_set_header_factory(
+      self, factory_o != nullptr ? GTK_LIST_ITEM_FACTORY(factory_o) : nullptr);
+}
+
+/**
+ * Gtk4\GtkDropDown::set_list_factory(?GtkListItemFactory $factory): void
+ *
+ * Sets the `GtkListItemFactory` to use for populating list items in the popup.
+ */
+ZEND_METHOD(Gtk4_GtkDropDown, set_list_factory) {
+  zval *factory = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(factory, class_for_gtype(GTK_TYPE_LIST_ITEM_FACTORY))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkDropDown *self = PHPGTK_SELF(GtkDropDown, GTK_TYPE_DROP_DOWN);
+  GObject *factory_o = nullptr;
+  if (factory != nullptr) {
+    factory_o = unwrap(factory, GTK_TYPE_LIST_ITEM_FACTORY);
+    if (factory_o == nullptr) RETURN_THROWS();
+  }
+  gtk_drop_down_set_list_factory(self,
+                                 factory_o != nullptr ? GTK_LIST_ITEM_FACTORY(factory_o) : nullptr);
 }
 
 /**

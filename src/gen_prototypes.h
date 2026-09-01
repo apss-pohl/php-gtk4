@@ -6,6 +6,9 @@
 
 void register_vfuncs_GtkAdjustment();
 void register_vfuncs_GtkApplication();
+namespace phpgtk {
+void register_GtkBitset(zend_class_entry *ce);
+}  // namespace phpgtk
 void register_vfuncs_GtkButton();
 void register_vfuncs_GtkCheckButton();
 void register_vfuncs_GtkDrawingArea();
@@ -47,6 +50,9 @@ ZEND_METHOD(Gtk4_GtkRoot, get_display);
 ZEND_METHOD(Gtk4_GtkRoot, get_focus);
 ZEND_METHOD(Gtk4_GtkRoot, set_focus);
 void register_vfuncs_GtkScale();
+namespace phpgtk {
+void register_GtkScrollInfo(zend_class_entry *ce);
+}  // namespace phpgtk
 ZEND_METHOD(Gtk4_GtkScrollable, get_hadjustment);
 ZEND_METHOD(Gtk4_GtkScrollable, get_hscroll_policy);
 ZEND_METHOD(Gtk4_GtkScrollable, get_vadjustment);
@@ -55,6 +61,18 @@ ZEND_METHOD(Gtk4_GtkScrollable, set_hadjustment);
 ZEND_METHOD(Gtk4_GtkScrollable, set_hscroll_policy);
 ZEND_METHOD(Gtk4_GtkScrollable, set_vadjustment);
 ZEND_METHOD(Gtk4_GtkScrollable, set_vscroll_policy);
+void register_vfuncs_GtkSelectionModel();
+ZEND_METHOD(Gtk4_GtkSelectionModel, get_selection);
+ZEND_METHOD(Gtk4_GtkSelectionModel, get_selection_in_range);
+ZEND_METHOD(Gtk4_GtkSelectionModel, is_selected);
+ZEND_METHOD(Gtk4_GtkSelectionModel, select_all);
+ZEND_METHOD(Gtk4_GtkSelectionModel, select_item);
+ZEND_METHOD(Gtk4_GtkSelectionModel, select_range);
+ZEND_METHOD(Gtk4_GtkSelectionModel, selection_changed);
+ZEND_METHOD(Gtk4_GtkSelectionModel, set_selection);
+ZEND_METHOD(Gtk4_GtkSelectionModel, unselect_all);
+ZEND_METHOD(Gtk4_GtkSelectionModel, unselect_item);
+ZEND_METHOD(Gtk4_GtkSelectionModel, unselect_range);
 void register_vfuncs_GtkSorter();
 void register_vfuncs_GtkTextBuffer();
 namespace phpgtk {

@@ -12,3 +12,5 @@ Gtk.MenuButton.get_direction   gtk_menu_button_get_direction (GtkArrowType) clas
 Gtk.MenuButton.set_direction   same; `$button->direction = GtkArrowType::Left` sets the arrow
 Gio.MenuModel.__construct   abstract with NULL class-struct slots (get_n_items ...) and vfuncs on GHashTables that cannot be thunked; a PHP subtype would segfault on first use - build menus with GMenu
 Gio.Cancellable.release_fd   aborts the process (GLib-GIO:ERROR "priv->fd_refcount > 0") unless get_fd() was called first, and the refcount is not observable from here
+Gtk.ListItem.__construct    a list item belongs to the factory that created it (the setup/bind handlers get it); a standalone one has no item and no position
+Gtk.TreeListRow.__construct GtkTreeListModel creates its rows (get_row()/get_child_row()); a row without a model has nothing to expand

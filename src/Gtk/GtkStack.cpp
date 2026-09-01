@@ -148,6 +148,19 @@ ZEND_METHOD(Gtk4_GtkStack, get_page) {
 }
 
 /**
+ * Gtk4\GtkStack::get_pages(): GtkSelectionModel
+ *
+ * Returns a `GListModel` that contains the pages of the stack.
+ */
+ZEND_METHOD(Gtk4_GtkStack, get_pages) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkStack *self = PHPGTK_SELF(GtkStack, GTK_TYPE_STACK);
+  GtkSelectionModel *phpgtk_ret = gtk_stack_get_pages(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
+/**
  * Gtk4\GtkStack::get_transition_duration(): int
  *
  * Returns the amount of time (in milliseconds) that transitions between pages in $stack will take.

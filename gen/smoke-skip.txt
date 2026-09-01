@@ -32,3 +32,5 @@ Gtk.Picture.set_file       a GFile parameter takes a path and answers with the a
 Gtk.FileDialog.set_initial_file   GTK stores it as initial-folder + initial-name (initial-file stays NULL), so it never round trips
 Gtk.FileDialog.set_initial_folder   same: the path comes back absolute
 Gtk.TextTag.set_priority   a tag outside a GtkTextTagTable has no priority to set (stays 0)
+Gtk.SingleSelection.set_selected   without a model there is nothing to select (GTK_INVALID_LIST_POSITION stays)
+Gtk.SingleSelection.selected       same, as a property
