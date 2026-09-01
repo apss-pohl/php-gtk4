@@ -194,6 +194,10 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## GtkBoxLayout
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## GtkCalendar
 
 - `get_date` — return type GLib.DateTime
@@ -264,6 +268,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `get_child_transform` — return type Gsk.Transform
 - `set_child_transform` — parameter `transform` of type Gsk.Transform
+
+## GtkFixedLayoutChild
+
+- `get_transform` — return type Gsk.Transform
+- `set_transform` — parameter `transform` of type Gsk.Transform
+- `property transform` — property type Gsk.Transform not mappable
 
 ## GtkFontDialog
 
@@ -468,7 +478,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `activate_action` — shadowed by activate_action_variant
 - `add_tick_callback` — callback parameter (needs an override)
-- `allocate` — parameter `transform` of type Gsk.Transform
 - `compute_bounds` — caller-allocates out parameter `out_bounds` of type Graphene.Rect
 - `compute_point` — parameter `point` of type Graphene.Point
 - `compute_transform` — caller-allocates out parameter `out_transform` of type Graphene.Matrix
@@ -485,7 +494,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_font_map` — return type Pango.FontMap (not in the closure)
 - `get_font_options` — return type cairo.FontOptions
 - `get_frame_clock` — return type Gdk.FrameClock (not in the closure)
-- `get_layout_manager` — return type Gtk.LayoutManager (not in the closure)
 - `get_native` — return type Gtk.Native (not in the closure)
 - `get_pango_context` — return type Pango.Context (not in the closure)
 - `get_primary_clipboard` — return type Gdk.Clipboard (not in the closure)
@@ -496,7 +504,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `set_cursor` — parameter `cursor` of type Gdk.Cursor
 - `set_font_map` — parameter `font_map` of type Pango.FontMap
 - `set_font_options` — parameter `options` of type cairo.FontOptions
-- `set_layout_manager` — parameter `layout_manager` of type Gtk.LayoutManager
 - `show` — deprecated (4.10)
 - `size_allocate` — parameter `allocation` of type Gtk.Allocation
 - `snapshot_child` — parameter `snapshot` of type Gtk.Snapshot
@@ -508,7 +515,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `vfunc show` — deprecated (4.10)
 - `vfunc snapshot` — parameter `snapshot` of type Gtk.Snapshot
 - `property cursor` — property type Gdk.Cursor not mappable
-- `property layout-manager` — property type Gtk.LayoutManager not mappable
 
 ## GtkWindow
 
@@ -533,6 +539,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.CustomSorter`: __construct, set_sort_func
 - `Gtk.DrawingArea`: set_draw_func
 - `Gtk.FileFilter`: new_from_gvariant
+- `Gtk.LayoutManager`: get_layout_child, get_request_mode
 - `Gtk.MenuButton`: set_create_popup_func
 - `Gtk.Popover`: popup
 - `Gtk.Scale`: set_format_value_func
@@ -540,6 +547,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.TextIter`: set_line_index, set_line_offset
 - `Gtk.TextView`: get_extra_menu
 - `Gtk.TreeListModel`: __construct
+- `Gtk.Widget`: allocate
 
 ## Emitted files
 
@@ -548,10 +556,13 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkAlertDialog.cpp`
 - `Gtk/GtkApplication.cpp`
 - `Gtk/GtkApplicationWindow.cpp`
+- `Gtk/GtkBinLayout.cpp`
 - `Gtk/GtkBitset.cpp`
 - `Gtk/GtkBox.cpp`
+- `Gtk/GtkBoxLayout.cpp`
 - `Gtk/GtkButton.cpp`
 - `Gtk/GtkCalendar.cpp`
+- `Gtk/GtkCenterLayout.cpp`
 - `Gtk/GtkCheckButton.cpp`
 - `Gtk/GtkColorDialog.cpp`
 - `Gtk/GtkColumnView.cpp`
@@ -575,6 +586,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkFilter.cpp`
 - `Gtk/GtkFilterListModel.cpp`
 - `Gtk/GtkFixed.cpp`
+- `Gtk/GtkFixedLayout.cpp`
+- `Gtk/GtkFixedLayoutChild.cpp`
 - `Gtk/GtkFontDialog.cpp`
 - `Gtk/GtkFrame.cpp`
 - `Gtk/GtkGesture.cpp`
@@ -587,10 +600,14 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkGestureSwipe.cpp`
 - `Gtk/GtkGestureZoom.cpp`
 - `Gtk/GtkGrid.cpp`
+- `Gtk/GtkGridLayout.cpp`
+- `Gtk/GtkGridLayoutChild.cpp`
 - `Gtk/GtkGridView.cpp`
 - `Gtk/GtkHeaderBar.cpp`
 - `Gtk/GtkImage.cpp`
 - `Gtk/GtkLabel.cpp`
+- `Gtk/GtkLayoutChild.cpp`
+- `Gtk/GtkLayoutManager.cpp`
 - `Gtk/GtkListItem.cpp`
 - `Gtk/GtkListItemFactory.cpp`
 - `Gtk/GtkListView.cpp`
@@ -601,6 +618,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkNotebookPage.cpp`
 - `Gtk/GtkOrientable.cpp`
 - `Gtk/GtkOverlay.cpp`
+- `Gtk/GtkOverlayLayout.cpp`
+- `Gtk/GtkOverlayLayoutChild.cpp`
 - `Gtk/GtkPaned.cpp`
 - `Gtk/GtkPasswordEntry.cpp`
 - `Gtk/GtkPicture.cpp`
@@ -674,8 +693,10 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkAboutDialogSmokeTest.php`
 - `tests/Generated/GtkAlertDialogSmokeTest.php`
 - `tests/Generated/GtkApplicationSmokeTest.php`
+- `tests/Generated/GtkBinLayoutSmokeTest.php`
 - `tests/Generated/GtkButtonSmokeTest.php`
 - `tests/Generated/GtkCalendarSmokeTest.php`
+- `tests/Generated/GtkCenterLayoutSmokeTest.php`
 - `tests/Generated/GtkCheckButtonSmokeTest.php`
 - `tests/Generated/GtkColorDialogSmokeTest.php`
 - `tests/Generated/GtkColumnViewSmokeTest.php`
@@ -698,6 +719,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkFilterSmokeTest.php`
 - `tests/Generated/GtkFilterListModelSmokeTest.php`
 - `tests/Generated/GtkFixedSmokeTest.php`
+- `tests/Generated/GtkFixedLayoutSmokeTest.php`
+- `tests/Generated/GtkFixedLayoutChildSmokeTest.php`
 - `tests/Generated/GtkFontDialogSmokeTest.php`
 - `tests/Generated/GtkFrameSmokeTest.php`
 - `tests/Generated/GtkGestureSmokeTest.php`
@@ -709,10 +732,14 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkGestureSwipeSmokeTest.php`
 - `tests/Generated/GtkGestureZoomSmokeTest.php`
 - `tests/Generated/GtkGridSmokeTest.php`
+- `tests/Generated/GtkGridLayoutSmokeTest.php`
+- `tests/Generated/GtkGridLayoutChildSmokeTest.php`
 - `tests/Generated/GtkGridViewSmokeTest.php`
 - `tests/Generated/GtkHeaderBarSmokeTest.php`
 - `tests/Generated/GtkImageSmokeTest.php`
 - `tests/Generated/GtkLabelSmokeTest.php`
+- `tests/Generated/GtkLayoutChildSmokeTest.php`
+- `tests/Generated/GtkLayoutManagerSmokeTest.php`
 - `tests/Generated/GtkListItemFactorySmokeTest.php`
 - `tests/Generated/GtkListViewSmokeTest.php`
 - `tests/Generated/GtkMenuButtonSmokeTest.php`
@@ -720,6 +747,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkNoSelectionSmokeTest.php`
 - `tests/Generated/GtkNotebookSmokeTest.php`
 - `tests/Generated/GtkOverlaySmokeTest.php`
+- `tests/Generated/GtkOverlayLayoutSmokeTest.php`
+- `tests/Generated/GtkOverlayLayoutChildSmokeTest.php`
 - `tests/Generated/GtkPasswordEntrySmokeTest.php`
 - `tests/Generated/GtkPictureSmokeTest.php`
 - `tests/Generated/GtkPopoverSmokeTest.php`

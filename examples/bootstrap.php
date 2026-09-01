@@ -95,7 +95,7 @@ final class Demo
         ],
         'Layout' => [
             'GtkGrid', 'GtkPaned', 'GtkFrame', 'GtkOverlay', 'GtkRevealer', 'GtkRevealerTransitionType',
-            'GtkFixed', 'GtkSeparator', 'GtkSizeGroup', 'GtkSizeGroupMode',
+            'GtkFixed', 'GtkSeparator', 'GtkSizeGroup', 'GtkSizeGroupMode', 'GtkLayoutManager',
         ],
         'Stacks & tabs' => [
             'GtkStack', 'GtkStackPage', 'GtkStackSwitcher', 'GtkStackSidebar', 'GtkStackTransitionType',

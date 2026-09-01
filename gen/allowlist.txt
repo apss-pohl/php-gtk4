@@ -197,3 +197,23 @@ Gtk.TreeExpander
 # scroll_to() (which unlocks GtkViewport::scroll_to() too).
 Gtk.Bitset
 Gtk.ScrollInfo
+
+# Wave 8 (layout, PLAN.md §3): the object GTK 4 delegates allocation to. A widget that has a
+# layout manager never reaches WidgetClass.size_allocate/measure (VfuncTest pins that), so
+# without GtkLayoutManager a PHP subclass of GtkBox or GtkOverlay cannot influence its own
+# layout at all - vfunc_allocate()/vfunc_measure() on a manager is the way in, and
+# GtkWidget::set_layout_manager() is how it gets installed. The concrete managers are what a
+# subclass swaps in or chains to; GtkConstraintLayout stays out (it needs the whole
+# GtkConstraint/GtkConstraintTarget API).
+Gtk.LayoutManager
+Gtk.LayoutChild
+Gtk.BinLayout
+Gtk.BoxLayout
+Gtk.CenterLayout
+Gtk.FixedLayout
+Gtk.FixedLayoutChild
+Gtk.OverlayLayout
+Gtk.OverlayLayoutChild
+Gtk.GridLayout
+Gtk.GridLayoutChild
+Gtk.SizeRequestMode

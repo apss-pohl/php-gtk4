@@ -526,6 +526,15 @@ enum GtkBaselinePosition: int
 }
 
 /**
+ * `GtkBinLayout` is a `GtkLayoutManager` subclass useful for create "bins" of widgets.
+ */
+class GtkBinLayout extends GtkLayoutManager
+{
+    /** Creates a new `GtkBinLayout` instance. */
+    public function __construct() {}
+}
+
+/**
  * A `GtkBitset` represents a set of unsigned integers.
  * @not-serializable
  */
@@ -695,6 +704,50 @@ class GtkBox extends GtkWidget implements GtkOrientable
 }
 
 /**
+ * `GtkBoxLayout` is a layout manager that arranges children in a single row or column.
+ *
+ * @property ?int $baseline_child
+ * @property ?GtkBaselinePosition $baseline_position
+ * @property ?bool $homogeneous
+ * @property ?int $spacing
+ */
+class GtkBoxLayout extends GtkLayoutManager implements GtkOrientable
+{
+    /** Creates a new `GtkBoxLayout`. */
+    public function __construct(GtkOrientation $orientation) {}
+
+    /** Gets the value set by gtk_box_layout_set_baseline_child(). */
+    public function get_baseline_child(): int {}
+
+    /** Gets the value set by gtk_box_layout_set_baseline_position(). */
+    public function get_baseline_position(): GtkBaselinePosition {}
+
+    /** Returns whether the layout is set to be homogeneous. */
+    public function get_homogeneous(): bool {}
+
+    /** Returns the space that $box_layout puts between children. */
+    public function get_spacing(): int {}
+
+    /** Sets the index of the child that determines the baseline in vertical layout. */
+    public function set_baseline_child(int $child): void {}
+
+    /** Sets the baseline position of a box layout. */
+    public function set_baseline_position(GtkBaselinePosition $position): void {}
+
+    /** Sets whether the box layout will allocate the same size to all children. */
+    public function set_homogeneous(bool $homogeneous): void {}
+
+    /** Sets how much spacing to put between children. */
+    public function set_spacing(int $spacing): void {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::get_orientation */
+    public function get_orientation(): GtkOrientation {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
+    public function set_orientation(GtkOrientation $orientation): void {}
+}
+
+/**
  * The `GtkButton` widget is generally used to trigger a callback function that is called when the
  * button is pressed.
  *
@@ -832,6 +885,53 @@ class GtkCalendar extends GtkWidget
 
     /** Removes the visual marker from a particular day. */
     public function unmark_day(int $day): void {}
+}
+
+/**
+ * `GtkCenterLayout` is a layout manager that manages up to three children.
+ *
+ * @property ?bool $shrink_center_last
+ */
+class GtkCenterLayout extends GtkLayoutManager
+{
+    /** Creates a new `GtkCenterLayout`. */
+    public function __construct() {}
+
+    /** Returns the baseline position of the layout. */
+    public function get_baseline_position(): GtkBaselinePosition {}
+
+    /** Returns the center widget of the layout. */
+    public function get_center_widget(): ?GtkWidget {}
+
+    /** Returns the end widget of the layout. */
+    public function get_end_widget(): ?GtkWidget {}
+
+    /** Gets the current orienration of the layout manager. */
+    public function get_orientation(): GtkOrientation {}
+
+    /** Gets whether $self shrinks the center widget after other children. */
+    public function get_shrink_center_last(): bool {}
+
+    /** Returns the start widget of the layout. */
+    public function get_start_widget(): ?GtkWidget {}
+
+    /** Sets the new baseline position of $self */
+    public function set_baseline_position(GtkBaselinePosition $baseline_position): void {}
+
+    /** Sets the new center widget of $self. */
+    public function set_center_widget(?GtkWidget $widget): void {}
+
+    /** Sets the new end widget of $self. */
+    public function set_end_widget(?GtkWidget $widget): void {}
+
+    /** Sets the orientation of $self. */
+    public function set_orientation(GtkOrientation $orientation): void {}
+
+    /** Sets whether to shrink the center widget after other children. */
+    public function set_shrink_center_last(bool $shrink_center_last): void {}
+
+    /** Sets the new start widget of $self. */
+    public function set_start_widget(?GtkWidget $widget): void {}
 }
 
 /**
@@ -2297,6 +2397,24 @@ class GtkFixed extends GtkWidget
 }
 
 /**
+ * `GtkFixedLayout` is a layout manager which can place child widgets at fixed positions.
+ */
+class GtkFixedLayout extends GtkLayoutManager
+{
+    /** Creates a new `GtkFixedLayout`. */
+    public function __construct() {}
+}
+
+/**
+ * `GtkLayoutChild` subclass for children in a `GtkFixedLayout`.
+ */
+class GtkFixedLayoutChild extends GtkLayoutChild
+{
+    /** A GtkFixedLayoutChild with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct() {}
+}
+
+/**
  * A `GtkFontDialog` object collects the arguments that are needed to present a font chooser dialog
  * to the user, such as a title for the dialog and whether it should be modal.
  *
@@ -2699,6 +2817,98 @@ class GtkGrid extends GtkWidget implements GtkOrientable
 
     /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
     public function set_orientation(GtkOrientation $orientation): void {}
+}
+
+/**
+ * `GtkGridLayout` is a layout manager which arranges child widgets in rows and columns.
+ *
+ * @property ?int $baseline_row
+ * @property ?bool $column_homogeneous
+ * @property ?int $column_spacing
+ * @property ?bool $row_homogeneous
+ * @property ?int $row_spacing
+ */
+class GtkGridLayout extends GtkLayoutManager
+{
+    /** Creates a new `GtkGridLayout`. */
+    public function __construct() {}
+
+    /** Retrieves the row set with gtk_grid_layout_set_baseline_row(). */
+    public function get_baseline_row(): int {}
+
+    /** Checks whether all columns of $grid should have the same width. */
+    public function get_column_homogeneous(): bool {}
+
+    /** Retrieves the spacing set with gtk_grid_layout_set_column_spacing(). */
+    public function get_column_spacing(): int {}
+
+    /** Returns the baseline position of $row. */
+    public function get_row_baseline_position(int $row): GtkBaselinePosition {}
+
+    /** Checks whether all rows of $grid should have the same height. */
+    public function get_row_homogeneous(): bool {}
+
+    /** Retrieves the spacing set with gtk_grid_layout_set_row_spacing(). */
+    public function get_row_spacing(): int {}
+
+    /** Sets which row defines the global baseline for the entire grid. */
+    public function set_baseline_row(int $row): void {}
+
+    /** Sets whether all columns of $grid should have the same width. */
+    public function set_column_homogeneous(bool $homogeneous): void {}
+
+    /** Sets the amount of space to insert between consecutive columns. */
+    public function set_column_spacing(int $spacing): void {}
+
+    /**
+     * Sets how the baseline should be positioned on $row of the grid, in case that row is assigned
+     * more space than is requested.
+     */
+    public function set_row_baseline_position(int $row, GtkBaselinePosition $pos): void {}
+
+    /** Sets whether all rows of $grid should have the same height. */
+    public function set_row_homogeneous(bool $homogeneous): void {}
+
+    /** Sets the amount of space to insert between consecutive rows. */
+    public function set_row_spacing(int $spacing): void {}
+}
+
+/**
+ * `GtkLayoutChild` subclass for children in a `GtkGridLayout`.
+ *
+ * @property ?int $column
+ * @property ?int $column_span
+ * @property ?int $row
+ * @property ?int $row_span
+ */
+class GtkGridLayoutChild extends GtkLayoutChild
+{
+    /** A GtkGridLayoutChild with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct() {}
+
+    /** Retrieves the column number to which $child attaches its left side. */
+    public function get_column(): int {}
+
+    /** Retrieves the number of columns that $child spans to. */
+    public function get_column_span(): int {}
+
+    /** Retrieves the row number to which $child attaches its top side. */
+    public function get_row(): int {}
+
+    /** Retrieves the number of rows that $child spans to. */
+    public function get_row_span(): int {}
+
+    /** Sets the column number to attach the left side of $child. */
+    public function set_column(int $column): void {}
+
+    /** Sets the number of columns $child spans to. */
+    public function set_column_span(int $span): void {}
+
+    /** Sets the row to place $child in. */
+    public function set_row(int $row): void {}
+
+    /** Sets the number of rows $child spans to. */
+    public function set_row_span(int $span): void {}
 }
 
 /**
@@ -3138,6 +3348,115 @@ class GtkLabel extends GtkWidget
 
     /** Sets the `yalign` of the label. */
     public function set_yalign(float $yalign): void {}
+}
+
+/**
+ * `GtkLayoutChild` is the base class for objects that are meant to hold layout properties.
+ *
+ * @property ?GtkWidget $child_widget
+ * @property ?GtkLayoutManager $layout_manager
+ */
+class GtkLayoutChild extends GObject
+{
+    /** GtkLayoutChild is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    public function __construct() {}
+
+    /** Retrieves the `GtkWidget` associated to the given $layout_child. */
+    public function get_child_widget(): GtkWidget {}
+
+    /** Retrieves the `GtkLayoutManager` instance that created the given $layout_child. */
+    public function get_layout_manager(): GtkLayoutManager {}
+}
+
+/**
+ * Layout managers are delegate classes that handle the preferred size and the allocation of a
+ * widget.
+ */
+class GtkLayoutManager extends GObject
+{
+    /** GtkLayoutManager is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    public function __construct() {}
+
+    /**
+     * Assigns the given $width, $height, and $baseline to a $widget, and computes the position and
+     * sizes of the children of the $widget using the layout management policy of $manager.
+     */
+    public function allocate(GtkWidget $widget, int $width, int $height, int $baseline): void {}
+
+    /** Retrieves the `GtkWidget` using the given `GtkLayoutManager`. */
+    public function get_widget(): ?GtkWidget {}
+
+    /** Queues a resize on the `GtkWidget` using $manager, if any. */
+    public function layout_changed(): void {}
+
+    /**
+     * Measures the size of the $widget using $manager, for the given $orientation and size.
+     *
+     * @return array{int, int, int, int}
+     */
+    public function measure(GtkWidget $widget, GtkOrientation $orientation, int $for_size): array {}
+
+    /**
+     * Retrieves a `GtkLayoutChild` instance for the `GtkLayoutManager`, creating one if necessary.
+     *
+     * GTK looks the manager up through the child's parent: a child with no parent is a
+     * `g_return_val_if_fail` that answers NULL, which the declared return type does not allow.
+     */
+    public function get_layout_child(GtkWidget $child): GtkLayoutChild {}
+
+    /**
+     * Retrieves the request mode of $manager.
+     *
+     * GTK reads the mode off the widget the manager was set on: without one it is a
+     * `g_return_val_if_fail` that tells PHP nothing and answers with the first enum value.
+     */
+    public function get_request_mode(): GtkSizeRequestMode {}
+
+    /**
+     * Native `allocate` (LayoutManagerClass.allocate): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_allocate()` from an override. Assigns the given $width,
+     * $height, and $baseline to a $widget, and computes the position and sizes of the children of
+     * the $widget using the layout management policy of $manager.
+     */
+    public function vfunc_allocate(GtkWidget $widget, int $width, int $height, int $baseline): void {}
+
+    /**
+     * Native `create_layout_child` (LayoutManagerClass.create_layout_child): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_create_layout_child()` from an
+     * override. Create a `GtkLayoutChild` instance for the given $for_child widget.
+     */
+    public function vfunc_create_layout_child(GtkWidget $widget, GtkWidget $for_child): GtkLayoutChild {}
+
+    /**
+     * Native `get_request_mode` (LayoutManagerClass.get_request_mode): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_get_request_mode()` from an override. a virtual
+     * function, used to return the preferred request mode for the layout manager; for instance,
+     * "width for height" or "height for width"; see `GtkSizeRequestMode`
+     */
+    public function vfunc_get_request_mode(GtkWidget $widget): GtkSizeRequestMode {}
+
+    /**
+     * Native `measure` (LayoutManagerClass.measure): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_measure()` from an override. Measures the size of the $widget
+     * using $manager, for the given $orientation and size.
+     *
+     * @return array{int, int, int, int}
+     */
+    public function vfunc_measure(GtkWidget $widget, GtkOrientation $orientation, int $for_size): array {}
+
+    /**
+     * Native `root` (LayoutManagerClass.root): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_root()` from an override. a virtual function, called when the widget using
+     * the layout manager is attached to a `GtkRoot`
+     */
+    public function vfunc_root(): void {}
+
+    /**
+     * Native `unroot` (LayoutManagerClass.unroot): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_unroot()` from an override. a virtual function, called when the widget
+     * using the layout manager is detached from a `GtkRoot`
+     */
+    public function vfunc_unroot(): void {}
 }
 
 /**
@@ -3868,6 +4187,39 @@ class GtkOverlay extends GtkWidget
 
     /** Sets whether $widget is included in the measured size of $overlay. */
     public function set_measure_overlay(GtkWidget $widget, bool $measure): void {}
+}
+
+/**
+ * `GtkOverlayLayout` is the layout manager used by `Overlay`.
+ */
+class GtkOverlayLayout extends GtkLayoutManager
+{
+    /** Creates a new `GtkOverlayLayout` instance. */
+    public function __construct() {}
+}
+
+/**
+ * `GtkLayoutChild` subclass for children in a `GtkOverlayLayout`.
+ *
+ * @property ?bool $clip_overlay
+ * @property ?bool $measure
+ */
+class GtkOverlayLayoutChild extends GtkLayoutChild
+{
+    /** A GtkOverlayLayoutChild with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct() {}
+
+    /** Retrieves whether the child is clipped. */
+    public function get_clip_overlay(): bool {}
+
+    /** Retrieves whether the child is measured. */
+    public function get_measure(): bool {}
+
+    /** Sets whether to clip this child. */
+    public function set_clip_overlay(bool $clip_overlay): void {}
+
+    /** Sets whether to measure this child. */
+    public function set_measure(bool $measure): void {}
 }
 
 /**
@@ -7584,6 +7936,7 @@ class GtkViewport extends GtkWidget implements GtkScrollable
  * @property ?int $height_request
  * @property ?bool $hexpand
  * @property ?bool $hexpand_set
+ * @property ?GtkLayoutManager $layout_manager
  * @property ?int $margin_bottom
  * @property ?int $margin_end
  * @property ?int $margin_start
@@ -7720,6 +8073,9 @@ class GtkWidget extends GObject
 
     /** Returns the widget’s last child. */
     public function get_last_child(): ?GtkWidget {}
+
+    /** Retrieves the layout manager used by $widget. */
+    public function get_layout_manager(): ?GtkLayoutManager {}
 
     /** Whether the widget is mapped. */
     public function get_mapped(): bool {}
@@ -7970,6 +8326,12 @@ class GtkWidget extends GObject
     /** Sets whether the hexpand flag will be used. */
     public function set_hexpand_set(bool $set): void {}
 
+    /**
+     * Sets the layout manager delegate instance that provides an implementation for measuring and
+     * allocating the children of $widget.
+     */
+    public function set_layout_manager(?GtkLayoutManager $layout_manager): void {}
+
     /** Sets the bottom margin of $widget. */
     public function set_margin_bottom(int $margin): void {}
 
@@ -8044,6 +8406,16 @@ class GtkWidget extends GObject
 
     /** Turns off flag values for the current widget state. */
     public function unset_state_flags(int $flags): void {}
+
+    /**
+     * Assign the widget its size and position inside its parent's allocation.
+     *
+     * What a layout manager's `vfunc_allocate()` calls for each child. GIR's last parameter is a
+     * `GskTransform *` placing the child relative to the parent; GSK is unbound, so the position is
+     * taken as $x/$y here and turned into the translation every layout manager wants (no transform
+     * at all when both are 0, which is what GTK's own containers pass for a child at the origin).
+     */
+    public function allocate(int $width, int $height, int $baseline = -1, int $x = 0, int $y = 0): void {}
 
     /**
      * Native `contains` (WidgetClass.contains): the GTK implementation below any PHP subclass, for

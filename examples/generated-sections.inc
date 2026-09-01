@@ -8,6 +8,16 @@ declare(strict_types=1);
 return [
     'Generated' => [
         'GdkModifierType',
+        'GtkBinLayout',
+        'GtkBoxLayout',
+        'GtkCenterLayout',
+        'GtkFixedLayout',
+        'GtkFixedLayoutChild',
+        'GtkGridLayout',
+        'GtkGridLayoutChild',
+        'GtkLayoutChild',
+        'GtkOverlayLayout',
+        'GtkOverlayLayoutChild',
         'GtkText',
         'GtkTextSearchFlags',
         'GtkTextWindowType',

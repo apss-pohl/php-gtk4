@@ -9,7 +9,6 @@ use Gtk4\GObject;
 use Gtk4\Gtk;
 use Gtk4\GtkBox;
 use Gtk4\GtkButton;
-use Gtk4\GtkFixed;
 use Gtk4\GtkOrientation;
 use Gtk4\GtkWindow;
 use PhpGtk4\Tests\Subclass\DestructCountingButton;
@@ -37,15 +36,21 @@ final class WrapTest extends GtkTestCase
 
     public function testUnregisteredTypeFallsBackToGObject(): void
     {
-        // GtkFixedLayout (the layout manager a GtkFixed has) is not bound and implements no
+        // GdkMonitor (what a display's monitor list holds) is not bound and implements no
         // registered interface: the nearest registered ancestor is GObject itself, which is a
         // handle like any other - not an exception.
-        $layout = new GtkFixed()->get_property('layout-manager');
-        self::assertInstanceOf(GObject::class, $layout);
-        self::assertSame(GObject::class, $layout::class);
-        $fixed = new GtkFixed();
-        $fixed->set_property('layout-manager', $layout);
-        self::assertSame($layout, $fixed->get_property('layout-manager'), 'a GObject handle still round-trips');
+        $display = GdkDisplay::get_default();
+        self::assertNotNull($display);
+        $monitors = $display->get_monitors();
+        if ($monitors->get_n_items() === 0) {
+            self::markTestSkipped('the display reports no monitor');
+        }
+        $monitor = $monitors->get_item(0);
+        self::assertInstanceOf(GObject::class, $monitor);
+        self::assertSame(GObject::class, $monitor::class);
+        // A GObject handle is a handle: same instance while PHP holds it, properties readable.
+        self::assertSame($monitor, $monitors->get_item(0));
+        self::assertIsString($monitor->get_property('connector'));
     }
 
     public function testNullObjectProperty(): void

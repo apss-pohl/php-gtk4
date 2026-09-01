@@ -473,6 +473,18 @@ ZEND_METHOD(Gtk4_GtkWidget, get_last_child) {
 }
 
 /**
+ * Gtk4\GtkWidget::get_layout_manager(): ?GtkLayoutManager
+ *
+ * Retrieves the layout manager used by $widget.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, get_layout_manager) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GtkLayoutManager *phpgtk_ret = gtk_widget_get_layout_manager(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkWidget::get_mapped(): bool
  *
  * Whether the widget is mapped.
@@ -1481,6 +1493,28 @@ ZEND_METHOD(Gtk4_GtkWidget, set_hexpand_set) {
 }
 
 /**
+ * Gtk4\GtkWidget::set_layout_manager(?GtkLayoutManager $layout_manager): void
+ *
+ * Sets the layout manager delegate instance that provides an implementation for measuring and
+ * allocating the children of $widget.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, set_layout_manager) {
+  zval *layout_manager = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(layout_manager, class_for_gtype(GTK_TYPE_LAYOUT_MANAGER))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GObject *layout_manager_o = nullptr;
+  if (layout_manager != nullptr) {
+    layout_manager_o = unwrap(layout_manager, GTK_TYPE_LAYOUT_MANAGER);
+    if (layout_manager_o == nullptr) RETURN_THROWS();
+  }
+  if (layout_manager_o != nullptr) g_object_ref(layout_manager_o);  // transfer full
+  gtk_widget_set_layout_manager(
+      self, layout_manager_o != nullptr ? GTK_LAYOUT_MANAGER(layout_manager_o) : nullptr);
+}
+
+/**
  * Gtk4\GtkWidget::set_margin_bottom(int $margin): void
  *
  * Sets the bottom margin of $widget.
@@ -1821,6 +1855,43 @@ ZEND_METHOD(Gtk4_GtkWidget, unset_state_flags) {
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
   if (!phpgtk::check_flags(GTK_TYPE_STATE_FLAGS, flags, 1)) RETURN_THROWS();
   gtk_widget_unset_state_flags(self, static_cast<GtkStateFlags>(flags));
+}
+
+/**
+ * public function allocate(int $width, int $height, int $baseline = -1, int $x = 0, int $y = 0):
+ * void Assign the widget its size and position inside its parent's allocation.
+ *
+ * What a layout manager's `vfunc_allocate()` calls for each child. GIR's last parameter is a
+ * `GskTransform *` placing the child relative to the parent; GSK is unbound, so the position is
+ * taken as $x/$y here and turned into the translation every layout manager wants (no transform
+ * at all when both are 0, which is what GTK's own containers pass for a child at the origin).
+ */
+ZEND_METHOD(Gtk4_GtkWidget, allocate) {
+  zend_long width = 0;
+  zend_long height = 0;
+  zend_long baseline = -1;
+  zend_long x = 0;
+  zend_long y = 0;
+  ZEND_PARSE_PARAMETERS_START(2, 5)
+  Z_PARAM_LONG(width)
+  Z_PARAM_LONG(height)
+  Z_PARAM_OPTIONAL
+  Z_PARAM_LONG(baseline)
+  Z_PARAM_LONG(x)
+  Z_PARAM_LONG(y)
+  ZEND_PARSE_PARAMETERS_END();
+  if (!check_range<int>(width, 1) || !check_range<int>(height, 2) ||
+      !check_range<int>(baseline, 3) || !check_range<int>(x, 4) || !check_range<int>(y, 5)) {
+    RETURN_THROWS();
+  }
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GskTransform *at = nullptr;
+  if (x != 0 || y != 0) {
+    const graphene_point_t p = {.x = static_cast<float>(x), .y = static_cast<float>(y)};
+    at = gsk_transform_translate(nullptr, &p);  // consumed by gtk_widget_allocate()
+  }
+  gtk_widget_allocate(self, static_cast<int>(width), static_cast<int>(height),
+                      static_cast<int>(baseline), at);
 }
 
 // vfunc thunks and installers: file-local, installed by class_init of a PHP subtype

@@ -74,8 +74,15 @@ final class EveryClassTest extends GtkTestCase
             if (!preg_match('/^(get|is|has|in)_/', $m->getName())) {
                 continue;
             }
-            // Return value must be a plain PHP value, an enum case or a Gtk4 handle - never a crash.
-            $value = $m->invoke($object);
+            // Return value must be a plain PHP value, an enum case or a Gtk4 handle - never a
+            // crash. A getter whose answer depends on state the object does not have yet
+            // (GtkLayoutManager::get_request_mode() before it is set on a widget) refuses with a
+            // LogicException instead of letting GLib CRITICAL and answer with a made-up value.
+            try {
+                $value = $m->invoke($object);
+            } catch (\LogicException) {
+                continue;
+            }
             self::assertTrue(
                 $value === null || is_scalar($value) || is_array($value) || $value instanceof \UnitEnum
                     || (is_object($value) && str_starts_with($value::class, 'Gtk4\\')),

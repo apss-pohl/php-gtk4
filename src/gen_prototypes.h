@@ -39,6 +39,7 @@ ZEND_METHOD(Gtk4_GtkEditable, set_width_chars);
 void register_vfuncs_GtkEntry();
 void register_vfuncs_GtkEntryBuffer();
 void register_vfuncs_GtkFilter();
+void register_vfuncs_GtkLayoutManager();
 ZEND_METHOD(Gtk4_GtkOrientable, get_orientation);
 ZEND_METHOD(Gtk4_GtkOrientable, set_orientation);
 void register_vfuncs_GtkPopover();
