@@ -2,22 +2,15 @@
 // Gtk4\GtkFixedLayoutChild
 #include "php_gtk4.h"
 #include "core/object.h"
-#include "core/subtype.h"
 
 using namespace phpgtk;
 
 /**
  * Gtk4\GtkFixedLayoutChild::__construct()
  *
- * A GtkFixedLayoutChild with default properties (GTK's own constructor is varargs-only; set the
- * properties afterwards).
+ * GtkFixedLayoutChild has no constructor in GTK: instances come from GTK, never from `new`.
  */
 ZEND_METHOD(Gtk4_GtkFixedLayoutChild, __construct) {
+  // Private: never called (object_init_ex() in wrap() skips constructors).
   ZEND_PARSE_PARAMETERS_NONE();
-  GObject *obj = subtype_new(ZEND_THIS, nullptr);
-  if (obj == nullptr) {
-    if (EG(exception) != nullptr) RETURN_THROWS();
-    obj = static_cast<GObject *>(g_object_new(GTK_TYPE_FIXED_LAYOUT_CHILD, nullptr));
-  }
-  attach_new(object_from_zval(ZEND_THIS), obj);
 }

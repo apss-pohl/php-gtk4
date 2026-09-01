@@ -6321,8 +6321,8 @@ class GtkFixedLayout extends GtkLayoutManager
  */
 class GtkFixedLayoutChild extends GtkLayoutChild
 {
-    /** A GtkFixedLayoutChild with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
-    public function __construct()
+    /** GtkFixedLayoutChild has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
     {
     }
 }
@@ -7006,8 +7006,8 @@ class GtkGridLayout extends GtkLayoutManager
  */
 class GtkGridLayoutChild extends GtkLayoutChild
 {
-    /** A GtkGridLayoutChild with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
-    public function __construct()
+    /** GtkGridLayoutChild has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
     {
     }
     /** Retrieves the column number to which $child attaches its left side. */
@@ -7687,8 +7687,8 @@ class GtkLabel extends GtkWidget
  */
 class GtkLayoutChild extends GObject
 {
-    /** GtkLayoutChild is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType). */
-    public function __construct()
+    /** GtkLayoutChild is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
     {
     }
     /** Retrieves the `GtkWidget` associated to the given $layout_child. */
@@ -8918,8 +8918,8 @@ class GtkOverlayLayout extends GtkLayoutManager
  */
 class GtkOverlayLayoutChild extends GtkLayoutChild
 {
-    /** A GtkOverlayLayoutChild with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
-    public function __construct()
+    /** GtkOverlayLayoutChild has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
     {
     }
     /** Retrieves whether the child is clipped. */

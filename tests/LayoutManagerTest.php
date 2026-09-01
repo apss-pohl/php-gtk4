@@ -7,7 +7,10 @@ namespace PhpGtk4\Tests;
 use Gtk4\GtkBinLayout;
 use Gtk4\GtkBox;
 use Gtk4\GtkBoxLayout;
+use Gtk4\GtkFixedLayout;
+use Gtk4\GtkFixedLayoutChild;
 use Gtk4\GtkLabel;
+use Gtk4\GtkLayoutChild;
 use Gtk4\GtkLayoutManager;
 use Gtk4\GtkOrientation;
 use Gtk4\GtkSizeRequestMode;
@@ -168,6 +171,30 @@ final class LayoutManagerTest extends GtkTestCase
         $layout = new StackLayout();
         $layout->layout_changed();
         self::assertNull($layout->get_widget());
+    }
+
+    public function testAManagerAnswersWithItsOwnLayoutChild(): void
+    {
+        $box = new GtkBox(GtkOrientation::Horizontal, 0);
+        $fixed = new GtkFixedLayout();
+        $box->set_layout_manager($fixed);
+        $kid = new GtkLabel('kid');
+        $box->append($kid);
+
+        $child = $fixed->get_layout_child($kid);
+        self::assertInstanceOf(GtkFixedLayoutChild::class, $child);
+        self::assertSame($kid, $child->get_child_widget());
+        self::assertSame($fixed, $child->get_layout_manager());
+    }
+
+    public function testALayoutChildCannotBeBuiltFromPhp(): void
+    {
+        // A layout manager creates them. GTK keeps the manager and the child widget unowned in
+        // construct-only properties, so one built from PHP dangles the moment PHP drops what it
+        // was handed - get_layout_manager() then wraps freed memory (SIGSEGV).
+        foreach ([GtkLayoutChild::class, GtkFixedLayoutChild::class] as $class) {
+            self::assertFalse(new \ReflectionClass($class)->isInstantiable(), "$class is not PHP's to make");
+        }
     }
 
     public function testWidgetIsAGtkWidgetSubclass(): void

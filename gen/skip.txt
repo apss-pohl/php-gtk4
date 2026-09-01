@@ -14,3 +14,7 @@ Gio.MenuModel.__construct   abstract with NULL class-struct slots (get_n_items .
 Gio.Cancellable.release_fd   aborts the process (GLib-GIO:ERROR "priv->fd_refcount > 0") unless get_fd() was called first, and the refcount is not observable from here
 Gtk.ListItem.__construct    a list item belongs to the factory that created it (the setup/bind handlers get it); a standalone one has no item and no position
 Gtk.TreeListRow.__construct GtkTreeListModel creates its rows (get_row()/get_child_row()); a row without a model has nothing to expand
+Gtk.LayoutChild.__construct   a layout manager creates its layout children (GtkLayoutManager::get_layout_child()); GTK stores the manager and the child widget *unowned* in construct-only properties, so one built from PHP CRITICALs when they are missing and dangles - get_layout_manager() then wraps freed memory - as soon as PHP drops what it was handed
+Gtk.FixedLayoutChild.__construct   GtkFixedLayout creates its layout children, as Gtk.LayoutChild
+Gtk.GridLayoutChild.__construct    GtkGridLayout creates its layout children, as Gtk.LayoutChild
+Gtk.OverlayLayoutChild.__construct GtkOverlayLayout creates its layout children, as Gtk.LayoutChild

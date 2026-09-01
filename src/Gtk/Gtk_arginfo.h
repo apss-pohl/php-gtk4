@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 1f2914d3177394d01f29554a04760cc30da22023 */
+ * Stub hash: 549af1de22f5c9bb4a30f106c63eec095c17cce2 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -7690,7 +7690,7 @@ static const zend_function_entry class_Gtk4_GtkFixedLayout_methods[] = {
 };
 
 static const zend_function_entry class_Gtk4_GtkFixedLayoutChild_methods[] = {
-	ZEND_ME(Gtk4_GtkFixedLayoutChild, __construct, arginfo_class_Gtk4_GtkFixedLayoutChild___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFixedLayoutChild, __construct, arginfo_class_Gtk4_GtkFixedLayoutChild___construct, ZEND_ACC_PRIVATE)
 	ZEND_FE_END
 };
 
@@ -7845,7 +7845,7 @@ static const zend_function_entry class_Gtk4_GtkGridLayout_methods[] = {
 };
 
 static const zend_function_entry class_Gtk4_GtkGridLayoutChild_methods[] = {
-	ZEND_ME(Gtk4_GtkGridLayoutChild, __construct, arginfo_class_Gtk4_GtkGridLayoutChild___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkGridLayoutChild, __construct, arginfo_class_Gtk4_GtkGridLayoutChild___construct, ZEND_ACC_PRIVATE)
 	ZEND_ME(Gtk4_GtkGridLayoutChild, get_column, arginfo_class_Gtk4_GtkGridLayoutChild_get_column, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkGridLayoutChild, get_column_span, arginfo_class_Gtk4_GtkGridLayoutChild_get_column_span, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkGridLayoutChild, get_row, arginfo_class_Gtk4_GtkGridLayoutChild_get_row, ZEND_ACC_PUBLIC)
@@ -7973,7 +7973,7 @@ static const zend_function_entry class_Gtk4_GtkLabel_methods[] = {
 };
 
 static const zend_function_entry class_Gtk4_GtkLayoutChild_methods[] = {
-	ZEND_ME(Gtk4_GtkLayoutChild, __construct, arginfo_class_Gtk4_GtkLayoutChild___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkLayoutChild, __construct, arginfo_class_Gtk4_GtkLayoutChild___construct, ZEND_ACC_PRIVATE)
 	ZEND_ME(Gtk4_GtkLayoutChild, get_child_widget, arginfo_class_Gtk4_GtkLayoutChild_get_child_widget, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkLayoutChild, get_layout_manager, arginfo_class_Gtk4_GtkLayoutChild_get_layout_manager, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
@@ -8212,7 +8212,7 @@ static const zend_function_entry class_Gtk4_GtkOverlayLayout_methods[] = {
 };
 
 static const zend_function_entry class_Gtk4_GtkOverlayLayoutChild_methods[] = {
-	ZEND_ME(Gtk4_GtkOverlayLayoutChild, __construct, arginfo_class_Gtk4_GtkOverlayLayoutChild___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkOverlayLayoutChild, __construct, arginfo_class_Gtk4_GtkOverlayLayoutChild___construct, ZEND_ACC_PRIVATE)
 	ZEND_ME(Gtk4_GtkOverlayLayoutChild, get_clip_overlay, arginfo_class_Gtk4_GtkOverlayLayoutChild_get_clip_overlay, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkOverlayLayoutChild, get_measure, arginfo_class_Gtk4_GtkOverlayLayoutChild_get_measure, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkOverlayLayoutChild, set_clip_overlay, arginfo_class_Gtk4_GtkOverlayLayoutChild_set_clip_overlay, ZEND_ACC_PUBLIC)

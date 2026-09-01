@@ -272,7 +272,9 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `get_transform` — return type Gsk.Transform
 - `set_transform` — parameter `transform` of type Gsk.Transform
+- `__construct` — skip.txt: GtkFixedLayout creates its layout children, as Gtk.LayoutChild
 - `property transform` — property type Gsk.Transform not mappable
+- `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GtkFontDialog
 
@@ -301,6 +303,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## GtkGridLayoutChild
+
+- `__construct` — skip.txt: GtkGridLayout creates its layout children, as Gtk.LayoutChild
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## GtkImage
 
 - `new_from_gicon` — parameter `icon` of type Gio.Icon
@@ -319,6 +326,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `set_tabs` — parameter `tabs` of type Pango.TabArray
 - `property attributes` — property type Pango.AttrList not mappable
 - `property tabs` — property type Pango.TabArray not mappable
+
+## GtkLayoutChild
+
+- `__construct` — skip.txt: a layout manager creates its layout children (GtkLayoutManager::get_layout_child()); GTK stores the manager and the child widget *unowned* in construct-only properties, so one built from PHP CRITICALs when they are missing and dangles - get_layout_manager() then wraps freed memory - as soon as PHP drops what it was handed
+- `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GtkListItem
 
@@ -341,6 +353,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkNotebookPage
 
 - `__construct` — skip.txt: GtkNotebook creates its pages (get_page()); a page without a notebook has no child
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GtkOverlayLayoutChild
+
+- `__construct` — skip.txt: GtkOverlayLayout creates its layout children, as Gtk.LayoutChild
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GtkPaned
@@ -720,7 +737,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkFilterListModelSmokeTest.php`
 - `tests/Generated/GtkFixedSmokeTest.php`
 - `tests/Generated/GtkFixedLayoutSmokeTest.php`
-- `tests/Generated/GtkFixedLayoutChildSmokeTest.php`
 - `tests/Generated/GtkFontDialogSmokeTest.php`
 - `tests/Generated/GtkFrameSmokeTest.php`
 - `tests/Generated/GtkGestureSmokeTest.php`
@@ -733,12 +749,10 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkGestureZoomSmokeTest.php`
 - `tests/Generated/GtkGridSmokeTest.php`
 - `tests/Generated/GtkGridLayoutSmokeTest.php`
-- `tests/Generated/GtkGridLayoutChildSmokeTest.php`
 - `tests/Generated/GtkGridViewSmokeTest.php`
 - `tests/Generated/GtkHeaderBarSmokeTest.php`
 - `tests/Generated/GtkImageSmokeTest.php`
 - `tests/Generated/GtkLabelSmokeTest.php`
-- `tests/Generated/GtkLayoutChildSmokeTest.php`
 - `tests/Generated/GtkLayoutManagerSmokeTest.php`
 - `tests/Generated/GtkListItemFactorySmokeTest.php`
 - `tests/Generated/GtkListViewSmokeTest.php`
@@ -748,7 +762,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkNotebookSmokeTest.php`
 - `tests/Generated/GtkOverlaySmokeTest.php`
 - `tests/Generated/GtkOverlayLayoutSmokeTest.php`
-- `tests/Generated/GtkOverlayLayoutChildSmokeTest.php`
 - `tests/Generated/GtkPasswordEntrySmokeTest.php`
 - `tests/Generated/GtkPictureSmokeTest.php`
 - `tests/Generated/GtkPopoverSmokeTest.php`
