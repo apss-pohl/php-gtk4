@@ -2582,7 +2582,8 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_map) {
  *
  * Native `measure` (WidgetClass.measure): the GTK implementation below any PHP subclass, for
  * `parent::vfunc_measure()` from an override. Measures $widget in the orientation $orientation and
- * for the given $for_size.
+ * for the given $for_size. A widget that has a layout manager is measured by it and never reaches
+ * this slot, exactly as with `vfunc_size_allocate()`.
  */
 ZEND_METHOD(Gtk4_GtkWidget, vfunc_measure) {
   zval *orientation;
@@ -2777,7 +2778,10 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_set_focus_child) {
  *
  * Native `size_allocate` (WidgetClass.size_allocate): the GTK implementation below any PHP
  * subclass, for `parent::vfunc_size_allocate()` from an override. Called to set the allocation, if
- * the widget does not have a layout manager.
+ * the widget does not have a layout manager. gtk_widget_allocate() hands a widget that has one to
+ * the layout manager instead of to this slot, so an override on a GtkBox, GtkOverlay or any other
+ * subclass whose class_init installs a layout manager never runs. GtkWindow, GtkDrawingArea and a
+ * direct GtkWidget subclass have none and do reach it.
  */
 ZEND_METHOD(Gtk4_GtkWidget, vfunc_size_allocate) {
   zend_long width;

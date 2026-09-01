@@ -5,6 +5,7 @@
 #include "object.h"
 
 #include <atomic>
+#include <cstring>
 #include <deque>
 #include <mutex>
 #include <string>
@@ -98,6 +99,38 @@ void php_types_add(GType type, const std::string *name) {
   php_types_snapshot().store(&next);
 }
 
+// A vfunc_<name>() the PHP class declares that no slot answers - a typo, a slot GTK does not
+// route through the class struct for this widget, or a member the generator skipped (Gtk.Snapshot
+// is unbound, so vfunc_snapshot() is not a thing) - is otherwise ignored without a word: nothing
+// is installed and the method simply never runs. Say so once, when the class' GType is created.
+void warn_about_unbound_vfuncs(zend_class_entry *ce, GType type) {
+  zend_string *name = nullptr;
+  void *ptr = nullptr;
+  ZEND_HASH_MAP_FOREACH_STR_KEY_PTR(&ce->function_table, name, ptr) {
+    auto *fn = static_cast<zend_function *>(ptr);
+    if (name == nullptr || fn->type != ZEND_USER_FUNCTION) continue;
+    // Only where it is declared: every PHP class in the chain gets its own GType and its own
+    // class_init, so an inherited method would otherwise be reported once per subclass.
+    if (fn->common.scope != ce) continue;
+    if (!zend_string_starts_with_literal_ci(name, "vfunc_")) continue;
+    const char *slot = ZSTR_VAL(name) + strlen("vfunc_");
+    bool bound = false;
+    for (const Vfunc &vf : vfuncs()) {
+      if (g_type_is_a(type, vf.owner) != FALSE && strcmp(vf.name, slot) == 0) {
+        bound = true;
+        break;
+      }
+    }
+    if (!bound) {
+      g_warning(
+          "php-gtk4: %s::%s() overrides no slot php-gtk4 binds on %s - it will never be "
+          "called",
+          ZSTR_VAL(ce->name), ZSTR_VAL(name), g_type_name(type));
+    }
+  }
+  ZEND_HASH_FOREACH_END();
+}
+
 // GTypeClassInit: install a thunk for every vfunc the PHP class defines as vfunc_<name>().
 void class_init(gpointer klass, gpointer class_data) {
   const auto *name = static_cast<const std::string *>(class_data);
@@ -117,6 +150,7 @@ void class_init(gpointer klass, gpointer class_data) {
         zend_hash_str_find_ptr(&ce->function_table, method.c_str(), method.size()));
     if (fn != nullptr && fn->type == ZEND_USER_FUNCTION) vf.install(klass);
   }
+  warn_about_unbound_vfuncs(ce, type);
 }
 
 // GInstanceInitFunc: bind the handle subtype_new() is constructing to its instance so that

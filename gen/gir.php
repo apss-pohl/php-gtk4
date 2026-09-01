@@ -1573,7 +1573,9 @@ final class Generator
                 null,
                 false,
                 "Native `{$v->name}` ({$struct->name}.{$v->name}): the GTK implementation below any PHP "
-                . "subclass, for `parent::$phpName()` from an override. " . docSummary($v->doc),
+                . "subclass, for `parent::$phpName()` from an override. " . docSummary($v->doc)
+                . (isset(VFUNC_NOTES[$n->qname() . '.' . $v->name])
+                    ? ' ' . VFUNC_NOTES[$n->qname() . '.' . $v->name] : ''),
             );
             // An empty slot (a signal's class handler GTK left NULL, `clicked`) is a no-op that
             // yields the type's zero value, so parent::vfunc_x() from an override always works.

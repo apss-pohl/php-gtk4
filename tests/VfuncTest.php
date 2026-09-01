@@ -10,6 +10,7 @@ use Gtk4\GLib;
 use Gtk4\GListStore;
 use Gtk4\GtkAdjustment;
 use Gtk4\GtkApplication;
+use Gtk4\GtkBox;
 use Gtk4\GtkButton;
 use Gtk4\GtkDirectionType;
 use Gtk4\GtkDrawingArea;
@@ -214,6 +215,38 @@ final class VfuncTest extends GtkTestCase
         self::pump();
         $d->vfunc_size_allocate(80, 60, -1);  // GtkDrawingArea's own size_allocate emits `resize`
         $this->checkAllVfuncs(GtkDrawingArea::class, $d, ['vfunc_resize']);
+    }
+
+    public function testLayoutManagerDivertsSizeAllocateAndMeasure(): void
+    {
+        // GTK 4 hands a widget that has a layout manager (GtkBox, GtkOverlay, ...) to that
+        // manager for allocating and measuring and never reaches WidgetClass.size_allocate /
+        // .measure, so those two overrides never run on such a subclass while the lifecycle
+        // slots still do. The thunks are correct; this pins the boundary so it is not
+        // rediscovered as a missing php-gtk4 vfunc.
+        $boxClass = self::recordingSubclass(GtkBox::class);
+        $areaClass = self::recordingSubclass(GtkDrawingArea::class);
+        $box = new $boxClass(GtkOrientation::Vertical, 0);
+        $area = new $areaClass();
+        $area->set_hexpand(true);
+        $area->set_vexpand(true);
+        $box->append($area);
+        // A recording window as the toplevel, allocated directly as in testWidget(): its
+        // vfunc_size_allocate() runs GTK's own allocation pass down the tree - no frame clock.
+        $winClass = self::recordingSubclass(GtkWindow::class);
+        $win = new $winClass();
+        $win->set_child($box);
+        $win->present();
+        self::pump();
+        $win->vfunc_size_allocate(320, 240, -1);
+
+        $boxHits = self::hitsOf($box);
+        self::assertContains('vfunc_map', $boxHits, 'a lifecycle slot still reaches the subclass');
+        self::assertNotContains('vfunc_size_allocate', $boxHits, 'GtkBoxLayout allocates, not the class slot');
+        self::assertNotContains('vfunc_measure', $boxHits, 'GtkBoxLayout measures, not the class slot');
+        // The same override on a widget without a layout manager is reached.
+        self::assertContains('vfunc_size_allocate', self::hitsOf($area), 'GtkDrawingArea has no layout manager');
+        $win->destroy();
     }
 
     public function testWindow(): void

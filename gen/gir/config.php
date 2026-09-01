@@ -26,6 +26,20 @@ const BOXED_OWNERS = [
     'Gtk.TextIter' => 'gtk_text_iter_get_buffer',
 ];
 
+/**
+ * Caveats appended to a generated `vfunc_<name>()` docblock: "Ns.Type.vfunc" -> the sentence.
+ * For slots GTK does not always route through the class struct, so that an override which
+ * silently never runs is documented rather than discovered.
+ */
+const VFUNC_NOTES = [
+    'Gtk.Widget.size_allocate' => 'gtk_widget_allocate() hands a widget that has one to the '
+        . 'layout manager instead of to this slot, so an override on a GtkBox, GtkOverlay or any '
+        . 'other subclass whose class_init installs a layout manager never runs. GtkWindow, '
+        . 'GtkDrawingArea and a direct GtkWidget subclass have none and do reach it.',
+    'Gtk.Widget.measure' => 'A widget that has a layout manager is measured by it and never '
+        . 'reaches this slot, exactly as with `vfunc_size_allocate()`.',
+];
+
 const NS_GIR = 'http://www.gtk.org/introspection/core/1.0';
 const NS_C = 'http://www.gtk.org/introspection/c/1.0';
 const NS_GLIB = 'http://www.gtk.org/introspection/glib/1.0';
