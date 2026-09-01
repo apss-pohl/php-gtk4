@@ -156,7 +156,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `new_for_pixbuf` — parameter `pixbuf` of type GdkPixbuf.Pixbuf
 - `new_from_resource` — skip.txt: g_error()s (aborts the process) on an invalid resource path - not a PHP-safe API
-- `download` — parameter `data` of type array (C array)
 - `__construct` — skip.txt: abstract for GTK's own subclasses only: a texture needs internal state (color state, 4.16+) that only the factories set - no PHP subtypes, no `new`
 - `smoke test` — smoke-skip.txt: factories need real image data (TextureTest covers it)
 
@@ -529,6 +528,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## Overrides in effect
 
+- `Gdk.Texture`: download
 - `Gio.Action`: activate
 - `Gio.ActionGroup`: activate_action
 - `Gio.Application`: run

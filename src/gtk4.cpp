@@ -110,6 +110,7 @@ static PHP_MINIT_FUNCTION(gtk4) {
   phpgtk::ce_GError = register_class_Gtk4_GError(spl_ce_RuntimeException);
   phpgtk::register_class("PhpValue", register_class_Gtk4_PhpValue(ce_GObject), PHP_TYPE_VALUE);
   phpgtk::register_CairoContext(register_class_Gtk4_CairoContext());
+  phpgtk::register_CairoSurface(register_class_Gtk4_CairoSurface());
   phpgtk::register_GtkCssSection(register_class_Gtk4_GtkCssSection());
   // GdkEvent and the subtypes with getters of their own; the rest (motion, delete, ...) resolve
   // to GdkEvent through the registry's parent walk.

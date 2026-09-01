@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: bb42688253c4f857c5769582c3a38ee59d4c54dd */
+ * Stub hash: cb3fb3f63aba76414a1a80fd83dc2c6e7647631c */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GObject___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -330,6 +330,20 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoContext_show_tex
 	ZEND_ARG_TYPE_INFO(0, text, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoContext_set_source_surface, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, surface, Gtk4\\CairoSurface, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, x, IS_DOUBLE, 0, "0.0")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, y, IS_DOUBLE, 0, "0.0")
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_CairoSurface_get_width arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_CairoSurface_get_height arginfo_class_Gtk4_GParamSpec_get_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_CairoSurface_write_to_png, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, filename, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_GtkCssSection_to_string arginfo_class_Gtk4_GParamSpec_get_name
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkCssSection_get_parent, 0, 0, Gtk4\\GtkCssSection, 1)
@@ -442,6 +456,10 @@ ZEND_METHOD(Gtk4_CairoContext, scale);
 ZEND_METHOD(Gtk4_CairoContext, rotate);
 ZEND_METHOD(Gtk4_CairoContext, set_font_size);
 ZEND_METHOD(Gtk4_CairoContext, show_text);
+ZEND_METHOD(Gtk4_CairoContext, set_source_surface);
+ZEND_METHOD(Gtk4_CairoSurface, get_width);
+ZEND_METHOD(Gtk4_CairoSurface, get_height);
+ZEND_METHOD(Gtk4_CairoSurface, write_to_png);
 ZEND_METHOD(Gtk4_GtkCssSection, to_string);
 ZEND_METHOD(Gtk4_GtkCssSection, get_parent);
 ZEND_METHOD(Gtk4_GtkCssSection, get_start_location);
@@ -627,6 +645,14 @@ static const zend_function_entry class_Gtk4_CairoContext_methods[] = {
 	ZEND_ME(Gtk4_CairoContext, rotate, arginfo_class_Gtk4_CairoContext_rotate, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_CairoContext, set_font_size, arginfo_class_Gtk4_CairoContext_set_font_size, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_CairoContext, show_text, arginfo_class_Gtk4_CairoContext_show_text, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoContext, set_source_surface, arginfo_class_Gtk4_CairoContext_set_source_surface, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_CairoSurface_methods[] = {
+	ZEND_ME(Gtk4_CairoSurface, get_width, arginfo_class_Gtk4_CairoSurface_get_width, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoSurface, get_height, arginfo_class_Gtk4_CairoSurface_get_height, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_CairoSurface, write_to_png, arginfo_class_Gtk4_CairoSurface_write_to_png, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -917,6 +943,16 @@ static zend_class_entry *register_class_Gtk4_CairoContext(void)
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "CairoContext", class_Gtk4_CairoContext_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_CairoSurface(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "CairoSurface", class_Gtk4_CairoSurface_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
 
 	return class_entry;

@@ -7,6 +7,7 @@
 #include "core/boxed.h"
 #include "classes.h"
 #include "Cairo/CairoContext.h"
+#include "Cairo/CairoSurface.h"
 #include "core/fundamental.h"
 
 using namespace phpgtk;
@@ -188,4 +189,27 @@ ZEND_METHOD(Gtk4_CairoContext, show_text) {
   if (!check_utf8(text, 1)) RETURN_THROWS();
   SELF_CR;
   cairo_show_text(cr, ZSTR_VAL(text));
+}
+
+/**
+ * Gtk4\CairoContext::set_source_surface(CairoSurface $surface, float $x = 0.0, float $y = 0.0):
+ * void
+ *
+ * Use $surface as the source pattern, its origin at ($x, $y).
+ */
+ZEND_METHOD(Gtk4_CairoContext, set_source_surface) {
+  zval *zsurface;
+  double x = 0.0;
+  double y = 0.0;
+  ZEND_PARSE_PARAMETERS_START(1, 3)
+  Z_PARAM_OBJECT_OF_CLASS(zsurface, fundamental_class_for_type(CAIRO_GOBJECT_TYPE_SURFACE)->ce)
+  Z_PARAM_OPTIONAL
+  Z_PARAM_DOUBLE(x)
+  Z_PARAM_DOUBLE(y)
+  ZEND_PARSE_PARAMETERS_END();
+  SELF_CR;
+  auto *surface =
+      static_cast<cairo_surface_t *>(unwrap_fundamental(zsurface, CAIRO_GOBJECT_TYPE_SURFACE));
+  if (surface == nullptr) RETURN_THROWS();
+  cairo_set_source_surface(cr, surface, x, y);
 }

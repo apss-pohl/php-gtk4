@@ -65,7 +65,7 @@ final class Demo
     public const array SECTIONS = [
         'Widgets' => [
             'GtkWidget', 'GtkWindow', 'GtkRoot', 'GtkBox', 'GtkOrientable', 'GtkButton',
-            'GtkLabel', 'GtkDrawingArea', 'CairoContext',
+            'GtkLabel', 'GtkDrawingArea', 'CairoContext', 'CairoSurface',
         ],
         'Widget enums' => [
             'GtkAlign', 'GtkOrientation', 'GtkBaselinePosition', 'GtkOverflow',

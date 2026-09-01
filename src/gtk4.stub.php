@@ -726,6 +726,35 @@ final class CairoContext
 
     /** Draw the text at the current point with the toy font API. */
     public function show_text(string $text): void {}
+
+    /**
+     * Use $surface as the source pattern, its origin at ($x, $y).
+     *
+     * The cairo counterpart of GTK 3's `gdk_cairo_set_source_pixbuf()`: paint an image into a
+     * draw func by downloading a {@see GdkTexture} and setting it as the source.
+     */
+    public function set_source_surface(CairoSurface $surface, float $x = 0.0, float $y = 0.0): void {}
+}
+
+/**
+ * A cairo image surface: pixels a {@see CairoContext} can paint from, and what
+ * {@see GdkTexture::download()} answers with. Pass one to
+ * {@see CairoContext::set_source_surface()} to draw an image inside a
+ * {@see GtkDrawingArea} draw func.
+ *
+ * @link https://www.cairographics.org/manual/cairo-cairo-surface-t.html
+ * @not-serializable
+ */
+final class CairoSurface
+{
+    /** The width in pixels. Only an image surface has one. */
+    public function get_width(): int {}
+
+    /** The height in pixels. Only an image surface has one. */
+    public function get_height(): int {}
+
+    /** Write the surface out as a PNG file. */
+    public function write_to_png(string $filename): void {}
 }
 
 /**

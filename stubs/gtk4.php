@@ -979,6 +979,44 @@ final class CairoContext
     {
         unset($text);
     }
+    /**
+     * Use $surface as the source pattern, its origin at ($x, $y).
+     *
+     * The cairo counterpart of GTK 3's `gdk_cairo_set_source_pixbuf()`: paint an image into a
+     * draw func by downloading a {@see GdkTexture} and setting it as the source.
+     */
+    public function set_source_surface(CairoSurface $surface, float $x = 0.0, float $y = 0.0): void
+    {
+        unset($surface);
+        unset($x);
+        unset($y);
+    }
+}
+/**
+ * A cairo image surface: pixels a {@see CairoContext} can paint from, and what
+ * {@see GdkTexture::download()} answers with. Pass one to
+ * {@see CairoContext::set_source_surface()} to draw an image inside a
+ * {@see GtkDrawingArea} draw func.
+ *
+ * @link https://www.cairographics.org/manual/cairo-cairo-surface-t.html
+ */
+final class CairoSurface
+{
+    /** The width in pixels. Only an image surface has one. */
+    public function get_width(): int
+    {
+        return 0;
+    }
+    /** The height in pixels. Only an image surface has one. */
+    public function get_height(): int
+    {
+        return 0;
+    }
+    /** Write the surface out as a PNG file. */
+    public function write_to_png(string $filename): void
+    {
+        unset($filename);
+    }
 }
 /**
  * Priorities for {@see Gtk::add_provider_for_display()}, in the order GTK applies
@@ -1429,6 +1467,19 @@ class GdkTexture extends GObject implements GdkPaintable
     public function save_to_tiff_bytes(): string
     {
         return '';
+    }
+    /**
+     * Download the texture's pixels into a cairo image surface.
+     *
+     * GIR's signature writes into a caller-allocated byte array, which PHP cannot hand over; GDK
+     * documents the format it writes as CAIRO_FORMAT_ARGB32, so the buffer this fills is exactly a
+     * cairo image surface. That is what makes an image paintable from a draw func at all - the GTK 4
+     * answer to GTK 3's `gdk_cairo_set_source_pixbuf()`, together with
+     * {@see CairoContext::set_source_surface()}.
+     */
+    public function download(): CairoSurface
+    {
+        return null;
     }
     public function compute_concrete_size(float $specified_width, float $specified_height, float $default_width, float $default_height): array
     {

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 30dcdeda044a753ad64e05ae3dc5a959f26af528 */
+ * Stub hash: 573d9fdad70295c671e60fd9631858ca19b1f172 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkDisplay___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -106,6 +106,9 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkTexture_save_to_tiff_bytes arginfo_class_Gtk4_GdkDisplay_get_name
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkTexture_download, 0, 0, Gtk4\\CairoSurface, 0)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_GdkTexture_compute_concrete_size arginfo_class_Gtk4_GdkPaintableObject_compute_concrete_size
 
 #define arginfo_class_Gtk4_GdkTexture_get_current_image arginfo_class_Gtk4_GdkPaintable_get_current_image
@@ -152,6 +155,7 @@ ZEND_METHOD(Gtk4_GdkTexture, save_to_png);
 ZEND_METHOD(Gtk4_GdkTexture, save_to_png_bytes);
 ZEND_METHOD(Gtk4_GdkTexture, save_to_tiff);
 ZEND_METHOD(Gtk4_GdkTexture, save_to_tiff_bytes);
+ZEND_METHOD(Gtk4_GdkTexture, download);
 
 static const zend_function_entry class_Gtk4_GdkDisplay_methods[] = {
 	ZEND_ME(Gtk4_GdkDisplay, __construct, arginfo_class_Gtk4_GdkDisplay___construct, ZEND_ACC_PRIVATE)
@@ -206,6 +210,7 @@ static const zend_function_entry class_Gtk4_GdkTexture_methods[] = {
 	ZEND_ME(Gtk4_GdkTexture, save_to_png_bytes, arginfo_class_Gtk4_GdkTexture_save_to_png_bytes, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkTexture, save_to_tiff, arginfo_class_Gtk4_GdkTexture_save_to_tiff, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkTexture, save_to_tiff_bytes, arginfo_class_Gtk4_GdkTexture_save_to_tiff_bytes, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkTexture, download, arginfo_class_Gtk4_GdkTexture_download, ZEND_ACC_PUBLIC)
 	ZEND_RAW_FENTRY("compute_concrete_size", zim_Gtk4_GdkPaintable_compute_concrete_size, arginfo_class_Gtk4_GdkTexture_compute_concrete_size, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("get_current_image", zim_Gtk4_GdkPaintable_get_current_image, arginfo_class_Gtk4_GdkTexture_get_current_image, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("get_flags", zim_Gtk4_GdkPaintable_get_flags, arginfo_class_Gtk4_GdkTexture_get_flags, ZEND_ACC_PUBLIC, NULL, NULL)

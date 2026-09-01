@@ -353,6 +353,17 @@ class GdkTexture extends GObject implements GdkPaintable
     /** Store the given $texture in memory as a TIFF file. */
     public function save_to_tiff_bytes(): string {}
 
+    /**
+     * Download the texture's pixels into a cairo image surface.
+     *
+     * GIR's signature writes into a caller-allocated byte array, which PHP cannot hand over; GDK
+     * documents the format it writes as CAIRO_FORMAT_ARGB32, so the buffer this fills is exactly a
+     * cairo image surface. That is what makes an image paintable from a draw func at all - the GTK 4
+     * answer to GTK 3's `gdk_cairo_set_source_pixbuf()`, together with
+     * {@see CairoContext::set_source_surface()}.
+     */
+    public function download(): CairoSurface {}
+
     /** @implementation-alias Gtk4\GdkPaintable::compute_concrete_size */
     public function compute_concrete_size(float $specified_width, float $specified_height, float $default_width, float $default_height): array {}
 
