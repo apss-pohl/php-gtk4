@@ -1847,9 +1847,6 @@ class GtkEntry extends GtkWidget implements GtkEditable
     /** Retrieves whether the text in $entry is visible. */
     public function get_visibility(): bool {}
 
-    /** Causes $entry to have keyboard focus. */
-    public function grab_focus_without_selecting(): bool {}
-
     /** Indicates that some progress is made, but you don’t know how much. */
     public function progress_pulse(): void {}
 
@@ -1924,6 +1921,15 @@ class GtkEntry extends GtkWidget implements GtkEditable
      * `set_invisible_char`.
      */
     public function unset_invisible_char(): void {}
+
+    /**
+     * Take the keyboard focus without selecting the text, or false when the widget cannot.
+     *
+     * Focus belongs to a toplevel: GTK hands it to the widget's root, and a widget that is not in a
+     * window yet has none - `gtk_root_set_focus(NULL)` CRITICALs and the call answers false anyway.
+     * `grab_focus()` itself checks first and simply returns false, so this matches it.
+     */
+    public function grab_focus_without_selecting(): bool {}
 
     /** @implementation-alias Gtk4\GtkEditable::delegate_get_accessible_platform_state */
     public function delegate_get_accessible_platform_state(GtkAccessiblePlatformState $state): bool {}
@@ -2163,7 +2169,14 @@ class GtkEventControllerKey extends GtkEventController
     /** Forwards the current event of this $controller to a $widget. */
     public function forward(GtkWidget $widget): bool {}
 
-    /** Gets the key group of the current event of this $controller. */
+    /**
+     * The keyboard group of the key event being handled.
+     *
+     * Only meaningful while the controller is handling an event: GTK reads it off
+     * `controller->current_event` and CRITICALs when there is none, then answers 0. Every other
+     * "current event" getter on GtkEventController is nullable and says so; this one returns an int,
+     * so it refuses instead.
+     */
     public function get_group(): int {}
 }
 
@@ -2667,14 +2680,6 @@ class GtkGesture extends GtkEventController
     public function get_bounding_box(): ?GdkRectangle {}
 
     /**
-     * If there are touch sequences being currently handled by $gesture, returns `true` and fills
-     * in $x and $y with the center of the bounding box containing all active touches.
-     *
-     * @return array{float, float}|null
-     */
-    public function get_bounding_box_center(): ?array {}
-
-    /**
      * Returns all gestures in the group of $gesture
      *
      * @return list<GtkGesture>
@@ -2725,6 +2730,17 @@ class GtkGesture extends GtkEventController
 
     /** Separates $gesture into an isolated group. */
     public function ungroup(): void {}
+
+    /**
+     * The centre of the box containing every active touch, or null when the gesture is not active.
+     *
+     * GTK walks the gesture's last event to find it, and with no sequence in flight that event is
+     * NULL - `gdk_event_get_event_type()` then CRITICALs before the call answers false. Asking the
+     * gesture whether it is active first keeps GTK out of it; the answer is the same null.
+     *
+     * @return array{float, float}|null
+     */
+    public function get_bounding_box_center(): ?array {}
 }
 
 /**
@@ -4859,9 +4875,6 @@ class GtkPopover extends GtkWidget implements GtkNative
      */
     public function get_offset(): array {}
 
-    /** Gets the rectangle that the popover points to. */
-    public function get_pointing_to(): ?GdkRectangle {}
-
     /** Returns the preferred position of $popover. */
     public function get_position(): GtkPositionType {}
 
@@ -4900,6 +4913,16 @@ class GtkPopover extends GtkWidget implements GtkNative
 
     /** Sets the preferred position for $popover to appear. */
     public function set_position(GtkPositionType $position): void {}
+
+    /**
+     * The rectangle the popover points at, or null when it points at its parent as a whole.
+     *
+     * GTK falls back to the bounds of the popover's parent widget when no rectangle was set, so
+     * without a parent it computes the bounds of NULL and CRITICALs before answering. A popover
+     * with no parent has nothing to point at, which is the same precondition `popup()` already
+     * refuses.
+     */
+    public function get_pointing_to(): ?GdkRectangle {}
 
     /**
      * Pop the popover up.
@@ -6781,9 +6804,6 @@ class GtkText extends GtkWidget implements GtkEditable
     /** Retrieves whether the text in $self is visible. */
     public function get_visibility(): bool {}
 
-    /** Causes $self to have keyboard focus. */
-    public function grab_focus_without_selecting(): bool {}
-
     /**
      * If $activates is `true`, pressing Enter will activate the default widget for the window
      * containing $self.
@@ -6829,6 +6849,15 @@ class GtkText extends GtkWidget implements GtkEditable
     /** Unsets the invisible char. */
     public function unset_invisible_char(): void {}
 
+    /**
+     * Take the keyboard focus without selecting the text, or false when the widget cannot.
+     *
+     * Focus belongs to a toplevel: GTK hands it to the widget's root, and a widget that is not in a
+     * window yet has none - `gtk_root_set_focus(NULL)` CRITICALs and the call answers false anyway.
+     * `grab_focus()` itself checks first and simply returns false, so this matches it.
+     */
+    public function grab_focus_without_selecting(): bool {}
+
     /** @implementation-alias Gtk4\GtkEditable::delegate_get_accessible_platform_state */
     public function delegate_get_accessible_platform_state(GtkAccessiblePlatformState $state): bool {}
 
@@ -6837,9 +6866,6 @@ class GtkText extends GtkWidget implements GtkEditable
 
     /** @implementation-alias Gtk4\GtkEditable::delete_text */
     public function delete_text(int $start_pos, int $end_pos): void {}
-
-    /** @implementation-alias Gtk4\GtkEditable::finish_delegate */
-    public function finish_delegate(): void {}
 
     /** @implementation-alias Gtk4\GtkEditable::get_alignment */
     public function get_alignment(): float {}
@@ -6870,9 +6896,6 @@ class GtkText extends GtkWidget implements GtkEditable
 
     /** @implementation-alias Gtk4\GtkEditable::get_width_chars */
     public function get_width_chars(): int {}
-
-    /** @implementation-alias Gtk4\GtkEditable::init_delegate */
-    public function init_delegate(): void {}
 
     /** @implementation-alias Gtk4\GtkEditable::select_region */
     public function select_region(int $start_pos, int $end_pos): void {}

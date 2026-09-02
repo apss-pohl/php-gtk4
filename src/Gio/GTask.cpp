@@ -8,6 +8,34 @@
 
 using namespace phpgtk;
 
+// GTask's "does it have a result yet?" - GLib keeps `result_set` private, and the two ways a
+// result arrives need different answers: a task GLib created and handed back through a
+// *_finish() callback is `completed` by then, while one PHP built and resolved synchronously is
+// not (completed only turns true when the callback is dispatched). So the PHP-side return_*()
+// methods leave a mark, and propagate_*() accepts either.
+namespace {
+
+// qdata key on a GTask whose result was set through this binding.
+GQuark php_task_result_quark() {
+  static GQuark q = 0;
+  if (q == 0) q = g_quark_from_static_string("php-gtk4-task-result-set");
+  return q;
+}
+
+// Whether asking for the result is meaningful; GLib CRITICALs and invents a zero otherwise.
+bool task_has_result(GTask *task) {
+  return g_task_get_completed(task) != FALSE ||
+         g_object_get_qdata(G_OBJECT(task), php_task_result_quark()) != nullptr;
+}
+
+// Called by every bound return_*(): from here on the task has an answer.
+void mark_task_result(GTask *task) {
+  // NOLINTNEXTLINE(performance-no-int-to-ptr) GINT_TO_POINTER() is how GLib tags qdata
+  g_object_set_qdata(G_OBJECT(task), php_task_result_quark(), GINT_TO_POINTER(1));
+}
+
+}  // namespace
+
 namespace {
 // AsyncReadyCallback trampoline for GTask::__construct(): wraps the C arguments, invokes the PHP
 // callable once and releases it (async scope).
@@ -190,71 +218,6 @@ ZEND_METHOD(Gtk4_GTask, had_error) {
 }
 
 /**
- * Gtk4\GTask::propagate_boolean(): bool
- *
- * Gets the result of $task as a #gboolean.
- */
-ZEND_METHOD(Gtk4_GTask, propagate_boolean) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
-  GError *error = nullptr;
-  const gboolean ok = g_task_propagate_boolean(self, &error);
-  if (!ok) {
-    throw_gerror(error);
-    RETURN_THROWS();
-  }
-  RETURN_BOOL(ok);
-}
-
-/**
- * Gtk4\GTask::propagate_int(): int
- *
- * Gets the result of $task as an integer (#gssize).
- */
-ZEND_METHOD(Gtk4_GTask, propagate_int) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
-  GError *error = nullptr;
-  const auto value = static_cast<zend_long>(g_task_propagate_int(self, &error));
-  if (error != nullptr) {
-    throw_gerror(error);
-    RETURN_THROWS();
-  }
-  RETURN_LONG(value);
-}
-
-/**
- * Gtk4\GTask::return_boolean(bool $result): void
- *
- * Sets $task's result to $result and completes the task (see g_task_return_pointer() for more
- * discussion of exactly what this means).
- */
-ZEND_METHOD(Gtk4_GTask, return_boolean) {
-  bool result;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_BOOL(result)
-  ZEND_PARSE_PARAMETERS_END();
-  GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
-  g_task_return_boolean(self, result);
-}
-
-/**
- * Gtk4\GTask::return_error(GError $error): void
- *
- * Sets $task's result to $error (which $task assumes ownership of) and completes the task (see
- * g_task_return_pointer() for more discussion of exactly what this means).
- */
-ZEND_METHOD(Gtk4_GTask, return_error) {
-  zval *error;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS(error, ce_GError)
-  ZEND_PARSE_PARAMETERS_END();
-  GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
-  GError *error_e = gerror_from_php(error);
-  g_task_return_error(self, error_e);
-}
-
-/**
  * Gtk4\GTask::return_error_if_cancelled(): bool
  *
  * Checks if $task's #GCancellable has been cancelled, and if so, sets $task's error accordingly
@@ -265,21 +228,6 @@ ZEND_METHOD(Gtk4_GTask, return_error_if_cancelled) {
   ZEND_PARSE_PARAMETERS_NONE();
   GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
   RETURN_BOOL(g_task_return_error_if_cancelled(self));
-}
-
-/**
- * Gtk4\GTask::return_int(int $result): void
- *
- * Sets $task's result to $result and completes the task (see g_task_return_pointer() for more
- * discussion of exactly what this means).
- */
-ZEND_METHOD(Gtk4_GTask, return_int) {
-  zend_long result;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_LONG(result)
-  ZEND_PARSE_PARAMETERS_END();
-  GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
-  g_task_return_int(self, static_cast<gssize>(result));
 }
 
 /**
@@ -358,4 +306,106 @@ ZEND_METHOD(Gtk4_GTask, set_static_name) {
   GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
   if (name != nullptr && !phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   g_task_set_static_name(self, name != nullptr ? ZSTR_VAL(name) : nullptr);
+}
+
+/**
+ * public function propagate_boolean(): bool
+ * The task's result, or a Gtk4\GError when it failed.
+ *
+ * A task has no result until something sets one; asking early is a GLib CRITICAL
+ * (`task->result_set`) followed by a made-up zero, which is indistinguishable from a real
+ * result. See the prelude for how "has a result" is decided.
+ */
+ZEND_METHOD(Gtk4_GTask, propagate_boolean) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
+  if (!task_has_result(self)) {
+    zend_throw_exception(spl_ce_LogicException,
+                         "Gtk4\\GTask::propagate_boolean(): the task has no result yet", 0);
+    RETURN_THROWS();
+  }
+  GError *error = nullptr;
+  const gboolean ok = g_task_propagate_boolean(self, &error);
+  if (ok == FALSE) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  RETURN_TRUE;
+}
+
+/**
+ * public function propagate_int(): int
+ * The task's result, or a Gtk4\GError when it failed.
+ *
+ * A task has no result until something sets one; asking early is a GLib CRITICAL
+ * (`task->result_set`) followed by a made-up zero, which is indistinguishable from a real
+ * result. See the prelude for how "has a result" is decided.
+ */
+ZEND_METHOD(Gtk4_GTask, propagate_int) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
+  if (!task_has_result(self)) {
+    zend_throw_exception(spl_ce_LogicException,
+                         "Gtk4\\GTask::propagate_int(): the task has no result yet", 0);
+    RETURN_THROWS();
+  }
+  GError *error = nullptr;
+  const gssize value = g_task_propagate_int(self, &error);
+  if (value == -1 && error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  RETURN_LONG(static_cast<zend_long>(value));
+}
+
+/**
+ * public function return_boolean(bool $result): void
+ * Set the task's result and schedule its callback.
+ *
+ * Marks the task as having an answer so propagate_boolean() can tell it apart from a fresh one
+ * (see the prelude).
+ */
+ZEND_METHOD(Gtk4_GTask, return_boolean) {
+  bool result = false;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_BOOL(result)
+  ZEND_PARSE_PARAMETERS_END();
+  GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
+  g_task_return_boolean(self, static_cast<gboolean>(result));
+  mark_task_result(self);
+}
+
+/**
+ * public function return_error(GError $error): void
+ * Fail the task with $error and schedule its callback.
+ *
+ * Marks the task as having an answer so propagate_*() can tell it apart from a fresh one
+ * (see the prelude).
+ */
+ZEND_METHOD(Gtk4_GTask, return_error) {
+  zval *error;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(error, ce_GError)
+  ZEND_PARSE_PARAMETERS_END();
+  GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
+  GError *error_e = gerror_from_php(error);
+  g_task_return_error(self, error_e);  // takes ownership
+  mark_task_result(self);
+}
+
+/**
+ * public function return_int(int $result): void
+ * Set the task's result and schedule its callback.
+ *
+ * Marks the task as having an answer so propagate_int() can tell it apart from a fresh one
+ * (see the prelude).
+ */
+ZEND_METHOD(Gtk4_GTask, return_int) {
+  zend_long result = 0;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_LONG(result)
+  ZEND_PARSE_PARAMETERS_END();
+  GTask *self = PHPGTK_SELF(GTask, G_TYPE_TASK);
+  g_task_return_int(self, static_cast<gssize>(result));
+  mark_task_result(self);
 }

@@ -29,3 +29,5 @@ Gtk.Snapshot.free_to_paintable   frees the GtkSnapshot itself, so the handle is 
 Graphene.Rect.inset_r     the plain inset() is bound as this const form (graphene's own inset() rewrites the rectangle it is given, which a value handle must not do)
 Graphene.Rect.offset_r    as inset_r: offset() is the const form
 Graphene.Rect.normalize_r as inset_r: normalize() is the const form
+Gtk.Text.init_delegate    GtkEditable plumbing for a widget that *delegates* to a GtkText from its own init; calling it on a GtkText is "invalid (NULL) pointer instance" from GLib
+Gtk.Text.finish_delegate  pairs with init_delegate

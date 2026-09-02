@@ -48,6 +48,15 @@ final class RobustnessTest extends GtkTestCase
      * GdkTexture::save_to_png() really did write those four files into the
      * repository root. Run the sweep from a scratch directory instead.
      */
+    /**
+     * Its whole job is to hand GTK hostile values of the right type and prove nothing crashes,
+     * so GTK's own preconditions firing is the expected outcome, not a defect.
+     */
+    protected function toleratesGtkCriticals(): bool
+    {
+        return true;
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

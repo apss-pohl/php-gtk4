@@ -16,6 +16,15 @@ use Gtk4\GtkWidget;
 /** Gtk4\ExceptionMode::Rethrow - callback throwables propagate to PHP. */
 final class RethrowModeTest extends GtkTestCase
 {
+    /**
+     * A Throwable parked inside a nested loop is reported with g_warning; that line is the
+     * behaviour under test.
+     */
+    protected function toleratesGtkCriticals(): bool
+    {
+        return true;
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

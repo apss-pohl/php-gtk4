@@ -14,10 +14,20 @@ ZEND_METHOD(Gtk4_GtkLayoutManager, get_layout_child) {
   GObject *child_o = unwrap(zchild, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
   GtkWidget *child = GTK_WIDGET(child_o);
-  if (gtk_widget_get_parent(child) == nullptr) {
+  GtkWidget *parent = gtk_widget_get_parent(child);
+  if (parent == nullptr) {
     zend_throw_exception(spl_ce_LogicException,
                          "Gtk4\\GtkLayoutManager::get_layout_child(): the child has no parent, so "
                          "no layout manager holds it",
+                         0);
+    RETURN_THROWS();
+  }
+  // ... and it has to be *this* manager's child: GTK checks the parent's manager and CRITICALs
+  // ("does not use the given layout manager of type ...") before answering NULL.
+  if (gtk_widget_get_layout_manager(parent) != self) {
+    zend_throw_exception(spl_ce_LogicException,
+                         "Gtk4\\GtkLayoutManager::get_layout_child(): the child's parent is laid "
+                         "out by a different manager",
                          0);
     RETURN_THROWS();
   }

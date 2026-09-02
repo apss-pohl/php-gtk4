@@ -266,6 +266,24 @@ final class Gtk
     {
         unset($object);
     }
+    /**
+     * Test builds only: start or stop recording GLib CRITICAL/WARNING messages. They still reach
+     * stderr; this only keeps a copy so a test can fail on one instead of letting it scroll past.
+     */
+    public static function testing_capture_logs(bool $capture): void
+    {
+        unset($capture);
+    }
+    /**
+     * Test builds only: the GLib CRITICAL/WARNING messages recorded since the last call, and
+     * clear them.
+     *
+     * @return list<string>
+     */
+    public static function testing_taken_logs(): array
+    {
+        return [];
+    }
     #endif
 }
 /**
@@ -2016,17 +2034,21 @@ interface GActionGroup
     /** Checks if the named action exists within $action_group. */
     public function has_action(string $action_name): bool;
     /**
-     * Lists the actions contained within $action_group.
-     *
-     * @return list<string>
-     */
-    public function list_actions(): array;
-    /**
      * Activate an action by name. $parameter is converted to the action's declared parameter type
      * (ValueError when the action is unknown or a required parameter is missing, TypeError when the
      * value does not fit the type).
      */
     public function activate_action(string $action_name, mixed $parameter = null): void;
+    /**
+     * The names of the actions in this group.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before that
+     * GLib CRITICALs and answers an empty list, which reads like "no actions" rather than "ask me
+     * later". Every other action group answers at any time.
+     *
+     * @return list<string>
+     */
+    public function list_actions(): array;
 }
 /**
  * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
@@ -2201,11 +2223,6 @@ class GApplication extends GObject implements GActionGroup, GActionMap
     {
         return null;
     }
-    /** Gets the D-Bus object path being used by the application, or `null`. */
-    public function get_dbus_object_path(): ?string
-    {
-        return null;
-    }
     /** Gets the flags for $application. */
     public function get_flags(): int
     {
@@ -2226,11 +2243,6 @@ class GApplication extends GObject implements GActionGroup, GActionMap
     }
     /** Checks if $application is registered. */
     public function get_is_registered(): bool
-    {
-        return false;
-    }
-    /** Checks if $application is remote. */
-    public function get_is_remote(): bool
     {
         return false;
     }
@@ -2333,6 +2345,26 @@ class GApplication extends GObject implements GActionGroup, GActionMap
     public function withdraw_notification(string $id): void
     {
         unset($id);
+    }
+    /**
+     * The D-Bus object path the application exports its actions on, or null when it has none.
+     *
+     * GLib fills it in while registering, and CRITICALs when asked before that. Registration
+     * happens on `run()` / `register()`, so "not registered yet" is a state, not an absence.
+     */
+    public function get_dbus_object_path(): ?string
+    {
+        return null;
+    }
+    /**
+     * Whether this process is the remote end of an already-running primary instance.
+     *
+     * Only decided by registration; GLib CRITICALs when asked before that and answers false, which
+     * is indistinguishable from "this is the primary instance".
+     */
+    public function get_is_remote(): bool
+    {
+        return false;
     }
     /**
      * Run the application (emits `startup`, `activate`, ...) until the last window closes or
@@ -3148,32 +3180,6 @@ class GTask extends GObject implements GAsyncResult
     {
         return false;
     }
-    /** Gets the result of $task as a #gboolean. */
-    public function propagate_boolean(): bool
-    {
-        return false;
-    }
-    /** Gets the result of $task as an integer (#gssize). */
-    public function propagate_int(): int
-    {
-        return 0;
-    }
-    /**
-     * Sets $task's result to $result and completes the task (see g_task_return_pointer() for more
-     * discussion of exactly what this means).
-     */
-    public function return_boolean(bool $result): void
-    {
-        unset($result);
-    }
-    /**
-     * Sets $task's result to $error (which $task assumes ownership of) and completes the task (see
-     * g_task_return_pointer() for more discussion of exactly what this means).
-     */
-    public function return_error(GError $error): void
-    {
-        unset($error);
-    }
     /**
      * Checks if $task's #GCancellable has been cancelled, and if so, sets $task's error
      * accordingly and completes the task (see g_task_return_pointer() for more discussion of
@@ -3182,14 +3188,6 @@ class GTask extends GObject implements GAsyncResult
     public function return_error_if_cancelled(): bool
     {
         return false;
-    }
-    /**
-     * Sets $task's result to $result and completes the task (see g_task_return_pointer() for more
-     * discussion of exactly what this means).
-     */
-    public function return_int(int $result): void
-    {
-        unset($result);
     }
     /**
      * Sets or clears $task's check-cancellable flag. If this is `true` (the default), then
@@ -3225,6 +3223,58 @@ class GTask extends GObject implements GAsyncResult
     public function set_static_name(?string $name): void
     {
         unset($name);
+    }
+    /**
+     * The task's result, or a Gtk4\GError when it failed.
+     *
+     * A task has no result until something sets one; asking early is a GLib CRITICAL
+     * (`task->result_set`) followed by a made-up zero, which is indistinguishable from a real
+     * result. See the prelude for how "has a result" is decided.
+     */
+    public function propagate_boolean(): bool
+    {
+        return false;
+    }
+    /**
+     * The task's result, or a Gtk4\GError when it failed.
+     *
+     * A task has no result until something sets one; asking early is a GLib CRITICAL
+     * (`task->result_set`) followed by a made-up zero, which is indistinguishable from a real
+     * result. See the prelude for how "has a result" is decided.
+     */
+    public function propagate_int(): int
+    {
+        return 0;
+    }
+    /**
+     * Set the task's result and schedule its callback.
+     *
+     * Marks the task as having an answer so propagate_boolean() can tell it apart from a fresh one
+     * (see the prelude).
+     */
+    public function return_boolean(bool $result): void
+    {
+        unset($result);
+    }
+    /**
+     * Fail the task with $error and schedule its callback.
+     *
+     * Marks the task as having an answer so propagate_*() can tell it apart from a fresh one
+     * (see the prelude).
+     */
+    public function return_error(GError $error): void
+    {
+        unset($error);
+    }
+    /**
+     * Set the task's result and schedule its callback.
+     *
+     * Marks the task as having an answer so propagate_int() can tell it apart from a fresh one
+     * (see the prelude).
+     */
+    public function return_int(int $result): void
+    {
+        unset($result);
     }
     public function legacy_propagate_error(): bool
     {
@@ -6268,11 +6318,6 @@ class GtkEntry extends GtkWidget implements GtkEditable
     {
         return false;
     }
-    /** Causes $entry to have keyboard focus. */
-    public function grab_focus_without_selecting(): bool
-    {
-        return false;
-    }
     /** Indicates that some progress is made, but you don’t know how much. */
     public function progress_pulse(): void
     {
@@ -6396,6 +6441,17 @@ class GtkEntry extends GtkWidget implements GtkEditable
      */
     public function unset_invisible_char(): void
     {
+    }
+    /**
+     * Take the keyboard focus without selecting the text, or false when the widget cannot.
+     *
+     * Focus belongs to a toplevel: GTK hands it to the widget's root, and a widget that is not in a
+     * window yet has none - `gtk_root_set_focus(NULL)` CRITICALs and the call answers false anyway.
+     * `grab_focus()` itself checks first and simply returns false, so this matches it.
+     */
+    public function grab_focus_without_selecting(): bool
+    {
+        return false;
     }
     public function delegate_get_accessible_platform_state(GtkAccessiblePlatformState $state): bool
     {
@@ -6741,7 +6797,14 @@ class GtkEventControllerKey extends GtkEventController
         unset($widget);
         return false;
     }
-    /** Gets the key group of the current event of this $controller. */
+    /**
+     * The keyboard group of the key event being handled.
+     *
+     * Only meaningful while the controller is handling an event: GTK reads it off
+     * `controller->current_event` and CRITICALs when there is none, then answers 0. Every other
+     * "current event" getter on GtkEventController is nullable and says so; this one returns an int,
+     * so it refuses instead.
+     */
     public function get_group(): int
     {
         return 0;
@@ -7444,16 +7507,6 @@ class GtkGesture extends GtkEventController
         return null;
     }
     /**
-     * If there are touch sequences being currently handled by $gesture, returns `true` and fills
-     * in $x and $y with the center of the bounding box containing all active touches.
-     *
-     * @return array{float, float}|null
-     */
-    public function get_bounding_box_center(): ?array
-    {
-        return null;
-    }
-    /**
      * Returns all gestures in the group of $gesture
      *
      * @return list<GtkGesture>
@@ -7535,6 +7588,19 @@ class GtkGesture extends GtkEventController
     /** Separates $gesture into an isolated group. */
     public function ungroup(): void
     {
+    }
+    /**
+     * The centre of the box containing every active touch, or null when the gesture is not active.
+     *
+     * GTK walks the gesture's last event to find it, and with no sequence in flight that event is
+     * NULL - `gdk_event_get_event_type()` then CRITICALs before the call answers false. Asking the
+     * gesture whether it is active first keeps GTK out of it; the answer is the same null.
+     *
+     * @return array{float, float}|null
+     */
+    public function get_bounding_box_center(): ?array
+    {
+        return null;
     }
 }
 /**
@@ -10567,11 +10633,6 @@ class GtkPopover extends GtkWidget implements GtkNative
     {
         return [];
     }
-    /** Gets the rectangle that the popover points to. */
-    public function get_pointing_to(): ?GdkRectangle
-    {
-        return null;
-    }
     /** Returns the preferred position of $popover. */
     public function get_position(): GtkPositionType
     {
@@ -10633,6 +10694,18 @@ class GtkPopover extends GtkWidget implements GtkNative
     public function set_position(GtkPositionType $position): void
     {
         unset($position);
+    }
+    /**
+     * The rectangle the popover points at, or null when it points at its parent as a whole.
+     *
+     * GTK falls back to the bounds of the popover's parent widget when no rectangle was set, so
+     * without a parent it computes the bounds of NULL and CRITICALs before answering. A popover
+     * with no parent has nothing to point at, which is the same precondition `popup()` already
+     * refuses.
+     */
+    public function get_pointing_to(): ?GdkRectangle
+    {
+        return null;
     }
     /**
      * Pop the popover up.
@@ -13222,11 +13295,6 @@ class GtkText extends GtkWidget implements GtkEditable
     {
         return false;
     }
-    /** Causes $self to have keyboard focus. */
-    public function grab_focus_without_selecting(): bool
-    {
-        return false;
-    }
     /**
      * If $activates is `true`, pressing Enter will activate the default widget for the window
      * containing $self.
@@ -13299,6 +13367,17 @@ class GtkText extends GtkWidget implements GtkEditable
     public function unset_invisible_char(): void
     {
     }
+    /**
+     * Take the keyboard focus without selecting the text, or false when the widget cannot.
+     *
+     * Focus belongs to a toplevel: GTK hands it to the widget's root, and a widget that is not in a
+     * window yet has none - `gtk_root_set_focus(NULL)` CRITICALs and the call answers false anyway.
+     * `grab_focus()` itself checks first and simply returns false, so this matches it.
+     */
+    public function grab_focus_without_selecting(): bool
+    {
+        return false;
+    }
     public function delegate_get_accessible_platform_state(GtkAccessiblePlatformState $state): bool
     {
         unset($state);
@@ -13311,9 +13390,6 @@ class GtkText extends GtkWidget implements GtkEditable
     {
         unset($start_pos);
         unset($end_pos);
-    }
-    public function finish_delegate(): void
-    {
     }
     public function get_alignment(): float
     {
@@ -13356,9 +13432,6 @@ class GtkText extends GtkWidget implements GtkEditable
     public function get_width_chars(): int
     {
         return 0;
-    }
-    public function init_delegate(): void
-    {
     }
     public function select_region(int $start_pos, int $end_pos): void
     {

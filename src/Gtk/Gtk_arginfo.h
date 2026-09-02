@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c3a923ac57d6a20397d78932f725c5c8683a4f9f */
+ * Stub hash: 4238604290f7b83c0ca629fb4c8dedad895b1380 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -1256,8 +1256,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkEntry_get_visibility arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
 
-#define arginfo_class_Gtk4_GtkEntry_grab_focus_without_selecting arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
-
 #define arginfo_class_Gtk4_GtkEntry_progress_pulse arginfo_class_Gtk4_GtkAboutDialog_realize
 
 #define arginfo_class_Gtk4_GtkEntry_reset_im_context arginfo_class_Gtk4_GtkAboutDialog_realize
@@ -1336,6 +1334,8 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GtkEntry_set_visibility arginfo_class_Gtk4_GtkColumnViewColumn_set_visible
 
 #define arginfo_class_Gtk4_GtkEntry_unset_invisible_char arginfo_class_Gtk4_GtkAboutDialog_realize
+
+#define arginfo_class_Gtk4_GtkEntry_grab_focus_without_selecting arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
 
 #define arginfo_class_Gtk4_GtkEntry_delegate_get_accessible_platform_state arginfo_class_Gtk4_GtkEditableObject_delegate_get_accessible_platform_state
 
@@ -1731,8 +1731,6 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkGesture_get_bounding_box, 0, 0, Gtk4\\GdkRectangle, 1)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_Gtk4_GtkGesture_get_bounding_box_center arginfo_class_Gtk4_GtkEditable_get_selection_bounds
-
 #define arginfo_class_Gtk4_GtkGesture_get_group arginfo_class_Gtk4_GtkAboutDialog_get_artists
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkGesture_get_last_event, 0, 1, Gtk4\\GdkEvent, 1)
@@ -1773,6 +1771,8 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkGesture_set_state,
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkGesture_ungroup arginfo_class_Gtk4_GtkAboutDialog_realize
+
+#define arginfo_class_Gtk4_GtkGesture_get_bounding_box_center arginfo_class_Gtk4_GtkEditable_get_selection_bounds
 
 #define arginfo_class_Gtk4_GtkGestureClick___construct arginfo_class_Gtk4_GtkAboutDialog___construct
 
@@ -2995,8 +2995,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkPopover_get_offset arginfo_class_Gtk4_GtkAboutDialog_get_artists
 
-#define arginfo_class_Gtk4_GtkPopover_get_pointing_to arginfo_class_Gtk4_GtkGesture_get_bounding_box
-
 #define arginfo_class_Gtk4_GtkPopover_get_position arginfo_class_Gtk4_GtkNotebook_get_tab_pos
 
 #define arginfo_class_Gtk4_GtkPopover_popdown arginfo_class_Gtk4_GtkAboutDialog_realize
@@ -3035,6 +3033,8 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkPopover_set_position, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, position, Gtk4\\GtkPositionType, 0)
 ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkPopover_get_pointing_to arginfo_class_Gtk4_GtkGesture_get_bounding_box
 
 #define arginfo_class_Gtk4_GtkPopover_popup arginfo_class_Gtk4_GtkAboutDialog_realize
 
@@ -4042,8 +4042,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkText_get_visibility arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
 
-#define arginfo_class_Gtk4_GtkText_grab_focus_without_selecting arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
-
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkText_set_activates_default, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, activates, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
@@ -4082,13 +4080,13 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkText_unset_invisible_char arginfo_class_Gtk4_GtkAboutDialog_realize
 
+#define arginfo_class_Gtk4_GtkText_grab_focus_without_selecting arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
 #define arginfo_class_Gtk4_GtkText_delegate_get_accessible_platform_state arginfo_class_Gtk4_GtkEditableObject_delegate_get_accessible_platform_state
 
 #define arginfo_class_Gtk4_GtkText_delete_selection arginfo_class_Gtk4_GtkAboutDialog_realize
 
 #define arginfo_class_Gtk4_GtkText_delete_text arginfo_class_Gtk4_GtkEditable_delete_text
-
-#define arginfo_class_Gtk4_GtkText_finish_delegate arginfo_class_Gtk4_GtkAboutDialog_realize
 
 #define arginfo_class_Gtk4_GtkText_get_alignment arginfo_class_Gtk4_GtkAdjustment_get_lower
 
@@ -4109,8 +4107,6 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GtkText_get_text arginfo_class_Gtk4_GtkAlertDialog_get_detail
 
 #define arginfo_class_Gtk4_GtkText_get_width_chars arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
-
-#define arginfo_class_Gtk4_GtkText_init_delegate arginfo_class_Gtk4_GtkAboutDialog_realize
 
 #define arginfo_class_Gtk4_GtkText_select_region arginfo_class_Gtk4_GtkEditable_delete_text
 
@@ -6064,7 +6060,6 @@ ZEND_METHOD(Gtk4_GtkEntry, get_progress_fraction);
 ZEND_METHOD(Gtk4_GtkEntry, get_progress_pulse_step);
 ZEND_METHOD(Gtk4_GtkEntry, get_text_length);
 ZEND_METHOD(Gtk4_GtkEntry, get_visibility);
-ZEND_METHOD(Gtk4_GtkEntry, grab_focus_without_selecting);
 ZEND_METHOD(Gtk4_GtkEntry, progress_pulse);
 ZEND_METHOD(Gtk4_GtkEntry, reset_im_context);
 ZEND_METHOD(Gtk4_GtkEntry, set_activates_default);
@@ -6088,6 +6083,7 @@ ZEND_METHOD(Gtk4_GtkEntry, set_progress_fraction);
 ZEND_METHOD(Gtk4_GtkEntry, set_progress_pulse_step);
 ZEND_METHOD(Gtk4_GtkEntry, set_visibility);
 ZEND_METHOD(Gtk4_GtkEntry, unset_invisible_char);
+ZEND_METHOD(Gtk4_GtkEntry, grab_focus_without_selecting);
 ZEND_METHOD(Gtk4_GtkEntry, vfunc_activate);
 ZEND_METHOD(Gtk4_GtkEntryBuffer, __construct);
 ZEND_METHOD(Gtk4_GtkEntryBuffer, delete_text);
@@ -6215,7 +6211,6 @@ ZEND_METHOD(Gtk4_GtkFrame, set_label_align);
 ZEND_METHOD(Gtk4_GtkFrame, set_label_widget);
 ZEND_METHOD(Gtk4_GtkGesture, __construct);
 ZEND_METHOD(Gtk4_GtkGesture, get_bounding_box);
-ZEND_METHOD(Gtk4_GtkGesture, get_bounding_box_center);
 ZEND_METHOD(Gtk4_GtkGesture, get_group);
 ZEND_METHOD(Gtk4_GtkGesture, get_last_event);
 ZEND_METHOD(Gtk4_GtkGesture, get_last_updated_sequence);
@@ -6229,6 +6224,7 @@ ZEND_METHOD(Gtk4_GtkGesture, is_grouped_with);
 ZEND_METHOD(Gtk4_GtkGesture, is_recognized);
 ZEND_METHOD(Gtk4_GtkGesture, set_state);
 ZEND_METHOD(Gtk4_GtkGesture, ungroup);
+ZEND_METHOD(Gtk4_GtkGesture, get_bounding_box_center);
 ZEND_METHOD(Gtk4_GtkGestureClick, __construct);
 ZEND_METHOD(Gtk4_GtkGestureDrag, __construct);
 ZEND_METHOD(Gtk4_GtkGestureDrag, get_offset);
@@ -6616,7 +6612,6 @@ ZEND_METHOD(Gtk4_GtkPopover, get_child);
 ZEND_METHOD(Gtk4_GtkPopover, get_has_arrow);
 ZEND_METHOD(Gtk4_GtkPopover, get_mnemonics_visible);
 ZEND_METHOD(Gtk4_GtkPopover, get_offset);
-ZEND_METHOD(Gtk4_GtkPopover, get_pointing_to);
 ZEND_METHOD(Gtk4_GtkPopover, get_position);
 ZEND_METHOD(Gtk4_GtkPopover, popdown);
 ZEND_METHOD(Gtk4_GtkPopover, present);
@@ -6629,6 +6624,7 @@ ZEND_METHOD(Gtk4_GtkPopover, set_mnemonics_visible);
 ZEND_METHOD(Gtk4_GtkPopover, set_offset);
 ZEND_METHOD(Gtk4_GtkPopover, set_pointing_to);
 ZEND_METHOD(Gtk4_GtkPopover, set_position);
+ZEND_METHOD(Gtk4_GtkPopover, get_pointing_to);
 ZEND_METHOD(Gtk4_GtkPopover, popup);
 ZEND_METHOD(Gtk4_GtkPopover, vfunc_activate_default);
 ZEND_METHOD(Gtk4_GtkPopover, vfunc_closed);
@@ -6913,7 +6909,6 @@ ZEND_METHOD(Gtk4_GtkText, get_propagate_text_width);
 ZEND_METHOD(Gtk4_GtkText, get_text_length);
 ZEND_METHOD(Gtk4_GtkText, get_truncate_multiline);
 ZEND_METHOD(Gtk4_GtkText, get_visibility);
-ZEND_METHOD(Gtk4_GtkText, grab_focus_without_selecting);
 ZEND_METHOD(Gtk4_GtkText, set_activates_default);
 ZEND_METHOD(Gtk4_GtkText, set_buffer);
 ZEND_METHOD(Gtk4_GtkText, set_enable_emoji_completion);
@@ -6928,6 +6923,7 @@ ZEND_METHOD(Gtk4_GtkText, set_propagate_text_width);
 ZEND_METHOD(Gtk4_GtkText, set_truncate_multiline);
 ZEND_METHOD(Gtk4_GtkText, set_visibility);
 ZEND_METHOD(Gtk4_GtkText, unset_invisible_char);
+ZEND_METHOD(Gtk4_GtkText, grab_focus_without_selecting);
 ZEND_METHOD(Gtk4_GtkTextBuffer, __construct);
 ZEND_METHOD(Gtk4_GtkTextBuffer, add_mark);
 ZEND_METHOD(Gtk4_GtkTextBuffer, add_selection_clipboard);
@@ -7972,7 +7968,6 @@ static const zend_function_entry class_Gtk4_GtkEntry_methods[] = {
 	ZEND_ME(Gtk4_GtkEntry, get_progress_pulse_step, arginfo_class_Gtk4_GtkEntry_get_progress_pulse_step, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, get_text_length, arginfo_class_Gtk4_GtkEntry_get_text_length, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, get_visibility, arginfo_class_Gtk4_GtkEntry_get_visibility, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GtkEntry, grab_focus_without_selecting, arginfo_class_Gtk4_GtkEntry_grab_focus_without_selecting, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, progress_pulse, arginfo_class_Gtk4_GtkEntry_progress_pulse, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, reset_im_context, arginfo_class_Gtk4_GtkEntry_reset_im_context, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, set_activates_default, arginfo_class_Gtk4_GtkEntry_set_activates_default, ZEND_ACC_PUBLIC)
@@ -7996,6 +7991,7 @@ static const zend_function_entry class_Gtk4_GtkEntry_methods[] = {
 	ZEND_ME(Gtk4_GtkEntry, set_progress_pulse_step, arginfo_class_Gtk4_GtkEntry_set_progress_pulse_step, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, set_visibility, arginfo_class_Gtk4_GtkEntry_set_visibility, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, unset_invisible_char, arginfo_class_Gtk4_GtkEntry_unset_invisible_char, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkEntry, grab_focus_without_selecting, arginfo_class_Gtk4_GtkEntry_grab_focus_without_selecting, ZEND_ACC_PUBLIC)
 	ZEND_RAW_FENTRY("delegate_get_accessible_platform_state", zim_Gtk4_GtkEditable_delegate_get_accessible_platform_state, arginfo_class_Gtk4_GtkEntry_delegate_get_accessible_platform_state, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("delete_selection", zim_Gtk4_GtkEditable_delete_selection, arginfo_class_Gtk4_GtkEntry_delete_selection, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("delete_text", zim_Gtk4_GtkEditable_delete_text, arginfo_class_Gtk4_GtkEntry_delete_text, ZEND_ACC_PUBLIC, NULL, NULL)
@@ -8212,7 +8208,6 @@ static const zend_function_entry class_Gtk4_GtkFrame_methods[] = {
 static const zend_function_entry class_Gtk4_GtkGesture_methods[] = {
 	ZEND_ME(Gtk4_GtkGesture, __construct, arginfo_class_Gtk4_GtkGesture___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkGesture, get_bounding_box, arginfo_class_Gtk4_GtkGesture_get_bounding_box, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GtkGesture, get_bounding_box_center, arginfo_class_Gtk4_GtkGesture_get_bounding_box_center, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkGesture, get_group, arginfo_class_Gtk4_GtkGesture_get_group, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkGesture, get_last_event, arginfo_class_Gtk4_GtkGesture_get_last_event, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkGesture, get_last_updated_sequence, arginfo_class_Gtk4_GtkGesture_get_last_updated_sequence, ZEND_ACC_PUBLIC)
@@ -8226,6 +8221,7 @@ static const zend_function_entry class_Gtk4_GtkGesture_methods[] = {
 	ZEND_ME(Gtk4_GtkGesture, is_recognized, arginfo_class_Gtk4_GtkGesture_is_recognized, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkGesture, set_state, arginfo_class_Gtk4_GtkGesture_set_state, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkGesture, ungroup, arginfo_class_Gtk4_GtkGesture_ungroup, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkGesture, get_bounding_box_center, arginfo_class_Gtk4_GtkGesture_get_bounding_box_center, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -8843,7 +8839,6 @@ static const zend_function_entry class_Gtk4_GtkPopover_methods[] = {
 	ZEND_ME(Gtk4_GtkPopover, get_has_arrow, arginfo_class_Gtk4_GtkPopover_get_has_arrow, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkPopover, get_mnemonics_visible, arginfo_class_Gtk4_GtkPopover_get_mnemonics_visible, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkPopover, get_offset, arginfo_class_Gtk4_GtkPopover_get_offset, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GtkPopover, get_pointing_to, arginfo_class_Gtk4_GtkPopover_get_pointing_to, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkPopover, get_position, arginfo_class_Gtk4_GtkPopover_get_position, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkPopover, popdown, arginfo_class_Gtk4_GtkPopover_popdown, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkPopover, present, arginfo_class_Gtk4_GtkPopover_present, ZEND_ACC_PUBLIC)
@@ -8856,6 +8851,7 @@ static const zend_function_entry class_Gtk4_GtkPopover_methods[] = {
 	ZEND_ME(Gtk4_GtkPopover, set_offset, arginfo_class_Gtk4_GtkPopover_set_offset, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkPopover, set_pointing_to, arginfo_class_Gtk4_GtkPopover_set_pointing_to, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkPopover, set_position, arginfo_class_Gtk4_GtkPopover_set_position, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkPopover, get_pointing_to, arginfo_class_Gtk4_GtkPopover_get_pointing_to, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkPopover, popup, arginfo_class_Gtk4_GtkPopover_popup, ZEND_ACC_PUBLIC)
 	ZEND_RAW_FENTRY("get_surface", zim_Gtk4_GtkNative_get_surface, arginfo_class_Gtk4_GtkPopover_get_surface, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("get_surface_transform", zim_Gtk4_GtkNative_get_surface_transform, arginfo_class_Gtk4_GtkPopover_get_surface_transform, ZEND_ACC_PUBLIC, NULL, NULL)
@@ -9372,7 +9368,6 @@ static const zend_function_entry class_Gtk4_GtkText_methods[] = {
 	ZEND_ME(Gtk4_GtkText, get_text_length, arginfo_class_Gtk4_GtkText_get_text_length, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkText, get_truncate_multiline, arginfo_class_Gtk4_GtkText_get_truncate_multiline, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkText, get_visibility, arginfo_class_Gtk4_GtkText_get_visibility, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GtkText, grab_focus_without_selecting, arginfo_class_Gtk4_GtkText_grab_focus_without_selecting, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkText, set_activates_default, arginfo_class_Gtk4_GtkText_set_activates_default, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkText, set_buffer, arginfo_class_Gtk4_GtkText_set_buffer, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkText, set_enable_emoji_completion, arginfo_class_Gtk4_GtkText_set_enable_emoji_completion, ZEND_ACC_PUBLIC)
@@ -9387,10 +9382,10 @@ static const zend_function_entry class_Gtk4_GtkText_methods[] = {
 	ZEND_ME(Gtk4_GtkText, set_truncate_multiline, arginfo_class_Gtk4_GtkText_set_truncate_multiline, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkText, set_visibility, arginfo_class_Gtk4_GtkText_set_visibility, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkText, unset_invisible_char, arginfo_class_Gtk4_GtkText_unset_invisible_char, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkText, grab_focus_without_selecting, arginfo_class_Gtk4_GtkText_grab_focus_without_selecting, ZEND_ACC_PUBLIC)
 	ZEND_RAW_FENTRY("delegate_get_accessible_platform_state", zim_Gtk4_GtkEditable_delegate_get_accessible_platform_state, arginfo_class_Gtk4_GtkText_delegate_get_accessible_platform_state, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("delete_selection", zim_Gtk4_GtkEditable_delete_selection, arginfo_class_Gtk4_GtkText_delete_selection, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("delete_text", zim_Gtk4_GtkEditable_delete_text, arginfo_class_Gtk4_GtkText_delete_text, ZEND_ACC_PUBLIC, NULL, NULL)
-	ZEND_RAW_FENTRY("finish_delegate", zim_Gtk4_GtkEditable_finish_delegate, arginfo_class_Gtk4_GtkText_finish_delegate, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("get_alignment", zim_Gtk4_GtkEditable_get_alignment, arginfo_class_Gtk4_GtkText_get_alignment, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("get_chars", zim_Gtk4_GtkEditable_get_chars, arginfo_class_Gtk4_GtkText_get_chars, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("get_delegate", zim_Gtk4_GtkEditable_get_delegate, arginfo_class_Gtk4_GtkText_get_delegate, ZEND_ACC_PUBLIC, NULL, NULL)
@@ -9401,7 +9396,6 @@ static const zend_function_entry class_Gtk4_GtkText_methods[] = {
 	ZEND_RAW_FENTRY("get_selection_bounds", zim_Gtk4_GtkEditable_get_selection_bounds, arginfo_class_Gtk4_GtkText_get_selection_bounds, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("get_text", zim_Gtk4_GtkEditable_get_text, arginfo_class_Gtk4_GtkText_get_text, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("get_width_chars", zim_Gtk4_GtkEditable_get_width_chars, arginfo_class_Gtk4_GtkText_get_width_chars, ZEND_ACC_PUBLIC, NULL, NULL)
-	ZEND_RAW_FENTRY("init_delegate", zim_Gtk4_GtkEditable_init_delegate, arginfo_class_Gtk4_GtkText_init_delegate, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("select_region", zim_Gtk4_GtkEditable_select_region, arginfo_class_Gtk4_GtkText_select_region, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("set_alignment", zim_Gtk4_GtkEditable_set_alignment, arginfo_class_Gtk4_GtkText_set_alignment, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("set_editable", zim_Gtk4_GtkEditable_set_editable, arginfo_class_Gtk4_GtkText_set_editable, ZEND_ACC_PUBLIC, NULL, NULL)

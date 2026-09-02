@@ -153,17 +153,6 @@ ZEND_METHOD(Gtk4_GApplication, get_application_id) {
 }
 
 /**
- * Gtk4\GApplication::get_dbus_object_path(): ?string
- *
- * Gets the D-Bus object path being used by the application, or `null`.
- */
-ZEND_METHOD(Gtk4_GApplication, get_dbus_object_path) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
-  PHPGTK_RETURN_STRING_OR_NULL(g_application_get_dbus_object_path(self));
-}
-
-/**
  * Gtk4\GApplication::get_flags(): int
  *
  * Gets the flags for $application.
@@ -206,17 +195,6 @@ ZEND_METHOD(Gtk4_GApplication, get_is_registered) {
   ZEND_PARSE_PARAMETERS_NONE();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
   RETURN_BOOL(g_application_get_is_registered(self));
-}
-
-/**
- * Gtk4\GApplication::get_is_remote(): bool
- *
- * Checks if $application is remote.
- */
-ZEND_METHOD(Gtk4_GApplication, get_is_remote) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
-  RETURN_BOOL(g_application_get_is_remote(self));
 }
 
 /**
@@ -492,6 +470,46 @@ ZEND_METHOD(Gtk4_GApplication, withdraw_notification) {
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
   if (!phpgtk::check_utf8(id, 1)) RETURN_THROWS();
   g_application_withdraw_notification(self, ZSTR_VAL(id));
+}
+
+/**
+ * public function get_dbus_object_path(): ?string
+ * The D-Bus object path the application exports its actions on, or null when it has none.
+ *
+ * GLib fills it in while registering, and CRITICALs when asked before that. Registration
+ * happens on `run()` / `register()`, so "not registered yet" is a state, not an absence.
+ */
+ZEND_METHOD(Gtk4_GApplication, get_dbus_object_path) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (g_application_get_is_registered(self) == FALSE) {
+    zend_throw_exception(spl_ce_LogicException,
+                         "Gtk4\\GApplication::get_dbus_object_path(): the application is not "
+                         "registered yet",
+                         0);
+    RETURN_THROWS();
+  }
+  PHPGTK_RETURN_STRING_OR_NULL(g_application_get_dbus_object_path(self));
+}
+
+/**
+ * public function get_is_remote(): bool
+ * Whether this process is the remote end of an already-running primary instance.
+ *
+ * Only decided by registration; GLib CRITICALs when asked before that and answers false, which
+ * is indistinguishable from "this is the primary instance".
+ */
+ZEND_METHOD(Gtk4_GApplication, get_is_remote) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (g_application_get_is_registered(self) == FALSE) {
+    zend_throw_exception(spl_ce_LogicException,
+                         "Gtk4\\GApplication::get_is_remote(): the application is not registered "
+                         "yet, so there is no primary instance to be remote from",
+                         0);
+    RETURN_THROWS();
+  }
+  RETURN_BOOL(g_application_get_is_remote(self));
 }
 
 /**

@@ -539,6 +539,14 @@ stage_test() {
     ensure_vendor
     step "phpunit (xvfb-run + bin/php-gtk4)"
     [[ -f gtk4.so ]] || fail "gtk4.so missing (run the build stage)"
+    # A GTK CRITICAL means the binding let a value through that GTK refuses, so GtkTestCase fails
+    # the test on one - but it can only see them through the Gtk::testing_* log hooks, which are
+    # compiled by --enable-gtk4-testing. The shipped .so must not carry those (release.yml builds
+    # it with a plain `ci.sh --only=build`), so this is opt-in locally and always on in CI.
+    if ! "$PHP" -n -d extension="$PWD/gtk4.so" -r 'exit(str_contains(ini_get("gtk4.features"), "testing=yes") ? 0 : 1);' 2>/dev/null; then
+        echo "  note: GTK criticals are not gating this run - rebuild with"
+        echo "        GTK4_CONFIGURE_ARGS=--enable-gtk4-testing ./ci.sh --only=build   (CI always does)"
+    fi
     PHP="$PHP" GTK4_SO=./gtk4.so ./tests/run.sh "${PHPUNIT_ARGS[@]}" || fail "test"
 }
 

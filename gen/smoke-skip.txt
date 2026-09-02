@@ -34,3 +34,4 @@ Gtk.FileDialog.set_initial_folder   same: the path comes back absolute
 Gtk.TextTag.set_priority   a tag outside a GtkTextTagTable has no priority to set (stays 0)
 Gtk.SingleSelection.set_selected   without a model there is nothing to select (GTK_INVALID_LIST_POSITION stays)
 Gtk.SingleSelection.selected       same, as a property
+Gtk.TextTag.line_height_set   GTK 4.14 registers the property but its own get_property() switch has no case for it ("invalid property id 62 for line-height-set", gtktexttag.c:1875), so it cannot be read back - GTK's bug, not a round trip the binding can honour

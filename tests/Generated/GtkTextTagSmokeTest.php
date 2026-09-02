@@ -85,8 +85,6 @@ final class GtkTextTagSmokeTest extends GtkTestCase
         self::assertTrue($o->letter_spacing_set);
         $o->line_height = 1.0;
         self::assertEqualsWithDelta(1.0, $o->line_height, 1e-6);
-        $o->line_height_set = true;
-        self::assertTrue($o->line_height_set);
         $o->overline = 1;
         self::assertSame(1, $o->overline);
         $o->overline_rgba_set = true;

@@ -210,17 +210,6 @@ ZEND_METHOD(Gtk4_GActionGroup, has_action) {
 }
 
 /**
- * Gtk4\GActionGroup::list_actions(): array
- *
- * Lists the actions contained within $action_group.
- */
-ZEND_METHOD(Gtk4_GActionGroup, list_actions) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
-  strv_to_php(g_action_group_list_actions(self), Transfer::Full, return_value);
-}
-
-/**
  * public function activate_action(string $action_name, mixed $parameter = null): void
  * Activate an action by name. $parameter is converted to the action's declared parameter type
  * (ValueError when the action is unknown or a required parameter is missing, TypeError when the
@@ -258,6 +247,30 @@ ZEND_METHOD(Gtk4_GActionGroup, activate_action) {
   g_action_group_activate_action(group, ZSTR_VAL(name), v);
   if (v != nullptr) g_variant_unref(v);
   if (EG(exception) != nullptr) RETURN_THROWS();
+}
+
+/**
+ * public function list_actions(): array
+ * The names of the actions in this group.
+ *
+ * A GApplication only has its actions once it is registered (from `startup` on); before that
+ * GLib CRITICALs and answers an empty list, which reads like "no actions" rather than "ask me
+ * later". Every other action group answers at any time.
+ *
+ * @return list<string>
+ */
+ZEND_METHOD(Gtk4_GActionGroup, list_actions) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  // NOLINTNEXTLINE(bugprone-assignment-in-if-condition) G_IS_APPLICATION() macro expansion
+  if (G_IS_APPLICATION(self) && g_application_get_is_registered(G_APPLICATION(self)) == FALSE) {
+    zend_throw_exception(spl_ce_LogicException,
+                         "Gtk4\\GActionGroup::list_actions(): the application is not registered "
+                         "yet - its actions exist from the `startup` signal on",
+                         0);
+    RETURN_THROWS();
+  }
+  strv_to_php(g_action_group_list_actions(self), Transfer::Full, return_value);
 }
 
 // vfunc thunks and installers: file-local, installed by class_init of a PHP subtype

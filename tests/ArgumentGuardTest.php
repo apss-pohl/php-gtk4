@@ -28,6 +28,15 @@ final class ArgumentGuardTest extends GtkTestCase
     // ---------------------------------------------------------------- GVariant recursion
 
     /** `$a = [1]; $a[] = &$a;` recursed until the C stack was gone: SIGSEGV. */
+    /**
+     * It pins the individual cases where GTK refuses a value PHP can build; several are only
+     * reachable *through* GTK's precondition (a reversed get_chars() range answers NULL).
+     */
+    protected function toleratesGtkCriticals(): bool
+    {
+        return true;
+    }
+
     public function testSelfReferentialArrayIsRejected(): void
     {
         $a = [1];

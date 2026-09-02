@@ -9,6 +9,14 @@ use Gtk4\Gtk;
 /** src/core/error: the C++/PHP exception boundary. */
 final class ErrorTest extends GtkTestCase
 {
+    /**
+     * It exercises the g_critical fallback itself - the CRITICAL *is* the assertion.
+     */
+    protected function toleratesGtkCriticals(): bool
+    {
+        return true;
+    }
+
     public function testHandlerReceivesTheThrowableObject(): void
     {
         $w = $this->window();

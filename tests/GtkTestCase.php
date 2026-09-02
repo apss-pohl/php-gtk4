@@ -48,6 +48,45 @@ abstract class GtkTestCase extends TestCase
         return $w;
     }
 
+    /**
+     * Whether this class is allowed to trip GLib preconditions.
+     *
+     * A GTK CRITICAL is how GTK says "PHP handed me something I refuse", so on an ordinary test
+     * it means a missing guard at the boundary - the binding should have raised a PHP error
+     * before reaching GTK. Only the suites whose job is to hand GTK bad values on purpose
+     * (RobustnessTest's sweep, ArgumentGuardTest's pinned cases) and the ones that exercise the
+     * g_critical fallback itself (ErrorTest) may answer true.
+     */
+    protected function toleratesGtkCriticals(): bool
+    {
+        return false;
+    }
+
+    private bool $criticalExpectedHere = false;
+
+    /**
+     * Mark *this* test as one that deliberately provokes a GLib precondition - the warning is
+     * the behaviour under test, not a missing guard. Prefer fixing the boundary; use this only
+     * where the point is what GTK does when its own rule is broken.
+     */
+    protected function expectsGtkCritical(): void
+    {
+        $this->criticalExpectedHere = true;
+    }
+
+    /** Test builds record GLib CRITICAL/WARNING lines so an unexpected one fails the test. */
+    private static function capturesLogs(): bool
+    {
+        return str_contains((string) ini_get('gtk4.features'), 'testing=yes');
+    }
+
+    protected function setUp(): void
+    {
+        if (self::capturesLogs()) {
+            Gtk::testing_capture_logs(true);
+        }
+    }
+
     protected function tearDown(): void
     {
         foreach ($this->windows as $w) {
@@ -55,6 +94,20 @@ abstract class GtkTestCase extends TestCase
         }
         $this->windows = [];
         Gtk::set_exception_handler(null);
+
+        if (!self::capturesLogs()) {
+            return;
+        }
+        $logs = Gtk::testing_taken_logs();
+        Gtk::testing_capture_logs(false);
+        $tolerated = $this->criticalExpectedHere || $this->toleratesGtkCriticals();
+        $this->criticalExpectedHere = false;
+        if ($logs !== [] && !$tolerated) {
+            self::fail(
+                'GTK complained during this test - the binding should have refused the value '
+                . "before GTK saw it:\n  " . implode("\n  ", array_unique($logs)),
+            );
+        }
     }
 
     /**

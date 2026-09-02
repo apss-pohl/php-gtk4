@@ -211,6 +211,20 @@ final class Gtk
      * calls and passing it as an argument throw an `Error` from then on.
      */
     public static function testing_run_dispose(GObject $object): void {}
+
+    /**
+     * Test builds only: start or stop recording GLib CRITICAL/WARNING messages. They still reach
+     * stderr; this only keeps a copy so a test can fail on one instead of letting it scroll past.
+     */
+    public static function testing_capture_logs(bool $capture): void {}
+
+    /**
+     * Test builds only: the GLib CRITICAL/WARNING messages recorded since the last call, and
+     * clear them.
+     *
+     * @return list<string>
+     */
+    public static function testing_taken_logs(): array {}
 #endif
 }
 

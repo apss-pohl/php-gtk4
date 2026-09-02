@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: d6feed6176de0e8b332688e63b9212b5515925af */
+ * Stub hash: 1e23ea4576f42f1a8ccb28914576432ad4dc60ee */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_change_state, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
@@ -83,12 +83,12 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GActionGroup_has_action arginfo_class_Gtk4_GActionGroup_get_action_enabled
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GActionGroup_list_actions, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GActionGroup_activate_action, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, action_name, IS_STRING, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameter, IS_MIXED, 0, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GActionGroup_list_actions, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GActionGroupObject___construct arginfo_class_Gtk4_GActionObject___construct
@@ -168,8 +168,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GApplication_get_application_id arginfo_class_Gtk4_GAction_get_parameter_type
 
-#define arginfo_class_Gtk4_GApplication_get_dbus_object_path arginfo_class_Gtk4_GAction_get_parameter_type
-
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GApplication_get_flags, 0, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
@@ -178,8 +176,6 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GApplication_get_is_busy arginfo_class_Gtk4_GAction_get_enabled
 
 #define arginfo_class_Gtk4_GApplication_get_is_registered arginfo_class_Gtk4_GAction_get_enabled
-
-#define arginfo_class_Gtk4_GApplication_get_is_remote arginfo_class_Gtk4_GAction_get_enabled
 
 #define arginfo_class_Gtk4_GApplication_get_resource_base_path arginfo_class_Gtk4_GAction_get_parameter_type
 
@@ -238,6 +234,10 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GApplication_withdraw_notification, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, id, IS_STRING, 0)
 ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GApplication_get_dbus_object_path arginfo_class_Gtk4_GAction_get_parameter_type
+
+#define arginfo_class_Gtk4_GApplication_get_is_remote arginfo_class_Gtk4_GAction_get_enabled
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GApplication_run, 0, 0, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, argv, IS_ARRAY, 0, "[]")
@@ -583,23 +583,7 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GTask_had_error arginfo_class_Gtk4_GAction_get_enabled
 
-#define arginfo_class_Gtk4_GTask_propagate_boolean arginfo_class_Gtk4_GAction_get_enabled
-
-#define arginfo_class_Gtk4_GTask_propagate_int arginfo_class_Gtk4_GApplication_get_flags
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GTask_return_boolean, 0, 1, IS_VOID, 0)
-	ZEND_ARG_TYPE_INFO(0, result, _IS_BOOL, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GTask_return_error, 0, 1, IS_VOID, 0)
-	ZEND_ARG_OBJ_INFO(0, error, Gtk4\\GError, 0)
-ZEND_END_ARG_INFO()
-
 #define arginfo_class_Gtk4_GTask_return_error_if_cancelled arginfo_class_Gtk4_GAction_get_enabled
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GTask_return_int, 0, 1, IS_VOID, 0)
-	ZEND_ARG_TYPE_INFO(0, result, IS_LONG, 0)
-ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GTask_set_check_cancellable, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, check_cancellable, _IS_BOOL, 0)
@@ -619,6 +603,22 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GTask_set_static_name arginfo_class_Gtk4_GTask_set_name
 
+#define arginfo_class_Gtk4_GTask_propagate_boolean arginfo_class_Gtk4_GAction_get_enabled
+
+#define arginfo_class_Gtk4_GTask_propagate_int arginfo_class_Gtk4_GApplication_get_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GTask_return_boolean, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, result, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GTask_return_error, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, error, Gtk4\\GError, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GTask_return_int, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, result, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_GTask_legacy_propagate_error arginfo_class_Gtk4_GAction_get_enabled
 
 ZEND_METHOD(Gtk4_GActionObject, __construct);
@@ -631,12 +631,10 @@ ZEND_METHOD(Gtk4_GApplication, activate);
 ZEND_METHOD(Gtk4_GApplication, add_main_option);
 ZEND_METHOD(Gtk4_GApplication, bind_busy_property);
 ZEND_METHOD(Gtk4_GApplication, get_application_id);
-ZEND_METHOD(Gtk4_GApplication, get_dbus_object_path);
 ZEND_METHOD(Gtk4_GApplication, get_flags);
 ZEND_METHOD(Gtk4_GApplication, get_inactivity_timeout);
 ZEND_METHOD(Gtk4_GApplication, get_is_busy);
 ZEND_METHOD(Gtk4_GApplication, get_is_registered);
-ZEND_METHOD(Gtk4_GApplication, get_is_remote);
 ZEND_METHOD(Gtk4_GApplication, get_resource_base_path);
 ZEND_METHOD(Gtk4_GApplication, get_version);
 ZEND_METHOD(Gtk4_GApplication, hold);
@@ -656,6 +654,8 @@ ZEND_METHOD(Gtk4_GApplication, set_version);
 ZEND_METHOD(Gtk4_GApplication, unbind_busy_property);
 ZEND_METHOD(Gtk4_GApplication, unmark_busy);
 ZEND_METHOD(Gtk4_GApplication, withdraw_notification);
+ZEND_METHOD(Gtk4_GApplication, get_dbus_object_path);
+ZEND_METHOD(Gtk4_GApplication, get_is_remote);
 ZEND_METHOD(Gtk4_GApplication, run);
 ZEND_METHOD(Gtk4_GApplication, vfunc_activate);
 ZEND_METHOD(Gtk4_GApplication, vfunc_name_lost);
@@ -737,17 +737,17 @@ ZEND_METHOD(Gtk4_GTask, get_priority);
 ZEND_METHOD(Gtk4_GTask, get_return_on_cancel);
 ZEND_METHOD(Gtk4_GTask, get_source_object);
 ZEND_METHOD(Gtk4_GTask, had_error);
-ZEND_METHOD(Gtk4_GTask, propagate_boolean);
-ZEND_METHOD(Gtk4_GTask, propagate_int);
-ZEND_METHOD(Gtk4_GTask, return_boolean);
-ZEND_METHOD(Gtk4_GTask, return_error);
 ZEND_METHOD(Gtk4_GTask, return_error_if_cancelled);
-ZEND_METHOD(Gtk4_GTask, return_int);
 ZEND_METHOD(Gtk4_GTask, set_check_cancellable);
 ZEND_METHOD(Gtk4_GTask, set_name);
 ZEND_METHOD(Gtk4_GTask, set_priority);
 ZEND_METHOD(Gtk4_GTask, set_return_on_cancel);
 ZEND_METHOD(Gtk4_GTask, set_static_name);
+ZEND_METHOD(Gtk4_GTask, propagate_boolean);
+ZEND_METHOD(Gtk4_GTask, propagate_int);
+ZEND_METHOD(Gtk4_GTask, return_boolean);
+ZEND_METHOD(Gtk4_GTask, return_error);
+ZEND_METHOD(Gtk4_GTask, return_int);
 
 static const zend_function_entry class_Gtk4_GAction_methods[] = {
 	ZEND_RAW_FENTRY("change_state", NULL, arginfo_class_Gtk4_GAction_change_state, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
@@ -786,8 +786,8 @@ static const zend_function_entry class_Gtk4_GActionGroup_methods[] = {
 	ZEND_RAW_FENTRY("get_action_state_hint", NULL, arginfo_class_Gtk4_GActionGroup_get_action_state_hint, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("get_action_state_type", NULL, arginfo_class_Gtk4_GActionGroup_get_action_state_type, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("has_action", NULL, arginfo_class_Gtk4_GActionGroup_has_action, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
-	ZEND_RAW_FENTRY("list_actions", NULL, arginfo_class_Gtk4_GActionGroup_list_actions, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("activate_action", NULL, arginfo_class_Gtk4_GActionGroup_activate_action, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+	ZEND_RAW_FENTRY("list_actions", NULL, arginfo_class_Gtk4_GActionGroup_list_actions, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_FE_END
 };
 
@@ -832,12 +832,10 @@ static const zend_function_entry class_Gtk4_GApplication_methods[] = {
 	ZEND_ME(Gtk4_GApplication, add_main_option, arginfo_class_Gtk4_GApplication_add_main_option, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, bind_busy_property, arginfo_class_Gtk4_GApplication_bind_busy_property, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, get_application_id, arginfo_class_Gtk4_GApplication_get_application_id, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GApplication, get_dbus_object_path, arginfo_class_Gtk4_GApplication_get_dbus_object_path, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, get_flags, arginfo_class_Gtk4_GApplication_get_flags, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, get_inactivity_timeout, arginfo_class_Gtk4_GApplication_get_inactivity_timeout, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, get_is_busy, arginfo_class_Gtk4_GApplication_get_is_busy, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, get_is_registered, arginfo_class_Gtk4_GApplication_get_is_registered, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GApplication, get_is_remote, arginfo_class_Gtk4_GApplication_get_is_remote, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, get_resource_base_path, arginfo_class_Gtk4_GApplication_get_resource_base_path, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, get_version, arginfo_class_Gtk4_GApplication_get_version, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, hold, arginfo_class_Gtk4_GApplication_hold, ZEND_ACC_PUBLIC)
@@ -857,6 +855,8 @@ static const zend_function_entry class_Gtk4_GApplication_methods[] = {
 	ZEND_ME(Gtk4_GApplication, unbind_busy_property, arginfo_class_Gtk4_GApplication_unbind_busy_property, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, unmark_busy, arginfo_class_Gtk4_GApplication_unmark_busy, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, withdraw_notification, arginfo_class_Gtk4_GApplication_withdraw_notification, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GApplication, get_dbus_object_path, arginfo_class_Gtk4_GApplication_get_dbus_object_path, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GApplication, get_is_remote, arginfo_class_Gtk4_GApplication_get_is_remote, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, run, arginfo_class_Gtk4_GApplication_run, ZEND_ACC_PUBLIC)
 	ZEND_RAW_FENTRY("action_added", zim_Gtk4_GActionGroup_action_added, arginfo_class_Gtk4_GApplication_action_added, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("action_enabled_changed", zim_Gtk4_GActionGroup_action_enabled_changed, arginfo_class_Gtk4_GApplication_action_enabled_changed, ZEND_ACC_PUBLIC, NULL, NULL)
@@ -1018,17 +1018,17 @@ static const zend_function_entry class_Gtk4_GTask_methods[] = {
 	ZEND_ME(Gtk4_GTask, get_return_on_cancel, arginfo_class_Gtk4_GTask_get_return_on_cancel, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GTask, get_source_object, arginfo_class_Gtk4_GTask_get_source_object, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GTask, had_error, arginfo_class_Gtk4_GTask_had_error, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GTask, propagate_boolean, arginfo_class_Gtk4_GTask_propagate_boolean, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GTask, propagate_int, arginfo_class_Gtk4_GTask_propagate_int, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GTask, return_boolean, arginfo_class_Gtk4_GTask_return_boolean, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GTask, return_error, arginfo_class_Gtk4_GTask_return_error, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GTask, return_error_if_cancelled, arginfo_class_Gtk4_GTask_return_error_if_cancelled, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GTask, return_int, arginfo_class_Gtk4_GTask_return_int, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GTask, set_check_cancellable, arginfo_class_Gtk4_GTask_set_check_cancellable, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GTask, set_name, arginfo_class_Gtk4_GTask_set_name, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GTask, set_priority, arginfo_class_Gtk4_GTask_set_priority, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GTask, set_return_on_cancel, arginfo_class_Gtk4_GTask_set_return_on_cancel, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GTask, set_static_name, arginfo_class_Gtk4_GTask_set_static_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTask, propagate_boolean, arginfo_class_Gtk4_GTask_propagate_boolean, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTask, propagate_int, arginfo_class_Gtk4_GTask_propagate_int, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTask, return_boolean, arginfo_class_Gtk4_GTask_return_boolean, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTask, return_error, arginfo_class_Gtk4_GTask_return_error, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTask, return_int, arginfo_class_Gtk4_GTask_return_int, ZEND_ACC_PUBLIC)
 	ZEND_RAW_FENTRY("legacy_propagate_error", zim_Gtk4_GAsyncResult_legacy_propagate_error, arginfo_class_Gtk4_GTask_legacy_propagate_error, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_FE_END
 };

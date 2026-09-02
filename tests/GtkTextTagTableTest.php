@@ -15,6 +15,9 @@ final class GtkTextTagTableTest extends GtkTestCase
 {
     public function testAddLookupRemove(): void
     {
+        // Adding the same tag twice is the rule under test: GTK warns and answers false, which
+        // is its documented contract rather than a value the binding should have refused.
+        $this->expectsGtkCritical();
         $table = new GtkTextTagTable();
         self::assertSame(0, $table->get_size());
 

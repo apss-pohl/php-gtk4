@@ -132,18 +132,22 @@ interface GActionGroup
     public function has_action(string $action_name): bool;
 
     /**
-     * Lists the actions contained within $action_group.
-     *
-     * @return list<string>
-     */
-    public function list_actions(): array;
-
-    /**
      * Activate an action by name. $parameter is converted to the action's declared parameter type
      * (ValueError when the action is unknown or a required parameter is missing, TypeError when the
      * value does not fit the type).
      */
     public function activate_action(string $action_name, mixed $parameter = null): void;
+
+    /**
+     * The names of the actions in this group.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before that
+     * GLib CRITICALs and answers an empty list, which reads like "no actions" rather than "ask me
+     * later". Every other action group answers at any time.
+     *
+     * @return list<string>
+     */
+    public function list_actions(): array;
 }
 
 /**
@@ -274,9 +278,6 @@ class GApplication extends GObject implements GActionGroup, GActionMap
     /** Gets the unique identifier for $application. */
     public function get_application_id(): ?string {}
 
-    /** Gets the D-Bus object path being used by the application, or `null`. */
-    public function get_dbus_object_path(): ?string {}
-
     /** Gets the flags for $application. */
     public function get_flags(): int {}
 
@@ -291,9 +292,6 @@ class GApplication extends GObject implements GActionGroup, GActionMap
 
     /** Checks if $application is registered. */
     public function get_is_registered(): bool {}
-
-    /** Checks if $application is remote. */
-    public function get_is_remote(): bool {}
 
     /** Gets the resource base path of $application. */
     public function get_resource_base_path(): ?string {}
@@ -360,6 +358,22 @@ class GApplication extends GObject implements GActionGroup, GActionMap
 
     /** Withdraws a notification that was sent with g_application_send_notification(). */
     public function withdraw_notification(string $id): void {}
+
+    /**
+     * The D-Bus object path the application exports its actions on, or null when it has none.
+     *
+     * GLib fills it in while registering, and CRITICALs when asked before that. Registration
+     * happens on `run()` / `register()`, so "not registered yet" is a state, not an absence.
+     */
+    public function get_dbus_object_path(): ?string {}
+
+    /**
+     * Whether this process is the remote end of an already-running primary instance.
+     *
+     * Only decided by registration; GLib CRITICALs when asked before that and answers false, which
+     * is indistinguishable from "this is the primary instance".
+     */
+    public function get_is_remote(): bool {}
 
     /**
      * Run the application (emits `startup`, `activate`, ...) until the last window closes or
@@ -945,36 +959,12 @@ class GTask extends GObject implements GAsyncResult
     /** Tests if $task resulted in an error. */
     public function had_error(): bool {}
 
-    /** Gets the result of $task as a #gboolean. */
-    public function propagate_boolean(): bool {}
-
-    /** Gets the result of $task as an integer (#gssize). */
-    public function propagate_int(): int {}
-
-    /**
-     * Sets $task's result to $result and completes the task (see g_task_return_pointer() for more
-     * discussion of exactly what this means).
-     */
-    public function return_boolean(bool $result): void {}
-
-    /**
-     * Sets $task's result to $error (which $task assumes ownership of) and completes the task (see
-     * g_task_return_pointer() for more discussion of exactly what this means).
-     */
-    public function return_error(GError $error): void {}
-
     /**
      * Checks if $task's #GCancellable has been cancelled, and if so, sets $task's error
      * accordingly and completes the task (see g_task_return_pointer() for more discussion of
      * exactly what this means).
      */
     public function return_error_if_cancelled(): bool {}
-
-    /**
-     * Sets $task's result to $result and completes the task (see g_task_return_pointer() for more
-     * discussion of exactly what this means).
-     */
-    public function return_int(int $result): void {}
 
     /**
      * Sets or clears $task's check-cancellable flag. If this is `true` (the default), then
@@ -999,6 +989,48 @@ class GTask extends GObject implements GAsyncResult
 
     /** Sets $task’s name, used in debugging and profiling. */
     public function set_static_name(?string $name): void {}
+
+    /**
+     * The task's result, or a Gtk4\GError when it failed.
+     *
+     * A task has no result until something sets one; asking early is a GLib CRITICAL
+     * (`task->result_set`) followed by a made-up zero, which is indistinguishable from a real
+     * result. See the prelude for how "has a result" is decided.
+     */
+    public function propagate_boolean(): bool {}
+
+    /**
+     * The task's result, or a Gtk4\GError when it failed.
+     *
+     * A task has no result until something sets one; asking early is a GLib CRITICAL
+     * (`task->result_set`) followed by a made-up zero, which is indistinguishable from a real
+     * result. See the prelude for how "has a result" is decided.
+     */
+    public function propagate_int(): int {}
+
+    /**
+     * Set the task's result and schedule its callback.
+     *
+     * Marks the task as having an answer so propagate_boolean() can tell it apart from a fresh one
+     * (see the prelude).
+     */
+    public function return_boolean(bool $result): void {}
+
+    /**
+     * Fail the task with $error and schedule its callback.
+     *
+     * Marks the task as having an answer so propagate_*() can tell it apart from a fresh one
+     * (see the prelude).
+     */
+    public function return_error(GError $error): void {}
+
+    /**
+     * Set the task's result and schedule its callback.
+     *
+     * Marks the task as having an answer so propagate_int() can tell it apart from a fresh one
+     * (see the prelude).
+     */
+    public function return_int(int $result): void {}
 
     /** @implementation-alias Gtk4\GAsyncResult::legacy_propagate_error */
     public function legacy_propagate_error(): bool {}

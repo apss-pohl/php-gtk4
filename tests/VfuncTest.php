@@ -165,6 +165,10 @@ final class VfuncTest extends GtkTestCase
 
     public function testWidget(): void
     {
+        // The direct sweep at the end runs the native slots after the toplevel is destroyed, so
+        // the focus ones look up a window that is gone. Incidental to what this exercises - the
+        // point is that every thunk was reached - and not something the binding should refuse.
+        $this->expectsGtkCritical();
         $class = self::recordingSubclass(GtkWidget::class);
         $w = new $class();
         // A recording window as the toplevel: its vfunc_size_allocate() (a PHP subtype may call
@@ -305,7 +309,7 @@ final class VfuncTest extends GtkTestCase
     public function testApplications(): void
     {
         $class = self::recordingSubclass(GtkApplication::class);
-        $app = new $class('org.phpgtk4.vfunc.' . getmypid(), GApplicationFlags::NON_UNIQUE);
+        $app = new $class('org.phpgtk4.vfunc.p' . getmypid(), GApplicationFlags::NON_UNIQUE);
         $app->connect('activate', function () use ($app): void {
             $w = new GtkWindow();
             $w->set_application($app);

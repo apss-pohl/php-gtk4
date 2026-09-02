@@ -200,6 +200,9 @@ final class GtkTextBufferTest extends GtkTestCase
 
     public function testStaleIterSurvivesTheBufferChangingUnderIt(): void
     {
+        // The point is what GTK does when the rule is broken: it warns about the stale iterator
+        // and carries on, rather than reading freed memory.
+        $this->expectsGtkCritical();
         $b = new GtkTextBuffer();
         $b->set_text('some text');
         $stale = $b->get_end_iter();

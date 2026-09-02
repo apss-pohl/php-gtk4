@@ -232,17 +232,6 @@ ZEND_METHOD(Gtk4_GtkText, get_visibility) {
 }
 
 /**
- * Gtk4\GtkText::grab_focus_without_selecting(): bool
- *
- * Causes $self to have keyboard focus.
- */
-ZEND_METHOD(Gtk4_GtkText, grab_focus_without_selecting) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GtkText *self = PHPGTK_SELF(GtkText, GTK_TYPE_TEXT);
-  RETURN_BOOL(gtk_text_grab_focus_without_selecting(self));
-}
-
-/**
  * Gtk4\GtkText::set_activates_default(bool $activates): void
  *
  * If $activates is `true`, pressing Enter will activate the default widget for the window
@@ -447,4 +436,19 @@ ZEND_METHOD(Gtk4_GtkText, unset_invisible_char) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkText *self = PHPGTK_SELF(GtkText, GTK_TYPE_TEXT);
   gtk_text_unset_invisible_char(self);
+}
+
+/**
+ * public function grab_focus_without_selecting(): bool
+ * Take the keyboard focus without selecting the text, or false when the widget cannot.
+ *
+ * Focus belongs to a toplevel: GTK hands it to the widget's root, and a widget that is not in a
+ * window yet has none - `gtk_root_set_focus(NULL)` CRITICALs and the call answers false anyway.
+ * `grab_focus()` itself checks first and simply returns false, so this matches it.
+ */
+ZEND_METHOD(Gtk4_GtkText, grab_focus_without_selecting) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkText *self = PHPGTK_SELF(GtkText, GTK_TYPE_TEXT);
+  if (gtk_widget_get_root(GTK_WIDGET(self)) == nullptr) RETURN_FALSE;
+  RETURN_BOOL(gtk_text_grab_focus_without_selecting(self));
 }

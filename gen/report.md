@@ -556,6 +556,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_tabs` — return type Pango.TabArray
 - `set_attributes` — parameter `attrs` of type Pango.AttrList
 - `set_tabs` — parameter `tabs` of type Pango.TabArray
+- `finish_delegate` — skip.txt: pairs with init_delegate
+- `init_delegate` — skip.txt: GtkEditable plumbing for a widget that *delegates* to a GtkText from its own init; calling it on a GtkText is "invalid (NULL) pointer instance" from GLib
 - `property attributes` — property type Pango.AttrList not mappable
 - `property tabs` — property type Pango.TabArray not mappable
 
@@ -653,22 +655,27 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `Gdk.Texture`: download
 - `Gio.Action`: activate
-- `Gio.ActionGroup`: activate_action
-- `Gio.Application`: run
+- `Gio.ActionGroup`: activate_action, list_actions
+- `Gio.Application`: get_dbus_object_path, get_is_remote, run
 - `Gio.ListStore`: __construct
 - `Gio.SimpleAction`: set_state
+- `Gio.Task`: propagate_boolean, propagate_int, return_boolean, return_error, return_int
 - `Graphene.Rect`: inset, normalize, offset
 - `Gtk.Box`: get_children
 - `Gtk.Builder`: add_from_string, add_objects_from_string, set_current_object, set_handlers
 - `Gtk.CustomFilter`: __construct, set_filter_func
 - `Gtk.CustomSorter`: __construct, set_sort_func
 - `Gtk.DrawingArea`: set_draw_func
+- `Gtk.Entry`: grab_focus_without_selecting
+- `Gtk.EventControllerKey`: get_group
 - `Gtk.FileFilter`: new_from_gvariant
+- `Gtk.Gesture`: get_bounding_box_center
 - `Gtk.IconTheme`: set_theme_name
 - `Gtk.LayoutManager`: get_layout_child, get_request_mode
 - `Gtk.MenuButton`: set_create_popup_func
-- `Gtk.Popover`: popup
+- `Gtk.Popover`: get_pointing_to, popup
 - `Gtk.Scale`: set_format_value_func
+- `Gtk.Text`: grab_focus_without_selecting
 - `Gtk.TextBuffer`: insert, insert_at_cursor, insert_interactive, insert_interactive_at_cursor, insert_markup, set_text
 - `Gtk.TextIter`: set_line_index, set_line_offset
 - `Gtk.TextView`: get_extra_menu
