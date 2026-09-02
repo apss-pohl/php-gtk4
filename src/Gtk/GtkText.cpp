@@ -3,6 +3,7 @@
 #include "php_gtk4.h"
 #include "core/object.h"
 #include "core/enums.h"
+#include "core/boxed.h"
 #include "core/subtype.h"
 
 using namespace phpgtk;
@@ -43,6 +44,35 @@ ZEND_METHOD(Gtk4_GtkText, new_with_buffer) {
   if (buffer_o == nullptr) RETURN_THROWS();
   GObject *obj = G_OBJECT(gtk_text_new_with_buffer(GTK_ENTRY_BUFFER(buffer_o)));
   wrap(obj, return_value);
+}
+
+/**
+ * Gtk4\GtkText::compute_cursor_extents(int $position): array
+ *
+ * Determine the positions of the strong and weak cursors if the insertion point in the layout is
+ * at $position.
+ */
+ZEND_METHOD(Gtk4_GtkText, compute_cursor_extents) {
+  zend_long position;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_LONG(position)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkText *self = PHPGTK_SELF(GtkText, GTK_TYPE_TEXT);
+  if (!phpgtk::check_range<gsize>(position, 1)) RETURN_THROWS();
+  graphene_rect_t strong{};
+  graphene_rect_t weak{};
+  gtk_text_compute_cursor_extents(self, static_cast<gsize>(position), &strong, &weak);
+  array_init_size(return_value, 2);
+  {
+    zval item;
+    wrap_boxed(GRAPHENE_TYPE_RECT, &strong, &item);
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    wrap_boxed(GRAPHENE_TYPE_RECT, &weak, &item);
+    add_next_index_zval(return_value, &item);
+  }
 }
 
 /**

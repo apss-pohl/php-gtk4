@@ -21,11 +21,11 @@ class Overrides extends GtkBox
         parent::vfunc_size_allocate($width, $height, $baseline);
     }
 
-    // Not bound: Gtk.Snapshot is not in the generator's closure, so nothing installs a thunk.
-    public function vfunc_snapshot(mixed $snapshot): void {}
-
-    // A typo: neither GTK nor php-gtk4 has a slot by that name.
+    // A typo, and a slot that never existed. Naming a real member the generator happens to skip
+    // would date the test - this one named vfunc_snapshot() until GtkSnapshot was bound.
     public function vfunc_size_alocate(int $width, int $height, int $baseline): void {}
+
+    public function vfunc_no_such_gtk_slot(): void {}
 }
 
 // Reported once, when the class' GType is created - not again for a subclass that inherits them.
@@ -36,6 +36,6 @@ new Deeper(GtkOrientation::Vertical, 0);
 echo "constructed\n";
 ?>
 --EXPECTF--
-%aphp-gtk4: Overrides::vfunc_snapshot() overrides no slot php-gtk4 binds on Php__Overrides - it will never be called
 %aphp-gtk4: Overrides::vfunc_size_alocate() overrides no slot php-gtk4 binds on Php__Overrides - it will never be called
+%aphp-gtk4: Overrides::vfunc_no_such_gtk_slot() overrides no slot php-gtk4 binds on Php__Overrides - it will never be called
 constructed

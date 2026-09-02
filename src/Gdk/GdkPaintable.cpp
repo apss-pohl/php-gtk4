@@ -4,6 +4,7 @@
 #include "core/object.h"
 #include "core/subtype.h"
 #include "core/error.h"
+#include <array>
 
 using namespace phpgtk;
 
@@ -119,6 +120,26 @@ ZEND_METHOD(Gtk4_GdkPaintable, invalidate_size) {
   ZEND_PARSE_PARAMETERS_NONE();
   GdkPaintable *self = PHPGTK_SELF(GdkPaintable, GDK_TYPE_PAINTABLE);
   gdk_paintable_invalidate_size(self);
+}
+
+/**
+ * Gtk4\GdkPaintable::snapshot(GdkSnapshot $snapshot, float $width, float $height): void
+ *
+ * Snapshots the given paintable with the given $width and $height.
+ */
+ZEND_METHOD(Gtk4_GdkPaintable, snapshot) {
+  zval *snapshot;
+  double width;
+  double height;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_OBJECT_OF_CLASS(snapshot, class_for_gtype(GDK_TYPE_SNAPSHOT))
+  Z_PARAM_DOUBLE(width)
+  Z_PARAM_DOUBLE(height)
+  ZEND_PARSE_PARAMETERS_END();
+  GdkPaintable *self = PHPGTK_SELF(GdkPaintable, GDK_TYPE_PAINTABLE);
+  GObject *snapshot_o = unwrap(snapshot, GDK_TYPE_SNAPSHOT);
+  if (snapshot_o == nullptr) RETURN_THROWS();
+  gdk_paintable_snapshot(self, GDK_SNAPSHOT(snapshot_o), width, height);
 }
 
 // vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
@@ -280,6 +301,36 @@ void vfunc_install_get_intrinsic_width(gpointer klass) {
       vfunc_thunk_get_intrinsic_width;
 }
 
+// vfunc thunk: static_cast<GdkPaintableInterface *>->snapshot -> $this->snapshot() on a PHP
+// subclass
+void vfunc_thunk_snapshot(GdkPaintable *self, GdkSnapshot *snapshot, double width, double height) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "snapshot", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return;
+  }
+  std::array<zval, 3> args{};
+  zval *argv = args.data();
+  wrap(snapshot != nullptr ? G_OBJECT(snapshot) : nullptr, &argv[0]);
+  ZVAL_DOUBLE(&argv[1], width);
+  ZVAL_DOUBLE(&argv[2], height);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 3, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GdkPaintable::snapshot");
+}
+
+// vfunc installer: static_cast<GdkPaintableInterface *>->snapshot (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_snapshot(gpointer klass) {
+  static_cast<GdkPaintableInterface *>(klass)->snapshot = vfunc_thunk_snapshot;
+}
+
 }  // namespace
 
 // MINIT: the vfunc thunks of GdkPaintable (core/subtype.h).
@@ -292,6 +343,7 @@ void register_vfuncs_GdkPaintable() {
                        vfunc_install_get_intrinsic_height);
   register_iface_vfunc(GDK_TYPE_PAINTABLE, "get_intrinsic_width",
                        vfunc_install_get_intrinsic_width);
+  register_iface_vfunc(GDK_TYPE_PAINTABLE, "snapshot", vfunc_install_snapshot);
 }
 
 /**

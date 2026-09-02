@@ -56,11 +56,16 @@ final class Gir
                 'class' => 'class', 'interface' => 'interface', 'enumeration' => 'enum',
                 'bitfield' => 'bitfield', 'record' => 'record', 'callback' => 'callback', 'alias' => 'alias',
             };
+            // A class need not carry a c:type: GtkSnapshot is a typedef of GdkSnapshot, so GIR
+            // gives it none, and every emitted `<ctype> *self` came out empty. The identifier
+            // prefix plus the name is the C name GTK declares in either case.
+            $ctype = $el->getAttributeNS(NS_C, 'type')
+                ?: ($kind === 'class' ? $this->prefixes[$ns] . $el->getAttribute('name') : null);
             $node = new Node(
                 $ns,
                 $el->getAttribute('name'),
                 $kind,
-                $el->getAttributeNS(NS_C, 'type') ?: null,
+                $ctype ?: null,
                 $el->getAttributeNS(NS_GLIB, 'type-name') ?: null,
                 $el->getAttributeNS(NS_GLIB, 'get-type') ?: null,
                 $el->getAttribute('version') ?: null,

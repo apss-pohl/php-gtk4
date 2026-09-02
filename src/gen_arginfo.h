@@ -3,5 +3,7 @@
 #pragma once
 #include "Gdk/Gdk_arginfo.h"
 #include "Gio/Gio_arginfo.h"
+#include "Graphene/Graphene_arginfo.h"
+#include "Gsk/Gsk_arginfo.h"
 #include "Gtk/Gtk_arginfo.h"
 #include "Pango/Pango_arginfo.h"

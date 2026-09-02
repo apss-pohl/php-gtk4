@@ -136,3 +136,13 @@ ZEND_METHOD(Gtk4_GdkPaintable, get_intrinsic_height);
 ZEND_METHOD(Gtk4_GdkPaintable, get_intrinsic_width);
 ZEND_METHOD(Gtk4_GdkPaintable, invalidate_contents);
 ZEND_METHOD(Gtk4_GdkPaintable, invalidate_size);
+ZEND_METHOD(Gtk4_GdkPaintable, snapshot);
+namespace phpgtk {
+void register_GraphenePoint(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GrapheneRect(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GrapheneSize(zend_class_entry *ce);
+}  // namespace phpgtk

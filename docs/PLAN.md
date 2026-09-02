@@ -427,8 +427,11 @@ load (verified with valgrind: write into a freed block inside libgtk, no php-gtk
 3. **Generator** — GIR parser + emitter producing Gtk/Gdk/Gio/GLib/Pango namespaces; replace the
    hand-written milestone-2 classes with generated ones (they must be byte-for-byte compatible in
    behaviour). Topological registration order. Stubs + coverage doc output.
-4. **GTK4 surface** — event controllers, list views/factories, snapshot/texture, builder scope.
-   Overrides directory populated.
+4. ✅ **GTK4 surface** — done 2026-09-02: event controllers (wave 3), list views/factories
+   (wave 7), the builder scope (wave 8) and snapshot/texture (`GtkSnapshot` + Graphene geometry,
+   with `append_cairo()` as the bridge to `CairoContext`); `gen/overrides/` populated throughout.
+   GSK's own types (render nodes, paths, transforms) stay unbound - what they gate is listed in
+   `gen/report.md`.
 5. **Hardening** — refcount/identity edge cases, shutdown ordering (disconnect closures before Zend
    teardown), exception rethrow mode, deprecation coverage, docs/examples ported from php-gtk3.
 6. **Optional features** — WebKitGTK 6, WebView2 on Windows following php-gtk3's separate

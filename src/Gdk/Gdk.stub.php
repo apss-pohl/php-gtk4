@@ -395,6 +395,9 @@ interface GdkPaintable
 
     /** Gets the preferred width the $paintable would like to be displayed at. */
     public function get_intrinsic_width(): int;
+
+    /** Snapshots the given paintable with the given $width and $height. */
+    public function snapshot(GdkSnapshot $snapshot, float $width, float $height): void;
 }
 
 /**
@@ -432,6 +435,9 @@ final class GdkPaintableObject extends GObject implements GdkPaintable
 
     /** @implementation-alias Gtk4\GdkPaintable::invalidate_size */
     public function invalidate_size(): void {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::snapshot */
+    public function snapshot(GdkSnapshot $snapshot, float $width, float $height): void {}
 }
 
 /**
@@ -462,6 +468,15 @@ enum GdkScrollUnit: int
 {
     case Wheel = 0;
     case Surface = 1;
+}
+
+/**
+ * Base type for snapshot operations.
+ */
+class GdkSnapshot extends GObject
+{
+    /** GdkSnapshot is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    public function __construct() {}
 }
 
 /**
@@ -624,6 +639,9 @@ class GdkTexture extends GObject implements GdkPaintable
 
     /** @implementation-alias Gtk4\GdkPaintable::invalidate_size */
     public function invalidate_size(): void {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::snapshot */
+    public function snapshot(GdkSnapshot $snapshot, float $width, float $height): void {}
 }
 
 /**

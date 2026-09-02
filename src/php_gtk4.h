@@ -18,6 +18,10 @@ extern "C" {
 }
 
 #include <gtk/gtk.h>
+// graphene's GType macros (GRAPHENE_TYPE_RECT, ...) live in their own header, which gtk.h does
+// not pull in; the geometry GtkSnapshot takes is bound as boxed records, so every namespace can
+// need them. The include directory is already on the search path through pkg-config gtk4.
+#include <graphene-gobject.h>
 
 #if PHP_VERSION_ID < 80400
 #error "php-gtk4 requires PHP >= 8.4"

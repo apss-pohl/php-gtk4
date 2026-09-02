@@ -167,8 +167,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GdkPaintable
 
 - `new_empty` — static function on an interface (PHP interfaces have no bodies)
-- `snapshot` — parameter `snapshot` of type Gdk.Snapshot
-- `vfunc snapshot` — parameter `snapshot` of type Gdk.Snapshot
 
 ## GdkSurface
 
@@ -193,6 +191,29 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `new_from_resource` — skip.txt: g_error()s (aborts the process) on an invalid resource path - not a PHP-safe API
 - `__construct` — skip.txt: abstract for GTK's own subclasses only: a texture needs internal state (color state, 4.16+) that only the factories set - no PHP subtypes, no `new`
 - `smoke test` — smoke-skip.txt: factories need real image data (TextureTest covers it)
+
+## GraphenePoint
+
+- `distance` — return gfloat plus out parameters
+- `free` — memory management belongs to the handle (clone / destructor)
+- `init_from_vec2` — parameter `src` of type Graphene.Vec2
+- `to_vec2` — caller-allocates out parameter `v` of type Graphene.Vec2
+
+## GrapheneRect
+
+- `field origin` — field type Graphene.Point is not a scalar
+- `field size` — field type Graphene.Size is not a scalar
+- `free` — memory management belongs to the handle (clone / destructor)
+- `get_vertices` — caller-allocates out parameter `vertices` of type array
+- `inset_r` — skip.txt: the plain inset() is bound as this const form (graphene's own inset() rewrites the rectangle it is given, which a value handle must not do)
+- `normalize_r` — skip.txt: as inset_r: normalize() is the const form
+- `offset_r` — skip.txt: as inset_r: offset() is the const form
+- `round` — deprecated (1.10)
+- `round_to_pixel` — deprecated (1.4)
+
+## GrapheneSize
+
+- `free` — memory management belongs to the handle (clone / destructor)
 
 ## GtkAdjustment
 
@@ -482,6 +503,40 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## GtkSnapshot
+
+- `append_border` — parameter `outline` of type Gsk.RoundedRect
+- `append_conic_gradient` — parameter `stops` of type array (C array)
+- `append_fill` — parameter `path` of type Gsk.Path
+- `append_inset_shadow` — parameter `outline` of type Gsk.RoundedRect
+- `append_layout` — parameter `layout` of type Pango.Layout
+- `append_linear_gradient` — parameter `stops` of type array (C array)
+- `append_node` — parameter `node` of type Gsk.RenderNode
+- `append_outset_shadow` — parameter `outline` of type Gsk.RoundedRect
+- `append_radial_gradient` — parameter `stops` of type array (C array)
+- `append_repeating_linear_gradient` — parameter `stops` of type array (C array)
+- `append_repeating_radial_gradient` — parameter `stops` of type array (C array)
+- `append_stroke` — parameter `path` of type Gsk.Path
+- `free_to_node` — return type Gsk.RenderNode (not in the closure)
+- `free_to_paintable` — skip.txt: frees the GtkSnapshot itself, so the handle is left on freed memory and its next qdata/toggle-ref touch is a SEGV (ASan caught it); to_paintable() answers with the same paintable and leaves the object alive
+- `push_color_matrix` — parameter `color_matrix` of type Graphene.Matrix
+- `push_debug` — varargs
+- `push_fill` — parameter `path` of type Gsk.Path
+- `push_gl_shader` — parameter `shader` of type Gsk.GLShader
+- `push_rounded_clip` — parameter `bounds` of type Gsk.RoundedRect
+- `push_shadow` — parameter `shadow` of type array (C array)
+- `push_stroke` — parameter `path` of type Gsk.Path
+- `render_background` — deprecated (4.10)
+- `render_focus` — deprecated (4.10)
+- `render_frame` — deprecated (4.10)
+- `render_insertion_cursor` — deprecated (4.10)
+- `render_layout` — deprecated (4.10)
+- `rotate_3d` — parameter `axis` of type Graphene.Vec3
+- `to_node` — return type Gsk.RenderNode (not in the closure)
+- `transform` — parameter `transform` of type Gsk.Transform
+- `transform_matrix` — parameter `matrix` of type Graphene.Matrix
+- `translate_3d` — parameter `point` of type Graphene.Point3D
+
 ## GtkSortListModel
 
 - `property item-type` — property type Gtk.GType not mappable
@@ -497,7 +552,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkText
 
-- `compute_cursor_extents` — caller-allocates out parameter `strong` of type Graphene.Rect
 - `get_attributes` — return type Pango.AttrList
 - `get_tabs` — return type Pango.TabArray
 - `set_attributes` — parameter `attrs` of type Pango.AttrList
@@ -536,7 +590,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_rtl_context` — return type Pango.Context (not in the closure)
 - `get_tabs` — return type Pango.TabArray
 - `set_tabs` — parameter `tabs` of type Pango.TabArray
-- `vfunc snapshot_layer` — parameter `snapshot` of type Gtk.Snapshot
 - `property tabs` — property type Pango.TabArray not mappable
 
 ## GtkToggleButton
@@ -558,8 +611,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `activate_action` — shadowed by activate_action_variant
 - `add_tick_callback` — callback parameter (needs an override)
-- `compute_bounds` — caller-allocates out parameter `out_bounds` of type Graphene.Rect
-- `compute_point` — parameter `point` of type Graphene.Point
 - `compute_transform` — caller-allocates out parameter `out_transform` of type Graphene.Matrix
 - `create_pango_context` — return type Pango.Context (not in the closure)
 - `create_pango_layout` — return type Pango.Layout (not in the closure)
@@ -581,14 +632,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `set_font_options` — parameter `options` of type cairo.FontOptions
 - `show` — deprecated (4.10)
 - `size_allocate` — parameter `allocation` of type Gtk.Allocation
-- `snapshot_child` — parameter `snapshot` of type Gtk.Snapshot
 - `translate_coordinates` — deprecated (4.12)
 - `vfunc compute_expand` — parameter vexpand_p is a pointer to a scalar without direction
 - `vfunc css_changed` — parameter `change` of type Gtk.CssStyleChange
 - `vfunc hide` — deprecated (4.10)
 - `vfunc query_tooltip` — parameter `tooltip` of type Gtk.Tooltip
 - `vfunc show` — deprecated (4.10)
-- `vfunc snapshot` — parameter `snapshot` of type Gtk.Snapshot
 
 ## GtkWindow
 
@@ -608,6 +657,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio.Application`: run
 - `Gio.ListStore`: __construct
 - `Gio.SimpleAction`: set_state
+- `Graphene.Rect`: inset, normalize, offset
 - `Gtk.Box`: get_children
 - `Gtk.Builder`: add_from_string, add_objects_from_string, set_current_object, set_handlers
 - `Gtk.CustomFilter`: __construct, set_filter_func
@@ -721,6 +771,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkSignalListItemFactory.cpp`
 - `Gtk/GtkSingleSelection.cpp`
 - `Gtk/GtkSizeGroup.cpp`
+- `Gtk/GtkSnapshot.cpp`
 - `Gtk/GtkSortListModel.cpp`
 - `Gtk/GtkSorter.cpp`
 - `Gtk/GtkSpinButton.cpp`
@@ -768,9 +819,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gdk/GdkDisplay.cpp`
 - `Gdk/GdkMonitor.cpp`
 - `Gdk/GdkPaintable.cpp`
+- `Gdk/GdkSnapshot.cpp`
 - `Gdk/GdkSurface.cpp`
 - `Gdk/GdkTexture.cpp`
 - `Gdk/Gdk.stub.php`
+- `Gsk/Gsk.stub.php`
+- `Graphene/GraphenePoint.cpp`
+- `Graphene/GrapheneRect.cpp`
+- `Graphene/GrapheneSize.cpp`
+- `Graphene/Graphene.stub.php`
 - `gen_minit.inc`
 - `gen_prototypes.h`
 - `gen_arginfo.h`
@@ -844,6 +901,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkScrolledWindowSmokeTest.php`
 - `tests/Generated/GtkSignalListItemFactorySmokeTest.php`
 - `tests/Generated/GtkSingleSelectionSmokeTest.php`
+- `tests/Generated/GtkSnapshotSmokeTest.php`
 - `tests/Generated/GtkSortListModelSmokeTest.php`
 - `tests/Generated/GtkSorterSmokeTest.php`
 - `tests/Generated/GtkSpinButtonSmokeTest.php`
@@ -872,3 +930,4 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GSimpleActionSmokeTest.php`
 - `tests/Generated/GTaskSmokeTest.php`
 - `tests/Generated/GdkCursorSmokeTest.php`
+- `tests/Generated/GdkSnapshotSmokeTest.php`

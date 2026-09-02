@@ -110,7 +110,11 @@ final class Node
 function macroParts(Gir $gir, Node $n): array
 {
     $prefix = $gir->prefixes[$n->ns];
-    $ctype = $n->ctype ?? $n->gtypeName ?? ($prefix . $n->name);
+    // The GType name first: it is the one spelled like the macro. Graphene's c:type is the C
+    // struct's own snake_case name (`graphene_rect_t`), which yields GRAPHENE_TYPE__RECT_T
+    // instead of GRAPHENE_TYPE_RECT; its glib:type-name (`GrapheneRect`) is what GTK's own types
+    // put in both places, so preferring it changes nothing for them.
+    $ctype = $n->gtypeName ?? $n->ctype ?? ($prefix . $n->name);
     $rest = substr($ctype, strlen($prefix));
     $snake = strtoupper(preg_replace('/(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/', '_', $rest) ?? $rest);
     return [strtoupper($prefix) . '_TYPE_' . $snake, strtoupper($prefix) . '_' . $snake];

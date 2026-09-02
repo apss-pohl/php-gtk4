@@ -1467,6 +1467,37 @@ void vfunc_install_set_anchor(gpointer klass) {
   GTK_TEXT_VIEW_CLASS(klass)->set_anchor = vfunc_thunk_set_anchor;
 }
 
+// vfunc thunk: GTK_TEXT_VIEW_CLASS->snapshot_layer -> $this->vfunc_snapshot_layer() on a PHP
+// subclass
+void vfunc_thunk_snapshot_layer(GtkTextView *self, GtkTextViewLayer layer, GtkSnapshot *snapshot) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_snapshot_layer", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_TEXT_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->snapshot_layer != nullptr) native->snapshot_layer(self, layer, snapshot);
+    return;
+  }
+  std::array<zval, 2> args{};
+  zval *argv = args.data();
+  ZVAL_LONG(&argv[0], static_cast<zend_long>(layer));
+  wrap(snapshot != nullptr ? G_OBJECT(snapshot) : nullptr, &argv[1]);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 2, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkTextView::vfunc_snapshot_layer");
+}
+
+// vfunc installer: GTK_TEXT_VIEW_CLASS->snapshot_layer (called from class_init / iface_init of a
+// PHP subtype)
+void vfunc_install_snapshot_layer(gpointer klass) {
+  GTK_TEXT_VIEW_CLASS(klass)->snapshot_layer = vfunc_thunk_snapshot_layer;
+}
+
 // vfunc thunk: GTK_TEXT_VIEW_CLASS->toggle_overwrite -> $this->vfunc_toggle_overwrite() on a PHP
 // subclass
 void vfunc_thunk_toggle_overwrite(GtkTextView *self) {
@@ -1804,6 +1835,41 @@ ZEND_METHOD(Gtk4_GtkTextView, vfunc_set_anchor) {
 }
 
 /**
+ * Gtk4\GtkTextView::vfunc_snapshot_layer(int $layer, GtkSnapshot $snapshot): void
+ *
+ * Native `snapshot_layer` (TextViewClass.snapshot_layer): the GTK implementation below any PHP
+ * subclass, for `parent::vfunc_snapshot_layer()` from an override. The snapshot_layer vfunc is
+ * called before and after the text view is drawing its own text. Applications can override this
+ * vfunc in a subclass to draw customized content underneath or above the text. In the
+ * %GTK_TEXT_VIEW_LAYER_BELOW_TEXT and %GTK_TEXT_VIEW_LAYER_ABOVE_TEXT layers the drawing is done
+ * in the buffer coordinate space.
+ */
+ZEND_METHOD(Gtk4_GtkTextView, vfunc_snapshot_layer) {
+  zend_long layer;
+  zval *snapshot;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_LONG(layer)
+  Z_PARAM_OBJECT_OF_CLASS(snapshot, class_for_gtype(GTK_TYPE_SNAPSHOT))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkTextView *self = PHPGTK_SELF(GtkTextView, GTK_TYPE_TEXT_VIEW);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkTextView::vfunc_snapshot_layer(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = GTK_TEXT_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->snapshot_layer == nullptr) {
+    return;
+  }
+  if (!phpgtk::check_flags(GTK_TYPE_TEXT_VIEW_LAYER, layer, 1)) RETURN_THROWS();
+  GObject *snapshot_o = unwrap(snapshot, GTK_TYPE_SNAPSHOT);
+  if (snapshot_o == nullptr) RETURN_THROWS();
+  klass->snapshot_layer(self, static_cast<GtkTextViewLayer>(layer), GTK_SNAPSHOT(snapshot_o));
+}
+
+/**
  * Gtk4\GtkTextView::vfunc_toggle_overwrite(): void
  *
  * Native `toggle_overwrite` (TextViewClass.toggle_overwrite): the GTK implementation below any PHP
@@ -1840,5 +1906,6 @@ void register_vfuncs_GtkTextView() {
   register_vfunc(GTK_TYPE_TEXT_VIEW, "move_cursor", vfunc_install_move_cursor);
   register_vfunc(GTK_TYPE_TEXT_VIEW, "paste_clipboard", vfunc_install_paste_clipboard);
   register_vfunc(GTK_TYPE_TEXT_VIEW, "set_anchor", vfunc_install_set_anchor);
+  register_vfunc(GTK_TYPE_TEXT_VIEW, "snapshot_layer", vfunc_install_snapshot_layer);
   register_vfunc(GTK_TYPE_TEXT_VIEW, "toggle_overwrite", vfunc_install_toggle_overwrite);
 }

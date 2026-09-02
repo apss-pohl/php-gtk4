@@ -1566,6 +1566,8 @@ interface GdkPaintable
     public function get_intrinsic_height(): int;
     /** Gets the preferred width the $paintable would like to be displayed at. */
     public function get_intrinsic_width(): int;
+    /** Snapshots the given paintable with the given $width and $height. */
+    public function snapshot(GdkSnapshot $snapshot, float $width, float $height): void;
 }
 /**
  * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
@@ -1613,6 +1615,12 @@ final class GdkPaintableObject extends GObject implements GdkPaintable
     public function invalidate_size(): void
     {
     }
+    public function snapshot(GdkSnapshot $snapshot, float $width, float $height): void
+    {
+        unset($snapshot);
+        unset($width);
+        unset($height);
+    }
 }
 /**
  * Flags about a paintable object.
@@ -1640,6 +1648,16 @@ enum GdkScrollUnit : int
 {
     case Wheel = 0;
     case Surface = 1;
+}
+/**
+ * Base type for snapshot operations.
+ */
+class GdkSnapshot extends GObject
+{
+    /** GdkSnapshot is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    public function __construct()
+    {
+    }
 }
 /**
  * This enumeration describes how the red, green and blue components of physical pixels on an
@@ -1869,6 +1887,12 @@ class GdkTexture extends GObject implements GdkPaintable
     }
     public function invalidate_size(): void
     {
+    }
+    public function snapshot(GdkSnapshot $snapshot, float $width, float $height): void
+    {
+        unset($snapshot);
+        unset($width);
+        unset($height);
     }
 }
 /**
@@ -3206,6 +3230,398 @@ class GTask extends GObject implements GAsyncResult
     {
         return false;
     }
+}
+/**
+ * A point with two coordinates.
+ *
+ * @property float $x
+ * @property float $y
+ */
+final class GraphenePoint
+{
+    /** A value from its fields (all optional, zero by default). */
+    public function __construct(float $x = 0.0, float $y = 0.0)
+    {
+        unset($x);
+        unset($y);
+    }
+    /** Allocates a new #graphene_point_t structure. */
+    public static function alloc(): GraphenePoint
+    {
+        return null;
+    }
+    /** Checks if the two points $a and $b point to the same coordinates. */
+    public function equal(GraphenePoint $b): bool
+    {
+        unset($b);
+        return false;
+    }
+    /** Initializes $p to the given $x and $y coordinates. */
+    public function init(float $x, float $y): GraphenePoint
+    {
+        unset($x);
+        unset($y);
+        return null;
+    }
+    /** Initializes $p with the same coordinates of $src. */
+    public function init_from_point(GraphenePoint $src): GraphenePoint
+    {
+        unset($src);
+        return null;
+    }
+    /** Linearly interpolates the coordinates of $a and $b using the given $factor. */
+    public function interpolate(GraphenePoint $b, float $factor): GraphenePoint
+    {
+        unset($b);
+        unset($factor);
+        return null;
+    }
+    /** Checks whether the two points $a and $b are within the threshold of $epsilon. */
+    public function near(GraphenePoint $b, float $epsilon): bool
+    {
+        unset($b);
+        unset($epsilon);
+        return false;
+    }
+    /** Returns a point fixed at (0, 0). */
+    public static function zero(): GraphenePoint
+    {
+        return null;
+    }
+    /** GObject property read (engine handler; see gen/ide-stub.php). */
+    public function __get(string $name): mixed
+    {
+        unset($name);
+        return null;
+    }
+    /** GObject property write (engine handler; see gen/ide-stub.php). */
+    public function __set(string $name, mixed $value): void
+    {
+        unset($name);
+        unset($value);
+    }
+    /** GObject property isset (engine handler; see gen/ide-stub.php). */
+    public function __isset(string $name): bool
+    {
+        unset($name);
+        return false;
+    }
+}
+/**
+ * The location and size of a rectangle region.
+ */
+final class GrapheneRect
+{
+    /** GrapheneRect values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Checks whether a #graphene_rect_t contains the given coordinates. */
+    public function contains_point(GraphenePoint $p): bool
+    {
+        unset($p);
+        return false;
+    }
+    /** Checks whether a #graphene_rect_t fully contains the given rectangle. */
+    public function contains_rect(GrapheneRect $b): bool
+    {
+        unset($b);
+        return false;
+    }
+    /** Checks whether the two given rectangle are equal. */
+    public function equal(GrapheneRect $b): bool
+    {
+        unset($b);
+        return false;
+    }
+    /** Expands a #graphene_rect_t to contain the given #graphene_point_t. */
+    public function expand(GraphenePoint $p): GrapheneRect
+    {
+        unset($p);
+        return null;
+    }
+    /** Compute the area of given normalized rectangle. */
+    public function get_area(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the coordinates of the bottom-left corner of the given rectangle. */
+    public function get_bottom_left(): GraphenePoint
+    {
+        return null;
+    }
+    /** Retrieves the coordinates of the bottom-right corner of the given rectangle. */
+    public function get_bottom_right(): GraphenePoint
+    {
+        return null;
+    }
+    /** Retrieves the coordinates of the center of the given rectangle. */
+    public function get_center(): GraphenePoint
+    {
+        return null;
+    }
+    /** Retrieves the normalized height of the given rectangle. */
+    public function get_height(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the coordinates of the top-left corner of the given rectangle. */
+    public function get_top_left(): GraphenePoint
+    {
+        return null;
+    }
+    /** Retrieves the coordinates of the top-right corner of the given rectangle. */
+    public function get_top_right(): GraphenePoint
+    {
+        return null;
+    }
+    /** Retrieves the normalized width of the given rectangle. */
+    public function get_width(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the normalized X coordinate of the origin of the given rectangle. */
+    public function get_x(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the normalized Y coordinate of the origin of the given rectangle. */
+    public function get_y(): float
+    {
+        return 0.0;
+    }
+    /** Initializes the given #graphene_rect_t with the given values. */
+    public function init(float $x, float $y, float $width, float $height): GrapheneRect
+    {
+        unset($x);
+        unset($y);
+        unset($width);
+        unset($height);
+        return null;
+    }
+    /** Initializes $r using the given $src rectangle. */
+    public function init_from_rect(GrapheneRect $src): GrapheneRect
+    {
+        unset($src);
+        return null;
+    }
+    /** Linearly interpolates the origin and size of the two given rectangles. */
+    public function interpolate(GrapheneRect $b, float $factor): GrapheneRect
+    {
+        unset($b);
+        unset($factor);
+        return null;
+    }
+    /** Computes the intersection of the two given rectangles. */
+    public function intersection(GrapheneRect $b): ?GrapheneRect
+    {
+        unset($b);
+        return null;
+    }
+    /**
+     * Rounds the origin of the given rectangle to its nearest integer value and and recompute the
+     * size so that the rectangle is large enough to contain all the conrners of the original
+     * rectangle.
+     */
+    public function round_extents(): GrapheneRect
+    {
+        return null;
+    }
+    /**
+     * Scales the size and origin of a rectangle horizontaly by $s_h, and vertically by $s_v. The
+     * result $res is normalized.
+     */
+    public function scale(float $s_h, float $s_v): GrapheneRect
+    {
+        unset($s_h);
+        unset($s_v);
+        return null;
+    }
+    /** Computes the union of the two given rectangles. */
+    public function union(GrapheneRect $b): GrapheneRect
+    {
+        unset($b);
+        return null;
+    }
+    /** Allocates a new #graphene_rect_t. */
+    public static function alloc(): GrapheneRect
+    {
+        return null;
+    }
+    /** Returns a degenerate rectangle with origin fixed at (0, 0) and a size of 0, 0. */
+    public static function zero(): GrapheneRect
+    {
+        return null;
+    }
+    /**
+     * Shrink the rectangle by $d_x on each vertical edge and $d_y on each horizontal one.
+     *
+     * graphene's plain form writes into the rectangle it is given and hands the same one back;
+     * a boxed handle here is a *value* (clone and compare by value), so a method that silently
+     * rewrote the receiver would break that. This is the `inset_r()` form, which leaves the
+     * receiver alone - and is why `inset_r()` itself is not bound separately.
+     */
+    public function inset(float $d_x, float $d_y): GrapheneRect
+    {
+        unset($d_x);
+        unset($d_y);
+        return null;
+    }
+    /**
+     * The same rectangle with a non-negative width and height.
+     *
+     * graphene's plain form writes into the rectangle it is given and hands the same one back;
+     * a boxed handle here is a *value* (clone and compare by value), so a method that silently
+     * rewrote the receiver would break that. This is the `normalize_r()` form, which leaves the
+     * receiver alone - and is why `normalize_r()` itself is not bound separately.
+     */
+    public function normalize(): GrapheneRect
+    {
+        return null;
+    }
+    /**
+     * Move the rectangle by $d_x and $d_y.
+     *
+     * graphene's plain form writes into the rectangle it is given and hands the same one back;
+     * a boxed handle here is a *value* (clone and compare by value), so a method that silently
+     * rewrote the receiver would break that. This is the `offset_r()` form, which leaves the
+     * receiver alone - and is why `offset_r()` itself is not bound separately.
+     */
+    public function offset(float $d_x, float $d_y): GrapheneRect
+    {
+        unset($d_x);
+        unset($d_y);
+        return null;
+    }
+}
+/**
+ * A size.
+ *
+ * @property float $width
+ * @property float $height
+ */
+final class GrapheneSize
+{
+    /** A value from its fields (all optional, zero by default). */
+    public function __construct(float $width = 0.0, float $height = 0.0)
+    {
+        unset($width);
+        unset($height);
+    }
+    /** Allocates a new #graphene_size_t. */
+    public static function alloc(): GrapheneSize
+    {
+        return null;
+    }
+    /** Checks whether the two give #graphene_size_t are equal. */
+    public function equal(GrapheneSize $b): bool
+    {
+        unset($b);
+        return false;
+    }
+    /** Initializes a #graphene_size_t using the given $width and $height. */
+    public function init(float $width, float $height): GrapheneSize
+    {
+        unset($width);
+        unset($height);
+        return null;
+    }
+    /** Initializes a #graphene_size_t using the width and height of the given $src. */
+    public function init_from_size(GrapheneSize $src): GrapheneSize
+    {
+        unset($src);
+        return null;
+    }
+    /**
+     * Linearly interpolates the two given #graphene_size_t using the given interpolation $factor.
+     */
+    public function interpolate(GrapheneSize $b, float $factor): GrapheneSize
+    {
+        unset($b);
+        unset($factor);
+        return null;
+    }
+    /** Scales the components of a #graphene_size_t using the given $factor. */
+    public function scale(float $factor): GrapheneSize
+    {
+        unset($factor);
+        return null;
+    }
+    /**
+     * A constant pointer to a zero #graphene_size_t, useful for equality checks and
+     * interpolations.
+     */
+    public static function zero(): GrapheneSize
+    {
+        return null;
+    }
+    /** GObject property read (engine handler; see gen/ide-stub.php). */
+    public function __get(string $name): mixed
+    {
+        unset($name);
+        return null;
+    }
+    /** GObject property write (engine handler; see gen/ide-stub.php). */
+    public function __set(string $name, mixed $value): void
+    {
+        unset($name);
+        unset($value);
+    }
+    /** GObject property isset (engine handler; see gen/ide-stub.php). */
+    public function __isset(string $name): bool
+    {
+        unset($name);
+        return false;
+    }
+}
+/**
+ * The blend modes available for render nodes.
+ */
+enum GskBlendMode : int
+{
+    case Default = 0;
+    case Multiply = 1;
+    case Screen = 2;
+    case Overlay = 3;
+    case Darken = 4;
+    case Lighten = 5;
+    case ColorDodge = 6;
+    case ColorBurn = 7;
+    case HardLight = 8;
+    case SoftLight = 9;
+    case Difference = 10;
+    case Exclusion = 11;
+    case Color = 12;
+    case Hue = 13;
+    case Saturation = 14;
+    case Luminosity = 15;
+}
+/**
+ * `GskFillRule` is used to select how paths are filled.
+ */
+enum GskFillRule : int
+{
+    case Winding = 0;
+    case EvenOdd = 1;
+}
+/**
+ * The mask modes available for mask nodes.
+ */
+enum GskMaskMode : int
+{
+    case Alpha = 0;
+    case InvertedAlpha = 1;
+    case Luminance = 2;
+    case InvertedLuminance = 3;
+}
+/**
+ * The filters used when scaling texture data.
+ */
+enum GskScalingFilter : int
+{
+    case Linear = 0;
+    case Nearest = 1;
+    case Trilinear = 2;
 }
 /**
  * The `GtkAboutDialog` offers a simple way to display information about a program.
@@ -7872,6 +8288,12 @@ class GtkIconPaintable extends GObject implements GdkPaintable
     public function invalidate_size(): void
     {
     }
+    public function snapshot(GdkSnapshot $snapshot, float $width, float $height): void
+    {
+        unset($snapshot);
+        unset($width);
+        unset($height);
+    }
 }
 /**
  * Built-in icon sizes.
@@ -11598,6 +12020,152 @@ enum GtkSizeRequestMode : int
     case ConstantSize = 2;
 }
 /**
+ * `GtkSnapshot` assists in creating `RenderNode`s for widgets.
+ */
+class GtkSnapshot extends GdkSnapshot
+{
+    /** Creates a new `GtkSnapshot`. */
+    public function __construct()
+    {
+    }
+    /**
+     * Creates a new `CairoNode` and appends it to the current render node of $snapshot, without
+     * changing the current node.
+     */
+    public function append_cairo(GrapheneRect $bounds): CairoContext
+    {
+        unset($bounds);
+        return null;
+    }
+    /**
+     * Creates a new render node drawing the $color into the given $bounds and appends it to the
+     * current render node of $snapshot.
+     */
+    public function append_color(GdkRGBA $color, GrapheneRect $bounds): void
+    {
+        unset($color);
+        unset($bounds);
+    }
+    /**
+     * Creates a new render node drawing the $texture into the given $bounds and appends it to the
+     * current render node of $snapshot.
+     */
+    public function append_scaled_texture(GdkTexture $texture, GskScalingFilter $filter, GrapheneRect $bounds): void
+    {
+        unset($texture);
+        unset($filter);
+        unset($bounds);
+    }
+    /**
+     * Creates a new render node drawing the $texture into the given $bounds and appends it to the
+     * current render node of $snapshot.
+     */
+    public function append_texture(GdkTexture $texture, GrapheneRect $bounds): void
+    {
+        unset($texture);
+        unset($bounds);
+    }
+    /**
+     * Removes the top element from the stack of render nodes and adds it to the nearest
+     * `GLShaderNode` below it.
+     */
+    public function gl_shader_pop_texture(): void
+    {
+    }
+    /** Applies a perspective projection transform. */
+    public function perspective(float $depth): void
+    {
+        unset($depth);
+    }
+    /**
+     * Removes the top element from the stack of render nodes, and appends it to the node
+     * underneath it.
+     */
+    public function pop(): void
+    {
+    }
+    /** Blends together two images with the given blend mode. */
+    public function push_blend(GskBlendMode $blend_mode): void
+    {
+        unset($blend_mode);
+    }
+    /** Blurs an image. */
+    public function push_blur(float $radius): void
+    {
+        unset($radius);
+    }
+    /** Clips an image to a rectangle. */
+    public function push_clip(GrapheneRect $bounds): void
+    {
+        unset($bounds);
+    }
+    /** Snapshots a cross-fade operation between two images with the given $progress. */
+    public function push_cross_fade(float $progress): void
+    {
+        unset($progress);
+    }
+    /** Until the first call to `pop`, the mask image for the mask operation will be recorded. */
+    public function push_mask(GskMaskMode $mask_mode): void
+    {
+        unset($mask_mode);
+    }
+    /** Modifies the opacity of an image. */
+    public function push_opacity(float $opacity): void
+    {
+        unset($opacity);
+    }
+    /** Creates a node that repeats the child node. */
+    public function push_repeat(GrapheneRect $bounds, ?GrapheneRect $child_bounds): void
+    {
+        unset($bounds);
+        unset($child_bounds);
+    }
+    /**
+     * Restores $snapshot to the state saved by a preceding call to `save` and removes that state
+     * from the stack of saved states.
+     */
+    public function restore(): void
+    {
+    }
+    /**
+     * Rotates @$snapshot's coordinate system by $angle degrees in 2D space - or in 3D speak,
+     * rotates around the Z axis. The rotation happens around the origin point of (0, 0) in the
+     * $snapshot's current coordinate system.
+     */
+    public function rotate(float $angle): void
+    {
+        unset($angle);
+    }
+    /** Makes a copy of the current state of $snapshot and saves it on an internal stack. */
+    public function save(): void
+    {
+    }
+    /** Scales $snapshot's coordinate system in 2-dimensional space by the given factors. */
+    public function scale(float $factor_x, float $factor_y): void
+    {
+        unset($factor_x);
+        unset($factor_y);
+    }
+    /** Scales $snapshot's coordinate system by the given factors. */
+    public function scale_3d(float $factor_x, float $factor_y, float $factor_z): void
+    {
+        unset($factor_x);
+        unset($factor_y);
+        unset($factor_z);
+    }
+    /** Returns a paintable encapsulating the render node that was constructed by $snapshot. */
+    public function to_paintable(?GrapheneSize $size): ?GdkPaintable
+    {
+        unset($size);
+        return null;
+    }
+    /** Translates $snapshot's coordinate system by $point in 2-dimensional space. */
+    public function translate(GraphenePoint $point): void
+    {
+        unset($point);
+    }
+}
+/**
  * A `GListModel` that sorts the elements of an underlying model according to a `GtkSorter`.
  *
  * @property ?bool $incremental
@@ -12569,6 +13137,17 @@ class GtkText extends GtkWidget implements GtkEditable
     {
         unset($buffer);
         return null;
+    }
+    /**
+     * Determine the positions of the strong and weak cursors if the insertion point in the layout
+     * is at $position.
+     *
+     * @return array{GrapheneRect, GrapheneRect}
+     */
+    public function compute_cursor_extents(int $position): array
+    {
+        unset($position);
+        return [];
     }
     /**
      * Returns whether pressing Enter will activate the default widget for the window containing
@@ -14741,6 +15320,19 @@ class GtkTextView extends GtkWidget implements GtkScrollable
     {
     }
     /**
+     * Native `snapshot_layer` (TextViewClass.snapshot_layer): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_snapshot_layer()` from an override. The snapshot_layer vfunc is
+     * called before and after the text view is drawing its own text. Applications can override
+     * this vfunc in a subclass to draw customized content underneath or above the text. In the
+     * %GTK_TEXT_VIEW_LAYER_BELOW_TEXT and %GTK_TEXT_VIEW_LAYER_ABOVE_TEXT layers the drawing is
+     * done in the buffer coordinate space.
+     */
+    public function vfunc_snapshot_layer(int $layer, GtkSnapshot $snapshot): void
+    {
+        unset($layer);
+        unset($snapshot);
+    }
+    /**
      * Native `toggle_overwrite` (TextViewClass.toggle_overwrite): the GTK implementation below any
      * PHP subclass, for `parent::vfunc_toggle_overwrite()` from an override. The class handler for
      * the `GtkTextView::toggle-overwrite` keybinding signal.
@@ -15191,11 +15783,27 @@ class GtkWidget extends GObject
         unset($direction);
         return false;
     }
+    /** Computes the bounds for $widget in the coordinate space of $target. */
+    public function compute_bounds(GtkWidget $target): ?GrapheneRect
+    {
+        unset($target);
+        return null;
+    }
     /** Computes whether a container should give this widget extra space when possible. */
     public function compute_expand(GtkOrientation $orientation): bool
     {
         unset($orientation);
         return false;
+    }
+    /**
+     * Translates the given $point in $widget's coordinates to coordinates relative to $target’s
+     * coordinate system.
+     */
+    public function compute_point(GtkWidget $target, GraphenePoint $point): ?GraphenePoint
+    {
+        unset($target);
+        unset($point);
+        return null;
     }
     /** Tests if the point at ($x, $y) is contained in $widget. */
     public function contains(float $x, float $y): bool
@@ -15857,6 +16465,12 @@ class GtkWidget extends GObject
     {
         return false;
     }
+    /** Snapshot the a child of $widget. */
+    public function snapshot_child(GtkWidget $child, GtkSnapshot $snapshot): void
+    {
+        unset($child);
+        unset($snapshot);
+    }
     /** Triggers a tooltip query on the display where the toplevel of $widget is located. */
     public function trigger_tooltip_query(): void
     {
@@ -16029,6 +16643,15 @@ class GtkWidget extends GObject
         unset($width);
         unset($height);
         unset($baseline);
+    }
+    /**
+     * Native `snapshot` (WidgetClass.snapshot): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_snapshot()` from an override. Vfunc called when a new snapshot of the widget
+     * has to be taken.
+     */
+    public function vfunc_snapshot(GtkSnapshot $snapshot): void
+    {
+        unset($snapshot);
     }
     /**
      * Native `state_flags_changed` (WidgetClass.state_flags_changed): the GTK implementation below

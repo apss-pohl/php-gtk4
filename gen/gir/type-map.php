@@ -850,7 +850,12 @@ final class TypeMap
                 $full,
                 $recordMacro
             ) {
-                $l = ["gpointer phpgtk_ret = $call;"];
+                // A `transfer none` getter may answer with a const pointer to a shared value;
+                // wrap_boxed() takes a gconstpointer and copies. `transfer full` is never const -
+                // g_boxed_free() below needs to own it.
+                $ptr = str_starts_with((string) ($f->ret->ctype ?? ''), 'const ')
+                    ? 'gconstpointer' : 'gpointer';
+                $l = ["$ptr phpgtk_ret = $call;"];
                 array_push($l, ...$throwCheck('phpgtk_ret == nullptr'));
                 $l[] = "wrap_boxed($recordMacro, phpgtk_ret, return_value);";
                 if ($full) {
@@ -1082,8 +1087,17 @@ final class TypeMap
                     : [])]];
         }
         if ($node->kind === 'record' && $node->gtypeName !== null && $this->types->known($t->name)) {
+            // A `transfer none` getter may answer with a const pointer to a shared value
+            // (graphene_point_zero()); the handle copies what it is given, so it only reads
+            // through it and the local keeps the constness GIR declared.
+            // A `transfer none` getter may answer with a const pointer to a shared value
+            // (graphene_point_zero()); wrap_boxed() takes a gconstpointer and copies, so the
+            // local just keeps the constness GIR declared. `transfer full` is never const - it
+            // would have nothing to free.
+            $constRet = str_starts_with($t->ctype ?? '', 'const ') ? 'const ' : '';
             return ['phpType' => ($f->retNullable ? '?' : '') . phpClass($node), 'lines' => fn(string $call) => [
-                "{$node->ctype} *phpgtk_ret = $call;", "wrap_boxed($typeMacro, phpgtk_ret, return_value);",
+                "$constRet{$node->ctype} *phpgtk_ret = $call;",
+                "wrap_boxed($typeMacro, phpgtk_ret, return_value);",
                 ...($full ? ["if (phpgtk_ret != nullptr) g_boxed_free($typeMacro, phpgtk_ret);"] : [])]];
         }
         return "return type {$t->name}";

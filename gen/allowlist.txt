@@ -238,3 +238,14 @@ Gtk.TextDirection
 # GtkNative is how a widget reaches the GdkSurface it is drawn on (gtk_native_get_surface());
 # without it GdkSurface would be bound and unreachable.
 Gtk.Native
+
+# Snapshot (PLAN.md milestone 4's last item): what a widget paints. GtkSnapshot::append_cairo()
+# hands back a cairo context, so a PHP widget draws with the CairoContext API it already has -
+# and binding the type is what lets `vfunc_snapshot()` out of gen/skip's closure, the one
+# GtkWidget slot a PHP subclass could not override. The graphene records are the geometry its
+# signatures take (rectangles and points, like GdkRectangle only in floats).
+Gtk.Snapshot
+Gdk.Snapshot
+Graphene.Rect
+Graphene.Point
+Graphene.Size

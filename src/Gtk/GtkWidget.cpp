@@ -186,6 +186,24 @@ ZEND_METHOD(Gtk4_GtkWidget, child_focus) {
 }
 
 /**
+ * Gtk4\GtkWidget::compute_bounds(GtkWidget $target): ?GrapheneRect
+ *
+ * Computes the bounds for $widget in the coordinate space of $target.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, compute_bounds) {
+  zval *target;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(target, class_for_gtype(GTK_TYPE_WIDGET))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GObject *target_o = unwrap(target, GTK_TYPE_WIDGET);
+  if (target_o == nullptr) RETURN_THROWS();
+  graphene_rect_t out_bounds{};
+  if (!gtk_widget_compute_bounds(self, GTK_WIDGET(target_o), &out_bounds)) RETURN_NULL();
+  wrap_boxed(GRAPHENE_TYPE_RECT, &out_bounds, return_value);
+}
+
+/**
  * Gtk4\GtkWidget::compute_expand(GtkOrientation $orientation): bool
  *
  * Computes whether a container should give this widget extra space when possible.
@@ -199,6 +217,31 @@ ZEND_METHOD(Gtk4_GtkWidget, compute_expand) {
   gint orientation_v = 0;
   if (!enum_from_php(orientation, GTK_TYPE_ORIENTATION, &orientation_v)) RETURN_THROWS();
   RETURN_BOOL(gtk_widget_compute_expand(self, static_cast<GtkOrientation>(orientation_v)));
+}
+
+/**
+ * Gtk4\GtkWidget::compute_point(GtkWidget $target, GraphenePoint $point): ?GraphenePoint
+ *
+ * Translates the given $point in $widget's coordinates to coordinates relative to $target’s
+ * coordinate system.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, compute_point) {
+  zval *target;
+  zval *point;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(target, class_for_gtype(GTK_TYPE_WIDGET))
+  Z_PARAM_OBJECT_OF_CLASS(point, boxed_class_for_type(GRAPHENE_TYPE_POINT)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GObject *target_o = unwrap(target, GTK_TYPE_WIDGET);
+  if (target_o == nullptr) RETURN_THROWS();
+  gpointer point_b = unwrap_boxed(point, GRAPHENE_TYPE_POINT);
+  if (point_b == nullptr) RETURN_THROWS();
+  graphene_point_t out_point{};
+  if (!gtk_widget_compute_point(self, GTK_WIDGET(target_o),
+                                static_cast<graphene_point_t *>(point_b), &out_point))
+    RETURN_NULL();
+  wrap_boxed(GRAPHENE_TYPE_POINT, &out_point, return_value);
 }
 
 /**
@@ -1866,6 +1909,26 @@ ZEND_METHOD(Gtk4_GtkWidget, should_layout) {
 }
 
 /**
+ * Gtk4\GtkWidget::snapshot_child(GtkWidget $child, GtkSnapshot $snapshot): void
+ *
+ * Snapshot the a child of $widget.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, snapshot_child) {
+  zval *child;
+  zval *snapshot;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(child, class_for_gtype(GTK_TYPE_WIDGET))
+  Z_PARAM_OBJECT_OF_CLASS(snapshot, class_for_gtype(GTK_TYPE_SNAPSHOT))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
+  if (child_o == nullptr) RETURN_THROWS();
+  GObject *snapshot_o = unwrap(snapshot, GTK_TYPE_SNAPSHOT);
+  if (snapshot_o == nullptr) RETURN_THROWS();
+  gtk_widget_snapshot_child(self, GTK_WIDGET(child_o), GTK_SNAPSHOT(snapshot_o));
+}
+
+/**
  * Gtk4\GtkWidget::trigger_tooltip_query(): void
  *
  * Triggers a tooltip query on the display where the toplevel of $widget is located.
@@ -2394,6 +2457,34 @@ void vfunc_thunk_size_allocate(GtkWidget *self, int width, int height, int basel
 // subtype)
 void vfunc_install_size_allocate(gpointer klass) {
   GTK_WIDGET_CLASS(klass)->size_allocate = vfunc_thunk_size_allocate;
+}
+
+// vfunc thunk: GTK_WIDGET_CLASS->snapshot -> $this->vfunc_snapshot() on a PHP subclass
+void vfunc_thunk_snapshot(GtkWidget *self, GtkSnapshot *snapshot) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_snapshot", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->snapshot != nullptr) native->snapshot(self, snapshot);
+    return;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  wrap(snapshot != nullptr ? G_OBJECT(snapshot) : nullptr, &argv[0]);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkWidget::vfunc_snapshot");
+}
+
+// vfunc installer: GTK_WIDGET_CLASS->snapshot (called from class_init / iface_init of a PHP
+// subtype)
+void vfunc_install_snapshot(gpointer klass) {
+  GTK_WIDGET_CLASS(klass)->snapshot = vfunc_thunk_snapshot;
 }
 
 // vfunc thunk: GTK_WIDGET_CLASS->state_flags_changed -> $this->vfunc_state_flags_changed() on a PHP
@@ -2950,6 +3041,35 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_size_allocate) {
 }
 
 /**
+ * Gtk4\GtkWidget::vfunc_snapshot(GtkSnapshot $snapshot): void
+ *
+ * Native `snapshot` (WidgetClass.snapshot): the GTK implementation below any PHP subclass, for
+ * `parent::vfunc_snapshot()` from an override. Vfunc called when a new snapshot of the widget has
+ * to be taken.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, vfunc_snapshot) {
+  zval *snapshot;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(snapshot, class_for_gtype(GTK_TYPE_SNAPSHOT))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkWidget::vfunc_snapshot(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->snapshot == nullptr) {
+    return;
+  }
+  GObject *snapshot_o = unwrap(snapshot, GTK_TYPE_SNAPSHOT);
+  if (snapshot_o == nullptr) RETURN_THROWS();
+  klass->snapshot(self, GTK_SNAPSHOT(snapshot_o));
+}
+
+/**
  * Gtk4\GtkWidget::vfunc_state_flags_changed(int $previous_state_flags): void
  *
  * Native `state_flags_changed` (WidgetClass.state_flags_changed): the GTK implementation below any
@@ -3091,6 +3211,7 @@ void register_vfuncs_GtkWidget() {
   register_vfunc(GTK_TYPE_WIDGET, "root", vfunc_install_root);
   register_vfunc(GTK_TYPE_WIDGET, "set_focus_child", vfunc_install_set_focus_child);
   register_vfunc(GTK_TYPE_WIDGET, "size_allocate", vfunc_install_size_allocate);
+  register_vfunc(GTK_TYPE_WIDGET, "snapshot", vfunc_install_snapshot);
   register_vfunc(GTK_TYPE_WIDGET, "state_flags_changed", vfunc_install_state_flags_changed);
   register_vfunc(GTK_TYPE_WIDGET, "system_setting_changed", vfunc_install_system_setting_changed);
   register_vfunc(GTK_TYPE_WIDGET, "unmap", vfunc_install_unmap);

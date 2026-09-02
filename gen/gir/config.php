@@ -12,7 +12,8 @@ declare(strict_types=1);
 namespace PhpGtk4\Gen;
 
 const GIR_DIRS = ['/usr/share/gir-1.0', '/usr/lib/x86_64-linux-gnu/gir-1.0', '/usr/lib64/gir-1.0'];
-const GIR_FILES = ['GLib-2.0', 'GObject-2.0', 'Gio-2.0', 'cairo-1.0', 'Pango-1.0', 'Gdk-4.0', 'Gsk-4.0', 'Gtk-4.0'];
+const GIR_FILES = ['GLib-2.0', 'GObject-2.0', 'Gio-2.0', 'cairo-1.0', 'Pango-1.0', 'Graphene-1.0', 'Gdk-4.0',
+    'Gsk-4.0', 'Gtk-4.0'];
 const GTK_FLOOR = '4.14';           // API newer than this is skipped in this wave
 const PHP_NAMESPACE = 'Gtk4';
 const INT_TYPES = '/^g(u?int(8|16|32|64)?|size|ssize|u?long|u?short|unichar|u?char)$/';

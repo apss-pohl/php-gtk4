@@ -345,7 +345,7 @@ parameters:
 		-
 			message: '#^Anonymous function has an unused use \$f\.$#'
 			identifier: closure.unusedUse
-			count: 2
+			count: 1
 			path: gen/gir/type-map.php
 
 		-

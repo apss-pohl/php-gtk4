@@ -283,11 +283,32 @@ GTK4 GIR only). Every open item here is generator output and is ticked when its 
       `GdkClipboard`). Not bound: `GdkContentProvider`/`GdkContentFormats` (the clipboard's typed
       payloads — they arrive with drag and drop, wave 3b), `GdkDevice`/`GdkSeat`, `GtkBuilder`'s
       `<template>` support (`extend_with_template` needs a GType parameter).
-- [ ] **Rendering from PHP** → milestone 4: `GtkSnapshot`, `GdkPaintable` (`GdkTexture`,
-      `GtkDrawingArea::set_draw_func` + `CairoContext` done 2026-08-26; `CairoSurface` +
-      `GdkTexture::download()` + `CairoContext::set_source_surface()` 2026-09-01, which is what
-      paints an image in a draw func). `GtkSnapshot` is also what a PHP `vfunc_snapshot()` needs -
-      the one widget slot subclassing still cannot reach.
+- [x] **Rendering from PHP** → milestone 4 (2026-09-02): `GtkSnapshot` + `GdkSnapshot` and the
+      geometry they take (`GrapheneRect`/`Point`/`Size` as boxed records, the first types from the
+      Graphene GIR). `append_cairo()` is what makes it usable from PHP: it answers with the
+      `CairoContext` the binding already speaks, so a snapshot mixes GSK nodes and cairo in one
+      pass. Binding the type is also what let `GtkWidget::vfunc_snapshot()` out of the closure -
+      the last widget slot a PHP subclass could not override, so a widget that paints itself no
+      longer has to be a `GtkDrawingArea` (`tests/Subclass/PaintedWidget.php`).
+      Earlier: `GdkTexture`, `GtkDrawingArea::set_draw_func` + `CairoContext` (2026-08-26),
+      `CairoSurface` + `GdkTexture::download()` + `set_source_surface()` (2026-09-01).
+      Still out: GSK proper (`GskRenderNode`, `GskPath`, `GskTransform`, `GskRoundedRect`), so
+      `append_node`, the gradient and shadow families and `push_rounded_clip` stay skipped, and
+      the five 4.10-deprecated `render_*` helpers are skipped as deprecated.
+      Two binding decisions of its own: **`free_to_paintable()` is not bound** - it frees the
+      GtkSnapshot itself, so the handle is left on freed memory and its next qdata/toggle-ref
+      touch is a SEGV (ASan caught it through RobustnessTest); `to_paintable()` answers with the
+      same paintable and leaves the object alive. And **graphene's plain `inset()`/`offset()`/
+      `normalize()` rewrite the rectangle they are given**, which a boxed *value* handle must not
+      do (`$rect->inset(1, 1)` silently shrank `$rect`), so the plain names are bound to
+      graphene's `_r` const forms and the `_r` names are not bound at all.
+      Three generator bugs it forced: a class need not carry a **`c:type`** (`GtkSnapshot` is a
+      typedef of `GdkSnapshot`, so every emitted `<ctype> *self` came out empty - the loader falls
+      back to the identifier prefix plus the name); the **GType macro** is derived from the
+      glib:type-name rather than the c:type (Graphene's c:type is the struct's own snake_case
+      name, giving `GRAPHENE_TYPE__RECT_T` instead of `GRAPHENE_TYPE_RECT`; GTK's own types spell
+      both the same, so nothing else moved); and a **`transfer none` record getter may be const**
+      (`graphene_point_zero()`), which the emitted local now keeps.
 - [x] **GL renderer smoke test** — the test infrastructure forces `GSK_RENDERER=cairo` +
       `GDK_DEBUG=gl-disable` (Xvfb). Verified manually on a real Wayland session with an AMD GPU on
       2026-08-26 (see PLAN.md §6 "GL"); repeat before a release, no automation possible on CI runners.

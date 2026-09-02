@@ -3244,6 +3244,9 @@ class GtkIconPaintable extends GObject implements GdkPaintable
 
     /** @implementation-alias Gtk4\GdkPaintable::invalidate_size */
     public function invalidate_size(): void {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::snapshot */
+    public function snapshot(GdkSnapshot $snapshot, float $width, float $height): void {}
 }
 
 /**
@@ -5914,6 +5917,103 @@ enum GtkSizeRequestMode: int
 }
 
 /**
+ * `GtkSnapshot` assists in creating `RenderNode`s for widgets.
+ */
+class GtkSnapshot extends GdkSnapshot
+{
+    /** Creates a new `GtkSnapshot`. */
+    public function __construct() {}
+
+    /**
+     * Creates a new `CairoNode` and appends it to the current render node of $snapshot, without
+     * changing the current node.
+     */
+    public function append_cairo(GrapheneRect $bounds): CairoContext {}
+
+    /**
+     * Creates a new render node drawing the $color into the given $bounds and appends it to the
+     * current render node of $snapshot.
+     */
+    public function append_color(GdkRGBA $color, GrapheneRect $bounds): void {}
+
+    /**
+     * Creates a new render node drawing the $texture into the given $bounds and appends it to the
+     * current render node of $snapshot.
+     */
+    public function append_scaled_texture(GdkTexture $texture, GskScalingFilter $filter, GrapheneRect $bounds): void {}
+
+    /**
+     * Creates a new render node drawing the $texture into the given $bounds and appends it to the
+     * current render node of $snapshot.
+     */
+    public function append_texture(GdkTexture $texture, GrapheneRect $bounds): void {}
+
+    /**
+     * Removes the top element from the stack of render nodes and adds it to the nearest
+     * `GLShaderNode` below it.
+     */
+    public function gl_shader_pop_texture(): void {}
+
+    /** Applies a perspective projection transform. */
+    public function perspective(float $depth): void {}
+
+    /**
+     * Removes the top element from the stack of render nodes, and appends it to the node
+     * underneath it.
+     */
+    public function pop(): void {}
+
+    /** Blends together two images with the given blend mode. */
+    public function push_blend(GskBlendMode $blend_mode): void {}
+
+    /** Blurs an image. */
+    public function push_blur(float $radius): void {}
+
+    /** Clips an image to a rectangle. */
+    public function push_clip(GrapheneRect $bounds): void {}
+
+    /** Snapshots a cross-fade operation between two images with the given $progress. */
+    public function push_cross_fade(float $progress): void {}
+
+    /** Until the first call to `pop`, the mask image for the mask operation will be recorded. */
+    public function push_mask(GskMaskMode $mask_mode): void {}
+
+    /** Modifies the opacity of an image. */
+    public function push_opacity(float $opacity): void {}
+
+    /** Creates a node that repeats the child node. */
+    public function push_repeat(GrapheneRect $bounds, ?GrapheneRect $child_bounds): void {}
+
+    /**
+     * Restores $snapshot to the state saved by a preceding call to `save` and removes that state
+     * from the stack of saved states.
+     */
+    public function restore(): void {}
+
+    /**
+     * Rotates @$snapshot's coordinate system by $angle degrees in 2D space - or in 3D speak,
+     * rotates around the Z axis. The rotation happens around the origin point of (0, 0) in the
+     * $snapshot's current coordinate system.
+     */
+    public function rotate(float $angle): void {}
+
+    /** Makes a copy of the current state of $snapshot and saves it on an internal stack. */
+    public function save(): void {}
+
+    /** Scales $snapshot's coordinate system in 2-dimensional space by the given factors. */
+    public function scale(float $factor_x, float $factor_y): void {}
+
+    /** Scales $snapshot's coordinate system by the given factors. */
+    public function scale_3d(float $factor_x, float $factor_y, float $factor_z): void {}
+
+    /** Returns a paintable encapsulating the render node that was constructed by $snapshot. */
+    public function to_paintable(?GrapheneSize $size): ?GdkPaintable {}
+
+    /** Translates $snapshot's coordinate system by $point in 2-dimensional space. */
+    public function translate(GraphenePoint $point): void {}
+}
+
+/**
  * A `GListModel` that sorts the elements of an underlying model according to a `GtkSorter`.
  *
  * @property ?bool $incremental
@@ -6627,6 +6727,14 @@ class GtkText extends GtkWidget implements GtkEditable
 
     /** Creates a new `GtkText` with the specified text buffer. */
     public static function new_with_buffer(GtkEntryBuffer $buffer): GtkText {}
+
+    /**
+     * Determine the positions of the strong and weak cursors if the insertion point in the layout
+     * is at $position.
+     *
+     * @return array{GrapheneRect, GrapheneRect}
+     */
+    public function compute_cursor_extents(int $position): array {}
 
     /**
      * Returns whether pressing Enter will activate the default widget for the window containing
@@ -8059,6 +8167,16 @@ class GtkTextView extends GtkWidget implements GtkScrollable
     public function vfunc_set_anchor(): void {}
 
     /**
+     * Native `snapshot_layer` (TextViewClass.snapshot_layer): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_snapshot_layer()` from an override. The snapshot_layer vfunc is
+     * called before and after the text view is drawing its own text. Applications can override
+     * this vfunc in a subclass to draw customized content underneath or above the text. In the
+     * %GTK_TEXT_VIEW_LAYER_BELOW_TEXT and %GTK_TEXT_VIEW_LAYER_ABOVE_TEXT layers the drawing is
+     * done in the buffer coordinate space.
+     */
+    public function vfunc_snapshot_layer(int $layer, GtkSnapshot $snapshot): void {}
+
+    /**
      * Native `toggle_overwrite` (TextViewClass.toggle_overwrite): the GTK implementation below any
      * PHP subclass, for `parent::vfunc_toggle_overwrite()` from an override. The class handler for
      * the `GtkTextView::toggle-overwrite` keybinding signal.
@@ -8381,8 +8499,17 @@ class GtkWidget extends GObject
     /** Called by widgets as the user moves around the window using keyboard shortcuts. */
     public function child_focus(GtkDirectionType $direction): bool {}
 
+    /** Computes the bounds for $widget in the coordinate space of $target. */
+    public function compute_bounds(GtkWidget $target): ?GrapheneRect {}
+
     /** Computes whether a container should give this widget extra space when possible. */
     public function compute_expand(GtkOrientation $orientation): bool {}
+
+    /**
+     * Translates the given $point in $widget's coordinates to coordinates relative to $target’s
+     * coordinate system.
+     */
+    public function compute_point(GtkWidget $target, GraphenePoint $point): ?GraphenePoint {}
 
     /** Tests if the point at ($x, $y) is contained in $widget. */
     public function contains(float $x, float $y): bool {}
@@ -8790,6 +8917,9 @@ class GtkWidget extends GObject
     /** Returns whether $widget should contribute to the measuring and allocation of its parent. */
     public function should_layout(): bool {}
 
+    /** Snapshot the a child of $widget. */
+    public function snapshot_child(GtkWidget $child, GtkSnapshot $snapshot): void {}
+
     /** Triggers a tooltip query on the display where the toplevel of $widget is located. */
     public function trigger_tooltip_query(): void {}
 
@@ -8916,6 +9046,13 @@ class GtkWidget extends GObject
      * runs. GtkWindow, GtkDrawingArea and a direct GtkWidget subclass have none and do reach it.
      */
     public function vfunc_size_allocate(int $width, int $height, int $baseline): void {}
+
+    /**
+     * Native `snapshot` (WidgetClass.snapshot): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_snapshot()` from an override. Vfunc called when a new snapshot of the widget
+     * has to be taken.
+     */
+    public function vfunc_snapshot(GtkSnapshot $snapshot): void {}
 
     /**
      * Native `state_flags_changed` (WidgetClass.state_flags_changed): the GTK implementation below
