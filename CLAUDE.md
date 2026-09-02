@@ -125,10 +125,13 @@ default `build`, e.g. `--enable-gtk4-testing`). A build is incremental (plain `m
 configure arguments are unchanged and `Makefile` is newer than `config.m4`; otherwise it
 reconfigures from clean (`.ci/configure.args` remembers the arguments).
 
-clang-tidy is the most expensive thing in the pipeline (~200 s over the whole tree), so a run
-remembers which files it linted at which content in `.ci/tidy-ok` (gitignored — CI always does a
-full pass) and skips them next time; editing any header, `.clang-tidy` or a compiler flag
-invalidates the lot, and `GTK4_LINT_ALL=1` forces it. `gen/gir.php` and `gen_stub.php` write a
+clang-tidy is by far the most expensive thing in the pipeline (~280 s cold over the whole tree on
+16 cores, 748 s of an 851 s job on a CI runner — the entire critical path), so a run remembers
+which files it linted at which content in `.ci/tidy-ok` (gitignored; `cpp-lint.yml` restores it
+through `actions/cache`, keyed additionally on the clang-tidy and GTK/PHP versions that key
+cannot see, so a new toolchain still relints everything) and skips them next time; editing a header,
+`.clang-tidy` or a compiler flag invalidates the lot, and `GTK4_LINT_ALL=1` forces it.
+`gen/gir.php` and `gen_stub.php` write a
 generated file **only when its content changed**, so an unchanged tree keeps its mtimes and `make`
 stays a no-op — rewriting identical files used to cost ~50 s of recompiling on every `ci.sh` run.
 Together those two make a push that touched no C++ take seconds.

@@ -47,6 +47,28 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             pkg-config libgtk-4-dev libwebkitgtk-6.0-dev gir1.2-gtk-4.0 clang-tidy-20 clang-format-20
 
+      # ci.sh remembers which files it linted at which content (.ci/tidy-ok), keyed on
+      # .clang-tidy, every src/ header and the include flags - so a push that touched no C++
+      # relints nothing. That file is gitignored, so without a cache CI re-lints all ~180
+      # translation units every run: 748s of an 851s job, the whole critical path.
+      #
+      # What ci.sh's own key cannot see is the toolchain: a new clang-tidy or new GTK/PHP headers
+      # change what the same file analyses to. Those go in the *cache* key, so any of them starts
+      # from an empty cache and every file is linted again.
+      - name: Fingerprint the analysis toolchain
+        id: toolchain
+        run: |
+          printf 'key=%s\n' \
+            "$(clang-tidy-20 --version | sha256sum | cut -c1-16)-gtk$(pkg-config --modversion gtk4)-php$(php-config --version)" \
+            >> "$GITHUB_OUTPUT"
+
+      - name: Cache clang-tidy results
+        uses: actions/cache@v6
+        with:
+          path: .ci/tidy-ok
+          key: tidy-ok-${{ steps.toolchain.outputs.key }}-${{ github.sha }}
+          restore-keys: tidy-ok-${{ steps.toolchain.outputs.key }}-
+
       # config.h (build metadata) is what src/php_gtk4.h includes; configure generates it.
       - name: Configure
         env:

@@ -258,8 +258,9 @@ stage_cpp_lint() {
 
     # clang-tidy parses the whole GTK/PHP header stack per translation unit, which is the
     # most expensive thing in the pipeline by far. Nothing about a .cpp changes between two
-    # runs unless its content does, so a run remembers what it linted (.ci/tidy-ok, gitignored,
-    # so CI always does a full pass). Headers are the exception: one of them changes the
+    # runs unless its content does, so a run remembers what it linted (.ci/tidy-ok, gitignored;
+    # cpp-lint.yml restores it through actions/cache, keyed additionally on the clang-tidy and
+    # GTK/PHP versions this key cannot see). Headers are the exception: one of them changes the
     # meaning of every TU that includes it, and so does .clang-tidy or a compiler flag -
     # any of those invalidates the whole cache. GTK4_LINT_ALL=1 forces a full pass.
     local tidy_cache=".ci/tidy-ok" tidy_key
