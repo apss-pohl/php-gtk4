@@ -100,6 +100,49 @@ instances) lives in the module globals struct in `src/core/globals.h`, accessed 
 once in MINIT and read-only afterwards, so they are shared. CI builds and tests NTS and ZTS for
 every supported PHP on Linux and Windows (`tests.yml`, `windows.yml`); the release binaries stay NTS.
 
+### Testing a ZTS build locally
+
+Distributions ship NTS only, so a ZTS interpreter has to be built once — into a prefix of your
+own, so nothing system-wide changes and no `sudo` is needed:
+
+```sh
+cd /path/to/php-src            # a PHP >= 8.4 source tree
+./configure --prefix="$HOME/.local/php-8.4-zts" --enable-zts \
+    --disable-cgi --without-pear --with-zlib \
+    --enable-mbstring --enable-tokenizer --with-libxml --enable-dom \
+    --enable-xmlwriter --enable-xmlreader --enable-simplexml --enable-phar
+make clean && make -j"$(nproc)" && make install
+```
+
+Neither the extension list nor `make clean` is optional. `tests/run.sh` runs PHPUnit through
+`bin/php-gtk4` rather than `php -n` (see "Running the tests"), so dom/mbstring/tokenizer/xmlwriter
+have to be in the interpreter, and the PNG fixtures the tests build need `zlib` — CI's images
+bundle it, a source build does not enable it by default. `make clean` matters when the tree was
+configured NTS before: ZTS turns on `ZEND_MAX_EXECUTION_TIMERS` and stale objects link against
+symbols that were not compiled (`undefined reference to zend_max_execution_timer_init`).
+
+A source build loads no `php.ini` at all, and PHP's *built-in* defaults are not the ones a
+distribution ships — `zend.exception_ignore_args` is `0` rather than `1`, so an exception's stack
+trace keeps its arguments alive and tests that assert an object is freed will fail. Install one:
+
+```sh
+cp php.ini-production "$HOME/.local/php-8.4-zts/lib/php.ini"
+```
+
+Then point `ci.sh` at it — `PHPIZE` is derived from `PHP_CONFIG`:
+
+```sh
+PHP="$HOME/.local/php-8.4-zts/bin/php" PHP_CONFIG="$HOME/.local/php-8.4-zts/bin/php-config" \
+    ./ci.sh --only=build,load,test
+```
+
+Worth doing before pushing anything that touches `src/core/globals.h` or that GLib/GTK can call
+back on a thread of its own: `GTK4_G()` resolves through per-thread storage under ZTS, so a
+callback that runs on one of GTK's worker threads reads globals that do not exist there. A
+`GLogWriterFunc` that recorded into the module globals segfaulted exactly this way — NTS has a
+single globals block and never noticed, and the sanitizer and valgrind stages did not either.
+`phpgtk::on_gui_thread()` (`src/core/mainloop.h`) is the guard for that case.
+
 **Using GTK from more than one thread** does not work, and that is GTK's rule, not ours: every
 `gtk_*` call must come from the thread that owns the default `GMainContext` — the one that ran
 `Gtk::init()`. The extension records that thread and `Gtk::init()`, `GtkApplication::run()`,

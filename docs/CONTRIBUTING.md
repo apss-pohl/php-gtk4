@@ -24,6 +24,9 @@ steps if the tree being pushed was never checked (a `--no-verify` commit). Skip 
 ## Hard constraints
 
 - **PHP 8.4+ only**, NTS or ZTS. No compatibility shims for older PHP; use 8.4 features freely.
+  Distributions ship NTS, so testing a ZTS build takes a one-off source build into a prefix of
+  your own — docs/BUILD.md "Testing a ZTS build locally". Worth it before touching
+  `src/core/globals.h` or adding a callback GLib can run on a thread of its own.
 - **C++20**, **GTK 4.14+** — guard anything newer with `GTK_CHECK_VERSION`. Never GTK 3 APIs.
 - **Naming is snake_case, final.** Methods mirror the C API minus the type prefix
   (`gtk_window_set_title` → `set_title`); properties keep GTK's names with underscores. No
