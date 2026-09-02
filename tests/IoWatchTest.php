@@ -48,8 +48,8 @@ final class IoWatchTest extends GtkTestCase
     public function testReadableFiresWithTheStreamAndCondition(): void
     {
         [$a, $b] = self::pair();
+        /** @var list<array{int, string|false}> $seen what the callback records */
         $seen = [];
-        /** @var \Closure(): list<array{int, string|false}> $recorded what the callback recorded (by reference) */
         $recorded = function () use (&$seen): array {
             return $seen;
         };
