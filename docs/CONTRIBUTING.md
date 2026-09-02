@@ -188,7 +188,9 @@ so a bug that reproduces in a `tests/` case is the most useful shape of all.
 - The PR title is a Conventional Commit too — a squash merge makes it the commit on `main`.
 - Add a line under `## [Unreleased]` in `CHANGELOG.md` for anything user-visible.
 - Don't bump `VERSION` in a feature PR — that is the release trigger (`docs/RELEASING.md`).
-- Dependabot handles composer and actions updates; don't bundle those.
+- Dependabot handles composer, actions and npm updates; don't bundle those. To do the same round
+  locally in one commit — including the pins Dependabot cannot see — run `./update-deps.sh`
+  (`--check` only reports, `--help` lists the sections).
 - Windows: the build is `config.w32` (PHP SDK + gvsbuild GTK, see the Windows section of
   `docs/BUILD.md`). Nothing under `src/` may become platform-specific except `pin_gtk_library()`;
   anything that touches `config.m4` (sources, defines, features) needs the same change in `config.w32`.

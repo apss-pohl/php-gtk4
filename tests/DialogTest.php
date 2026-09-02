@@ -59,11 +59,15 @@ final class DialogTest extends GtkTestCase
      */
     public function testFileDialogSplitsAnInitialFile(): void
     {
+        // Split with a real directory and the platform's own separator: GLib uses
+        // g_path_get_dirname(), which answers `\etc` for `/etc/hostname` on Windows, so a
+        // hard-coded POSIX path fails there for a reason that has nothing to do with the binding.
+        $folder = sys_get_temp_dir();
         $dialog = new GtkFileDialog();
-        $dialog->set_initial_file('/etc/hostname');
+        $dialog->set_initial_file($folder . DIRECTORY_SEPARATOR . 'hostname');
 
         self::assertNull($dialog->get_initial_file());
-        self::assertSame('/etc', $dialog->get_initial_folder());
+        self::assertSame($folder, $dialog->get_initial_folder());
         self::assertSame('hostname', $dialog->get_initial_name());
     }
 

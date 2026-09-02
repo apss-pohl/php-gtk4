@@ -330,7 +330,12 @@ the concrete class was unbound — bind the class, never weaken the signature);
 `DocsTest` guards CLAUDE.md sections and doc-mentioned paths; `CommitLintTest` and
 `ReleaseNotesTest` pin every accepted/rejected commit shape and the grouping of the release body.
 `CHANGELOG.md` has the release
-checklist; Dependabot watches composer and actions.
+checklist; Dependabot watches composer, actions and npm. **`./update-deps.sh`** is the local
+equivalent of those PRs plus what Dependabot cannot see: it updates `composer.lock` (`--major` also
+raises a constraint), the `package.json` pins and every `uses: owner/repo@v<N>` in the workflows, and
+*reports* the three pins that are bumped by hand — `GVSBUILD_VERSION`/`GVSBUILD_SHA256`
+(`--gvsbuild` writes them), the vendored `gen/gen_stub.php` against the installed php-src copy, and
+the runner images / clang pins. `--check` writes nothing and exits non-zero when anything is behind.
 
 ## CI
 

@@ -208,6 +208,9 @@ curl -s https://api.github.com/repos/wingtk/gvsbuild/releases/tags/2026.8.0 \
   | jq -r '.assets[] | select(.name | test("GTK4")) | .digest'
 ```
 
+`./update-deps.sh --only=gvsbuild` does that lookup for you and prints the current pin next to
+gvsbuild's newest release and its digest; `--gvsbuild` writes both values into the recipe.
+
 To move to a newer GTK on Windows: pick a release from <https://github.com/wingtk/gvsbuild/releases>,
 set it in `windows-build.yml` (`WorkflowsTest` fails if a caller carries its own pin), push, and let
 `windows.yml` prove it. Do it when a newer GTK is needed or when a release is cut (it is on the

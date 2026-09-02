@@ -63,6 +63,13 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **`./update-deps.sh`** — one pass over everything this repository pins to a third party.
+  `composer.lock` and the `composer.json` constraints (`--major`), the `package.json` pins, and
+  every `uses: owner/repo@v<N>` in the workflows are updated in place; the pins Dependabot cannot
+  see are reported — the Windows GTK pin (`--gvsbuild` writes `GVSBUILD_VERSION` and its digest),
+  the vendored `gen/gen_stub.php` against the installed php-src copy, and the runner images.
+  `--check` writes nothing and exits non-zero when anything is behind, so it fits a cron.
+
 - Three `tests/phpt` cases for runtime paths the PHPUnit suite structurally cannot reach: the
   origin a throw inside an **async callback** is blamed on (stderr only), and what request
   shutdown does with a **live PHP subclass** in a widget tree and with an **armed I/O watch**
