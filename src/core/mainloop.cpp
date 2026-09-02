@@ -57,6 +57,14 @@ void record_gui_thread() {
   gui_thread.compare_exchange_strong(expected, g_thread_self());
 }
 
+// Whether this thread is the one that owns GTK. Unlike assert_gui_thread() this never throws:
+// a GLib log writer runs on whatever thread logged, where under ZTS there is no request and
+// GTK4_G() would resolve through a TSRM slot that is not ours.
+bool on_gui_thread() {
+  GThread *owner = gui_thread.load();
+  return owner != nullptr && owner == g_thread_self();
+}
+
 // Throws \Error if GTK was initialised on another thread. No-op before init (GTK is not in use
 // yet) and always true on NTS, where there is only one PHP thread.
 bool assert_gui_thread(const char *what) {

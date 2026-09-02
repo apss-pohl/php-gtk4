@@ -33,6 +33,9 @@ bool in_unregistered_nested_loop();
 // and single-threaded, whatever PHP's build: with ZTS, only one request
 // thread may own the GUI. Throws \Error and returns false on a violation.
 bool assert_gui_thread(const char *what);
+// Whether this is the thread Gtk::init() ran on. A GLib log writer is process-wide and GTK
+// calls it from whatever thread logged, so anything that touches per-request state has to ask.
+bool on_gui_thread();
 void record_gui_thread();
 
 }  // namespace phpgtk

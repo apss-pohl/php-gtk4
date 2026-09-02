@@ -168,7 +168,9 @@ namespace {
 // text is buffered and read later, because a log can arrive inside any GTK frame.
 GLogWriterOutput capture_writer(GLogLevelFlags level, const GLogField *fields, gsize n_fields,
                                 gpointer) {
-  if (GTK4_G(capturing_logs) &&
+  // Only on the thread that owns GTK: this writer is process-wide, and under ZTS the module
+  // globals below belong to one request on one thread. GTK logs from its own worker threads.
+  if (on_gui_thread() && GTK4_G(capturing_logs) &&
       (static_cast<unsigned>(level) & (static_cast<unsigned>(G_LOG_LEVEL_CRITICAL) |
                                        static_cast<unsigned>(G_LOG_LEVEL_WARNING))) != 0U) {
     const char *domain = nullptr;
