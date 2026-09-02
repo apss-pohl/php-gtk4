@@ -20,6 +20,9 @@ final class StackLayout extends GtkLayoutManager
 
     public int $measurements = 0;
 
+    /** +1 for every vfunc_root(), -1 for every vfunc_unroot(). */
+    public int $rooted = 0;
+
     /** @var list<array{int, int, int, int}> width, height, x, y per child of the last allocation */
     public array $placed = [];
 
@@ -51,6 +54,18 @@ final class StackLayout extends GtkLayoutManager
     public function vfunc_get_request_mode(GtkWidget $widget): GtkSizeRequestMode
     {
         return GtkSizeRequestMode::ConstantSize;
+    }
+
+    public function vfunc_root(): void
+    {
+        $this->rooted++;
+        parent::vfunc_root();
+    }
+
+    public function vfunc_unroot(): void
+    {
+        $this->rooted--;
+        parent::vfunc_unroot();
     }
 
     /** @return list<GtkWidget> */

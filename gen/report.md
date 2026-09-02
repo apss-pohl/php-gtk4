@@ -124,16 +124,29 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `set_source_tag` — gpointer parameter
 - `set_task_data` — gpointer parameter
 
+## GdkClipboard
+
+- `get_content` — return type Gdk.ContentProvider (not in the closure)
+- `get_formats` — return type Gdk.ContentFormats
+- `read_finish` — return Gio.InputStream plus out parameters
+- `read_value_async` — parameter `type` of type Gdk.GType
+- `read_value_finish` — return type GObject.Value
+- `set` — shadowed by set_value
+- `set_content` — parameter `provider` of type Gdk.ContentProvider
+- `set_valist` — parameter `type` of type Gdk.GType
+- `set_value` — parameter `value` of type GObject.Value
+- `__construct` — skip.txt: GDK owns the clipboards (GdkDisplay::get_clipboard()/get_primary_clipboard()); `new` aborts the process in gdk_clipboard_set_property ("assertion failed: (priv->display != NULL)")
+- `property content` — property type Gdk.ContentProvider not mappable
+- `property formats` — property type Gdk.ContentFormats not mappable
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## GdkDisplay
 
 - `create_gl_context` — return type Gdk.GLContext (not in the closure)
 - `device_is_grabbed` — parameter `device` of type Gdk.Device
 - `get_app_launch_context` — return type Gdk.AppLaunchContext (not in the closure)
-- `get_clipboard` — return type Gdk.Clipboard (not in the closure)
 - `get_default_seat` — return type Gdk.Seat (not in the closure)
 - `get_dmabuf_formats` — return type Gdk.DmabufFormats
-- `get_monitor_at_surface` — parameter `surface` of type Gdk.Surface
-- `get_primary_clipboard` — return type Gdk.Clipboard (not in the closure)
 - `get_setting` — parameter `value` of type GObject.Value
 - `get_startup_notification_id` — deprecated (4.10)
 - `list_seats` — list of Gdk.Seat
@@ -146,11 +159,33 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `property dmabuf-formats` — property type Gdk.DmabufFormats not mappable
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## GdkMonitor
+
+- `__construct` — skip.txt: GDK owns the monitors (GdkDisplay::get_monitors()); a standalone one answers NULL from get_display(), which its declared type does not allow
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## GdkPaintable
 
 - `new_empty` — static function on an interface (PHP interfaces have no bodies)
 - `snapshot` — parameter `snapshot` of type Gdk.Snapshot
 - `vfunc snapshot` — parameter `snapshot` of type Gdk.Snapshot
+
+## GdkSurface
+
+- `create_cairo_context` — return type Gdk.CairoContext (not in the closure)
+- `create_gl_context` — return type Gdk.GLContext (not in the closure)
+- `create_similar_surface` — deprecated (4.12)
+- `create_vulkan_context` — deprecated (4.14)
+- `get_device_cursor` — parameter `device` of type Gdk.Device
+- `get_device_position` — parameter `device` of type Gdk.Device
+- `get_frame_clock` — return type Gdk.FrameClock (not in the closure)
+- `set_device_cursor` — parameter `device` of type Gdk.Device
+- `set_input_region` — parameter `region` of type cairo.Region
+- `set_opaque_region` — parameter `region` of type cairo.Region
+- `translate_coordinates` — inout parameter x
+- `__construct` — skip.txt: GDK creates surfaces for a widget (GtkWindow) or through new_toplevel()/new_popup(); a PHP subtype has no display and aborts in gdk_surface_set_property
+- `property frame-clock` — property type Gdk.FrameClock not mappable
+- `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GdkTexture
 
@@ -196,6 +231,23 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkBoxLayout
 
 - `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GtkBuilder
+
+- `new_from_file` — skip.txt: as new_from_string; add_from_file() throws instead
+- `new_from_resource` — skip.txt: as new_from_string; add_from_resource() throws instead
+- `new_from_string` — skip.txt: g_error()s (Gtk-ERROR, aborts the process) on any document GTK cannot parse or instantiate, and a .ui document is data - `new GtkBuilder()` + add_from_string() reports the same failure as a Gtk4\GError
+- `create_closure` — return type GObject.Closure
+- `extend_with_template` — parameter `template_type` of type Gtk.GType
+- `get_type_from_name` — return type Gtk.GType
+- `value_from_string` — caller-allocates out parameter `value` of type GObject.Value
+- `value_from_string_type` — parameter `type` of type Gtk.GType
+
+## GtkBuilderScope
+
+- `vfunc create_closure` — GError out parameter
+- `vfunc get_type_from_function` — return or argument type not convertible in a thunk
+- `vfunc get_type_from_name` — return or argument type not convertible in a thunk
 
 ## GtkCalendar
 
@@ -308,6 +360,19 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `__construct` — skip.txt: GtkGridLayout creates its layout children, as Gtk.LayoutChild
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## GtkIconPaintable
+
+- `__construct` — skip.txt: GtkIconTheme creates them (lookup_icon()); a standalone one paints nothing and has neither file nor icon name
+- `property file` — property type Gio.File not mappable
+
+## GtkIconTheme
+
+- `get_icon_sizes` — return type array
+- `get_search_path` — return type array
+- `has_gicon` — parameter `gicon` of type Gio.Icon
+- `lookup_by_gicon` — parameter `icon` of type Gio.Icon
+- `set_search_path` — parameter `path` of type array (C array)
+
 ## GtkImage
 
 - `new_from_gicon` — parameter `icon` of type Gio.Icon
@@ -345,6 +410,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkMultiSelection
 
 - `property item-type` — property type Gtk.GType not mappable
+
+## GtkNative
+
+- `get_for_surface` — static function on an interface (PHP interfaces have no bodies)
+- `get_renderer` — return type Gsk.Renderer (not in the closure)
 
 ## GtkNoSelection
 
@@ -437,20 +507,14 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkTextBuffer
 
-- `add_selection_clipboard` — parameter `clipboard` of type Gdk.Clipboard
-- `copy_clipboard` — parameter `clipboard` of type Gdk.Clipboard
 - `create_child_anchor` — return type Gtk.TextChildAnchor (not in the closure)
 - `create_tag` — varargs
-- `cut_clipboard` — parameter `clipboard` of type Gdk.Clipboard
 - `get_iter_at_child_anchor` — parameter `anchor` of type Gtk.TextChildAnchor
 - `get_selection_content` — return type Gdk.ContentProvider (not in the closure)
 - `insert_child_anchor` — parameter `anchor` of type Gtk.TextChildAnchor
 - `insert_with_tags` — varargs
 - `insert_with_tags_by_name` — varargs
-- `paste_clipboard` — parameter `clipboard` of type Gdk.Clipboard
-- `remove_selection_clipboard` — parameter `clipboard` of type Gdk.Clipboard
 - `vfunc insert_child_anchor` — parameter `anchor` of type Gtk.TextChildAnchor
-- `vfunc paste_done` — parameter `clipboard` of type Gdk.Clipboard
 
 ## GtkTextIter
 
@@ -505,19 +569,14 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_allocated_width` — deprecated (4.12)
 - `get_allocation` — deprecated (4.12)
 - `get_ancestor` — parameter `widget_type` of type Gtk.GType
-- `get_clipboard` — return type Gdk.Clipboard (not in the closure)
-- `get_cursor` — return type Gdk.Cursor (not in the closure)
 - `get_font_map` — return type Pango.FontMap (not in the closure)
 - `get_font_options` — return type cairo.FontOptions
 - `get_frame_clock` — return type Gdk.FrameClock (not in the closure)
-- `get_native` — return type Gtk.Native (not in the closure)
 - `get_pango_context` — return type Pango.Context (not in the closure)
-- `get_primary_clipboard` — return type Gdk.Clipboard (not in the closure)
 - `get_settings` — return type Gtk.Settings (not in the closure)
 - `get_style_context` — deprecated (4.10)
 - `get_template_child` — parameter `widget_type` of type Gtk.GType
 - `hide` — deprecated (4.10)
-- `set_cursor` — parameter `cursor` of type Gdk.Cursor
 - `set_font_map` — parameter `font_map` of type Pango.FontMap
 - `set_font_options` — parameter `options` of type cairo.FontOptions
 - `show` — deprecated (4.10)
@@ -530,11 +589,9 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `vfunc query_tooltip` — parameter `tooltip` of type Gtk.Tooltip
 - `vfunc show` — deprecated (4.10)
 - `vfunc snapshot` — parameter `snapshot` of type Gtk.Snapshot
-- `property cursor` — property type Gdk.Cursor not mappable
 
 ## GtkWindow
 
-- `fullscreen_on_monitor` — parameter `monitor` of type Gdk.Monitor
 - `get_group` — return type Gtk.WindowGroup (not in the closure)
 - `present_with_time` — deprecated (4.14)
 
@@ -552,10 +609,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio.ListStore`: __construct
 - `Gio.SimpleAction`: set_state
 - `Gtk.Box`: get_children
+- `Gtk.Builder`: add_from_string, add_objects_from_string, set_current_object, set_handlers
 - `Gtk.CustomFilter`: __construct, set_filter_func
 - `Gtk.CustomSorter`: __construct, set_sort_func
 - `Gtk.DrawingArea`: set_draw_func
 - `Gtk.FileFilter`: new_from_gvariant
+- `Gtk.IconTheme`: set_theme_name
 - `Gtk.LayoutManager`: get_layout_child, get_request_mode
 - `Gtk.MenuButton`: set_create_popup_func
 - `Gtk.Popover`: popup
@@ -577,6 +636,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkBitset.cpp`
 - `Gtk/GtkBox.cpp`
 - `Gtk/GtkBoxLayout.cpp`
+- `Gtk/GtkBuilder.cpp`
+- `Gtk/GtkBuilderScope.cpp`
 - `Gtk/GtkButton.cpp`
 - `Gtk/GtkCalendar.cpp`
 - `Gtk/GtkCenterLayout.cpp`
@@ -621,6 +682,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkGridLayoutChild.cpp`
 - `Gtk/GtkGridView.cpp`
 - `Gtk/GtkHeaderBar.cpp`
+- `Gtk/GtkIconPaintable.cpp`
+- `Gtk/GtkIconTheme.cpp`
 - `Gtk/GtkImage.cpp`
 - `Gtk/GtkLabel.cpp`
 - `Gtk/GtkLayoutChild.cpp`
@@ -630,6 +693,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkListView.cpp`
 - `Gtk/GtkMenuButton.cpp`
 - `Gtk/GtkMultiSelection.cpp`
+- `Gtk/GtkNative.cpp`
 - `Gtk/GtkNoSelection.cpp`
 - `Gtk/GtkNotebook.cpp`
 - `Gtk/GtkNotebookPage.cpp`
@@ -699,8 +763,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GSimpleAction.cpp`
 - `Gio/GTask.cpp`
 - `Gio/Gio.stub.php`
+- `Gdk/GdkClipboard.cpp`
+- `Gdk/GdkCursor.cpp`
 - `Gdk/GdkDisplay.cpp`
+- `Gdk/GdkMonitor.cpp`
 - `Gdk/GdkPaintable.cpp`
+- `Gdk/GdkSurface.cpp`
 - `Gdk/GdkTexture.cpp`
 - `Gdk/Gdk.stub.php`
 - `gen_minit.inc`
@@ -711,6 +779,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkAlertDialogSmokeTest.php`
 - `tests/Generated/GtkApplicationSmokeTest.php`
 - `tests/Generated/GtkBinLayoutSmokeTest.php`
+- `tests/Generated/GtkBuilderSmokeTest.php`
 - `tests/Generated/GtkButtonSmokeTest.php`
 - `tests/Generated/GtkCalendarSmokeTest.php`
 - `tests/Generated/GtkCenterLayoutSmokeTest.php`
@@ -751,6 +820,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkGridLayoutSmokeTest.php`
 - `tests/Generated/GtkGridViewSmokeTest.php`
 - `tests/Generated/GtkHeaderBarSmokeTest.php`
+- `tests/Generated/GtkIconPaintableSmokeTest.php`
+- `tests/Generated/GtkIconThemeSmokeTest.php`
 - `tests/Generated/GtkImageSmokeTest.php`
 - `tests/Generated/GtkLabelSmokeTest.php`
 - `tests/Generated/GtkLayoutManagerSmokeTest.php`
@@ -800,3 +871,4 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GMenuItemSmokeTest.php`
 - `tests/Generated/GSimpleActionSmokeTest.php`
 - `tests/Generated/GTaskSmokeTest.php`
+- `tests/Generated/GdkCursorSmokeTest.php`

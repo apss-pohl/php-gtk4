@@ -265,7 +265,8 @@ examples → CI → commit):
 | 5 | dialogs (4.10 async API): `GtkAlertDialog`, `GtkFileDialog`, `GtkColorDialog`, `GtkFontDialog`, `GtkAboutDialog`, `GtkFileFilter` | `GAsyncReadyCallback` scope (async) + `*_finish` → `GError` throws |
 | 6 | text: `GtkTextView`, `GtkTextBuffer`, `GtkTextIter` (boxed), `GtkTextMark/Tag/TagTable` | boxed with many methods (`GtkTextIter`) |
 | 7 | list models/views: `GtkStringList`, `GtkSingleSelection`, `GtkMultiSelection`, `GtkListView`, `GtkColumnView(+Column)`, `GtkSignalListItemFactory`, `GtkTreeListModel` | `GtkListItemFactory` promoted; done 2026-09-01 (+ `GtkGridView`, `GtkNoSelection`, `GtkBitset`, `GtkTreeExpander`, `GtkScrollInfo`) |
-| 8 | styling/builder/Gdk: `GtkCssProvider`, `GtkBuilder`, `GtkIconTheme`, `GdkDisplay`, `GdkMonitor`, `GdkSurface`, `GdkCursor`, `GdkClipboard` | CSS + `GdkDisplay` done 2026-08-28, `GdkMonitor` 2026-08-31; `GtkBuilder` scope promoted |
+| 8 | styling/builder/Gdk: `GtkCssProvider`, `GtkBuilder`, `GtkIconTheme`, `GdkDisplay`, `GdkMonitor`, `GdkSurface`, `GdkCursor`, `GdkClipboard` | CSS + `GdkDisplay` done 2026-08-28; the rest done 2026-09-02 (+ `GtkIconPaintable`, `GtkNative`) — the `GtkBuilderScope` that resolves a handler name to a PHP callable is hand-written (`gen/overrides/Gtk.Builder.cpp`), not a promoted class |
+| out of band | layout managers (`GtkLayoutManager` + the concrete ones, `GtkWidget::allocate`) and the cairo image source (`CairoSurface`, `GdkTexture::download()`) | done 2026-09-01; wave 1 bound the containers but not the object GTK 4 delegates their allocation to |
 | later | printing, `GdkPixbuf*` (prefer `GdkTexture`), WebKitGTK 6 | — |
 
 ## 4. GTK4-specific surface

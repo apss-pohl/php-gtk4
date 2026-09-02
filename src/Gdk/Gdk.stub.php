@@ -11,6 +11,51 @@
 namespace Gtk4;
 
 /**
+ * The `GdkClipboard` object represents data shared between applications or inside an application.
+ *
+ * @property ?GdkDisplay $display
+ * @property-read ?bool $local
+ */
+class GdkClipboard extends GObject
+{
+    /** GdkClipboard has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Gets the `GdkDisplay` that the clipboard was created for. */
+    public function get_display(): GdkDisplay {}
+
+    /** Returns if the clipboard is local. */
+    public function is_local(): bool {}
+
+    /** Asynchronously requests an input stream to read the $clipboard's contents from. */
+    public function read_async(array $mime_types, int $io_priority, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Asynchronously request the $clipboard contents converted to a string. */
+    public function read_text_async(?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes an asynchronous clipboard read. */
+    public function read_text_finish(GAsyncResult $result): ?string {}
+
+    /** Asynchronously request the $clipboard contents converted to a `GdkPixbuf`. */
+    public function read_texture_async(?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes an asynchronous clipboard read. */
+    public function read_texture_finish(GAsyncResult $result): ?GdkTexture {}
+
+    /** Puts the given $text into the clipboard. */
+    public function set_text(string $text): void {}
+
+    /** Puts the given $texture into the clipboard. */
+    public function set_texture(GdkTexture $texture): void {}
+
+    /** Asynchronously instructs the $clipboard to store its contents remotely. */
+    public function store_async(int $io_priority, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes an asynchronous clipboard store. */
+    public function store_finish(GAsyncResult $result): bool {}
+}
+
+/**
  * Specifies the crossing mode for enter and leave events.
  */
 enum GdkCrossingMode: int
@@ -24,6 +69,42 @@ enum GdkCrossingMode: int
     case TouchBegin = 6;
     case TouchEnd = 7;
     case DeviceSwitch = 8;
+}
+
+/**
+ * `GdkCursor` is used to create and destroy cursors.
+ *
+ * @property ?GdkCursor $fallback
+ * @property ?int $hotspot_x
+ * @property ?int $hotspot_y
+ * @property ?string $name
+ * @property ?GdkTexture $texture
+ */
+class GdkCursor extends GObject
+{
+    /** A GdkCursor with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct() {}
+
+    /** Creates a new cursor by looking up $name in the current cursor theme. */
+    public static function new_from_name(string $name, ?GdkCursor $fallback = null): GdkCursor {}
+
+    /** Creates a new cursor from a `GdkTexture`. */
+    public static function new_from_texture(GdkTexture $texture, int $hotspot_x, int $hotspot_y, ?GdkCursor $fallback = null): GdkCursor {}
+
+    /** Returns the fallback for this $cursor. */
+    public function get_fallback(): ?GdkCursor {}
+
+    /** Returns the horizontal offset of the hotspot. */
+    public function get_hotspot_x(): int {}
+
+    /** Returns the vertical offset of the hotspot. */
+    public function get_hotspot_y(): int {}
+
+    /** Returns the name of the cursor. */
+    public function get_name(): ?string {}
+
+    /** Returns the texture for the cursor. */
+    public function get_texture(): ?GdkTexture {}
 }
 
 /**
@@ -54,11 +135,20 @@ class GdkDisplay extends GObject
     /** Flushes any requests queued for the windowing system. */
     public function flush(): void {}
 
+    /** Gets the clipboard used for copy/paste operations. */
+    public function get_clipboard(): GdkClipboard {}
+
+    /** Gets the monitor in which the largest area of $surface resides. */
+    public function get_monitor_at_surface(GdkSurface $surface): ?GdkMonitor {}
+
     /** Gets the list of monitors associated with this display. */
     public function get_monitors(): GListModel {}
 
     /** Gets the name of the display. */
     public function get_name(): string {}
+
+    /** Gets the clipboard used for the primary selection. */
+    public function get_primary_clipboard(): GdkClipboard {}
 
     /** Finds out if the display has been closed. */
     public function is_closed(): bool {}
@@ -212,6 +302,68 @@ final class GdkModifierType
 }
 
 /**
+ * `GdkMonitor` objects represent the individual outputs that are associated with a `GdkDisplay`.
+ *
+ * @property-read ?string $connector
+ * @property-read ?string $description
+ * @property ?GdkDisplay $display
+ * @property-read ?GdkRectangle $geometry
+ * @property-read ?int $height_mm
+ * @property-read ?string $manufacturer
+ * @property-read ?string $model
+ * @property-read ?int $refresh_rate
+ * @property-read ?float $scale
+ * @property-read ?int $scale_factor
+ * @property-read ?GdkSubpixelLayout $subpixel_layout
+ * @property-read ?bool $valid
+ * @property-read ?int $width_mm
+ */
+class GdkMonitor extends GObject
+{
+    /** GdkMonitor has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Gets the name of the monitor's connector, if available. */
+    public function get_connector(): ?string {}
+
+    /** Gets a string describing the monitor, if available. */
+    public function get_description(): ?string {}
+
+    /** Gets the display that this monitor belongs to. */
+    public function get_display(): GdkDisplay {}
+
+    /** Retrieves the size and position of the monitor within the display coordinate space. */
+    public function get_geometry(): GdkRectangle {}
+
+    /** Gets the height in millimeters of the monitor. */
+    public function get_height_mm(): int {}
+
+    /** Gets the name or PNP ID of the monitor's manufacturer. */
+    public function get_manufacturer(): ?string {}
+
+    /** Gets the string identifying the monitor model, if available. */
+    public function get_model(): ?string {}
+
+    /** Gets the refresh rate of the monitor, if available. */
+    public function get_refresh_rate(): int {}
+
+    /** Gets the internal scale factor that maps from monitor coordinates to device pixels. */
+    public function get_scale(): float {}
+
+    /** Gets the internal scale factor that maps from monitor coordinates to device pixels. */
+    public function get_scale_factor(): int {}
+
+    /** Gets information about the layout of red, green and blue primaries for pixels. */
+    public function get_subpixel_layout(): GdkSubpixelLayout {}
+
+    /** Gets the width in millimeters of the monitor. */
+    public function get_width_mm(): int {}
+
+    /** Returns `true` if the $monitor object corresponds to a physical monitor. */
+    public function is_valid(): bool {}
+}
+
+/**
  * Specifies the kind of crossing for enter and leave events.
  */
 enum GdkNotifyType: int
@@ -310,6 +462,91 @@ enum GdkScrollUnit: int
 {
     case Wheel = 0;
     case Surface = 1;
+}
+
+/**
+ * This enumeration describes how the red, green and blue components of physical pixels on an
+ * output device are laid out.
+ */
+enum GdkSubpixelLayout: int
+{
+    case Unknown = 0;
+    case None = 1;
+    case HorizontalRgb = 2;
+    case HorizontalBgr = 3;
+    case VerticalRgb = 4;
+    case VerticalBgr = 5;
+}
+
+/**
+ * A `GdkSurface` is a rectangular region on the screen.
+ *
+ * @property ?GdkCursor $cursor
+ * @property ?GdkDisplay $display
+ * @property-read ?int $height
+ * @property-read ?bool $mapped
+ * @property-read ?float $scale
+ * @property-read ?int $scale_factor
+ * @property-read ?int $width
+ */
+class GdkSurface extends GObject
+{
+    /** GdkSurface is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Create a new popup surface. */
+    public static function new_popup(GdkSurface $parent, bool $autohide): GdkSurface {}
+
+    /** Creates a new toplevel surface. */
+    public static function new_toplevel(GdkDisplay $display): GdkSurface {}
+
+    /** Emits a short beep associated to $surface. */
+    public function beep(): void {}
+
+    /**
+     * Destroys the window system resources associated with $surface and decrements $surface's
+     * reference count.
+     */
+    public function destroy(): void {}
+
+    /** Retrieves a `GdkCursor` pointer for the cursor currently set on the `GdkSurface`. */
+    public function get_cursor(): ?GdkCursor {}
+
+    /** Gets the `GdkDisplay` associated with a `GdkSurface`. */
+    public function get_display(): GdkDisplay {}
+
+    /** Returns the height of the given $surface. */
+    public function get_height(): int {}
+
+    /** Checks whether the surface has been mapped. */
+    public function get_mapped(): bool {}
+
+    /** Returns the internal scale that maps from surface coordinates to the actual device pixels. */
+    public function get_scale(): float {}
+
+    /**
+     * Returns the internal scale factor that maps from surface coordinates to the actual device
+     * pixels.
+     */
+    public function get_scale_factor(): int {}
+
+    /** Returns the width of the given $surface. */
+    public function get_width(): int {}
+
+    /** Hide the surface. */
+    public function hide(): void {}
+
+    /** Check to see if a surface is destroyed. */
+    public function is_destroyed(): bool {}
+
+    /** Forces a [signal@Gdk.Surface::render] signal emission for $surface to be scheduled. */
+    public function queue_render(): void {}
+
+    /** Request a layout phase from the surface's frame clock. */
+    public function request_layout(): void {}
+
+    /** Sets the default mouse pointer for a `GdkSurface`. */
+    public function set_cursor(?GdkCursor $cursor): void {}
 }
 
 /**

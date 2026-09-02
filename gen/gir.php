@@ -133,10 +133,10 @@ final class Generator
         foreach ($handwritten as $q) {
             $this->types->handwritten[$q] = true;
         }
+        $this->skipList = $skip;   // add() consults it: a skipped member pulls no enums
         foreach ($allow as $q) {
             $this->add($q);
         }
-        $this->skipList = $skip;
     }
 
     private function add(string $q): void
@@ -156,6 +156,18 @@ final class Generator
         // (GtkAccessible/GtkBuildable on every widget would triple the wave).
         // Enums/flags used by kept signatures are cheap: always emit them.
         foreach ($n->funcs as $f) {
+            // Only from a member that can still be emitted. The type-dependent reasons cannot be
+            // decided here (the closure is what decides them), but these three can, and a member
+            // that fails one of them must not drag an enum in: gdk_surface_create_similar_surface(),
+            // deprecated in 4.12, pulled cairo_content_t into the closure - and with it a
+            // src/cairo/ that shadows src/Cairo/ on a case-insensitive filesystem.
+            if (
+                $f->deprecated !== null
+                || ($f->version !== null && version_compare($f->version, GTK_FLOOR, '>'))
+                || isset($this->skipList[$n->qname() . '.' . $f->name])
+            ) {
+                continue;
+            }
             foreach ([$f->ret, ...array_map(fn($p) => $p->type, $f->params)] as $t) {
                 $tn = $this->gir->types[$t->name] ?? null;
                 if ($tn !== null && in_array($tn->kind, ['enum', 'bitfield'], true) && $tn->gtypeName !== null) {

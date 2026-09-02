@@ -198,7 +198,7 @@ Gtk.TreeExpander
 Gtk.Bitset
 Gtk.ScrollInfo
 
-# Wave 8 (layout, PLAN.md §3): the object GTK 4 delegates allocation to. A widget that has a
+# Layout managers (out of band, PLAN.md §3 wave 1's leftover): the object GTK 4 delegates allocation to. A widget that has a
 # layout manager never reaches WidgetClass.size_allocate/measure (VfuncTest pins that), so
 # without GtkLayoutManager a PHP subclass of GtkBox or GtkOverlay cannot influence its own
 # layout at all - vfunc_allocate()/vfunc_measure() on a manager is the way in, and
@@ -217,3 +217,24 @@ Gtk.OverlayLayoutChild
 Gtk.GridLayout
 Gtk.GridLayoutChild
 Gtk.SizeRequestMode
+
+# Wave 8 (styling/builder/Gdk, PLAN.md §3): what is left of the wave whose CSS and GdkDisplay
+# halves landed on 2026-08-28. GtkBuilder is the headline - a .ui file is how a GTK application
+# of any size describes its widgets, and GTK 4 replaced GtkBuilder::connect_signals() with
+# GtkBuilderScope, so the PHP side needs a scope that resolves a handler name to a callable.
+# The Gdk half is what a window has to ask about the screen it is on: the monitor, the surface,
+# the cursor over it, and the clipboard.
+Gtk.Builder
+Gtk.BuilderScope
+Gtk.IconTheme
+Gtk.IconPaintable
+Gtk.IconLookupFlags
+Gdk.Monitor
+Gdk.Surface
+Gdk.Cursor
+Gdk.Clipboard
+Gdk.SubpixelLayout
+Gtk.TextDirection
+# GtkNative is how a widget reaches the GdkSurface it is drawn on (gtk_native_get_surface());
+# without it GdkSurface would be bound and unreachable.
+Gtk.Native

@@ -15,6 +15,10 @@ use PHPUnit\Framework\TestCase;
  * <gio/glistmodel.h> the same way. So our per-namespace directories must not
  * mirror GTK's header names - the shared prototypes live in src/gen_prototypes.h, and
  * src/<Ns>/ holds no headers at all.
+ *
+ * The same filesystem also collapses two of *our* paths that differ only in case, so the
+ * generator must never emit a namespace directory beside one that already exists under another
+ * spelling (a stray cairo_content_t in the closure produced src/cairo/ next to src/Cairo/).
  */
 final class HeaderNamesTest extends TestCase
 {
@@ -60,6 +64,32 @@ final class HeaderNamesTest extends TestCase
             }
         }
         self::assertSame([], $clashes, 'rename these headers (see the class docblock)');
+    }
+
+    public function testNoTwoPathsUnderSrcDifferOnlyInCase(): void
+    {
+        $src = realpath(self::ROOT . '/src');
+        self::assertIsString($src);
+        /** @var array<string, string> $seen */
+        $seen = [];
+        $clashes = [];
+        $it = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($src, \FilesystemIterator::SKIP_DOTS),
+        );
+        foreach ($it as $file) {
+            if (!$file instanceof \SplFileInfo) {
+                continue;
+            }
+            foreach ([$file->getPath(), $file->getPathname()] as $path) {
+                $rel = substr($path, strlen($src) + 1);
+                $key = strtolower($rel);
+                if (isset($seen[$key]) && $seen[$key] !== $rel) {
+                    $clashes["$key"] = "src/$rel collides with src/{$seen[$key]}";
+                }
+                $seen[$key] = $rel;
+            }
+        }
+        self::assertSame([], array_values($clashes), 'these paths are the same file on Windows');
     }
 
     /**

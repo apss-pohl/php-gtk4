@@ -1079,6 +1079,84 @@ final class GtkCssSection
     }
 }
 /**
+ * The `GdkClipboard` object represents data shared between applications or inside an application.
+ *
+ * @property ?GdkDisplay $display
+ * @property-read ?bool $local
+ */
+class GdkClipboard extends GObject
+{
+    /** GdkClipboard has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Gets the `GdkDisplay` that the clipboard was created for. */
+    public function get_display(): GdkDisplay
+    {
+        return null;
+    }
+    /** Returns if the clipboard is local. */
+    public function is_local(): bool
+    {
+        return false;
+    }
+    /** Asynchronously requests an input stream to read the $clipboard's contents from. */
+    public function read_async(array $mime_types, int $io_priority, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($mime_types);
+        unset($io_priority);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Asynchronously request the $clipboard contents converted to a string. */
+    public function read_text_async(?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes an asynchronous clipboard read. */
+    public function read_text_finish(GAsyncResult $result): ?string
+    {
+        unset($result);
+        return null;
+    }
+    /** Asynchronously request the $clipboard contents converted to a `GdkPixbuf`. */
+    public function read_texture_async(?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes an asynchronous clipboard read. */
+    public function read_texture_finish(GAsyncResult $result): ?GdkTexture
+    {
+        unset($result);
+        return null;
+    }
+    /** Puts the given $text into the clipboard. */
+    public function set_text(string $text): void
+    {
+        unset($text);
+    }
+    /** Puts the given $texture into the clipboard. */
+    public function set_texture(GdkTexture $texture): void
+    {
+        unset($texture);
+    }
+    /** Asynchronously instructs the $clipboard to store its contents remotely. */
+    public function store_async(int $io_priority, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($io_priority);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes an asynchronous clipboard store. */
+    public function store_finish(GAsyncResult $result): bool
+    {
+        unset($result);
+        return false;
+    }
+}
+/**
  * Specifies the crossing mode for enter and leave events.
  */
 enum GdkCrossingMode : int
@@ -1092,6 +1170,63 @@ enum GdkCrossingMode : int
     case TouchBegin = 6;
     case TouchEnd = 7;
     case DeviceSwitch = 8;
+}
+/**
+ * `GdkCursor` is used to create and destroy cursors.
+ *
+ * @property ?GdkCursor $fallback
+ * @property ?int $hotspot_x
+ * @property ?int $hotspot_y
+ * @property ?string $name
+ * @property ?GdkTexture $texture
+ */
+class GdkCursor extends GObject
+{
+    /** A GdkCursor with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct()
+    {
+    }
+    /** Creates a new cursor by looking up $name in the current cursor theme. */
+    public static function new_from_name(string $name, ?GdkCursor $fallback = null): GdkCursor
+    {
+        unset($name);
+        unset($fallback);
+        return null;
+    }
+    /** Creates a new cursor from a `GdkTexture`. */
+    public static function new_from_texture(GdkTexture $texture, int $hotspot_x, int $hotspot_y, ?GdkCursor $fallback = null): GdkCursor
+    {
+        unset($texture);
+        unset($hotspot_x);
+        unset($hotspot_y);
+        unset($fallback);
+        return null;
+    }
+    /** Returns the fallback for this $cursor. */
+    public function get_fallback(): ?GdkCursor
+    {
+        return null;
+    }
+    /** Returns the horizontal offset of the hotspot. */
+    public function get_hotspot_x(): int
+    {
+        return 0;
+    }
+    /** Returns the vertical offset of the hotspot. */
+    public function get_hotspot_y(): int
+    {
+        return 0;
+    }
+    /** Returns the name of the cursor. */
+    public function get_name(): ?string
+    {
+        return null;
+    }
+    /** Returns the texture for the cursor. */
+    public function get_texture(): ?GdkTexture
+    {
+        return null;
+    }
 }
 /**
  * `GdkDisplay` objects are the GDK representation of a workstation.
@@ -1130,6 +1265,17 @@ class GdkDisplay extends GObject
     public function flush(): void
     {
     }
+    /** Gets the clipboard used for copy/paste operations. */
+    public function get_clipboard(): GdkClipboard
+    {
+        return null;
+    }
+    /** Gets the monitor in which the largest area of $surface resides. */
+    public function get_monitor_at_surface(GdkSurface $surface): ?GdkMonitor
+    {
+        unset($surface);
+        return null;
+    }
     /** Gets the list of monitors associated with this display. */
     public function get_monitors(): GListModel
     {
@@ -1139,6 +1285,11 @@ class GdkDisplay extends GObject
     public function get_name(): string
     {
         return '';
+    }
+    /** Gets the clipboard used for the primary selection. */
+    public function get_primary_clipboard(): GdkClipboard
+    {
+        return null;
     }
     /** Finds out if the display has been closed. */
     public function is_closed(): bool
@@ -1300,6 +1451,95 @@ final class GdkModifierType
     public const int META_MASK = 268435456;
 }
 /**
+ * `GdkMonitor` objects represent the individual outputs that are associated with a `GdkDisplay`.
+ *
+ * @property-read ?string $connector
+ * @property-read ?string $description
+ * @property ?GdkDisplay $display
+ * @property-read ?GdkRectangle $geometry
+ * @property-read ?int $height_mm
+ * @property-read ?string $manufacturer
+ * @property-read ?string $model
+ * @property-read ?int $refresh_rate
+ * @property-read ?float $scale
+ * @property-read ?int $scale_factor
+ * @property-read ?GdkSubpixelLayout $subpixel_layout
+ * @property-read ?bool $valid
+ * @property-read ?int $width_mm
+ */
+class GdkMonitor extends GObject
+{
+    /** GdkMonitor has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Gets the name of the monitor's connector, if available. */
+    public function get_connector(): ?string
+    {
+        return null;
+    }
+    /** Gets a string describing the monitor, if available. */
+    public function get_description(): ?string
+    {
+        return null;
+    }
+    /** Gets the display that this monitor belongs to. */
+    public function get_display(): GdkDisplay
+    {
+        return null;
+    }
+    /** Retrieves the size and position of the monitor within the display coordinate space. */
+    public function get_geometry(): GdkRectangle
+    {
+        return null;
+    }
+    /** Gets the height in millimeters of the monitor. */
+    public function get_height_mm(): int
+    {
+        return 0;
+    }
+    /** Gets the name or PNP ID of the monitor's manufacturer. */
+    public function get_manufacturer(): ?string
+    {
+        return null;
+    }
+    /** Gets the string identifying the monitor model, if available. */
+    public function get_model(): ?string
+    {
+        return null;
+    }
+    /** Gets the refresh rate of the monitor, if available. */
+    public function get_refresh_rate(): int
+    {
+        return 0;
+    }
+    /** Gets the internal scale factor that maps from monitor coordinates to device pixels. */
+    public function get_scale(): float
+    {
+        return 0.0;
+    }
+    /** Gets the internal scale factor that maps from monitor coordinates to device pixels. */
+    public function get_scale_factor(): int
+    {
+        return 0;
+    }
+    /** Gets information about the layout of red, green and blue primaries for pixels. */
+    public function get_subpixel_layout(): GdkSubpixelLayout
+    {
+        return null;
+    }
+    /** Gets the width in millimeters of the monitor. */
+    public function get_width_mm(): int
+    {
+        return 0;
+    }
+    /** Returns `true` if the $monitor object corresponds to a physical monitor. */
+    public function is_valid(): bool
+    {
+        return false;
+    }
+}
+/**
  * Specifies the kind of crossing for enter and leave events.
  */
 enum GdkNotifyType : int
@@ -1400,6 +1640,121 @@ enum GdkScrollUnit : int
 {
     case Wheel = 0;
     case Surface = 1;
+}
+/**
+ * This enumeration describes how the red, green and blue components of physical pixels on an
+ * output device are laid out.
+ */
+enum GdkSubpixelLayout : int
+{
+    case Unknown = 0;
+    case None = 1;
+    case HorizontalRgb = 2;
+    case HorizontalBgr = 3;
+    case VerticalRgb = 4;
+    case VerticalBgr = 5;
+}
+/**
+ * A `GdkSurface` is a rectangular region on the screen.
+ *
+ * @property ?GdkCursor $cursor
+ * @property ?GdkDisplay $display
+ * @property-read ?int $height
+ * @property-read ?bool $mapped
+ * @property-read ?float $scale
+ * @property-read ?int $scale_factor
+ * @property-read ?int $width
+ */
+class GdkSurface extends GObject
+{
+    /** GdkSurface is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Create a new popup surface. */
+    public static function new_popup(GdkSurface $parent, bool $autohide): GdkSurface
+    {
+        unset($parent);
+        unset($autohide);
+        return null;
+    }
+    /** Creates a new toplevel surface. */
+    public static function new_toplevel(GdkDisplay $display): GdkSurface
+    {
+        unset($display);
+        return null;
+    }
+    /** Emits a short beep associated to $surface. */
+    public function beep(): void
+    {
+    }
+    /**
+     * Destroys the window system resources associated with $surface and decrements $surface's
+     * reference count.
+     */
+    public function destroy(): void
+    {
+    }
+    /** Retrieves a `GdkCursor` pointer for the cursor currently set on the `GdkSurface`. */
+    public function get_cursor(): ?GdkCursor
+    {
+        return null;
+    }
+    /** Gets the `GdkDisplay` associated with a `GdkSurface`. */
+    public function get_display(): GdkDisplay
+    {
+        return null;
+    }
+    /** Returns the height of the given $surface. */
+    public function get_height(): int
+    {
+        return 0;
+    }
+    /** Checks whether the surface has been mapped. */
+    public function get_mapped(): bool
+    {
+        return false;
+    }
+    /** Returns the internal scale that maps from surface coordinates to the actual device pixels. */
+    public function get_scale(): float
+    {
+        return 0.0;
+    }
+    /**
+     * Returns the internal scale factor that maps from surface coordinates to the actual device
+     * pixels.
+     */
+    public function get_scale_factor(): int
+    {
+        return 0;
+    }
+    /** Returns the width of the given $surface. */
+    public function get_width(): int
+    {
+        return 0;
+    }
+    /** Hide the surface. */
+    public function hide(): void
+    {
+    }
+    /** Check to see if a surface is destroyed. */
+    public function is_destroyed(): bool
+    {
+        return false;
+    }
+    /** Forces a [signal@Gdk.Surface::render] signal emission for $surface to be scheduled. */
+    public function queue_render(): void
+    {
+    }
+    /** Request a layout phase from the surface's frame clock. */
+    public function request_layout(): void
+    {
+    }
+    /** Sets the default mouse pointer for a `GdkSurface`. */
+    public function set_cursor(?GdkCursor $cursor): void
+    {
+        unset($cursor);
+    }
 }
 /**
  * `GdkTexture` is the basic element used to refer to pixel data.
@@ -2872,7 +3227,7 @@ class GTask extends GObject implements GAsyncResult
  * @property ?string $website_label
  * @property ?bool $wrap_license
  */
-class GtkAboutDialog extends GtkWindow implements GtkRoot
+class GtkAboutDialog extends GtkWindow implements GtkNative, GtkRoot
 {
     /** Creates a new `GtkAboutDialog`. */
     public function __construct()
@@ -3059,6 +3414,20 @@ class GtkAboutDialog extends GtkWindow implements GtkRoot
     public function set_wrap_license(bool $wrap_license): void
     {
         unset($wrap_license);
+    }
+    public function get_surface(): ?GdkSurface
+    {
+        return null;
+    }
+    public function get_surface_transform(): array
+    {
+        return [];
+    }
+    public function realize(): void
+    {
+    }
+    public function unrealize(): void
+    {
     }
     public function get_display(): GdkDisplay
     {
@@ -3508,21 +3877,11 @@ class GtkApplication extends GApplication implements GActionGroup, GActionMap
     }
 }
 /**
- * Types of user actions that may be blocked by `GtkApplication`.
- */
-final class GtkApplicationInhibitFlags
-{
-    public const int LOGOUT = 1;
-    public const int SWITCH = 2;
-    public const int SUSPEND = 4;
-    public const int IDLE = 8;
-}
-/**
  * `GtkApplicationWindow` is a `GtkWindow` subclass that integrates with `GtkApplication`.
  *
  * @property ?bool $show_menubar
  */
-class GtkApplicationWindow extends GtkWindow implements GActionMap, GtkRoot
+class GtkApplicationWindow extends GtkWindow implements GActionMap, GtkNative, GtkRoot
 {
     /** Creates a new `GtkApplicationWindow`. */
     public function __construct(GtkApplication $application)
@@ -3556,6 +3915,20 @@ class GtkApplicationWindow extends GtkWindow implements GActionMap, GtkRoot
     public function remove_action(string $action_name): void
     {
         unset($action_name);
+    }
+    public function get_surface(): ?GdkSurface
+    {
+        return null;
+    }
+    public function get_surface_transform(): array
+    {
+        return [];
+    }
+    public function realize(): void
+    {
+    }
+    public function unrealize(): void
+    {
     }
     public function get_display(): GdkDisplay
     {
@@ -3938,6 +4311,180 @@ class GtkBoxLayout extends GtkLayoutManager implements GtkOrientable
     public function set_orientation(GtkOrientation $orientation): void
     {
         unset($orientation);
+    }
+}
+/**
+ * A `GtkBuilder` reads XML descriptions of a user interface and instantiates the described
+ * objects.
+ *
+ * @property ?GObject $current_object
+ * @property ?GtkBuilderScope $scope
+ * @property ?string $translation_domain
+ */
+class GtkBuilder extends GObject
+{
+    /** Creates a new empty builder object. */
+    public function __construct()
+    {
+    }
+    /**
+     * Parses a file containing a UI definition and merges it with the current contents of
+     * $builder.
+     */
+    public function add_from_file(string $filename): bool
+    {
+        unset($filename);
+        return false;
+    }
+    /**
+     * Parses a resource file containing a UI definition and merges it with the current contents of
+     * $builder.
+     */
+    public function add_from_resource(string $resource_path): bool
+    {
+        unset($resource_path);
+        return false;
+    }
+    /**
+     * Parses a file containing a UI definition building only the requested objects and merges them
+     * with the current contents of $builder.
+     */
+    public function add_objects_from_file(string $filename, array $object_ids): bool
+    {
+        unset($filename);
+        unset($object_ids);
+        return false;
+    }
+    /**
+     * Parses a resource file containing a UI definition, building only the requested objects and
+     * merges them with the current contents of $builder.
+     */
+    public function add_objects_from_resource(string $resource_path, array $object_ids): bool
+    {
+        unset($resource_path);
+        unset($object_ids);
+        return false;
+    }
+    /**
+     * Add $object to the $builder object pool so it can be referenced just like any other object
+     * built by builder.
+     */
+    public function expose_object(string $name, GObject $object): void
+    {
+        unset($name);
+        unset($object);
+    }
+    /** Gets the current object set via gtk_builder_set_current_object(). */
+    public function get_current_object(): ?GObject
+    {
+        return null;
+    }
+    /** Gets the object named $name. */
+    public function get_object(string $name): ?GObject
+    {
+        unset($name);
+        return null;
+    }
+    /**
+     * Gets all objects that have been constructed by $builder.
+     *
+     * @return list<GObject>
+     */
+    public function get_objects(): array
+    {
+        return [];
+    }
+    /** Gets the scope in use that was set via gtk_builder_set_scope(). */
+    public function get_scope(): GtkBuilderScope
+    {
+        return null;
+    }
+    /** Gets the translation domain of $builder. */
+    public function get_translation_domain(): ?string
+    {
+        return null;
+    }
+    /** Sets the scope the builder should operate in. */
+    public function set_scope(?GtkBuilderScope $scope): void
+    {
+        unset($scope);
+    }
+    /** Sets the translation domain of $builder. */
+    public function set_translation_domain(?string $domain): void
+    {
+        unset($domain);
+    }
+    /**
+     * Parse $buffer and merge what it describes into $builder.
+     *
+     * GTK takes the length separately; a PHP string carries its own, and letting the script pass one
+     * meant `add_from_string($xml, PHP_INT_MAX)` read past the end of the buffer.
+     */
+    public function add_from_string(string $buffer): bool
+    {
+        unset($buffer);
+        return false;
+    }
+    /**
+     * Parse $buffer, merging only the objects $object_ids names (and whatever they need).
+     *
+     * The length comes from the PHP string, as in {@see GtkBuilder::add_from_string()}.
+     */
+    public function add_objects_from_string(string $buffer, array $object_ids): bool
+    {
+        unset($buffer);
+        unset($object_ids);
+        return false;
+    }
+    /**
+     * Set the object the next `<template>` document is built for.
+     *
+     * GIR annotates the parameter nullable, but GTK's own precondition is
+     * `g_return_if_fail (current_object || G_IS_OBJECT (current_object))` - which rejects NULL
+     * (observed on GTK 4.14.5): passing it emits a CRITICAL and changes nothing. So the
+     * parameter is not nullable here; there is no way to clear the current object.
+     */
+    public function set_current_object(GObject $current_object): void
+    {
+        unset($current_object);
+    }
+    /**
+     * Resolve every `<signal handler="name">` in what is parsed next against $handlers.
+     *
+     * GTK 4 connects the signals of a .ui document while parsing it and asks its GtkBuilderScope for
+     * each handler, so this has to be called *before* `add_from_string()`/`add_from_file()`; a handler
+     * a later call does not find still fails the way GTK words it. `swapped="yes"` and `object="..."`
+     * are refused for a PHP handler - a closure already carries what it captured with `use`.
+     */
+    public function set_handlers(array $handlers): void
+    {
+        unset($handlers);
+    }
+}
+/**
+ * The list of flags that can be passed to gtk_builder_create_closure().
+ */
+final class GtkBuilderClosureFlags
+{
+    public const int SWAPPED = 1;
+}
+/**
+ * `GtkBuilderScope` is an interface to provide language binding support to `GtkBuilder`.
+ */
+interface GtkBuilderScope
+{
+}
+/**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GtkBuilderScope} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GtkBuilderScope} with a body.
+ *
+ */
+final class GtkBuilderScopeObject extends GObject implements GtkBuilderScope
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct()
+    {
     }
 }
 /**
@@ -7248,6 +7795,85 @@ class GtkHeaderBar extends GtkWidget
     }
 }
 /**
+ * Used to specify options for gtk_icon_theme_lookup_icon().
+ */
+final class GtkIconLookupFlags
+{
+    public const int FORCE_REGULAR = 1;
+    public const int FORCE_SYMBOLIC = 2;
+    public const int PRELOAD = 4;
+}
+/**
+ * Contains information found when looking up an icon in `GtkIconTheme`.
+ *
+ * @property ?string $icon_name
+ * @property ?bool $is_symbolic
+ */
+class GtkIconPaintable extends GObject implements GdkPaintable
+{
+    /** GtkIconPaintable has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Creates a `GtkIconPaintable` for a file with a given size and scale. */
+    public static function new_for_file(string $file, int $size, int $scale): GtkIconPaintable
+    {
+        unset($file);
+        unset($size);
+        unset($scale);
+        return null;
+    }
+    /** Gets the `GFile` that was used to load the icon. */
+    public function get_file(): ?string
+    {
+        return null;
+    }
+    /** Get the icon name being used for this icon. */
+    public function get_icon_name(): ?string
+    {
+        return null;
+    }
+    /** Checks if the icon is symbolic or not. */
+    public function is_symbolic(): bool
+    {
+        return false;
+    }
+    public function compute_concrete_size(float $specified_width, float $specified_height, float $default_width, float $default_height): array
+    {
+        unset($specified_width);
+        unset($specified_height);
+        unset($default_width);
+        unset($default_height);
+        return [];
+    }
+    public function get_current_image(): GdkPaintable
+    {
+        return null;
+    }
+    public function get_flags(): int
+    {
+        return 0;
+    }
+    public function get_intrinsic_aspect_ratio(): float
+    {
+        return 0.0;
+    }
+    public function get_intrinsic_height(): int
+    {
+        return 0;
+    }
+    public function get_intrinsic_width(): int
+    {
+        return 0;
+    }
+    public function invalidate_contents(): void
+    {
+    }
+    public function invalidate_size(): void
+    {
+    }
+}
+/**
  * Built-in icon sizes.
  */
 enum GtkIconSize : int
@@ -7255,6 +7881,105 @@ enum GtkIconSize : int
     case Inherit = 0;
     case Normal = 1;
     case Large = 2;
+}
+/**
+ * `GtkIconTheme` provides a facility for loading themed icons.
+ *
+ * @property ?GdkDisplay $display
+ * @property-read ?array $icon_names
+ * @property ?array $resource_path
+ * @property ?array $search_path
+ * @property ?string $theme_name
+ */
+class GtkIconTheme extends GObject
+{
+    /** Creates a new icon theme object. */
+    public function __construct()
+    {
+    }
+    /** Gets the icon theme object associated with $display. */
+    public static function get_for_display(GdkDisplay $display): GtkIconTheme
+    {
+        unset($display);
+        return null;
+    }
+    /**
+     * Adds a resource path that will be looked at when looking for icons, similar to search paths.
+     */
+    public function add_resource_path(string $path): void
+    {
+        unset($path);
+    }
+    /** Appends a directory to the search path. */
+    public function add_search_path(string $path): void
+    {
+        unset($path);
+    }
+    /** Returns the display that the `GtkIconTheme` object was created for. */
+    public function get_display(): ?GdkDisplay
+    {
+        return null;
+    }
+    /**
+     * Lists the names of icons in the current icon theme.
+     *
+     * @return list<string>
+     */
+    public function get_icon_names(): array
+    {
+        return [];
+    }
+    /**
+     * Gets the current resource path.
+     *
+     * @return list<string>
+     */
+    public function get_resource_path(): array
+    {
+        return [];
+    }
+    /** Gets the current icon theme name. */
+    public function get_theme_name(): string
+    {
+        return '';
+    }
+    /** Checks whether an icon theme includes an icon for a particular name. */
+    public function has_icon(string $icon_name): bool
+    {
+        unset($icon_name);
+        return false;
+    }
+    /** Looks up a named icon for a desired size and window scale, returning a `GtkIconPaintable`. */
+    public function lookup_icon(string $icon_name, ?array $fallbacks, int $size, int $scale, GtkTextDirection $direction, int $flags): GtkIconPaintable
+    {
+        unset($icon_name);
+        unset($fallbacks);
+        unset($size);
+        unset($scale);
+        unset($direction);
+        unset($flags);
+        return null;
+    }
+    /**
+     * Sets the resource paths that will be looked at when looking for icons, similar to search
+     * paths.
+     */
+    public function set_resource_path(?array $path): void
+    {
+        unset($path);
+    }
+    /**
+     * Set the icon theme this object looks names up in.
+     *
+     * GTK refuses it on the theme a display owns - `g_return_if_fail (!self->is_display_singleton)`,
+     * a CRITICAL that changes nothing - because that one follows the desktop's setting. There is no
+     * public predicate for it, but the singleton is by definition the theme its own display answers
+     * with, so that is what this compares. A theme of one's own (`new GtkIconTheme()`) is free.
+     */
+    public function set_theme_name(?string $theme_name): void
+    {
+        unset($theme_name);
+    }
 }
 /**
  * The `GtkImage` widget displays an image.
@@ -8373,6 +9098,51 @@ class GtkMultiSelection extends GObject implements GListModel, GtkSelectionModel
     }
 }
 /**
+ * `GtkNative` is the interface implemented by all widgets that have their own `GdkSurface`.
+ */
+interface GtkNative
+{
+    /** Returns the surface of this `GtkNative`. */
+    public function get_surface(): ?GdkSurface;
+    /**
+     * Retrieves the surface transform of $self.
+     *
+     * @return array{float, float}
+     */
+    public function get_surface_transform(): array;
+    /** Realizes a `GtkNative`. */
+    public function realize(): void;
+    /** Unrealizes a `GtkNative`. */
+    public function unrealize(): void;
+}
+/**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GtkNative} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GtkNative} with a body.
+ *
+ */
+final class GtkNativeObject extends GObject implements GtkNative
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct()
+    {
+    }
+    public function get_surface(): ?GdkSurface
+    {
+        return null;
+    }
+    public function get_surface_transform(): array
+    {
+        return [];
+    }
+    public function realize(): void
+    {
+    }
+    public function unrealize(): void
+    {
+    }
+}
+/**
  * Options for selecting a different wrap mode for natural size requests.
  */
 enum GtkNaturalWrapMode : int
@@ -9333,7 +10103,7 @@ enum GtkPolicyType : int
  * @property ?GdkRectangle $pointing_to
  * @property ?GtkPositionType $position
  */
-class GtkPopover extends GtkWidget
+class GtkPopover extends GtkWidget implements GtkNative
 {
     /** Creates a new `GtkPopover`. */
     public function __construct()
@@ -9453,6 +10223,20 @@ class GtkPopover extends GtkWidget
     public function popup(): void
     {
     }
+    public function get_surface(): ?GdkSurface
+    {
+        return null;
+    }
+    public function get_surface_transform(): array
+    {
+        return [];
+    }
+    public function realize(): void
+    {
+    }
+    public function unrealize(): void
+    {
+    }
     /**
      * Native `activate_default` (PopoverClass.activate_default): the GTK implementation below any
      * PHP subclass, for `parent::vfunc_activate_default()` from an override.
@@ -9475,7 +10259,7 @@ class GtkPopover extends GtkWidget
  * @property ?GMenuModel $menu_model
  * @property ?string $visible_submenu
  */
-class GtkPopoverMenu extends GtkPopover
+class GtkPopoverMenu extends GtkPopover implements GtkNative
 {
     /** A GtkPopoverMenu with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
     public function __construct()
@@ -9526,6 +10310,20 @@ class GtkPopoverMenu extends GtkPopover
     public function set_menu_model(?GMenuModel $model): void
     {
         unset($model);
+    }
+    public function get_surface(): ?GdkSurface
+    {
+        return null;
+    }
+    public function get_surface_transform(): array
+    {
+        return [];
+    }
+    public function realize(): void
+    {
+    }
+    public function unrealize(): void
+    {
     }
 }
 /**
@@ -9988,7 +10786,7 @@ enum GtkRevealerTransitionType : int
 /**
  * `GtkRoot` is the interface implemented by all widgets that can act as a toplevel widget.
  */
-interface GtkRoot
+interface GtkRoot extends GtkNative
 {
     /** Returns the display that this `GtkRoot` is on. */
     public function get_display(): GdkDisplay;
@@ -10023,6 +10821,20 @@ final class GtkRootObject extends GObject implements GtkRoot
     public function set_focus(?GtkWidget $focus): void
     {
         unset($focus);
+    }
+    public function get_surface(): ?GdkSurface
+    {
+        return null;
+    }
+    public function get_surface_transform(): array
+    {
+        return [];
+    }
+    public function realize(): void
+    {
+    }
+    public function unrealize(): void
+    {
     }
 }
 /**
@@ -12027,6 +12839,14 @@ class GtkTextBuffer extends GObject
         unset($mark);
         unset($where);
     }
+    /**
+     * Adds $clipboard to the list of clipboards in which the selection contents of $buffer are
+     * available.
+     */
+    public function add_selection_clipboard(GdkClipboard $clipboard): void
+    {
+        unset($clipboard);
+    }
     /** Emits the “apply-tag” signal on $buffer. */
     public function apply_tag(GtkTextTag $tag, GtkTextIter $start, GtkTextIter $end): void
     {
@@ -12063,6 +12883,11 @@ class GtkTextBuffer extends GObject
     public function begin_user_action(): void
     {
     }
+    /** Copies the currently-selected text to a clipboard. */
+    public function copy_clipboard(GdkClipboard $clipboard): void
+    {
+        unset($clipboard);
+    }
     /** Creates a mark at position $where. */
     public function create_mark(?string $mark_name, GtkTextIter $where, bool $left_gravity): GtkTextMark
     {
@@ -12070,6 +12895,15 @@ class GtkTextBuffer extends GObject
         unset($where);
         unset($left_gravity);
         return null;
+    }
+    /**
+     * Copies the currently-selected text to a clipboard, then deletes said text if it’s
+     * editable.
+     */
+    public function cut_clipboard(GdkClipboard $clipboard, bool $default_editable): void
+    {
+        unset($clipboard);
+        unset($default_editable);
     }
     /** Deletes text between $start and $end. */
     public function delete(GtkTextIter $start, GtkTextIter $end): void
@@ -12298,6 +13132,13 @@ class GtkTextBuffer extends GObject
         unset($name);
         unset($where);
     }
+    /** Pastes the contents of a clipboard. */
+    public function paste_clipboard(GdkClipboard $clipboard, ?GtkTextIter $override_location, bool $default_editable): void
+    {
+        unset($clipboard);
+        unset($override_location);
+        unset($default_editable);
+    }
     /** This function moves the “insert” and “selection_bound” marks simultaneously. */
     public function place_cursor(GtkTextIter $where): void
     {
@@ -12312,6 +13153,11 @@ class GtkTextBuffer extends GObject
     {
         unset($start);
         unset($end);
+    }
+    /** Removes a `GdkClipboard` added with `add_selection_clipboard` */
+    public function remove_selection_clipboard(GdkClipboard $clipboard): void
+    {
+        unset($clipboard);
     }
     /** Emits the “remove-tag” signal. */
     public function remove_tag(GtkTextTag $tag, GtkTextIter $start, GtkTextIter $end): void
@@ -12514,6 +13360,15 @@ class GtkTextBuffer extends GObject
      */
     public function vfunc_modified_changed(): void
     {
+    }
+    /**
+     * Native `paste_done` (TextBufferClass.paste_done): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_paste_done()` from an override. The class handler for the
+     * `GtkTextBuffer::paste-done` signal.
+     */
+    public function vfunc_paste_done(GdkClipboard $clipboard): void
+    {
+        unset($clipboard);
     }
     /**
      * Native `redo` (TextBufferClass.redo): the GTK implementation below any PHP subclass, for
@@ -14240,6 +15095,7 @@ class GtkViewport extends GtkWidget implements GtkScrollable
  * @property ?bool $can_target
  * @property ?array $css_classes
  * @property ?string $css_name
+ * @property ?GdkCursor $cursor
  * @property ?bool $focus_on_click
  * @property ?bool $focusable
  * @property ?GtkAlign $halign
@@ -14381,6 +15237,11 @@ class GtkWidget extends GObject
     {
         return false;
     }
+    /** Gets the clipboard object for $widget. */
+    public function get_clipboard(): GdkClipboard
+    {
+        return null;
+    }
     /** Gets the current foreground color for the widget’s CSS style. */
     public function get_color(): GdkRGBA
     {
@@ -14399,6 +15260,11 @@ class GtkWidget extends GObject
     public function get_css_name(): string
     {
         return '';
+    }
+    /** Queries the cursor set on $widget. */
+    public function get_cursor(): ?GdkCursor
+    {
+        return null;
     }
     /** Gets the reading direction for a particular widget. */
     public function get_direction(): GtkTextDirection
@@ -14498,6 +15364,11 @@ class GtkWidget extends GObject
     {
         return '';
     }
+    /** Returns the nearest `GtkNative` ancestor of $widget. */
+    public function get_native(): ?GtkNative
+    {
+        return null;
+    }
     /** Returns the widget’s next sibling. */
     public function get_next_sibling(): ?GtkWidget
     {
@@ -14530,6 +15401,11 @@ class GtkWidget extends GObject
     }
     /** Returns the widget’s previous sibling. */
     public function get_prev_sibling(): ?GtkWidget
+    {
+        return null;
+    }
+    /** Gets the primary clipboard of $widget. */
+    public function get_primary_clipboard(): GdkClipboard
     {
         return null;
     }
@@ -14822,6 +15698,11 @@ class GtkWidget extends GObject
     public function set_css_classes(array $classes): void
     {
         unset($classes);
+    }
+    /** Sets the cursor to be shown when pointer devices point towards $widget. */
+    public function set_cursor(?GdkCursor $cursor): void
+    {
+        unset($cursor);
     }
     /** Sets a named cursor to be shown when pointer devices point towards $widget. */
     public function set_cursor_from_name(?string $name): void
@@ -15221,7 +16102,7 @@ class GtkWidget extends GObject
  * @property ?GtkWidget $titlebar
  * @property ?GtkWindow $transient_for
  */
-class GtkWindow extends GtkWidget implements GtkRoot
+class GtkWindow extends GtkWidget implements GtkNative, GtkRoot
 {
     /** Creates a new `GtkWindow`. */
     public function __construct()
@@ -15272,6 +16153,11 @@ class GtkWindow extends GtkWidget implements GtkRoot
     /** Asks to place $window in the fullscreen state. */
     public function fullscreen(): void
     {
+    }
+    /** Asks to place $window in the fullscreen state on the given $monitor. */
+    public function fullscreen_on_monitor(GdkMonitor $monitor): void
+    {
+        unset($monitor);
     }
     /** Gets the `GtkApplication` associated with the window. */
     public function get_application(): ?GtkApplication
@@ -15529,6 +16415,20 @@ class GtkWindow extends GtkWidget implements GtkRoot
     }
     /** Asks to unminimize the specified $window. */
     public function unminimize(): void
+    {
+    }
+    public function get_surface(): ?GdkSurface
+    {
+        return null;
+    }
+    public function get_surface_transform(): array
+    {
+        return [];
+    }
+    public function realize(): void
+    {
+    }
+    public function unrealize(): void
     {
     }
     public function get_display(): GdkDisplay

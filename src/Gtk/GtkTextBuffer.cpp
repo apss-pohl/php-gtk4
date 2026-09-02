@@ -90,6 +90,23 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, add_mark) {
 }
 
 /**
+ * Gtk4\GtkTextBuffer::add_selection_clipboard(GdkClipboard $clipboard): void
+ *
+ * Adds $clipboard to the list of clipboards in which the selection contents of $buffer are
+ * available.
+ */
+ZEND_METHOD(Gtk4_GtkTextBuffer, add_selection_clipboard) {
+  zval *clipboard;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(clipboard, class_for_gtype(GDK_TYPE_CLIPBOARD))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkTextBuffer *self = PHPGTK_SELF(GtkTextBuffer, GTK_TYPE_TEXT_BUFFER);
+  GObject *clipboard_o = unwrap(clipboard, GDK_TYPE_CLIPBOARD);
+  if (clipboard_o == nullptr) RETURN_THROWS();
+  gtk_text_buffer_add_selection_clipboard(self, GDK_CLIPBOARD(clipboard_o));
+}
+
+/**
  * Gtk4\GtkTextBuffer::apply_tag(GtkTextTag $tag, GtkTextIter $start, GtkTextIter $end): void
  *
  * Emits the “apply-tag” signal on $buffer.
@@ -184,6 +201,22 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, begin_user_action) {
 }
 
 /**
+ * Gtk4\GtkTextBuffer::copy_clipboard(GdkClipboard $clipboard): void
+ *
+ * Copies the currently-selected text to a clipboard.
+ */
+ZEND_METHOD(Gtk4_GtkTextBuffer, copy_clipboard) {
+  zval *clipboard;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(clipboard, class_for_gtype(GDK_TYPE_CLIPBOARD))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkTextBuffer *self = PHPGTK_SELF(GtkTextBuffer, GTK_TYPE_TEXT_BUFFER);
+  GObject *clipboard_o = unwrap(clipboard, GDK_TYPE_CLIPBOARD);
+  if (clipboard_o == nullptr) RETURN_THROWS();
+  gtk_text_buffer_copy_clipboard(self, GDK_CLIPBOARD(clipboard_o));
+}
+
+/**
  * Gtk4\GtkTextBuffer::create_mark(?string $mark_name, GtkTextIter $where, bool $left_gravity):
  * GtkTextMark
  *
@@ -206,6 +239,24 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, create_mark) {
       gtk_text_buffer_create_mark(self, mark_name != nullptr ? ZSTR_VAL(mark_name) : nullptr,
                                   static_cast<GtkTextIter *>(where_b), left_gravity);
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
+ * Gtk4\GtkTextBuffer::cut_clipboard(GdkClipboard $clipboard, bool $default_editable): void
+ *
+ * Copies the currently-selected text to a clipboard, then deletes said text if it’s editable.
+ */
+ZEND_METHOD(Gtk4_GtkTextBuffer, cut_clipboard) {
+  zval *clipboard;
+  bool default_editable;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(clipboard, class_for_gtype(GDK_TYPE_CLIPBOARD))
+  Z_PARAM_BOOL(default_editable)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkTextBuffer *self = PHPGTK_SELF(GtkTextBuffer, GTK_TYPE_TEXT_BUFFER);
+  GObject *clipboard_o = unwrap(clipboard, GDK_TYPE_CLIPBOARD);
+  if (clipboard_o == nullptr) RETURN_THROWS();
+  gtk_text_buffer_cut_clipboard(self, GDK_CLIPBOARD(clipboard_o), default_editable);
 }
 
 /**
@@ -810,6 +861,34 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, move_mark_by_name) {
 }
 
 /**
+ * Gtk4\GtkTextBuffer::paste_clipboard(GdkClipboard $clipboard, ?GtkTextIter $override_location,
+ * bool $default_editable): void
+ *
+ * Pastes the contents of a clipboard.
+ */
+ZEND_METHOD(Gtk4_GtkTextBuffer, paste_clipboard) {
+  zval *clipboard;
+  zval *override_location = nullptr;
+  bool default_editable;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_OBJECT_OF_CLASS(clipboard, class_for_gtype(GDK_TYPE_CLIPBOARD))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(override_location, boxed_class_for_type(GTK_TYPE_TEXT_ITER)->ce)
+  Z_PARAM_BOOL(default_editable)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkTextBuffer *self = PHPGTK_SELF(GtkTextBuffer, GTK_TYPE_TEXT_BUFFER);
+  GObject *clipboard_o = unwrap(clipboard, GDK_TYPE_CLIPBOARD);
+  if (clipboard_o == nullptr) RETURN_THROWS();
+  gpointer override_location_b = nullptr;
+  if (override_location != nullptr) {
+    override_location_b = unwrap_boxed(override_location, GTK_TYPE_TEXT_ITER);
+    if (override_location_b == nullptr) RETURN_THROWS();
+  }
+  gtk_text_buffer_paste_clipboard(self, GDK_CLIPBOARD(clipboard_o),
+                                  static_cast<GtkTextIter *>(override_location_b),
+                                  default_editable);
+}
+
+/**
  * Gtk4\GtkTextBuffer::place_cursor(GtkTextIter $where): void
  *
  * This function moves the “insert” and “selection_bound” marks simultaneously.
@@ -855,6 +934,22 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, remove_all_tags) {
   if (end_b == nullptr) RETURN_THROWS();
   gtk_text_buffer_remove_all_tags(self, static_cast<GtkTextIter *>(start_b),
                                   static_cast<GtkTextIter *>(end_b));
+}
+
+/**
+ * Gtk4\GtkTextBuffer::remove_selection_clipboard(GdkClipboard $clipboard): void
+ *
+ * Removes a `GdkClipboard` added with `add_selection_clipboard`
+ */
+ZEND_METHOD(Gtk4_GtkTextBuffer, remove_selection_clipboard) {
+  zval *clipboard;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(clipboard, class_for_gtype(GDK_TYPE_CLIPBOARD))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkTextBuffer *self = PHPGTK_SELF(GtkTextBuffer, GTK_TYPE_TEXT_BUFFER);
+  GObject *clipboard_o = unwrap(clipboard, GDK_TYPE_CLIPBOARD);
+  if (clipboard_o == nullptr) RETURN_THROWS();
+  gtk_text_buffer_remove_selection_clipboard(self, GDK_CLIPBOARD(clipboard_o));
 }
 
 /**
@@ -1411,6 +1506,35 @@ void vfunc_install_modified_changed(gpointer klass) {
   GTK_TEXT_BUFFER_CLASS(klass)->modified_changed = vfunc_thunk_modified_changed;
 }
 
+// vfunc thunk: GTK_TEXT_BUFFER_CLASS->paste_done -> $this->vfunc_paste_done() on a PHP subclass
+void vfunc_thunk_paste_done(GtkTextBuffer *self, GdkClipboard *clipboard) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_paste_done", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->paste_done != nullptr) native->paste_done(self, clipboard);
+    return;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  wrap(clipboard != nullptr ? G_OBJECT(clipboard) : nullptr, &argv[0]);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkTextBuffer::vfunc_paste_done");
+}
+
+// vfunc installer: GTK_TEXT_BUFFER_CLASS->paste_done (called from class_init / iface_init of a PHP
+// subtype)
+void vfunc_install_paste_done(gpointer klass) {
+  GTK_TEXT_BUFFER_CLASS(klass)->paste_done = vfunc_thunk_paste_done;
+}
+
 // vfunc thunk: GTK_TEXT_BUFFER_CLASS->redo -> $this->vfunc_redo() on a PHP subclass
 void vfunc_thunk_redo(GtkTextBuffer *self) {
   zval zself;
@@ -1792,6 +1916,35 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_modified_changed) {
 }
 
 /**
+ * Gtk4\GtkTextBuffer::vfunc_paste_done(GdkClipboard $clipboard): void
+ *
+ * Native `paste_done` (TextBufferClass.paste_done): the GTK implementation below any PHP subclass,
+ * for `parent::vfunc_paste_done()` from an override. The class handler for the
+ * `GtkTextBuffer::paste-done` signal.
+ */
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_paste_done) {
+  zval *clipboard;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(clipboard, class_for_gtype(GDK_TYPE_CLIPBOARD))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkTextBuffer *self = PHPGTK_SELF(GtkTextBuffer, GTK_TYPE_TEXT_BUFFER);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkTextBuffer::vfunc_paste_done(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->paste_done == nullptr) {
+    return;
+  }
+  GObject *clipboard_o = unwrap(clipboard, GDK_TYPE_CLIPBOARD);
+  if (clipboard_o == nullptr) RETURN_THROWS();
+  klass->paste_done(self, GDK_CLIPBOARD(clipboard_o));
+}
+
+/**
  * Gtk4\GtkTextBuffer::vfunc_redo(): void
  *
  * Native `redo` (TextBufferClass.redo): the GTK implementation below any PHP subclass, for
@@ -1888,6 +2041,7 @@ void register_vfuncs_GtkTextBuffer() {
   register_vfunc(GTK_TYPE_TEXT_BUFFER, "mark_deleted", vfunc_install_mark_deleted);
   register_vfunc(GTK_TYPE_TEXT_BUFFER, "mark_set", vfunc_install_mark_set);
   register_vfunc(GTK_TYPE_TEXT_BUFFER, "modified_changed", vfunc_install_modified_changed);
+  register_vfunc(GTK_TYPE_TEXT_BUFFER, "paste_done", vfunc_install_paste_done);
   register_vfunc(GTK_TYPE_TEXT_BUFFER, "redo", vfunc_install_redo);
   register_vfunc(GTK_TYPE_TEXT_BUFFER, "remove_tag", vfunc_install_remove_tag);
   register_vfunc(GTK_TYPE_TEXT_BUFFER, "undo", vfunc_install_undo);

@@ -77,7 +77,7 @@ final class Demo
         ],
         'Application' => [
             'Gtk', 'GApplication', 'GtkApplication', 'GSimpleAction', 'GAction', 'GActionMap',
-            'GActionGroup', 'GApplicationFlags', 'GtkApplicationInhibitFlags',
+            'GActionGroup', 'GApplicationFlags',
         ],
         'Objects & values' => [
             'GObject', 'GParamSpec', 'PhpValue', 'GdkRGBA', 'GdkRectangle',
@@ -91,7 +91,7 @@ final class Demo
         ],
         'Styling' => [
             'GtkCssProvider', 'GtkStyleProvider', 'GtkStyleProviderPriority', 'GtkCssSection',
-            'GdkDisplay',
+            'GdkDisplay', 'GtkBuilder',
         ],
         'Layout' => [
             'GtkGrid', 'GtkPaned', 'GtkFrame', 'GtkOverlay', 'GtkRevealer', 'GtkRevealerTransitionType',

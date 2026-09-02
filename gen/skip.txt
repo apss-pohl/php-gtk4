@@ -18,3 +18,10 @@ Gtk.LayoutChild.__construct   a layout manager creates its layout children (GtkL
 Gtk.FixedLayoutChild.__construct   GtkFixedLayout creates its layout children, as Gtk.LayoutChild
 Gtk.GridLayoutChild.__construct    GtkGridLayout creates its layout children, as Gtk.LayoutChild
 Gtk.OverlayLayoutChild.__construct GtkOverlayLayout creates its layout children, as Gtk.LayoutChild
+Gtk.Builder.new_from_string   g_error()s (Gtk-ERROR, aborts the process) on any document GTK cannot parse or instantiate, and a .ui document is data - `new GtkBuilder()` + add_from_string() reports the same failure as a Gtk4\GError
+Gtk.Builder.new_from_file     as new_from_string; add_from_file() throws instead
+Gtk.Builder.new_from_resource as new_from_string; add_from_resource() throws instead
+Gdk.Clipboard.__construct   GDK owns the clipboards (GdkDisplay::get_clipboard()/get_primary_clipboard()); `new` aborts the process in gdk_clipboard_set_property ("assertion failed: (priv->display != NULL)")
+Gdk.Surface.__construct     GDK creates surfaces for a widget (GtkWindow) or through new_toplevel()/new_popup(); a PHP subtype has no display and aborts in gdk_surface_set_property
+Gdk.Monitor.__construct     GDK owns the monitors (GdkDisplay::get_monitors()); a standalone one answers NULL from get_display(), which its declared type does not allow
+Gtk.IconPaintable.__construct   GtkIconTheme creates them (lookup_icon()); a standalone one paints nothing and has neither file nor icon name

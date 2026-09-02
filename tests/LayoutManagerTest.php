@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use Gtk4\GtkBaselinePosition;
 use Gtk4\GtkBinLayout;
 use Gtk4\GtkBox;
 use Gtk4\GtkBoxLayout;
+use Gtk4\GtkCenterLayout;
 use Gtk4\GtkFixedLayout;
 use Gtk4\GtkFixedLayoutChild;
+use Gtk4\GtkGridLayout;
 use Gtk4\GtkLabel;
 use Gtk4\GtkLayoutChild;
 use Gtk4\GtkLayoutManager;
@@ -195,6 +198,117 @@ final class LayoutManagerTest extends GtkTestCase
         foreach ([GtkLayoutChild::class, GtkFixedLayoutChild::class] as $class) {
             self::assertFalse(new \ReflectionClass($class)->isInstantiable(), "$class is not PHP's to make");
         }
+    }
+
+    public function testRootAndUnrootFollowTheWidgetIntoAndOutOfAWindow(): void
+    {
+        // GTK calls them when the widget the manager sits on gains or loses a toplevel.
+        $box = new GtkBox(GtkOrientation::Horizontal, 0);
+        $layout = new StackLayout();
+        $box->set_layout_manager($layout);
+        self::assertSame(0, $layout->rooted);
+
+        $win = $this->window();
+        $win->set_child($box);
+        self::assertSame(1, $layout->rooted, 'vfunc_root() ran');
+
+        $win->set_child(null);
+        self::assertSame(0, $layout->rooted, 'vfunc_unroot() ran');
+    }
+
+    public function testTheNativeMeasureSlotIsReachableForParentChaining(): void
+    {
+        // GtkBinLayout's own measure through parent:: - the native vfunc_*() methods exist so a
+        // PHP manager can chain instead of reimplementing GTK's layout.
+        $box = new GtkBox(GtkOrientation::Horizontal, 0);
+        $inner = new GtkLabel('measured');
+        $box->append($inner);
+        $layout = new GtkBinLayout();
+        $box->set_layout_manager($layout);
+
+        $this->expectException(\LogicException::class);
+        $layout->vfunc_measure($box, GtkOrientation::Horizontal, -1);
+    }
+
+    public function testBoxLayoutCarriesWhatGtkBoxWouldHave(): void
+    {
+        // The manager behind every GtkBox: the box's own spacing/homogeneous/baseline live here.
+        $layout = new GtkBoxLayout(GtkOrientation::Vertical);
+        self::assertSame(GtkOrientation::Vertical, $layout->get_orientation());
+        $layout->set_orientation(GtkOrientation::Horizontal);
+        self::assertSame(GtkOrientation::Horizontal, $layout->get_orientation());
+
+        $layout->set_spacing(11);
+        self::assertSame(11, $layout->get_spacing());
+        $layout->set_homogeneous(true);
+        self::assertTrue($layout->get_homogeneous());
+        $layout->set_baseline_child(1);
+        self::assertSame(1, $layout->get_baseline_child());
+        $layout->set_baseline_position(GtkBaselinePosition::Bottom);
+        self::assertSame(GtkBaselinePosition::Bottom, $layout->get_baseline_position());
+    }
+
+    public function testBoxLayoutOnAPlainWidgetLaysItOut(): void
+    {
+        $box = new GtkBox(GtkOrientation::Horizontal, 0);
+        $box->set_layout_manager(new GtkBoxLayout(GtkOrientation::Horizontal));
+        $one = new GtkLabel('one');
+        $two = new GtkLabel('two');
+        $box->append($one);
+        $box->append($two);
+
+        $win = $this->window();
+        $win->set_child($box);
+        $win->present();
+        $box->allocate(200, 40);
+
+        self::assertGreaterThan(0, $one->get_width());
+        self::assertGreaterThan(0, $two->get_width());
+    }
+
+    public function testCenterLayoutHoldsThreeSlots(): void
+    {
+        $layout = new GtkCenterLayout();
+        self::assertNull($layout->get_start_widget());
+        self::assertNull($layout->get_center_widget());
+        self::assertNull($layout->get_end_widget());
+
+        $start = new GtkLabel('start');
+        $centre = new GtkLabel('centre');
+        $end = new GtkLabel('end');
+        $layout->set_start_widget($start);
+        $layout->set_center_widget($centre);
+        $layout->set_end_widget($end);
+        self::assertSame($start, $layout->get_start_widget());
+        self::assertSame($centre, $layout->get_center_widget());
+        self::assertSame($end, $layout->get_end_widget());
+
+        $layout->set_orientation(GtkOrientation::Vertical);
+        self::assertSame(GtkOrientation::Vertical, $layout->get_orientation());
+        $layout->set_baseline_position(GtkBaselinePosition::Top);
+        self::assertSame(GtkBaselinePosition::Top, $layout->get_baseline_position());
+
+        $layout->set_start_widget(null);
+        self::assertNull($layout->get_start_widget());
+    }
+
+    public function testGridLayoutCarriesTheGridsSpacing(): void
+    {
+        $layout = new GtkGridLayout();
+        $layout->set_column_spacing(7);
+        $layout->set_row_spacing(9);
+        self::assertSame(7, $layout->get_column_spacing());
+        self::assertSame(9, $layout->get_row_spacing());
+
+        $layout->set_column_homogeneous(true);
+        $layout->set_row_homogeneous(true);
+        self::assertTrue($layout->get_column_homogeneous());
+        self::assertTrue($layout->get_row_homogeneous());
+
+        $layout->set_baseline_row(2);
+        self::assertSame(2, $layout->get_baseline_row());
+        $layout->set_row_baseline_position(2, GtkBaselinePosition::Center);
+        self::assertSame(GtkBaselinePosition::Center, $layout->get_row_baseline_position(2));
     }
 
     public function testWidgetIsAGtkWidgetSubclass(): void

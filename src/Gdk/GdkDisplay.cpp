@@ -78,6 +78,35 @@ ZEND_METHOD(Gtk4_GdkDisplay, flush) {
 }
 
 /**
+ * Gtk4\GdkDisplay::get_clipboard(): GdkClipboard
+ *
+ * Gets the clipboard used for copy/paste operations.
+ */
+ZEND_METHOD(Gtk4_GdkDisplay, get_clipboard) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GdkDisplay *self = PHPGTK_SELF(GdkDisplay, GDK_TYPE_DISPLAY);
+  GdkClipboard *phpgtk_ret = gdk_display_get_clipboard(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
+ * Gtk4\GdkDisplay::get_monitor_at_surface(GdkSurface $surface): ?GdkMonitor
+ *
+ * Gets the monitor in which the largest area of $surface resides.
+ */
+ZEND_METHOD(Gtk4_GdkDisplay, get_monitor_at_surface) {
+  zval *surface;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(surface, class_for_gtype(GDK_TYPE_SURFACE))
+  ZEND_PARSE_PARAMETERS_END();
+  GdkDisplay *self = PHPGTK_SELF(GdkDisplay, GDK_TYPE_DISPLAY);
+  GObject *surface_o = unwrap(surface, GDK_TYPE_SURFACE);
+  if (surface_o == nullptr) RETURN_THROWS();
+  GdkMonitor *phpgtk_ret = gdk_display_get_monitor_at_surface(self, GDK_SURFACE(surface_o));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GdkDisplay::get_monitors(): GListModel
  *
  * Gets the list of monitors associated with this display.
@@ -100,6 +129,18 @@ ZEND_METHOD(Gtk4_GdkDisplay, get_name) {
   const char *phpgtk_ret = gdk_display_get_name(self);
   if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
   RETURN_STRING(phpgtk_ret);
+}
+
+/**
+ * Gtk4\GdkDisplay::get_primary_clipboard(): GdkClipboard
+ *
+ * Gets the clipboard used for the primary selection.
+ */
+ZEND_METHOD(Gtk4_GdkDisplay, get_primary_clipboard) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GdkDisplay *self = PHPGTK_SELF(GdkDisplay, GDK_TYPE_DISPLAY);
+  GdkClipboard *phpgtk_ret = gdk_display_get_primary_clipboard(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

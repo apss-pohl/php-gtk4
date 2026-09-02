@@ -137,6 +137,22 @@ ZEND_METHOD(Gtk4_GtkWindow, fullscreen) {
 }
 
 /**
+ * Gtk4\GtkWindow::fullscreen_on_monitor(GdkMonitor $monitor): void
+ *
+ * Asks to place $window in the fullscreen state on the given $monitor.
+ */
+ZEND_METHOD(Gtk4_GtkWindow, fullscreen_on_monitor) {
+  zval *monitor;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(monitor, class_for_gtype(GDK_TYPE_MONITOR))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWindow *self = PHPGTK_SELF(GtkWindow, GTK_TYPE_WINDOW);
+  GObject *monitor_o = unwrap(monitor, GDK_TYPE_MONITOR);
+  if (monitor_o == nullptr) RETURN_THROWS();
+  gtk_window_fullscreen_on_monitor(self, GDK_MONITOR(monitor_o));
+}
+
+/**
  * Gtk4\GtkWindow::get_application(): ?GtkApplication
  *
  * Gets the `GtkApplication` associated with the window.

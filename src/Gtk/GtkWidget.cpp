@@ -299,6 +299,18 @@ ZEND_METHOD(Gtk4_GtkWidget, get_child_visible) {
 }
 
 /**
+ * Gtk4\GtkWidget::get_clipboard(): GdkClipboard
+ *
+ * Gets the clipboard object for $widget.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, get_clipboard) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GdkClipboard *phpgtk_ret = gtk_widget_get_clipboard(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkWidget::get_color(): GdkRGBA
  *
  * Gets the current foreground color for the widget’s CSS style.
@@ -333,6 +345,18 @@ ZEND_METHOD(Gtk4_GtkWidget, get_css_name) {
   const char *phpgtk_ret = gtk_widget_get_css_name(self);
   if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
   RETURN_STRING(phpgtk_ret);
+}
+
+/**
+ * Gtk4\GtkWidget::get_cursor(): ?GdkCursor
+ *
+ * Queries the cursor set on $widget.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, get_cursor) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GdkCursor *phpgtk_ret = gtk_widget_get_cursor(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -553,6 +577,18 @@ ZEND_METHOD(Gtk4_GtkWidget, get_name) {
 }
 
 /**
+ * Gtk4\GtkWidget::get_native(): ?GtkNative
+ *
+ * Returns the nearest `GtkNative` ancestor of $widget.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, get_native) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GtkNative *phpgtk_ret = gtk_widget_get_native(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkWidget::get_next_sibling(): ?GtkWidget
  *
  * Returns the widget’s next sibling.
@@ -632,6 +668,18 @@ ZEND_METHOD(Gtk4_GtkWidget, get_prev_sibling) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
   GtkWidget *phpgtk_ret = gtk_widget_get_prev_sibling(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
+ * Gtk4\GtkWidget::get_primary_clipboard(): GdkClipboard
+ *
+ * Gets the primary clipboard of $widget.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, get_primary_clipboard) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GdkClipboard *phpgtk_ret = gtk_widget_get_primary_clipboard(self);
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
@@ -1354,6 +1402,25 @@ ZEND_METHOD(Gtk4_GtkWidget, set_css_classes) {
   if (classes_v == nullptr) RETURN_THROWS();
   gtk_widget_set_css_classes(self, const_cast<const char **>(classes_v));
   g_strfreev(classes_v);
+}
+
+/**
+ * Gtk4\GtkWidget::set_cursor(?GdkCursor $cursor): void
+ *
+ * Sets the cursor to be shown when pointer devices point towards $widget.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, set_cursor) {
+  zval *cursor = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cursor, class_for_gtype(GDK_TYPE_CURSOR))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GObject *cursor_o = nullptr;
+  if (cursor != nullptr) {
+    cursor_o = unwrap(cursor, GDK_TYPE_CURSOR);
+    if (cursor_o == nullptr) RETURN_THROWS();
+  }
+  gtk_widget_set_cursor(self, cursor_o != nullptr ? GDK_CURSOR(cursor_o) : nullptr);
 }
 
 /**

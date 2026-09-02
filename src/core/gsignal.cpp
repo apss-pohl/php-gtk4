@@ -73,6 +73,17 @@ void closure_marshal(GClosure *c, GValue *return_value, guint n_params, const GV
 }
 }  // namespace
 
+// A floating GClosure around a PHP callable, marshalled like a signal handler. connect() sinks it
+// into the instance; GtkBuilder's scope hands it to GTK, which does the same.
+GClosure *php_closure_new(zval *callable, zend_string *origin) {
+  auto *pc = reinterpret_cast<PhpClosure *>(g_closure_new_simple(sizeof(PhpClosure), nullptr));
+  ZVAL_COPY(&pc->callable, callable);
+  pc->signal_name = zend_string_copy(origin);
+  g_closure_add_finalize_notifier(&pc->closure, nullptr, closure_finalize);
+  g_closure_set_marshal(&pc->closure, closure_marshal);
+  return &pc->closure;
+}
+
 // Shared body of GObject::connect() / connect_after().
 void signal_connect_method(INTERNAL_FUNCTION_PARAMETERS, bool after) {
   zend_string *signal;
@@ -97,21 +108,16 @@ void signal_connect_method(INTERNAL_FUNCTION_PARAMETERS, bool after) {
     RETURN_THROWS();
   }
 
-  auto *pc = reinterpret_cast<PhpClosure *>(g_closure_new_simple(sizeof(PhpClosure), nullptr));
-  ZVAL_COPY(&pc->callable, &fci.function_name);
-  pc->signal_name = zend_string_copy(signal);
-
-  g_closure_add_finalize_notifier(&pc->closure, nullptr, closure_finalize);
-  g_closure_set_marshal(&pc->closure, closure_marshal);
-  gulong id = g_signal_connect_closure_by_id(obj, signal_id, detail, &pc->closure, after);
+  GClosure *closure = php_closure_new(&fci.function_name, signal);
+  gulong id = g_signal_connect_closure_by_id(obj, signal_id, detail, closure, after);
   if (id == 0) {  // GLib refused (it warned): the closure is ours to drop, nothing to track
-    g_closure_sink(g_closure_ref(&pc->closure));
-    g_closure_unref(&pc->closure);
+    g_closure_sink(g_closure_ref(closure));
+    g_closure_unref(closure);
     zend_argument_value_error(1, "could not connect to signal '%s' on %s", ZSTR_VAL(signal),
                               G_OBJECT_TYPE_NAME(obj));
     RETURN_THROWS();
   }
-  teardown_track_closure(&pc->closure, obj, id);
+  teardown_track_closure(closure, obj, id);
   RETURN_LONG(static_cast<zend_long>(id));
 }
 

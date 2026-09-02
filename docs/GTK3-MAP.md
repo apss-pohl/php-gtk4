@@ -7,7 +7,7 @@ implements it.
 Source of truth: php-gtk3 class headers (158 headers, ~2400 exported methods) vs.
 `src/gtk4.stub.php` + the MINIT registration block in `src/gtk4.cpp`.
 
-Status column regenerated 2026-09-01 by `gen/map-status.php` (run by `gen/gir.php --install`);
+Status column regenerated 2026-09-02 by `gen/map-status.php` (run by `gen/gir.php --install`);
 the notes are hand-written and may lag.
 
 ## Legend
@@ -24,9 +24,9 @@ the notes are hand-written and may lag.
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 65 | — |
+| ✅ implemented | 71 | — |
 | 🟡 partial | 1 | — |
-| ❌ to port (GTK 4 equivalent exists) | 28 | ~1750 |
+| ❌ to port (GTK 4 equivalent exists) | 22 | ~1750 |
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 5 | ~130 |
 
@@ -200,9 +200,9 @@ is open work.
 | `GtkCssProvider` | 16 | `GtkCssProvider` | ✅ | `load_from_data` signature changed (no length/GError out-param in 4.12+). |
 | `GtkStyleContext` | 79 | — | ⛔ | **Deprecated/gutted in GTK 4**; use `GtkWidget::add_css_class` / `remove_css_class` — already ✅ on `GtkWidget`. |
 | `GtkWidgetPath` | 39 | — | ⛔ | Removed in GTK 4. |
-| `GtkBuilder` | 26 | `GtkBuilder` | ❌ | GTK 4 `.ui` syntax; `connect_signals` replaced by `GtkBuilderScope`. |
-| `GtkClipboard` | 26 | `GdkClipboard` | ❌ | Async, `GdkContentProvider`-based. |
-| `GtkIconTheme` | 8 | `GtkIconTheme` | ❌ | Returns `GtkIconPaintable` now. |
+| `GtkBuilder` | 26 | `GtkBuilder` | ✅ | GTK 4 `.ui` syntax. `connect_signals` is replaced by `GtkBuilderScope`: `set_handlers(['on_click' => fn])` **before** `add_from_string()`, because GTK connects while parsing. `new_from_*` is not bound (it aborts the process on a bad document; `add_from_*` throws a `GError`); the string parsers take no length. `<template>` is not supported. |
+| `GtkClipboard` | 26 | `GdkClipboard` | ✅ | Async, `GdkContentProvider`-based. Bound: `set_text`/`set_texture` and the `read_text`/`read_texture` async pair. The typed `GValue`/`GdkContentProvider` payloads follow with drag and drop (wave 3b). GDK owns the clipboards - `GdkDisplay::get_clipboard()`, never `new`. |
+| `GtkIconTheme` | 8 | `GtkIconTheme` | ✅ | Returns `GtkIconPaintable` now (`lookup_icon()`); the paintable is the theme's to create. `Gio.Icon` overloads (`has_gicon`, `lookup_by_gicon`) stay unbound. |
 | `GtkLogSuppression` | 0 | — | ⛔ | php-gtk3-specific helper. |
 
 ## Printing
@@ -220,12 +220,12 @@ is open work.
 | `GdkRGBA` | 4 | `GdkRGBA` | ✅ | Boxed type with `parse`, `to_string`, `equal`, `is_opaque` + `r/g/b/a` fields. Richer than php-gtk3's. |
 | — | — | `GdkRectangle` | ✅ | New in php-gtk4 (`intersect`, `union`, `contains_point`, `equal`). |
 | `GdkDisplay` | 5 | `GdkDisplay` | ✅ | `get_monitors()` returns a `GListModel` in GTK 4. |
-| `GdkMonitor` | 5 | `GdkMonitor` | ❌ | `get_geometry`, `get_width_mm`; `get_workarea` removed in GTK 4. |
+| `GdkMonitor` | 5 | `GdkMonitor` | ✅ | `get_geometry`, `get_width_mm`; `get_workarea` removed in GTK 4. GDK owns them (`GdkDisplay::get_monitors()`): a standalone one answers NULL from `get_display()`, so `new` is refused. |
 | `GdkScreen` | 4 | — | ⛔ | Removed in GTK 4; use `GdkDisplay`. |
 | `GdkVisual` | 6 | — | ⛔ | Removed in GTK 4. |
-| `GdkWindow` | 10 | `GdkSurface` | ❌ | Much smaller API; most methods (`maximize`, `get_children`, `get_default_root_window`) are gone. |
+| `GdkWindow` | 10 | `GdkSurface` | ✅ | Much smaller API; most methods (`maximize`, `get_children`, `get_default_root_window`) are gone. Reached through `GtkNative::get_surface()`; GDK creates it, so `new` and PHP subclasses are refused (they abort inside GDK). |
 | `GdkDrawable` | 0 | — | ⛔ | Removed long ago. |
-| `GdkCursor` | 7 | `GdkCursor` | ❌ | `new_from_name`, `new_from_texture`; `get_cursor_type` removed. |
+| `GdkCursor` | 7 | `GdkCursor` | ✅ | `new_from_name`, `new_from_texture`; `get_cursor_type` removed. An unknown name is still a cursor - GDK resolves it against the theme when a surface uses it. |
 | `GdkPixbuf` | 21 | `GdkTexture` / `GdkPaintable` | ✅ | GdkPixbuf still exists as a library but GTK 4 widgets want `GdkPaintable`. |
 | `GdkPixbufFormat` | 1 | `GdkPixbufFormat` | ❌ | |
 | `GdkEvent` + `GdkEventButton/Key/Motion/Scroll/Crossing/Focus/Configure/Touch/Any` | 3 + 8×2 | `GdkEvent` (opaque) + event controllers | ⛔ | **The event unions are gone.** GTK 4 uses `GtkEventControllerKey`, `GtkGestureClick`, `GtkEventControllerMotion`, `GtkEventControllerScroll`, `GtkEventControllerFocus`. Binding these controllers is the port target. |

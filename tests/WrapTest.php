@@ -8,8 +8,10 @@ use Gtk4\GdkDisplay;
 use Gtk4\GObject;
 use Gtk4\Gtk;
 use Gtk4\GtkBox;
+use Gtk4\GtkBuilder;
 use Gtk4\GtkButton;
 use Gtk4\GtkOrientation;
+use Gtk4\GtkWidget;
 use Gtk4\GtkWindow;
 use PhpGtk4\Tests\Subclass\DestructCountingButton;
 use PhpGtk4\Tests\Subclass\StatefulButton;
@@ -36,21 +38,43 @@ final class WrapTest extends GtkTestCase
 
     public function testUnregisteredTypeFallsBackToGObject(): void
     {
-        // GdkMonitor (what a display's monitor list holds) is not bound and implements no
-        // registered interface: the nearest registered ancestor is GObject itself, which is a
-        // handle like any other - not an exception.
-        $display = GdkDisplay::get_default();
-        self::assertNotNull($display);
-        $monitors = $display->get_monitors();
-        if ($monitors->get_n_items() === 0) {
-            self::markTestSkipped('the display reports no monitor');
+        // GtkBuilder instantiates any GType GTK knows, bound here or not - the only way to get a
+        // handle on an unregistered type without one existing in the binding. The candidates are
+        // tried in order so that a later wave binding one does not leave the test with nothing.
+        $object = self::builtFromUi(['GtkPrintSettings', 'GtkPageSetup', 'GtkTextChildAnchor']);
+        self::assertInstanceOf(GObject::class, $object);
+        self::assertSame(GObject::class, $object::class, 'the nearest registered ancestor is GObject');
+        // A GObject handle is a handle like any other: identity holds while PHP holds it.
+        self::assertSame(spl_object_id($object), spl_object_id($object));
+    }
+
+    public function testUnregisteredTypeFallsBackToItsNearestRegisteredAncestor(): void
+    {
+        // Not GObject this time: an unbound *widget* answers with the nearest class up its chain.
+        $object = self::builtFromUi(['GtkMediaControls', 'GtkLevelBar', 'GtkVideo']);
+        self::assertInstanceOf(GtkWidget::class, $object);
+        self::assertSame(GtkWidget::class, $object::class);
+    }
+
+    /**
+     * The first of $types php-gtk4 does not bind, instantiated through a .ui document.
+     *
+     * @param list<string> $types
+     */
+    private static function builtFromUi(array $types): GObject
+    {
+        foreach ($types as $type) {
+            if (class_exists('Gtk4\\' . $type)) {
+                continue;   // bound by a later wave: try the next candidate
+            }
+            $builder = new GtkBuilder();
+            $builder->add_from_string("<interface><object class=\"$type\" id=\"x\"/></interface>");
+            $object = $builder->get_object('x');
+            self::assertNotNull($object);
+
+            return $object;
         }
-        $monitor = $monitors->get_item(0);
-        self::assertInstanceOf(GObject::class, $monitor);
-        self::assertSame(GObject::class, $monitor::class);
-        // A GObject handle is a handle: same instance while PHP holds it, properties readable.
-        self::assertSame($monitor, $monitors->get_item(0));
-        self::assertIsString($monitor->get_property('connector'));
+        self::fail('every candidate type is bound now - pick one php-gtk4 still does not bind');
     }
 
     public function testNullObjectProperty(): void
