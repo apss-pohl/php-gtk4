@@ -58,8 +58,15 @@ ZEND_METHOD(Gtk4_GtkPicture, new_for_filename) {
   Z_PARAM_OPTIONAL
   Z_PARAM_PATH_STR_OR_NULL(filename)
   ZEND_PARSE_PARAMETERS_END();
-  GObject *obj =
-      G_OBJECT(gtk_picture_new_for_filename(filename != nullptr ? ZSTR_VAL(filename) : nullptr));
+  zend_string *filename_abs = nullptr;
+  if (filename != nullptr) {
+    filename_abs = phpgtk::absolute_filename(filename, 1);
+    if (filename_abs == nullptr) RETURN_THROWS();
+  }
+  GtkWidget *call_result =
+      gtk_picture_new_for_filename(filename_abs != nullptr ? ZSTR_VAL(filename_abs) : nullptr);
+  if (filename_abs != nullptr) zend_string_release(filename_abs);
+  GObject *obj = G_OBJECT(call_result);
   wrap(obj, return_value);
 }
 
@@ -236,7 +243,13 @@ ZEND_METHOD(Gtk4_GtkPicture, set_filename) {
   Z_PARAM_PATH_STR_OR_NULL(filename)
   ZEND_PARSE_PARAMETERS_END();
   GtkPicture *self = PHPGTK_SELF(GtkPicture, GTK_TYPE_PICTURE);
-  gtk_picture_set_filename(self, filename != nullptr ? ZSTR_VAL(filename) : nullptr);
+  zend_string *filename_abs = nullptr;
+  if (filename != nullptr) {
+    filename_abs = phpgtk::absolute_filename(filename, 1);
+    if (filename_abs == nullptr) RETURN_THROWS();
+  }
+  gtk_picture_set_filename(self, filename_abs != nullptr ? ZSTR_VAL(filename_abs) : nullptr);
+  if (filename_abs != nullptr) zend_string_release(filename_abs);
 }
 
 /**

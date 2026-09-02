@@ -72,7 +72,10 @@ ZEND_METHOD(Gtk4_GtkCssProvider, load_from_path) {
   Z_PARAM_PATH_STR(path)
   ZEND_PARSE_PARAMETERS_END();
   GtkCssProvider *self = PHPGTK_SELF(GtkCssProvider, GTK_TYPE_CSS_PROVIDER);
-  gtk_css_provider_load_from_path(self, ZSTR_VAL(path));
+  zend_string *path_abs = phpgtk::absolute_filename(path, 1);
+  if (path_abs == nullptr) RETURN_THROWS();
+  gtk_css_provider_load_from_path(self, ZSTR_VAL(path_abs));
+  if (path_abs != nullptr) zend_string_release(path_abs);
 }
 
 /**

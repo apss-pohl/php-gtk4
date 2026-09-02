@@ -172,8 +172,11 @@ ZEND_METHOD(Gtk4_GtkBuilder, add_from_file) {
   Z_PARAM_PATH_STR(filename)
   ZEND_PARSE_PARAMETERS_END();
   GtkBuilder *self = PHPGTK_SELF(GtkBuilder, GTK_TYPE_BUILDER);
+  zend_string *filename_abs = phpgtk::absolute_filename(filename, 1);
+  if (filename_abs == nullptr) RETURN_THROWS();
   GError *error = nullptr;
-  const gboolean ok = gtk_builder_add_from_file(self, ZSTR_VAL(filename), &error);
+  const gboolean ok = gtk_builder_add_from_file(self, ZSTR_VAL(filename_abs), &error);
+  if (filename_abs != nullptr) zend_string_release(filename_abs);
   if (!ok) {
     throw_gerror(error);
     RETURN_THROWS();
@@ -217,11 +220,14 @@ ZEND_METHOD(Gtk4_GtkBuilder, add_objects_from_file) {
   Z_PARAM_ARRAY(object_ids)
   ZEND_PARSE_PARAMETERS_END();
   GtkBuilder *self = PHPGTK_SELF(GtkBuilder, GTK_TYPE_BUILDER);
+  zend_string *filename_abs = phpgtk::absolute_filename(filename, 1);
+  if (filename_abs == nullptr) RETURN_THROWS();
   char **object_ids_v = strv_from_php(object_ids);
   if (object_ids_v == nullptr) RETURN_THROWS();
   GError *error = nullptr;
   const gboolean ok = gtk_builder_add_objects_from_file(
-      self, ZSTR_VAL(filename), const_cast<const char **>(object_ids_v), &error);
+      self, ZSTR_VAL(filename_abs), const_cast<const char **>(object_ids_v), &error);
+  if (filename_abs != nullptr) zend_string_release(filename_abs);
   g_strfreev(object_ids_v);
   if (!ok) {
     throw_gerror(error);

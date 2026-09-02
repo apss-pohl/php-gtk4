@@ -343,6 +343,15 @@ Each needs a written design in PLAN.md before code; none blocks the waves.
       `GtkSnapshot` lands, widget templates. Closed since: GTK *interfaces* implemented in PHP
       (`GListModel`), and custom **layout** from PHP — a `GtkLayoutManager` subclass, because a
       widget that has one never reaches `vfunc_size_allocate()` (2026-09-01).
+- [x] **Relative paths were resolved against the wrong directory under ZTS** (2026-09-02, found
+      with the local ZTS build the same day - docs/BUILD.md "Testing a ZTS build locally"). PHP's
+      `chdir()` moves a *per-thread virtual* cwd; GTK, GLib and cairo are C libraries reading the
+      *process* cwd, so `$texture->save_to_png('out.png')` landed where the process started rather
+      than where PHP was. NTS never sees it - there the two are the same directory - and it is
+      also why `RobustnessTest`'s scratch-directory containment silently did nothing there (the
+      sweep wrote four TIFFs into the repository root). Every `filename` parameter now goes
+      through `phpgtk::absolute_filename()` (`expand_filepath()` against PHP's own cwd) before
+      GTK sees it, emitted by the generator, so reading and writing are both covered.
 - [ ] **Cross-thread hand-off** for the "one GUI thread + workers" shape: a thread-safe
       `GLib::invoke_on_main(callable)` (serialise the callable or require a `parallel`-style
       channel; `g_main_context_invoke` on the GUI context, callable released on that thread).

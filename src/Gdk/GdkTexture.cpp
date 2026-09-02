@@ -77,8 +77,12 @@ ZEND_METHOD(Gtk4_GdkTexture, new_from_filename) {
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_PATH_STR(path)
   ZEND_PARSE_PARAMETERS_END();
+  zend_string *path_abs = phpgtk::absolute_filename(path, 1);
+  if (path_abs == nullptr) RETURN_THROWS();
   GError *error = nullptr;
-  GObject *obj = G_OBJECT(gdk_texture_new_from_filename(ZSTR_VAL(path), &error));
+  GdkTexture *call_result = gdk_texture_new_from_filename(ZSTR_VAL(path_abs), &error);
+  if (path_abs != nullptr) zend_string_release(path_abs);
+  GObject *obj = G_OBJECT(call_result);
   if (obj == nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
@@ -131,7 +135,11 @@ ZEND_METHOD(Gtk4_GdkTexture, save_to_png) {
   Z_PARAM_PATH_STR(filename)
   ZEND_PARSE_PARAMETERS_END();
   GdkTexture *self = PHPGTK_SELF(GdkTexture, GDK_TYPE_TEXTURE);
-  RETURN_BOOL(gdk_texture_save_to_png(self, ZSTR_VAL(filename)));
+  zend_string *filename_abs = phpgtk::absolute_filename(filename, 1);
+  if (filename_abs == nullptr) RETURN_THROWS();
+  gboolean call_result = gdk_texture_save_to_png(self, ZSTR_VAL(filename_abs));
+  if (filename_abs != nullptr) zend_string_release(filename_abs);
+  RETURN_BOOL(call_result);
 }
 
 /**
@@ -160,7 +168,11 @@ ZEND_METHOD(Gtk4_GdkTexture, save_to_tiff) {
   Z_PARAM_PATH_STR(filename)
   ZEND_PARSE_PARAMETERS_END();
   GdkTexture *self = PHPGTK_SELF(GdkTexture, GDK_TYPE_TEXTURE);
-  RETURN_BOOL(gdk_texture_save_to_tiff(self, ZSTR_VAL(filename)));
+  zend_string *filename_abs = phpgtk::absolute_filename(filename, 1);
+  if (filename_abs == nullptr) RETURN_THROWS();
+  gboolean call_result = gdk_texture_save_to_tiff(self, ZSTR_VAL(filename_abs));
+  if (filename_abs != nullptr) zend_string_release(filename_abs);
+  RETURN_BOOL(call_result);
 }
 
 /**

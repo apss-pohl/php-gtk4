@@ -581,18 +581,36 @@ final class TypeMap
                 $guard = $nullable ? "$name != nullptr && " : '';
                 $utf8Check = ["if ({$guard}!phpgtk::check_utf8($name, $argNum)) RETURN_THROWS();"];
             }
+            // A relative filename has to be resolved against PHP's own cwd before GTK sees it:
+            // under ZTS chdir() moves a per-thread virtual cwd that a C library knows nothing
+            // about (php_gtk4.h, absolute_filename).
+            $post = [];
+            $value = $name;
+            if ($t->name === 'filename') {
+                $value = "{$name}_abs";
+                $post = ["if ({$name}_abs != nullptr) zend_string_release({$name}_abs);"];
+                $utf8Check = array_merge($utf8Check, $nullable
+                    ? ["zend_string *{$name}_abs = nullptr;",
+                        "if ($name != nullptr) {",
+                        "  {$name}_abs = phpgtk::absolute_filename($name, $argNum);",
+                        "  if ({$name}_abs == nullptr) RETURN_THROWS();",
+                        '}']
+                    : ["zend_string *{$name}_abs = phpgtk::absolute_filename($name, $argNum);",
+                        "if ({$name}_abs == nullptr) RETURN_THROWS();"]);
+            }
             return array_merge($r, [
                 'phpType' => ($nullable ? '?' : '') . 'string',
                 'decl' => "zend_string *$name" . ($nullable ? ' = nullptr' : '') . ';',
                 'zpp' => $zpp . ($nullable ? '_OR_NULL' : '') . "($name)",
                 'pre' => $utf8Check,
+                'post' => $post,
                 // transfer full (gtk_string_list_take): the callee frees the string with g_free(),
                 // so it gets a GLib copy, never Zend's own buffer.
                 'carg' => $p->transfer === 'full'
                     ? ($nullable
-                        ? "$name != nullptr ? g_strdup(ZSTR_VAL($name)) : nullptr"
-                        : "g_strdup(ZSTR_VAL($name))")
-                    : ($nullable ? "$name != nullptr ? ZSTR_VAL($name) : nullptr" : "ZSTR_VAL($name)"),
+                        ? "$value != nullptr ? g_strdup(ZSTR_VAL($value)) : nullptr"
+                        : "g_strdup(ZSTR_VAL($value))")
+                    : ($nullable ? "$value != nullptr ? ZSTR_VAL($value) : nullptr" : "ZSTR_VAL($value)"),
             ]);
         }
         if ($t->name === 'gboolean') {

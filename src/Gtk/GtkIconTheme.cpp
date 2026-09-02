@@ -72,7 +72,10 @@ ZEND_METHOD(Gtk4_GtkIconTheme, add_search_path) {
   Z_PARAM_PATH_STR(path)
   ZEND_PARSE_PARAMETERS_END();
   GtkIconTheme *self = PHPGTK_SELF(GtkIconTheme, GTK_TYPE_ICON_THEME);
-  gtk_icon_theme_add_search_path(self, ZSTR_VAL(path));
+  zend_string *path_abs = phpgtk::absolute_filename(path, 1);
+  if (path_abs == nullptr) RETURN_THROWS();
+  gtk_icon_theme_add_search_path(self, ZSTR_VAL(path_abs));
+  if (path_abs != nullptr) zend_string_release(path_abs);
 }
 
 /**

@@ -15,6 +15,7 @@
 extern "C" {
 #include <ext/standard/info.h>
 #include <ext/spl/spl_exceptions.h>
+#include <main/fopen_wrappers.h>
 }
 
 #include <gtk/gtk.h>
@@ -39,6 +40,8 @@ extern "C" {
 #define PHPGTK_BUILD_FEATURES "webkit=no"
 #endif
 
+#include <array>
+#include <cstring>
 #include <type_traits>
 
 extern zend_module_entry gtk4_module_entry;
@@ -105,6 +108,24 @@ inline bool check_range(zend_long v, uint32_t arg) {
     return false;
   }
   return true;
+}
+
+// A filename crossing PHP -> C is made absolute against PHP's *own* working directory first.
+// `chdir()` moves a per-thread virtual cwd under ZTS, while GTK, GLib and cairo are C libraries
+// that read the process cwd - so a relative path would resolve somewhere else entirely there
+// (NTS never notices: the two are the same directory). Answers a zend_string the caller
+// releases, or nullptr with a ValueError thrown.
+inline zend_string *absolute_filename(zend_string *path, uint32_t arg) {
+  std::array<char, MAXPATHLEN> resolved{};
+  if (expand_filepath(ZSTR_VAL(path), resolved.data()) == nullptr) {
+    if (arg != 0) {
+      zend_argument_value_error(arg, "cannot be resolved against the current directory");
+    } else {
+      zend_value_error("path cannot be resolved against the current directory");
+    }
+    return nullptr;
+  }
+  return zend_string_init(resolved.data(), strlen(resolved.data()), false);
 }
 
 // A flags value must be a combination of the type's own bits: GLib otherwise rejects the
