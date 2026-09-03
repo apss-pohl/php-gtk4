@@ -76,9 +76,9 @@ Gtk.SizeGroup
 
 # Wave 2 (controls, docs/PLAN.md §3): the input widgets - text entry (+ the GtkEditable
 # interface and the buffer behind it), check/toggle buttons, spin button, scale (+ its GtkRange
-# parent), progress bar, image, spinner, calendar. Plus what the fastlane port needs next to
-# them (docs/GTK3-MAP.md): GtkPicture + GdkPaintable for photos, GtkPasswordEntry, and
-# GtkDropDown over a GtkStringList as the GtkComboBox replacement.
+# parent), progress bar, image, spinner, calendar. Plus the neighbours a ported GTK3 application
+# needs next to them (docs/GTK3-MAP.md): GtkPicture + GdkPaintable for photos, GtkPasswordEntry,
+# and GtkDropDown over a GtkStringList as the GtkComboBox replacement.
 Gtk.Entry
 Gtk.Editable
 Gtk.EntryBuffer

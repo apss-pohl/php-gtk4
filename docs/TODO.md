@@ -147,8 +147,8 @@ draft, hand-write via overrides / promotion where the project needs more.
 - [x] **Socket on the main loop** (2026-08-30): `GLib::io_add_watch(resource, GIOCondition, callable)`
       — a `GIOChannel` watch over PHP's descriptor (`php_stream_cast(PHP_STREAM_AS_SOCKETD)`),
       callable + stream parked through the callback graveyard, RSHUTDOWN-tracked like timeouts
-      (`IoWatchTest`). ext-sockets users go through `socket_export_stream()`. The runtime item the
-      fastlane port needs to retire its 14 nested `events_pending()/main_iteration()` pumps.
+      (`IoWatchTest`). ext-sockets users go through `socket_export_stream()`. The runtime item a
+      ported application needs to retire GTK3's nested `events_pending()/main_iteration()` pumps.
 - [x] **Wave 5 — dialogs** (2026-08-30): `GtkFileDialog`, `GtkFileFilter`, `GtkColorDialog`,
       `GtkFontDialog`, `GtkAboutDialog` (+ `PangoFontDescription`, `GtkLicense` and the Pango
       enums the descriptions use). The async machinery was already there from the review wave, so
@@ -262,7 +262,6 @@ draft, hand-write via overrides / promotion where the project needs more.
       use-after-free; the override wraps without freeing. And `new GtkDragIcon()` builds a
       GtkRoot with no GdkSurface, which dies unrealized in `gtk_drag_icon_realize()` - refused in
       `gen/skip.txt` like `GdkDrag`/`GdkDrop`, GTK makes the icon for a drag it started.
-      Next: the fastlane port spike (one screen on php-gtk4).
 
 ## 7. GTK4 feature surface (what the binding still has to expose to deliver GTK4's benefits)
 
