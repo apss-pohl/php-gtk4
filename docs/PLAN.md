@@ -424,9 +424,12 @@ load (verified with valgrind: write into a freed block inside libgtk, no php-gtk
    `GVariant`), signals (GClosure marshaller, `emit()`), callbacks (`GLib` sources), exception
    boundary with `ExceptionMode`, RSHUTDOWN teardown, `GtkWidget` layer with `GtkButton`/`GtkLabel`,
    `GtkApplication` + `GMainLoop`, actions with real PHP interfaces, `PhpValue` + `GListStore`.
-3. **Generator** — GIR parser + emitter producing Gtk/Gdk/Gio/GLib/Pango namespaces; replace the
-   hand-written milestone-2 classes with generated ones (they must be byte-for-byte compatible in
-   behaviour). Topological registration order. Stubs + coverage doc output.
+3. ✅ **Generator** — done 2026-09-03, when wave 3b closed the map's port order. GIR parser +
+   emitter over Gtk/Gdk/Gio/GObject/GLib/Pango/Graphene/cairo; wave 0 replaced the hand-written
+   milestone-2 classes with generated ones and the suite was adapted to GTK's own API shape;
+   `src/gen_minit.inc` registers parents first; the stub, the IDE stub and docs/GTK3-MAP.md's
+   status column are all generator output. Hand work is confined to `gen/overrides/`,
+   `gen/skip.txt` (every skip with a reason, listed in `gen/report.md`) and `gen/handwritten.txt`.
 4. ✅ **GTK4 surface** — done 2026-09-02: event controllers (wave 3), list views/factories
    (wave 7), the builder scope (wave 8) and snapshot/texture (`GtkSnapshot` + Graphene geometry,
    with `append_cairo()` as the bridge to `CairoContext`); `gen/overrides/` populated throughout.

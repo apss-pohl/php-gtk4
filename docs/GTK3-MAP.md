@@ -268,7 +268,8 @@ generator, reviewed as a draft, hand-finished through overrides/promotion, merge
 7. **List models** — `GListModel`, `GListStore`, `GtkStringList`, `GtkSingleSelection`,
    `GtkListView`, `GtkColumnView`, `GtkSignalListItemFactory`. Do **not** port `GtkTreeView`.
 8. **Styling / builder** — `GtkCssProvider`, `GtkBuilder`.
-9. Optional/later: printing, `GdkClipboard`, WebKitGTK 6, GtkSourceView 5.
+9. Optional/later: printing, WebKitGTK 6, GtkSourceView 5. (`GdkClipboard` landed with wave 8,
+   its typed payloads with wave 3b.)
 
 Each entry follows the four-part definition of done in CLAUDE.md: implementation + registration,
 tests, stub + regenerated arginfo/IDE stub, and its own `examples/<Class>.php`.

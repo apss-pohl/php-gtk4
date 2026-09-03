@@ -294,11 +294,18 @@ display, and calls `Gtk::init()` once.
   the stack shows the closure above `GtkApplication::run()`.
 - Arginfo comes from the stub, argument parsing from `ZEND_PARSE_PARAMETERS_*` — arity/type
   violations are `ArgumentCountError`/`TypeError` (PHP 8 semantics).
-- GLib `CRITICAL` lines on stderr from `ErrorTest` are expected (the g_critical fallback path for
-  the no-handler case). They cannot be captured from PHP and must not be turned into PHP warnings
-  (PHPUnit would throw inside the C callback). `tests/run.sh` sets `GSK_RENDERER=cairo` so GTK
-  does not try EGL under Xvfb. **Their text is asserted in `tests/phpt/` instead**, where
-  run-tests.php compares the process's stderr.
+- **A GLib `CRITICAL` fails the test that caused it.** It is how GTK says "PHP handed me something
+  I refuse", so on an ordinary test it means a missing guard at the boundary — the binding should
+  have raised a PHP error before GTK saw the value. A `--enable-gtk4-testing` build installs a
+  `g_log_set_writer_func` (`Gtk::testing_capture_logs()`, once per process and only on the GUI
+  thread — GTK's worker threads have no request, `on_gui_thread()`); `GtkTestCase` arms it in
+  `setUp()` and fails in `tearDown()` on anything left over. Fix the boundary; only a suite whose
+  job is to hand GTK bad values on purpose (`RobustnessTest`, `ArgumentGuardTest`) or one that
+  exercises the `g_critical` fallback itself (`ErrorTest`) overrides `toleratesGtkCriticals()`,
+  and a single deliberate case says `expectsGtkCritical()`. A critical must not be turned into a
+  PHP warning (PHPUnit would throw inside the C callback), so **their text is asserted in
+  `tests/phpt/`**, where run-tests.php compares the process's stderr. `tests/run.sh` sets
+  `GSK_RENDERER=cairo` so GTK does not try EGL under Xvfb.
 - `tests/phpt/` (`make test` / `./ci.sh --only=phpt`, see `tests/phpt/README.md`): one process per
   test, expected output covers stdout **and** stderr. Put a test here only for what PHPUnit cannot
   reach — `g_critical`/GLib warning text, uncaught fatals and exit codes, RSHUTDOWN teardown

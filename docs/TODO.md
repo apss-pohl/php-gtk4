@@ -263,6 +263,21 @@ draft, hand-write via overrides / promotion where the project needs more.
       GtkRoot with no GdkSurface, which dies unrealized in `gtk_drag_icon_realize()` - refused in
       `gen/skip.txt` like `GdkDrag`/`GdkDrop`, GTK makes the icon for a drag it started.
 
+**The rollout is complete**: every step of docs/GTK3-MAP.md's "Recommended port order" has landed,
+so there is no next wave. What the map still marks ❌ is the residue the order deliberately left
+for last, and each group needs a decision rather than a wave:
+
+- *deprecated in 4.10* — `GtkDialog`, `GtkInfoBar`, `GtkStatusbar`, `GtkEntryCompletion`,
+  `GtkColorButton`/`GtkFontButton`, `GtkAppChooser*`. The wave rules skip deprecated API in favour
+  of its replacement, and every replacement is bound; port none of them unless a real port asks.
+- *current widgets no wave needed* — `GtkListBox`(+`Row`), `GtkFlowBox`(+`Child`), `GtkExpander`,
+  `GtkActionBar`, `GtkAspectFrame`. Mechanical: add to `gen/allowlist.txt` and generate.
+- *small gaps in bound classes* — `GIcon`/`GThemedIcon` (what `GtkImage::set_from_gicon()` wants),
+  the runtime GTK version triple (`gtk_get_major_version` …, next to `Gtk4\VERSION`), and
+  `GtkUriLauncher` as the replacement for the deprecated `gtk_show_uri`.
+- *whole subsystems* — printing (`GtkPrintSettings`/`GtkPageSetup`/`GtkPaperSize`), `GdkPixbuf*`
+  (prefer `GdkTexture`), GSK's own types (§7), WebKitGTK 6 (PLAN.md milestone 6).
+
 ## 7. GTK4 feature surface (what the binding still has to expose to deliver GTK4's benefits)
 
 Inherited for free (nothing to do): GSK/GPU rendering, the flat widget hierarchy (no
@@ -383,6 +398,21 @@ Each needs a written design in PLAN.md before code; none blocks the waves.
       sweep wrote four TIFFs into the repository root). Every `filename` parameter now goes
       through `phpgtk::absolute_filename()` (`expand_filepath()` against PHP's own cwd) before
       GTK sees it, emitted by the generator, so reading and writing are both covered.
+- [x] **A GTK CRITICAL fails the test that caused it** (2026-09-02) — GLib's warnings used to
+      scroll past in the PHPUnit output, so a missing guard at the boundary looked like noise.
+      A `--enable-gtk4-testing` build installs a `g_log_set_writer_func` (once per process, and
+      only on the GUI thread - `on_gui_thread()`, because GTK's worker threads have no request);
+      `GtkTestCase` arms it per test and fails on anything left over. A suite whose job is to hand
+      GTK bad values answers `toleratesGtkCriticals()`, a single test says `expectsGtkCritical()`.
+      26 ordinary-test criticals were real missing guards and are fixed. Still open: `RobustnessTest`
+      tolerates its whole sweep (~162 lines), which should become a pinned list keyed on the
+      triggering method rather than on GTK's wording, so a *new* one there fails too.
+- [ ] **The coverage floor has almost no margin** (2026-09-03): 80.1% against
+      `COVERAGE_MIN_LINES=80`, i.e. 23 lines. Wave 3b is what thinned it - `GdkDrag` and `GdkDrop`
+      are 128 lines that no test can reach, because only a compositor-driven drag creates one, and
+      they count in the denominator like any other file. The next wave will trip the floor. The
+      choice then is to raise real coverage or to decide what the denominator should contain;
+      lowering the floor is not it.
 - [ ] **Cross-thread hand-off** for the "one GUI thread + workers" shape: a thread-safe
       `GLib::invoke_on_main(callable)` (serialise the callable or require a `parallel`-style
       channel; `g_main_context_invoke` on the GUI context, callable released on that thread).
