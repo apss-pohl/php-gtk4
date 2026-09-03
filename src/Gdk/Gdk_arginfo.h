@@ -1,10 +1,16 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: cf756aed69c4fbfe5bf4bcbd26dab8ab7d79eb7c */
+ * Stub hash: c8c5d11b4d428e8bb035a9be319a673d4da001df */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkClipboard___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkClipboard_get_content, 0, 0, Gtk4\\GdkContentProvider, 1)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkClipboard_get_display, 0, 0, Gtk4\\GdkDisplay, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkClipboard_get_formats, 0, 0, Gtk4\\GdkContentFormats, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkClipboard_is_local, 0, 0, _IS_BOOL, 0)
@@ -32,6 +38,10 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkClipboard_read_text
 	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkClipboard_set_content, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, provider, Gtk4\\GdkContentProvider, 1)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkClipboard_set_text, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, text, IS_STRING, 0)
 ZEND_END_ARG_INFO()
@@ -49,6 +59,88 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkClipboard_store_finish, 0, 1, _IS_BOOL, 0)
 	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
 ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkClipboard_set_value, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, value, IS_MIXED, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, type, IS_STRING, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkContentFormats_contain_mime_type, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, mime_type, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkContentFormats_match, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, second, Gtk4\\GdkContentFormats, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkContentFormats_match_mime_type, 0, 1, IS_STRING, 1)
+	ZEND_ARG_OBJ_INFO(0, second, Gtk4\\GdkContentFormats, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkContentFormats_to_string, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkContentFormats_union, 0, 1, Gtk4\\GdkContentFormats, 0)
+	ZEND_ARG_OBJ_INFO(0, second, Gtk4\\GdkContentFormats, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkContentFormats_union_deserialize_gtypes arginfo_class_Gtk4_GdkClipboard_get_formats
+
+#define arginfo_class_Gtk4_GdkContentFormats_union_deserialize_mime_types arginfo_class_Gtk4_GdkClipboard_get_formats
+
+#define arginfo_class_Gtk4_GdkContentFormats_union_serialize_gtypes arginfo_class_Gtk4_GdkClipboard_get_formats
+
+#define arginfo_class_Gtk4_GdkContentFormats_union_serialize_mime_types arginfo_class_Gtk4_GdkClipboard_get_formats
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkContentFormats_parse, 0, 1, Gtk4\\GdkContentFormats, 1)
+	ZEND_ARG_TYPE_INFO(0, string, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkContentFormats___construct, 0, 0, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, mime_types, IS_ARRAY, 0, "[]")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkContentFormats_contain_gtype, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, type, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkContentFormats_get_gtypes, 0, 0, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkContentFormats_get_mime_types arginfo_class_Gtk4_GdkContentFormats_get_gtypes
+
+#define arginfo_class_Gtk4_GdkContentProvider___construct arginfo_class_Gtk4_GdkClipboard___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkContentProvider_new_for_bytes, 0, 2, Gtk4\\GdkContentProvider, 0)
+	ZEND_ARG_TYPE_INFO(0, mime_type, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, bytes, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkContentProvider_content_changed, 0, 0, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkContentProvider_ref_formats arginfo_class_Gtk4_GdkClipboard_get_formats
+
+#define arginfo_class_Gtk4_GdkContentProvider_ref_storable_formats arginfo_class_Gtk4_GdkClipboard_get_formats
+
+#define arginfo_class_Gtk4_GdkContentProvider_write_mime_type_finish arginfo_class_Gtk4_GdkClipboard_store_finish
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkContentProvider_get_value, 0, 0, IS_MIXED, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, type, IS_STRING, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkContentProvider_new_for_value, 0, 1, Gtk4\\GdkContentProvider, 0)
+	ZEND_ARG_TYPE_INFO(0, value, IS_MIXED, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, type, IS_STRING, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkContentProvider_vfunc_attach_clipboard, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, clipboard, Gtk4\\GdkClipboard, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkContentProvider_vfunc_content_changed arginfo_class_Gtk4_GdkContentProvider_content_changed
+
+#define arginfo_class_Gtk4_GdkContentProvider_vfunc_detach_clipboard arginfo_class_Gtk4_GdkContentProvider_vfunc_attach_clipboard
 
 #define arginfo_class_Gtk4_GdkCursor___construct arginfo_class_Gtk4_GdkClipboard___construct
 
@@ -87,12 +179,11 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDisplay_open, 0, 0,
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, display_name, IS_STRING, 1, "null")
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkDisplay_beep, 0, 0, IS_VOID, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_GdkDisplay_beep arginfo_class_Gtk4_GdkContentProvider_content_changed
 
-#define arginfo_class_Gtk4_GdkDisplay_close arginfo_class_Gtk4_GdkDisplay_beep
+#define arginfo_class_Gtk4_GdkDisplay_close arginfo_class_Gtk4_GdkContentProvider_content_changed
 
-#define arginfo_class_Gtk4_GdkDisplay_flush arginfo_class_Gtk4_GdkDisplay_beep
+#define arginfo_class_Gtk4_GdkDisplay_flush arginfo_class_Gtk4_GdkContentProvider_content_changed
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDisplay_get_clipboard, 0, 0, Gtk4\\GdkClipboard, 0)
 ZEND_END_ARG_INFO()
@@ -104,8 +195,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDisplay_get_monitors, 0, 0, Gtk4\\GListModel, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkDisplay_get_name, 0, 0, IS_STRING, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_GdkDisplay_get_name arginfo_class_Gtk4_GdkContentFormats_to_string
 
 #define arginfo_class_Gtk4_GdkDisplay_get_primary_clipboard arginfo_class_Gtk4_GdkDisplay_get_clipboard
 
@@ -121,7 +211,59 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkDisplay_supports_shadow_width arginfo_class_Gtk4_GdkClipboard_is_local
 
-#define arginfo_class_Gtk4_GdkDisplay_sync arginfo_class_Gtk4_GdkDisplay_beep
+#define arginfo_class_Gtk4_GdkDisplay_sync arginfo_class_Gtk4_GdkContentProvider_content_changed
+
+#define arginfo_class_Gtk4_GdkDrag___construct arginfo_class_Gtk4_GdkClipboard___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkDrag_drop_done, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, success, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkDrag_get_actions arginfo_class_Gtk4_GdkCursor_get_hotspot_x
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDrag_get_content, 0, 0, Gtk4\\GdkContentProvider, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkDrag_get_display arginfo_class_Gtk4_GdkClipboard_get_display
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDrag_get_drag_surface, 0, 0, Gtk4\\GdkSurface, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkDrag_get_formats arginfo_class_Gtk4_GdkClipboard_get_formats
+
+#define arginfo_class_Gtk4_GdkDrag_get_selected_action arginfo_class_Gtk4_GdkCursor_get_hotspot_x
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDrag_get_surface, 0, 0, Gtk4\\GdkSurface, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkDrag_set_hotspot, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, hot_x, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, hot_y, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkDrop___construct arginfo_class_Gtk4_GdkClipboard___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkDrop_finish, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, action, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkDrop_get_actions arginfo_class_Gtk4_GdkCursor_get_hotspot_x
+
+#define arginfo_class_Gtk4_GdkDrop_get_display arginfo_class_Gtk4_GdkClipboard_get_display
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDrop_get_drag, 0, 0, Gtk4\\GdkDrag, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkDrop_get_formats arginfo_class_Gtk4_GdkClipboard_get_formats
+
+#define arginfo_class_Gtk4_GdkDrop_get_surface arginfo_class_Gtk4_GdkDrag_get_surface
+
+#define arginfo_class_Gtk4_GdkDrop_read_async arginfo_class_Gtk4_GdkClipboard_read_async
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkDrop_status, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, actions, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, preferred, IS_LONG, 0)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkMonitor___construct arginfo_class_Gtk4_GdkClipboard___construct
 
@@ -190,9 +332,9 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkPaintableObject_get_intrinsic_width arginfo_class_Gtk4_GdkCursor_get_hotspot_x
 
-#define arginfo_class_Gtk4_GdkPaintableObject_invalidate_contents arginfo_class_Gtk4_GdkDisplay_beep
+#define arginfo_class_Gtk4_GdkPaintableObject_invalidate_contents arginfo_class_Gtk4_GdkContentProvider_content_changed
 
-#define arginfo_class_Gtk4_GdkPaintableObject_invalidate_size arginfo_class_Gtk4_GdkDisplay_beep
+#define arginfo_class_Gtk4_GdkPaintableObject_invalidate_size arginfo_class_Gtk4_GdkContentProvider_content_changed
 
 #define arginfo_class_Gtk4_GdkPaintableObject_snapshot arginfo_class_Gtk4_GdkPaintable_snapshot
 
@@ -209,9 +351,9 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkSurface_new_topleve
 	ZEND_ARG_OBJ_INFO(0, display, Gtk4\\GdkDisplay, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_Gtk4_GdkSurface_beep arginfo_class_Gtk4_GdkDisplay_beep
+#define arginfo_class_Gtk4_GdkSurface_beep arginfo_class_Gtk4_GdkContentProvider_content_changed
 
-#define arginfo_class_Gtk4_GdkSurface_destroy arginfo_class_Gtk4_GdkDisplay_beep
+#define arginfo_class_Gtk4_GdkSurface_destroy arginfo_class_Gtk4_GdkContentProvider_content_changed
 
 #define arginfo_class_Gtk4_GdkSurface_get_cursor arginfo_class_Gtk4_GdkCursor_get_fallback
 
@@ -227,13 +369,13 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkSurface_get_width arginfo_class_Gtk4_GdkCursor_get_hotspot_x
 
-#define arginfo_class_Gtk4_GdkSurface_hide arginfo_class_Gtk4_GdkDisplay_beep
+#define arginfo_class_Gtk4_GdkSurface_hide arginfo_class_Gtk4_GdkContentProvider_content_changed
 
 #define arginfo_class_Gtk4_GdkSurface_is_destroyed arginfo_class_Gtk4_GdkClipboard_is_local
 
-#define arginfo_class_Gtk4_GdkSurface_queue_render arginfo_class_Gtk4_GdkDisplay_beep
+#define arginfo_class_Gtk4_GdkSurface_queue_render arginfo_class_Gtk4_GdkContentProvider_content_changed
 
-#define arginfo_class_Gtk4_GdkSurface_request_layout arginfo_class_Gtk4_GdkDisplay_beep
+#define arginfo_class_Gtk4_GdkSurface_request_layout arginfo_class_Gtk4_GdkContentProvider_content_changed
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkSurface_set_cursor, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, cursor, Gtk4\\GdkCursor, 1)
@@ -264,11 +406,11 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkTexture_save_to_pn
 	ZEND_ARG_TYPE_INFO(0, filename, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_Gtk4_GdkTexture_save_to_png_bytes arginfo_class_Gtk4_GdkDisplay_get_name
+#define arginfo_class_Gtk4_GdkTexture_save_to_png_bytes arginfo_class_Gtk4_GdkContentFormats_to_string
 
 #define arginfo_class_Gtk4_GdkTexture_save_to_tiff arginfo_class_Gtk4_GdkTexture_save_to_png
 
-#define arginfo_class_Gtk4_GdkTexture_save_to_tiff_bytes arginfo_class_Gtk4_GdkDisplay_get_name
+#define arginfo_class_Gtk4_GdkTexture_save_to_tiff_bytes arginfo_class_Gtk4_GdkContentFormats_to_string
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkTexture_download, 0, 0, Gtk4\\CairoSurface, 0)
 ZEND_END_ARG_INFO()
@@ -285,24 +427,53 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkTexture_get_intrinsic_width arginfo_class_Gtk4_GdkCursor_get_hotspot_x
 
-#define arginfo_class_Gtk4_GdkTexture_invalidate_contents arginfo_class_Gtk4_GdkDisplay_beep
+#define arginfo_class_Gtk4_GdkTexture_invalidate_contents arginfo_class_Gtk4_GdkContentProvider_content_changed
 
-#define arginfo_class_Gtk4_GdkTexture_invalidate_size arginfo_class_Gtk4_GdkDisplay_beep
+#define arginfo_class_Gtk4_GdkTexture_invalidate_size arginfo_class_Gtk4_GdkContentProvider_content_changed
 
 #define arginfo_class_Gtk4_GdkTexture_snapshot arginfo_class_Gtk4_GdkPaintable_snapshot
 
 ZEND_METHOD(Gtk4_GdkClipboard, __construct);
+ZEND_METHOD(Gtk4_GdkClipboard, get_content);
 ZEND_METHOD(Gtk4_GdkClipboard, get_display);
+ZEND_METHOD(Gtk4_GdkClipboard, get_formats);
 ZEND_METHOD(Gtk4_GdkClipboard, is_local);
 ZEND_METHOD(Gtk4_GdkClipboard, read_async);
 ZEND_METHOD(Gtk4_GdkClipboard, read_text_async);
 ZEND_METHOD(Gtk4_GdkClipboard, read_text_finish);
 ZEND_METHOD(Gtk4_GdkClipboard, read_texture_async);
 ZEND_METHOD(Gtk4_GdkClipboard, read_texture_finish);
+ZEND_METHOD(Gtk4_GdkClipboard, set_content);
 ZEND_METHOD(Gtk4_GdkClipboard, set_text);
 ZEND_METHOD(Gtk4_GdkClipboard, set_texture);
 ZEND_METHOD(Gtk4_GdkClipboard, store_async);
 ZEND_METHOD(Gtk4_GdkClipboard, store_finish);
+ZEND_METHOD(Gtk4_GdkClipboard, set_value);
+ZEND_METHOD(Gtk4_GdkContentFormats, contain_mime_type);
+ZEND_METHOD(Gtk4_GdkContentFormats, match);
+ZEND_METHOD(Gtk4_GdkContentFormats, match_mime_type);
+ZEND_METHOD(Gtk4_GdkContentFormats, to_string);
+ZEND_METHOD(Gtk4_GdkContentFormats, union);
+ZEND_METHOD(Gtk4_GdkContentFormats, union_deserialize_gtypes);
+ZEND_METHOD(Gtk4_GdkContentFormats, union_deserialize_mime_types);
+ZEND_METHOD(Gtk4_GdkContentFormats, union_serialize_gtypes);
+ZEND_METHOD(Gtk4_GdkContentFormats, union_serialize_mime_types);
+ZEND_METHOD(Gtk4_GdkContentFormats, parse);
+ZEND_METHOD(Gtk4_GdkContentFormats, __construct);
+ZEND_METHOD(Gtk4_GdkContentFormats, contain_gtype);
+ZEND_METHOD(Gtk4_GdkContentFormats, get_gtypes);
+ZEND_METHOD(Gtk4_GdkContentFormats, get_mime_types);
+ZEND_METHOD(Gtk4_GdkContentProvider, __construct);
+ZEND_METHOD(Gtk4_GdkContentProvider, new_for_bytes);
+ZEND_METHOD(Gtk4_GdkContentProvider, content_changed);
+ZEND_METHOD(Gtk4_GdkContentProvider, ref_formats);
+ZEND_METHOD(Gtk4_GdkContentProvider, ref_storable_formats);
+ZEND_METHOD(Gtk4_GdkContentProvider, write_mime_type_finish);
+ZEND_METHOD(Gtk4_GdkContentProvider, get_value);
+ZEND_METHOD(Gtk4_GdkContentProvider, new_for_value);
+ZEND_METHOD(Gtk4_GdkContentProvider, vfunc_attach_clipboard);
+ZEND_METHOD(Gtk4_GdkContentProvider, vfunc_content_changed);
+ZEND_METHOD(Gtk4_GdkContentProvider, vfunc_detach_clipboard);
 ZEND_METHOD(Gtk4_GdkCursor, __construct);
 ZEND_METHOD(Gtk4_GdkCursor, new_from_name);
 ZEND_METHOD(Gtk4_GdkCursor, new_from_texture);
@@ -329,6 +500,25 @@ ZEND_METHOD(Gtk4_GdkDisplay, prepare_gl);
 ZEND_METHOD(Gtk4_GdkDisplay, supports_input_shapes);
 ZEND_METHOD(Gtk4_GdkDisplay, supports_shadow_width);
 ZEND_METHOD(Gtk4_GdkDisplay, sync);
+ZEND_METHOD(Gtk4_GdkDrag, __construct);
+ZEND_METHOD(Gtk4_GdkDrag, drop_done);
+ZEND_METHOD(Gtk4_GdkDrag, get_actions);
+ZEND_METHOD(Gtk4_GdkDrag, get_content);
+ZEND_METHOD(Gtk4_GdkDrag, get_display);
+ZEND_METHOD(Gtk4_GdkDrag, get_drag_surface);
+ZEND_METHOD(Gtk4_GdkDrag, get_formats);
+ZEND_METHOD(Gtk4_GdkDrag, get_selected_action);
+ZEND_METHOD(Gtk4_GdkDrag, get_surface);
+ZEND_METHOD(Gtk4_GdkDrag, set_hotspot);
+ZEND_METHOD(Gtk4_GdkDrop, __construct);
+ZEND_METHOD(Gtk4_GdkDrop, finish);
+ZEND_METHOD(Gtk4_GdkDrop, get_actions);
+ZEND_METHOD(Gtk4_GdkDrop, get_display);
+ZEND_METHOD(Gtk4_GdkDrop, get_drag);
+ZEND_METHOD(Gtk4_GdkDrop, get_formats);
+ZEND_METHOD(Gtk4_GdkDrop, get_surface);
+ZEND_METHOD(Gtk4_GdkDrop, read_async);
+ZEND_METHOD(Gtk4_GdkDrop, status);
 ZEND_METHOD(Gtk4_GdkMonitor, __construct);
 ZEND_METHOD(Gtk4_GdkMonitor, get_connector);
 ZEND_METHOD(Gtk4_GdkMonitor, get_description);
@@ -380,17 +570,54 @@ ZEND_METHOD(Gtk4_GdkTexture, download);
 
 static const zend_function_entry class_Gtk4_GdkClipboard_methods[] = {
 	ZEND_ME(Gtk4_GdkClipboard, __construct, arginfo_class_Gtk4_GdkClipboard___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GdkClipboard, get_content, arginfo_class_Gtk4_GdkClipboard_get_content, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, get_display, arginfo_class_Gtk4_GdkClipboard_get_display, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkClipboard, get_formats, arginfo_class_Gtk4_GdkClipboard_get_formats, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, is_local, arginfo_class_Gtk4_GdkClipboard_is_local, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, read_async, arginfo_class_Gtk4_GdkClipboard_read_async, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, read_text_async, arginfo_class_Gtk4_GdkClipboard_read_text_async, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, read_text_finish, arginfo_class_Gtk4_GdkClipboard_read_text_finish, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, read_texture_async, arginfo_class_Gtk4_GdkClipboard_read_texture_async, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, read_texture_finish, arginfo_class_Gtk4_GdkClipboard_read_texture_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkClipboard, set_content, arginfo_class_Gtk4_GdkClipboard_set_content, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, set_text, arginfo_class_Gtk4_GdkClipboard_set_text, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, set_texture, arginfo_class_Gtk4_GdkClipboard_set_texture, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, store_async, arginfo_class_Gtk4_GdkClipboard_store_async, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, store_finish, arginfo_class_Gtk4_GdkClipboard_store_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkClipboard, set_value, arginfo_class_Gtk4_GdkClipboard_set_value, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkContentFormats_methods[] = {
+	ZEND_ME(Gtk4_GdkContentFormats, contain_mime_type, arginfo_class_Gtk4_GdkContentFormats_contain_mime_type, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentFormats, match, arginfo_class_Gtk4_GdkContentFormats_match, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentFormats, match_mime_type, arginfo_class_Gtk4_GdkContentFormats_match_mime_type, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentFormats, to_string, arginfo_class_Gtk4_GdkContentFormats_to_string, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentFormats, union, arginfo_class_Gtk4_GdkContentFormats_union, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentFormats, union_deserialize_gtypes, arginfo_class_Gtk4_GdkContentFormats_union_deserialize_gtypes, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentFormats, union_deserialize_mime_types, arginfo_class_Gtk4_GdkContentFormats_union_deserialize_mime_types, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentFormats, union_serialize_gtypes, arginfo_class_Gtk4_GdkContentFormats_union_serialize_gtypes, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentFormats, union_serialize_mime_types, arginfo_class_Gtk4_GdkContentFormats_union_serialize_mime_types, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentFormats, parse, arginfo_class_Gtk4_GdkContentFormats_parse, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GdkContentFormats, __construct, arginfo_class_Gtk4_GdkContentFormats___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentFormats, contain_gtype, arginfo_class_Gtk4_GdkContentFormats_contain_gtype, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentFormats, get_gtypes, arginfo_class_Gtk4_GdkContentFormats_get_gtypes, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentFormats, get_mime_types, arginfo_class_Gtk4_GdkContentFormats_get_mime_types, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkContentProvider_methods[] = {
+	ZEND_ME(Gtk4_GdkContentProvider, __construct, arginfo_class_Gtk4_GdkContentProvider___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentProvider, new_for_bytes, arginfo_class_Gtk4_GdkContentProvider_new_for_bytes, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GdkContentProvider, content_changed, arginfo_class_Gtk4_GdkContentProvider_content_changed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentProvider, ref_formats, arginfo_class_Gtk4_GdkContentProvider_ref_formats, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentProvider, ref_storable_formats, arginfo_class_Gtk4_GdkContentProvider_ref_storable_formats, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentProvider, write_mime_type_finish, arginfo_class_Gtk4_GdkContentProvider_write_mime_type_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentProvider, get_value, arginfo_class_Gtk4_GdkContentProvider_get_value, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentProvider, new_for_value, arginfo_class_Gtk4_GdkContentProvider_new_for_value, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GdkContentProvider, vfunc_attach_clipboard, arginfo_class_Gtk4_GdkContentProvider_vfunc_attach_clipboard, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentProvider, vfunc_content_changed, arginfo_class_Gtk4_GdkContentProvider_vfunc_content_changed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentProvider, vfunc_detach_clipboard, arginfo_class_Gtk4_GdkContentProvider_vfunc_detach_clipboard, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -425,6 +652,33 @@ static const zend_function_entry class_Gtk4_GdkDisplay_methods[] = {
 	ZEND_ME(Gtk4_GdkDisplay, supports_input_shapes, arginfo_class_Gtk4_GdkDisplay_supports_input_shapes, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, supports_shadow_width, arginfo_class_Gtk4_GdkDisplay_supports_shadow_width, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, sync, arginfo_class_Gtk4_GdkDisplay_sync, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkDrag_methods[] = {
+	ZEND_ME(Gtk4_GdkDrag, __construct, arginfo_class_Gtk4_GdkDrag___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GdkDrag, drop_done, arginfo_class_Gtk4_GdkDrag_drop_done, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrag, get_actions, arginfo_class_Gtk4_GdkDrag_get_actions, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrag, get_content, arginfo_class_Gtk4_GdkDrag_get_content, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrag, get_display, arginfo_class_Gtk4_GdkDrag_get_display, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrag, get_drag_surface, arginfo_class_Gtk4_GdkDrag_get_drag_surface, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrag, get_formats, arginfo_class_Gtk4_GdkDrag_get_formats, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrag, get_selected_action, arginfo_class_Gtk4_GdkDrag_get_selected_action, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrag, get_surface, arginfo_class_Gtk4_GdkDrag_get_surface, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrag, set_hotspot, arginfo_class_Gtk4_GdkDrag_set_hotspot, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GdkDrop_methods[] = {
+	ZEND_ME(Gtk4_GdkDrop, __construct, arginfo_class_Gtk4_GdkDrop___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GdkDrop, finish, arginfo_class_Gtk4_GdkDrop_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrop, get_actions, arginfo_class_Gtk4_GdkDrop_get_actions, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrop, get_display, arginfo_class_Gtk4_GdkDrop_get_display, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrop, get_drag, arginfo_class_Gtk4_GdkDrop_get_drag, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrop, get_formats, arginfo_class_Gtk4_GdkDrop_get_formats, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrop, get_surface, arginfo_class_Gtk4_GdkDrop_get_surface, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrop, read_async, arginfo_class_Gtk4_GdkDrop_read_async, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrop, status, arginfo_class_Gtk4_GdkDrop_status, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -531,6 +785,26 @@ static zend_class_entry *register_class_Gtk4_GdkClipboard(zend_class_entry *clas
 	return class_entry;
 }
 
+static zend_class_entry *register_class_Gtk4_GdkContentFormats(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkContentFormats", class_Gtk4_GdkContentFormats_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkContentProvider(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkContentProvider", class_Gtk4_GdkContentProvider_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
 static zend_class_entry *register_class_Gtk4_GdkCrossingMode(void)
 {
 	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GdkCrossingMode", IS_LONG, NULL);
@@ -594,6 +868,16 @@ static zend_class_entry *register_class_Gtk4_GdkDisplay(zend_class_entry *class_
 	return class_entry;
 }
 
+static zend_class_entry *register_class_Gtk4_GdkDrag(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkDrag", class_Gtk4_GdkDrag_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
 static zend_class_entry *register_class_Gtk4_GdkDragAction(void)
 {
 	zend_class_entry ce, *class_entry;
@@ -624,6 +908,35 @@ static zend_class_entry *register_class_Gtk4_GdkDragAction(void)
 	zend_string *const_ASK_name = zend_string_init_interned("ASK", sizeof("ASK") - 1, 1);
 	zend_declare_typed_class_constant(class_entry, const_ASK_name, &const_ASK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
 	zend_string_release(const_ASK_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkDragCancelReason(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GdkDragCancelReason", IS_LONG, NULL);
+
+	zval enum_case_NoTarget_value;
+	ZVAL_LONG(&enum_case_NoTarget_value, 0);
+	zend_enum_add_case_cstr(class_entry, "NoTarget", &enum_case_NoTarget_value);
+
+	zval enum_case_UserCancelled_value;
+	ZVAL_LONG(&enum_case_UserCancelled_value, 1);
+	zend_enum_add_case_cstr(class_entry, "UserCancelled", &enum_case_UserCancelled_value);
+
+	zval enum_case_Error_value;
+	ZVAL_LONG(&enum_case_Error_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Error", &enum_case_Error_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkDrop(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkDrop", class_Gtk4_GdkDrop_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
 
 	return class_entry;
 }

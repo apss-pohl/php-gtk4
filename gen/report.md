@@ -126,19 +126,33 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GdkClipboard
 
-- `get_content` — return type Gdk.ContentProvider (not in the closure)
-- `get_formats` — return type Gdk.ContentFormats
 - `read_finish` — return Gio.InputStream plus out parameters
 - `read_value_async` — parameter `type` of type Gdk.GType
 - `read_value_finish` — return type GObject.Value
 - `set` — shadowed by set_value
-- `set_content` — parameter `provider` of type Gdk.ContentProvider
 - `set_valist` — parameter `type` of type Gdk.GType
 - `set_value` — parameter `value` of type GObject.Value
 - `__construct` — skip.txt: GDK owns the clipboards (GdkDisplay::get_clipboard()/get_primary_clipboard()); `new` aborts the process in gdk_clipboard_set_property ("assertion failed: (priv->display != NULL)")
-- `property content` — property type Gdk.ContentProvider not mappable
-- `property formats` — property type Gdk.ContentFormats not mappable
 - `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GdkContentFormats
+
+- `new_for_gtype` — parameter `type` of type Gdk.GType
+- `match_gtype` — return type Gdk.GType
+- `print` — parameter `string` of type GLib.String
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## GdkContentProvider
+
+- `new_typed` — varargs
+- `new_union` — parameter `providers` of type array (C array)
+- `write_mime_type_async` — parameter `stream` of type Gio.OutputStream
+- `vfunc get_value` — GError out parameter
+- `vfunc ref_formats` — return or argument type not convertible in a thunk
+- `vfunc ref_storable_formats` — return or argument type not convertible in a thunk
+- `vfunc write_mime_type_async` — parameter `stream` of type Gio.OutputStream
+- `vfunc write_mime_type_finish` — GError out parameter
 
 ## GdkDisplay
 
@@ -157,6 +171,24 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `translate_key` — out parameter `consumed` of type Gdk.ModifierType
 - `__construct` — skip.txt: GDK owns displays (GdkDisplay::get_default() / open()); a PHP subtype would have no backend behind it
 - `property dmabuf-formats` — property type Gdk.DmabufFormats not mappable
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GdkDrag
+
+- `begin` — parameter `device` of type Gdk.Device
+- `get_device` — return type Gdk.Device (not in the closure)
+- `__construct` — skip.txt: GDK creates a drag when a GtkDragSource starts one (get_drag()); a PHP subtype has no device and aborts the process in gdk_drag_set_property ("assertion failed: (priv->device != NULL)")
+- `property device` — property type Gdk.Device not mappable
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GdkDrop
+
+- `get_device` — return type Gdk.Device (not in the closure)
+- `read_finish` — return Gio.InputStream plus out parameters
+- `read_value_async` — parameter `type` of type Gdk.GType
+- `read_value_finish` — return type GObject.Value
+- `__construct` — skip.txt: the other end of the same drag, created by GDK; as Gdk.Drag
+- `property device` — property type Gdk.Device not mappable
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GdkMonitor
@@ -279,12 +311,24 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `load_from_data` — deprecated (4.12)
 
+## GtkDragIcon
+
+- `create_widget_for_value` — parameter `value` of type GObject.Value
+- `__construct` — skip.txt: GTK creates the icon for a drag (get_for_drag()); a standalone one realizes without a GdkSurface and dies in gtk_drag_icon_realize
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## GtkDropDown
 
 - `new` — parameter `expression` of type Gtk.Expression
 - `get_expression` — return type Gtk.Expression (not in the closure)
 - `set_expression` — parameter `expression` of type Gtk.Expression
 - `property expression` — property type Gtk.Expression not mappable
+
+## GtkDropTarget
+
+- `get_drop` — deprecated (4.4)
+- `property value` — property type GObject.Value not mappable
+- `smoke test` — smoke-skip.txt: the constructor takes a *type name* ("string", a registered class), not an arbitrary string; DragDropTest builds it properly
 
 ## GtkEditable
 
@@ -304,7 +348,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_tabs` — return type Pango.TabArray
 - `set_attributes` — parameter `attrs` of type Pango.AttrList
 - `set_completion` — deprecated (4.10)
-- `set_icon_drag_source` — parameter `provider` of type Gdk.ContentProvider
 - `set_icon_from_gicon` — parameter `icon` of type Gio.Icon
 - `set_tabs` — parameter `tabs` of type Pango.TabArray
 - `property attributes` — property type Pango.AttrList not mappable
@@ -566,7 +609,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `create_child_anchor` — return type Gtk.TextChildAnchor (not in the closure)
 - `create_tag` — varargs
 - `get_iter_at_child_anchor` — parameter `anchor` of type Gtk.TextChildAnchor
-- `get_selection_content` — return type Gdk.ContentProvider (not in the closure)
 - `insert_child_anchor` — parameter `anchor` of type Gtk.TextChildAnchor
 - `insert_with_tags` — varargs
 - `insert_with_tags_by_name` — varargs
@@ -653,6 +695,9 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## Overrides in effect
 
+- `Gdk.Clipboard`: set_value
+- `Gdk.ContentFormats`: __construct, contain_gtype, get_gtypes, get_mime_types
+- `Gdk.ContentProvider`: get_value, new_for_value
 - `Gdk.Texture`: download
 - `Gio.Action`: activate
 - `Gio.ActionGroup`: activate_action, list_actions
@@ -666,6 +711,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.CustomFilter`: __construct, set_filter_func
 - `Gtk.CustomSorter`: __construct, set_sort_func
 - `Gtk.DrawingArea`: set_draw_func
+- `Gtk.DropTarget`: __construct, get_gtypes, get_value, set_gtypes
+- `Gtk.DropTargetAsync`: get_formats
 - `Gtk.Entry`: grab_focus_without_selecting
 - `Gtk.EventControllerKey`: get_group
 - `Gtk.FileFilter`: new_from_gvariant
@@ -705,8 +752,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkCssProvider.cpp`
 - `Gtk/GtkCustomFilter.cpp`
 - `Gtk/GtkCustomSorter.cpp`
+- `Gtk/GtkDragIcon.cpp`
+- `Gtk/GtkDragSource.cpp`
 - `Gtk/GtkDrawingArea.cpp`
 - `Gtk/GtkDropDown.cpp`
+- `Gtk/GtkDropTarget.cpp`
+- `Gtk/GtkDropTargetAsync.cpp`
 - `Gtk/GtkEditable.cpp`
 - `Gtk/GtkEntry.cpp`
 - `Gtk/GtkEntryBuffer.cpp`
@@ -822,8 +873,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GTask.cpp`
 - `Gio/Gio.stub.php`
 - `Gdk/GdkClipboard.cpp`
+- `Gdk/GdkContentFormats.cpp`
+- `Gdk/GdkContentProvider.cpp`
 - `Gdk/GdkCursor.cpp`
 - `Gdk/GdkDisplay.cpp`
+- `Gdk/GdkDrag.cpp`
+- `Gdk/GdkDrop.cpp`
 - `Gdk/GdkMonitor.cpp`
 - `Gdk/GdkPaintable.cpp`
 - `Gdk/GdkSnapshot.cpp`
@@ -854,8 +909,10 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkCssProviderSmokeTest.php`
 - `tests/Generated/GtkCustomFilterSmokeTest.php`
 - `tests/Generated/GtkCustomSorterSmokeTest.php`
+- `tests/Generated/GtkDragSourceSmokeTest.php`
 - `tests/Generated/GtkDrawingAreaSmokeTest.php`
 - `tests/Generated/GtkDropDownSmokeTest.php`
+- `tests/Generated/GtkDropTargetAsyncSmokeTest.php`
 - `tests/Generated/GtkEntrySmokeTest.php`
 - `tests/Generated/GtkEntryBufferSmokeTest.php`
 - `tests/Generated/GtkEventControllerSmokeTest.php`
@@ -936,5 +993,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GMenuItemSmokeTest.php`
 - `tests/Generated/GSimpleActionSmokeTest.php`
 - `tests/Generated/GTaskSmokeTest.php`
+- `tests/Generated/GdkContentProviderSmokeTest.php`
 - `tests/Generated/GdkCursorSmokeTest.php`
 - `tests/Generated/GdkSnapshotSmokeTest.php`

@@ -79,6 +79,9 @@ final class Demo
             'Gtk', 'GApplication', 'GtkApplication', 'GSimpleAction', 'GAction', 'GActionMap',
             'GActionGroup', 'GApplicationFlags',
         ],
+        'Drag and drop' => [
+            'GtkDragSource', 'GtkDropTarget', 'GdkContentProvider', 'GdkContentFormats',
+        ],
         'Objects & values' => [
             'GObject', 'GParamSpec', 'PhpValue', 'GdkRGBA', 'GdkRectangle',
             'GdkTexture', 'GdkMemoryFormat', 'GError', 'ExceptionMode',

@@ -31,3 +31,6 @@ Graphene.Rect.offset_r    as inset_r: offset() is the const form
 Graphene.Rect.normalize_r as inset_r: normalize() is the const form
 Gtk.Text.init_delegate    GtkEditable plumbing for a widget that *delegates* to a GtkText from its own init; calling it on a GtkText is "invalid (NULL) pointer instance" from GLib
 Gtk.Text.finish_delegate  pairs with init_delegate
+Gdk.Drag.__construct   GDK creates a drag when a GtkDragSource starts one (get_drag()); a PHP subtype has no device and aborts the process in gdk_drag_set_property ("assertion failed: (priv->device != NULL)")
+Gdk.Drop.__construct   the other end of the same drag, created by GDK; as Gdk.Drag
+Gtk.DragIcon.__construct   GTK creates the icon for a drag (get_for_drag()); a standalone one realizes without a GdkSurface and dies in gtk_drag_icon_realize

@@ -230,8 +230,38 @@ draft, hand-write via overrides / promotion where the project needs more.
       dragged `cairo_content_t` in - and with it a second, lower-case cairo namespace directory
       that *is* `src/Cairo/` on a case-insensitive filesystem (`HeaderNamesTest` grew a check for
       two of our own paths differing only in case).
-- [ ] **Wave 3b** as listed in PLAN.md §3 (drag and drop; the feature item in §7 below points at
-      it); merged only with the full pipeline green and the map's status column regenerated.
+- [x] **Wave 3b - drag and drop** (2026-09-03), the last wave of the map's port order:
+      `GtkDragSource`, `GtkDropTarget` (+ `Async`), `GtkDragIcon`, `GdkContentProvider`,
+      `GdkContentFormats`, `GdkDrag`/`GdkDrop`. A drag carries a *value*, and GIR spells both ends
+      with a GValue and a GType - neither of which PHP has a word for - so the payload is an
+      ordinary PHP value through `core/marshal` and the type is named the way a list store names
+      its item type: **`gtype_from_php_name()`** ("string"/"int"/"float"/"bool" or a registered
+      class) with **`php_name_for_gtype()`** as its inverse, so a getter answers in the spelling
+      its setter takes. That is what `GdkContentProvider::new_for_value()`/`get_value()`,
+      `GtkDropTarget::__construct()`/`set_gtypes()`/`get_gtypes()`/`get_value()`,
+      `GdkContentFormats`'s array members and `GdkClipboard::set_value()` are overrides for -
+      without the constructor override a drop target accepted nothing at all, GIR's own taking a
+      GType. `GdkClipboard::set_content()`/`get_content()` came back on their own once
+      `GdkContentProvider` was in the closure, which is the wave-8 gap this closes.
+      `gdk_content_provider_get_value()` is caller-*typed*, not merely caller-allocated: it
+      asserts on an uninitialised GValue, so the type is asked for or taken from the provider's
+      own formats. `new` is refused on `GdkDrag`/`GdkDrop` (GDK makes them when a drag starts; a
+      PHP subtype has no device and aborts in `gdk_drag_set_property`).
+      One generator bug, the third of its family and the first fixed categorically: GIR marks a
+      method's **receiver** with `<instance-parameter transfer-ownership="full">` when the call
+      *consumes* the object it is called on (`gdk_content_formats_union()` and the four
+      `union_*serialize_*`). Only parameter and return transfer were read, so GTK freed the
+      handle's own value and the handle's later unref hit a dead refcount - a `ref_count > 0`
+      CRITICAL nothing surfaced, then `malloc(): unaligned fastbin chunk` some three thousand
+      tests later. ASan completed the suite silently; valgrind named it. `Func::consumesSelf` now
+      carries the annotation and the boxed emitter hands the callee a `g_boxed_copy()`.
+      Two more overrides came out of writing the tests, both of the same shape - GTK does not do
+      what its GIR says. `gtk_drop_target_async_get_formats()` is annotated `transfer full` but
+      returns `self->formats` borrowed (its sibling `gtk_drop_target_get_formats()` is annotated
+      correctly), so the generated free unref'd GTK's own formats and the *second* read was a
+      use-after-free; the override wraps without freeing. And `new GtkDragIcon()` builds a
+      GtkRoot with no GdkSurface, which dies unrealized in `gtk_drag_icon_realize()` - refused in
+      `gen/skip.txt` like `GdkDrag`/`GdkDrop`, GTK makes the icon for a drag it started.
       Next: the fastlane port spike (one screen on php-gtk4).
 
 ## 7. GTK4 feature surface (what the binding still has to expose to deliver GTK4's benefits)
@@ -247,8 +277,10 @@ GTK4 GIR only). Every open item here is generator output and is ticked when its 
 - [x] **Event controllers** → wave 3 (2026-08-29): `GtkGestureClick`, `GtkEventControllerKey/Motion/Scroll/Focus`,
       `GtkWidget::add_controller()/remove_controller()`; signals already marshal (ints/doubles/flags);
       `GdkEvent` goes on the fundamental registry, `GdkModifierType` is a flags class.
-- [ ] **Drag and drop** → wave 3b (added to the PLAN table 2026-08-28): `GtkDragSource`,
-      `GtkDropTarget`, `GdkContentProvider` (GValue payloads: boxed/variant support exists).
+- [x] **Drag and drop** → wave 3b (2026-09-03): `GtkDragSource`, `GtkDropTarget`,
+      `GdkContentProvider` and the typed clipboard payloads that share its machinery. Still out:
+      `GdkDevice`/`GdkSeat` (which is why `GdkDrag::get_device()` and the drop's device-aware
+      members stay skipped) and the `Gio.InputStream` half of `read_finish`.
 - [ ] **Intermittent `tests/phpt/init-no-display.phpt` segfault** (seen twice on 2026-08-29 in full
       `./ci.sh` runs while the PHPUnit suite loaded the machine; "still alive" is printed, the
       process dies afterwards - request or module shutdown after a *failed* `Gtk::init()`). Not

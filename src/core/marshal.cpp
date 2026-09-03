@@ -240,6 +240,47 @@ bool set_or_unset(zval *pv, GType t, GValue *out, Setter set) {
   return true;
 }
 
+// A GType named the way PHP names one - see marshal.h. The four scalars a payload realistically
+// carries, plus any registered class; the class arm is how a GdkTexture or a PhpValue crosses.
+GType gtype_from_php_name(zend_string *name, uint32_t arg) {
+  const char *s = ZSTR_VAL(name);
+  if (strcmp(s, "string") == 0) return G_TYPE_STRING;
+  if (strcmp(s, "int") == 0) return G_TYPE_INT64;
+  if (strcmp(s, "float") == 0 || strcmp(s, "double") == 0) return G_TYPE_DOUBLE;
+  if (strcmp(s, "bool") == 0) return G_TYPE_BOOLEAN;
+  const char *slash = strrchr(s, '\\');
+  zend_class_entry *ce = class_for_gtype_name(slash != nullptr ? slash + 1 : s);
+  const GType t = ce != nullptr ? gtype_for_class(ce) : 0;
+  if (t == 0) {
+    zend_argument_value_error(arg,
+                              "must be \"string\", \"int\", \"float\", \"bool\" or a registered "
+                              "class name, \"%s\" given",
+                              s);
+    return 0;
+  }
+  return t;
+}
+
+// The reverse of gtype_from_php_name(): the four scalars keep their PHP spelling, everything
+// else answers with the GType's name, which is the registered class name.
+zend_string *php_name_for_gtype(GType type) {
+  switch (type) {
+    case G_TYPE_STRING:
+      return zend_string_init("string", sizeof("string") - 1, false);
+    case G_TYPE_INT64:
+      return zend_string_init("int", sizeof("int") - 1, false);
+    case G_TYPE_DOUBLE:
+      return zend_string_init("float", sizeof("float") - 1, false);
+    case G_TYPE_BOOLEAN:
+      return zend_string_init("bool", sizeof("bool") - 1, false);
+    default:
+      break;
+  }
+  const char *name = g_type_name(type);
+  if (name == nullptr) name = "";
+  return zend_string_init(name, strlen(name), false);
+}
+
 // zval -> GValue of type `t`. Returns false (TypeError thrown, *out unset) on failure.
 bool to_gvalue(zval *pv, GType t, GValue *out) {
   g_value_init(out, t);

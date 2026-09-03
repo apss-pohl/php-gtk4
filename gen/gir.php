@@ -1321,6 +1321,17 @@ final class Generator
         $overrides = $this->overrides[$n->qname()] ?? [];
         $selfLine = "  $ctype *self = PHPGTK_BOXED_SELF($ctype);";
         foreach ($n->funcs as $f) {
+            // A method GIR marks <instance-parameter transfer-ownership="full"> *consumes* the
+            // value it is called on (gdk_content_formats_union()). The handle owns that value and
+            // releases it later, so the callee gets a reference of its own - otherwise GTK frees
+            // it under the handle and the next unref corrupts the heap.
+            // PHPGTK_BOXED_SELF is a statement pair (it returns on a dead handle), so the copy
+            // is a second statement rather than a nested call.
+            $self = $f->consumesSelf
+                ? "  $ctype *owned = PHPGTK_BOXED_SELF($ctype);\n"
+                    . "  auto *self = static_cast<$ctype *>(g_boxed_copy($typeMacro, owned));"
+                    . '  // the call takes ownership of it'
+                : $selfLine;
             $phpNameOf = $f->kind === 'constructor' && $f->name === 'new' ? '__construct' : ($f->shadows ?? $f->name);
             if (isset($overrides[$phpNameOf])) {
                 continue;
@@ -1329,7 +1340,7 @@ final class Generator
                 $this->skip($n, $f->name, 'memory management belongs to the handle (clone / destructor)');
                 continue;
             }
-            $m = $this->method($n, $f, $typeMacro, $castMacro, false, [], null, $selfLine);
+            $m = $this->method($n, $f, $typeMacro, $castMacro, false, [], null, $self);
             if ($m === null) {
                 continue;
             }

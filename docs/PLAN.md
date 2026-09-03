@@ -260,7 +260,7 @@ examples → CI → commit):
 | 1 | layout: `GtkScrolledWindow`, `GtkGrid`, `GtkPaned`, `GtkFrame`, `GtkStack`(+Switcher/Sidebar), `GtkNotebook`, `GtkOverlay`, `GtkRevealer`, `GtkFixed`, `GtkSeparator`, `GtkSizeGroup`, `GtkWidget` margins | — |
 | 2 | controls: `GtkEntry`/`GtkEditable`/`GtkEntryBuffer`, `GtkCheckButton`, `GtkToggleButton`, `GtkSpinButton`, `GtkScale`, `GtkAdjustment`, `GtkProgressBar`, `GtkImage`, `GtkSpinner`, `GtkCalendar` | `GtkEditable` interface methods once per interface |
 | 3 | event controllers: `GtkEventController*`, `GtkGestureClick/Drag`, `GdkEvent` family | `GdkEvent` on the fundamental registry; `GdkModifierType` flags |
-| 3b | drag and drop: `GtkDragSource`, `GtkDropTarget`, `GdkContentProvider`, `GdkDrop`/`GdkDrag` | GValue payloads (boxed/variant exist); `GdkContentFormats` boxed |
+| 3b | drag and drop: `GtkDragSource`, `GtkDropTarget`, `GdkContentProvider`, `GdkDrop`/`GdkDrag` | done 2026-09-03 (+ `GtkDragIcon`, `GtkDropTargetAsync`): GValue payloads through `core/marshal`, a GType named from PHP (`gtype_from_php_name()`), `GdkContentFormats` boxed - and the typed clipboard payloads wave 8 left out |
 | 4 | menus/actions: `GMenu`, `GMenuItem`, `GtkPopoverMenu(Bar)`, `GtkMenuButton`, `GtkHeaderBar`, `GtkApplicationWindow`, accels | `GMenuModel` |
 | 5 | dialogs (4.10 async API): `GtkAlertDialog`, `GtkFileDialog`, `GtkColorDialog`, `GtkFontDialog`, `GtkAboutDialog`, `GtkFileFilter` | `GAsyncReadyCallback` scope (async) + `*_finish` → `GError` throws |
 | 6 | text: `GtkTextView`, `GtkTextBuffer`, `GtkTextIter` (boxed), `GtkTextMark/Tag/TagTable` | boxed with many methods (`GtkTextIter`) |

@@ -665,6 +665,19 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, get_selection_bounds) {
 }
 
 /**
+ * Gtk4\GtkTextBuffer::get_selection_content(): GdkContentProvider
+ *
+ * Get a content provider for this buffer.
+ */
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_selection_content) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkTextBuffer *self = PHPGTK_SELF(GtkTextBuffer, GTK_TYPE_TEXT_BUFFER);
+  GdkContentProvider *phpgtk_ret = gtk_text_buffer_get_selection_content(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
+/**
  * Gtk4\GtkTextBuffer::get_slice(GtkTextIter $start, GtkTextIter $end, bool $include_hidden_chars):
  * string
  *

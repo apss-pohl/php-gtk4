@@ -37,6 +37,7 @@ final class RobustnessTest extends GtkTestCase
     private const BINARY_ARGUMENTS = [
         \Gtk4\GtkCssProvider::class . '::load_from_bytes' => [0],
         \Gtk4\GdkTexture::class . '::new_from_bytes' => [0],
+        \Gtk4\GdkContentProvider::class . '::new_for_bytes' => [1],
     ];
 
     private string $cwd = '';

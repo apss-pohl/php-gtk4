@@ -193,6 +193,10 @@ final class Gir
         $rv = $x->query('g:return-value', $f)->item(0);
         assert($rv instanceof \DOMElement);
         $ret = self::type($x, $ns, $rv) ?? new Type('none', 'void');
+        $instances = $x->query('g:parameters/g:instance-parameter', $f);
+        $instance = $instances !== false ? $instances->item(0) : null;
+        $consumesSelf = $instance instanceof \DOMElement
+            && $instance->getAttribute('transfer-ownership') === 'full';
         $params = [];
         $varargs = false;
         foreach ($x->query('g:parameters/g:parameter', $f) as $p) {
@@ -232,6 +236,7 @@ final class Gir
             $f->getAttribute('shadowed-by') ?: null,
             $varargs,
             self::doc($x, $f),
+            $consumesSelf,
         );
     }
 }

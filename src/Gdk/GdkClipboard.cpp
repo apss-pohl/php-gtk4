@@ -4,10 +4,15 @@
 #include "core/object.h"
 #include "core/collections.h"
 #include "core/gerror.h"
+#include "core/boxed.h"
 #include "core/callback.h"
 #include <array>
 
 using namespace phpgtk;
+
+// The typed payload half of the clipboard: GIR's GValue and GType parameters, as an ordinary PHP
+// value and a type name (core/marshal, gtype_from_php_name).
+#include "core/marshal.h"
 
 /**
  * Gtk4\GdkClipboard::__construct()
@@ -20,6 +25,18 @@ ZEND_METHOD(Gtk4_GdkClipboard, __construct) {
 }
 
 /**
+ * Gtk4\GdkClipboard::get_content(): ?GdkContentProvider
+ *
+ * Returns the `GdkContentProvider` currently set on $clipboard.
+ */
+ZEND_METHOD(Gtk4_GdkClipboard, get_content) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GdkClipboard *self = PHPGTK_SELF(GdkClipboard, GDK_TYPE_CLIPBOARD);
+  GdkContentProvider *phpgtk_ret = gdk_clipboard_get_content(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GdkClipboard::get_display(): GdkDisplay
  *
  * Gets the `GdkDisplay` that the clipboard was created for.
@@ -29,6 +46,18 @@ ZEND_METHOD(Gtk4_GdkClipboard, get_display) {
   GdkClipboard *self = PHPGTK_SELF(GdkClipboard, GDK_TYPE_CLIPBOARD);
   GdkDisplay *phpgtk_ret = gdk_clipboard_get_display(self);
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
+ * Gtk4\GdkClipboard::get_formats(): GdkContentFormats
+ *
+ * Gets the formats that the clipboard can provide its current contents in.
+ */
+ZEND_METHOD(Gtk4_GdkClipboard, get_formats) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GdkClipboard *self = PHPGTK_SELF(GdkClipboard, GDK_TYPE_CLIPBOARD);
+  GdkContentFormats *phpgtk_ret = gdk_clipboard_get_formats(self);
+  wrap_boxed(GDK_TYPE_CONTENT_FORMATS, phpgtk_ret, return_value);
 }
 
 /**
@@ -239,6 +268,26 @@ ZEND_METHOD(Gtk4_GdkClipboard, read_texture_finish) {
 }
 
 /**
+ * Gtk4\GdkClipboard::set_content(?GdkContentProvider $provider): bool
+ *
+ * Sets a new content provider on $clipboard.
+ */
+ZEND_METHOD(Gtk4_GdkClipboard, set_content) {
+  zval *provider = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(provider, class_for_gtype(GDK_TYPE_CONTENT_PROVIDER))
+  ZEND_PARSE_PARAMETERS_END();
+  GdkClipboard *self = PHPGTK_SELF(GdkClipboard, GDK_TYPE_CLIPBOARD);
+  GObject *provider_o = nullptr;
+  if (provider != nullptr) {
+    provider_o = unwrap(provider, GDK_TYPE_CONTENT_PROVIDER);
+    if (provider_o == nullptr) RETURN_THROWS();
+  }
+  RETURN_BOOL(gdk_clipboard_set_content(
+      self, provider_o != nullptr ? GDK_CONTENT_PROVIDER(provider_o) : nullptr));
+}
+
+/**
  * Gtk4\GdkClipboard::set_text(string $text): void
  *
  * Puts the given $text into the clipboard.
@@ -340,4 +389,60 @@ ZEND_METHOD(Gtk4_GdkClipboard, store_finish) {
     RETURN_THROWS();
   }
   RETURN_BOOL(ok);
+}
+
+/**
+ * public function set_value(mixed $value, ?string $type = null): void
+ * Put $value on the clipboard, typed as $type (inferred from $value when omitted).
+ *
+ * The typed counterpart of set_text()/set_texture(): GIR takes a GValue, and the marshaller is
+ * what turns an ordinary PHP value into one. The type is named as everywhere else -
+ * "string"/"int"/"float"/"bool" or a registered class name.
+ */
+ZEND_METHOD(Gtk4_GdkClipboard, set_value) {
+  zval *value;
+  zend_string *type = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 2)
+  Z_PARAM_ZVAL(value)
+  Z_PARAM_OPTIONAL
+  Z_PARAM_STR_OR_NULL(type)
+  ZEND_PARSE_PARAMETERS_END();
+  GdkClipboard *self = PHPGTK_SELF(GdkClipboard, GDK_TYPE_CLIPBOARD);
+
+  GType t = 0;
+  if (type != nullptr) {
+    t = gtype_from_php_name(type, 2);
+    if (t == 0) RETURN_THROWS();
+  } else {
+    switch (Z_TYPE_P(value)) {
+      case IS_STRING:
+        t = G_TYPE_STRING;
+        break;
+      case IS_LONG:
+        t = G_TYPE_INT64;
+        break;
+      case IS_DOUBLE:
+        t = G_TYPE_DOUBLE;
+        break;
+      case IS_TRUE:
+      case IS_FALSE:
+        t = G_TYPE_BOOLEAN;
+        break;
+      case IS_OBJECT: {
+        GObject *obj = unwrap(value, G_TYPE_OBJECT);
+        if (obj == nullptr) RETURN_THROWS();
+        t = G_OBJECT_TYPE(obj);
+        break;
+      }
+      default:
+        zend_argument_type_error(1,
+                                 "must be a string, int, float, bool or GObject handle to be "
+                                 "set without naming a type");
+        RETURN_THROWS();
+    }
+  }
+  GValue gv = G_VALUE_INIT;
+  if (!to_gvalue(value, t, &gv)) RETURN_THROWS();
+  gdk_clipboard_set_value(self, &gv);
+  g_value_unset(&gv);
 }

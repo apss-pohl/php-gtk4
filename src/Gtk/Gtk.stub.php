@@ -1502,6 +1502,83 @@ enum GtkDirectionType: int
 }
 
 /**
+ * `GtkDragIcon` is a `GtkRoot` implementation for drag icons.
+ *
+ * @property ?GtkWidget $child
+ */
+class GtkDragIcon extends GtkWidget implements GtkNative, GtkRoot
+{
+    /** GtkDragIcon has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Gets the `GtkDragIcon` in use with $drag. */
+    public static function get_for_drag(GdkDrag $drag): GtkWidget {}
+
+    /** Creates a `GtkDragIcon` that shows $paintable, and associates it with the drag operation. */
+    public static function set_from_paintable(GdkDrag $drag, GdkPaintable $paintable, int $hot_x, int $hot_y): void {}
+
+    /** Gets the widget currently used as drag icon. */
+    public function get_child(): ?GtkWidget {}
+
+    /** Sets the widget to display as the drag icon. */
+    public function set_child(?GtkWidget $child): void {}
+
+    /** @implementation-alias Gtk4\GtkNative::get_surface */
+    public function get_surface(): ?GdkSurface {}
+
+    /** @implementation-alias Gtk4\GtkNative::get_surface_transform */
+    public function get_surface_transform(): array {}
+
+    /** @implementation-alias Gtk4\GtkNative::realize */
+    public function realize(): void {}
+
+    /** @implementation-alias Gtk4\GtkNative::unrealize */
+    public function unrealize(): void {}
+
+    /** @implementation-alias Gtk4\GtkRoot::get_display */
+    public function get_display(): GdkDisplay {}
+
+    /** @implementation-alias Gtk4\GtkRoot::get_focus */
+    public function get_focus(): ?GtkWidget {}
+
+    /** @implementation-alias Gtk4\GtkRoot::set_focus */
+    public function set_focus(?GtkWidget $focus): void {}
+}
+
+/**
+ * `GtkDragSource` is an event controller to initiate Drag-And-Drop operations.
+ *
+ * @property ?int $actions
+ * @property ?GdkContentProvider $content
+ */
+class GtkDragSource extends GtkGestureSingle
+{
+    /** Creates a new `GtkDragSource` object. */
+    public function __construct() {}
+
+    /** Cancels a currently ongoing drag operation. */
+    public function drag_cancel(): void {}
+
+    /** Gets the actions that are currently set on the `GtkDragSource`. */
+    public function get_actions(): int {}
+
+    /** Gets the current content provider of a `GtkDragSource`. */
+    public function get_content(): ?GdkContentProvider {}
+
+    /** Returns the underlying `GdkDrag` object for an ongoing drag. */
+    public function get_drag(): ?GdkDrag {}
+
+    /** Sets the actions on the `GtkDragSource`. */
+    public function set_actions(int $actions): void {}
+
+    /** Sets a content provider on a `GtkDragSource`. */
+    public function set_content(?GdkContentProvider $content): void {}
+
+    /** Sets a paintable to use as icon during DND operations. */
+    public function set_icon(?GdkPaintable $paintable, int $hot_x, int $hot_y): void {}
+}
+
+/**
  * `GtkDrawingArea` is a widget that allows drawing with cairo.
  *
  * @property ?int $content_height
@@ -1611,6 +1688,101 @@ class GtkDropDown extends GtkWidget
 
     /** Sets whether an arrow will be displayed within the widget. */
     public function set_show_arrow(bool $show_arrow): void {}
+}
+
+/**
+ * `GtkDropTarget` is an event controller to receive Drag-and-Drop operations.
+ *
+ * @property ?int $actions
+ * @property-read ?GdkDrop $current_drop
+ * @property-read ?GdkDrop $drop
+ * @property ?GdkContentFormats $formats
+ * @property ?bool $preload
+ */
+class GtkDropTarget extends GtkEventController
+{
+    /** Gets the actions that this drop target supports. */
+    public function get_actions(): int {}
+
+    /** Gets the currently handled drop operation. */
+    public function get_current_drop(): ?GdkDrop {}
+
+    /** Gets the data formats that this drop target accepts. */
+    public function get_formats(): ?GdkContentFormats {}
+
+    /** Gets whether data should be preloaded on hover. */
+    public function get_preload(): bool {}
+
+    /** Rejects the ongoing drop operation. */
+    public function reject(): void {}
+
+    /** Sets the actions that this drop target supports. */
+    public function set_actions(int $actions): void {}
+
+    /** Sets whether data should be preloaded on hover. */
+    public function set_preload(bool $preload): void {}
+
+    /**
+     * A drop target accepting $type, offering $actions (a GdkDragAction mask).
+     *
+     * GIR's constructor takes a GType, which PHP has no spelling for; the type is named the way a
+     * payload's is elsewhere - "string"/"int"/"float"/"bool" or a registered class name
+     * (core/marshal, gtype_from_php_name). Without it a drop target accepts nothing at all.
+     */
+    public function __construct(string $type, int $actions) {}
+
+    /**
+     * The types this target accepts, in the spelling set_gtypes() takes.
+     *
+     * @return list<string>
+     */
+    public function get_gtypes(): array {}
+
+    /**
+     * The value being dropped, or null outside a drop.
+     *
+     * GIR answers with a GValue; the marshaller turns it into the PHP value the source offered.
+     */
+    public function get_value(): mixed {}
+
+    /**
+     * The types this target accepts, named as in the constructor.
+     */
+    public function set_gtypes(array $types): void {}
+}
+
+/**
+ * `GtkDropTargetAsync` is an event controller to receive Drag-and-Drop operations, asynchronously.
+ *
+ * @property ?int $actions
+ * @property ?GdkContentFormats $formats
+ */
+class GtkDropTargetAsync extends GtkEventController
+{
+    /** Creates a new `GtkDropTargetAsync` object. */
+    public function __construct(?GdkContentFormats $formats, int $actions) {}
+
+    /** Gets the actions that this drop target supports. */
+    public function get_actions(): int {}
+
+    /** Sets the $drop as not accepted on this drag site. */
+    public function reject_drop(GdkDrop $drop): void {}
+
+    /** Sets the actions that this drop target supports. */
+    public function set_actions(int $actions): void {}
+
+    /** Sets the data formats that this drop target will accept. */
+    public function set_formats(?GdkContentFormats $formats): void {}
+
+    /**
+     * The formats this target accepts, or null when it accepts everything.
+     *
+     * GTK's GIR annotates this `transfer full`, but `gtk_drop_target_async_get_formats()` returns
+     * `self->formats` borrowed (its sibling `gtk_drop_target_get_formats()` is annotated correctly).
+     * Taking the annotation at its word unrefs GTK's own formats: the first call freed them and the
+     * second read freed memory. So this one does not free what it wrapped.
+     */
+    public function get_formats(): ?GdkContentFormats {}
 }
 
 /**
@@ -1873,6 +2045,9 @@ class GtkEntry extends GtkWidget implements GtkEditable
 
     /** Sets whether the icon is activatable. */
     public function set_icon_activatable(GtkEntryIconPosition $icon_pos, bool $activatable): void {}
+
+    /** Sets up the icon at the given position as drag source. */
+    public function set_icon_drag_source(GtkEntryIconPosition $icon_pos, GdkContentProvider $provider, int $actions): void {}
 
     /** Sets the icon shown in the entry at the specified position from the current icon theme. */
     public function set_icon_from_icon_name(GtkEntryIconPosition $icon_pos, ?string $icon_name): void {}
@@ -7082,6 +7257,9 @@ class GtkTextBuffer extends GObject
      * @return array{GtkTextIter, GtkTextIter}|null
      */
     public function get_selection_bounds(): ?array {}
+
+    /** Get a content provider for this buffer. */
+    public function get_selection_content(): GdkContentProvider {}
 
     /** Returns the text in the range [$start,$end). */
     public function get_slice(GtkTextIter $start, GtkTextIter $end, bool $include_hidden_chars): string {}

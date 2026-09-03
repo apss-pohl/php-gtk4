@@ -1099,7 +1099,9 @@ final class GtkCssSection
 /**
  * The `GdkClipboard` object represents data shared between applications or inside an application.
  *
+ * @property-read ?GdkContentProvider $content
  * @property ?GdkDisplay $display
+ * @property-read ?GdkContentFormats $formats
  * @property-read ?bool $local
  */
 class GdkClipboard extends GObject
@@ -1108,8 +1110,18 @@ class GdkClipboard extends GObject
     private function __construct()
     {
     }
+    /** Returns the `GdkContentProvider` currently set on $clipboard. */
+    public function get_content(): ?GdkContentProvider
+    {
+        return null;
+    }
     /** Gets the `GdkDisplay` that the clipboard was created for. */
     public function get_display(): GdkDisplay
+    {
+        return null;
+    }
+    /** Gets the formats that the clipboard can provide its current contents in. */
+    public function get_formats(): GdkContentFormats
     {
         return null;
     }
@@ -1150,6 +1162,12 @@ class GdkClipboard extends GObject
         unset($result);
         return null;
     }
+    /** Sets a new content provider on $clipboard. */
+    public function set_content(?GdkContentProvider $provider): bool
+    {
+        unset($provider);
+        return false;
+    }
     /** Puts the given $text into the clipboard. */
     public function set_text(string $text): void
     {
@@ -1172,6 +1190,205 @@ class GdkClipboard extends GObject
     {
         unset($result);
         return false;
+    }
+    /**
+     * Put $value on the clipboard, typed as $type (inferred from $value when omitted).
+     *
+     * The typed counterpart of set_text()/set_texture(): GIR takes a GValue, and the marshaller is
+     * what turns an ordinary PHP value into one. The type is named as everywhere else -
+     * "string"/"int"/"float"/"bool" or a registered class name.
+     */
+    public function set_value(mixed $value, ?string $type = null): void
+    {
+        unset($value);
+        unset($type);
+    }
+}
+/**
+ * The `GdkContentFormats` structure is used to advertise and negotiate the format of content.
+ */
+final class GdkContentFormats
+{
+    /** Checks if a given mime type is part of the given $formats. */
+    public function contain_mime_type(string $mime_type): bool
+    {
+        unset($mime_type);
+        return false;
+    }
+    /** Checks if $first and $second have any matching formats. */
+    public function match(GdkContentFormats $second): bool
+    {
+        unset($second);
+        return false;
+    }
+    /** Finds the first mime type from $first that is also contained in $second. */
+    public function match_mime_type(GdkContentFormats $second): ?string
+    {
+        unset($second);
+        return null;
+    }
+    /** Prints the given $formats into a human-readable string. */
+    public function to_string(): string
+    {
+        return '';
+    }
+    /** Append all missing types from $second to $first, in the order they had in $second. */
+    public function union(GdkContentFormats $second): GdkContentFormats
+    {
+        unset($second);
+        return null;
+    }
+    /** Add GTypes for mime types in $formats for which deserializers are registered. */
+    public function union_deserialize_gtypes(): GdkContentFormats
+    {
+        return null;
+    }
+    /** Add mime types for GTypes in $formats for which deserializers are registered. */
+    public function union_deserialize_mime_types(): GdkContentFormats
+    {
+        return null;
+    }
+    /** Add GTypes for the mime types in $formats for which serializers are registered. */
+    public function union_serialize_gtypes(): GdkContentFormats
+    {
+        return null;
+    }
+    /** Add mime types for GTypes in $formats for which serializers are registered. */
+    public function union_serialize_mime_types(): GdkContentFormats
+    {
+        return null;
+    }
+    /** Parses the given $string into `GdkContentFormats` and returns the formats. */
+    public static function parse(string $string): ?GdkContentFormats
+    {
+        unset($string);
+        return null;
+    }
+    /**
+     * The set of MIME types a drag or a clipboard offers.
+     *
+     * GIR's constructor takes a C array; a PHP list of strings is the same thing. An empty set is
+     * what GTK's own `gdk_content_formats_new(NULL, 0)` builds, and union_*() grows it.
+     */
+    public function __construct(array $mime_types = [])
+    {
+        unset($mime_types);
+    }
+    /**
+     * Whether this set offers $type, named as elsewhere.
+     */
+    public function contain_gtype(string $type): bool
+    {
+        unset($type);
+        return false;
+    }
+    /**
+     * The types in this set, named as elsewhere ("string", a registered class name).
+     *
+     * @return list<string>
+     */
+    public function get_gtypes(): array
+    {
+        return [];
+    }
+    /**
+     * The MIME types in this set.
+     *
+     * @return list<string>
+     */
+    public function get_mime_types(): array
+    {
+        return [];
+    }
+}
+/**
+ * A `GdkContentProvider` is used to provide content for the clipboard or for drag-and-drop
+ * operations in a number of formats.
+ *
+ * @property-read ?GdkContentFormats $formats
+ * @property-read ?GdkContentFormats $storable_formats
+ */
+class GdkContentProvider extends GObject
+{
+    /** A GdkContentProvider with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct()
+    {
+    }
+    /** Create a content provider that provides the given $bytes as data for the given $mime_type. */
+    public static function new_for_bytes(string $mime_type, string $bytes): GdkContentProvider
+    {
+        unset($mime_type);
+        unset($bytes);
+        return null;
+    }
+    /** Emits the ::content-changed signal. */
+    public function content_changed(): void
+    {
+    }
+    /** Gets the formats that the provider can provide its current contents in. */
+    public function ref_formats(): GdkContentFormats
+    {
+        return null;
+    }
+    /** Gets the formats that the provider suggests other applications to store the data in. */
+    public function ref_storable_formats(): GdkContentFormats
+    {
+        return null;
+    }
+    /** Finishes an asynchronous write operation. */
+    public function write_mime_type_finish(GAsyncResult $result): bool
+    {
+        unset($result);
+        return false;
+    }
+    /**
+     * The value this provider offers, as $type (the first type it advertises when omitted).
+     *
+     * GIR's GValue is caller-allocated *and* caller-typed: GDK fills it only if it can supply that
+     * type, and asserts on an uninitialised one. So the type is asked for explicitly or taken from
+     * the provider's own formats, and the marshaller turns the result back into a PHP value.
+     */
+    public function get_value(?string $type = null): mixed
+    {
+        unset($type);
+        return null;
+    }
+    /**
+     * A provider offering $value, typed as $type (inferred from $value when omitted).
+     *
+     * GIR takes a GValue, which PHP has no spelling for; the marshaller converts one either way, so
+     * the payload is an ordinary PHP value and the GType is named the way a list store's item type
+     * is - "string"/"int"/"float"/"bool" or a registered class name.
+     */
+    public static function new_for_value(mixed $value, ?string $type = null): GdkContentProvider
+    {
+        unset($value);
+        unset($type);
+        return null;
+    }
+    /**
+     * Native `attach_clipboard` (ContentProviderClass.attach_clipboard): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_attach_clipboard()` from an override.
+     */
+    public function vfunc_attach_clipboard(GdkClipboard $clipboard): void
+    {
+        unset($clipboard);
+    }
+    /**
+     * Native `content_changed` (ContentProviderClass.content_changed): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_content_changed()` from an override. Emits the
+     * ::content-changed signal.
+     */
+    public function vfunc_content_changed(): void
+    {
+    }
+    /**
+     * Native `detach_clipboard` (ContentProviderClass.detach_clipboard): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_detach_clipboard()` from an override.
+     */
+    public function vfunc_detach_clipboard(GdkClipboard $clipboard): void
+    {
+        unset($clipboard);
     }
 }
 /**
@@ -1354,6 +1571,69 @@ class GdkDisplay extends GObject
     }
 }
 /**
+ * The `GdkDrag` object represents the source of an ongoing DND operation.
+ *
+ * @property ?int $actions
+ * @property ?GdkContentProvider $content
+ * @property-read ?GdkDisplay $display
+ * @property ?GdkContentFormats $formats
+ * @property ?int $selected_action
+ * @property ?GdkSurface $surface
+ */
+class GdkDrag extends GObject
+{
+    /** GdkDrag is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Informs GDK that the drop ended. */
+    public function drop_done(bool $success): void
+    {
+        unset($success);
+    }
+    /** Determines the bitmask of possible actions proposed by the source. */
+    public function get_actions(): int
+    {
+        return 0;
+    }
+    /** Returns the `GdkContentProvider` associated to the `GdkDrag` object. */
+    public function get_content(): GdkContentProvider
+    {
+        return null;
+    }
+    /** Gets the `GdkDisplay` that the drag object was created for. */
+    public function get_display(): GdkDisplay
+    {
+        return null;
+    }
+    /** Returns the surface on which the drag icon should be rendered during the drag operation. */
+    public function get_drag_surface(): ?GdkSurface
+    {
+        return null;
+    }
+    /** Retrieves the formats supported by this `GdkDrag` object. */
+    public function get_formats(): GdkContentFormats
+    {
+        return null;
+    }
+    /** Determines the action chosen by the drag destination. */
+    public function get_selected_action(): int
+    {
+        return 0;
+    }
+    /** Returns the `GdkSurface` where the drag originates. */
+    public function get_surface(): GdkSurface
+    {
+        return null;
+    }
+    /** Sets the position of the drag surface that will be kept under the cursor hotspot. */
+    public function set_hotspot(int $hot_x, int $hot_y): void
+    {
+        unset($hot_x);
+        unset($hot_y);
+    }
+}
+/**
  * Used in `GdkDrop` and `GdkDrag` to indicate the actions that the destination can and should do
  * with the dropped data.
  */
@@ -1363,6 +1643,81 @@ final class GdkDragAction
     public const int MOVE = 2;
     public const int LINK = 4;
     public const int ASK = 8;
+}
+/**
+ * Used in `GdkDrag` to the reason of a cancelled DND operation.
+ */
+enum GdkDragCancelReason : int
+{
+    case NoTarget = 0;
+    case UserCancelled = 1;
+    case Error = 2;
+}
+/**
+ * The `GdkDrop` object represents the target of an ongoing DND operation.
+ *
+ * @property ?int $actions
+ * @property-read ?GdkDisplay $display
+ * @property ?GdkDrag $drag
+ * @property ?GdkContentFormats $formats
+ * @property ?GdkSurface $surface
+ */
+class GdkDrop extends GObject
+{
+    /** GdkDrop is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Ends the drag operation after a drop. */
+    public function finish(int $action): void
+    {
+        unset($action);
+    }
+    /** Returns the possible actions for this `GdkDrop`. */
+    public function get_actions(): int
+    {
+        return 0;
+    }
+    /** Gets the `GdkDisplay` that $self was created for. */
+    public function get_display(): GdkDisplay
+    {
+        return null;
+    }
+    /**
+     * If this is an in-app drag-and-drop operation, returns the `GdkDrag` that corresponds to this
+     * drop.
+     */
+    public function get_drag(): ?GdkDrag
+    {
+        return null;
+    }
+    /** Returns the `GdkContentFormats` that the drop offers the data to be read in. */
+    public function get_formats(): GdkContentFormats
+    {
+        return null;
+    }
+    /** Returns the `GdkSurface` performing the drop. */
+    public function get_surface(): GdkSurface
+    {
+        return null;
+    }
+    /**
+     * Asynchronously read the dropped data from a `GdkDrop` in a format that complies with one of
+     * the mime types.
+     */
+    public function read_async(array $mime_types, int $io_priority, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($mime_types);
+        unset($io_priority);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Selects all actions that are potentially supported by the destination. */
+    public function status(int $actions, int $preferred): void
+    {
+        unset($actions);
+        unset($preferred);
+    }
 }
 /**
  * Specifies the type of the event.
@@ -5836,6 +6191,117 @@ enum GtkDirectionType : int
     case Right = 5;
 }
 /**
+ * `GtkDragIcon` is a `GtkRoot` implementation for drag icons.
+ *
+ * @property ?GtkWidget $child
+ */
+class GtkDragIcon extends GtkWidget implements GtkNative, GtkRoot
+{
+    /** GtkDragIcon has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Gets the `GtkDragIcon` in use with $drag. */
+    public static function get_for_drag(GdkDrag $drag): GtkWidget
+    {
+        unset($drag);
+        return null;
+    }
+    /** Creates a `GtkDragIcon` that shows $paintable, and associates it with the drag operation. */
+    public static function set_from_paintable(GdkDrag $drag, GdkPaintable $paintable, int $hot_x, int $hot_y): void
+    {
+        unset($drag);
+        unset($paintable);
+        unset($hot_x);
+        unset($hot_y);
+    }
+    /** Gets the widget currently used as drag icon. */
+    public function get_child(): ?GtkWidget
+    {
+        return null;
+    }
+    /** Sets the widget to display as the drag icon. */
+    public function set_child(?GtkWidget $child): void
+    {
+        unset($child);
+    }
+    public function get_surface(): ?GdkSurface
+    {
+        return null;
+    }
+    public function get_surface_transform(): array
+    {
+        return [];
+    }
+    public function realize(): void
+    {
+    }
+    public function unrealize(): void
+    {
+    }
+    public function get_display(): GdkDisplay
+    {
+        return null;
+    }
+    public function get_focus(): ?GtkWidget
+    {
+        return null;
+    }
+    public function set_focus(?GtkWidget $focus): void
+    {
+        unset($focus);
+    }
+}
+/**
+ * `GtkDragSource` is an event controller to initiate Drag-And-Drop operations.
+ *
+ * @property ?int $actions
+ * @property ?GdkContentProvider $content
+ */
+class GtkDragSource extends GtkGestureSingle
+{
+    /** Creates a new `GtkDragSource` object. */
+    public function __construct()
+    {
+    }
+    /** Cancels a currently ongoing drag operation. */
+    public function drag_cancel(): void
+    {
+    }
+    /** Gets the actions that are currently set on the `GtkDragSource`. */
+    public function get_actions(): int
+    {
+        return 0;
+    }
+    /** Gets the current content provider of a `GtkDragSource`. */
+    public function get_content(): ?GdkContentProvider
+    {
+        return null;
+    }
+    /** Returns the underlying `GdkDrag` object for an ongoing drag. */
+    public function get_drag(): ?GdkDrag
+    {
+        return null;
+    }
+    /** Sets the actions on the `GtkDragSource`. */
+    public function set_actions(int $actions): void
+    {
+        unset($actions);
+    }
+    /** Sets a content provider on a `GtkDragSource`. */
+    public function set_content(?GdkContentProvider $content): void
+    {
+        unset($content);
+    }
+    /** Sets a paintable to use as icon during DND operations. */
+    public function set_icon(?GdkPaintable $paintable, int $hot_x, int $hot_y): void
+    {
+        unset($paintable);
+        unset($hot_x);
+        unset($hot_y);
+    }
+}
+/**
  * `GtkDrawingArea` is a widget that allows drawing with cairo.
  *
  * @property ?int $content_height
@@ -5997,6 +6463,136 @@ class GtkDropDown extends GtkWidget
     public function set_show_arrow(bool $show_arrow): void
     {
         unset($show_arrow);
+    }
+}
+/**
+ * `GtkDropTarget` is an event controller to receive Drag-and-Drop operations.
+ *
+ * @property ?int $actions
+ * @property-read ?GdkDrop $current_drop
+ * @property-read ?GdkDrop $drop
+ * @property ?GdkContentFormats $formats
+ * @property ?bool $preload
+ */
+class GtkDropTarget extends GtkEventController
+{
+    /** Gets the actions that this drop target supports. */
+    public function get_actions(): int
+    {
+        return 0;
+    }
+    /** Gets the currently handled drop operation. */
+    public function get_current_drop(): ?GdkDrop
+    {
+        return null;
+    }
+    /** Gets the data formats that this drop target accepts. */
+    public function get_formats(): ?GdkContentFormats
+    {
+        return null;
+    }
+    /** Gets whether data should be preloaded on hover. */
+    public function get_preload(): bool
+    {
+        return false;
+    }
+    /** Rejects the ongoing drop operation. */
+    public function reject(): void
+    {
+    }
+    /** Sets the actions that this drop target supports. */
+    public function set_actions(int $actions): void
+    {
+        unset($actions);
+    }
+    /** Sets whether data should be preloaded on hover. */
+    public function set_preload(bool $preload): void
+    {
+        unset($preload);
+    }
+    /**
+     * A drop target accepting $type, offering $actions (a GdkDragAction mask).
+     *
+     * GIR's constructor takes a GType, which PHP has no spelling for; the type is named the way a
+     * payload's is elsewhere - "string"/"int"/"float"/"bool" or a registered class name
+     * (core/marshal, gtype_from_php_name). Without it a drop target accepts nothing at all.
+     */
+    public function __construct(string $type, int $actions)
+    {
+        unset($type);
+        unset($actions);
+    }
+    /**
+     * The types this target accepts, in the spelling set_gtypes() takes.
+     *
+     * @return list<string>
+     */
+    public function get_gtypes(): array
+    {
+        return [];
+    }
+    /**
+     * The value being dropped, or null outside a drop.
+     *
+     * GIR answers with a GValue; the marshaller turns it into the PHP value the source offered.
+     */
+    public function get_value(): mixed
+    {
+        return null;
+    }
+    /**
+     * The types this target accepts, named as in the constructor.
+     */
+    public function set_gtypes(array $types): void
+    {
+        unset($types);
+    }
+}
+/**
+ * `GtkDropTargetAsync` is an event controller to receive Drag-and-Drop operations, asynchronously.
+ *
+ * @property ?int $actions
+ * @property ?GdkContentFormats $formats
+ */
+class GtkDropTargetAsync extends GtkEventController
+{
+    /** Creates a new `GtkDropTargetAsync` object. */
+    public function __construct(?GdkContentFormats $formats, int $actions)
+    {
+        unset($formats);
+        unset($actions);
+    }
+    /** Gets the actions that this drop target supports. */
+    public function get_actions(): int
+    {
+        return 0;
+    }
+    /** Sets the $drop as not accepted on this drag site. */
+    public function reject_drop(GdkDrop $drop): void
+    {
+        unset($drop);
+    }
+    /** Sets the actions that this drop target supports. */
+    public function set_actions(int $actions): void
+    {
+        unset($actions);
+    }
+    /** Sets the data formats that this drop target will accept. */
+    public function set_formats(?GdkContentFormats $formats): void
+    {
+        unset($formats);
+    }
+    /**
+     * The formats this target accepts, or null when it accepts everything.
+     *
+     * GTK's GIR annotates this `transfer full`, but `gtk_drop_target_async_get_formats()` returns
+     * `self->formats` borrowed (its sibling `gtk_drop_target_get_formats()` is annotated correctly).
+     * Taking the annotation at its word unrefs GTK's own formats: the first call freed them and the
+     * second read freed memory. So this one does not free what it wrapped.
+     */
+    public function get_formats(): ?GdkContentFormats
+    {
+        return null;
     }
 }
 /**
@@ -6359,6 +6955,13 @@ class GtkEntry extends GtkWidget implements GtkEditable
     {
         unset($icon_pos);
         unset($activatable);
+    }
+    /** Sets up the icon at the given position as drag source. */
+    public function set_icon_drag_source(GtkEntryIconPosition $icon_pos, GdkContentProvider $provider, int $actions): void
+    {
+        unset($icon_pos);
+        unset($provider);
+        unset($actions);
     }
     /** Sets the icon shown in the entry at the specified position from the current icon theme. */
     public function set_icon_from_icon_name(GtkEntryIconPosition $icon_pos, ?string $icon_name): void
@@ -13721,6 +14324,11 @@ class GtkTextBuffer extends GObject
      * @return array{GtkTextIter, GtkTextIter}|null
      */
     public function get_selection_bounds(): ?array
+    {
+        return null;
+    }
+    /** Get a content provider for this buffer. */
+    public function get_selection_content(): GdkContentProvider
     {
         return null;
     }

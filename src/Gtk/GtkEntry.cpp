@@ -506,6 +506,32 @@ ZEND_METHOD(Gtk4_GtkEntry, set_icon_activatable) {
 }
 
 /**
+ * Gtk4\GtkEntry::set_icon_drag_source(GtkEntryIconPosition $icon_pos, GdkContentProvider $provider,
+ * int $actions): void
+ *
+ * Sets up the icon at the given position as drag source.
+ */
+ZEND_METHOD(Gtk4_GtkEntry, set_icon_drag_source) {
+  zval *icon_pos;
+  zval *provider;
+  zend_long actions;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_OBJECT_OF_CLASS(icon_pos, enum_class_for_type(GTK_TYPE_ENTRY_ICON_POSITION))
+  Z_PARAM_OBJECT_OF_CLASS(provider, class_for_gtype(GDK_TYPE_CONTENT_PROVIDER))
+  Z_PARAM_LONG(actions)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
+  gint icon_pos_v = 0;
+  if (!enum_from_php(icon_pos, GTK_TYPE_ENTRY_ICON_POSITION, &icon_pos_v)) RETURN_THROWS();
+  GObject *provider_o = unwrap(provider, GDK_TYPE_CONTENT_PROVIDER);
+  if (provider_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_flags(GDK_TYPE_DRAG_ACTION, actions, 3)) RETURN_THROWS();
+  gtk_entry_set_icon_drag_source(self, static_cast<GtkEntryIconPosition>(icon_pos_v),
+                                 GDK_CONTENT_PROVIDER(provider_o),
+                                 static_cast<GdkDragAction>(actions));
+}
+
+/**
  * Gtk4\GtkEntry::set_icon_from_icon_name(GtkEntryIconPosition $icon_pos, ?string $icon_name): void
  *
  * Sets the icon shown in the entry at the specified position from the current icon theme.

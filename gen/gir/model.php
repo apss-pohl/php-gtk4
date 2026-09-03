@@ -60,6 +60,10 @@ final class Func
         public ?string $shadowedBy,
         public bool $varargs,
         public string $doc,
+        // GIR's <instance-parameter transfer-ownership="full">: the call *consumes* the object
+        // it is called on (gdk_content_formats_union()). A handle owns its value, so the callee
+        // has to be given a reference of its own or the handle is left on freed memory.
+        public bool $consumesSelf = false,
     ) {}
 }
 

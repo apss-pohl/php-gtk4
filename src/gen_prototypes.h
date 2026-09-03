@@ -127,6 +127,10 @@ ZEND_METHOD(Gtk4_GListModel, get_n_items);
 ZEND_METHOD(Gtk4_GListModel, get_item);
 ZEND_METHOD(Gtk4_GListModel, items_changed);
 void register_vfuncs_GMenuModel();
+namespace phpgtk {
+void register_GdkContentFormats(zend_class_entry *ce);
+}  // namespace phpgtk
+void register_vfuncs_GdkContentProvider();
 void register_vfuncs_GdkPaintable();
 ZEND_METHOD(Gtk4_GdkPaintable, compute_concrete_size);
 ZEND_METHOD(Gtk4_GdkPaintable, get_current_image);

@@ -9,6 +9,9 @@ return [
     'Generated' => [
         'GdkClipboard',
         'GdkCursor',
+        'GdkDrag',
+        'GdkDragCancelReason',
+        'GdkDrop',
         'GdkModifierType',
         'GdkMonitor',
         'GdkSnapshot',
@@ -26,6 +29,8 @@ return [
         'GtkBuilderClosureFlags',
         'GtkBuilderScope',
         'GtkCenterLayout',
+        'GtkDragIcon',
+        'GtkDropTargetAsync',
         'GtkFixedLayout',
         'GtkFixedLayoutChild',
         'GtkGridLayout',

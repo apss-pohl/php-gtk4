@@ -249,3 +249,19 @@ Gdk.Snapshot
 Graphene.Rect
 Graphene.Point
 Graphene.Size
+
+# Wave 3b (drag and drop, PLAN.md §3 - the last wave of the map's port order): a drag is a
+# GtkDragSource gesture producing a GdkContentProvider, and a GtkDropTarget event controller
+# consuming one through a GdkDrop. GdkContentProvider is also what GdkClipboard's typed payloads
+# need - wave 8 bound the clipboard's text/texture convenience calls and skipped set_content()
+# and get_content() because the type was not in the closure.
+Gtk.DragSource
+Gtk.DropTarget
+Gtk.DropTargetAsync
+Gtk.DragIcon
+Gdk.ContentProvider
+Gdk.Drag
+Gdk.Drop
+Gdk.ContentFormats
+Gdk.DragCancelReason
+Gdk.DragAction

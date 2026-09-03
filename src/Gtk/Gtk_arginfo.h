@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 4238604290f7b83c0ca629fb4c8dedad895b1380 */
+ * Stub hash: b6f098279843f342e61622a56490f4e13d396dd1 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -1034,6 +1034,63 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkCustomSorter_set_s
 	ZEND_ARG_TYPE_INFO(0, compare, IS_CALLABLE, 1)
 ZEND_END_ARG_INFO()
 
+#define arginfo_class_Gtk4_GtkDragIcon___construct arginfo_class_Gtk4_GtkAboutDialog___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkDragIcon_get_for_drag, 0, 1, Gtk4\\GtkWidget, 0)
+	ZEND_ARG_OBJ_INFO(0, drag, Gtk4\\GdkDrag, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkDragIcon_set_from_paintable, 0, 4, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, drag, Gtk4\\GdkDrag, 0)
+	ZEND_ARG_OBJ_INFO(0, paintable, Gtk4\\GdkPaintable, 0)
+	ZEND_ARG_TYPE_INFO(0, hot_x, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, hot_y, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkDragIcon_get_child arginfo_class_Gtk4_GtkAboutDialog_get_focus
+
+#define arginfo_class_Gtk4_GtkDragIcon_set_child arginfo_class_Gtk4_GtkButton_set_child
+
+#define arginfo_class_Gtk4_GtkDragIcon_get_surface arginfo_class_Gtk4_GtkAboutDialog_get_surface
+
+#define arginfo_class_Gtk4_GtkDragIcon_get_surface_transform arginfo_class_Gtk4_GtkAboutDialog_get_artists
+
+#define arginfo_class_Gtk4_GtkDragIcon_realize arginfo_class_Gtk4_GtkAboutDialog_realize
+
+#define arginfo_class_Gtk4_GtkDragIcon_unrealize arginfo_class_Gtk4_GtkAboutDialog_realize
+
+#define arginfo_class_Gtk4_GtkDragIcon_get_display arginfo_class_Gtk4_GtkAboutDialog_get_display
+
+#define arginfo_class_Gtk4_GtkDragIcon_get_focus arginfo_class_Gtk4_GtkAboutDialog_get_focus
+
+#define arginfo_class_Gtk4_GtkDragIcon_set_focus arginfo_class_Gtk4_GtkAboutDialog_set_focus
+
+#define arginfo_class_Gtk4_GtkDragSource___construct arginfo_class_Gtk4_GtkAboutDialog___construct
+
+#define arginfo_class_Gtk4_GtkDragSource_drag_cancel arginfo_class_Gtk4_GtkAboutDialog_realize
+
+#define arginfo_class_Gtk4_GtkDragSource_get_actions arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkDragSource_get_content, 0, 0, Gtk4\\GdkContentProvider, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkDragSource_get_drag, 0, 0, Gtk4\\GdkDrag, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkDragSource_set_actions, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, actions, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkDragSource_set_content, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, content, Gtk4\\GdkContentProvider, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkDragSource_set_icon, 0, 3, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, paintable, Gtk4\\GdkPaintable, 1)
+	ZEND_ARG_TYPE_INFO(0, hot_x, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, hot_y, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_GtkDrawingArea___construct arginfo_class_Gtk4_GtkAboutDialog___construct
 
 #define arginfo_class_Gtk4_GtkDrawingArea_get_content_height arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
@@ -1108,6 +1165,57 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkDropDown_set_show_arrow, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, show_arrow, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkDropTarget_get_actions arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkDropTarget_get_current_drop, 0, 0, Gtk4\\GdkDrop, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkDropTarget_get_formats, 0, 0, Gtk4\\GdkContentFormats, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkDropTarget_get_preload arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkDropTarget_reject arginfo_class_Gtk4_GtkAboutDialog_realize
+
+#define arginfo_class_Gtk4_GtkDropTarget_set_actions arginfo_class_Gtk4_GtkDragSource_set_actions
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkDropTarget_set_preload, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, preload, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkDropTarget___construct, 0, 0, 2)
+	ZEND_ARG_TYPE_INFO(0, type, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, actions, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkDropTarget_get_gtypes arginfo_class_Gtk4_GtkAboutDialog_get_artists
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkDropTarget_get_value, 0, 0, IS_MIXED, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkDropTarget_set_gtypes, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, types, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkDropTargetAsync___construct, 0, 0, 2)
+	ZEND_ARG_OBJ_INFO(0, formats, Gtk4\\GdkContentFormats, 1)
+	ZEND_ARG_TYPE_INFO(0, actions, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkDropTargetAsync_get_actions arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkDropTargetAsync_reject_drop, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, drop, Gtk4\\GdkDrop, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkDropTargetAsync_set_actions arginfo_class_Gtk4_GtkDragSource_set_actions
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkDropTargetAsync_set_formats, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, formats, Gtk4\\GdkContentFormats, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkDropTargetAsync_get_formats arginfo_class_Gtk4_GtkDropTarget_get_formats
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkEditable_delete_text, 0, 2, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, start_pos, IS_LONG, 0)
@@ -1277,6 +1385,12 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkEntry_set_icon_activatable, 0, 2, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, icon_pos, Gtk4\\GtkEntryIconPosition, 0)
 	ZEND_ARG_TYPE_INFO(0, activatable, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkEntry_set_icon_drag_source, 0, 3, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, icon_pos, Gtk4\\GtkEntryIconPosition, 0)
+	ZEND_ARG_OBJ_INFO(0, provider, Gtk4\\GdkContentProvider, 0)
+	ZEND_ARG_TYPE_INFO(0, actions, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkEntry_set_icon_from_icon_name, 0, 2, IS_VOID, 0)
@@ -1595,8 +1709,7 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkFileFilter_set_name arginfo_class_Gtk4_GtkAboutDialog_set_program_name
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFileFilter_to_gvariant, 0, 0, IS_MIXED, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_GtkFileFilter_to_gvariant arginfo_class_Gtk4_GtkDropTarget_get_value
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkFileFilter_new_from_gvariant, 0, 1, Gtk4\\GtkFileFilter, 0)
 	ZEND_ARG_TYPE_INFO(0, variant, IS_MIXED, 0)
@@ -4252,6 +4365,9 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkTextBuffer_get_selection_bounds arginfo_class_Gtk4_GtkEditable_get_selection_bounds
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_selection_content, 0, 0, Gtk4\\GdkContentProvider, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_slice, 0, 3, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, start, Gtk4\\GtkTextIter, 0)
 	ZEND_ARG_OBJ_INFO(0, end, Gtk4\\GtkTextIter, 0)
@@ -5987,6 +6103,19 @@ ZEND_METHOD(Gtk4_GtkCustomFilter, __construct);
 ZEND_METHOD(Gtk4_GtkCustomFilter, set_filter_func);
 ZEND_METHOD(Gtk4_GtkCustomSorter, __construct);
 ZEND_METHOD(Gtk4_GtkCustomSorter, set_sort_func);
+ZEND_METHOD(Gtk4_GtkDragIcon, __construct);
+ZEND_METHOD(Gtk4_GtkDragIcon, get_for_drag);
+ZEND_METHOD(Gtk4_GtkDragIcon, set_from_paintable);
+ZEND_METHOD(Gtk4_GtkDragIcon, get_child);
+ZEND_METHOD(Gtk4_GtkDragIcon, set_child);
+ZEND_METHOD(Gtk4_GtkDragSource, __construct);
+ZEND_METHOD(Gtk4_GtkDragSource, drag_cancel);
+ZEND_METHOD(Gtk4_GtkDragSource, get_actions);
+ZEND_METHOD(Gtk4_GtkDragSource, get_content);
+ZEND_METHOD(Gtk4_GtkDragSource, get_drag);
+ZEND_METHOD(Gtk4_GtkDragSource, set_actions);
+ZEND_METHOD(Gtk4_GtkDragSource, set_content);
+ZEND_METHOD(Gtk4_GtkDragSource, set_icon);
 ZEND_METHOD(Gtk4_GtkDrawingArea, __construct);
 ZEND_METHOD(Gtk4_GtkDrawingArea, get_content_height);
 ZEND_METHOD(Gtk4_GtkDrawingArea, get_content_width);
@@ -6013,6 +6142,23 @@ ZEND_METHOD(Gtk4_GtkDropDown, set_model);
 ZEND_METHOD(Gtk4_GtkDropDown, set_search_match_mode);
 ZEND_METHOD(Gtk4_GtkDropDown, set_selected);
 ZEND_METHOD(Gtk4_GtkDropDown, set_show_arrow);
+ZEND_METHOD(Gtk4_GtkDropTarget, get_actions);
+ZEND_METHOD(Gtk4_GtkDropTarget, get_current_drop);
+ZEND_METHOD(Gtk4_GtkDropTarget, get_formats);
+ZEND_METHOD(Gtk4_GtkDropTarget, get_preload);
+ZEND_METHOD(Gtk4_GtkDropTarget, reject);
+ZEND_METHOD(Gtk4_GtkDropTarget, set_actions);
+ZEND_METHOD(Gtk4_GtkDropTarget, set_preload);
+ZEND_METHOD(Gtk4_GtkDropTarget, __construct);
+ZEND_METHOD(Gtk4_GtkDropTarget, get_gtypes);
+ZEND_METHOD(Gtk4_GtkDropTarget, get_value);
+ZEND_METHOD(Gtk4_GtkDropTarget, set_gtypes);
+ZEND_METHOD(Gtk4_GtkDropTargetAsync, __construct);
+ZEND_METHOD(Gtk4_GtkDropTargetAsync, get_actions);
+ZEND_METHOD(Gtk4_GtkDropTargetAsync, reject_drop);
+ZEND_METHOD(Gtk4_GtkDropTargetAsync, set_actions);
+ZEND_METHOD(Gtk4_GtkDropTargetAsync, set_formats);
+ZEND_METHOD(Gtk4_GtkDropTargetAsync, get_formats);
 ZEND_METHOD(Gtk4_GtkEditableObject, __construct);
 ZEND_METHOD(Gtk4_GtkEditable, delegate_get_accessible_platform_state);
 ZEND_METHOD(Gtk4_GtkEditable, delete_selection);
@@ -6068,6 +6214,7 @@ ZEND_METHOD(Gtk4_GtkEntry, set_buffer);
 ZEND_METHOD(Gtk4_GtkEntry, set_extra_menu);
 ZEND_METHOD(Gtk4_GtkEntry, set_has_frame);
 ZEND_METHOD(Gtk4_GtkEntry, set_icon_activatable);
+ZEND_METHOD(Gtk4_GtkEntry, set_icon_drag_source);
 ZEND_METHOD(Gtk4_GtkEntry, set_icon_from_icon_name);
 ZEND_METHOD(Gtk4_GtkEntry, set_icon_from_paintable);
 ZEND_METHOD(Gtk4_GtkEntry, set_icon_sensitive);
@@ -6961,6 +7108,7 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, get_max_undo_levels);
 ZEND_METHOD(Gtk4_GtkTextBuffer, get_modified);
 ZEND_METHOD(Gtk4_GtkTextBuffer, get_selection_bound);
 ZEND_METHOD(Gtk4_GtkTextBuffer, get_selection_bounds);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_selection_content);
 ZEND_METHOD(Gtk4_GtkTextBuffer, get_slice);
 ZEND_METHOD(Gtk4_GtkTextBuffer, get_start_iter);
 ZEND_METHOD(Gtk4_GtkTextBuffer, get_tag_table);
@@ -7870,6 +8018,34 @@ static const zend_function_entry class_Gtk4_GtkCustomSorter_methods[] = {
 	ZEND_FE_END
 };
 
+static const zend_function_entry class_Gtk4_GtkDragIcon_methods[] = {
+	ZEND_ME(Gtk4_GtkDragIcon, __construct, arginfo_class_Gtk4_GtkDragIcon___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GtkDragIcon, get_for_drag, arginfo_class_Gtk4_GtkDragIcon_get_for_drag, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GtkDragIcon, set_from_paintable, arginfo_class_Gtk4_GtkDragIcon_set_from_paintable, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GtkDragIcon, get_child, arginfo_class_Gtk4_GtkDragIcon_get_child, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDragIcon, set_child, arginfo_class_Gtk4_GtkDragIcon_set_child, ZEND_ACC_PUBLIC)
+	ZEND_RAW_FENTRY("get_surface", zim_Gtk4_GtkNative_get_surface, arginfo_class_Gtk4_GtkDragIcon_get_surface, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_surface_transform", zim_Gtk4_GtkNative_get_surface_transform, arginfo_class_Gtk4_GtkDragIcon_get_surface_transform, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("realize", zim_Gtk4_GtkNative_realize, arginfo_class_Gtk4_GtkDragIcon_realize, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("unrealize", zim_Gtk4_GtkNative_unrealize, arginfo_class_Gtk4_GtkDragIcon_unrealize, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_display", zim_Gtk4_GtkRoot_get_display, arginfo_class_Gtk4_GtkDragIcon_get_display, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("get_focus", zim_Gtk4_GtkRoot_get_focus, arginfo_class_Gtk4_GtkDragIcon_get_focus, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("set_focus", zim_Gtk4_GtkRoot_set_focus, arginfo_class_Gtk4_GtkDragIcon_set_focus, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkDragSource_methods[] = {
+	ZEND_ME(Gtk4_GtkDragSource, __construct, arginfo_class_Gtk4_GtkDragSource___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDragSource, drag_cancel, arginfo_class_Gtk4_GtkDragSource_drag_cancel, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDragSource, get_actions, arginfo_class_Gtk4_GtkDragSource_get_actions, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDragSource, get_content, arginfo_class_Gtk4_GtkDragSource_get_content, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDragSource, get_drag, arginfo_class_Gtk4_GtkDragSource_get_drag, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDragSource, set_actions, arginfo_class_Gtk4_GtkDragSource_set_actions, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDragSource, set_content, arginfo_class_Gtk4_GtkDragSource_set_content, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDragSource, set_icon, arginfo_class_Gtk4_GtkDragSource_set_icon, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
 static const zend_function_entry class_Gtk4_GtkDrawingArea_methods[] = {
 	ZEND_ME(Gtk4_GtkDrawingArea, __construct, arginfo_class_Gtk4_GtkDrawingArea___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkDrawingArea, get_content_height, arginfo_class_Gtk4_GtkDrawingArea_get_content_height, ZEND_ACC_PUBLIC)
@@ -7901,6 +8077,31 @@ static const zend_function_entry class_Gtk4_GtkDropDown_methods[] = {
 	ZEND_ME(Gtk4_GtkDropDown, set_search_match_mode, arginfo_class_Gtk4_GtkDropDown_set_search_match_mode, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkDropDown, set_selected, arginfo_class_Gtk4_GtkDropDown_set_selected, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkDropDown, set_show_arrow, arginfo_class_Gtk4_GtkDropDown_set_show_arrow, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkDropTarget_methods[] = {
+	ZEND_ME(Gtk4_GtkDropTarget, get_actions, arginfo_class_Gtk4_GtkDropTarget_get_actions, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDropTarget, get_current_drop, arginfo_class_Gtk4_GtkDropTarget_get_current_drop, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDropTarget, get_formats, arginfo_class_Gtk4_GtkDropTarget_get_formats, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDropTarget, get_preload, arginfo_class_Gtk4_GtkDropTarget_get_preload, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDropTarget, reject, arginfo_class_Gtk4_GtkDropTarget_reject, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDropTarget, set_actions, arginfo_class_Gtk4_GtkDropTarget_set_actions, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDropTarget, set_preload, arginfo_class_Gtk4_GtkDropTarget_set_preload, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDropTarget, __construct, arginfo_class_Gtk4_GtkDropTarget___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDropTarget, get_gtypes, arginfo_class_Gtk4_GtkDropTarget_get_gtypes, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDropTarget, get_value, arginfo_class_Gtk4_GtkDropTarget_get_value, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDropTarget, set_gtypes, arginfo_class_Gtk4_GtkDropTarget_set_gtypes, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkDropTargetAsync_methods[] = {
+	ZEND_ME(Gtk4_GtkDropTargetAsync, __construct, arginfo_class_Gtk4_GtkDropTargetAsync___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDropTargetAsync, get_actions, arginfo_class_Gtk4_GtkDropTargetAsync_get_actions, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDropTargetAsync, reject_drop, arginfo_class_Gtk4_GtkDropTargetAsync_reject_drop, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDropTargetAsync, set_actions, arginfo_class_Gtk4_GtkDropTargetAsync_set_actions, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDropTargetAsync, set_formats, arginfo_class_Gtk4_GtkDropTargetAsync_set_formats, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkDropTargetAsync, get_formats, arginfo_class_Gtk4_GtkDropTargetAsync_get_formats, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -7976,6 +8177,7 @@ static const zend_function_entry class_Gtk4_GtkEntry_methods[] = {
 	ZEND_ME(Gtk4_GtkEntry, set_extra_menu, arginfo_class_Gtk4_GtkEntry_set_extra_menu, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, set_has_frame, arginfo_class_Gtk4_GtkEntry_set_has_frame, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, set_icon_activatable, arginfo_class_Gtk4_GtkEntry_set_icon_activatable, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkEntry, set_icon_drag_source, arginfo_class_Gtk4_GtkEntry_set_icon_drag_source, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, set_icon_from_icon_name, arginfo_class_Gtk4_GtkEntry_set_icon_from_icon_name, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, set_icon_from_paintable, arginfo_class_Gtk4_GtkEntry_set_icon_from_paintable, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, set_icon_sensitive, arginfo_class_Gtk4_GtkEntry_set_icon_sensitive, ZEND_ACC_PUBLIC)
@@ -9445,6 +9647,7 @@ static const zend_function_entry class_Gtk4_GtkTextBuffer_methods[] = {
 	ZEND_ME(Gtk4_GtkTextBuffer, get_modified, arginfo_class_Gtk4_GtkTextBuffer_get_modified, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, get_selection_bound, arginfo_class_Gtk4_GtkTextBuffer_get_selection_bound, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, get_selection_bounds, arginfo_class_Gtk4_GtkTextBuffer_get_selection_bounds, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_selection_content, arginfo_class_Gtk4_GtkTextBuffer_get_selection_content, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, get_slice, arginfo_class_Gtk4_GtkTextBuffer_get_slice, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, get_start_iter, arginfo_class_Gtk4_GtkTextBuffer_get_start_iter, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, get_tag_table, arginfo_class_Gtk4_GtkTextBuffer_get_tag_table, ZEND_ACC_PUBLIC)
@@ -10429,6 +10632,27 @@ static zend_class_entry *register_class_Gtk4_GtkDirectionType(void)
 	return class_entry;
 }
 
+static zend_class_entry *register_class_Gtk4_GtkDragIcon(zend_class_entry *class_entry_Gtk4_GtkWidget, zend_class_entry *class_entry_Gtk4_GtkNative, zend_class_entry *class_entry_Gtk4_GtkRoot)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkDragIcon", class_Gtk4_GtkDragIcon_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkWidget, 0);
+	zend_class_implements(class_entry, 2, class_entry_Gtk4_GtkNative, class_entry_Gtk4_GtkRoot);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkDragSource(zend_class_entry *class_entry_Gtk4_GtkGestureSingle)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkDragSource", class_Gtk4_GtkDragSource_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkGestureSingle, 0);
+
+	return class_entry;
+}
+
 static zend_class_entry *register_class_Gtk4_GtkDrawingArea(zend_class_entry *class_entry_Gtk4_GtkWidget)
 {
 	zend_class_entry ce, *class_entry;
@@ -10445,6 +10669,26 @@ static zend_class_entry *register_class_Gtk4_GtkDropDown(zend_class_entry *class
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkDropDown", class_Gtk4_GtkDropDown_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkWidget, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkDropTarget(zend_class_entry *class_entry_Gtk4_GtkEventController)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkDropTarget", class_Gtk4_GtkDropTarget_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkEventController, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkDropTargetAsync(zend_class_entry *class_entry_Gtk4_GtkEventController)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkDropTargetAsync", class_Gtk4_GtkDropTargetAsync_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkEventController, 0);
 
 	return class_entry;
 }
