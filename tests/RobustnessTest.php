@@ -106,6 +106,13 @@ final class RobustnessTest extends GtkTestCase
         if ($key === '') {
             return;
         }
+        // GTK reporting about the *machine*, not about the value it was handed: the same call
+        // is silent on a desktop and a complaint on a CI runner, so neither direction of the pin
+        // can hold it. Only what is genuinely environmental belongs here.
+        $seen = array_values(array_filter($seen, static fn(string $m): bool => !str_contains(
+            $m,
+            'not supported by GtkFileChooserNativePortal because portal is too old',
+        )));
         $isPinned = isset(self::pinned()[$key]);
         if ($seen !== [] && !$isPinned) {
             self::fail(
