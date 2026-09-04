@@ -38,14 +38,20 @@ final class DrawingAreaTest extends GtkTestCase
         $loop = new GMainLoop();
         $seen = null;
         $draw = function (GtkDrawingArea $a, CairoContext $cr, int $w, int $h) use (&$seen, $loop, $paint): void {
-            if ($paint !== null) {
-                $paint($cr, $w, $h);
+            // The loop ends as soon as the draw func ran, whether or not the paint threw -
+            // otherwise a throwing paint only ends with the fallback timeout below.
+            try {
+                if ($paint !== null) {
+                    $paint($cr, $w, $h);
+                }
+            } finally {
+                $seen = [$a, $cr, $w, $h];
+                $loop->quit();
             }
-            $seen = [$a, $cr, $w, $h];
-            $loop->quit();
         };
         $area->set_draw_func($draw);
-        GLib::timeout_add(5000, function () use ($loop): bool {
+        // Fallback for a draw that never happens; generous enough for an instrumented (asan) build.
+        GLib::timeout_add(1000, function () use ($loop): bool {
             $loop->quit();
             return false;
         });
