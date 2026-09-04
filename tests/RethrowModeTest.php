@@ -181,9 +181,6 @@ final class RethrowModeTest extends GtkTestCase
     public function testCDrivenNestedLoopParksAndRunRethrowsWithPreviousChained(): void
     {
         // Needs the test hook: a nested loop driven from C with no PHP boundary in between.
-        if (!str_contains((string) ini_get('gtk4.features'), 'testing=yes')) {
-            self::markTestSkipped('needs --enable-gtk4-testing (FEATURES testing=yes)');
-        }
         $loop = new GMainLoop();
         $afterNested = false;
         $secondRan = false;
@@ -217,9 +214,6 @@ final class RethrowModeTest extends GtkTestCase
 
     public function testCDrivenNestingWithoutRegisteredLoopPropagatesDirectly(): void
     {
-        if (!str_contains((string) ini_get('gtk4.features'), 'testing=yes')) {
-            self::markTestSkipped('needs --enable-gtk4-testing (FEATURES testing=yes)');
-        }
         GLib::timeout_add(0, static function (): bool {
             throw new \LengthException('top level');
         });

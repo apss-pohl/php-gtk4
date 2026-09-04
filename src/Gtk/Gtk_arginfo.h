@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: b6f098279843f342e61622a56490f4e13d396dd1 */
+ * Stub hash: 5ce1d633c3255dbb1532c7436497b0fca2f7354d */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -1566,8 +1566,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkEventController_get_propagation_phase, 0, 0, Gtk4\\GtkPropagationPhase, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkEventController_get_widget, 0, 0, Gtk4\\GtkWidget, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_GtkEventController_get_widget arginfo_class_Gtk4_GtkAboutDialog_get_focus
 
 #define arginfo_class_Gtk4_GtkEventController_reset arginfo_class_Gtk4_GtkAboutDialog_realize
 
@@ -2414,7 +2413,8 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkLayoutChild___construct arginfo_class_Gtk4_GtkAboutDialog___construct
 
-#define arginfo_class_Gtk4_GtkLayoutChild_get_child_widget arginfo_class_Gtk4_GtkEventController_get_widget
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkLayoutChild_get_child_widget, 0, 0, Gtk4\\GtkWidget, 0)
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkLayoutChild_get_layout_manager, 0, 0, Gtk4\\GtkLayoutManager, 0)
 ZEND_END_ARG_INFO()
@@ -2895,7 +2895,7 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkNotebookPage___construct arginfo_class_Gtk4_GtkAboutDialog___construct
 
-#define arginfo_class_Gtk4_GtkNotebookPage_get_child arginfo_class_Gtk4_GtkEventController_get_widget
+#define arginfo_class_Gtk4_GtkNotebookPage_get_child arginfo_class_Gtk4_GtkLayoutChild_get_child_widget
 
 #define arginfo_class_Gtk4_GtkOrientable_get_orientation arginfo_class_Gtk4_GtkBox_get_orientation
 
@@ -3477,7 +3477,7 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkScrolledWindow_get_has_frame arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
 
-#define arginfo_class_Gtk4_GtkScrolledWindow_get_hscrollbar arginfo_class_Gtk4_GtkEventController_get_widget
+#define arginfo_class_Gtk4_GtkScrolledWindow_get_hscrollbar arginfo_class_Gtk4_GtkLayoutChild_get_child_widget
 
 #define arginfo_class_Gtk4_GtkScrolledWindow_get_kinetic_scrolling arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
 
@@ -3502,7 +3502,7 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkScrolledWindow_get_vadjustment arginfo_class_Gtk4_GtkRange_get_adjustment
 
-#define arginfo_class_Gtk4_GtkScrolledWindow_get_vscrollbar arginfo_class_Gtk4_GtkEventController_get_widget
+#define arginfo_class_Gtk4_GtkScrolledWindow_get_vscrollbar arginfo_class_Gtk4_GtkLayoutChild_get_child_widget
 
 #define arginfo_class_Gtk4_GtkScrolledWindow_set_child arginfo_class_Gtk4_GtkButton_set_child
 
@@ -4032,7 +4032,7 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkStackPage___construct arginfo_class_Gtk4_GtkAboutDialog___construct
 
-#define arginfo_class_Gtk4_GtkStackPage_get_child arginfo_class_Gtk4_GtkEventController_get_widget
+#define arginfo_class_Gtk4_GtkStackPage_get_child arginfo_class_Gtk4_GtkLayoutChild_get_child_widget
 
 #define arginfo_class_Gtk4_GtkStackPage_get_icon_name arginfo_class_Gtk4_GtkAboutDialog_get_comments
 

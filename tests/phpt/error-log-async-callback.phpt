@@ -27,5 +27,5 @@ $loop->run();
 echo "the loop returned and GTK is still running\n";
 ?>
 --EXPECTF--
-%aCRITICAL %a: php-gtk4: uncaught RuntimeException in 'GTask::__construct' handler: from the async callback
+Warning: php-gtk4: uncaught RuntimeException in 'GTask::__construct' handler: from the async callback in %s on line %d
 the loop returned and GTK is still running

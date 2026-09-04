@@ -49,7 +49,7 @@ summary: `docs/CONTRIBUTING.md`. Keep all three consistent.
 ./ci.sh --only=build                   # phpize + configure + make -> ./gtk4.so (what everything else uses)
 ./buildall.sh                          # build + install for every enabled version in its table (sudo for install)
 phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(nproc)"   # by hand
-./configure ... --enable-gtk4-sanitize | --enable-gtk4-coverage | --enable-gtk4-webkit | --enable-gtk4-testing
+./configure ... --enable-gtk4-sanitize | --enable-gtk4-coverage | --enable-gtk4-webkit
 bear -- make                           # compile_commands.json for clangd / clang-tidy
 ```
 
@@ -121,7 +121,7 @@ from php's `dlopen()`, which the sanitizer runtime otherwise refuses — setup-p
 Env: `PHP`, `PHP_CONFIG`, `PHPIZE`, `JOBS` (default nproc, used by every tool), `CLANG_TIDY`,
 `CLANG_FORMAT` (default: newest installed `clang-*-N`; CI and `.vscode` use 20), `COMPOSER`,
 `PHPT_TESTS` (default `tests/phpt`), `GTK4_CONFIGURE_ARGS` (extra configure switches for the
-default `build`, e.g. `--enable-gtk4-testing`). A build is incremental (plain `make`) when the
+default `build`, e.g. `--enable-gtk4-webkit`). A build is incremental (plain `make`) when the
 configure arguments are unchanged and `Makefile` is newer than `config.m4`; otherwise it
 reconfigures from clean (`.ci/configure.args` remembers the arguments).
 
@@ -256,12 +256,19 @@ display, and calls `Gtk::init()` once.
   `tearDown()`, `captureHandlerException()` installs a temporary `Gtk::set_exception_handler`,
   `latch()`/`latched()` for flags set from GTK callbacks, `opaque()` to pass deliberately wrong
   arguments past static analysis.
-- `--enable-gtk4-testing` (what the `asan`/`coverage` variants use, `Gtk4\FEATURES` says
-  `testing=yes`) compiles the `Gtk::testing_*` hooks: methods declared in the stub inside
-  `#if defined(PHPGTK_TESTING)` blocks, absent from the shipped `.so` (the IDE stub keeps them so
-  PHPStan can type the tests), used by tests that need C-driven behaviour PHP cannot produce
-  (`testing_iterate_nested()` = a GTK-internal nested main loop). Tests that need one check
-  `ini_get('gtk4.features')` for `testing=yes` and `markTestSkipped()` otherwise.
+- **`tests/GtkInstances.php` is the shared sweep target factory**: one named branch per class
+  that `new` cannot build (an abstract base, a handle only GTK hands out, a constructor argument
+  the generic path cannot invent), used by both generic sweeps — `RobustnessTest` and
+  `TypeDeclarationTest` — so a class is either live in both or skipped by both. Adding a branch
+  puts a whole method surface under both; `GtkInstances::UNREACHABLE` names what nothing can
+  build and why (real input events, a drag, the widget-interface `*Object` fallbacks `wrap()`
+  never reaches), and those reasons are what the remaining skips print. `release()` (called from
+  both tearDowns) drops the owners a handle needs alive.
+- The two `Gtk::testing_*` hooks — `testing_iterate_nested()` (a GTK-internal nested main loop)
+  and `testing_run_dispose()` — are compiled into **every** build. They exist for tests that need
+  C-driven behaviour PHP cannot produce; their docblocks say they are not part of the supported
+  surface. There is no build flag: what the suite runs is what ships, and nothing skips itself for
+  want of a configure switch.
 - Tests are the *only* thing that exercises the C++ — a segfault shows up as PHPUnit dying
   mid-run; isolate with `--filter 'Class::method$'` per test to find it.
 - `EveryClassTest` constructs every instantiable class and calls every arg-less `get_*/is_*/has_*`
@@ -296,19 +303,28 @@ display, and calls `Gtk::init()` once.
   violations are `ArgumentCountError`/`TypeError` (PHP 8 semantics).
 - **A GLib `CRITICAL` fails the test that caused it.** It is how GTK says "PHP handed me something
   I refuse", so on an ordinary test it means a missing guard at the boundary — the binding should
-  have raised a PHP error before GTK saw the value. A `--enable-gtk4-testing` build installs a
-  `g_log_set_writer_func` (`Gtk::testing_capture_logs()`, once per process and only on the GUI
-  thread — GTK's worker threads have no request, `on_gui_thread()`); `GtkTestCase` arms it in
-  `setUp()` and fails in `tearDown()` on anything left over. Fix the boundary; only a suite whose
-  job is to hand GTK bad values on purpose (`RobustnessTest`, `ArgumentGuardTest`) or one that
-  exercises the `g_critical` fallback itself (`ErrorTest`) overrides `toleratesGtkCriticals()`,
-  and a single deliberate case says `expectsGtkCritical()`. A critical must not be turned into a
-  PHP warning (PHPUnit would throw inside the C callback), so **their text is asserted in
-  `tests/phpt/`**, where run-tests.php compares the process's stderr. `tests/run.sh` sets
+  have raised a PHP error before GTK saw the value. GLib's messages are PHP errors at runtime
+  (`src/core/diagnostics.cpp`, `gtk4.diagnostics`), so `GtkTestCase` needs no C++ hook: it
+  installs a `set_error_handler` in `setUp()` and fails in `tearDown()` on anything collected.
+  Nothing is configured for the suite: `gtk4.diagnostics` defaults to `warning`, so the gate runs
+  on exactly what ships. GTK's *advice* (`G_LOG_LEVEL_MESSAGE` → `E_NOTICE`) is collected too but
+  never fails a test — `takeGtkNotices()` is how one asserts it. Fix the boundary; only a suite
+  whose job is to hand GTK bad values on purpose (`RobustnessTest`, `ArgumentGuardTest`,
+  `DiagnosticsTest`) or one that exercises the uncaught-handler report itself (`ErrorTest`)
+  overrides `toleratesGtkCriticals()`, and a single deliberate case declares the message with
+  **`expectsGtkCritical($substring)`** — asserted both ways, so a *new* complaint in that test
+  fails it and so does a declaration nothing matched. `RobustnessTest` gates itself against
+  **`tests/robustness-criticals.txt`** instead, which pins the `<class>::<method>#<sweep>` keys
+  GTK is known to complain about (`#arguments` / `#values` for the two sweeps) and fails on an
+  unlisted complaint or a line that has gone quiet — a review surface, not a suppression file
+  (`tests/README-robustness-pin.md`). The `fatal` mode and the mode switching are asserted in
+  **`tests/phpt/`** (`diagnostics-fatal.phpt`, `diagnostics-modes.phpt`), where run-tests.php can
+  compare a whole process's output and an `E_ERROR` may end it. `tests/run.sh` sets
   `GSK_RENDERER=cairo` so GTK does not try EGL under Xvfb.
 - `tests/phpt/` (`make test` / `./ci.sh --only=phpt`, see `tests/phpt/README.md`): one process per
   test, expected output covers stdout **and** stderr. Put a test here only for what PHPUnit cannot
-  reach — `g_critical`/GLib warning text, uncaught fatals and exit codes, RSHUTDOWN teardown
+  reach — a `fatal`-mode GLib CRITICAL (an `E_ERROR` ends the process), uncaught fatals and exit
+  codes, RSHUTDOWN teardown
   output, `--INI--`/`--ENV--` dependent startup, and crash isolation (run-tests names the crashing
   test and continues, PHPUnit just dies). Everything else belongs in `tests/*.php`.
   `make test` strips every `extension=` line from the scanned ini into `tmp-php.ini` and re-adds
@@ -357,8 +373,7 @@ setup-php 8.4, GTK4/WebKitGTK headers, clang 20 from apt.llvm.org, `phpize && ./
 `./ci.sh --only=cpp-lint` (same clang-tidy/clang-format stage as locally, any finding fails);
 (2) `./ci.sh --only=php-qa` + `--only=md-lint`, plus a `commits` job that runs `bin/commit-lint`
 over the PR title (a squash merge makes it the commit) and `./ci.sh --only=commits` over the
-branch's commits (a rebase merge keeps them); (3) build the extension (with
-`GTK4_CONFIGURE_ARGS=--enable-gtk4-testing`, so the testing hooks run on every leg) and run the
+branch's commits (a rebase merge keeps them); (3) build the extension and run the
 PHPUnit suite *and* `./ci.sh --only=phpt` for PHP 8.4 and 8.5, NTS and ZTS, on Ubuntu 24.04 (`fail-fast: false`;
 failing `.out`/`.diff` files upload as the `phpt-failures-php*-<ts>` artifact), plus `sanitizers`
 (`ci.sh --only=valgrind` + `--only=asan`), `coverage` (`--only=coverage`, gcovr HTML artifact) and a
@@ -393,8 +408,13 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   (underscores → dashes) to GObject properties, `get_debug_info` for `var_dump`; a **toggle ref** +
   qdata identity: while GTK holds other refs the GObject holds the `zend_object` (`held`), so a
   PHP subclass' state survives the script dropping its reference, released in the toggle notify
-  and in RSHUTDOWN (`object_release_holds()`, or Zend reports the handle as a leak); the GType-name
-  → `zend_class_entry` registry; `wrap()`/`unwrap()`/
+  and in RSHUTDOWN (`object_release_holds()`, or Zend reports the handle as a leak);
+  `object_hold_owner()` for the getters whose result keeps a bare pointer into its owner
+  (`gtk_stack_get_pages()`, a composite widget's `get_first_child()` — `RETURNS_HOLD_SELF` in
+  `gen/gir/config.php`, the object counterpart of `BOXED_OWNERS`): the reference is held between
+  the *handles*, not the GObjects, because a parent already owns its child and a GObject-level
+  back-reference would be an uncollectable cycle — `get_gc` shows it to the collector; the
+  GType-name → `zend_class_entry` registry; `wrap()`/`unwrap()`/
   `PHPGTK_SELF`; when no class up the parent chain is registered but a registered *interface* is,
   `wrap()` uses that interface's generated `Gtk4\<Interface>Object` fallback class, most derived
   interface first), `marshal` (the single `GValue` ↔ `zval` bridge; a property write or signal argument converts
@@ -404,9 +424,19 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   `GClosure` with a GValue-array marshaller, callable resolved with `zend_fcall_info_init` and
   invoked with `zend_call_function`), `error` (the exception boundary:
   `report_pending_exception()` takes `EG(exception)`, hands the real `Throwable` to
-  `Gtk::set_exception_handler`, else `g_critical`), `boxed` (value-type handles: owned
-  `g_boxed_copy`, clone/compare by value, fields as properties via per-class reader/writer;
-  `GdkRGBA`, `GdkRectangle`; `GStrv` ↔ `list<string>` is a value mapping), `variant` (`GVariant` ↔
+  `Gtk::set_exception_handler`, else a `diagnostic()`), `diagnostics` (GLib's own
+  `g_critical`/`g_warning` as PHP errors: a `g_log_set_writer_func` *records* — it runs inside GTK
+  frames, where `zend_error()` could run a throwing error handler or `longjmp` across them — and
+  sets `EG(vm_interrupt)`; the chained `zend_interrupt_function` then reports at the VM's next safe
+  point, which the engine documents as after an internal call, i.e. the PHP line that made it.
+  Each entry carries the file/line it was recorded at, so `zend_error_at()` keeps the attribution.
+  **`gtk4.diagnostics`** (`PHP_INI_ALL`) chooses: `warning` (default — both `E_WARNING`),
+  `fatal` (`CRITICAL` → `E_ERROR`), `stderr` (GLib's own writer), `off`.
+  php-gtk4's own reports go through `diagnostic()` and are *always* `E_WARNING` —
+  `ExceptionMode::Log` promises GTK keeps running, so its report must not be what stops it),
+  `boxed` (value-type handles: owned `g_boxed_copy`, clone/compare by value, fields as properties
+  via per-class reader/writer; `GdkRGBA`, `GdkRectangle`; `GStrv` ↔ `list<string>` is a value
+  mapping), `variant` (`GVariant` ↔
   PHP values, type-directed or inferred), `paramspec` (`GParamSpec` handle), `gerror`
   (`throw_gerror()` for `GError **` APIs,
   `GError` values → `Gtk4\GError` exceptions), `cairo` (`CairoContext` registration),
@@ -476,8 +506,9 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
 - Exception rule (from php-gtk3, keep it): a PHP throwable must never unwind through GLib frames,
   and Zend refuses to run PHP while one is pending. Every trampoline ends with
   `phpgtk::report_pending_exception(origin)`, which implements `Gtk4\ExceptionMode`: `Log`
-  (handler/g_critical, GTK continues) or `Rethrow` (handler, then the Throwable stays pending,
-  `quit_running_loops()` stops `GMainLoop::run`/`GtkApplication::run`, and it propagates to PHP).
+  (handler, else an `E_WARNING` through `core/diagnostics`; GTK continues) or `Rethrow` (handler,
+  then the Throwable stays pending, `quit_running_loops()` stops
+  `GMainLoop::run`/`GtkApplication::run`, and it propagates to PHP).
   Non-signal callbacks go through `src/core/callback.*` with the installing method as origin;
   typed C callbacks (`GtkDrawingAreaDrawFunc`, `GtkCustomFilterFunc`, `GCompareDataFunc`) follow
   the trampoline rule in docs/PLAN.md ("Typed C callbacks") — `gen/overrides/Gtk.DrawingArea.cpp`,

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PhpGtk4\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use ReflectionClass;
 use ReflectionEnum;
 use ReflectionExtension;
 use ReflectionMethod;
@@ -50,12 +49,77 @@ final class RobustnessTest extends GtkTestCase
      * repository root. Run the sweep from a scratch directory instead.
      */
     /**
-     * Its whole job is to hand GTK hostile values of the right type and prove nothing crashes,
-     * so GTK's own preconditions firing is the expected outcome, not a defect.
+     * The file listing the `Class::method` keys whose sweep GTK is known to complain about.
+     * One line each, sorted; `#` comments and blank lines ignored.
+     */
+    private const PINNED = __DIR__ . '/robustness-criticals.txt';
+
+    /**
+     * Its whole job is to hand GTK hostile values of the right type, so GTK's own preconditions
+     * firing is an expected outcome here rather than a defect - but *which* methods reach one is
+     * pinned in {@see PINNED}, not tolerated wholesale. tearDown() gates on that list, so a
+     * method that starts complaining fails the sweep even though the suite as a whole expects
+     * complaints. Keyed on the triggering method, never on GTK's wording, which changes between
+     * versions.
      */
     protected function toleratesGtkCriticals(): bool
     {
-        return true;
+        return true;   // gated by tearDown() against PINNED instead
+    }
+
+    /** The key currently being swept, or '' outside the two sweep tests. */
+    private string $sweeping = '';
+
+    /**
+     * The pinned keys, read once.
+     *
+     * @return array<string, true>
+     */
+    private static function pinned(): array
+    {
+        /** @var array<string, true>|null $keys */
+        static $keys = null;
+        if ($keys === null) {
+            $keys = [];
+            foreach (file(self::PINNED, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $line) {
+                $line = trim($line);
+                if ($line !== '' && !str_starts_with($line, '#')) {
+                    $keys[$line] = true;
+                }
+            }
+        }
+        return $keys;
+    }
+
+    /**
+     * Compare what GTK actually said against the pin. Both directions fail: a method that
+     * complains without being listed is a boundary the binding should be closing (or a line to
+     * add deliberately), and a listed method that stayed quiet means the list is stale.
+     *
+     * Called from tearDown() *after* parent::tearDown() has restored the error handler, so a
+     * failure here cannot leave one installed (PHPUnit calls that risky).
+     *
+     * @param list<string> $seen
+     */
+    private function gateAgainstPinnedList(string $key, array $seen): void
+    {
+        if ($key === '') {
+            return;
+        }
+        $isPinned = isset(self::pinned()[$key]);
+        if ($seen !== [] && !$isPinned) {
+            self::fail(
+                "GTK complained while sweeping $key, which " . basename(self::PINNED)
+                . " does not list. Close the boundary, or add the line if GTK's precondition is "
+                . "the point:\n  " . implode("\n  ", $seen),
+            );
+        }
+        if ($seen === [] && $isPinned) {
+            self::fail(
+                basename(self::PINNED) . " lists $key but GTK no longer complains about it - "
+                . 'drop the line.',
+            );
+        }
     }
 
     protected function setUp(): void
@@ -71,6 +135,10 @@ final class RobustnessTest extends GtkTestCase
 
     protected function tearDown(): void
     {
+        $key = $this->sweeping;
+        GtkInstances::release();
+        $seen = $this->gtkCriticals();
+        $this->sweeping = '';
         chdir($this->cwd);
         foreach (glob($this->scratch . '/*') ?: [] as $stray) {
             if (is_file($stray)) {
@@ -79,6 +147,7 @@ final class RobustnessTest extends GtkTestCase
         }
         @rmdir($this->scratch);
         parent::tearDown();
+        $this->gateAgainstPinnedList($key, $seen);
     }
 
     /** @return iterable<string, array{class-string, string}> */
@@ -103,83 +172,32 @@ final class RobustnessTest extends GtkTestCase
         }
     }
 
-    /** @param class-string $class */
-    private function instance(string $class): ?object
-    {
-        return match ($class) {
-            \Gtk4\GObject::class, \Gtk4\GtkWindow::class => $this->window(),   // GObject: any handle
-            \Gtk4\GtkApplication::class => new \Gtk4\GtkApplication(null, 1 << 5),
-            \Gtk4\GSimpleAction::class => new \Gtk4\GSimpleAction('a', 's'),
-            \Gtk4\PhpValue::class => new \Gtk4\PhpValue('v'),
-            \Gtk4\GdkTexture::class => \Gtk4\GdkTexture::new_from_bytes(PngFixture::red(2, 1)),
-            \Gtk4\GError::class => new \Gtk4\GError('x'),
-            \Gtk4\GListStore::class => new \Gtk4\GListStore(),
-            \Gtk4\GtkFilter::class, \Gtk4\GtkCustomFilter::class => new \Gtk4\GtkCustomFilter(fn() => true),
-            \Gtk4\GtkSorter::class, \Gtk4\GtkCustomSorter::class => new \Gtk4\GtkCustomSorter(fn() => 0),
-            \Gtk4\GtkFilterListModel::class, \Gtk4\GtkSortListModel::class, \Gtk4\GtkDrawingArea::class => new $class(),
-            \Gtk4\GtkWidget::class => new \Gtk4\GtkButton(),   // abstract: exercise through a subclass
-            \Gtk4\GParamSpec::class => self::paramSpec(),
-            \Gtk4\GdkRGBA::class, \Gtk4\GdkRectangle::class, \Gtk4\GMainLoop::class,
-            \Gtk4\GtkButton::class, \Gtk4\GtkLabel::class => new $class(),
-            \Gtk4\GApplication::class => new \Gtk4\GApplication(null, 1 << 5),
-            \Gtk4\GtkApplicationWindow::class => new \Gtk4\GtkApplicationWindow(
-                new \Gtk4\GtkApplication(null, 1 << 5),
-            ),
-            \Gtk4\GtkBox::class => new \Gtk4\GtkBox(\Gtk4\GtkOrientation::Horizontal, 0),
-            \Gtk4\GtkPaned::class => new \Gtk4\GtkPaned(\Gtk4\GtkOrientation::Horizontal),
-            \Gtk4\GtkScale::class => new \Gtk4\GtkScale(\Gtk4\GtkOrientation::Horizontal),
-            \Gtk4\GtkAdjustment::class => new \Gtk4\GtkAdjustment(0.0, 0.0, 100.0, 1.0, 10.0, 0.0),
-            \Gtk4\GtkSpinButton::class => new \Gtk4\GtkSpinButton(null, 1.0, 0),
-            \Gtk4\GtkEntryBuffer::class => new \Gtk4\GtkEntryBuffer('abc', -1),
-            \Gtk4\GtkBitset::class => \Gtk4\GtkBitset::new_range(0, 4),
-            // Abstract bases, exercised through the plainest concrete subclass.
-            \Gtk4\GtkGesture::class => new \Gtk4\GtkGestureClick(),
-            \Gtk4\GtkEventController::class => new \Gtk4\GtkEventControllerKey(),
-            // Handles GTK hands out but never lets PHP build - they come from their owner,
-            // and the handle is what keeps that owner alive (BOXED_OWNERS for the iter, a
-            // plain reference for the page).
-            \Gtk4\GtkTextIter::class => new \Gtk4\GtkTextBuffer()->get_start_iter(),
-            \Gtk4\GtkStackPage::class => new \Gtk4\GtkStack()->add_child(new \Gtk4\GtkButton()),
-            \Gtk4\GdkDisplay::class => \Gtk4\GdkDisplay::get_default(),
-            \Gtk4\GtkTreeListModel::class => self::treeListModel(),
-            \Gtk4\GtkTreeListRow::class => self::treeListModel()->get_child_row(0),
-            default => self::construct($class),
-        };
-    }
-
-
-    private static function treeListModel(): \Gtk4\GtkTreeListModel
-    {
-        return new \Gtk4\GtkTreeListModel(
-            new \Gtk4\GtkStringList(['a', 'b']),
-            false,
-            false,
-            static fn(): ?\Gtk4\GListModel => null,
-        );
-    }
-
     /**
-     * Everything the map above does not name: any class that takes no required
-     * constructor argument is swept through a plain instance, so a newly bound
-     * class is covered the day it lands. What is left over - abstract classes,
-     * handles GTK only ever creates itself (`new` throws), constructors that
-     * need an argument - has its static methods swept and nothing else.
+     * The sweep target. Everything but the window comes from {@see GtkInstances}, which the
+     * getter sweep shares: a class either has a live instance in both or is skipped by both.
      *
      * @param class-string $class
      */
-    private static function construct(string $class): ?object
+    private function instance(string $class): ?object
     {
-        $rc = new ReflectionClass($class);
-        $ctor = $rc->getConstructor();
-        if (!$rc->isInstantiable() || ($ctor !== null && $ctor->getNumberOfRequiredParameters() > 0)) {
-            return null;
+        if ($class === \Gtk4\GObject::class || $class === \Gtk4\GtkWindow::class) {
+            return $this->window();   // GObject: any handle; the window is torn down for us
         }
+        return GtkInstances::make($class);
+    }
 
-        try {
-            return $rc->newInstance();
-        } catch (\Throwable) {
-            return null;
-        }
+    /**
+     * Why a class has no sweep target. {@see GtkInstances::UNREACHABLE} names the ones nothing
+     * can build and says why, so a skip is a documented decision rather than a shrug.
+     *
+     * @param class-string $class
+     */
+    private static function whyNoInstance(string $class): string
+    {
+        $reason = GtkInstances::UNREACHABLE[$class] ?? null;
+        return $reason === null
+            ? "$class is not instantiable"
+            : "$class cannot be built: $reason";
     }
 
     /**
@@ -188,10 +206,11 @@ final class RobustnessTest extends GtkTestCase
     #[DataProvider('methods')]
     public function testWrongArgumentsThrowInsteadOfCrashing(string $class, string $method): void
     {
+        $this->sweeping = $class . '::' . $method . '#arguments';
         $rm = new ReflectionMethod($class, $method);
         $target = $rm->isStatic() ? null : $this->instance($class);
         if ($target === null && !$rm->isStatic()) {
-            self::markTestSkipped("$class is not instantiable");
+            self::markTestSkipped(self::whyNoInstance($class));
         }
         $call = fn(array $args) => $rm->isStatic() ? $rm->invokeArgs(null, $args) : $rm->invokeArgs($target, $args);
         $required = $rm->getNumberOfRequiredParameters();
@@ -247,7 +266,15 @@ final class RobustnessTest extends GtkTestCase
                 // is fine - the point is that nothing crashed.
             }
         }
-        self::assertGreaterThanOrEqual(0, $checks, 'survived every argument combination');
+        // The finding is a self::fail() inside the loop, or the process not surviving it. This
+        // one only states that the sweep actually probed something: every non-variadic method has
+        // at least the too-many-arguments probe, so a zero here means the sweep silently did
+        // nothing. A variadic one has no upper arity to violate and may have nothing to probe.
+        if ($rm->isVariadic()) {
+            $this->addToAssertionCount(1);
+        } else {
+            self::assertGreaterThan(0, $checks, "$class::$method(): the sweep probed nothing");
+        }
     }
 
     /**
@@ -262,10 +289,11 @@ final class RobustnessTest extends GtkTestCase
     #[DataProvider('methods')]
     public function testHostileValuesOfTheRightTypeAreRefusedOrSurvived(string $class, string $method): void
     {
+        $this->sweeping = $class . '::' . $method . '#values';
         $rm = new ReflectionMethod($class, $method);
         $target = $rm->isStatic() ? null : $this->instance($class);
         if ($target === null && !$rm->isStatic()) {
-            self::markTestSkipped("$class is not instantiable");
+            self::markTestSkipped(self::whyNoInstance($class));
         }
         $call = fn(array $args) => $rm->isStatic() ? $rm->invokeArgs(null, $args) : $rm->invokeArgs($target, $args);
         $required = $rm->getNumberOfRequiredParameters();
@@ -308,19 +336,6 @@ final class RobustnessTest extends GtkTestCase
         $this->addToAssertionCount(1);  // survived every hostile value
     }
 
-    private static function paramSpec(): \Gtk4\GParamSpec
-    {
-        $w = new \Gtk4\GtkWindow();
-        $spec = null;
-        $w->connect('notify::title', function (\Gtk4\GObject $o, \Gtk4\GParamSpec $p) use (&$spec): void {
-            $spec = $p;
-        });
-        $w->set_title('x');
-        $w->destroy();
-        assert($spec instanceof \Gtk4\GParamSpec);
-        return $spec;
-    }
-
     private static function validValueFor(\ReflectionParameter $p): mixed
     {
         $t = $p->getType();
@@ -356,6 +371,6 @@ final class RobustnessTest extends GtkTestCase
             return (new ReflectionEnum($name)->getCases()[0] ?? null)?->getValue();
         }
 
-        return class_exists($name) ? self::construct($name) : null;
+        return class_exists($name) ? GtkInstances::plain($name) : null;
     }
 }

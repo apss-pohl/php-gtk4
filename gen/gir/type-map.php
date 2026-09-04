@@ -470,7 +470,7 @@ final class TypeMap
                 $ins[] = $cb;
                 continue;
             }
-            $m = $this->inParam($p, $trailingNullable && $f->kind !== 'method', count($ins) + 1);
+            $m = $this->inParam($p, $trailingNullable && $f->kind !== 'method', count($ins) + 1, $f->cid);
             if ($m === null) {
                 return "parameter `{$p->name}` of type {$p->type->name}" . ($p->type->isArray ? ' (C array)' : '');
             }
@@ -546,8 +546,31 @@ final class TypeMap
         return null;
     }
 
+    /**
+     * The `check_domain()` line for a parameter listed in PARAM_DOMAINS, or nothing. `$cid` is
+     * the owning function's C identifier, which together with the GIR parameter name is the key.
+     *
+     * @return list<string>
+     */
+    private function domainCheck(?string $cid, string $name, int $argNum, bool $isFloat): array
+    {
+        /** @var array{int|float|null, int|float|null}|null $bounds */
+        $bounds = PARAM_DOMAINS[$cid . '.' . $name] ?? null;
+        if ($bounds === null) {
+            return [];
+        }
+        /** @var int|float|null $lo */
+        /** @var int|float|null $hi */
+        [$lo, $hi] = $bounds;
+        $fn = $isFloat ? 'check_domain_double' : 'check_domain';
+        $none = $isFloat ? ['-HUGE_VAL', 'HUGE_VAL'] : ['ZEND_LONG_MIN', 'ZEND_LONG_MAX'];
+        $low = $lo === null ? $none[0] : ($isFloat ? var_export((float) $lo, true) : (string) (int) $lo);
+        $high = $hi === null ? $none[1] : ($isFloat ? var_export((float) $hi, true) : (string) (int) $hi);
+        return ["if (!phpgtk::$fn($name, $low, $high, $argNum)) RETURN_THROWS();"];
+    }
+
     /** @return array<string, mixed>|null */
-    public function inParam(Param $p, bool $trailingNullable, int $argNum = 0): ?array
+    public function inParam(Param $p, bool $trailingNullable, int $argNum = 0, ?string $cid = null): ?array
     {
         $t = $p->type;
         $name = $p->name;
@@ -620,6 +643,7 @@ final class TypeMap
         }
         if (in_array($t->name, ['gfloat', 'gdouble'], true)) {
             return array_merge($r, ['phpType' => 'float', 'decl' => "double $name;", 'zpp' => "Z_PARAM_DOUBLE($name)",
+                'pre' => $this->domainCheck($cid, $name, $argNum, true),
                 'carg' => $t->name === 'gfloat' ? "static_cast<float>($name)" : $name]);
         }
         if (preg_match(INT_TYPES, $t->name)) {
@@ -634,7 +658,8 @@ final class TypeMap
                 ? []
                 : ["if (!phpgtk::check_range<$ct>($name, $argNum)) RETURN_THROWS();"];
             return array_merge($r, ['phpType' => 'int', 'decl' => "zend_long $name;", 'zpp' => "Z_PARAM_LONG($name)",
-                'pre' => $range, 'carg' => "static_cast<$ct>($name)"]);
+                'pre' => array_merge($range, $this->domainCheck($cid, $name, $argNum, false)),
+                'carg' => "static_cast<$ct>($name)"]);
         }
         if ($t->name === 'GLib.Variant') {
             return array_merge($r, [
@@ -720,11 +745,15 @@ final class TypeMap
             ]);
         }
         if ($node->kind === 'bitfield' || $node->kind === 'enum') {
-            // Flags are plain ints (no PHP enum to check them), so the value is checked against
-            // the type's own mask: GLib otherwise takes the assignment, prints a CRITICAL and
-            // carries on with the default (php_gtk4.h, check_flags).
+            // Flags and unbound enums are plain ints (no PHP enum to check them), so the value is
+            // checked against the type itself: GLib otherwise takes the assignment, prints a
+            // CRITICAL and carries on with the default. A bitfield is checked against its mask,
+            // an enumeration against its declared values - the two GTypeClass layouts differ, and
+            // reading one as the other refused every non-zero value (php_gtk4.h, check_flags /
+            // check_enum_member).
+            $check = $node->kind === 'bitfield' ? 'check_flags' : 'check_enum_member';
             $mask = $node->gtypeName !== null
-                ? ["if (!phpgtk::check_flags($typeMacro, $name, $argNum)) RETURN_THROWS();"]
+                ? ["if (!phpgtk::$check($typeMacro, $name, $argNum)) RETURN_THROWS();"]
                 : [];
             return array_merge($r, ['phpType' => 'int', 'decl' => "zend_long $name;", 'zpp' => "Z_PARAM_LONG($name)",
                 'pre' => $mask, 'carg' => "static_cast<{$node->ctype}>($name)"]);
@@ -1102,6 +1131,10 @@ final class TypeMap
                 'wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);',
                 ...($full
                     ? ['if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref']
+                    : []),
+                ...(isset(RETURNS_HOLD_SELF[$f->cid])
+                    ? ['object_hold_owner(return_value, ZEND_THIS);  // '
+                        . RETURNS_HOLD_SELF[$f->cid]]
                     : [])]];
         }
         if ($node->kind === 'record' && $node->gtypeName !== null && $this->types->known($t->name)) {

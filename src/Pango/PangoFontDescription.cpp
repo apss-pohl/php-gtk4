@@ -341,6 +341,7 @@ ZEND_METHOD(Gtk4_PangoFontDescription, set_size) {
   ZEND_PARSE_PARAMETERS_END();
   PangoFontDescription *self = PHPGTK_BOXED_SELF(PangoFontDescription);
   if (!phpgtk::check_range<gint>(size, 1)) RETURN_THROWS();
+  if (!phpgtk::check_domain(size, 0, ZEND_LONG_MAX, 1)) RETURN_THROWS();
   pango_font_description_set_size(self, static_cast<gint>(size));
 }
 

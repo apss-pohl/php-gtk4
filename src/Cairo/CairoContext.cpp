@@ -44,18 +44,28 @@ void wrap_cairo(cairo_t *cr, zval *rv) {
 // The cairo_t behind $this.
 #define SELF_CR cairo_t *cr = PHPGTK_FUNDAMENTAL_SELF(cairo_t)
 
+// The argument list of a method taking N doubles. Zend's ZPP macros are a state machine whose
+// failure path is a `break`, so they have to expand in a straight line: a `for` loop over the
+// array swallowed that break and carried on into a point the engine asserts is unreachable -
+// UBSan says so on a wrong-typed first argument, and the release build only got away with it
+// (found by RobustnessTest once CairoContext had an instance to sweep).
+// NOLINTBEGIN(bugprone-macro-parentheses) ZPP argument lists, not expressions
+#define CAIRO_DOUBLES_1 Z_PARAM_DOUBLE(a[0])
+#define CAIRO_DOUBLES_2 CAIRO_DOUBLES_1 Z_PARAM_DOUBLE(a[1])
+#define CAIRO_DOUBLES_3 CAIRO_DOUBLES_2 Z_PARAM_DOUBLE(a[2])
+#define CAIRO_DOUBLES_4 CAIRO_DOUBLES_3 Z_PARAM_DOUBLE(a[3])
+#define CAIRO_DOUBLES_5 CAIRO_DOUBLES_4 Z_PARAM_DOUBLE(a[4])
+
 // Methods taking N doubles and returning nothing share one parser.
-#define CAIRO_DOUBLE_METHOD(name, n, call) \
-  ZEND_METHOD(Gtk4_CairoContext, name) {   \
-    double a[n] = {};                      \
-    ZEND_PARSE_PARAMETERS_START(n, n)      \
-    for (double &d : a) {                  \
-      Z_PARAM_DOUBLE(d)                    \
-    }                                      \
-    ZEND_PARSE_PARAMETERS_END();           \
-    SELF_CR;                               \
-    call;                                  \
+#define CAIRO_DOUBLE_METHOD(name, n, call)         \
+  ZEND_METHOD(Gtk4_CairoContext, name) {           \
+    double a[n] = {};                              \
+    ZEND_PARSE_PARAMETERS_START(n, n)              \
+    CAIRO_DOUBLES_##n ZEND_PARSE_PARAMETERS_END(); \
+    SELF_CR;                                       \
+    call;                                          \
   }
+// NOLINTEND(bugprone-macro-parentheses)
 
 /**
  * Gtk4\CairoContext::set_source_rgb(float $red, float $green, float $blue): void

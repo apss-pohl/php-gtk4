@@ -227,6 +227,16 @@ the demo application: every bound class with its own page.
 | `cannot open display` / no window | No X11/Wayland session. Over SSH use X forwarding, or `xvfb-run` for headless runs. |
 | Windows: *The specified module could not be found* | `C:\gtk\bin` not on `PATH`, or a 32-bit/TS mismatch between `php.exe` and the DLL. |
 | Windows: window opens without icons or themes | GTK cannot find its `share\` tree — keep the DLLs in the unpacked gvsbuild tree instead of copying them out. |
+| `PHP Warning: Gtk: ... assertion '...' failed` | GTK refused a value your script passed; the line named is the call. Fix the call, or see `gtk4.diagnostics` below. |
+
+## Runtime settings
+
+| directive | default | what it does |
+| --- | --- | --- |
+| `gtk4.diagnostics` | `warning` | What GTK's own complaints (`g_critical` / `g_warning`) become. `warning`: PHP `E_WARNING`s at the line that caused them, catchable with `set_error_handler()`. `fatal`: a `CRITICAL` becomes `E_ERROR` — useful in development and CI, where an unguarded call should stop the run. `stderr`: GLib's raw output. `off`: dropped. |
+
+`gtk4.build_info` and `gtk4.features` are informational (`phpinfo()`); the `Gtk4\BUILD_INFO` and
+`Gtk4\FEATURES` constants are baked in at build time and are the authoritative copies.
 
 ## Uninstalling
 

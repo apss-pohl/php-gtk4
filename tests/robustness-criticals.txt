@@ -1,0 +1,95 @@
+# Methods whose RobustnessTest sweep GTK is known to complain about.
+#
+# The sweep hands every method hostile values of the right type on purpose, so a GLib
+# CRITICAL is an expected outcome for some of them - but only for the ones listed here.
+# RobustnessTest::gateAgainstPinnedList() fails a sweep that complains without a line, and
+# fails a line whose method has gone quiet, so neither a new leak nor a stale entry hides.
+#
+# Keyed on the triggering method, never on GTK's wording, which changes between versions.
+#
+# Before adding a line, check the boundary: if the binding could refuse the value with a
+# TypeError/ValueError/LogicException (CLAUDE.md, "Convert at the boundary" and the error
+# vocabulary), do that instead. A line here says "GTK's own precondition is the only thing
+# that can catch this".
+#
+# The key is `<class>::<method>#<sweep>`: `#arguments` is the wrong-types/arity sweep,
+# `#values` the right-type-hostile-value one, because a method can trip only one of them.
+#
+# To regenerate after a deliberate change, see tests/README-robustness-pin.md.
+Gtk4\GApplication::add_main_option#arguments
+Gtk4\GApplication::add_main_option#values
+Gtk4\GApplication::bind_busy_property#arguments
+Gtk4\GApplication::run#arguments
+Gtk4\GApplication::set_application_id#arguments
+Gtk4\GApplication::set_resource_base_path#arguments
+Gtk4\GApplication::unbind_busy_property#arguments
+Gtk4\GApplication::withdraw_notification#arguments
+Gtk4\GCancellable::disconnect#arguments
+Gtk4\GCancellable::disconnect#values
+Gtk4\GListStore::insert#arguments
+Gtk4\GListStore::remove#arguments
+Gtk4\GMenu::remove#arguments
+Gtk4\GMenu::remove#values
+Gtk4\GMenuItem::get_link#arguments
+Gtk4\GMenuItem::set_attribute_value#arguments
+Gtk4\GMenuItem::set_link#arguments
+Gtk4\GTask::return_boolean#arguments
+Gtk4\GTask::return_int#arguments
+Gtk4\GTask::return_int#values
+Gtk4\GtkApplication::get_actions_for_accel#arguments
+Gtk4\GtkApplication::set_menubar#arguments
+Gtk4\GtkBox::reorder_child_after#arguments
+Gtk4\GtkColumnView::insert_column#arguments
+Gtk4\GtkColumnView::scroll_to#arguments
+Gtk4\GtkCssProvider::load_from_bytes#arguments
+Gtk4\GtkCssProvider::load_from_bytes#values
+Gtk4\GtkCssProvider::load_from_file#arguments
+Gtk4\GtkCssProvider::load_from_file#values
+Gtk4\GtkCssProvider::load_from_path#arguments
+Gtk4\GtkCssProvider::load_from_path#values
+Gtk4\GtkCssProvider::load_from_resource#arguments
+Gtk4\GtkCssProvider::load_from_string#arguments
+Gtk4\GtkEntry::set_alignment#arguments
+Gtk4\GtkFixed::move#arguments
+Gtk4\GtkGrid::attach_next_to#arguments
+Gtk4\GtkGrid::attach_next_to#values
+Gtk4\GtkGridView::scroll_to#arguments
+Gtk4\GtkListView::scroll_to#arguments
+Gtk4\GtkNotebook::reorder_child#arguments
+Gtk4\GtkNotebook::reorder_child#values
+Gtk4\GtkNotebook::set_menu_label#arguments
+Gtk4\GtkNotebook::set_menu_label_text#arguments
+Gtk4\GtkNotebook::set_tab_detachable#arguments
+Gtk4\GtkNotebook::set_tab_label#arguments
+Gtk4\GtkNotebook::set_tab_label_text#arguments
+Gtk4\GtkNotebook::set_tab_reorderable#arguments
+Gtk4\GtkOverlay::set_clip_overlay#arguments
+Gtk4\GtkOverlay::set_measure_overlay#arguments
+Gtk4\GtkPasswordEntry::set_alignment#arguments
+Gtk4\GtkRange::set_range#arguments
+Gtk4\GtkScale::new_with_range#arguments
+Gtk4\GtkSnapshot::push_blur#arguments
+Gtk4\GtkSnapshot::push_cross_fade#arguments
+Gtk4\GtkSnapshot::push_opacity#arguments
+Gtk4\GtkSpinButton::new_with_range#arguments
+Gtk4\GtkSpinButton::set_alignment#arguments
+Gtk4\GtkSpinButton::set_climb_rate#arguments
+Gtk4\GtkStack::add_titled#arguments
+Gtk4\GtkStack::set_visible_child_full#arguments
+Gtk4\GtkStack::set_visible_child_name#arguments
+Gtk4\GtkStringList::remove#arguments
+Gtk4\GtkStringList::splice#arguments
+Gtk4\GtkText::set_alignment#arguments
+Gtk4\GtkTextBuffer::delete_mark_by_name#arguments
+Gtk4\GtkTextIter::set_line_index#arguments
+Gtk4\GtkTextIter::set_line_offset#arguments
+Gtk4\GtkTextTag::set_priority#arguments
+Gtk4\GtkTextTag::set_priority#values
+Gtk4\GtkTextView::move_overlay#arguments
+Gtk4\GtkTextView::move_overlay#values
+Gtk4\GtkTextView::set_gutter#arguments
+Gtk4\GtkWidget::allocate#arguments
+Gtk4\GtkWidget::allocate#values
+Gtk4\GtkWidget::insert_after#arguments
+Gtk4\GtkWidget::insert_before#arguments
+Gtk4\PangoFontDescription::set_absolute_size#arguments

@@ -24,6 +24,8 @@ $win->destroy();
 ?>
 --EXPECTF--
 handler saw RuntimeException from 'notify::title'
-%aCRITICAL %a: php-gtk4: Gtk::set_exception_handler() callback threw DomainException while reporting from 'notify::title'
-%aCRITICAL %a: php-gtk4: uncaught RuntimeException in 'notify::title' handler: original
+
+Warning: php-gtk4: Gtk::set_exception_handler() callback threw DomainException while reporting from 'notify::title' in %s on line %d
+
+Warning: php-gtk4: uncaught RuntimeException in 'notify::title' handler: original in %s on line %d
 GTK kept running

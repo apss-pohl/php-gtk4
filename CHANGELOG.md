@@ -9,6 +9,27 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Security
 
+- Four more ways a well-typed PHP value ended the process, found by widening `RobustnessTest`
+  a second time (see *Added*) so that the classes it could never build get swept too:
+  - **`GMenuModel::get_item_link()` / `get_item_attribute_value()` with an index outside the
+    model.** A negative one indexes before the item array (SIGSEGV); one past the end reaches
+    `g_assert_not_reached()` in `gmenumodel.c`, a `g_error()`. Both are values a loop bound
+    produces, and both are a `ValueError` now (`gen/overrides/Gio.MenuModel.*`).
+  - **`GtkStack::get_pages()` and a composite widget's `get_first_child()`** hand out objects
+    that keep a bare pointer to the object they came from: `new GtkStack()->get_pages()` drops
+    the stack on the same line and left a live handle onto freed memory (`get_n_items()`
+    answered 497), and measuring a `GtkScale`'s private child after the scale was gone was a
+    SEGV. The returned *handle* now keeps its owner's handle alive - `object_hold_owner()`, the
+    object counterpart of `BOXED_OWNERS`, listed per member in `RETURNS_HOLD_SELF`. The
+    reference is held between the handles rather than the GObjects on purpose: a parent already
+    owns its child, so a GObject-level back-reference would have been an uncollectable cycle.
+    Sweeping all 1389 arg-less object getters under ASan finds nothing left.
+  - **`CairoContext`'s N-double methods were undefined behaviour on a wrong-typed argument.**
+    Their shared parser ran `Z_PARAM_DOUBLE` inside a `for` loop; Zend's ZPP macros are a state
+    machine whose failure path is a bare `break`, so the loop swallowed it and carried on into a
+    point the engine asserts is unreachable. `$cr->set_source_rgb('x', 1.0, 1.0)` was UB that
+    the release build happened to survive.
+
 - Two more ways a well-typed PHP value ended the process, both found by widening
   `RobustnessTest` (see *Added*) to sweep the classes it used to skip:
   - **`GtkEditable::get_chars()` with `end < start`** - and every other method returning an
@@ -75,6 +96,19 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   shutdown does with a **live PHP subclass** in a widget tree and with an **armed I/O watch**
   (including one whose stream PHP closed under it) - both crash shapes that would take the
   PHPUnit runner down with them rather than failing a test.
+
+- **The sweeps share one instance factory, and it reaches the classes `new` cannot.**
+  `tests/GtkInstances.php` holds a named branch per class no constructor can produce - an
+  abstract base, a handle GTK only ever hands out, a constructor argument the generic path
+  cannot invent - and both `RobustnessTest` and `TypeDeclarationTest` build their target
+  through it, so a class is either live in both or skipped by both. `GdkSurface`, `GdkClipboard`,
+  `GdkMonitor`, `GrapheneRect`, `CairoContext`, `CairoSurface`, `GtkListItem`, `GtkCssSection`,
+  `GtkNotebookPage`, `GtkIconPaintable`, the three `GtkLayoutChild` classes and the interface
+  fallbacks behind `observe_children()` and `get_pages()` came under the sweeps that way, and
+  the suite's skips went from 706 to 284. What is still unbuildable is listed in
+  `GtkInstances::UNREACHABLE` with the reason - real input events, a drag, the widget-interface
+  fallbacks `wrap()` never reaches - and `TypeDeclarationTest` fails if any getter ever hands
+  one of them out, which is how `GtkBuilderScopeObject` turned out to be reachable after all.
 
 - **`RobustnessTest` sweeps the whole surface, not the handful of classes it could name.** It
   used to skip any class its hand-written instance map did not list - 3262 of its 4174 cases,
@@ -286,11 +320,12 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   bounds and item type, application-id and action-name validity): GTK reports them as criticals.
 - `GtkWidget` and other GIR-abstract classes are no longer `abstract` in PHP (`wrap()` needs to
   instantiate them for GTK-created objects); `new` is refused by a private constructor.
-- `--enable-gtk4-testing` (`FEATURES` gains `testing=yes|no`): compiles `Gtk::testing_*` hooks
-  declared in `#if defined(PHPGTK_TESTING)` stub blocks; never in the shipped `.so`, used by the
-  `asan`/`coverage` variants. First hook: `Gtk::testing_iterate_nested(int $iterations)` — a
-  C-driven nested main loop, which lets the suite cover parked-exception `previous` chaining and
-  the enclosing `run()` rethrow (`RethrowModeTest`, `tests/scripts/stress.php`).
+- `Gtk::testing_iterate_nested(int $iterations)` and `Gtk::testing_run_dispose(GObject $object)`
+  drive from C what PHP cannot produce — a GTK-internal nested main loop, and disposal under a
+  live handle — which lets the suite cover parked-exception `previous` chaining, the enclosing
+  `run()` rethrow (`RethrowModeTest`, `tests/scripts/stress.php`) and disposed-handle errors
+  (`WrapTest`). They are compiled into every build and their docblocks say they are not part of
+  the supported surface; there is no configure switch, so the suite runs what ships.
 - Constructor ownership rule for the generator (docs/PLAN.md "Ownership", gen/README.md):
   floating → `attach_new()`, `GtkRoot` implementor → `attach()`, plain transfer-full GObject →
   `attach_new()`, else a generator error; `attach_new()` now detects a `GtkRoot` at runtime
@@ -309,6 +344,33 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Changed
 
+- **Action queries on an unregistered `GApplication` refuse instead of answering.** `has_action()`,
+  `get_action_enabled()`, `get_action_state()`, `get_action_parameter_type()`,
+  `get_action_state_hint()`, `get_action_state_type()` and `change_action_state()` sat below
+  `g_application_query_action()`, which is a `g_return_if_fail()` until `startup`: GLib CRITICALed
+  and they answered `false` / `null`, which reads like "no such action" rather than "ask me
+  later". All seven now raise the `LogicException` `list_actions()` already raised
+  (`gen/overrides/Gio.ActionGroup.cpp`). `add_action`, `remove_action` and `lookup_action` are
+  `GActionMap` and keep working at any time.
+- **GLib's diagnostics are PHP errors** — a new `gtk4.diagnostics` ini directive (`PHP_INI_ALL`).
+  GTK refuses a value by logging (`g_return_if_fail()` → `g_critical`), which means the *script*
+  did something wrong; that used to reach stderr with no file, no line, no `error_reporting`, no
+  `set_error_handler` and no `error_log`, and vanished entirely when stderr was redirected. They
+  now arrive as PHP errors at the line that caused them:
+
+  ```text
+  PHP Warning:  Gtk: gtk_editable_get_chars: assertion 'end_pos == -1 || end_pos >= start_pos'
+                failed in /home/you/app.php on line 12
+  ```
+
+  `warning` (the default) reports `CRITICAL` and `WARNING` as `E_WARNING`; `fatal` promotes a
+  `CRITICAL` to `E_ERROR`; `stderr` restores GLib's own writer; `off` drops them. php-gtk4's own
+  reports — the `ExceptionMode::Log` fallback for an uncaught handler exception, an unbound
+  `vfunc_*()` — take the same path and are always `E_WARNING`, because `Log` promises GTK keeps
+  running. Reporting happens at the VM's next safe point (`zend_interrupt_function`), never in the
+  GLib writer, which runs inside arbitrary GTK frames where PHP must not (`src/core/diagnostics.cpp`).
+  `G_LOG_LEVEL_MESSAGE` — GTK advising rather than refusing, "GtkDialog mapped without a transient
+  parent" — becomes an `E_NOTICE` on the same path.
 - `gen/gir.php` is six files: the loader, the model, the type map, the writer, and the emitters
   with the CLI that stay in `gir.php` (docs/TODO.md §10). Each step of the split was verified by
   regenerating - every one of the 178 generated files stayed byte-identical - and the type map is
@@ -359,6 +421,43 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   named-argument callers using the old camelCase spellings break.
 
 ### Fixed
+
+- **Six unbound enums were checked as if they were flags.** `GtkSystemSetting`, `GtkScrollType`,
+  `GtkDeleteType`, `GtkMovementStep`, `GtkTextExtendSelection` and `GtkTextViewLayer` are GIR
+  `enumeration`s that nothing binds as PHP enums, so they cross as ints - and the generator
+  checked them with `check_flags()`, which casts the `GEnumClass` to a `GFlagsClass` and reads
+  `mask`, a field that is `minimum` there. It is 0 for all six, so *every* non-zero value was
+  refused with a message about a mask of `0x0`, and the read itself was of the wrong type. They
+  use `check_enum_member()` now. Found on a ZTS run where GTK delivered a real
+  `GtkSystemSetting` to a PHP `vfunc_system_setting_changed()`.
+
+- **A parameter now has to be inside the domain its C function documents**, not just inside its
+  C type. GTK states these as `g_return_if_fail()`, which means a `CRITICAL` and the call
+  silently not happening - `$calendar->set_month(12)` left the month where it was and told PHP
+  nothing. `PARAM_DOMAINS` (`gen/gir/config.php`) lists each bound, copied from the assertion
+  GTK itself printed: the `GtkCalendar` setters, `GtkDrawingArea`'s content size,
+  `GtkEditable::get_chars()`/`delete_text()`, `GtkGrid::attach()`'s spans,
+  `GtkGestureLongPress::set_delay_factor()`, `GtkIconTheme::lookup_icon()`'s scale and
+  `PangoFontDescription::set_size()`. That retired 33 lines from
+  `tests/robustness-criticals.txt`; four more went with the guards on
+  `GdkClipboard::read_async()` (an empty mime list is refused), `GdkPaintable::compute_concrete_size()`
+  (the CSS sizing algorithm's domain) and `GtkSelectionModel::selection_changed()` (a range past
+  the end of the model).
+
+- **`GtkEventController::get_widget()` declares `?GtkWidget`**, which is what it answers: GIR
+  does not mark the return nullable, but `priv->widget` is NULL until the controller is added to
+  a widget, and PHP can hold one that never was. `NULLABLE_RETURNS` in `gen/gir/config.php` is
+  where such a correction goes; `TypeDeclarationTest` is what finds them.
+
+- **`GdkClipboard`'s four async reads take a non-nullable callback.** GIR marks the
+  `GAsyncReadyCallback` nullable because C allows a fire-and-forget call; GDK asserts
+  `callback != NULL` and does nothing at all, so `?callable` was a promise the binding could not
+  keep. `NON_NULLABLE_PARAMS` drops the `?`, making null an ordinary `TypeError`.
+
+- `ci.sh` preloads `libubsan` alongside `libasan` in the `asan` stage. The build is
+  `-fsanitize=address,undefined` and gcc keeps the UBSan handlers in their own library, so a
+  finding surfaced as `php: symbol lookup error: gtk4-asan.so: undefined symbol:
+  __ubsan_handle_builtin_unreachable` with no location instead of a report.
 
 - Generated methods handed a transfer-full string parameter (`GtkStringList::take()`) Zend's own
   buffer, which GTK then `g_free()`d (`free(): invalid pointer`); the generator passes a

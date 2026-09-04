@@ -47,7 +47,9 @@ final class GtkAlertDialogTest extends GtkTestCase
                 $outcome = $e;  // newer GTK reports the cancellation as a GError
             }
         };
-        $d->choose(null, $cancellable, $callback);
+        // A transient parent, as a real dialog has: GTK maps its own GtkDialog underneath and
+        // says "mapped without a transient parent. This is discouraged." when there is none.
+        $d->choose($this->window(), $cancellable, $callback);
         $cancellable->cancel();
         $deadline = microtime(true) + 10;  // sanitizer/coverage builds are slow to dispatch
         while ($outcome === null && microtime(true) < $deadline) {
@@ -60,12 +62,18 @@ final class GtkAlertDialogTest extends GtkTestCase
         self::assertTrue($seen === null || $seen === $d);
     }
 
-    public function testNullCallbackIsAccepted(): void
+    /** The parent is nullable; GTK then maps its own GtkDialog with no transient parent. */
+    public function testNullCallbackAndNullParentAreAccepted(): void
     {
         $d = new GtkAlertDialog();
         $d->set_message('no callback');
         $c = new GCancellable();
         $d->choose(null, $c, null);
+        self::assertStringContainsString(
+            'transient parent',
+            implode("\n", $this->takeGtkNotices()),
+            'GTK advises against it (an E_NOTICE), but the call is legal',
+        );
         $c->cancel();
         for ($i = 0; $i < 5; $i++) {
             GLib::main_context_iteration(false);

@@ -6,6 +6,7 @@ namespace PhpGtk4\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
+use ReflectionEnum;
 use ReflectionExtension;
 use ReflectionMethod;
 use ReflectionNamedType;
@@ -23,16 +24,24 @@ use ReflectionNamedType;
  */
 final class TypeDeclarationTest extends GtkTestCase
 {
+    /** Releases the owners {@see GtkInstances} pinned for the handles it handed out. */
+    protected function tearDown(): void
+    {
+        GtkInstances::release();
+        parent::tearDown();
+    }
+
     /**
-     * Every class the extension registers that can be constructed without arguments we can
-     * invent - enough to call its arg-less getters.
+     * Every class the extension registers, abstract bases included: {@see GtkInstances} builds
+     * those through their plainest concrete subclass, and the getters they *declare* are
+     * exactly the ones no subclass test re-checks.
      *
      * @return iterable<string, array{class-string}>
      */
     public static function instantiableClasses(): iterable
     {
         foreach (new ReflectionExtension('gtk4')->getClasses() as $class) {
-            if ($class->isInterface() || $class->isEnum() || $class->isAbstract()) {
+            if ($class->isInterface() || $class->isEnum()) {
                 continue;
             }
             yield $class->getName() => [$class->getName()];
@@ -46,7 +55,12 @@ final class TypeDeclarationTest extends GtkTestCase
         $reflection = new ReflectionClass($class);
         $object = $this->construct($reflection);
         if ($object === null) {
-            self::markTestSkipped("$class takes constructor arguments this test cannot invent");
+            $reason = GtkInstances::UNREACHABLE[$class] ?? null;
+            self::markTestSkipped(
+                $reason === null
+                    ? "$class has no instance this test can build"
+                    : "$class cannot be built: $reason",
+            );
         }
 
         $checked = 0;
@@ -64,6 +78,17 @@ final class TypeDeclarationTest extends GtkTestCase
                 continue;   // refusing to answer is fine; answering with the wrong type is not
             }
             $checked++;
+            // Reachability check for GtkInstances::UNREACHABLE: that list says which classes no
+            // test can produce an instance of, and a getter handing one out is the proof that a
+            // reason has gone stale (a later wave binding GtkWidget::get_settings() would make
+            // GtkStyleProviderObject reachable, say). The claims are prose; this is the check.
+            if (is_object($value)) {
+                self::assertArrayNotHasKey(
+                    $value::class,
+                    GtkInstances::UNREACHABLE,
+                    sprintf('%s::%s() hands out a class GtkInstances calls unreachable', $class, $method->getName()),
+                );
+            }
             self::assertTrue(
                 $this->satisfies($value, $declared),
                 sprintf(
@@ -76,7 +101,12 @@ final class TypeDeclarationTest extends GtkTestCase
                 ),
             );
         }
-        self::assertGreaterThanOrEqual(0, $checked);
+        // The finding is the assertion inside the loop. There is nothing true left to assert
+        // here - a class whose getters all refuse to answer checks nothing and is not wrong to -
+        // so count the pass rather than dress a tautology up as an assertion (the hostile sweep
+        // in RobustnessTest ends the same way).
+        $this->addToAssertionCount(1);
+        unset($checked);
     }
 
     /**
@@ -128,12 +158,22 @@ final class TypeDeclarationTest extends GtkTestCase
         return (class_exists($name) || interface_exists($name)) && $value instanceof $name;
     }
 
-    /** @param ReflectionClass<object> $class */
+    /**
+     * The getter target. {@see GtkInstances} is asked first - it is the same table the hostile
+     * sweep uses, so the two agree on which classes have a live instance - and only what it
+     * does not name falls back to inventing scalar constructor arguments here.
+     *
+     * @param ReflectionClass<object> $class
+     */
     private function construct(ReflectionClass $class): ?object
     {
         $name = $class->getName();
         if ($name === \Gtk4\GtkWindow::class) {
             return $this->window();
+        }
+        $named = GtkInstances::make($name);
+        if ($named !== null) {
+            return $named;
         }
         $constructor = $class->getConstructor();
         if ($constructor === null || $constructor->isPrivate()) {
@@ -150,13 +190,17 @@ final class TypeDeclarationTest extends GtkTestCase
                 continue;
             }
             $typeName = $type instanceof ReflectionNamedType ? $type->getName() : 'mixed';
-            $arguments[] = match ($typeName) {
-                'string' => 'x',
-                'int' => 0,
-                'float' => 0.0,
-                'bool' => false,
-                'array' => [],
-                'callable' => static fn() => null,
+            $arguments[] = match (true) {
+                $typeName === 'string' => 'x',
+                $typeName === 'int' => 0,
+                $typeName === 'float' => 0.0,
+                $typeName === 'bool' => false,
+                $typeName === 'array' => [],
+                $typeName === 'callable' => static fn() => null,
+                // A GTK enum parameter (GtkOrientation, GtkSizeGroupMode, ...) is inventable:
+                // any case will do for calling arg-less getters afterwards, and this covers
+                // every class whose only obstacle was one, without a per-class list.
+                enum_exists($typeName) => (new ReflectionEnum($typeName)->getCases()[0] ?? null)?->getValue(),
                 default => null,
             };
             if (end($arguments) === null && !($type?->allowsNull() ?? false)) {

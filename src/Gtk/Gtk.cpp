@@ -118,14 +118,13 @@ ZEND_METHOD(Gtk4_Gtk, remove_provider_for_display) {
                                                 GTK_STYLE_PROVIDER(provider_o));
 }
 
-#ifdef PHPGTK_TESTING
 /**
  * static Gtk4\Gtk::testing_iterate_nested(int $iterations): void
  *
- * Test builds only (`--enable-gtk4-testing`, `FEATURES` has `testing=yes`): iterate the default
- * context $iterations times from C, blocking each time, the way GTK does inside DnD or a portal
- * call. Deliberately *not* a rethrow boundary - a Throwable parked in {@see
- * ExceptionMode::Rethrow} surfaces from the enclosing run(), as it would then.
+ * A test hook, not part of the supported surface: iterate the default context $iterations times
+ * from C, blocking each time, the way GTK does inside DnD or a portal call. Deliberately *not* a
+ * rethrow boundary - a Throwable parked in {@see ExceptionMode::Rethrow} surfaces from the
+ * enclosing run(), as it would then.
  */
 ZEND_METHOD(Gtk4_Gtk, testing_iterate_nested) {
   zend_long iterations;
@@ -146,9 +145,9 @@ ZEND_METHOD(Gtk4_Gtk, testing_iterate_nested) {
 /**
  * static Gtk4\Gtk::testing_run_dispose(GObject $object): void
  *
- * Test builds only: run `g_object_run_dispose()` on $object from C while PHP still holds it, the
- * way GTK guts a widget that a C owner destroys. The handle turns *disposed*: method calls and
- * passing it as an argument throw an `Error` from then on.
+ * A test hook, not part of the supported surface: run `g_object_run_dispose()` on $object from C
+ * while PHP still holds it, the way GTK guts a widget that a C owner destroys. The handle turns
+ * *disposed*: method calls and passing it as an argument throw an `Error` from then on.
  */
 ZEND_METHOD(Gtk4_Gtk, testing_run_dispose) {
   zval *object;
@@ -159,73 +158,3 @@ ZEND_METHOD(Gtk4_Gtk, testing_run_dispose) {
   if (obj == nullptr) RETURN_THROWS();
   g_object_run_dispose(obj);
 }
-
-namespace {
-
-// GLogWriterFunc: record CRITICAL and WARNING text so a test can assert on it, and still print
-// it. GLib's own preconditions are how GTK reports "PHP handed me something I refuse", and they
-// only ever went to stderr - 135 distinct ones had accumulated unnoticed. No PHP runs here: the
-// text is buffered and read later, because a log can arrive inside any GTK frame.
-GLogWriterOutput capture_writer(GLogLevelFlags level, const GLogField *fields, gsize n_fields,
-                                gpointer) {
-  // Only on the thread that owns GTK: this writer is process-wide, and under ZTS the module
-  // globals below belong to one request on one thread. GTK logs from its own worker threads.
-  if (on_gui_thread() && GTK4_G(capturing_logs) &&
-      (static_cast<unsigned>(level) & (static_cast<unsigned>(G_LOG_LEVEL_CRITICAL) |
-                                       static_cast<unsigned>(G_LOG_LEVEL_WARNING))) != 0U) {
-    const char *domain = nullptr;
-    const char *message = nullptr;
-    for (gsize i = 0; i < n_fields; i++) {
-      if (strcmp(fields[i].key, "GLIB_DOMAIN") == 0) {
-        domain = static_cast<const char *>(fields[i].value);
-      } else if (strcmp(fields[i].key, "MESSAGE") == 0) {
-        message = static_cast<const char *>(fields[i].value);
-      }
-    }
-    if (message != nullptr) {
-      GTK4_G(captured_logs)
-          .emplace_back(std::string(domain != nullptr ? domain : "GLib") + ": " + message);
-    }
-  }
-  return g_log_writer_default(level, fields, n_fields, nullptr);
-}
-
-}  // namespace
-
-/**
- * static Gtk4\Gtk::testing_capture_logs(bool $capture): void
- *
- * Test builds only: start or stop recording GLib CRITICAL/WARNING messages. They still reach
- * stderr; this only keeps a copy so a test can fail on one instead of letting it scroll past.
- */
-ZEND_METHOD(Gtk4_Gtk, testing_capture_logs) {
-  bool capture = false;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_BOOL(capture)
-  ZEND_PARSE_PARAMETERS_END();
-  // GLib allows exactly one writer per process, so install it once and let the flag decide
-  // whether it records; a second g_log_set_writer_func() is a fatal GLib error.
-  static bool installed = false;
-  if (capture && !installed) {
-    g_log_set_writer_func(capture_writer, nullptr, nullptr);
-    installed = true;
-  }
-  GTK4_G(capturing_logs) = capture;
-  GTK4_G(captured_logs).clear();
-}
-
-/**
- * static Gtk4\Gtk::testing_taken_logs(): array
- *
- * Test builds only: the GLib CRITICAL/WARNING messages recorded since the last call, and clear
- * them.
- */
-ZEND_METHOD(Gtk4_Gtk, testing_taken_logs) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  array_init(return_value);
-  for (const std::string &line : GTK4_G(captured_logs)) {
-    add_next_index_stringl(return_value, line.c_str(), line.size());
-  }
-  GTK4_G(captured_logs).clear();
-}
-#endif

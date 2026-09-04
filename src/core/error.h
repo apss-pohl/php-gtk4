@@ -7,7 +7,8 @@
 // Gtk4\ExceptionMode:
 //
 //   Log      take the Throwable out of the engine, hand it to the handler
-//            installed with Gtk::set_exception_handler() (else g_critical()),
+//            installed with Gtk::set_exception_handler() (else an E_WARNING through
+//            core/diagnostics),
 //            and let GTK continue as if nothing happened.
 //   Rethrow  call the handler too (for observability), then leave the Throwable
 //            pending in the engine and quit every running main loop. Zend then
@@ -26,7 +27,7 @@
 //            loop-driving call that returns to PHP - run(), or
 //            main_context_iteration(). A second Throwable raised while one is
 //            parked is chained onto it as `previous`. Whatever is still parked at
-//            request shutdown goes to the handler / g_critical, never nowhere.
+//            request shutdown goes to the handler / an E_WARNING, never nowhere.
 #pragma once
 #include "php_gtk4.h"
 

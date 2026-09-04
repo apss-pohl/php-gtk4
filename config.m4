@@ -17,10 +17,6 @@ PHP_ARG_ENABLE([gtk4-coverage],
   [whether to build gtk4 with gcov coverage],
   [AS_HELP_STRING([--enable-gtk4-coverage], [Build gtk4 with gcov instrumentation])],
   [no], [no])
-PHP_ARG_ENABLE([gtk4-testing],
-  [whether to compile the test-only hooks into gtk4],
-  [AS_HELP_STRING([--enable-gtk4-testing], [Compile Gtk::testing_* hooks (test builds only, never ship)])],
-  [no], [no])
 PHP_ARG_ENABLE([gtk4-webkit],
   [whether to enable WebKitGTK in gtk4],
   [AS_HELP_STRING([--enable-gtk4-webkit], [Enable WebKitGTK 6 support])],
@@ -51,12 +47,6 @@ if test "$PHP_GTK4" != "no"; then
     PHP_EVAL_LIBLINE([$WEBKITGTK_LIBS], [GTK4_SHARED_LIBADD])
     AC_DEFINE([PHPGTK_WITH_WEBKIT], [1], [WebKitGTK support])
     GTK4_FEATURES="webkit=yes"
-  fi
-  if test "$PHP_GTK4_TESTING" != "no"; then
-    AC_DEFINE([PHPGTK_TESTING], [1], [Test-only hooks compiled in])
-    GTK4_FEATURES="$GTK4_FEATURES testing=yes"
-  else
-    GTK4_FEATURES="$GTK4_FEATURES testing=no"
   fi
   AC_DEFINE_UNQUOTED([PHPGTK_BUILD_FEATURES], ["$GTK4_FEATURES"], [Compiled-in optional features])
 

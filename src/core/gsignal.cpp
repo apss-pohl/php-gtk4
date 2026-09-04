@@ -1,5 +1,6 @@
 #include "gsignal.h"
 #include "error.h"
+#include "diagnostics.h"
 #include "marshal.h"
 #include "object.h"
 #include "teardown.h"
@@ -35,7 +36,7 @@ void closure_marshal(GClosure *c, GValue *return_value, guint n_params, const GV
   zend_fcall_info fci;
   zend_fcall_info_cache fcc;
   if (zend_fcall_info_init(&pc->callable, 0, &fci, &fcc, nullptr, nullptr) != SUCCESS) {
-    g_critical("php-gtk4: handler for '%s' is no longer callable", origin);
+    diagnostic("php-gtk4: handler for '%s' is no longer callable", origin);
     return;
   }
 

@@ -447,9 +447,7 @@ build_variant() {  # build_variant <output.so> [configure args...]
     cp -f modules/gtk4.so "$out"
 }
 
-# GTK4_CONFIGURE_ARGS: extra configure switches for the default build (tests.yml sets
-# --enable-gtk4-testing so the testing hooks are exercised on every matrix leg; releases
-# build without it and ship no hooks).
+# GTK4_CONFIGURE_ARGS: extra configure switches for the default build.
 stage_build() {
     # shellcheck disable=SC2086
     build_variant gtk4.so ${GTK4_CONFIGURE_ARGS:-}
@@ -469,12 +467,17 @@ stage_asan() {
     step "asan build (gtk4-asan.so)"
     local libasan; libasan=$(gcc -print-file-name=libasan.so)
     [[ -f "$libasan" ]] || fail "libasan.so not found (install libasan for your gcc)"
-    build_variant gtk4-asan.so --enable-gtk4-sanitize --enable-gtk4-testing
+    # libubsan too: the build is -fsanitize=address,undefined, and gcc keeps the UBSan handlers
+    # in their own library. Without it a UBSan finding is not a report but "php: symbol lookup
+    # error: gtk4-asan.so: undefined symbol: __ubsan_handle_..." with no location.
+    local libubsan; libubsan=$(gcc -print-file-name=libubsan.so)
+    [[ -f "$libubsan" ]] || fail "libubsan.so not found (install libubsan for your gcc)"
+    build_variant gtk4-asan.so --enable-gtk4-sanitize
     mkdir -p .ci
     local shim="$PWD/.ci/asan-dlopen-shim.so"
     gcc -shared -fPIC -O2 -o "$shim" tests/asan-dlopen-shim.c || fail "asan dlopen shim"
 
-    local -a env=(LD_PRELOAD="$shim:$libasan" USE_ZEND_ALLOC=0
+    local -a env=(LD_PRELOAD="$shim:$libasan:$libubsan" USE_ZEND_ALLOC=0
                   ASAN_OPTIONS="verify_asan_link_order=0:detect_leaks=1:abort_on_error=0:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1"
                   LSAN_OPTIONS="suppressions=$PWD/tests/lsan.supp:print_suppressions=0"
                   UBSAN_OPTIONS="print_stacktrace=1:halt_on_error=1")
@@ -507,7 +510,7 @@ stage_coverage() {
     ensure_vendor
     step "coverage build (gtk4-cov.so)"
     find src -name '*.gcda' -delete 2>/dev/null || true
-    build_variant gtk4-cov.so --enable-gtk4-coverage --enable-gtk4-testing
+    build_variant gtk4-cov.so --enable-gtk4-coverage
 
     step "coverage: phpunit suite + stress script"
     PHP="$PHP" GTK4_SO=./gtk4-cov.so ./tests/run.sh "${PHPUNIT_ARGS[@]}" || fail "coverage phpunit"
@@ -540,14 +543,6 @@ stage_test() {
     ensure_vendor
     step "phpunit (xvfb-run + bin/php-gtk4)"
     [[ -f gtk4.so ]] || fail "gtk4.so missing (run the build stage)"
-    # A GTK CRITICAL means the binding let a value through that GTK refuses, so GtkTestCase fails
-    # the test on one - but it can only see them through the Gtk::testing_* log hooks, which are
-    # compiled by --enable-gtk4-testing. The shipped .so must not carry those (release.yml builds
-    # it with a plain `ci.sh --only=build`), so this is opt-in locally and always on in CI.
-    if ! "$PHP" -n -d extension="$PWD/gtk4.so" -r 'exit(str_contains(ini_get("gtk4.features"), "testing=yes") ? 0 : 1);' 2>/dev/null; then
-        echo "  note: GTK criticals are not gating this run - rebuild with"
-        echo "        GTK4_CONFIGURE_ARGS=--enable-gtk4-testing ./ci.sh --only=build   (CI always does)"
-    fi
     PHP="$PHP" GTK4_SO=./gtk4.so ./tests/run.sh "${PHPUNIT_ARGS[@]}" || fail "test"
 }
 

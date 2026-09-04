@@ -11,13 +11,6 @@
 ZEND_METHOD(Gtk4_GActionGroup, list_actions) {
   ZEND_PARSE_PARAMETERS_NONE();
   GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
-  // NOLINTNEXTLINE(bugprone-assignment-in-if-condition) G_IS_APPLICATION() macro expansion
-  if (G_IS_APPLICATION(self) && g_application_get_is_registered(G_APPLICATION(self)) == FALSE) {
-    zend_throw_exception(spl_ce_LogicException,
-                         "Gtk4\\GActionGroup::list_actions(): the application is not registered "
-                         "yet - its actions exist from the `startup` signal on",
-                         0);
-    RETURN_THROWS();
-  }
+  if (!action_group_is_queryable(self, "list_actions")) RETURN_THROWS();
   strv_to_php(g_action_group_list_actions(self), Transfer::Full, return_value);
 }

@@ -398,15 +398,20 @@ Each needs a written design in PLAN.md before code; none blocks the waves.
       sweep wrote four TIFFs into the repository root). Every `filename` parameter now goes
       through `phpgtk::absolute_filename()` (`expand_filepath()` against PHP's own cwd) before
       GTK sees it, emitted by the generator, so reading and writing are both covered.
-- [x] **A GTK CRITICAL fails the test that caused it** (2026-09-02) — GLib's warnings used to
-      scroll past in the PHPUnit output, so a missing guard at the boundary looked like noise.
-      A `--enable-gtk4-testing` build installs a `g_log_set_writer_func` (once per process, and
-      only on the GUI thread - `on_gui_thread()`, because GTK's worker threads have no request);
-      `GtkTestCase` arms it per test and fails on anything left over. A suite whose job is to hand
-      GTK bad values answers `toleratesGtkCriticals()`, a single test says `expectsGtkCritical()`.
-      26 ordinary-test criticals were real missing guards and are fixed. Still open: `RobustnessTest`
-      tolerates its whole sweep (~162 lines), which should become a pinned list keyed on the
-      triggering method rather than on GTK's wording, so a *new* one there fails too.
+- [x] **A GTK CRITICAL fails the test that caused it** (2026-09-02, reworked 2026-09-03) — GLib's
+      warnings used to scroll past in the PHPUnit output, so a missing guard at the boundary looked
+      like noise. 26 ordinary-test criticals were real missing guards and are fixed. The first cut
+      captured them behind `--enable-gtk4-testing`, which meant the shipped `.so` had no
+      diagnostics at all and one ordinary `./ci.sh --only=build` silently un-gated the suite;
+      it is now a runtime feature instead (`gtk4.diagnostics`, `src/core/diagnostics.cpp`), so
+      `GtkTestCase` gates with a plain `set_error_handler` and every build behaves the same.
+      A suite whose job is to hand GTK bad values answers `toleratesGtkCriticals()`, a single test
+      declares the message it provokes with `expectsGtkCritical($substring)` - asserted both ways,
+      so neither a *new* complaint nor a stale expectation hides. `RobustnessTest` no longer
+      tolerates its sweep wholesale either: `tests/robustness-criticals.txt` pins the 140
+      `<class>::<method>#<sweep>` keys GTK is known to complain about, and the sweep fails on an
+      unlisted complaint or a listed method that has gone quiet
+      (`tests/README-robustness-pin.md`).
 - [ ] **The coverage floor has almost no margin** (2026-09-03): 80.1% against
       `COVERAGE_MIN_LINES=80`, i.e. 23 lines. Wave 3b is what thinned it - `GdkDrag` and `GdkDrop`
       are 128 lines that no test can reach, because only a compositor-driven drag creates one, and
@@ -429,7 +434,7 @@ Closed 2026-08-28 (second pass): lock-free PHP-GType snapshot on the `wrap()` pa
 `find_property()` without a heap allocation, GFlags input validation, the reusable Windows recipe
 (`windows-build.yml`: one gvsbuild pin, `/W3` + a warning gate on `src\`, GTK floor on the
 non-pkgconf path, newest-dll launchers), incremental `ci.sh` builds + `GTK4_CONFIGURE_ARGS`
-(`tests.yml` builds `--enable-gtk4-testing` on every leg, a WebKit build leg), `phpunit.xml.dist`,
+(a WebKit build leg), `phpunit.xml.dist`,
 EXIT-trap cleanup / named asan env / phpt against the default build, `Cairo/CairoContext.h`,
 `register_boxed()` without the dead parameter, anonymous namespaces in `src/core`, dead handle
 arguments as `Error`, the comment gate over generated files, generated-sections only when needed,
@@ -448,6 +453,48 @@ identifier-precise include selection. PHP-Parser: vendor-first by design (gen/RE
 - [ ] `upload-artifact@v7` / `download-artifact@v8`: both on the v4+ artifact backend, verified
       compatible; Dependabot keeps them moving, `WorkflowsTest` does not pin majors.
 - [ ] Branch protection for `main` (§9): blocked by the private/Free-plan repo.
+
+## 9c. Sweep widening 2026-09-03 — leftovers
+
+Closed 2026-09-03: `tests/GtkInstances.php`, one instance factory shared by `RobustnessTest` and
+`TypeDeclarationTest`, so a class is either live in both sweeps or skipped by both (suite skips
+706 → 284, and every remaining one carries a reason). Four process-enders it found:
+`GMenuModel::get_item_link()`/`get_item_attribute_value()` outside the model (SIGSEGV / `g_error`),
+the use-after-free behind `GtkStack::get_pages()` and a composite widget's `get_first_child()`
+(`object_hold_owner()` + `RETURNS_HOLD_SELF`, the object counterpart of `BOXED_OWNERS`), and
+`CairoContext`'s N-double parser, which ran Zend's ZPP macros inside a `for` loop and so carried a
+failed parse into a `__builtin_unreachable`. Three generator tables came with them —
+`NULLABLE_RETURNS`, `NON_NULLABLE_PARAMS`, `PARAM_DOMAINS` — plus `check_enum_member()` for the six
+unbound enums that were being read as `GFlagsClass`. `tests/robustness-criticals.txt` went 158 → 77.
+
+- [ ] **The 77 remaining pin lines**, classified by the message GTK actually prints (the numeric
+      family is done). What is left, in the order worth attacking:
+      *state / wrong-object preconditions* — `list != NULL` on the `GtkNotebook` child methods,
+      `gtk_widget_get_parent(child) == box` on the reorder/move calls, `parent != NULL` on
+      `gtk_layout_manager_get_layout_child()`, `!task->ever_returned`, `is_registered` — all
+      `LogicException` candidates by the CLAUDE.md vocabulary and the obvious next batch;
+      *lookup misses* — "Child name not found in GtkStack", "no mark named" — a question of whether
+      a miss should raise at all; and *parse diagnostics* — theme parser errors, "invalid
+      accelerator string", the `goption.c` warnings — which are GTK reporting about data the script
+      supplied and are correctly pinned. Regenerate the file the way
+      `tests/README-robustness-pin.md` describes, and only after closing a boundary.
+- [ ] `gdk_drop_read_async()` very likely asserts `callback != NULL` like its four `GdkClipboard`
+      siblings, but a `GdkDrop` needs a real drag from another client and no test can reach one
+      (`DragDropTest::testTheseAreGdksToCreateNotPhps`), so `NON_NULLABLE_PARAMS` deliberately has
+      no line for it: every entry there is a precondition that was *observed* firing. Revisit when
+      a drag test exists.
+- [ ] `RETURNS_HOLD_SELF` can only name `$this`, so the sibling walk is outside it —
+      `get_next_sibling()`'s result belongs to the shared parent. Measured, not assumed: reaching a
+      sibling through the eight composite widgets that have one, dropping everything that holds the
+      parent and calling every arg-less getter on the orphan is clean under ASan+UBSan. Re-measure
+      before adding the owner-expression form `BOXED_OWNERS` has.
+- [ ] `GtkInstances::UNREACHABLE` is guarded dynamically (`TypeDeclarationTest` fails if any getter
+      hands out a class it calls unbuildable, which is how `GtkBuilderScopeObject` turned out to be
+      reachable), but only through arg-less getters on classes the factory can build. A class
+      reachable *only* through a method with arguments would keep a stale excuse.
+- [ ] Windows and PHP 8.5 unverified locally for this work: no new `src/*.cpp`, so `config.m4` and
+      `config.w32` need no change, but `<cmath>`, `<zend_strtod.h>` and `HUGE_VAL` in
+      `src/php_gtk4.h` first meet MSVC and the `/W3` gate in `windows.yml`.
 
 ## 10. Keep (verified good, do not "clean up")
 

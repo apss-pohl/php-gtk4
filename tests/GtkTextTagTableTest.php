@@ -17,7 +17,7 @@ final class GtkTextTagTableTest extends GtkTestCase
     {
         // Adding the same tag twice is the rule under test: GTK warns and answers false, which
         // is its documented contract rather than a value the binding should have refused.
-        $this->expectsGtkCritical();
+        $this->expectsGtkCritical("gtk_text_tag_table_add: assertion 'tag->priv->table == NULL' failed");
         $table = new GtkTextTagTable();
         self::assertSame(0, $table->get_size());
 

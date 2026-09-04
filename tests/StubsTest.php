@@ -22,10 +22,6 @@ final class StubsTest extends TestCase
     {
         $src = file_get_contents(self::STUB);
         self::assertIsString($src);
-        // `#if defined(PHPGTK_TESTING)` blocks exist only in --enable-gtk4-testing builds.
-        if (!str_contains(\Gtk4\FEATURES, 'testing=yes')) {
-            $src = preg_replace('/^[ \t]*#if defined\(PHPGTK_TESTING\)\n.*?^[ \t]*#endif\n/ms', '', $src) ?? $src;
-        }
         return $src;
     }
 

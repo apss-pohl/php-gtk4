@@ -20,5 +20,5 @@ $loop->run();
 echo "loop returned normally\n";
 ?>
 --EXPECTF--
-%aCRITICAL %a: php-gtk4: uncaught LogicException in 'GLib::idle_add' handler: from the idle callback
+Warning: php-gtk4: uncaught LogicException in 'GLib::idle_add' handler: from the idle callback in %s on line %d
 loop returned normally

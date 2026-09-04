@@ -7,7 +7,7 @@ implements it.
 Source of truth: php-gtk3 class headers (158 headers, ~2400 exported methods) vs.
 `src/gtk4.stub.php` + the MINIT registration block in `src/gtk4.cpp`.
 
-Status column regenerated 2026-09-03 by `gen/map-status.php` (run by `gen/gir.php --install`);
+Status column regenerated 2026-09-04 by `gen/map-status.php` (run by `gen/gir.php --install`);
 the notes are hand-written and may lag.
 
 ## Legend

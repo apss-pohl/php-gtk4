@@ -147,6 +147,7 @@ ZEND_METHOD(Gtk4_GtkCalendar, set_day) {
   ZEND_PARSE_PARAMETERS_END();
   GtkCalendar *self = PHPGTK_SELF(GtkCalendar, GTK_TYPE_CALENDAR);
   if (!phpgtk::check_range<int>(day, 1)) RETURN_THROWS();
+  if (!phpgtk::check_domain(day, 1, 31, 1)) RETURN_THROWS();
   gtk_calendar_set_day(self, static_cast<int>(day));
 }
 
@@ -162,6 +163,7 @@ ZEND_METHOD(Gtk4_GtkCalendar, set_month) {
   ZEND_PARSE_PARAMETERS_END();
   GtkCalendar *self = PHPGTK_SELF(GtkCalendar, GTK_TYPE_CALENDAR);
   if (!phpgtk::check_range<int>(month, 1)) RETURN_THROWS();
+  if (!phpgtk::check_domain(month, 0, 11, 1)) RETURN_THROWS();
   gtk_calendar_set_month(self, static_cast<int>(month));
 }
 
@@ -219,6 +221,7 @@ ZEND_METHOD(Gtk4_GtkCalendar, set_year) {
   ZEND_PARSE_PARAMETERS_END();
   GtkCalendar *self = PHPGTK_SELF(GtkCalendar, GTK_TYPE_CALENDAR);
   if (!phpgtk::check_range<int>(year, 1)) RETURN_THROWS();
+  if (!phpgtk::check_domain(year, 1, 9999, 1)) RETURN_THROWS();
   gtk_calendar_set_year(self, static_cast<int>(year));
 }
 

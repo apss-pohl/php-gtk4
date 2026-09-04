@@ -46,7 +46,20 @@
     method or adds one GIR does not have (`Gtk.Box.get_children.cpp`). On an interface
     (`Gio.Action.activate.cpp`) it replaces the one shared implementation.
   - `overrides/<Ns>.<Type>.cpp` — the class prelude: includes and file-static helpers (callback
-    trampolines) emitted verbatim before the methods (`Gtk.CustomFilter.cpp`).
+    trampolines) emitted verbatim before the methods (`Gtk.CustomFilter.cpp`);
+  - `NULLABLE_RETURNS` in `gir/config.php` — C identifier -> reason, for returns GIR calls
+    non-null that really do answer NULL (`gtk_event_controller_get_widget()` before the
+    controller is added to a widget). The declared return type is a promise the engine never
+    verifies, so `TypeDeclarationTest` is what finds these;
+  - `NON_NULLABLE_PARAMS` — `<C identifier>.<param>` -> reason, the same from the other side: a
+    parameter GIR marks nullable that the function refuses with a `g_return_if_fail()` (the
+    `GAsyncReadyCallback` of `gdk_clipboard_read_async()` and friends). Dropping the `?` makes
+    null an ordinary TypeError;
+  - `RETURNS_HOLD_SELF` — C identifier -> reason, for members whose returned object keeps a bare
+    pointer to the object it came from (`gtk_stack_get_pages()`, `gtk_widget_get_first_child()`
+    on a composite widget). The emitted `object_hold_owner(return_value, ZEND_THIS)` makes the
+    returned *handle* keep `$this`'s handle alive - the object counterpart of `BOXED_OWNERS`,
+    held between handles so a parent already owning its child is not turned into a leak.
   Every emitted parameter carries its argument checks: a `utf8` string gets
   `phpgtk::check_utf8()` (no embedded NUL, valid UTF-8 - a `filename` does not, it is bytes and
   `Z_PARAM_PATH_STR` already refuses the NUL), and an integer narrower than `zend_long` or
@@ -126,6 +139,6 @@ Which `attach*()` a generated constructor emits is decided by the return type, n
 
 `GtkRoot` is read from GIR (`implements`), never from a name list. Wave 0 diffed this choice against
 the then hand-written constructors before anything else was generated; `attach_new()` also catches a
-root at runtime with a `g_critical`.
+root at runtime with a `diagnostic()`.
 
 Run everything via `./ci.sh --only=stubs [--fix]`.

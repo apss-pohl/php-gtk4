@@ -76,8 +76,12 @@ classes automatically and must not be edited for one.
 ./ci.sh --with=asan,coverage,valgrind      # what CI runs in total
 ```
 
-A segfault shows up as PHPUnit dying mid-run; bisect with `--filter 'Class::method$'`. GLib
-`CRITICAL` lines from `ErrorTest` are expected; their text is asserted in `tests/phpt/`.
+A segfault shows up as PHPUnit dying mid-run; bisect with `--filter 'Class::method$'`. GLib's own
+`CRITICAL`/`WARNING` messages are PHP errors (`gtk4.diagnostics`), so the test that provokes one
+fails with its text and a passing run says nothing on stderr. The default `warning` reports a
+`CRITICAL` as an `E_WARNING` at the PHP line that caused it; `-d gtk4.diagnostics=fatal` makes it
+an `E_ERROR` that stops at the first one, and `-d gtk4.diagnostics=stderr` gives GLib's raw output
+— both useful when chasing one.
 
 The two expensive stages only do the work that is needed: clang-tidy skips every file it already
 linted at that exact content (`.ci/tidy-ok`; a header change relints everything, `GTK4_LINT_ALL=1`

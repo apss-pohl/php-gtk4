@@ -2297,7 +2297,7 @@ class GtkEventController extends GObject
     public function get_propagation_phase(): GtkPropagationPhase {}
 
     /** Returns the `GtkWidget` this controller relates to. */
-    public function get_widget(): GtkWidget {}
+    public function get_widget(): ?GtkWidget {}
 
     /** Resets the $controller to a clean state. */
     public function reset(): void {}

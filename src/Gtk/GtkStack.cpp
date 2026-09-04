@@ -158,6 +158,8 @@ ZEND_METHOD(Gtk4_GtkStack, get_pages) {
   GtkSelectionModel *phpgtk_ret = gtk_stack_get_pages(self);
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
   if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+  object_hold_owner(return_value, ZEND_THIS);  // GtkStackPages keeps a bare GtkStack pointer (the
+                                               // stack holds only a weak one back)
 }
 
 /**

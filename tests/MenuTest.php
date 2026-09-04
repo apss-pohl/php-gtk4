@@ -104,10 +104,12 @@ final class MenuTest extends GtkTestCase
 
     public function testPopoverMenusTakeAModel(): void
     {
-        // A submenu in a non-nested popover is what GtkPopoverMenu cannot render ("Don't know
-        // how to handle this item"); the nested flag below is the supported way, and having
-        // both in one test is what shows the difference.
-        $this->expectsGtkCritical();
+        // A submenu in a non-nested popover is what GtkPopoverMenu cannot render; the nested flag
+        // below is the supported way, and having both in one test is what shows the difference.
+        // GTK then unwinds the item it could not build, which is where the other two come from.
+        $this->expectsGtkCritical("Don't know how to handle this item");
+        $this->expectsGtkCritical("g_object_get_data: assertion 'G_IS_OBJECT (object)' failed");
+        $this->expectsGtkCritical("gtk_menu_section_box_remove_custom: assertion 'id != NULL' failed");
         $menu = new GMenu();
         $menu->append('One', 'app.one');
         $sub = new GMenu();
@@ -273,7 +275,7 @@ final class MenuTest extends GtkTestCase
     {
         // The window is built before the application has started, which is what makes get_id()
         // answer 0 - GTK says so on stderr and that sequencing is the point of the assertion.
-        $this->expectsGtkCritical();
+        $this->expectsGtkCritical('New application windows must be added after the GApplication::startup signal');
         $app = new GtkApplication('org.php.gtk4.MenuTest', GApplicationFlags::NON_UNIQUE);
         $win = new GtkApplicationWindow($app);
         self::assertSame($app, $win->get_application());

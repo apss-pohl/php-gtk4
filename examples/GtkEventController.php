@@ -59,7 +59,7 @@ return Demo::page(
                 $controller->get_name() ?? '(null)',
                 $controller->get_propagation_phase()->name,
                 $controller->get_propagation_limit()->name,
-                $controller->get_widget()::class,
+                get_debug_type($controller->get_widget()),   // null until add_controller()
                 $event === null ? 'null' : $event::class,
                 $controller->get_current_event_time(),
                 $controller->get_current_event_state(),

@@ -2,6 +2,7 @@
 #include "callback.h"
 #include "error.h"
 #include "globals.h"
+#include "diagnostics.h"
 #include "marshal.h"
 #include "subtype.h"
 #include <array>
@@ -140,7 +141,7 @@ void arm(Object *self) {
 // Take ownership: ref_sink, then the toggle-ref dance.
 void attach(Object *self, GObject *obj) {
   if ((self->obj != nullptr && !prebound(self, obj)) || obj == nullptr) {
-    g_critical("php-gtk4: attach() misuse");
+    diagnostic("php-gtk4: attach() misuse");
     return;
   }
   self->obj = G_OBJECT(g_object_ref_sink(obj));
@@ -151,14 +152,14 @@ void attach(Object *self, GObject *obj) {
 // The ownership rule (docs/PLAN.md "Ownership", gen/README.md): floating -> sink, plain
 // GObject -> adopt, GtkRoot (windows) -> GTK's toplevel list owns the initial reference,
 // so those must use attach(). Enforced here rather than trusted: a root is ref'd like
-// attach() would, with a g_critical so the misuse shows up in tests.
+// attach() would, with a diagnostic so the misuse shows up in tests.
 void attach_new(Object *self, GObject *obj) {
   if ((self->obj != nullptr && !prebound(self, obj)) || obj == nullptr) {
-    g_critical("php-gtk4: attach_new() misuse");
+    diagnostic("php-gtk4: attach_new() misuse");
     return;
   }
   if (GTK_IS_ROOT(obj)) {
-    g_critical(
+    diagnostic(
         "php-gtk4: attach_new() on a %s: GTK owns a toplevel's initial reference, use "
         "attach()",
         G_OBJECT_TYPE_NAME(obj));
@@ -195,6 +196,7 @@ zend_object *create_object(zend_class_entry *ce) {
   self->obj = nullptr;
   self->held = false;
   self->disposed = false;
+  ZVAL_UNDEF(&self->owner);
   zend_object_std_init(&self->std, ce);
   object_properties_init(&self->std, ce);
   self->std.handlers = &handlers;
@@ -205,7 +207,8 @@ zend_object *create_object(zend_class_entry *ce) {
 void free_obj(zend_object *o) {
   Object *self = object_from_zend(o);
   detach(self);
-  callback_drain();  // the unref may have run destroy notifies
+  zval_ptr_dtor(&self->owner);  // the owner outlives us by exactly this reference
+  callback_drain();             // the unref may have run destroy notifies
   zend_object_std_dtor(o);
   settle_destructor_exception();  // a __destruct of something the callables / properties held
 }
@@ -320,7 +323,32 @@ int compare_objects(zval *a, zval *b) {
   ZEND_COMPARE_OBJECTS_FALLBACK(a, b);
   return Z_OBJ_P(a) == Z_OBJ_P(b) ? 0 : 1;
 }
+
+// get_gc handler: report the owner reference to the cycle collector. Nothing the binding does
+// makes a cycle through it - an owner never points back - but a PHP subclass storing the object
+// it got from itself ($this->row = $this->get_first_child()) does, and Zend can only collect
+// what it is shown.
+HashTable *get_gc(zend_object *o, zval **table, int *n) {
+  Object *self = object_from_zend(o);
+  if (Z_TYPE(self->owner) != IS_OBJECT) return zend_std_get_gc(o, table, n);
+  zend_get_gc_buffer *buffer = zend_get_gc_buffer_create();
+  zend_get_gc_buffer_add_zval(buffer, &self->owner);
+  zend_get_gc_buffer_use(buffer, table, n);
+  return zend_std_get_properties(o);
+}
 }  // namespace
+
+// Keep `owner`'s handle alive for as long as `handle`'s: see the header for why the reference
+// sits between the handles and not between the GObjects.
+void object_hold_owner(zval *handle, zval *owner) {
+  if (handle == nullptr || owner == nullptr) return;
+  if (Z_TYPE_P(handle) != IS_OBJECT || Z_TYPE_P(owner) != IS_OBJECT) return;
+  if (Z_OBJ_P(handle) == Z_OBJ_P(owner)) return;  // a getter that answered with itself
+  Object *self = object_from_zval(handle);
+  if (Z_TYPE(self->owner) == IS_OBJECT && Z_OBJ(self->owner) == Z_OBJ_P(owner)) return;
+  zval_ptr_dtor(&self->owner);  // reparented: the new owner is the one that matters now
+  ZVAL_COPY(&self->owner, owner);
+}
 
 // MINIT: build the shared handler table for all GObject classes.
 void object_handlers_init() {
@@ -335,6 +363,7 @@ void object_handlers_init() {
   handlers.unset_property = unset_property;
   handlers.get_debug_info = get_debug_info;
   handlers.compare = compare_objects;
+  handlers.get_gc = get_gc;
 }
 
 // ---------------------------------------------------------------- registry

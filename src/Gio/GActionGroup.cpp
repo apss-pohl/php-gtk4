@@ -10,6 +10,30 @@
 
 using namespace phpgtk;
 
+// Prelude for Gtk4\GActionGroup: the registration precondition every query shares.
+
+namespace {
+
+// A GApplication only owns its actions once it is registered (from `startup` on). Every query
+// below it - g_application_query_action() and g_application_change_action_state() - is a
+// g_return_if_fail() until then, so GLib CRITICALs and answers a default that reads like "no such
+// action" rather than "ask me later". Refuse the call instead: the handle is in the wrong state,
+// which is a LogicException by the vocabulary in CLAUDE.md. Every other action group answers at
+// any time, so the check is scoped to GApplication.
+bool action_group_is_queryable(GActionGroup *self, const char *method) {
+  // NOLINTNEXTLINE(bugprone-assignment-in-if-condition) G_IS_APPLICATION() macro expansion
+  if (G_IS_APPLICATION(self) && g_application_get_is_registered(G_APPLICATION(self)) == FALSE) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "Gtk4\\GActionGroup::%s(): the application is not registered yet - "
+                            "its actions exist from the `startup` signal on",
+                            method);
+    return false;
+  }
+  return true;
+}
+
+}  // namespace
+
 /**
  * Gtk4\GActionGroup::action_added(string $action_name): void
  *
@@ -83,133 +107,6 @@ ZEND_METHOD(Gtk4_GActionGroup, action_state_changed) {
 }
 
 /**
- * Gtk4\GActionGroup::change_action_state(string $action_name, mixed $value = null): void
- *
- * Request for the state of the named action within $action_group to be changed to $value.
- */
-ZEND_METHOD(Gtk4_GActionGroup, change_action_state) {
-  zend_string *action_name;
-  zval *value = nullptr;
-  ZEND_PARSE_PARAMETERS_START(1, 2)
-  Z_PARAM_STR(action_name)
-  Z_PARAM_OPTIONAL
-  Z_PARAM_ZVAL(value)
-  ZEND_PARSE_PARAMETERS_END();
-  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
-  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
-  GVariant *value_v = nullptr;
-  if (value != nullptr && Z_TYPE_P(value) != IS_NULL) {
-    value_v = php_to_variant(value, nullptr);
-    if (value_v == nullptr) RETURN_THROWS();
-    g_variant_ref_sink(value_v);
-  }
-  g_action_group_change_action_state(self, ZSTR_VAL(action_name), value_v);
-  if (value_v != nullptr) g_variant_unref(value_v);
-}
-
-/**
- * Gtk4\GActionGroup::get_action_enabled(string $action_name): bool
- *
- * Checks if the named action within $action_group is currently enabled.
- */
-ZEND_METHOD(Gtk4_GActionGroup, get_action_enabled) {
-  zend_string *action_name;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_STR(action_name)
-  ZEND_PARSE_PARAMETERS_END();
-  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
-  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
-  RETURN_BOOL(g_action_group_get_action_enabled(self, ZSTR_VAL(action_name)));
-}
-
-/**
- * Gtk4\GActionGroup::get_action_parameter_type(string $action_name): ?string
- *
- * Queries the type of the parameter that must be given when activating the named action within
- * $action_group.
- */
-ZEND_METHOD(Gtk4_GActionGroup, get_action_parameter_type) {
-  zend_string *action_name;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_STR(action_name)
-  ZEND_PARSE_PARAMETERS_END();
-  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
-  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
-  const GVariantType *vt = g_action_group_get_action_parameter_type(self, ZSTR_VAL(action_name));
-  if (vt == nullptr) RETURN_NULL();
-  RETVAL_STRINGL(g_variant_type_peek_string(vt), g_variant_type_get_string_length(vt));
-}
-
-/**
- * Gtk4\GActionGroup::get_action_state(string $action_name): mixed
- *
- * Queries the current state of the named action within $action_group.
- */
-ZEND_METHOD(Gtk4_GActionGroup, get_action_state) {
-  zend_string *action_name;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_STR(action_name)
-  ZEND_PARSE_PARAMETERS_END();
-  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
-  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
-  GVariant *phpgtk_ret = g_action_group_get_action_state(self, ZSTR_VAL(action_name));
-  if (phpgtk_ret == nullptr) RETURN_NULL();
-  variant_to_php(phpgtk_ret, return_value);
-  g_variant_unref(phpgtk_ret);
-}
-
-/**
- * Gtk4\GActionGroup::get_action_state_hint(string $action_name): mixed
- *
- * Requests a hint about the valid range of values for the state of the named action within
- * $action_group.
- */
-ZEND_METHOD(Gtk4_GActionGroup, get_action_state_hint) {
-  zend_string *action_name;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_STR(action_name)
-  ZEND_PARSE_PARAMETERS_END();
-  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
-  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
-  GVariant *phpgtk_ret = g_action_group_get_action_state_hint(self, ZSTR_VAL(action_name));
-  if (phpgtk_ret == nullptr) RETURN_NULL();
-  variant_to_php(phpgtk_ret, return_value);
-  g_variant_unref(phpgtk_ret);
-}
-
-/**
- * Gtk4\GActionGroup::get_action_state_type(string $action_name): ?string
- *
- * Queries the type of the state of the named action within $action_group.
- */
-ZEND_METHOD(Gtk4_GActionGroup, get_action_state_type) {
-  zend_string *action_name;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_STR(action_name)
-  ZEND_PARSE_PARAMETERS_END();
-  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
-  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
-  const GVariantType *vt = g_action_group_get_action_state_type(self, ZSTR_VAL(action_name));
-  if (vt == nullptr) RETURN_NULL();
-  RETVAL_STRINGL(g_variant_type_peek_string(vt), g_variant_type_get_string_length(vt));
-}
-
-/**
- * Gtk4\GActionGroup::has_action(string $action_name): bool
- *
- * Checks if the named action exists within $action_group.
- */
-ZEND_METHOD(Gtk4_GActionGroup, has_action) {
-  zend_string *action_name;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_STR(action_name)
-  ZEND_PARSE_PARAMETERS_END();
-  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
-  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
-  RETURN_BOOL(g_action_group_has_action(self, ZSTR_VAL(action_name)));
-}
-
-/**
  * public function activate_action(string $action_name, mixed $parameter = null): void
  * Activate an action by name. $parameter is converted to the action's declared parameter type
  * (ValueError when the action is unknown or a required parameter is missing, TypeError when the
@@ -250,6 +147,168 @@ ZEND_METHOD(Gtk4_GActionGroup, activate_action) {
 }
 
 /**
+ * public function change_action_state(string $action_name, mixed $value = null): void
+ * Request for the state of the named action within $action_group to be changed to $value.
+ *
+ * A GApplication only has its actions once it is registered (from `startup` on); before
+ * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+ * "ask me later", so this refuses with a `LogicException` instead. Every other action
+ * group answers at any time.
+ */
+ZEND_METHOD(Gtk4_GActionGroup, change_action_state) {
+  zend_string *action_name;
+  zval *value = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 2)
+  Z_PARAM_STR(action_name)
+  Z_PARAM_OPTIONAL
+  Z_PARAM_ZVAL(value)
+  ZEND_PARSE_PARAMETERS_END();
+  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
+  if (!action_group_is_queryable(self, "change_action_state")) RETURN_THROWS();
+  GVariant *value_v = nullptr;
+  if (value != nullptr && Z_TYPE_P(value) != IS_NULL) {
+    value_v = php_to_variant(value, nullptr);
+    if (value_v == nullptr) RETURN_THROWS();
+    g_variant_ref_sink(value_v);
+  }
+  g_action_group_change_action_state(self, ZSTR_VAL(action_name), value_v);
+  if (value_v != nullptr) g_variant_unref(value_v);
+}
+
+/**
+ * public function get_action_enabled(string $action_name): bool
+ * Checks if the named action within $action_group is currently enabled.
+ *
+ * A GApplication only has its actions once it is registered (from `startup` on); before
+ * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+ * "ask me later", so this refuses with a `LogicException` instead. Every other action
+ * group answers at any time.
+ */
+ZEND_METHOD(Gtk4_GActionGroup, get_action_enabled) {
+  zend_string *action_name;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_STR(action_name)
+  ZEND_PARSE_PARAMETERS_END();
+  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
+  if (!action_group_is_queryable(self, "get_action_enabled")) RETURN_THROWS();
+  RETURN_BOOL(g_action_group_get_action_enabled(self, ZSTR_VAL(action_name)));
+}
+
+/**
+ * public function get_action_parameter_type(string $action_name): ?string
+ * Queries the type of the parameter that must be given when activating the named action within
+ * $action_group.
+ *
+ * A GApplication only has its actions once it is registered (from `startup` on); before
+ * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+ * "ask me later", so this refuses with a `LogicException` instead. Every other action
+ * group answers at any time.
+ */
+ZEND_METHOD(Gtk4_GActionGroup, get_action_parameter_type) {
+  zend_string *action_name;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_STR(action_name)
+  ZEND_PARSE_PARAMETERS_END();
+  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
+  if (!action_group_is_queryable(self, "get_action_parameter_type")) RETURN_THROWS();
+  const GVariantType *vt = g_action_group_get_action_parameter_type(self, ZSTR_VAL(action_name));
+  if (vt == nullptr) RETURN_NULL();
+  RETVAL_STRINGL(g_variant_type_peek_string(vt), g_variant_type_get_string_length(vt));
+}
+
+/**
+ * public function get_action_state(string $action_name): mixed
+ * Queries the current state of the named action within $action_group.
+ *
+ * A GApplication only has its actions once it is registered (from `startup` on); before
+ * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+ * "ask me later", so this refuses with a `LogicException` instead. Every other action
+ * group answers at any time.
+ */
+ZEND_METHOD(Gtk4_GActionGroup, get_action_state) {
+  zend_string *action_name;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_STR(action_name)
+  ZEND_PARSE_PARAMETERS_END();
+  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
+  if (!action_group_is_queryable(self, "get_action_state")) RETURN_THROWS();
+  GVariant *phpgtk_ret = g_action_group_get_action_state(self, ZSTR_VAL(action_name));
+  if (phpgtk_ret == nullptr) RETURN_NULL();
+  variant_to_php(phpgtk_ret, return_value);
+  g_variant_unref(phpgtk_ret);
+}
+
+/**
+ * public function get_action_state_hint(string $action_name): mixed
+ * Requests a hint about the valid range of values for the state of the named action within
+ * $action_group.
+ *
+ * A GApplication only has its actions once it is registered (from `startup` on); before
+ * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+ * "ask me later", so this refuses with a `LogicException` instead. Every other action
+ * group answers at any time.
+ */
+ZEND_METHOD(Gtk4_GActionGroup, get_action_state_hint) {
+  zend_string *action_name;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_STR(action_name)
+  ZEND_PARSE_PARAMETERS_END();
+  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
+  if (!action_group_is_queryable(self, "get_action_state_hint")) RETURN_THROWS();
+  GVariant *phpgtk_ret = g_action_group_get_action_state_hint(self, ZSTR_VAL(action_name));
+  if (phpgtk_ret == nullptr) RETURN_NULL();
+  variant_to_php(phpgtk_ret, return_value);
+  g_variant_unref(phpgtk_ret);
+}
+
+/**
+ * public function get_action_state_type(string $action_name): ?string
+ * Queries the type of the state of the named action within $action_group.
+ *
+ * A GApplication only has its actions once it is registered (from `startup` on); before
+ * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+ * "ask me later", so this refuses with a `LogicException` instead. Every other action
+ * group answers at any time.
+ */
+ZEND_METHOD(Gtk4_GActionGroup, get_action_state_type) {
+  zend_string *action_name;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_STR(action_name)
+  ZEND_PARSE_PARAMETERS_END();
+  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
+  if (!action_group_is_queryable(self, "get_action_state_type")) RETURN_THROWS();
+  const GVariantType *vt = g_action_group_get_action_state_type(self, ZSTR_VAL(action_name));
+  if (vt == nullptr) RETURN_NULL();
+  RETVAL_STRINGL(g_variant_type_peek_string(vt), g_variant_type_get_string_length(vt));
+}
+
+/**
+ * public function has_action(string $action_name): bool
+ * Checks if the named action exists within $action_group.
+ *
+ * A GApplication only has its actions once it is registered (from `startup` on); before
+ * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+ * "ask me later", so this refuses with a `LogicException` instead. Every other action
+ * group answers at any time.
+ */
+ZEND_METHOD(Gtk4_GActionGroup, has_action) {
+  zend_string *action_name;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_STR(action_name)
+  ZEND_PARSE_PARAMETERS_END();
+  GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
+  if (!phpgtk::check_utf8(action_name, 1)) RETURN_THROWS();
+  if (!action_group_is_queryable(self, "has_action")) RETURN_THROWS();
+  RETURN_BOOL(g_action_group_has_action(self, ZSTR_VAL(action_name)));
+}
+
+/**
  * public function list_actions(): array
  * The names of the actions in this group.
  *
@@ -262,14 +321,7 @@ ZEND_METHOD(Gtk4_GActionGroup, activate_action) {
 ZEND_METHOD(Gtk4_GActionGroup, list_actions) {
   ZEND_PARSE_PARAMETERS_NONE();
   GActionGroup *self = PHPGTK_SELF(GActionGroup, G_TYPE_ACTION_GROUP);
-  // NOLINTNEXTLINE(bugprone-assignment-in-if-condition) G_IS_APPLICATION() macro expansion
-  if (G_IS_APPLICATION(self) && g_application_get_is_registered(G_APPLICATION(self)) == FALSE) {
-    zend_throw_exception(spl_ce_LogicException,
-                         "Gtk4\\GActionGroup::list_actions(): the application is not registered "
-                         "yet - its actions exist from the `startup` signal on",
-                         0);
-    RETURN_THROWS();
-  }
+  if (!action_group_is_queryable(self, "list_actions")) RETURN_THROWS();
   strv_to_php(g_action_group_list_actions(self), Transfer::Full, return_value);
 }
 

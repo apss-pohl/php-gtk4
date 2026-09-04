@@ -197,6 +197,7 @@ final class Gir
         $instance = $instances !== false ? $instances->item(0) : null;
         $consumesSelf = $instance instanceof \DOMElement
             && $instance->getAttribute('transfer-ownership') === 'full';
+        $identifier = $f->getAttributeNS(NS_C, 'identifier');
         $params = [];
         $varargs = false;
         foreach ($x->query('g:parameters/g:parameter', $f) as $p) {
@@ -210,7 +211,8 @@ final class Gir
                 $p->getAttribute('name'),
                 $t,
                 $p->getAttribute('direction') ?: 'in',
-                $p->getAttribute('nullable') === '1' || $p->getAttribute('allow-none') === '1',
+                ($p->getAttribute('nullable') === '1' || $p->getAttribute('allow-none') === '1')
+                    && !isset(NON_NULLABLE_PARAMS[$identifier . '.' . $p->getAttribute('name')]),
                 $p->getAttribute('optional') === '1',
                 $p->getAttribute('transfer-ownership') ?: 'none',
                 $p->getAttribute('scope') ?: null,
@@ -220,14 +222,15 @@ final class Gir
         }
         return new Func(
             $f->getAttribute('name'),
-            $f->getAttributeNS(NS_C, 'identifier'),
+            $identifier,
             match ($f->localName) {
                 'constructor' => 'constructor', 'function' => 'function', 'virtual-method' => 'vfunc',
                 default => 'method'
             },
             $ret,
             $rv->getAttribute('transfer-ownership') ?: 'none',
-            $rv->getAttribute('nullable') === '1',
+            $rv->getAttribute('nullable') === '1'
+                || isset(NULLABLE_RETURNS[$identifier]),
             $params,
             $f->getAttribute('throws') === '1',
             $f->getAttribute('version') ?: null,

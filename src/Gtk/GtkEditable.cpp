@@ -51,6 +51,7 @@ ZEND_METHOD(Gtk4_GtkEditable, delete_text) {
   ZEND_PARSE_PARAMETERS_END();
   GtkEditable *self = PHPGTK_SELF(GtkEditable, GTK_TYPE_EDITABLE);
   if (!phpgtk::check_range<int>(start_pos, 1)) RETURN_THROWS();
+  if (!phpgtk::check_domain(start_pos, 0, ZEND_LONG_MAX, 1)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(end_pos, 2)) RETURN_THROWS();
   gtk_editable_delete_text(self, static_cast<int>(start_pos), static_cast<int>(end_pos));
 }
@@ -91,6 +92,7 @@ ZEND_METHOD(Gtk4_GtkEditable, get_chars) {
   ZEND_PARSE_PARAMETERS_END();
   GtkEditable *self = PHPGTK_SELF(GtkEditable, GTK_TYPE_EDITABLE);
   if (!phpgtk::check_range<int>(start_pos, 1)) RETURN_THROWS();
+  if (!phpgtk::check_domain(start_pos, 0, ZEND_LONG_MAX, 1)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(end_pos, 2)) RETURN_THROWS();
   char *phpgtk_ret =
       gtk_editable_get_chars(self, static_cast<int>(start_pos), static_cast<int>(end_pos));

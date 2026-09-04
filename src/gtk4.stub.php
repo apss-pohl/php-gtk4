@@ -67,7 +67,7 @@ class GObject
      *
      * What happens when the handler throws depends on {@see Gtk::set_exception_mode()}:
      * `ExceptionMode::Log` (default) reports it to the {@see Gtk::set_exception_handler()}
-     * callable (or g_critical() on stderr) and GTK continues; `ExceptionMode::Rethrow`
+     * callable (or an `E_WARNING`) and GTK continues; `ExceptionMode::Rethrow`
      * stops any running main loop and rethrows it to the PHP code that triggered the
      * emission (or from {@see GtkApplication::run()} / {@see GMainLoop::run()}).
      *
@@ -144,7 +144,7 @@ final class GParamSpec
  */
 enum ExceptionMode: int
 {
-    /** Report via {@see Gtk::set_exception_handler()} (or g_critical()) and keep going. */
+    /** Report via {@see Gtk::set_exception_handler()} (or an `E_WARNING`) and keep going. */
     case Log = 0;
     /**
      * Stop any running {@see GtkApplication::run()} / {@see GMainLoop::run()} and rethrow the
@@ -196,36 +196,21 @@ final class Gtk
     /** Detach a provider added with {@see add_provider_for_display()}; unknown providers are ignored. */
     public static function remove_provider_for_display(GdkDisplay $display, GtkStyleProvider $provider): void {}
 
-#if defined(PHPGTK_TESTING)
     /**
-     * Test builds only (`--enable-gtk4-testing`, `FEATURES` has `testing=yes`): iterate the
-     * default context $iterations times from C, blocking each time, the way GTK does inside
-     * DnD or a portal call. Deliberately *not* a rethrow boundary - a Throwable parked in
+     * A test hook, not part of the supported surface: iterate the default context $iterations
+     * times from C, blocking each time, the way GTK does inside DnD or a portal call.
+     * Deliberately *not* a rethrow boundary - a Throwable parked in
      * {@see ExceptionMode::Rethrow} surfaces from the enclosing run(), as it would then.
      */
     public static function testing_iterate_nested(int $iterations): void {}
 
     /**
-     * Test builds only: run `g_object_run_dispose()` on $object from C while PHP still holds it,
-     * the way GTK guts a widget that a C owner destroys. The handle turns *disposed*: method
-     * calls and passing it as an argument throw an `Error` from then on.
+     * A test hook, not part of the supported surface: run `g_object_run_dispose()` on $object
+     * from C while PHP still holds it, the way GTK guts a widget that a C owner destroys. The
+     * handle turns *disposed*: method calls and passing it as an argument throw an `Error` from
+     * then on.
      */
     public static function testing_run_dispose(GObject $object): void {}
-
-    /**
-     * Test builds only: start or stop recording GLib CRITICAL/WARNING messages. They still reach
-     * stderr; this only keeps a copy so a test can fail on one instead of letting it scroll past.
-     */
-    public static function testing_capture_logs(bool $capture): void {}
-
-    /**
-     * Test builds only: the GLib CRITICAL/WARNING messages recorded since the last call, and
-     * clear them.
-     *
-     * @return list<string>
-     */
-    public static function testing_taken_logs(): array {}
-#endif
 }
 
 /**

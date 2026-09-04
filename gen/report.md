@@ -695,14 +695,16 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## Overrides in effect
 
-- `Gdk.Clipboard`: set_value
+- `Gdk.Clipboard`: read_async, set_value
 - `Gdk.ContentFormats`: __construct, contain_gtype, get_gtypes, get_mime_types
 - `Gdk.ContentProvider`: get_value, new_for_value
+- `Gdk.Paintable`: compute_concrete_size
 - `Gdk.Texture`: download
 - `Gio.Action`: activate
-- `Gio.ActionGroup`: activate_action, list_actions
+- `Gio.ActionGroup`: activate_action, change_action_state, get_action_enabled, get_action_parameter_type, get_action_state, get_action_state_hint, get_action_state_type, has_action, list_actions
 - `Gio.Application`: get_dbus_object_path, get_is_remote, run
 - `Gio.ListStore`: __construct
+- `Gio.MenuModel`: get_item_attribute_value, get_item_link
 - `Gio.SimpleAction`: set_state
 - `Gio.Task`: propagate_boolean, propagate_int, return_boolean, return_error, return_int
 - `Graphene.Rect`: inset, normalize, offset
@@ -722,6 +724,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.MenuButton`: set_create_popup_func
 - `Gtk.Popover`: get_pointing_to, popup
 - `Gtk.Scale`: set_format_value_func
+- `Gtk.SelectionModel`: selection_changed
 - `Gtk.Text`: grab_focus_without_selecting
 - `Gtk.TextBuffer`: insert, insert_at_cursor, insert_interactive, insert_interactive_at_cursor, insert_markup, set_text
 - `Gtk.TextIter`: set_line_index, set_line_offset

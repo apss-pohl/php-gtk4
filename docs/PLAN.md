@@ -66,7 +66,7 @@ GTK4 / GLib C API
   adopted; a `GtkRoot` implementor (`GtkWindow` and subclasses) is *not* ours — GTK's toplevel
   list holds the initial reference — so its constructor uses `attach()`; anything else is a
   generator error that goes to the `overrides/` directory under `gen/`. `attach_new()` enforces
-  the root case at runtime (`g_critical` + `attach()` semantics). **Identity**: a qdata
+  the root case at runtime (an `E_WARNING` + `attach()` semantics). **Identity**: a qdata
   back-pointer makes `wrap()` return the existing `zend_object` (`ZVAL_OBJ_COPY`), so `===` holds and
   subclass state survives round trips; the toggle ref guarantees the object cannot be finalized
   while a handle exists, so `obj` is only `nullptr` before `attach()`.
@@ -114,7 +114,7 @@ GTK4 / GLib C API
   while one is pending. Every trampoline ends with `report_pending_exception(origin)`: take
   `EG(exception)`, `zend_clear_exception()`, call the handler installed via
   `Gtk::set_exception_handler(callable(\Throwable, string $origin))` with the **real object**
-  (class, file, line, trace intact); if none or if it throws itself, `g_critical()`. The emitting
+  (class, file, line, trace intact); if none or if it throws itself, an `E_WARNING`. The emitting
   GTK call continues. Handler is request-scoped (released in RSHUTDOWN).
 - `Gtk4\ExceptionMode::Rethrow` (`Gtk::set_exception_mode()`): the handler is still called, then
   the Throwable is handed back to the engine (`zend_throw_exception_object`) and every running

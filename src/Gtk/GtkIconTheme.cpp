@@ -171,6 +171,7 @@ ZEND_METHOD(Gtk4_GtkIconTheme, lookup_icon) {
   }
   if (!phpgtk::check_range<int>(size, 3)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(scale, 4)) RETURN_THROWS();
+  if (!phpgtk::check_domain(scale, 1, ZEND_LONG_MAX, 4)) RETURN_THROWS();
   gint direction_v = 0;
   if (!enum_from_php(direction, GTK_TYPE_TEXT_DIRECTION, &direction_v)) RETURN_THROWS();
   if (!phpgtk::check_flags(GTK_TYPE_ICON_LOOKUP_FLAGS, flags, 6)) RETURN_THROWS();

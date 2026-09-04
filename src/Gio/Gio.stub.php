@@ -104,39 +104,84 @@ interface GActionGroup
     /** Emits the #GActionGroup::action-state-changed signal on $action_group. */
     public function action_state_changed(string $action_name, mixed $state = null): void;
 
-    /** Request for the state of the named action within $action_group to be changed to $value. */
-    public function change_action_state(string $action_name, mixed $value = null): void;
-
-    /** Checks if the named action within $action_group is currently enabled. */
-    public function get_action_enabled(string $action_name): bool;
-
-    /**
-     * Queries the type of the parameter that must be given when activating the named action within
-     * $action_group.
-     */
-    public function get_action_parameter_type(string $action_name): ?string;
-
-    /** Queries the current state of the named action within $action_group. */
-    public function get_action_state(string $action_name): mixed;
-
-    /**
-     * Requests a hint about the valid range of values for the state of the named action within
-     * $action_group.
-     */
-    public function get_action_state_hint(string $action_name): mixed;
-
-    /** Queries the type of the state of the named action within $action_group. */
-    public function get_action_state_type(string $action_name): ?string;
-
-    /** Checks if the named action exists within $action_group. */
-    public function has_action(string $action_name): bool;
-
     /**
      * Activate an action by name. $parameter is converted to the action's declared parameter type
      * (ValueError when the action is unknown or a required parameter is missing, TypeError when the
      * value does not fit the type).
      */
     public function activate_action(string $action_name, mixed $parameter = null): void;
+
+    /**
+     * Request for the state of the named action within $action_group to be changed to $value.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before
+     * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+     * "ask me later", so this refuses with a `LogicException` instead. Every other action
+     * group answers at any time.
+     */
+    public function change_action_state(string $action_name, mixed $value = null): void;
+
+    /**
+     * Checks if the named action within $action_group is currently enabled.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before
+     * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+     * "ask me later", so this refuses with a `LogicException` instead. Every other action
+     * group answers at any time.
+     */
+    public function get_action_enabled(string $action_name): bool;
+
+    /**
+     * Queries the type of the parameter that must be given when activating the named action within
+     * $action_group.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before
+     * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+     * "ask me later", so this refuses with a `LogicException` instead. Every other action
+     * group answers at any time.
+     */
+    public function get_action_parameter_type(string $action_name): ?string;
+
+    /**
+     * Queries the current state of the named action within $action_group.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before
+     * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+     * "ask me later", so this refuses with a `LogicException` instead. Every other action
+     * group answers at any time.
+     */
+    public function get_action_state(string $action_name): mixed;
+
+    /**
+     * Requests a hint about the valid range of values for the state of the named action within
+     * $action_group.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before
+     * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+     * "ask me later", so this refuses with a `LogicException` instead. Every other action
+     * group answers at any time.
+     */
+    public function get_action_state_hint(string $action_name): mixed;
+
+    /**
+     * Queries the type of the state of the named action within $action_group.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before
+     * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+     * "ask me later", so this refuses with a `LogicException` instead. Every other action
+     * group answers at any time.
+     */
+    public function get_action_state_type(string $action_name): ?string;
+
+    /**
+     * Checks if the named action exists within $action_group.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before
+     * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+     * "ask me later", so this refuses with a `LogicException` instead. Every other action
+     * group answers at any time.
+     */
+    public function has_action(string $action_name): bool;
 
     /**
      * The names of the actions in this group.
@@ -815,15 +860,6 @@ class GMenuModel extends GObject
     /** GMenuModel is abstract in GTK: instances come from GTK, never from `new`. */
     private function __construct() {}
 
-    /**
-     * Queries the item at position $item_index in $model for the attribute specified by
-     * $attribute.
-     */
-    public function get_item_attribute_value(int $item_index, string $attribute, ?string $expected_type): mixed {}
-
-    /** Queries the item at position $item_index in $model for the link specified by $link. */
-    public function get_item_link(int $item_index, string $link): ?GMenuModel {}
-
     /** Query the number of items in $model. */
     public function get_n_items(): int {}
 
@@ -832,6 +868,22 @@ class GMenuModel extends GObject
 
     /** Requests emission of the #GMenuModel::items-changed signal on $model. */
     public function items_changed(int $position, int $removed, int $added): void {}
+
+    /**
+     * Queries the item at position $item_index in $model for the attribute specified by $attribute.
+     *
+     * Generated but for the index check: GLib reads the item array unguarded, so an index outside
+     * the model ends the process instead of raising. See the prelude.
+     */
+    public function get_item_attribute_value(int $item_index, string $attribute, ?string $expected_type): mixed {}
+
+    /**
+     * Queries the item at position $item_index in $model for the link specified by $link.
+     *
+     * Generated but for the index check: GLib reads the item array unguarded, so an index outside
+     * the model ends the process instead of raising. See the prelude.
+     */
+    public function get_item_link(int $item_index, string $link): ?GMenuModel {}
 
     /**
      * Native `get_item_link` (MenuModelClass.get_item_link): the GTK implementation below any PHP

@@ -53,7 +53,9 @@ ZEND_METHOD(Gtk4_GtkGrid, attach) {
   if (!phpgtk::check_range<int>(column, 2)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(row, 3)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(width, 4)) RETURN_THROWS();
+  if (!phpgtk::check_domain(width, 1, ZEND_LONG_MAX, 4)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(height, 5)) RETURN_THROWS();
+  if (!phpgtk::check_domain(height, 1, ZEND_LONG_MAX, 5)) RETURN_THROWS();
   gtk_grid_attach(self, GTK_WIDGET(child_o), static_cast<int>(column), static_cast<int>(row),
                   static_cast<int>(width), static_cast<int>(height));
 }

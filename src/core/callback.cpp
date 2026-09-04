@@ -2,6 +2,7 @@
 
 #include "error.h"
 #include "globals.h"
+#include "diagnostics.h"
 
 #include <vector>
 
@@ -59,7 +60,7 @@ bool callback_invoke(Callback *cb, uint32_t argc, zval *args, zval *retval) {
   zend_fcall_info fci;
   zend_fcall_info_cache fcc;
   if (zend_fcall_info_init(&cb->callable, 0, &fci, &fcc, nullptr, nullptr) != SUCCESS) {
-    g_critical("php-gtk4: callback installed by %s is no longer callable", cb->origin);
+    diagnostic("php-gtk4: callback installed by %s is no longer callable", cb->origin);
     return false;
   }
   fci.retval = retval;

@@ -435,6 +435,8 @@ ZEND_METHOD(Gtk4_GtkWidget, get_first_child) {
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
   GtkWidget *phpgtk_ret = gtk_widget_get_first_child(self);
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  object_hold_owner(return_value, ZEND_THIS);  // a composite widget hands out private children that
+                                               // measure through its own struct
 }
 
 /**
@@ -537,6 +539,8 @@ ZEND_METHOD(Gtk4_GtkWidget, get_last_child) {
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
   GtkWidget *phpgtk_ret = gtk_widget_get_last_child(self);
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  object_hold_owner(return_value, ZEND_THIS);  // a composite widget hands out private children that
+                                               // measure through its own struct
 }
 
 /**
@@ -3121,7 +3125,7 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_system_setting_changed) {
   if (klass->system_setting_changed == nullptr) {
     return;
   }
-  if (!phpgtk::check_flags(GTK_TYPE_SYSTEM_SETTING, settings, 1)) RETURN_THROWS();
+  if (!phpgtk::check_enum_member(GTK_TYPE_SYSTEM_SETTING, settings, 1)) RETURN_THROWS();
   klass->system_setting_changed(self, static_cast<GtkSystemSetting>(settings));
 }
 

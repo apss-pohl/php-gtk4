@@ -3,6 +3,7 @@
 #include <array>
 
 #include "globals.h"
+#include "diagnostics.h"
 #include "mainloop.h"
 
 namespace phpgtk {
@@ -61,7 +62,7 @@ namespace {
 void park_exception(zval *exception, const char *origin) {
   if (Z_ISUNDEF(GTK4_G(parked_exception))) {
     ZVAL_COPY_VALUE(&GTK4_G(parked_exception), exception);
-    g_warning(
+    diagnostic(
         "php-gtk4: %s thrown in '%s' inside a nested main loop (depth %d); rethrow is "
         "deferred until control returns to PHP",
         ZSTR_VAL(Z_OBJCE_P(exception)->name), origin, g_main_depth());
@@ -83,12 +84,12 @@ bool rethrow_parked_exception() {
 
 namespace {
 
-// Fallback when no handler is installed (or it failed): g_critical() with class + message.
+// Fallback when no handler is installed (or it failed): a PHP warning with class + message.
 void log_uncaught(zval *exception, const char *origin) {
   zval rv;
   zval *msg = zend_read_property_ex(Z_OBJCE_P(exception), Z_OBJ_P(exception),
                                     ZSTR_KNOWN(ZEND_STR_MESSAGE), /* silent */ true, &rv);
-  g_critical("php-gtk4: uncaught %s in '%s' handler: %s", ZSTR_VAL(Z_OBJCE_P(exception)->name),
+  diagnostic("php-gtk4: uncaught %s in '%s' handler: %s", ZSTR_VAL(Z_OBJCE_P(exception)->name),
              origin, msg != nullptr && Z_TYPE_P(msg) == IS_STRING ? Z_STRVAL_P(msg) : "");
 }
 
@@ -111,7 +112,7 @@ bool call_handler(zval *exception, const char *origin) {
     zval_ptr_dtor(&retval);
     if (EG(exception) != nullptr) {
       // The handler itself failed; it must not escape into GLib either.
-      g_critical(
+      diagnostic(
           "php-gtk4: Gtk::set_exception_handler() callback threw %s while reporting from '%s'",
           ZSTR_VAL(EG(exception)->ce->name), origin);
       zend_clear_exception();

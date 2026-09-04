@@ -2,6 +2,7 @@
 
 #include "error.h"
 #include "globals.h"
+#include "diagnostics.h"
 #include "object.h"
 
 #include <atomic>
@@ -122,7 +123,7 @@ void warn_about_unbound_vfuncs(zend_class_entry *ce, GType type) {
       }
     }
     if (!bound) {
-      g_warning(
+      diagnostic(
           "php-gtk4: %s::%s() overrides no slot php-gtk4 binds on %s - it will never be "
           "called",
           ZSTR_VAL(ce->name), ZSTR_VAL(name), g_type_name(type));
@@ -139,7 +140,7 @@ void class_init(gpointer klass, gpointer class_data) {
       zend_lookup_class_ex(zn, nullptr, ZEND_FETCH_CLASS_NO_AUTOLOAD | ZEND_FETCH_CLASS_SILENT);
   zend_string_release(zn);
   if (ce == nullptr) {
-    g_warning("php-gtk4: class_init of %s: PHP class not found in this request", name->c_str());
+    diagnostic("php-gtk4: class_init of %s: PHP class not found in this request", name->c_str());
     return;
   }
   const GType type = G_TYPE_FROM_CLASS(klass);
@@ -296,7 +297,7 @@ GObject *subtype_new(zval *self, const char *first_property, ...) {
   }
   if (handle->obj != obj) {
     // instance_init always runs for our type; anything else is a bug, not a user error.
-    g_critical("php-gtk4: %s: instance_init did not bind the handle", ZSTR_VAL(ce->name));
+    diagnostic("php-gtk4: %s: instance_init did not bind the handle", ZSTR_VAL(ce->name));
     object_prebind(handle, obj);
   }
   return obj;

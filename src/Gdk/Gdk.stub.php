@@ -35,17 +35,14 @@ class GdkClipboard extends GObject
     /** Returns if the clipboard is local. */
     public function is_local(): bool {}
 
-    /** Asynchronously requests an input stream to read the $clipboard's contents from. */
-    public function read_async(array $mime_types, int $io_priority, ?GCancellable $cancellable, ?callable $callback): void {}
-
     /** Asynchronously request the $clipboard contents converted to a string. */
-    public function read_text_async(?GCancellable $cancellable, ?callable $callback): void {}
+    public function read_text_async(?GCancellable $cancellable, callable $callback): void {}
 
     /** Finishes an asynchronous clipboard read. */
     public function read_text_finish(GAsyncResult $result): ?string {}
 
     /** Asynchronously request the $clipboard contents converted to a `GdkPixbuf`. */
-    public function read_texture_async(?GCancellable $cancellable, ?callable $callback): void {}
+    public function read_texture_async(?GCancellable $cancellable, callable $callback): void {}
 
     /** Finishes an asynchronous clipboard read. */
     public function read_texture_finish(GAsyncResult $result): ?GdkTexture {}
@@ -60,10 +57,19 @@ class GdkClipboard extends GObject
     public function set_texture(GdkTexture $texture): void {}
 
     /** Asynchronously instructs the $clipboard to store its contents remotely. */
-    public function store_async(int $io_priority, ?GCancellable $cancellable, ?callable $callback): void {}
+    public function store_async(int $io_priority, ?GCancellable $cancellable, callable $callback): void {}
 
     /** Finishes an asynchronous clipboard store. */
     public function store_finish(GAsyncResult $result): bool {}
+
+    /**
+     * Asynchronously requests an input stream to read the $clipboard's contents from.
+     *
+     * Generated but for the empty-list check: GDK asserts `mime_types[0] != NULL` and never calls
+     * the callback, so an empty list - what an unfiltered `array_filter()` leaves behind - is a read
+     * that silently never finishes.
+     */
+    public function read_async(array $mime_types, int $io_priority, ?GCancellable $cancellable, callable $callback): void {}
 
     /**
      * Put $value on the clipboard, typed as $type (inferred from $value when omitted).

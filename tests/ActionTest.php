@@ -168,6 +168,45 @@ final class ActionTest extends GtkTestCase
         self::assertStringContainsString("no action 'quit'", $error);
     }
 
+    /**
+     * Every GActionGroup query on an unregistered GApplication refuses instead of letting GLib
+     * CRITICAL and answer a default that reads like "no such action" (gen/overrides/
+     * Gio.ActionGroup.cpp). `add/remove/lookup_action` are GActionMap and work at any time.
+     *
+     * @return iterable<string, array{string, list<mixed>}>
+     */
+    public static function unregisteredQueries(): iterable
+    {
+        yield 'has_action' => ['has_action', ['quit']];
+        yield 'get_action_enabled' => ['get_action_enabled', ['quit']];
+        yield 'get_action_state' => ['get_action_state', ['quit']];
+        yield 'get_action_parameter_type' => ['get_action_parameter_type', ['quit']];
+        yield 'get_action_state_hint' => ['get_action_state_hint', ['quit']];
+        yield 'get_action_state_type' => ['get_action_state_type', ['quit']];
+        yield 'list_actions' => ['list_actions', []];
+        yield 'change_action_state' => ['change_action_state', ['quit', 1]];
+    }
+
+    /**
+     * @param list<mixed> $args
+     */
+    #[DataProvider('unregisteredQueries')]
+    public function testActionQueriesBeforeRegistrationRefuse(string $method, array $args): void
+    {
+        $app = self::app();
+        $app->add_action(new GSimpleAction('quit'));
+        // The GActionMap side answers at any time, so the action really is there.
+        self::assertSame('quit', $app->lookup_action('quit')?->get_name());
+
+        try {
+            $app->{$method}(...$args);
+            self::fail("$method() answered instead of refusing before registration");
+        } catch (\LogicException $e) {
+            self::assertStringContainsString('not registered yet', $e->getMessage());
+            self::assertStringContainsString($method, $e->getMessage());
+        }
+    }
+
     public function testWidgetActivateActionReachesTheApplication(): void
     {
         $app = self::app();

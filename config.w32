@@ -17,7 +17,6 @@
 // No ';' inside the ARG_* calls: phpize.js lifts them out with /ARG_(ENABLE|WITH)\([^;]+\);/
 // and a semicolon in the help text cuts the call in half (JScript "Unterminated string constant").
 ARG_WITH("gtk4", "Enable the GTK 4 binding - value: gvsbuild root (or set GTK4_ROOT)", "no");
-ARG_ENABLE("gtk4-testing", "Compile Gtk::testing_* hooks into gtk4 (test builds only, never ship)", "no");
 ARG_ENABLE("gtk4-webkit", "Enable WebKitGTK 6 support in gtk4 (not available on Windows)", "no");
 
 if (PHP_GTK4 != "no") {
@@ -159,12 +158,6 @@ if (PHP_GTK4 != "no") {
 	var build_date = d.getUTCFullYear() + "-" + pad(d.getUTCMonth() + 1) + "-" + pad(d.getUTCDate()) + "T" +
 		pad(d.getUTCHours()) + ":" + pad(d.getUTCMinutes()) + ":" + pad(d.getUTCSeconds()) + "Z";
 	var features = "webkit=no";
-	if (PHP_GTK4_TESTING != "no") {
-		AC_DEFINE("PHPGTK_TESTING", 1, "Test-only hooks compiled in");
-		features += " testing=yes";
-	} else {
-		features += " testing=no";
-	}
 	AC_DEFINE("PHPGTK_BUILD_INFO", "built " + build_date + ", git " + git_hash, "Build info", true);
 	AC_DEFINE("PHPGTK_BUILD_FEATURES", features, "Compiled-in optional features", true);
 

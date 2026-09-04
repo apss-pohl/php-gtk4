@@ -14,6 +14,28 @@ using namespace phpgtk;
 // value and a type name (core/marshal, gtype_from_php_name).
 #include "core/marshal.h"
 
+namespace {
+
+// AsyncReadyCallback trampoline for GdkClipboard::read_async(): wraps the C arguments, invokes the
+// PHP callable once and releases it (async scope). It lives here rather than beside the method
+// because read_async() is an override (Gdk.Clipboard.read_async.cpp) and the generator emits a
+// trampoline only for the methods it writes itself.
+void cb_read_async_callback(GObject *source_object, GAsyncResult *res, gpointer data) {
+  auto *cb = static_cast<Callback *>(data);
+  std::array<zval, 2> args{};
+  zval *argv = args.data();
+  wrap(source_object != nullptr ? G_OBJECT(source_object) : nullptr, &argv[0]);
+  wrap(res != nullptr ? G_OBJECT(res) : nullptr, &argv[1]);
+  zval ret;
+  callback_invoke(cb, 2, argv, &ret);
+  if (!Z_ISUNDEF(ret)) zval_ptr_dtor(&ret);
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  callback_free(cb);
+  callback_drain();
+}
+
+}  // namespace
+
 /**
  * Gtk4\GdkClipboard::__construct()
  *
@@ -72,62 +94,6 @@ ZEND_METHOD(Gtk4_GdkClipboard, is_local) {
 }
 
 namespace {
-// AsyncReadyCallback trampoline for GdkClipboard::read_async(): wraps the C arguments, invokes the
-// PHP callable once and releases it (async scope).
-void cb_read_async_callback(GObject *source_object, GAsyncResult *res, gpointer data) {
-  auto *cb = static_cast<Callback *>(data);
-  std::array<zval, 2> args{};
-  zval *argv = args.data();
-  wrap(source_object != nullptr ? G_OBJECT(source_object) : nullptr, &argv[0]);
-  wrap(res != nullptr ? G_OBJECT(res) : nullptr, &argv[1]);
-  zval ret;
-  callback_invoke(cb, 2, argv, &ret);
-  if (!Z_ISUNDEF(ret)) zval_ptr_dtor(&ret);
-  for (zval &arg : args) zval_ptr_dtor(&arg);
-  callback_free(cb);
-  callback_drain();
-}
-}  // namespace
-
-/**
- * Gtk4\GdkClipboard::read_async(array $mime_types, int $io_priority, ?GCancellable $cancellable,
- * ?callable $callback): void
- *
- * Asynchronously requests an input stream to read the $clipboard's contents from.
- */
-ZEND_METHOD(Gtk4_GdkClipboard, read_async) {
-  zval *mime_types;
-  zend_long io_priority;
-  zval *cancellable = nullptr;
-  zend_fcall_info fci_callback = empty_fcall_info;
-  zend_fcall_info_cache fcc_callback = empty_fcall_info_cache;
-  ZEND_PARSE_PARAMETERS_START(4, 4)
-  Z_PARAM_ARRAY(mime_types)
-  Z_PARAM_LONG(io_priority)
-  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
-  Z_PARAM_FUNC_OR_NULL(fci_callback, fcc_callback)
-  ZEND_PARSE_PARAMETERS_END();
-  GdkClipboard *self = PHPGTK_SELF(GdkClipboard, GDK_TYPE_CLIPBOARD);
-  char **mime_types_v = strv_from_php(mime_types);
-  if (mime_types_v == nullptr) RETURN_THROWS();
-  if (!phpgtk::check_range<int>(io_priority, 2)) RETURN_THROWS();
-  GObject *cancellable_o = nullptr;
-  if (cancellable != nullptr) {
-    cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
-    if (cancellable_o == nullptr) RETURN_THROWS();
-  }
-  Callback *cb_callback =
-      ZEND_FCI_INITIALIZED(fci_callback)
-          ? callback_new(&fci_callback.function_name, "GdkClipboard::read_async")
-          : nullptr;
-  gdk_clipboard_read_async(self, const_cast<const char **>(mime_types_v),
-                           static_cast<int>(io_priority),
-                           cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
-                           cb_callback != nullptr ? cb_read_async_callback : nullptr, cb_callback);
-  g_strfreev(mime_types_v);
-}
-
-namespace {
 // AsyncReadyCallback trampoline for GdkClipboard::read_text_async(): wraps the C arguments, invokes
 // the PHP callable once and releases it (async scope).
 void cb_read_text_async_callback(GObject *source_object, GAsyncResult *res, gpointer data) {
@@ -146,7 +112,7 @@ void cb_read_text_async_callback(GObject *source_object, GAsyncResult *res, gpoi
 }  // namespace
 
 /**
- * Gtk4\GdkClipboard::read_text_async(?GCancellable $cancellable, ?callable $callback): void
+ * Gtk4\GdkClipboard::read_text_async(?GCancellable $cancellable, callable $callback): void
  *
  * Asynchronously request the $clipboard contents converted to a string.
  */
@@ -156,7 +122,7 @@ ZEND_METHOD(Gtk4_GdkClipboard, read_text_async) {
   zend_fcall_info_cache fcc_callback = empty_fcall_info_cache;
   ZEND_PARSE_PARAMETERS_START(2, 2)
   Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
-  Z_PARAM_FUNC_OR_NULL(fci_callback, fcc_callback)
+  Z_PARAM_FUNC(fci_callback, fcc_callback)
   ZEND_PARSE_PARAMETERS_END();
   GdkClipboard *self = PHPGTK_SELF(GdkClipboard, GDK_TYPE_CLIPBOARD);
   GObject *cancellable_o = nullptr;
@@ -165,12 +131,10 @@ ZEND_METHOD(Gtk4_GdkClipboard, read_text_async) {
     if (cancellable_o == nullptr) RETURN_THROWS();
   }
   Callback *cb_callback =
-      ZEND_FCI_INITIALIZED(fci_callback)
-          ? callback_new(&fci_callback.function_name, "GdkClipboard::read_text_async")
-          : nullptr;
-  gdk_clipboard_read_text_async(
-      self, cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
-      cb_callback != nullptr ? cb_read_text_async_callback : nullptr, cb_callback);
+      callback_new(&fci_callback.function_name, "GdkClipboard::read_text_async");
+  gdk_clipboard_read_text_async(self,
+                                cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
+                                cb_read_text_async_callback, cb_callback);
 }
 
 /**
@@ -216,7 +180,7 @@ void cb_read_texture_async_callback(GObject *source_object, GAsyncResult *res, g
 }  // namespace
 
 /**
- * Gtk4\GdkClipboard::read_texture_async(?GCancellable $cancellable, ?callable $callback): void
+ * Gtk4\GdkClipboard::read_texture_async(?GCancellable $cancellable, callable $callback): void
  *
  * Asynchronously request the $clipboard contents converted to a `GdkPixbuf`.
  */
@@ -226,7 +190,7 @@ ZEND_METHOD(Gtk4_GdkClipboard, read_texture_async) {
   zend_fcall_info_cache fcc_callback = empty_fcall_info_cache;
   ZEND_PARSE_PARAMETERS_START(2, 2)
   Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
-  Z_PARAM_FUNC_OR_NULL(fci_callback, fcc_callback)
+  Z_PARAM_FUNC(fci_callback, fcc_callback)
   ZEND_PARSE_PARAMETERS_END();
   GdkClipboard *self = PHPGTK_SELF(GdkClipboard, GDK_TYPE_CLIPBOARD);
   GObject *cancellable_o = nullptr;
@@ -235,12 +199,10 @@ ZEND_METHOD(Gtk4_GdkClipboard, read_texture_async) {
     if (cancellable_o == nullptr) RETURN_THROWS();
   }
   Callback *cb_callback =
-      ZEND_FCI_INITIALIZED(fci_callback)
-          ? callback_new(&fci_callback.function_name, "GdkClipboard::read_texture_async")
-          : nullptr;
+      callback_new(&fci_callback.function_name, "GdkClipboard::read_texture_async");
   gdk_clipboard_read_texture_async(
       self, cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
-      cb_callback != nullptr ? cb_read_texture_async_callback : nullptr, cb_callback);
+      cb_read_texture_async_callback, cb_callback);
 }
 
 /**
@@ -337,8 +299,8 @@ void cb_store_async_callback(GObject *source_object, GAsyncResult *res, gpointer
 }  // namespace
 
 /**
- * Gtk4\GdkClipboard::store_async(int $io_priority, ?GCancellable $cancellable, ?callable
- * $callback): void
+ * Gtk4\GdkClipboard::store_async(int $io_priority, ?GCancellable $cancellable, callable $callback):
+ * void
  *
  * Asynchronously instructs the $clipboard to store its contents remotely.
  */
@@ -350,7 +312,7 @@ ZEND_METHOD(Gtk4_GdkClipboard, store_async) {
   ZEND_PARSE_PARAMETERS_START(3, 3)
   Z_PARAM_LONG(io_priority)
   Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
-  Z_PARAM_FUNC_OR_NULL(fci_callback, fcc_callback)
+  Z_PARAM_FUNC(fci_callback, fcc_callback)
   ZEND_PARSE_PARAMETERS_END();
   GdkClipboard *self = PHPGTK_SELF(GdkClipboard, GDK_TYPE_CLIPBOARD);
   if (!phpgtk::check_range<int>(io_priority, 1)) RETURN_THROWS();
@@ -359,14 +321,10 @@ ZEND_METHOD(Gtk4_GdkClipboard, store_async) {
     cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
     if (cancellable_o == nullptr) RETURN_THROWS();
   }
-  Callback *cb_callback =
-      ZEND_FCI_INITIALIZED(fci_callback)
-          ? callback_new(&fci_callback.function_name, "GdkClipboard::store_async")
-          : nullptr;
+  Callback *cb_callback = callback_new(&fci_callback.function_name, "GdkClipboard::store_async");
   gdk_clipboard_store_async(self, static_cast<int>(io_priority),
                             cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
-                            cb_callback != nullptr ? cb_store_async_callback : nullptr,
-                            cb_callback);
+                            cb_store_async_callback, cb_callback);
 }
 
 /**
@@ -389,6 +347,48 @@ ZEND_METHOD(Gtk4_GdkClipboard, store_finish) {
     RETURN_THROWS();
   }
   RETURN_BOOL(ok);
+}
+
+/**
+ * public function read_async(array $mime_types, int $io_priority, ?GCancellable $cancellable,
+ * callable $callback): void Asynchronously requests an input stream to read the $clipboard's
+ * contents from.
+ *
+ * Generated but for the empty-list check: GDK asserts `mime_types[0] != NULL` and never calls
+ * the callback, so an empty list - what an unfiltered `array_filter()` leaves behind - is a read
+ * that silently never finishes.
+ */
+ZEND_METHOD(Gtk4_GdkClipboard, read_async) {
+  zval *mime_types;
+  zend_long io_priority;
+  zval *cancellable = nullptr;
+  zend_fcall_info fci_callback = empty_fcall_info;
+  zend_fcall_info_cache fcc_callback = empty_fcall_info_cache;
+  ZEND_PARSE_PARAMETERS_START(4, 4)
+  Z_PARAM_ARRAY(mime_types)
+  Z_PARAM_LONG(io_priority)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
+  Z_PARAM_FUNC(fci_callback, fcc_callback)
+  ZEND_PARSE_PARAMETERS_END();
+  GdkClipboard *self = PHPGTK_SELF(GdkClipboard, GDK_TYPE_CLIPBOARD);
+  if (zend_hash_num_elements(Z_ARRVAL_P(mime_types)) == 0) {
+    zend_argument_value_error(1, "must name at least one mime type");
+    RETURN_THROWS();
+  }
+  char **mime_types_v = strv_from_php(mime_types);
+  if (mime_types_v == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(io_priority, 2)) RETURN_THROWS();
+  GObject *cancellable_o = nullptr;
+  if (cancellable != nullptr) {
+    cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
+    if (cancellable_o == nullptr) RETURN_THROWS();
+  }
+  Callback *cb_callback = callback_new(&fci_callback.function_name, "GdkClipboard::read_async");
+  gdk_clipboard_read_async(self, const_cast<const char **>(mime_types_v),
+                           static_cast<int>(io_priority),
+                           cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
+                           cb_read_async_callback, cb_callback);
+  g_strfreev(mime_types_v);
 }
 
 /**

@@ -218,29 +218,27 @@ $loop->run();
 while (!$idleRan) {
     GLib::main_context_iteration(true);
 }
-// C-driven nested loop (test builds): a parked Throwable + a chained one, rethrown by run().
-if (str_contains((string) ini_get('gtk4.features'), 'testing=yes')) {
-    Gtk::set_exception_mode(ExceptionMode::Rethrow);
-    $nested = new GMainLoop();
-    GLib::idle_add(function (): bool {
-        GLib::timeout_add(0, fn() => throw new RuntimeException('nested 1'));
-        GLib::timeout_add(0, fn() => throw new RuntimeException('nested 2'));
-        usleep(2000);
-        Gtk::testing_iterate_nested(2);
-        return false;
-    });
-    try {
-        $nested->run();
-        fwrite(STDERR, "nested rethrow missing\n");
+// C-driven nested loop: a parked Throwable + a chained one, rethrown by run().
+Gtk::set_exception_mode(ExceptionMode::Rethrow);
+$nested = new GMainLoop();
+GLib::idle_add(function (): bool {
+    GLib::timeout_add(0, fn() => throw new RuntimeException('nested 1'));
+    GLib::timeout_add(0, fn() => throw new RuntimeException('nested 2'));
+    usleep(2000);
+    Gtk::testing_iterate_nested(2);
+    return false;
+});
+try {
+    $nested->run();
+    fwrite(STDERR, "nested rethrow missing\n");
+    exit(1);
+} catch (RuntimeException $e) {
+    if ($e->getMessage() !== 'nested 1' || $e->getPrevious()?->getMessage() !== 'nested 2') {
+        fwrite(STDERR, "nested chain wrong\n");
         exit(1);
-    } catch (RuntimeException $e) {
-        if ($e->getMessage() !== 'nested 1' || $e->getPrevious()?->getMessage() !== 'nested 2') {
-            fwrite(STDERR, "nested chain wrong\n");
-            exit(1);
-        }
     }
-    Gtk::set_exception_mode(ExceptionMode::Log);
 }
+Gtk::set_exception_mode(ExceptionMode::Log);
 $app = new GtkApplication(null, 1 << 5);
 $app->connect('activate', function (GtkApplication $a): void {
     $w = new GtkWindow();
@@ -252,9 +250,8 @@ $app->run();
 
 Gtk::set_exception_handler(null);
 // per round: two set_title() emissions (+ the throwing vfunc every third round), plus the idle
-// source (+ the two nested ones in test builds) (+ the two nested ones in test builds)
-$testing = str_contains((string) ini_get('gtk4.features'), 'testing=yes');
-$expected = 2 * $rounds + intdiv($rounds, 3) + 1 + ($testing ? 2 : 0);
+// source, plus the two nested ones
+$expected = 2 * $rounds + intdiv($rounds, 3) + 1 + 2;
 if ($reported !== $expected) {
     fwrite(STDERR, "expected $expected reported exceptions, got $reported\n");
     exit(1);

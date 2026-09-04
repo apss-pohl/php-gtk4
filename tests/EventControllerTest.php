@@ -114,6 +114,11 @@ final class EventControllerTest extends GtkTestCase
         $key->connect('key-pressed', $onKey);
         $released = $this->latch();
         $key->connect('key-released', $released);
+        self::assertNull(
+            $key->get_widget(),
+            'a controller that has not been added to a widget has none - GIR says the return is '
+            . 'non-null, GTK returns NULL, so the stub declares ?GtkWidget (gen NULLABLE_RETURNS)',
+        );
         $this->win->add_controller($key);
         self::assertSame($this->win, $key->get_widget());
         self::assertNull(

@@ -97,7 +97,7 @@ ZEND_METHOD(Gtk4_GtkEventController, get_propagation_phase) {
 }
 
 /**
- * Gtk4\GtkEventController::get_widget(): GtkWidget
+ * Gtk4\GtkEventController::get_widget(): ?GtkWidget
  *
  * Returns the `GtkWidget` this controller relates to.
  */

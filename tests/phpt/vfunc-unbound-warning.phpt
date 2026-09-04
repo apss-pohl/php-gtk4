@@ -36,6 +36,7 @@ new Deeper(GtkOrientation::Vertical, 0);
 echo "constructed\n";
 ?>
 --EXPECTF--
-%aphp-gtk4: Overrides::vfunc_size_alocate() overrides no slot php-gtk4 binds on Php__Overrides - it will never be called
-%aphp-gtk4: Overrides::vfunc_no_such_gtk_slot() overrides no slot php-gtk4 binds on Php__Overrides - it will never be called
+Warning: php-gtk4: Overrides::vfunc_size_alocate() overrides no slot php-gtk4 binds on Php__Overrides - it will never be called in %s on line %d
+
+Warning: php-gtk4: Overrides::vfunc_no_such_gtk_slot() overrides no slot php-gtk4 binds on Php__Overrides - it will never be called in %s on line %d
 constructed

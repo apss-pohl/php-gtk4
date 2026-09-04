@@ -10,10 +10,14 @@ use Gtk4\Gtk;
 use Gtk4\GtkBox;
 use Gtk4\GtkBuilder;
 use Gtk4\GtkButton;
+use Gtk4\GtkLabel;
 use Gtk4\GtkOrientation;
+use Gtk4\GtkScale;
+use Gtk4\GtkStack;
 use Gtk4\GtkWidget;
 use Gtk4\GtkWindow;
 use PhpGtk4\Tests\Subclass\DestructCountingButton;
+use PhpGtk4\Tests\Subclass\DestructCountingStack;
 use PhpGtk4\Tests\Subclass\StatefulButton;
 
 /** src/core/wrap: object handles, identity, ownership. */
@@ -227,9 +231,6 @@ final class WrapTest extends GtkTestCase
     {
         // GTK 4's gtk_window_destroy() only drops GTK's reference (testHandleOutlivesGtkWindowDestroy);
         // disposal under a live handle comes from C owners, so it is driven from C here.
-        if (!str_contains((string) ini_get('gtk4.features'), 'testing=yes')) {
-            self::markTestSkipped('needs --enable-gtk4-testing (FEATURES testing=yes)');
-        }
         $b = new GtkButton();
         $other = $this->window();
         Gtk::testing_run_dispose($b);
@@ -250,5 +251,82 @@ final class WrapTest extends GtkTestCase
         $weak = \WeakReference::create($b);
         unset($b);
         self::assertNull($weak->get());
+    }
+
+    // ------------------------------------------------------------------ owner-holding handles
+
+    /**
+     * `gtk_stack_get_pages()` returns a model that keeps a bare pointer to the stack, and the
+     * stack keeps only a weak one back - so the model outlives its stack by construction and
+     * used to read freed memory (`get_n_items()` answered 497, and ASan called it a SEGV).
+     * `object_hold_owner()` makes the returned handle keep the stack's handle alive.
+     */
+    public function testModelHandedOutByAStackOutlivesTheStack(): void
+    {
+        $stack = new GtkStack();
+        $stack->add_child(new GtkLabel('one'));
+        $pages = $stack->get_pages();
+
+        unset($stack);
+        gc_collect_cycles();
+
+        self::assertSame(1, $pages->get_n_items());
+    }
+
+    /** The whole point is that the owner is *not* freed early - and is freed once nothing holds it. */
+    public function testTheHeldOwnerIsReleasedWithTheHandleThatHeldIt(): void
+    {
+        DestructCountingStack::$destructed = 0;
+        $stack = new DestructCountingStack();
+        $pages = $stack->get_pages();
+
+        unset($stack);
+        gc_collect_cycles();
+        self::assertSame(0, DestructCountingStack::$destructed, 'the model still holds the stack');
+
+        unset($pages);
+        gc_collect_cycles();
+        self::assertSame(1, DestructCountingStack::$destructed, 'and lets go with the last handle');
+    }
+
+    /**
+     * A composite widget's `get_first_child()` hands out a private child that measures through
+     * its parent's struct; measuring it after the parent was freed was a SEGV.
+     */
+    public function testInternalChildOfACompositeWidgetOutlivesIt(): void
+    {
+        $scale = new GtkScale(GtkOrientation::Horizontal);
+        $child = $scale->get_first_child();
+        self::assertInstanceOf(GtkWidget::class, $child);
+
+        unset($scale);
+        gc_collect_cycles();
+
+        self::assertCount(2, $child->get_preferred_size());
+    }
+
+    /** The same C object is one handle, so asking twice does not stack owners up. */
+    public function testAskingTwiceAnswersTheSameHandle(): void
+    {
+        $stack = new GtkStack();
+
+        self::assertSame($stack->get_pages(), $stack->get_pages());
+    }
+
+    /**
+     * The owner reference lives between the handles, not between the GObjects, so a subclass
+     * that stores what it got from itself is an ordinary PHP cycle the collector can break -
+     * a GObject-level back-reference would have been an uncollectable leak.
+     */
+    public function testAHandleThatStoresWhatItGotFromItselfIsCollectable(): void
+    {
+        DestructCountingStack::$destructed = 0;
+        $stack = new DestructCountingStack();
+        $stack->kept = $stack->get_pages();   // stack -> pages -> stack
+
+        unset($stack);
+        gc_collect_cycles();
+
+        self::assertSame(1, DestructCountingStack::$destructed);
     }
 }

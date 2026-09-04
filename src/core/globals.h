@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "error.h"
+#include "diagnostics.h"
 
 namespace phpgtk {
 
@@ -37,6 +38,14 @@ struct TrackedNotified {
   GObject *owner;
   void (*clear)(GObject *);
 };
+// diagnostics.cpp: a GLib/php-gtk4 message waiting for a VM safe point, with the PHP
+// file/line that was executing when it arrived.
+struct Diagnostic {
+  int type = E_WARNING;  // or E_ERROR
+  std::string message;
+  std::string filename;  // empty when no PHP frame was executing
+  uint32_t lineno = 0;
+};
 
 }  // namespace phpgtk
 
@@ -55,10 +64,11 @@ std::unordered_map<gpointer, phpgtk::TrackedNotified> notified;
 std::unordered_set<struct _PhpValue *> phpvalues;  // live PhpValue instances
 std::unordered_set<phpgtk::Object *> held;         // handles their GObject holds a ref on (toggle)
 std::unordered_map<gpointer, zend_object *> fundamental_handles;  // instance -> its live handle
-std::vector<std::string> captured_logs;  // Gtk::testing_capture_logs(): GLib CRITICAL/WARNING text
-bool capturing_logs;                     // whether the writer records instead of only printing
-bool shutting_down;                      // RSHUTDOWN: no new holds, Zend is going away
-phpgtk::Object *constructing;            // subtype.cpp: handle a g_object_new() is for
+std::vector<phpgtk::Diagnostic> diagnostics;  // recorded, waiting for a VM safe point
+phpgtk::DiagnosticsMode diagnostics_mode;     // gtk4.diagnostics
+bool reporting_diagnostic;                    // diagnostics_flush() re-entrancy guard
+bool shutting_down;                           // RSHUTDOWN: no new holds, Zend is going away
+phpgtk::Object *constructing;                 // subtype.cpp: handle a g_object_new() is for
 ZEND_END_MODULE_GLOBALS(gtk4)
 // NOLINTEND(modernize-use-using,cppcoreguidelines-pro-type-member-init,bugprone-reserved-identifier)
 

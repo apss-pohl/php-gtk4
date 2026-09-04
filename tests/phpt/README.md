@@ -11,7 +11,7 @@ harness compares the process's whole stdout **and stderr**:
 
 | category | why not PHPUnit |
 | --- | --- |
-| `g_critical` / GLib warning text | written to stderr by C, never visible to PHP (CLAUDE.md, `src/core/error.cpp`) |
+| a GLib `CRITICAL` under `gtk4.diagnostics=fatal` | it is an `E_ERROR`, so it ends the process - PHPUnit cannot survive one (`src/core/diagnostics.cpp`) |
 | uncaught fatals, exit codes | the throwable that escapes would kill the PHPUnit runner itself |
 | RSHUTDOWN teardown output | request shutdown happens after the last PHPUnit assertion can run |
 | `--ENV--` / `--INI--` dependent startup | `tests/bootstrap.php` fixes the environment before any test runs |
@@ -27,7 +27,7 @@ What is here, by the rule above:
 
 | test | the thing PHPUnit cannot reach |
 | ---- | ------------------------------ |
-| `error-log-signal`, `error-log-callback`, `error-log-async-callback`, `error-handler-throws` | the `g_critical` text, including which method an exception is blamed on |
+| `error-log-signal`, `error-log-callback`, `error-log-async-callback`, `error-handler-throws` | the uncaught-handler warning text, including which method an exception is blamed on |
 | `error-rethrow-fatal`, `error-rethrow-mainloop` | a Throwable that escapes, and the exit code it leaves |
 | `shutdown-teardown`, `shutdown-subtype`, `shutdown-io-watch` | what request shutdown does with closures, a live PHP subclass and an armed I/O watch |
 | `variant-recursion-guard` | two inputs that used to be a SIGSEGV |

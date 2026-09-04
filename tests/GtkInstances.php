@@ -1,0 +1,316 @@
+<?php
+
+declare(strict_types=1);
+
+namespace PhpGtk4\Tests;
+
+use ReflectionClass;
+
+/**
+ * One live instance per registered class, for the two generic sweeps that need a target to
+ * call methods on: {@see RobustnessTest} (hostile arguments) and {@see TypeDeclarationTest}
+ * (arg-less getters against their declared return type).
+ *
+ * Both used to build their own, and both skipped whatever they could not `new`: an abstract
+ * base, a handle GTK only ever hands out (`new` throws on it - CLAUDE.md, `core/fundamental`),
+ * a constructor with an argument the generic path cannot invent. That is the bulk of the
+ * suite's skips, and it skipped exactly the surface no hand-written test reaches either.
+ *
+ * A named branch here puts a whole class under both sweeps, so keep them cheap and keep them
+ * honest: build the handle the way an application would (`$display->get_clipboard()`,
+ * `$notebook->get_page($child)`), never by reaching around the binding.
+ *
+ * What stays unbuildable is listed in {@see UNREACHABLE}; the sweeps still skip those.
+ */
+final class GtkInstances
+{
+    /**
+     * Classes no test can produce an instance of, with the reason. Not used in code - it is
+     * the answer to "why is this still skipped", kept next to the factory that would hold the
+     * branch if one existed.
+     *
+     * @var array<string, string>
+     */
+    public const UNREACHABLE = [
+        // Real input events. GTK 4 has no public constructor for any of them (GDK 3's
+        // gdk_event_new() is gone), and X11 under Xvfb has no device to synthesise from.
+        \Gtk4\GdkEvent::class => 'only GDK creates events, from real input',
+        \Gtk4\GdkButtonEvent::class => 'only GDK creates events, from real input',
+        \Gtk4\GdkCrossingEvent::class => 'only GDK creates events, from real input',
+        \Gtk4\GdkFocusEvent::class => 'only GDK creates events, from real input',
+        \Gtk4\GdkGrabBrokenEvent::class => 'only GDK creates events, from real input',
+        \Gtk4\GdkKeyEvent::class => 'only GDK creates events, from real input',
+        \Gtk4\GdkPadEvent::class => 'only GDK creates events, from real input',
+        \Gtk4\GdkScrollEvent::class => 'only GDK creates events, from real input',
+        \Gtk4\GdkTouchEvent::class => 'only GDK creates events, from real input',
+        \Gtk4\GdkTouchpadEvent::class => 'only GDK creates events, from real input',
+        \Gtk4\GdkEventSequence::class => 'identity of a touch sequence, only ever seen in an event',
+        // A drag needs a real pointer grab; the icon needs the drag.
+        \Gtk4\GdkDrag::class => 'needs a pointer grab a headless X server cannot give',
+        \Gtk4\GdkDrop::class => 'needs a drag from another client',
+        \Gtk4\GtkDragIcon::class => 'GtkDragIcon::get_for_drag() needs a GdkDrag',
+        // wrap() only falls back to an interface class when *no* class up the GType chain is
+        // registered. Every widget descends from the registered GtkWidget, so the fallbacks
+        // for widget interfaces can never be reached - GtkEntry::get_delegate() answers with
+        // the bound GtkText, not with GtkEditableObject. They exist for the non-widget case.
+        \Gtk4\GtkEditableObject::class => 'every GtkEditable is a widget, so wrap() finds a class',
+        \Gtk4\GtkNativeObject::class => 'every GtkNative is a widget, so wrap() finds a class',
+        \Gtk4\GtkOrientableObject::class => 'every GtkOrientable is a widget, so wrap() finds a class',
+        \Gtk4\GtkRootObject::class => 'every GtkRoot is a widget, so wrap() finds a class',
+        \Gtk4\GtkScrollableObject::class => 'every GtkScrollable is a widget, so wrap() finds a class',
+        \Gtk4\GtkStyleProviderObject::class => 'the only style providers PHP can reach are bound',
+        \Gtk4\GAsyncResultObject::class => 'every GAsyncResult PHP sees is a bound GTask',
+        \Gtk4\GActionObject::class => 'every GAction PHP can reach is a bound GSimpleAction',
+        \Gtk4\GActionGroupObject::class => 'the action groups PHP can reach are bound',
+        \Gtk4\GActionMapObject::class => 'the action maps PHP can reach are bound',
+    ];
+
+    /**
+     * Owners of handles that are only valid while the object they came from lives - the
+     * notebook behind a page, the layout manager behind a layout child. Held until
+     * {@see release()}, which both sweeps call from tearDown().
+     *
+     * @var list<object>
+     */
+    private static array $owners = [];
+
+    /** Drop the pinned owners. Called from tearDown(), so a sweep never leaks a window. */
+    public static function release(): void
+    {
+        foreach (self::$owners as $owner) {
+            if ($owner instanceof \Gtk4\GtkWindow) {
+                $owner->destroy();
+            }
+        }
+        self::$owners = [];
+    }
+
+    /**
+     * An instance of $class, or null when nothing can build one.
+     *
+     * @param class-string $class
+     */
+    public static function make(string $class): ?object
+    {
+        return match ($class) {
+            \Gtk4\GtkApplication::class => new \Gtk4\GtkApplication(null, 1 << 5),
+            \Gtk4\GApplication::class => new \Gtk4\GApplication(null, 1 << 5),
+            \Gtk4\GSimpleAction::class => new \Gtk4\GSimpleAction('a', 's'),
+            \Gtk4\PhpValue::class => new \Gtk4\PhpValue('v'),
+            \Gtk4\GdkTexture::class => \Gtk4\GdkTexture::new_from_bytes(PngFixture::red(2, 1)),
+            \Gtk4\GError::class => new \Gtk4\GError('x'),
+            \Gtk4\GListStore::class => new \Gtk4\GListStore(),
+            \Gtk4\GtkFilter::class, \Gtk4\GtkCustomFilter::class => new \Gtk4\GtkCustomFilter(fn() => true),
+            \Gtk4\GtkSorter::class, \Gtk4\GtkCustomSorter::class => new \Gtk4\GtkCustomSorter(fn() => 0),
+            \Gtk4\GtkFilterListModel::class, \Gtk4\GtkSortListModel::class,
+            \Gtk4\GtkDrawingArea::class => new $class(),
+            \Gtk4\GtkWidget::class => new \Gtk4\GtkButton(),   // abstract: exercise through a subclass
+            \Gtk4\GParamSpec::class => self::paramSpec(),
+            \Gtk4\GObject::class => new \Gtk4\PhpValue('v'),
+            \Gtk4\GdkRGBA::class, \Gtk4\GdkRectangle::class, \Gtk4\GMainLoop::class,
+            \Gtk4\GtkWindow::class, \Gtk4\GtkButton::class, \Gtk4\GtkLabel::class => new $class(),
+            \Gtk4\GtkApplicationWindow::class => new \Gtk4\GtkApplicationWindow(self::registeredApp()),
+            \Gtk4\GtkBox::class => new \Gtk4\GtkBox(\Gtk4\GtkOrientation::Horizontal, 0),
+            \Gtk4\GtkPaned::class => new \Gtk4\GtkPaned(\Gtk4\GtkOrientation::Horizontal),
+            \Gtk4\GtkScale::class => new \Gtk4\GtkScale(\Gtk4\GtkOrientation::Horizontal),
+            \Gtk4\GtkAdjustment::class => new \Gtk4\GtkAdjustment(0.0, 0.0, 100.0, 1.0, 10.0, 0.0),
+            \Gtk4\GtkSpinButton::class => new \Gtk4\GtkSpinButton(null, 1.0, 0),
+            \Gtk4\GtkEntryBuffer::class => new \Gtk4\GtkEntryBuffer('abc', -1),
+            \Gtk4\GtkBitset::class => \Gtk4\GtkBitset::new_range(0, 4),
+            // Concrete classes whose only obstacle is a required argument the generic path
+            // cannot invent (an enum case, a content type). One line each is all it takes to
+            // put their whole method surface under the sweeps.
+            \Gtk4\GtkSeparator::class => new \Gtk4\GtkSeparator(\Gtk4\GtkOrientation::Horizontal),
+            \Gtk4\GtkBoxLayout::class => new \Gtk4\GtkBoxLayout(\Gtk4\GtkOrientation::Horizontal),
+            \Gtk4\GtkGesturePan::class => new \Gtk4\GtkGesturePan(\Gtk4\GtkOrientation::Horizontal),
+            \Gtk4\GtkSizeGroup::class => new \Gtk4\GtkSizeGroup(\Gtk4\GtkSizeGroupMode::Both),
+            \Gtk4\GtkStringObject::class => new \Gtk4\GtkStringObject('x'),
+            \Gtk4\GtkTextMark::class => new \Gtk4\GtkTextMark('m', false),
+            \Gtk4\GtkDropTarget::class => new \Gtk4\GtkDropTarget('string', 1 << 0),
+            \Gtk4\GtkDropTargetAsync::class => new \Gtk4\GtkDropTargetAsync(null, 1 << 0),
+            \Gtk4\GtkEventControllerScroll::class => new \Gtk4\GtkEventControllerScroll(1 << 0),
+            // Abstract bases, exercised through the plainest concrete subclass.
+            \Gtk4\GtkGesture::class => new \Gtk4\GtkGestureClick(),
+            \Gtk4\GtkEventController::class => new \Gtk4\GtkEventControllerKey(),
+            \Gtk4\GtkLayoutManager::class => new \Gtk4\GtkBoxLayout(\Gtk4\GtkOrientation::Horizontal),
+            \Gtk4\GMenuModel::class => new \Gtk4\GMenu(),
+            \Gtk4\GdkSnapshot::class => new \Gtk4\GtkSnapshot(),
+            // Handles GTK hands out but never lets PHP build - they come from their owner,
+            // and the handle is what keeps that owner alive (BOXED_OWNERS for the iter, a
+            // plain reference for the page).
+            \Gtk4\GtkTextIter::class => new \Gtk4\GtkTextBuffer()->get_start_iter(),
+            \Gtk4\GtkStackPage::class => self::pin(new \Gtk4\GtkStack())->add_child(new \Gtk4\GtkButton()),
+            \Gtk4\GdkDisplay::class => \Gtk4\GdkDisplay::get_default(),
+            \Gtk4\GtkTreeListModel::class => self::treeListModel(),
+            \Gtk4\GtkTreeListRow::class => self::treeListModel()->get_child_row(0),
+            // The display's own handles: no constructor, one owner that outlives every test.
+            \Gtk4\GdkClipboard::class => self::display()->get_clipboard(),
+            \Gtk4\GdkSurface::class => \Gtk4\GdkSurface::new_toplevel(self::display()),
+            \Gtk4\GdkMonitor::class => self::display()->get_monitors()->get_item(0),
+            \Gtk4\GtkIconPaintable::class => \Gtk4\GtkIconTheme::get_for_display(self::display())
+                ->lookup_icon('list-add', null, 16, 1, \Gtk4\GtkTextDirection::None, 0),
+            \Gtk4\GrapheneRect::class => self::bounds(),
+            \Gtk4\CairoSurface::class => \Gtk4\GdkTexture::new_from_bytes(PngFixture::red(2, 1))->download(),
+            \Gtk4\CairoContext::class => self::pin(new \Gtk4\GtkSnapshot())->append_cairo(self::bounds()),
+            \Gtk4\GdkPaintableObject::class => self::pin(new \Gtk4\GtkSnapshot())->to_paintable(null),
+            \Gtk4\GtkNotebookPage::class => self::notebookPage(),
+            \Gtk4\GtkLayoutChild::class, \Gtk4\GtkGridLayoutChild::class => self::layoutChild(
+                new \Gtk4\GtkGridLayout(),
+            ),
+            \Gtk4\GtkFixedLayoutChild::class => self::layoutChild(new \Gtk4\GtkFixedLayout()),
+            \Gtk4\GtkOverlayLayoutChild::class => self::layoutChild(new \Gtk4\GtkOverlayLayout()),
+            \Gtk4\GtkSelectionModelObject::class => self::pin(new \Gtk4\GtkStack())->get_pages(),
+            \Gtk4\GListModelObject::class => self::pin(new \Gtk4\GtkBox(\Gtk4\GtkOrientation::Horizontal, 0))
+                ->observe_children(),
+            \Gtk4\GtkBuilderScopeObject::class => self::pin(new \Gtk4\GtkBuilder())->get_scope(),
+            \Gtk4\GtkCssSection::class => self::cssSection(),
+            \Gtk4\GtkListItem::class => self::listItem(),
+            default => self::plain($class),
+        };
+    }
+
+    /**
+     * Everything the table does not name: any class that takes no required constructor
+     * argument is built plainly, so a newly bound class is covered the day it lands.
+     *
+     * @param class-string $class
+     */
+    public static function plain(string $class): ?object
+    {
+        $rc = new ReflectionClass($class);
+        $ctor = $rc->getConstructor();
+        if (!$rc->isInstantiable() || ($ctor !== null && $ctor->getNumberOfRequiredParameters() > 0)) {
+            return null;
+        }
+
+        try {
+            return $rc->newInstance();
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * Keep $owner alive until release(): the handles below are only meaningful while the
+     * object that produced them exists.
+     *
+     * @template T of object
+     * @param T $owner
+     * @return T
+     */
+    private static function pin(object $owner): object
+    {
+        self::$owners[] = $owner;
+        return $owner;
+    }
+
+    /**
+     * A fresh application past `startup`. GTK refuses to take an application window before then
+     * ("New application windows must be added after the GApplication::startup signal has been
+     * emitted"), and register() is what emits it without entering run().
+     *
+     * The id has to be unique per instance, and cannot be the `null` every other application in
+     * this file uses: registering exports the application on the session bus, an anonymous one
+     * at /org/gtk/Application/anonymous, and a second anonymous registration in the same process
+     * fails with "An object is already exported for the interface org.gtk.Application". A
+     * per-instance id keeps every sweep row on its own application instead of sharing one.
+     */
+    private static function registeredApp(): \Gtk4\GtkApplication
+    {
+        /** @var int $n */
+        static $n = 0;
+        $app = self::pin(new \Gtk4\GtkApplication(
+            sprintf('org.phpgtk4.tests.p%d.n%d', getmypid(), $n++),
+            1 << 5,
+        ));
+        $app->register(null);
+        return $app;
+    }
+
+    private static function display(): \Gtk4\GdkDisplay
+    {
+        $display = \Gtk4\GdkDisplay::get_default();
+        assert($display instanceof \Gtk4\GdkDisplay);
+        return $display;
+    }
+
+    /** A rectangle the way a widget produces one, for the snapshot APIs that need bounds. */
+    private static function bounds(): \Gtk4\GrapheneRect
+    {
+        $button = new \Gtk4\GtkButton();
+        $rect = $button->compute_bounds($button);
+        assert($rect instanceof \Gtk4\GrapheneRect);
+        return $rect;
+    }
+
+    private static function notebookPage(): \Gtk4\GtkNotebookPage
+    {
+        $notebook = self::pin(new \Gtk4\GtkNotebook());
+        $child = new \Gtk4\GtkButton();
+        $notebook->append_page($child, null);
+        return $notebook->get_page($child);
+    }
+
+    /** The per-child state a layout manager keeps - one concrete class per manager. */
+    private static function layoutChild(\Gtk4\GtkLayoutManager $manager): \Gtk4\GtkLayoutChild
+    {
+        $box = self::pin(new \Gtk4\GtkBox(\Gtk4\GtkOrientation::Horizontal, 0));
+        $box->set_layout_manager($manager);
+        $child = new \Gtk4\GtkButton();
+        $box->append($child);
+        return $manager->get_layout_child($child);
+    }
+
+    /** The section a stylesheet's `parsing-error` points at - CSS is the only way to get one. */
+    private static function cssSection(): ?\Gtk4\GtkCssSection
+    {
+        $provider = self::pin(new \Gtk4\GtkCssProvider());
+        $section = null;
+        $provider->connect(
+            'parsing-error',
+            function (\Gtk4\GtkCssProvider $p, \Gtk4\GtkCssSection $s) use (&$section): void {
+                $section ??= $s;
+            },
+        );
+        $provider->load_from_string('button { color: ; }');
+        return $section;
+    }
+
+    /** A list item, as the factory of a live GtkListView is handed one. */
+    private static function listItem(): ?\Gtk4\GtkListItem
+    {
+        $item = null;
+        $factory = new \Gtk4\GtkSignalListItemFactory();
+        $factory->connect('setup', function (\Gtk4\GtkListItemFactory $f, \Gtk4\GtkListItem $i) use (&$item): void {
+            $item ??= $i;
+        });
+        $view = new \Gtk4\GtkListView(new \Gtk4\GtkSingleSelection(new \Gtk4\GtkStringList(['a'])), $factory);
+        $window = self::pin(new \Gtk4\GtkWindow());
+        $window->set_child($view);
+        $window->present();
+        return $item;
+    }
+
+    private static function treeListModel(): \Gtk4\GtkTreeListModel
+    {
+        return new \Gtk4\GtkTreeListModel(
+            new \Gtk4\GtkStringList(['a', 'b']),
+            false,
+            false,
+            static fn(): ?\Gtk4\GListModel => null,
+        );
+    }
+
+    private static function paramSpec(): \Gtk4\GParamSpec
+    {
+        $w = new \Gtk4\GtkWindow();
+        $spec = null;
+        $w->connect('notify::title', function (\Gtk4\GObject $o, \Gtk4\GParamSpec $p) use (&$spec): void {
+            $spec ??= $p;
+        });
+        $w->set_title('x');
+        $w->destroy();
+        assert($spec instanceof \Gtk4\GParamSpec);
+        return $spec;
+    }
+}

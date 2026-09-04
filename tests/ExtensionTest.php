@@ -19,7 +19,7 @@ final class ExtensionTest extends GtkTestCase
         $build = \Gtk4\BUILD_INFO;
         $features = \Gtk4\FEATURES;
         self::assertStringContainsString('git', $build);
-        self::assertMatchesRegularExpression('/^webkit=(yes|no) testing=(yes|no)$/', $features);
+        self::assertMatchesRegularExpression('/^webkit=(yes|no)$/', $features);
         self::assertFalse(defined('PHPGTK_VERSION'), 'no global (gtk3-style) constants');
     }
 

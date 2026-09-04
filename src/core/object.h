@@ -21,6 +21,7 @@ struct Object {
   GObject *obj;     // nullptr = not attached yet
   bool held;        // the GObject holds a reference on `std` (toggle ref: not the last ref)
   bool disposed;    // GObject::dispose ran while PHP still referenced it (gtk_window_destroy)
+  zval owner;       // handle this one may not outlive (object_hold_owner), IS_UNDEF for most
   zend_object std;  // must be last (zend_object is variable-sized)
 };
 
@@ -32,6 +33,17 @@ inline Object *object_from_zend(zend_object *o) {
 inline Object *object_from_zval(const zval *zv) {
   return object_from_zend(Z_OBJ_P(zv));
 }
+
+// Make the handle in `handle` keep the handle in `owner` alive: GTK hands out objects that
+// point back at the object they came from *without* a reference of their own - a GtkStackPages
+// keeps a bare GtkStack pointer, a composite widget's internal child measures through its
+// parent's private struct - so `new GtkStack()->get_pages()` leaves a live handle onto freed
+// memory. The object analogue of BOXED_OWNERS (gen/gir/config.php), and deliberately held
+// between the *handles* rather than between the GObjects: a parent already owns its child, so a
+// GObject-level back-reference would be an uncollectable cycle, while this one is an ordinary
+// zval the cycle collector can see (get_gc). Emitted by the generator for the members listed in
+// RETURNS_HOLD_SELF; a second call with the same owner is a no-op.
+void object_hold_owner(zval *handle, zval *owner);
 
 // The handle registered on a GObject (qdata back-pointer), nullptr if none.
 Object *object_handle(GObject *obj);
@@ -46,7 +58,7 @@ void attach(Object *self, GObject *obj);
 // instance is sunk, a plain GObject's initial reference is adopted as ours -
 // no extra ref, so the object really dies with the last handle/owner. NOT for
 // GtkRoot implementors (gtk_window_new(): GTK's toplevel list owns that
-// reference) - use attach(); attach_new() detects and corrects it with a g_critical.
+// reference) - use attach(); attach_new() detects and corrects it with a diagnostic().
 void attach_new(Object *self, GObject *obj);
 
 // Call once from MINIT before registering classes.

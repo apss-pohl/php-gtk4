@@ -168,7 +168,7 @@ final class VfuncTest extends GtkTestCase
         // The direct sweep at the end runs the native slots after the toplevel is destroyed, so
         // the focus ones look up a window that is gone. Incidental to what this exercises - the
         // point is that every thunk was reached - and not something the binding should refuse.
-        $this->expectsGtkCritical();
+        $this->expectsGtkCritical("gtk_window_get_focus: assertion 'GTK_IS_WINDOW (window)' failed");
         $class = self::recordingSubclass(GtkWidget::class);
         $w = new $class();
         // A recording window as the toplevel: its vfunc_size_allocate() (a PHP subtype may call

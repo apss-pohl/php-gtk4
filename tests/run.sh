@@ -34,10 +34,11 @@ unset WAYLAND_DISPLAY
 # (EveryClassTest), and it slows everything down. The stress/ASan runs use
 # php -n and never load it.
 export XDEBUG_MODE=off
-# CRITICAL lines from ErrorTest are expected: they are the g_critical() fallback
-# path for exceptions thrown in handlers when no Gtk::set_exception_handler is set.
 [[ -x vendor/bin/phpunit ]] || { echo "vendor/bin/phpunit missing - run: $PHP /usr/local/bin/composer install" >&2; exit 1; }
 # PHP_GTK4_ENV (optional): extra VAR=value pairs bin/php-gtk4 applies to the php
 # process only (ci.sh --only=asan uses it for LD_PRELOAD=libasan etc.).
 export PHP_GTK4_ENV=${PHP_GTK4_ENV:-}
+# gtk4.diagnostics is left at its default (warning), so the suite runs what ships: GLib's own
+# CRITICAL/WARNING messages arrive as PHP warnings that GtkTestCase collects and fails the
+# causing test on.
 exec xvfb-run -a bin/php-gtk4 vendor/bin/phpunit "$@"

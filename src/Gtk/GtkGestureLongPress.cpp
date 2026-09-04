@@ -50,5 +50,6 @@ ZEND_METHOD(Gtk4_GtkGestureLongPress, set_delay_factor) {
   Z_PARAM_DOUBLE(delay_factor)
   ZEND_PARSE_PARAMETERS_END();
   GtkGestureLongPress *self = PHPGTK_SELF(GtkGestureLongPress, GTK_TYPE_GESTURE_LONG_PRESS);
+  if (!phpgtk::check_domain_double(delay_factor, 0.5, 2.0, 1)) RETURN_THROWS();
   gtk_gesture_long_press_set_delay_factor(self, delay_factor);
 }

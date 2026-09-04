@@ -92,7 +92,7 @@ return Demo::page(
             ): bool {
                 $last['pressed'] = $describe($keyval, $keycode, $state);
                 $pad->set_text($keyval >= 0x20 && $keyval <= 0x7e ? "'" . chr($keyval) . "'" : "keyval $keyval");
-                Demo::status('key-pressed on ' . $c->get_widget()::class);
+                Demo::status('key-pressed on ' . get_debug_type($c->get_widget()));
                 // Claim the space bar (true) so the demo's sidebar never sees it; pass the rest on.
                 $claim = $keyval === 0x20;
                 $claimed += $claim ? 1 : 0;

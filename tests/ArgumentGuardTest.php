@@ -4,15 +4,28 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use Gtk4\GdkClipboard;
+use Gtk4\GdkDisplay;
 use Gtk4\GdkTexture;
 use Gtk4\GListStore;
+use Gtk4\GMenu;
+use Gtk4\GMenuModel;
 use Gtk4\GSimpleAction;
+use Gtk4\GtkCalendar;
+use Gtk4\GtkDrawingArea;
 use Gtk4\GtkEntry;
+use Gtk4\GtkGestureLongPress;
+use Gtk4\GtkGrid;
 use Gtk4\GtkLabel;
+use Gtk4\GtkOrientation;
+use Gtk4\GtkSingleSelection;
+use Gtk4\GtkStringList;
 use Gtk4\GtkTextBuffer;
 use Gtk4\GtkTextIter;
 use Gtk4\GtkWindow;
+use Gtk4\PangoFontDescription;
 use Gtk4\PhpValue;
+use PhpGtk4\Tests\Subclass\ChainingScale;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -254,6 +267,297 @@ final class ArgumentGuardTest extends GtkTestCase
 
         self::assertSame('hello', $entry->get_chars(0, -1));
         self::assertSame('', $entry->get_chars(1, 0));
+    }
+
+    /**
+     * `g_menu_model_get_item_link()` and `get_item_attribute_value()` index the item array
+     * without checking: a negative index read before it (SIGSEGV) and one past the end reached
+     * `g_assert_not_reached()` in gmenumodel.c (a `g_error()`, so the process ended either way).
+     * Both are values a script can produce from a loop bound, so the boundary refuses them.
+     */
+    #[DataProvider('outOfRangeMenuIndexes')]
+    public function testMenuItemIndexOutsideTheModelIsRejected(int $index): void
+    {
+        $menu = new GMenu();
+        $menu->append('only item', null);
+
+        $this->expectException(\ValueError::class);
+        $menu->get_item_link($index, 'submenu');
+    }
+
+    #[DataProvider('outOfRangeMenuIndexes')]
+    public function testMenuItemAttributeIndexOutsideTheModelIsRejected(int $index): void
+    {
+        $menu = new GMenu();
+        $menu->append('only item', null);
+
+        $this->expectException(\ValueError::class);
+        $menu->get_item_attribute_value($index, 'label', null);
+    }
+
+    /** @return iterable<string, array{int}> */
+    public static function outOfRangeMenuIndexes(): iterable
+    {
+        yield 'negative' => [-1];
+        yield 'one past the end' => [1];
+        yield 'far past the end' => [999];
+    }
+
+    /** An empty model has no valid index at all, and says so rather than naming a range. */
+    public function testMenuItemIndexOnAnEmptyModelIsRejected(): void
+    {
+        $menu = new GMenu();
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('cannot be used on an empty menu');
+        $menu->get_item_link(0, 'submenu');
+    }
+
+    /** The guard is on the range only: an index inside the model still answers. */
+    public function testMenuItemIndexInsideTheModelStillPasses(): void
+    {
+        $menu = new GMenu();
+        $submenu = new GMenu();
+        $menu->append('plain', null);
+        $menu->append_submenu('with a submenu', $submenu);
+
+        self::assertSame('plain', $menu->get_item_attribute_value(0, 'label', null));
+        self::assertNull($menu->get_item_link(0, 'submenu'));
+        self::assertInstanceOf(GMenuModel::class, $menu->get_item_link(1, 'submenu'));
+    }
+
+    // ------------------------------------------------- preconditions GTK only complains about
+
+    /**
+     * `gdk_clipboard_read_async()` asserts `mime_types[0] != NULL` and returns without ever
+     * calling the callback, so an empty list - what a filtered format list can end up as - is a
+     * read that silently never finishes.
+     */
+    public function testClipboardReadWithoutAMimeTypeIsRejected(): void
+    {
+        $clipboard = self::clipboard();
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('must name at least one mime type');
+        $clipboard->read_async([], 0, null, static fn() => null);
+    }
+
+    /**
+     * GIR marks the `GAsyncReadyCallback` of these four nullable, as C allows for a fire-and-
+     * forget call; GDK asserts `callback != NULL` and does nothing at all. The stub therefore
+     * declares them non-nullable (`NON_NULLABLE_PARAMS` in gen/gir/config.php), which makes null
+     * an ordinary TypeError at the boundary. Called through reflection because the argument the
+     * test passes is exactly the one the signature now forbids.
+     *
+     * @param list<mixed> $arguments
+     */
+    #[DataProvider('clipboardCallsThatNeedACallback')]
+    public function testClipboardAsyncWithoutACallbackIsRejected(string $method, array $arguments): void
+    {
+        $call = new \ReflectionMethod(GdkClipboard::class, $method);
+
+        $this->expectException(\TypeError::class);
+        $call->invokeArgs(self::clipboard(), $arguments);
+    }
+
+    /** @return iterable<string, array{string, list<mixed>}> */
+    public static function clipboardCallsThatNeedACallback(): iterable
+    {
+        yield 'read_async' => ['read_async', [['text/plain'], 0, null, null]];
+        yield 'read_text_async' => ['read_text_async', [null, null]];
+        yield 'read_texture_async' => ['read_texture_async', [null, null]];
+        yield 'store_async' => ['store_async', [0, null, null]];
+    }
+
+    /**
+     * The CSS sizing algorithm has a domain GDK states as four `g_return_if_fail()`s and then
+     * answers `[0.0, 0.0]` for - indistinguishable from a real answer. A size computed by the
+     * script can leave it, so the range is refused instead.
+     */
+    #[DataProvider('sizesOutsideTheSizingAlgorithm')]
+    public function testConcreteSizeOutsideTheAlgorithmsDomainIsRejected(
+        float $specifiedWidth,
+        float $specifiedHeight,
+        float $defaultWidth,
+        float $defaultHeight,
+    ): void {
+        $paintable = self::paintable();
+
+        $this->expectException(\ValueError::class);
+        $paintable->compute_concrete_size($specifiedWidth, $specifiedHeight, $defaultWidth, $defaultHeight);
+    }
+
+    /** @return iterable<string, array{float, float, float, float}> */
+    public static function sizesOutsideTheSizingAlgorithm(): iterable
+    {
+        yield 'negative specified width' => [-1.0, 0.0, 16.0, 16.0];
+        yield 'negative specified height' => [0.0, -1.0, 16.0, 16.0];
+        yield 'zero default width' => [0.0, 0.0, 0.0, 16.0];
+        yield 'zero default height' => [0.0, 0.0, 16.0, 0.0];
+    }
+
+    /**
+     * 0 means "not specified" and is inside the domain: with neither dimension specified the
+     * algorithm answers the paintable's intrinsic size, here the 2x1 of the fixture PNG.
+     */
+    public function testConcreteSizeInsideTheDomainStillAnswers(): void
+    {
+        self::assertSame([2.0, 1.0], self::paintable()->compute_concrete_size(0.0, 0.0, 16.0, 16.0));
+    }
+
+    /**
+     * `gtk_selection_model_selection_changed()` asserts the range lies inside the model and drops
+     * the notification otherwise, so a range one item too long silently fails to repaint.
+     */
+    #[DataProvider('rangesPastTheEndOfTheModel')]
+    public function testSelectionChangeBeyondTheModelIsRejected(int $position, int $items): void
+    {
+        $model = new GtkSingleSelection(new GtkStringList(['one']));
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('must not reach past the end of the model');
+        $model->selection_changed($position, $items);
+    }
+
+    /** @return iterable<string, array{int, int}> */
+    public static function rangesPastTheEndOfTheModel(): iterable
+    {
+        yield 'far past the end' => [0, 999];
+        yield 'one item too long' => [0, 2];
+        yield 'starting past the end' => [1, 1];
+    }
+
+    /** The whole model is a legal range. */
+    public function testSelectionChangeInsideTheModelStillPasses(): void
+    {
+        $model = new GtkSingleSelection(new GtkStringList(['one']));
+
+        $model->selection_changed(0, 1);
+        self::assertSame(1, $model->get_n_items());
+    }
+
+    /**
+     * A parameter whose C function accepts less than its type does. GTK states each of these as
+     * a `g_return_if_fail()`, so out of domain meant a CRITICAL and the call silently not
+     * happening - `$calendar->set_month(12)` left the month alone and told PHP nothing. Every
+     * bound is copied from the assertion GTK printed (`PARAM_DOMAINS` in gen/gir/config.php),
+     * and every line here retired one from tests/robustness-criticals.txt.
+     *
+     * @param class-string $class
+     * @param list<mixed> $arguments
+     */
+    #[DataProvider('argumentsOutsideTheirDomain')]
+    public function testAParameterOutsideItsDomainIsRejected(
+        string $class,
+        string $method,
+        array $arguments,
+        string $expected,
+    ): void {
+        $target = GtkInstances::make($class);
+        self::assertInstanceOf($class, $target);
+
+        try {
+            new \ReflectionMethod($class, $method)->invokeArgs($target, $arguments);
+            self::fail("$class::$method() accepted a value outside its domain");
+        } catch (\ValueError $e) {
+            self::assertStringContainsString($expected, $e->getMessage());
+        }
+    }
+
+    /** @return iterable<string, array{class-string, string, list<mixed>, string}> */
+    public static function argumentsOutsideTheirDomain(): iterable
+    {
+        yield 'calendar month' => [GtkCalendar::class, 'set_month', [12], 'must be between 0 and 11'];
+        yield 'calendar day' => [GtkCalendar::class, 'set_day', [0], 'must be between 1 and 31'];
+        yield 'calendar year' => [GtkCalendar::class, 'set_year', [0], 'must be between 1 and 9999'];
+        yield 'drawing area width' => [
+            GtkDrawingArea::class, 'set_content_width', [-1], 'must be greater than or equal to 0',
+        ];
+        yield 'drawing area height' => [
+            GtkDrawingArea::class, 'set_content_height', [-1], 'must be greater than or equal to 0',
+        ];
+        yield 'editable start' => [
+            GtkEntry::class, 'get_chars', [-1, 2], 'must be greater than or equal to 0',
+        ];
+        yield 'editable delete start' => [
+            GtkEntry::class, 'delete_text', [-1, 2], 'must be greater than or equal to 0',
+        ];
+        yield 'grid span' => [
+            GtkGrid::class, 'attach', [new GtkLabel('x'), 0, 0, 0, 1], 'must be greater than or equal to 1',
+        ];
+        yield 'long press delay' => [
+            GtkGestureLongPress::class, 'set_delay_factor', [9.0], 'must be between 0.5 and 2',
+        ];
+        yield 'font size' => [
+            PangoFontDescription::class, 'set_size', [-1], 'must be greater than or equal to 0',
+        ];
+    }
+
+    /** The domain is a floor, not a ban: what GTK does accept still goes through. */
+    public function testValuesInsideTheDomainStillPass(): void
+    {
+        $calendar = new GtkCalendar();
+        $calendar->set_day(28);   // 31 is inside the domain but GTK still clamps it to the month
+        self::assertSame(28, $calendar->get_day(), 'a day every month has is taken as given');
+
+        $entry = new GtkEntry();
+        $entry->set_text('hello');
+        self::assertSame('hello', $entry->get_chars(0, -1), '-1 still means "to the end"');
+
+        $gesture = new GtkGestureLongPress();
+        $gesture->set_delay_factor(2.0);
+        self::assertSame(2.0, $gesture->get_delay_factor());
+    }
+
+    /** The message a float bound prints is not the C locale's: "0.5", never "0,5". */
+    public function testAFloatBoundPrintsWithADecimalPoint(): void
+    {
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('must be between 0.5 and 2, 9 given');
+        new GtkGestureLongPress()->set_delay_factor(9.0);
+    }
+
+    /**
+     * An enum GIR declares but nothing binds as a PHP enum crosses as an int, and its value used
+     * to be checked with `check_flags()` - which casts the `GEnumClass` to a `GFlagsClass` and
+     * reads `mask`, a field that is `minimum` there. It is 0 for every one of the six affected
+     * types, so *every* non-zero value was refused with a message about "a mask of 0x0", and the
+     * read itself was of the wrong type. Found on a ZTS run where GTK delivered a real
+     * `GtkSystemSetting` to a PHP `vfunc_system_setting_changed()`.
+     */
+    public function testAValidValueOfAnUnboundEnumIsAccepted(): void
+    {
+        $scale = new ChainingScale(GtkOrientation::Horizontal);
+        $scale->set_range(0.0, 10.0);
+
+        // GTK_SCROLL_STEP_FORWARD: a value the type declares, and the whole point is that it goes
+        // through rather than being refused against a mask of zero - GTK's own change_value sets
+        // the range to what it was handed, so the new value is the proof that it ran.
+        $scale->vfunc_change_value(3, 5.0);
+        self::assertSame(5.0, $scale->get_value());
+    }
+
+    /** A value the enum does not declare is still refused, and says which type it is not in. */
+    public function testAnUnknownValueOfAnUnboundEnumIsRejected(): void
+    {
+        $scale = new ChainingScale(GtkOrientation::Horizontal);
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('must be a valid GtkScrollType value, 99 given');
+        $scale->vfunc_change_value(99, 5.0);
+    }
+
+    private static function clipboard(): GdkClipboard
+    {
+        $display = GdkDisplay::get_default();
+        self::assertInstanceOf(GdkDisplay::class, $display);
+        return $display->get_clipboard();
+    }
+
+    /** Any paintable will do - a texture is the one every implementation shares the code with. */
+    private static function paintable(): GdkTexture
+    {
+        return GdkTexture::new_from_bytes(PngFixture::red(2, 1));
     }
 
     public function testWindowTitleRoundTripIsUnaffected(): void

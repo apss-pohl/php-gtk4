@@ -2,6 +2,7 @@
 #include "php_gtk4.h"
 #include "classes.h"
 #include "core/boxed.h"
+#include "core/diagnostics.h"
 #include "core/enums.h"
 #include "core/fundamental.h"
 #include "core/gerror.h"
@@ -52,9 +53,22 @@ static PHP_GSHUTDOWN_FUNCTION(gtk4) {
 #endif
 }
 
+// gtk4.diagnostics: map the name to the mode the writer reads (src/core/diagnostics.h).
+// Rejecting an unknown value makes a typo a startup error rather than a silent default.
+static PHP_INI_MH(OnUpdateDiagnostics) {
+  phpgtk::DiagnosticsMode mode{};
+  if (new_value == nullptr ||
+      !phpgtk::diagnostics_mode_from_name(ZSTR_VAL(new_value), ZSTR_LEN(new_value), &mode)) {
+    return FAILURE;
+  }
+  GTK4_G(diagnostics_mode) = mode;
+  return SUCCESS;
+}
+
 PHP_INI_BEGIN()
 PHP_INI_ENTRY("gtk4.build_info", PHPGTK_BUILD_INFO, PHP_INI_SYSTEM, nullptr)
 PHP_INI_ENTRY("gtk4.features", PHPGTK_BUILD_FEATURES, PHP_INI_SYSTEM, nullptr)
+PHP_INI_ENTRY("gtk4.diagnostics", "warning", PHP_INI_ALL, OnUpdateDiagnostics)
 PHP_INI_END()
 
 // GTK, like GLib, cannot be unloaded from a process: it registers GTypes, atexit handlers
@@ -87,6 +101,7 @@ static void pin_gtk_library() {
 static PHP_MINIT_FUNCTION(gtk4) {
   REGISTER_INI_ENTRIES();
   pin_gtk_library();
+  phpgtk::diagnostics_minit();           // before anything can log
   register_gtk4_symbols(module_number);  // Gtk4\VERSION, BUILD_INFO, FEATURES
   phpgtk::object_handlers_init();
   phpgtk::boxed_handlers_init();
@@ -148,12 +163,14 @@ static PHP_MINIT_FUNCTION(gtk4) {
 
 // Module shutdown.
 static PHP_MSHUTDOWN_FUNCTION(gtk4) {
+  phpgtk::diagnostics_mshutdown();  // the engine must not keep pointing into this .so
   UNREGISTER_INI_ENTRIES();
   return SUCCESS;
 }
 
 // Request init: one-time verification of the PHP enums against the C enums.
 static PHP_RINIT_FUNCTION(gtk4) {
+  phpgtk::diagnostics_request_init();
   phpgtk::object_request_init();
   phpgtk::enums_verify();
   return SUCCESS;
@@ -164,6 +181,7 @@ static PHP_RSHUTDOWN_FUNCTION(gtk4) {
   phpgtk::teardown_request();  // before anything that holds callables could finalize later
   phpgtk::phpvalue_request_shutdown();
   phpgtk::exception_state_shutdown();
+  phpgtk::diagnostics_request_shutdown();  // last: the three above can still report
   return SUCCESS;
 }
 

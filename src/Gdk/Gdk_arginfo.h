@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c8c5d11b4d428e8bb035a9be319a673d4da001df */
+ * Stub hash: ede9d341cadd6905c56dcf3b54de555a84df2790 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkClipboard___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -16,16 +16,9 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkClipboard_is_local, 0, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkClipboard_read_async, 0, 4, IS_VOID, 0)
-	ZEND_ARG_TYPE_INFO(0, mime_types, IS_ARRAY, 0)
-	ZEND_ARG_TYPE_INFO(0, io_priority, IS_LONG, 0)
-	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
-	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkClipboard_read_text_async, 0, 2, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
-	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkClipboard_read_text_finish, 0, 1, IS_STRING, 1)
@@ -53,11 +46,18 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkClipboard_store_async, 0, 3, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, io_priority, IS_LONG, 0)
 	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
-	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkClipboard_store_finish, 0, 1, _IS_BOOL, 0)
 	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkClipboard_read_async, 0, 4, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, mime_types, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, io_priority, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkClipboard_set_value, 0, 1, IS_VOID, 0)
@@ -258,7 +258,12 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkDrop_get_surface arginfo_class_Gtk4_GdkDrag_get_surface
 
-#define arginfo_class_Gtk4_GdkDrop_read_async arginfo_class_Gtk4_GdkClipboard_read_async
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkDrop_read_async, 0, 4, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, mime_types, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, io_priority, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkDrop_status, 0, 2, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, actions, IS_LONG, 0)
@@ -438,7 +443,6 @@ ZEND_METHOD(Gtk4_GdkClipboard, get_content);
 ZEND_METHOD(Gtk4_GdkClipboard, get_display);
 ZEND_METHOD(Gtk4_GdkClipboard, get_formats);
 ZEND_METHOD(Gtk4_GdkClipboard, is_local);
-ZEND_METHOD(Gtk4_GdkClipboard, read_async);
 ZEND_METHOD(Gtk4_GdkClipboard, read_text_async);
 ZEND_METHOD(Gtk4_GdkClipboard, read_text_finish);
 ZEND_METHOD(Gtk4_GdkClipboard, read_texture_async);
@@ -448,6 +452,7 @@ ZEND_METHOD(Gtk4_GdkClipboard, set_text);
 ZEND_METHOD(Gtk4_GdkClipboard, set_texture);
 ZEND_METHOD(Gtk4_GdkClipboard, store_async);
 ZEND_METHOD(Gtk4_GdkClipboard, store_finish);
+ZEND_METHOD(Gtk4_GdkClipboard, read_async);
 ZEND_METHOD(Gtk4_GdkClipboard, set_value);
 ZEND_METHOD(Gtk4_GdkContentFormats, contain_mime_type);
 ZEND_METHOD(Gtk4_GdkContentFormats, match);
@@ -574,7 +579,6 @@ static const zend_function_entry class_Gtk4_GdkClipboard_methods[] = {
 	ZEND_ME(Gtk4_GdkClipboard, get_display, arginfo_class_Gtk4_GdkClipboard_get_display, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, get_formats, arginfo_class_Gtk4_GdkClipboard_get_formats, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, is_local, arginfo_class_Gtk4_GdkClipboard_is_local, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GdkClipboard, read_async, arginfo_class_Gtk4_GdkClipboard_read_async, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, read_text_async, arginfo_class_Gtk4_GdkClipboard_read_text_async, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, read_text_finish, arginfo_class_Gtk4_GdkClipboard_read_text_finish, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, read_texture_async, arginfo_class_Gtk4_GdkClipboard_read_texture_async, ZEND_ACC_PUBLIC)
@@ -584,6 +588,7 @@ static const zend_function_entry class_Gtk4_GdkClipboard_methods[] = {
 	ZEND_ME(Gtk4_GdkClipboard, set_texture, arginfo_class_Gtk4_GdkClipboard_set_texture, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, store_async, arginfo_class_Gtk4_GdkClipboard_store_async, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, store_finish, arginfo_class_Gtk4_GdkClipboard_store_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkClipboard, read_async, arginfo_class_Gtk4_GdkClipboard_read_async, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkClipboard, set_value, arginfo_class_Gtk4_GdkClipboard_set_value, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };

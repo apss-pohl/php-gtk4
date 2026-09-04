@@ -54,7 +54,7 @@ class GObject
      *
      * What happens when the handler throws depends on {@see Gtk::set_exception_mode()}:
      * `ExceptionMode::Log` (default) reports it to the {@see Gtk::set_exception_handler()}
-     * callable (or g_critical() on stderr) and GTK continues; `ExceptionMode::Rethrow`
+     * callable (or an `E_WARNING`) and GTK continues; `ExceptionMode::Rethrow`
      * stops any running main loop and rethrows it to the PHP code that triggered the
      * emission (or from {@see GtkApplication::run()} / {@see GMainLoop::run()}).
      *
@@ -184,7 +184,7 @@ final class GParamSpec
  */
 enum ExceptionMode : int
 {
-    /** Report via {@see Gtk::set_exception_handler()} (or g_critical()) and keep going. */
+    /** Report via {@see Gtk::set_exception_handler()} (or an `E_WARNING`) and keep going. */
     case Log = 0;
     /**
      * Stop any running {@see GtkApplication::run()} / {@see GMainLoop::run()} and rethrow the
@@ -246,11 +246,10 @@ final class Gtk
         unset($display);
         unset($provider);
     }
-    #if defined(PHPGTK_TESTING)
     /**
-     * Test builds only (`--enable-gtk4-testing`, `FEATURES` has `testing=yes`): iterate the
-     * default context $iterations times from C, blocking each time, the way GTK does inside
-     * DnD or a portal call. Deliberately *not* a rethrow boundary - a Throwable parked in
+     * A test hook, not part of the supported surface: iterate the default context $iterations
+     * times from C, blocking each time, the way GTK does inside DnD or a portal call.
+     * Deliberately *not* a rethrow boundary - a Throwable parked in
      * {@see ExceptionMode::Rethrow} surfaces from the enclosing run(), as it would then.
      */
     public static function testing_iterate_nested(int $iterations): void
@@ -258,33 +257,15 @@ final class Gtk
         unset($iterations);
     }
     /**
-     * Test builds only: run `g_object_run_dispose()` on $object from C while PHP still holds it,
-     * the way GTK guts a widget that a C owner destroys. The handle turns *disposed*: method
-     * calls and passing it as an argument throw an `Error` from then on.
+     * A test hook, not part of the supported surface: run `g_object_run_dispose()` on $object
+     * from C while PHP still holds it, the way GTK guts a widget that a C owner destroys. The
+     * handle turns *disposed*: method calls and passing it as an argument throw an `Error` from
+     * then on.
      */
     public static function testing_run_dispose(GObject $object): void
     {
         unset($object);
     }
-    /**
-     * Test builds only: start or stop recording GLib CRITICAL/WARNING messages. They still reach
-     * stderr; this only keeps a copy so a test can fail on one instead of letting it scroll past.
-     */
-    public static function testing_capture_logs(bool $capture): void
-    {
-        unset($capture);
-    }
-    /**
-     * Test builds only: the GLib CRITICAL/WARNING messages recorded since the last call, and
-     * clear them.
-     *
-     * @return list<string>
-     */
-    public static function testing_taken_logs(): array
-    {
-        return [];
-    }
-    #endif
 }
 /**
  * GLib main-context helpers (idle and timeout sources on the default context).
@@ -1130,16 +1111,8 @@ class GdkClipboard extends GObject
     {
         return false;
     }
-    /** Asynchronously requests an input stream to read the $clipboard's contents from. */
-    public function read_async(array $mime_types, int $io_priority, ?GCancellable $cancellable, ?callable $callback): void
-    {
-        unset($mime_types);
-        unset($io_priority);
-        unset($cancellable);
-        unset($callback);
-    }
     /** Asynchronously request the $clipboard contents converted to a string. */
-    public function read_text_async(?GCancellable $cancellable, ?callable $callback): void
+    public function read_text_async(?GCancellable $cancellable, callable $callback): void
     {
         unset($cancellable);
         unset($callback);
@@ -1151,7 +1124,7 @@ class GdkClipboard extends GObject
         return null;
     }
     /** Asynchronously request the $clipboard contents converted to a `GdkPixbuf`. */
-    public function read_texture_async(?GCancellable $cancellable, ?callable $callback): void
+    public function read_texture_async(?GCancellable $cancellable, callable $callback): void
     {
         unset($cancellable);
         unset($callback);
@@ -1179,7 +1152,7 @@ class GdkClipboard extends GObject
         unset($texture);
     }
     /** Asynchronously instructs the $clipboard to store its contents remotely. */
-    public function store_async(int $io_priority, ?GCancellable $cancellable, ?callable $callback): void
+    public function store_async(int $io_priority, ?GCancellable $cancellable, callable $callback): void
     {
         unset($io_priority);
         unset($cancellable);
@@ -1190,6 +1163,20 @@ class GdkClipboard extends GObject
     {
         unset($result);
         return false;
+    }
+    /**
+     * Asynchronously requests an input stream to read the $clipboard's contents from.
+     *
+     * Generated but for the empty-list check: GDK asserts `mime_types[0] != NULL` and never calls
+     * the callback, so an empty list - what an unfiltered `array_filter()` leaves behind - is a read
+     * that silently never finishes.
+     */
+    public function read_async(array $mime_types, int $io_priority, ?GCancellable $cancellable, callable $callback): void
+    {
+        unset($mime_types);
+        unset($io_priority);
+        unset($cancellable);
+        unset($callback);
     }
     /**
      * Put $value on the clipboard, typed as $type (inferred from $value when omitted).
@@ -2368,32 +2355,77 @@ interface GActionGroup
     public function action_removed(string $action_name): void;
     /** Emits the #GActionGroup::action-state-changed signal on $action_group. */
     public function action_state_changed(string $action_name, mixed $state = null): void;
-    /** Request for the state of the named action within $action_group to be changed to $value. */
-    public function change_action_state(string $action_name, mixed $value = null): void;
-    /** Checks if the named action within $action_group is currently enabled. */
-    public function get_action_enabled(string $action_name): bool;
-    /**
-     * Queries the type of the parameter that must be given when activating the named action within
-     * $action_group.
-     */
-    public function get_action_parameter_type(string $action_name): ?string;
-    /** Queries the current state of the named action within $action_group. */
-    public function get_action_state(string $action_name): mixed;
-    /**
-     * Requests a hint about the valid range of values for the state of the named action within
-     * $action_group.
-     */
-    public function get_action_state_hint(string $action_name): mixed;
-    /** Queries the type of the state of the named action within $action_group. */
-    public function get_action_state_type(string $action_name): ?string;
-    /** Checks if the named action exists within $action_group. */
-    public function has_action(string $action_name): bool;
     /**
      * Activate an action by name. $parameter is converted to the action's declared parameter type
      * (ValueError when the action is unknown or a required parameter is missing, TypeError when the
      * value does not fit the type).
      */
     public function activate_action(string $action_name, mixed $parameter = null): void;
+    /**
+     * Request for the state of the named action within $action_group to be changed to $value.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before
+     * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+     * "ask me later", so this refuses with a `LogicException` instead. Every other action
+     * group answers at any time.
+     */
+    public function change_action_state(string $action_name, mixed $value = null): void;
+    /**
+     * Checks if the named action within $action_group is currently enabled.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before
+     * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+     * "ask me later", so this refuses with a `LogicException` instead. Every other action
+     * group answers at any time.
+     */
+    public function get_action_enabled(string $action_name): bool;
+    /**
+     * Queries the type of the parameter that must be given when activating the named action within
+     * $action_group.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before
+     * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+     * "ask me later", so this refuses with a `LogicException` instead. Every other action
+     * group answers at any time.
+     */
+    public function get_action_parameter_type(string $action_name): ?string;
+    /**
+     * Queries the current state of the named action within $action_group.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before
+     * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+     * "ask me later", so this refuses with a `LogicException` instead. Every other action
+     * group answers at any time.
+     */
+    public function get_action_state(string $action_name): mixed;
+    /**
+     * Requests a hint about the valid range of values for the state of the named action within
+     * $action_group.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before
+     * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+     * "ask me later", so this refuses with a `LogicException` instead. Every other action
+     * group answers at any time.
+     */
+    public function get_action_state_hint(string $action_name): mixed;
+    /**
+     * Queries the type of the state of the named action within $action_group.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before
+     * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+     * "ask me later", so this refuses with a `LogicException` instead. Every other action
+     * group answers at any time.
+     */
+    public function get_action_state_type(string $action_name): ?string;
+    /**
+     * Checks if the named action exists within $action_group.
+     *
+     * A GApplication only has its actions once it is registered (from `startup` on); before
+     * that GLib CRITICALs and answers a default that reads like "no such action" rather than
+     * "ask me later", so this refuses with a `LogicException` instead. Every other action
+     * group answers at any time.
+     */
+    public function has_action(string $action_name): bool;
     /**
      * The names of the actions in this group.
      *
@@ -3320,24 +3352,6 @@ class GMenuModel extends GObject
     private function __construct()
     {
     }
-    /**
-     * Queries the item at position $item_index in $model for the attribute specified by
-     * $attribute.
-     */
-    public function get_item_attribute_value(int $item_index, string $attribute, ?string $expected_type): mixed
-    {
-        unset($item_index);
-        unset($attribute);
-        unset($expected_type);
-        return null;
-    }
-    /** Queries the item at position $item_index in $model for the link specified by $link. */
-    public function get_item_link(int $item_index, string $link): ?GMenuModel
-    {
-        unset($item_index);
-        unset($link);
-        return null;
-    }
     /** Query the number of items in $model. */
     public function get_n_items(): int
     {
@@ -3354,6 +3368,31 @@ class GMenuModel extends GObject
         unset($position);
         unset($removed);
         unset($added);
+    }
+    /**
+     * Queries the item at position $item_index in $model for the attribute specified by $attribute.
+     *
+     * Generated but for the index check: GLib reads the item array unguarded, so an index outside
+     * the model ends the process instead of raising. See the prelude.
+     */
+    public function get_item_attribute_value(int $item_index, string $attribute, ?string $expected_type): mixed
+    {
+        unset($item_index);
+        unset($attribute);
+        unset($expected_type);
+        return null;
+    }
+    /**
+     * Queries the item at position $item_index in $model for the link specified by $link.
+     *
+     * Generated but for the index check: GLib reads the item array unguarded, so an index outside
+     * the model ends the process instead of raising. See the prelude.
+     */
+    public function get_item_link(int $item_index, string $link): ?GMenuModel
+    {
+        unset($item_index);
+        unset($link);
+        return null;
     }
     /**
      * Native `get_item_link` (MenuModelClass.get_item_link): the GTK implementation below any PHP
@@ -7333,7 +7372,7 @@ class GtkEventController extends GObject
         return null;
     }
     /** Returns the `GtkWidget` this controller relates to. */
-    public function get_widget(): GtkWidget
+    public function get_widget(): ?GtkWidget
     {
         return null;
     }

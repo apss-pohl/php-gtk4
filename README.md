@@ -40,6 +40,29 @@ Exceptions thrown in handlers are logged by default; `Gtk::set_exception_mode(Ex
 makes them propagate out of `run()` instead. `Gtk4\GMainLoop` + `Gtk4\GLib::timeout_add()` cover
 scripts without windows.
 
+**Diagnostics.** GTK refuses a value it does not accept by logging — `g_return_if_fail()` — which
+means your script did something wrong. php-gtk4 turns those into PHP errors at the line that caused
+them, rather than leaving them on stderr with no file, no line and no `error_log`:
+
+```text
+PHP Warning:  Gtk: gtk_editable_get_chars: assertion 'end_pos == -1 || end_pos >= start_pos'
+              failed in /home/you/app.php on line 12
+```
+
+`set_error_handler()` catches them like any other PHP error, and `error_reporting`, `error_log`
+and `@` all apply. The `gtk4.diagnostics` ini directive picks what happens (changeable at runtime
+with `ini_set()`):
+
+| value                | GLib `CRITICAL` | GLib `WARNING` |
+| -------------------- | --------------- | -------------- |
+| `warning` *(default)*| `E_WARNING`     | `E_WARNING`    |
+| `fatal`              | `E_ERROR`       | `E_WARNING`    |
+| `stderr`             | GLib's own output, unchanged     ||
+| `off`                | dropped                          ||
+
+GTK returns and carries on after a `CRITICAL`, so the default reports without ending your
+application. `fatal` is for development and CI, where an unguarded boundary should stop the run.
+
 ## Build & install
 
 Requires **PHP 8.4+** (NTS or ZTS) with `php8.4-dev` and `libgtk-4-dev` (GTK ≥ 4.14). Standard `phpize` build:

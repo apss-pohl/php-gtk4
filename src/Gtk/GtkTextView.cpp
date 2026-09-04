@@ -1651,7 +1651,7 @@ ZEND_METHOD(Gtk4_GtkTextView, vfunc_delete_from_cursor) {
   if (klass->delete_from_cursor == nullptr) {
     return;
   }
-  if (!phpgtk::check_flags(GTK_TYPE_DELETE_TYPE, type, 1)) RETURN_THROWS();
+  if (!phpgtk::check_enum_member(GTK_TYPE_DELETE_TYPE, type, 1)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(count, 2)) RETURN_THROWS();
   klass->delete_from_cursor(self, static_cast<GtkDeleteType>(type), static_cast<int>(count));
 }
@@ -1687,7 +1687,7 @@ ZEND_METHOD(Gtk4_GtkTextView, vfunc_extend_selection) {
   if (klass->extend_selection == nullptr) {
     RETURN_FALSE;
   }
-  if (!phpgtk::check_flags(GTK_TYPE_TEXT_EXTEND_SELECTION, granularity, 1)) RETURN_THROWS();
+  if (!phpgtk::check_enum_member(GTK_TYPE_TEXT_EXTEND_SELECTION, granularity, 1)) RETURN_THROWS();
   gpointer location_b = unwrap_boxed(location, GTK_TYPE_TEXT_ITER);
   if (location_b == nullptr) RETURN_THROWS();
   gpointer start_b = unwrap_boxed(start, GTK_TYPE_TEXT_ITER);
@@ -1780,7 +1780,7 @@ ZEND_METHOD(Gtk4_GtkTextView, vfunc_move_cursor) {
   if (klass->move_cursor == nullptr) {
     return;
   }
-  if (!phpgtk::check_flags(GTK_TYPE_MOVEMENT_STEP, step, 1)) RETURN_THROWS();
+  if (!phpgtk::check_enum_member(GTK_TYPE_MOVEMENT_STEP, step, 1)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(count, 2)) RETURN_THROWS();
   klass->move_cursor(self, static_cast<GtkMovementStep>(step), static_cast<int>(count),
                      extend_selection);
@@ -1863,7 +1863,7 @@ ZEND_METHOD(Gtk4_GtkTextView, vfunc_snapshot_layer) {
   if (klass->snapshot_layer == nullptr) {
     return;
   }
-  if (!phpgtk::check_flags(GTK_TYPE_TEXT_VIEW_LAYER, layer, 1)) RETURN_THROWS();
+  if (!phpgtk::check_enum_member(GTK_TYPE_TEXT_VIEW_LAYER, layer, 1)) RETURN_THROWS();
   GObject *snapshot_o = unwrap(snapshot, GTK_TYPE_SNAPSHOT);
   if (snapshot_o == nullptr) RETURN_THROWS();
   klass->snapshot_layer(self, static_cast<GtkTextViewLayer>(layer), GTK_SNAPSHOT(snapshot_o));

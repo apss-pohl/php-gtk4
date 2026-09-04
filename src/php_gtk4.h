@@ -9,6 +9,7 @@
 #include <zend_exceptions.h>
 #include <zend_interfaces.h>
 #include <zend_enum.h>
+#include <zend_strtod.h>
 // Neither header has BEGIN_EXTERN_C guards; without this MSVC looks the spl_ce_* class
 // entries up C++-mangled and the DLL fails to link (Linux linkers get the same names
 // from the .so by accident). php-src's intl extension does the same.
@@ -41,6 +42,7 @@ extern "C" {
 #endif
 
 #include <array>
+#include <cmath>
 #include <cstring>
 #include <type_traits>
 
@@ -110,6 +112,54 @@ inline bool check_range(zend_long v, uint32_t arg) {
   return true;
 }
 
+// A parameter whose C function documents a domain narrower than its type: gtk_calendar_set_month()
+// takes an int and accepts 0..11, gtk_grid_attach() a positive span. GTK states these as
+// g_return_if_fail(), which means a CRITICAL and the call silently not happening - the property
+// keeps its old value and PHP hears nothing. The bounds come from the assertion GTK itself
+// prints, and are listed per parameter in PARAM_DOMAINS (gen/gir/config.php). Pass
+// ZEND_LONG_MIN / ZEND_LONG_MAX for an open end.
+inline bool check_domain(zend_long v, zend_long lo, zend_long hi, uint32_t arg) {
+  if (v >= lo && v <= hi) return true;
+  if (lo == ZEND_LONG_MIN) {
+    zend_argument_value_error(
+        arg, "must be less than or equal to " ZEND_LONG_FMT ", " ZEND_LONG_FMT " given", hi, v);
+  } else if (hi == ZEND_LONG_MAX) {
+    zend_argument_value_error(
+        arg, "must be greater than or equal to " ZEND_LONG_FMT ", " ZEND_LONG_FMT " given", lo, v);
+  } else {
+    zend_argument_value_error(
+        arg, "must be between " ZEND_LONG_FMT " and " ZEND_LONG_FMT ", " ZEND_LONG_FMT " given", lo,
+        hi, v);
+  }
+  return false;
+}
+
+// A double as PHP itself renders one: through zend_gcvt with an explicit '.', because printf's
+// %G follows the C locale and a German one turned "0.5" in an error message into "0,5".
+struct DoubleText {
+  std::array<char, ZEND_DOUBLE_MAX_LENGTH> buf{};
+  explicit DoubleText(double v) { zend_gcvt(v, 17, '.', 'E', buf.data()); }
+  [[nodiscard]] const char *c_str() const { return buf.data(); }
+};
+
+// The same for a floating-point parameter (gtk_gesture_long_press_set_delay_factor: 0.5 .. 2.0).
+// An open end is an infinity - HUGE_VAL, not INFINITY, which is a float and would narrow.
+inline bool check_domain_double(double v, double lo, double hi, uint32_t arg) {
+  if (v >= lo && v <= hi) return true;
+  const DoubleText got(v);
+  if (lo == -HUGE_VAL) {
+    zend_argument_value_error(arg, "must be less than or equal to %s, %s given",
+                              DoubleText(hi).c_str(), got.c_str());
+  } else if (hi == HUGE_VAL) {
+    zend_argument_value_error(arg, "must be greater than or equal to %s, %s given",
+                              DoubleText(lo).c_str(), got.c_str());
+  } else {
+    zend_argument_value_error(arg, "must be between %s and %s, %s given", DoubleText(lo).c_str(),
+                              DoubleText(hi).c_str(), got.c_str());
+  }
+  return false;
+}
+
 // A filename crossing PHP -> C is made absolute against PHP's *own* working directory first.
 // `chdir()` moves a per-thread virtual cwd under ZTS, while GTK, GLib and cairo are C libraries
 // that read the process cwd - so a relative path would resolve somewhere else entirely there
@@ -126,6 +176,28 @@ inline zend_string *absolute_filename(zend_string *path, uint32_t arg) {
     return nullptr;
   }
   return zend_string_init(resolved.data(), strlen(resolved.data()), false);
+}
+
+// The enum counterpart of check_flags(), for a GIR `enumeration` that is not bound as a PHP enum
+// (it is not in gen/allowlist.txt, so it crosses as an int): the value has to be one the type
+// actually declares. These used to go through check_flags(), which casts the class to
+// GFlagsClass and reads `mask` - on a GEnumClass that field is `minimum`, 0 for every one of
+// them, so *every* non-zero value was refused with a nonsense message about a mask of 0x0. It
+// was also a read of the wrong type. Found on a ZTS run where GTK happened to deliver
+// GTK_SYSTEM_SETTING_ICON_THEME to a PHP vfunc_system_setting_changed().
+inline bool check_enum_member(GType type, zend_long value, uint32_t arg) {
+  auto *klass = static_cast<GEnumClass *>(g_type_class_ref(type));
+  const bool known = value >= klass->minimum && value <= klass->maximum &&
+                     g_enum_get_value(klass, static_cast<gint>(value)) != nullptr;
+  g_type_class_unref(klass);
+  if (known) return true;
+  if (arg != 0) {
+    zend_argument_value_error(arg, "must be a valid %s value, " ZEND_LONG_FMT " given",
+                              g_type_name(type), value);
+  } else {
+    zend_value_error("%s: invalid value " ZEND_LONG_FMT, g_type_name(type), value);
+  }
+  return false;
 }
 
 // A flags value must be a combination of the type's own bits: GLib otherwise rejects the
