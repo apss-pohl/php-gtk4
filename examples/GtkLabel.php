@@ -12,9 +12,10 @@ use Gtk4\GtkWindow;
 /*
  * Gtk4\GtkLabel - text, Pango markup and selections.
  *
- * The label is selectable: drag across it and the window title reports
- * get_selection_bounds() live, which is a boolean C function whose out
- * parameters come back as a list (or null when nothing is selected).
+ * The label is selectable: drag across it and the status line (Demo::status(),
+ * polled every 250 ms) reports get_selection_bounds() live, which is a boolean C
+ * function whose out parameters come back as a list (or null when nothing is
+ * selected).
  *
  *   bin/php-gtk4 examples/demo.php GtkLabel
  */

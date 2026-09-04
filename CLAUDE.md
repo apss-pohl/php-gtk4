@@ -55,9 +55,10 @@ phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(n
 - `./ci.sh --only=build` also writes `compile_commands.json` (from `make -Bn`, no `bear`
   needed) — the include paths clangd in `.vscode/settings.json` reads; without it every
   header reports `'php_gtk4.h' file not found`. Rebuild after `config.m4` changes.
-- Requires `php8.4-dev` (phpize/php-config) and `libgtk-4-dev`. `config.m4` refuses PHP < 8.4 and
-  GTK < 4.14. Build metadata (git hash, date, features) is baked in at configure time
-  (`PHPGTK_BUILD_INFO` in config.h).
+- Requires `php8.4-dev` (phpize/php-config) and `libgtk-4-dev`; the default `gen` stage (and so
+  the pre-commit hook) also needs `gir1.2-gtk-4.0`. `config.m4` refuses PHP < 8.4 and GTK < 4.14.
+  Build metadata (git hash, date, features) is baked in at configure time (`PHPGTK_BUILD_INFO` in
+  config.h).
 - **Editing `config.m4` requires re-running `phpize`** (configure is generated from it); `ci.sh`
   does that on every build. **Never run `phpize --clean`**: it deletes `tests/*.php` (php-src
   assumes `.phpt` tests there). Use `make clean` — and note that phpize's `make clean` removes every
@@ -211,7 +212,11 @@ only as true as the code behind it, and every new element is checked against the
   binary, nor for a `filename`, which is bytes), `check_range<T>` (a `zend_long` is 64-bit and
   signed, the C type usually is not), `check_flags` (a flags int must fit the type's mask) — and
   a property write converts exactly like the equivalent setter's parameter (`core/marshal`,
-  `caller_is_strict()`). The generator emits all of this; hand-written methods must not forget it
+  `caller_is_strict()`). The same header holds the narrower checks: `check_domain` /
+  `check_domain_double` (a bound GTK only enforces with `g_return_if_fail`, listed per parameter
+  in `PARAM_DOMAINS`, `gen/gir/config.php`), `check_enum_member` (a GIR enum that crosses as an
+  int) and `absolute_filename` (a path resolved against PHP's own cwd, which under ZTS is not the
+  process cwd). The generator emits all of this; hand-written methods must not forget it
   (`GdkRGBA::parse()` did).
 - **A value PHP can build must not end the process.** Unbounded recursion, a state precondition
   GLib enforces with an abort — guard it (`gen/overrides`) or refuse the member
@@ -542,9 +547,9 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   bad *argument* → `zend_argument_value_error(pos, …)` /
   `zend_argument_type_error` / `zend_argument_count_error` (`ValueError`/`TypeError`/
   `ArgumentCountError`) — always the positional form when the value came in as a parameter, so
-  the message names it (`connect(): Argument #1 ($signal) …`); a dead handle passed *as an
-  argument* is a `TypeError` for the same reason, a dead or *disposed* `$this` (GTK ran dispose
-  under a live handle — `Object::disposed`, set by a weak notify) is an `Error`; the wrapped object
+  the message names it (`connect(): Argument #1 ($signal) …`); a dead or *disposed* handle (GTK
+  ran dispose under a live handle — `Object::disposed`, set by a weak notify) is an `Error` as
+  `$this` and as an argument alike (`unwrap()`: only a wrong *class* is the `TypeError`); the wrapped object
   is in the wrong *state* for the call (running loop, stateless action, a native `vfunc_*()` outside
   `parent::` chaining) → `spl_ce_LogicException`; the *handle itself* cannot do it — dead `$this`,
   `new`/`clone` of a C-created handle, `unset()` of a GObject property, a GTK precondition failure
@@ -559,11 +564,11 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   CamelCase (`GtkAlign::Center`, PHP enum convention). phpcs' camelCaps rule is switched off for
   `tests/` and `examples/` because PHP subclasses override GTK slots as `vfunc_<name>()`; the stub
   itself is not linted by phpcs at all.
-- **C++ file conventions**: `src/core/*.cpp` define inside `namespace phpgtk {}` and mark
-  file-local helpers `static`; class files (`src/<Ns>/*.cpp`, generated or hand-written, and the
-  `gen/overrides/` preludes) `using namespace phpgtk;` and put file-local helpers (trampolines,
-  thunks) in an anonymous namespace. Include order in a `.cpp`: own header, project headers, then
-  `<std>` headers, each group separated by a blank line (`SortIncludes` is off — clang-format keeps
+- **C++ file conventions**: `src/core/*.cpp` define inside `namespace phpgtk {}`; class files
+  (`src/<Ns>/*.cpp`, generated or hand-written, and the `gen/overrides/` preludes) `using namespace
+  phpgtk;`. File-local helpers (trampolines, thunks) go in an anonymous namespace everywhere;
+  `static` only where a GLib macro declares it (`G_DEFINE_TYPE` in `core/phpvalue.cpp`). Includes:
+  own header first; keep the existing grouping of a file (`SortIncludes` is off — clang-format keeps
   what you write). `NOLINTNEXTLINE(check) reason` — with the reason — is allowed for findings inside
   GLib/Zend macro expansions and for GLib API signatures we cannot change (`gconstpointer` items,
   `gint8` chars); multi-line macros use `NOLINTBEGIN`/`NOLINTEND`. The magic-number and enum-size

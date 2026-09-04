@@ -412,7 +412,8 @@ Each needs a written design in PLAN.md before code; none blocks the waves.
       `<class>::<method>#<sweep>` keys GTK is known to complain about, and the sweep fails on an
       unlisted complaint or a listed method that has gone quiet
       (`tests/README-robustness-pin.md`).
-- [ ] **The coverage floor has almost no margin** (2026-09-03): 80.1% against
+- [x] **The coverage floor has almost no margin** (2026-09-03; margin restored 2026-09-04: the
+      vfunc sweeps, the variant thunks and the review guards took it to 85.7%). It was 80.1% against
       `COVERAGE_MIN_LINES=80`, i.e. 23 lines. Wave 3b is what thinned it - `GdkDrag` and `GdkDrop`
       are 128 lines that no test can reach, because only a compositor-driven drag creates one, and
       they count in the denominator like any other file. The next wave will trip the floor. The
@@ -450,8 +451,9 @@ identifier-precise include selection. PHP-Parser: vendor-first by design (gen/RE
       the MINIT ordering; it iterates the keys now.
 - [ ] Per-namespace stub naming (`src/Gtk/Gtk.stub.php` next to the hand-written `Gtk.cpp`) stays
       as documented in gen/README.md; renaming would touch every tool's path list for no behaviour.
-- [ ] `upload-artifact@v7` / `download-artifact@v8`: both on the v4+ artifact backend, verified
-      compatible; Dependabot keeps them moving, `WorkflowsTest` does not pin majors.
+- [x] `upload-artifact@v7` / `download-artifact@v8`: both on the v4+ artifact backend, verified
+      compatible. Since 2026-09-04 every action is pinned to a commit SHA with the tag as a
+      trailing comment (the form `update-deps.sh` and Dependabot both keep moving).
 - [ ] Branch protection for `main` (§9): blocked by the private/Free-plan repo.
 
 ## 9c. Sweep widening 2026-09-03 — leftovers
@@ -495,6 +497,45 @@ unbound enums that were being read as `GFlagsClass`. `tests/robustness-criticals
 - [ ] Windows and PHP 8.5 unverified locally for this work: no new `src/*.cpp`, so `config.m4` and
       `config.w32` need no change, but `<cmath>`, `<zend_strtod.h>` and `HUGE_VAL` in
       `src/php_gtk4.h` first meet MSVC and the `/W3` gate in `windows.yml`.
+
+## 9d. Review 2026-09-04 — leftovers
+
+Six-area review (conventions, tools, architecture, type safety, security, performance). Closed the
+same day: GtkBuilder resolves `<signal handler>` from `set_handlers()` only (GTK's C-symbol lookup
+let a `.ui` document call `abort`), builder closures are torn down at RSHUTDOWN, `emit()` bounds a
+length by the string before it, typed `GVariant` scalars / GStrv elements / vfunc returns /
+`GdkRectangle` / `GBytes` convert like parameters (`caller_is_strict()` now looks through the
+internal frame to the PHP caller, so `set_property()` is strict where its caller is), property
+access on a disposed handle is an `Error`, out-of-range property writes are a `ValueError`,
+`Gtk::testing_run_dispose()` takes widgets only, `@property` tags are nullable only where null is
+possible, `GType` properties are type names, `get_page()` ×2 nullable, the `gen` stage skips off the
+reference toolchain, actions and the PHP SDK are SHA/tag pinned, plus the doc drift and script
+fixes. The interface-property routing and the `GVariant` thunks landed the same day (PLAN §2.6).
+
+- [ ] **GC-invisible cycles through `object_hold_owner()` and `BoxedClass::owner`**: parent handle →
+      (toggle) parent GObject → child GObject → (`held`) child handle → `owner` → parent handle.
+      Zend sees only the `owner` edge, so `get_first_child()` on a detached tree, or a PHP buffer
+      subclass storing one of its own iters, leaks both handles until RSHUTDOWN. Reporting the held
+      child handles from the parent's `get_gc` would let the collector see it, but the freeing order
+      then meets the toggle release inside the parent's finalize; dropping `owner` while held brings
+      back the `GtkScale` gizmo use-after-free. Needs its own design and an ASan run; pin the
+      current behaviour with a test first.
+- [ ] **Sweeps for what the converters now guard**: `RobustnessTest` sweeps methods only - no
+      property writes, no `emit()` arguments, no vfunc return values, no typed `GVariant`
+      conversions - and `TypeDeclarationTest` skips `@property` reads and getters with parameters.
+      Every converter finding of the review was invisible to the sweeps; `ConverterGuardTest` pins
+      the cases, a sweep would keep them closed.
+- [ ] `gen/gir.php` emitters (`emitClass` 317 lines, `emitRecord` 218, `vfuncThunk` 151) still sit
+      in one file exempt from three phpcs sniffs and baselined in PHPStan; split them out so the
+      exclusions can shrink with the baseline. Header declarations in `src/core/*.h` carry no
+      comment (the gate covers definitions only); `.clang-tidy` explains its macro exclusions but
+      not the style choices.
+- [ ] Performance, all single-digit percent: the signal marshaller re-resolves the callable and
+      allocates the argument array per emission, `subtype_vfunc()` hashes the method name per call,
+      the PHP-GType snapshots are O(N²) in PHP subclasses and never freed.
+- [ ] The whole-tree clang-tidy pass could not be run on the development machine for this batch
+      (killed for memory three times after the header changes); the changed TUs were linted
+      directly and are clean, CI's `cpp-lint` job is the verification.
 
 ## 10. Keep (verified good, do not "clean up")
 
