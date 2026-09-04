@@ -1090,6 +1090,20 @@ ZEND_METHOD(Gtk4_GtkWidget, insert_after) {
     previous_sibling_o = unwrap(previous_sibling, GTK_TYPE_WIDGET);
     if (previous_sibling_o == nullptr) RETURN_THROWS();
   }
+  if (previous_sibling_o != nullptr &&
+      gtk_widget_get_parent(GTK_WIDGET(previous_sibling_o)) != GTK_WIDGET(parent_o)) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "%s(): Argument #2 ($previous_sibling) is not a child of $parent",
+                            ZSTR_VAL(EX(func)->common.function_name));
+    RETURN_THROWS();
+  }
+  if (gtk_widget_get_parent(GTK_WIDGET(self)) != nullptr &&
+      gtk_widget_get_parent(GTK_WIDGET(self)) != GTK_WIDGET(parent_o)) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "%s(): this %s already has a parent, and not the one given",
+                            ZSTR_VAL(EX(func)->common.function_name), G_OBJECT_TYPE_NAME(self));
+    RETURN_THROWS();
+  }
   gtk_widget_insert_after(self, GTK_WIDGET(parent_o),
                           previous_sibling_o != nullptr ? GTK_WIDGET(previous_sibling_o) : nullptr);
 }
@@ -1113,6 +1127,20 @@ ZEND_METHOD(Gtk4_GtkWidget, insert_before) {
   if (next_sibling != nullptr) {
     next_sibling_o = unwrap(next_sibling, GTK_TYPE_WIDGET);
     if (next_sibling_o == nullptr) RETURN_THROWS();
+  }
+  if (next_sibling_o != nullptr &&
+      gtk_widget_get_parent(GTK_WIDGET(next_sibling_o)) != GTK_WIDGET(parent_o)) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "%s(): Argument #2 ($next_sibling) is not a child of $parent",
+                            ZSTR_VAL(EX(func)->common.function_name));
+    RETURN_THROWS();
+  }
+  if (gtk_widget_get_parent(GTK_WIDGET(self)) != nullptr &&
+      gtk_widget_get_parent(GTK_WIDGET(self)) != GTK_WIDGET(parent_o)) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "%s(): this %s already has a parent, and not the one given",
+                            ZSTR_VAL(EX(func)->common.function_name), G_OBJECT_TYPE_NAME(self));
+    RETURN_THROWS();
   }
   gtk_widget_insert_before(self, GTK_WIDGET(parent_o),
                            next_sibling_o != nullptr ? GTK_WIDGET(next_sibling_o) : nullptr);

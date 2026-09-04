@@ -55,7 +55,10 @@
     parameter GIR marks nullable that the function refuses with a `g_return_if_fail()` (the
     `GAsyncReadyCallback` of `gdk_clipboard_read_async()` and friends). Dropping the `?` makes
     null an ordinary TypeError;
-  - `PARAM_DOMAINS` — `<C identifier>.<param>` -> `[min, max]` (`null` for an open end, a float
+  - `CHILD_PARAMS` / `SELF_UNPARENTED_OR` — widget parameters GTK requires in a place (a child of
+  `$this`, a page of the notebook, a child of another parameter; `$this` unparented or under the
+  given parent): a `LogicException` naming the argument, where GTK would CRITICAL and do nothing.
+- `PARAM_DOMAINS` — `<C identifier>.<param>` -> `[min, max]` (`null` for an open end, a float
     bound for a float check), for parameters whose function accepts less than their type
     (`gtk_calendar_set_month()`: 0..11). GTK states these as `g_return_if_fail()` — a CRITICAL and
     a call that silently does nothing — so the generator emits `check_domain()` /

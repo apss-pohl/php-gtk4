@@ -87,6 +87,12 @@ ZEND_METHOD(Gtk4_GtkGrid, attach_next_to) {
     sibling_o = unwrap(sibling, GTK_TYPE_WIDGET);
     if (sibling_o == nullptr) RETURN_THROWS();
   }
+  if (sibling_o != nullptr && gtk_widget_get_parent(GTK_WIDGET(sibling_o)) != GTK_WIDGET(self)) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "%s(): Argument #2 ($sibling) is not a child of this %s",
+                            ZSTR_VAL(EX(func)->common.function_name), G_OBJECT_TYPE_NAME(self));
+    RETURN_THROWS();
+  }
   gint side_v = 0;
   if (!enum_from_php(side, GTK_TYPE_POSITION_TYPE, &side_v)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(width, 4)) RETURN_THROWS();

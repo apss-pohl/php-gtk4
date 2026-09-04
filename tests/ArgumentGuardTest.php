@@ -11,12 +11,15 @@ use Gtk4\GListStore;
 use Gtk4\GMenu;
 use Gtk4\GMenuModel;
 use Gtk4\GSimpleAction;
+use Gtk4\GtkBox;
+use Gtk4\GtkButton;
 use Gtk4\GtkCalendar;
 use Gtk4\GtkDrawingArea;
 use Gtk4\GtkEntry;
 use Gtk4\GtkGestureLongPress;
 use Gtk4\GtkGrid;
 use Gtk4\GtkLabel;
+use Gtk4\GtkNotebook;
 use Gtk4\GtkOrientation;
 use Gtk4\GtkSingleSelection;
 use Gtk4\GtkStringList;
@@ -566,5 +569,62 @@ final class ArgumentGuardTest extends GtkTestCase
         $window->set_title('plain');
         self::assertSame('plain', $window->get_title());
         $window->destroy();
+    }
+    // ---- a widget in the wrong place (CHILD_PARAMS / SELF_UNPARENTED_OR): LogicException, not a CRITICAL
+
+    public function testANotebookMethodRefusesAWidgetThatIsNotAPage(): void
+    {
+        $notebook = new GtkNotebook();
+        $notebook->append_page(new GtkLabel('p'), null);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Argument #1 ($child) is not a page of this notebook');
+        $notebook->set_tab_label(new GtkButton(), null);
+    }
+
+    public function testAContainerMethodRefusesAWidgetThatIsNotItsChild(): void
+    {
+        $box = new GtkBox(GtkOrientation::Vertical, 0);
+        $box->append(new GtkLabel('a'));
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Argument #1 ($child) is not a child of this GtkBox');
+        $box->reorder_child_after(new GtkButton(), null);
+    }
+
+    public function testInsertAfterRefusesASiblingOfAnotherParent(): void
+    {
+        $box = new GtkBox(GtkOrientation::Vertical, 0);
+        $elsewhere = new GtkBox(GtkOrientation::Vertical, 0);
+        $sibling = new GtkButton();
+        $elsewhere->append($sibling);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Argument #2 ($previous_sibling) is not a child of $parent');
+        new GtkLabel('n')->insert_after($box, $sibling);
+    }
+
+    public function testInsertBeforeRefusesAWidgetThatAlreadyHasAnotherParent(): void
+    {
+        $box = new GtkBox(GtkOrientation::Vertical, 0);
+        $elsewhere = new GtkBox(GtkOrientation::Vertical, 0);
+        $widget = new GtkButton();
+        $elsewhere->append($widget);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('already has a parent');
+        $widget->insert_before($box, null);
+    }
+
+    public function testInsertAfterAcceptsAValidSibling(): void
+    {
+        $box = new GtkBox(GtkOrientation::Vertical, 0);
+        $first = new GtkLabel('first');
+        $box->append($first);
+        $second = new GtkLabel('second');
+
+        $second->insert_after($box, $first);
+
+        self::assertSame($second, $first->get_next_sibling());
     }
 }

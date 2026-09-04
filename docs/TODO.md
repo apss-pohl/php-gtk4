@@ -469,12 +469,16 @@ failed parse into a `__builtin_unreachable`. Three generator tables came with th
 `NULLABLE_RETURNS`, `NON_NULLABLE_PARAMS`, `PARAM_DOMAINS` — plus `check_enum_member()` for the six
 unbound enums that were being read as `GFlagsClass`. `tests/robustness-criticals.txt` went 158 → 77.
 
-- [ ] **The 77 remaining pin lines**, classified by the message GTK actually prints (the numeric
-      family is done). What is left, in the order worth attacking:
-      *state / wrong-object preconditions* — `list != NULL` on the `GtkNotebook` child methods,
-      `gtk_widget_get_parent(child) == box` on the reorder/move calls, `parent != NULL` on
-      `gtk_layout_manager_get_layout_child()`, `!task->ever_returned`, `is_registered` — all
-      `LogicException` candidates by the CLAUDE.md vocabulary and the obvious next batch;
+- [ ] **The 63 remaining pin lines** (77 until 2026-09-04), classified by the message GTK actually
+      prints (the numeric family is done). Done 2026-09-04: the *widget-in-the-wrong-place* family -
+      `list != NULL` on the seven `GtkNotebook` child methods, `gtk_widget_get_parent(child) ==
+      box` on reorder/move/attach/overlay, the sibling checks of `insert_after/before` - is
+      `CHILD_PARAMS` + `SELF_UNPARENTED_OR` in `gen/gir/config.php`, emitted as a `LogicException`
+      naming the argument (`ArgumentGuardTest`). What is left, in the order worth attacking:
+      *state preconditions* — `parent != NULL` on `gtk_layout_manager_get_layout_child()`,
+      `!task->ever_returned`, `is_registered` on the `GApplication` methods,
+      `center_child != NULL` on `GtkTextView::move_overlay()` — `LogicException` candidates by the
+      CLAUDE.md vocabulary;
       *lookup misses* — "Child name not found in GtkStack", "no mark named" — a question of whether
       a miss should raise at all; and *parse diagnostics* — theme parser errors, "invalid
       accelerator string", the `goption.c` warnings — which are GTK reporting about data the script
@@ -512,7 +516,10 @@ possible, `GType` properties are type names, `get_page()` ×2 nullable, the `gen
 reference toolchain, actions and the PHP SDK are SHA/tag pinned, plus the doc drift and script
 fixes. The interface-property routing and the `GVariant` thunks landed the same day (PLAN §2.6).
 
-- [ ] **GC-invisible cycles through `object_hold_owner()` and `BoxedClass::owner`**: parent handle →
+- [x] **GC-invisible cycles through `object_hold_owner()` and `BoxedClass::owner`** (closed the same
+      day: the owner's `get_gc` reports the held dependents whose GTK reference is its own - the
+      child of a parent widget, `holds_dependent()` - and a boxed value holds its owner's handle;
+      `OwnerCycleTest`, ASan/LSan clean): parent handle →
       (toggle) parent GObject → child GObject → (`held`) child handle → `owner` → parent handle.
       Zend sees only the `owner` edge, so `get_first_child()` on a detached tree, or a PHP buffer
       subclass storing one of its own iters, leaks both handles until RSHUTDOWN. Reporting the held

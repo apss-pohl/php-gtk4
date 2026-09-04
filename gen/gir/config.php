@@ -122,6 +122,42 @@ const RETURNS_HOLD_SELF = [
 ];
 
 /**
+ * Widget parameters GTK requires to be in a particular place, as `<C identifier>.<param>` ->
+ * the relation: `parent` (a child of `$this`), `page` (a page of this notebook), or
+ * `child-of:<param>` (a child of the widget in another parameter). GTK checks each with a
+ * g_return_if_fail() - a CRITICAL and the call silently not happening - so the generator emits
+ * the check first and raises a LogicException naming the argument (the handle is in the wrong
+ * state for the call, CLAUDE.md's vocabulary). Every line retired an entry from
+ * tests/robustness-criticals.txt; the message GTK printed is what decided the relation.
+ */
+const CHILD_PARAMS = [
+    'gtk_box_reorder_child_after.child' => 'parent',
+    'gtk_box_reorder_child_after.sibling' => 'parent',
+    'gtk_fixed_move.widget' => 'parent',
+    'gtk_overlay_set_clip_overlay.widget' => 'parent',
+    'gtk_overlay_set_measure_overlay.widget' => 'parent',
+    'gtk_grid_attach_next_to.sibling' => 'parent',
+    'gtk_notebook_reorder_child.child' => 'page',
+    'gtk_notebook_set_tab_label.child' => 'page',
+    'gtk_notebook_set_tab_label_text.child' => 'page',
+    'gtk_notebook_set_menu_label.child' => 'page',
+    'gtk_notebook_set_menu_label_text.child' => 'page',
+    'gtk_notebook_set_tab_reorderable.child' => 'page',
+    'gtk_notebook_set_tab_detachable.child' => 'page',
+    'gtk_widget_insert_after.previous_sibling' => 'child-of:parent',
+    'gtk_widget_insert_before.next_sibling' => 'child-of:parent',
+];
+
+/**
+ * Methods that reparent `$this`: it must have no parent yet, or the one in the named parameter -
+ * GTK otherwise warns "Can't set new parent" and does nothing. `<C identifier>` -> the parameter.
+ */
+const SELF_UNPARENTED_OR = [
+    'gtk_widget_insert_after' => 'parent',
+    'gtk_widget_insert_before' => 'parent',
+];
+
+/**
  * Parameters whose C function accepts a narrower domain than their type, as
  * `<C identifier>.<param>` -> `[min, max]` (`null` for an open end; a float bound makes it a
  * float check). GTK states these as `g_return_if_fail()`, so out of domain means a CRITICAL and

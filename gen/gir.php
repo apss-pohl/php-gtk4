@@ -1200,6 +1200,17 @@ final class Generator
                 $lines[] = '  ' . $l;
             }
         }
+        if ($f->kind === 'method' && isset(SELF_UNPARENTED_OR[$f->cid])) {
+            $parent = SELF_UNPARENTED_OR[$f->cid] . '_o';
+            $lines[] = '  if (gtk_widget_get_parent(GTK_WIDGET(self)) != nullptr &&';
+            $lines[] = "      gtk_widget_get_parent(GTK_WIDGET(self)) != GTK_WIDGET($parent)) {";
+            $lines[] = '    zend_throw_exception_ex(spl_ce_LogicException, 0,';
+            $lines[] = '                            "%s(): this %s already has a parent, and not the one given",';
+            $lines[] = '                            ZSTR_VAL(EX(func)->common.function_name),';
+            $lines[] = '                            G_OBJECT_TYPE_NAME(self));';
+            $lines[] = '    RETURN_THROWS();';
+            $lines[] = '  }';
+        }
         foreach ($outs as $o) {
             $lines[] = $o['kind'] === 'boxed'
                 ? "  {$o['ctype']} {$o['name']}{};"

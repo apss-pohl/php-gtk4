@@ -617,6 +617,33 @@ final class TypeMap
         return ["if (!phpgtk::$fn($name, $low, $high, $argNum)) RETURN_THROWS();"];
     }
 
+    /**
+     * A widget parameter GTK requires in a place (CHILD_PARAMS): the LogicException before the
+     * call, where GTK would g_return_if_fail() and carry on.
+     *
+     * @return list<string>
+     */
+    private function childCheck(?string $cid, string $name, int $argNum): array
+    {
+        $relation = CHILD_PARAMS[$cid . '.' . $name] ?? null;
+        if ($relation === null) {
+            return [];
+        }
+        [$kind, $of] = str_contains($relation, ':') ? explode(':', $relation, 2) : [$relation, ''];
+        $widget = "GTK_WIDGET({$name}_o)";
+        $fn = 'ZSTR_VAL(EX(func)->common.function_name)';
+        [$test, $message, $args] = match ($kind) {
+            'parent' => ["gtk_widget_get_parent($widget) != GTK_WIDGET(self)",
+                'is not a child of this %s', "$fn, G_OBJECT_TYPE_NAME(self)"],
+            'page' => ["gtk_notebook_page_num(self, $widget) == -1", 'is not a page of this notebook', $fn],
+            default => ["gtk_widget_get_parent($widget) != GTK_WIDGET({$of}_o)", 'is not a child of $' . $of, $fn],
+        };
+        return ["if ({$name}_o != nullptr && $test) {",
+            '  zend_throw_exception_ex(spl_ce_LogicException, 0, "%s(): Argument #' . $argNum
+                . ' ($' . $name . ') ' . $message . '", ' . $args . ');',
+            '  RETURN_THROWS();', '}'];
+    }
+
     /** @return array<string, mixed>|null */
     public function inParam(Param $p, bool $trailingNullable, int $argNum = 0, ?string $cid = null): ?array
     {
@@ -824,6 +851,7 @@ final class TypeMap
                 // The callee takes this reference (GIR transfer full); the handle keeps its own.
                 $pre[] = "if ({$name}_o != nullptr) g_object_ref({$name}_o);  // transfer full";
             }
+            array_push($pre, ...$this->childCheck($cid, $name, $argNum));
             return array_merge($r, [
                 'objectVar' => $p->transfer === 'full' ? "{$name}_o" : null,
                 'phpType' => ($nullable ? '?' : '') . $phpT,
