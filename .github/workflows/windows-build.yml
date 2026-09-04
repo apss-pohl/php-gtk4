@@ -49,7 +49,7 @@ env:
   GVSBUILD_SHA256: '1f95a92d037f5292da05e6ab1037032ff21ddb7b20d4ac8e83e3674c864c07b0'
   GTK4_ROOT: C:\gtk
   # php-src's Windows SDK (phpsdk-vs17-x64.bat, nmake wrappers, deps handling).
-  PHP_SDK_REF: master
+  PHP_SDK_REF: php-sdk-2.8.3  # a tag, never a branch: this shell builds what release.yml attests
   PHP_SDK_VS: vs17
 
 jobs:
@@ -64,10 +64,10 @@ jobs:
         shell: pwsh
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up PHP ${{ inputs.php }}
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: ${{ inputs.php }}
           extensions: dom, mbstring, tokenizer, xml, xmlwriter
@@ -102,7 +102,7 @@ jobs:
       # The hash is part of the key: bumping the pin can never resolve to the old tree.
       - name: Cache gvsbuild GTK 4
         id: gtk-cache
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: C:\gtk
           key: gvsbuild-gtk4-${{ env.GVSBUILD_VERSION }}-${{ env.GVSBUILD_SHA256 }}-x64
@@ -178,7 +178,7 @@ jobs:
 
       - name: Cache Composer packages
         if: inputs.run-tests
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: vendor
           key: composer-win-php${{ inputs.php }}-${{ hashFiles('composer.lock') }}
@@ -195,7 +195,7 @@ jobs:
 
       - name: Upload PHPUnit report
         if: inputs.run-tests && always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: phpunit-junit-windows-php${{ inputs.php }}-${{ inputs.ts }}
           path: phpunit-junit.xml
@@ -207,7 +207,7 @@ jobs:
           Copy-Item $env:GTK4_DLL "dist\${{ inputs.dll-name }}"
 
       - name: Upload php_gtk4.dll
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ inputs.artifact }}
           path: dist/${{ inputs.dll-name }}

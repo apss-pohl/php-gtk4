@@ -49,9 +49,20 @@ for BUILD in "${BUILDS[@]}"; do
 
     echo "=== Building for PHP ${VERSION} ==="
     # NEVER `phpize --clean`: it deletes tests/*.php (php-src assumes .phpt there).
+    # phpize's `make clean` runs `find . -name '*.so' | xargs rm`, which would take the variants
+    # ci.sh built in the repo root (gtk4.so, gtk4-asan.so, gtk4-cov.so) with it - stash them
+    # around it exactly like ci.sh's build_variant() does.
+    STASH=$(mktemp -d)
+    cp -f gtk4*.so "$STASH"/ 2>/dev/null || true
     [ -f Makefile ] && make clean >/dev/null 2>&1 || true
+    cp -f "$STASH"/*.so . 2>/dev/null || true
+    rm -rf "$STASH"
     "$PHPIZE"
     ./configure "${CONFIGURE_ARGS[@]}"
+    # ci.sh takes its incremental path when .ci/configure.args still names the arguments of
+    # its own last configure; this configure ran with different ones (and a different PHP when
+    # the table has several), so drop the record and the next `./ci.sh --only=build` reconfigures.
+    rm -f .ci/configure.args
     make -j"$JOBS"
 
     EXT_DIR=$("$PHP_CONFIG" --extension-dir)

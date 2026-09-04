@@ -27,11 +27,11 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # ubuntu-latest ships PHP 8.3; the project is PHP 8.4+ only.
       - name: Set up PHP 8.4
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: '8.4'
           tools: none
@@ -41,8 +41,8 @@ jobs:
       # TU is analysed too. No bear/compile_commands.json: ci.sh derives the flags itself.
       - name: Install GTK4 / WebKitGTK dev headers and clang 20
         run: |
-          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc >/dev/null
-          echo "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-20 main" | sudo tee /etc/apt/sources.list.d/llvm-20.list
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /usr/share/keyrings/apt.llvm.org.asc >/dev/null
+          echo "deb [signed-by=/usr/share/keyrings/apt.llvm.org.asc] http://apt.llvm.org/noble/ llvm-toolchain-noble-20 main" | sudo tee /etc/apt/sources.list.d/llvm-20.list
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             pkg-config libgtk-4-dev libwebkitgtk-6.0-dev gir1.2-gtk-4.0 clang-tidy-20 clang-format-20
@@ -63,7 +63,7 @@ jobs:
             >> "$GITHUB_OUTPUT"
 
       - name: Cache clang-tidy results
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .ci/tidy-ok
           key: tidy-ok-${{ steps.toolchain.outputs.key }}-${{ github.sha }}
