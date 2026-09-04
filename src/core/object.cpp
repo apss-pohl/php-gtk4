@@ -254,11 +254,28 @@ bool refuse_dead(Object *self, zend_string *member) {
 zval *read_property(zend_object *o, zend_string *member, int type, void **cache_slot, zval *rv) {
   Object *self = object_from_zend(o);
   GParamSpec *spec = find_property(self, member);
-  if (spec == nullptr || (spec->flags & G_PARAM_READABLE) == 0) {
-    return zend_std_read_property(o, member, type, cache_slot, rv);
+  if (spec == nullptr) return zend_std_read_property(o, member, type, cache_slot, rv);
+  if (type == BP_VAR_IS && (dead(self) || (spec->flags & G_PARAM_READABLE) == 0)) {
+    return &EG(uninitialized_zval);  // isset(): not set
   }
-  if (type == BP_VAR_IS && dead(self)) return &EG(uninitialized_zval);  // isset(): not set
+  if ((spec->flags & G_PARAM_READABLE) == 0) {  // write-only: the Error, not "undefined property"
+    zend_throw_error(nullptr, "Cannot read write-only property %s::$%s", ZSTR_VAL(o->ce->name),
+                     ZSTR_VAL(member));
+    return &EG(uninitialized_zval);
+  }
   if (refuse_dead(self, member)) return &EG(uninitialized_zval);
+  // The one property whose getter asserts a state: g_application_get_is_remote() before
+  // register() is a GLib CRITICAL. The method says so with a LogicException
+  // (gen/overrides/Gio.Application.get_is_remote.cpp); the property read must not say less.
+  // NOLINTNEXTLINE(bugprone-assignment-in-if-condition) G_IS_APPLICATION() macro expansion
+  if (strcmp(spec->name, "is-remote") == 0 && G_IS_APPLICATION(self->obj) &&
+      g_application_get_is_registered(G_APPLICATION(self->obj)) == FALSE) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "%s::$%s: the application is not registered yet, so there is no "
+                            "primary instance to be remote from",
+                            ZSTR_VAL(o->ce->name), ZSTR_VAL(member));
+    return &EG(uninitialized_zval);
+  }
   GValue v = G_VALUE_INIT;
   g_value_init(&v, spec->value_type);
   g_object_get_property(self->obj, spec->name, &v);
@@ -271,9 +288,8 @@ zval *read_property(zend_object *o, zend_string *member, int type, void **cache_
 zval *write_property(zend_object *o, zend_string *member, zval *value, void **cache_slot) {
   Object *self = object_from_zend(o);
   GParamSpec *spec = find_property(self, member);
-  if (spec == nullptr || (spec->flags & G_PARAM_WRITABLE) == 0) {
-    return zend_std_write_property(o, member, value, cache_slot);
-  }
+  if (spec == nullptr) return zend_std_write_property(o, member, value, cache_slot);
+  if (!property_writable(spec, ZSTR_VAL(o->ce->name), ZSTR_VAL(member))) return value;
   if (refuse_dead(self, member)) return value;
   GValue v = G_VALUE_INIT;
   if (to_gvalue(value, spec->value_type, &v)) {
@@ -291,7 +307,7 @@ int has_property(zend_object *o, zend_string *member, int has_set_exists, void *
   GParamSpec *spec = find_property(self, member);
   if (spec == nullptr) return zend_std_has_property(o, member, has_set_exists, cache_slot);
   if (has_set_exists == ZEND_PROPERTY_EXISTS) return 1;
-  if (dead(self)) return 0;
+  if (dead(self) || (spec->flags & G_PARAM_READABLE) == 0) return 0;
   zval rv;
   read_property(o, member, BP_VAR_IS, nullptr, &rv);
   int result = has_set_exists == ZEND_PROPERTY_NOT_EMPTY ? zend_is_true(&rv) : !Z_ISNULL(rv);
@@ -385,6 +401,19 @@ HashTable *get_gc(zend_object *o, zval **table, int *n) {
   return zend_std_get_properties(o);
 }
 }  // namespace
+
+// A read-only property used to fall through to a dynamic PHP property of the same name (the
+// write "succeeded" and shadowed nothing), a construct-only one reached GLib, which warned and
+// kept the old value: both are the Error PHP raises for a readonly property.
+bool property_writable(GParamSpec *spec, const char *class_name, const char *member) {
+  if ((spec->flags & G_PARAM_WRITABLE) != 0 && (spec->flags & G_PARAM_CONSTRUCT_ONLY) == 0) {
+    return true;
+  }
+  zend_throw_error(nullptr, "Cannot modify %s property %s::$%s",
+                   (spec->flags & G_PARAM_WRITABLE) == 0 ? "read-only" : "construct-only",
+                   class_name, member);
+  return false;
+}
 
 // g_param_value_validate() clamps a copy; a copy that changed was out of range.
 bool property_value_in_range(GParamSpec *spec, const GValue *value, const char *what) {

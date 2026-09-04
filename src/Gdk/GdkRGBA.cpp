@@ -32,17 +32,21 @@ bool read(gpointer data, const char *f, zval *rv) {
 // Boxed field writer: accepts int/float, stored as float.
 bool write(gpointer data, const char *f, zval *value) {
   auto *c = static_cast<GdkRGBA *>(data);
-  const auto v = static_cast<float>(zval_get_double(value));
-  if (strcmp(f, "red") == 0)
-    c->red = v;
-  else if (strcmp(f, "green") == 0)
-    c->green = v;
-  else if (strcmp(f, "blue") == 0)
-    c->blue = v;
-  else if (strcmp(f, "alpha") == 0)
-    c->alpha = v;
-  else
-    return false;
+  float *p = nullptr;
+  if (strcmp(f, "red") == 0) {
+    p = &c->red;
+  } else if (strcmp(f, "green") == 0) {
+    p = &c->green;
+  } else if (strcmp(f, "blue") == 0) {
+    p = &c->blue;
+  } else if (strcmp(f, "alpha") == 0) {
+    p = &c->alpha;
+  }
+  if (p == nullptr) return false;
+  // like a float parameter (core/boxed); true for a field even when the value was refused, so
+  // the write never falls through to a dynamic PHP property of the same name
+  double d = 0;
+  if (boxed_field_double(value, "Gtk4\\GdkRGBA", f, &d)) *p = static_cast<float>(d);
   return true;
 }
 

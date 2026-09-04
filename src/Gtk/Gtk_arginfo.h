@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: eb7adb1b4af4cda5b788ec3f442b973df3509bc2 */
+ * Stub hash: 3e58999ba520b593176ed98093042553a8c1873e */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()

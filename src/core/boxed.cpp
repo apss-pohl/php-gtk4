@@ -1,5 +1,6 @@
 #include "boxed.h"
 #include "object.h"
+#include "marshal.h"
 
 #include <string>
 #include <unordered_map>
@@ -215,6 +216,45 @@ void boxed_handlers_init() {
   handlers.get_debug_info = get_debug_info;
   handlers.get_gc = get_gc;
   handlers.compare = compare_objects;
+}
+
+// Field writers (boxed.h): an int field takes an int, a float field an int or a float.
+bool boxed_field_long(zval *v, const char *class_name, const char *field, zend_long *out) {
+  if (Z_TYPE_P(v) == IS_LONG) {
+    *out = Z_LVAL_P(v);
+    return true;
+  }
+  if (!caller_is_strict() && zend_parse_arg_long_weak(v, out, 0)) return true;
+  zend_type_error("Cannot assign %s to property %s::$%s of type int", zend_zval_value_name(v),
+                  class_name, field);
+  return false;
+}
+// A float field: an int widens, anything else follows the caller's coercion rules.
+bool boxed_field_double(zval *v, const char *class_name, const char *field, double *out) {
+  if (Z_TYPE_P(v) == IS_DOUBLE) {
+    *out = Z_DVAL_P(v);
+    return true;
+  }
+  if (Z_TYPE_P(v) == IS_LONG) {  // widening: allowed under strict_types too
+    *out = static_cast<double>(Z_LVAL_P(v));
+    return true;
+  }
+  if (!caller_is_strict() && zend_parse_arg_double_weak(v, out, 0)) return true;
+  zend_type_error("Cannot assign %s to property %s::$%s of type float", zend_zval_value_name(v),
+                  class_name, field);
+  return false;
+}
+
+// A bool field: true/false, or what weak mode accepts where strict_types is not declared.
+bool boxed_field_bool(zval *v, const char *class_name, const char *field, bool *out) {
+  if (Z_TYPE_P(v) == IS_TRUE || Z_TYPE_P(v) == IS_FALSE) {
+    *out = Z_TYPE_P(v) == IS_TRUE;
+    return true;
+  }
+  if (!caller_is_strict() && zend_parse_arg_bool_weak(v, out, 0)) return true;
+  zend_type_error("Cannot assign %s to property %s::$%s of type bool", zend_zval_value_name(v),
+                  class_name, field);
+  return false;
 }
 
 // MINIT: bind a PHP class to a boxed GType with its field accessors.

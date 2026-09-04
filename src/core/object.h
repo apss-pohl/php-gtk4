@@ -52,6 +52,9 @@ void object_hold_owner(zval *handle, zval *owner);
 // enum's members): GLib would otherwise refuse it with a warning and keep the old value, telling
 // PHP nothing. False with a ValueError pending, naming `what` (`GtkLabel::$xalign`).
 bool property_value_in_range(GParamSpec *spec, const GValue *value, const char *what);
+// A property PHP may write at all: false with an Error pending for a read-only or a
+// construct-only one (GLib would warn and keep the old value).
+bool property_writable(GParamSpec *spec, const char *class_name, const char *member);
 
 // The handle registered on a GObject (qdata back-pointer), nullptr if none.
 Object *object_handle(GObject *obj);

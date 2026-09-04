@@ -20,7 +20,7 @@ bool read(gpointer data, const char *field, zval *rv) {
   return false;
 }
 
-// Boxed field writer: coerces to the field's C type.
+// Boxed field writer: each field converts like a parameter of its type (core/boxed).
 bool write(gpointer data, const char *field, zval *v) {
   (void)data;
   (void)field;

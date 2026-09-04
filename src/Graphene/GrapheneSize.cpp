@@ -25,15 +25,19 @@ bool read(gpointer data, const char *field, zval *rv) {
   return false;
 }
 
-// Boxed field writer: coerces to the field's C type.
+// Boxed field writer: each field converts like a parameter of its type (core/boxed).
 bool write(gpointer data, const char *field, zval *v) {
   auto *value = static_cast<graphene_size_t *>(data);
   if (strcmp(field, "width") == 0) {
-    value->width = static_cast<float>(zval_get_double(v));
+    double d = 0;
+    if (boxed_field_double(v, "Gtk4\\GrapheneSize", "width", &d))
+      value->width = static_cast<float>(d);
     return true;
   }
   if (strcmp(field, "height") == 0) {
-    value->height = static_cast<float>(zval_get_double(v));
+    double d = 0;
+    if (boxed_field_double(v, "Gtk4\\GrapheneSize", "height", &d))
+      value->height = static_cast<float>(d);
     return true;
   }
   return false;

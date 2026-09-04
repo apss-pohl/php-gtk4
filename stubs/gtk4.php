@@ -2559,7 +2559,7 @@ final class GActionMapObject extends GObject implements GActionMap
 /**
  * `GApplication` is the core class for application support.
  *
- * @property ?GActionGroup $action_group
+ * @property-write ?GActionGroup $action_group
  * @property ?string $application_id
  * @property int $flags
  * @property int $inactivity_timeout
@@ -5685,7 +5685,7 @@ class GtkCenterLayout extends GtkLayoutManager
  *
  * @property bool $active
  * @property ?GtkWidget $child
- * @property ?GtkCheckButton $group
+ * @property-write ?GtkCheckButton $group
  * @property bool $inconsistent
  * @property ?string $label
  * @property bool $use_underline
@@ -7782,10 +7782,10 @@ class GtkFileDialog extends GObject
 /**
  * `GtkFileFilter` filters files by name or mime type.
  *
- * @property ?array $mime_types
+ * @property-write ?array $mime_types
  * @property ?string $name
- * @property ?array $patterns
- * @property ?array $suffixes
+ * @property-write ?array $patterns
+ * @property-write ?array $suffixes
  */
 class GtkFileFilter extends GtkFilter
 {
@@ -13781,7 +13781,7 @@ enum GtkStringFilterMatchMode : int
  * `GtkStringList` is a list model that wraps an array of strings.
  *
  * @property-read int $n_items
- * @property ?array $strings
+ * @property-write ?array $strings
  */
 class GtkStringList extends GObject implements GListModel
 {
@@ -15362,7 +15362,7 @@ final class GtkTextSearchFlags
  * @property bool $accumulative_margin
  * @property bool $allow_breaks
  * @property bool $allow_breaks_set
- * @property ?string $background
+ * @property-write ?string $background
  * @property bool $background_full_height
  * @property bool $background_full_height_set
  * @property ?GdkRGBA $background_rgba
@@ -15378,7 +15378,7 @@ final class GtkTextSearchFlags
  * @property ?PangoFontDescription $font_desc
  * @property ?string $font_features
  * @property bool $font_features_set
- * @property ?string $foreground
+ * @property-write ?string $foreground
  * @property ?GdkRGBA $foreground_rgba
  * @property bool $foreground_set
  * @property int $indent
@@ -15402,7 +15402,7 @@ final class GtkTextSearchFlags
  * @property ?GdkRGBA $overline_rgba
  * @property bool $overline_rgba_set
  * @property bool $overline_set
- * @property ?string $paragraph_background
+ * @property-write ?string $paragraph_background
  * @property ?GdkRGBA $paragraph_background_rgba
  * @property bool $paragraph_background_set
  * @property int $pixels_above_lines
@@ -16131,7 +16131,7 @@ enum GtkTextWindowType : int
  * A `GtkToggleButton` is a button which remains “pressed-in” when clicked.
  *
  * @property bool $active
- * @property ?GtkToggleButton $group
+ * @property-write ?GtkToggleButton $group
  */
 class GtkToggleButton extends GtkButton
 {
@@ -17504,7 +17504,7 @@ class GtkWidget extends GObject
  * @property bool $mnemonics_visible
  * @property bool $modal
  * @property bool $resizable
- * @property ?string $startup_id
+ * @property-write ?string $startup_id
  * @property-read bool $suspended
  * @property ?string $title
  * @property ?GtkWidget $titlebar

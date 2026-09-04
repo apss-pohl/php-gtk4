@@ -37,13 +37,7 @@ bool write(gpointer data, const char *f, zval *value) {
   int *p = field_ptr(static_cast<GdkRectangle *>(data), f);
   if (p == nullptr) return false;
   zend_long v = 0;
-  if (Z_TYPE_P(value) == IS_LONG) {
-    v = Z_LVAL_P(value);
-  } else if (caller_is_strict() || !zend_parse_arg_long_weak(value, &v, 0)) {
-    zend_type_error("Cannot assign %s to property GdkRectangle::$%s of type int",
-                    zend_zval_value_name(value), f);
-    return true;
-  }
+  if (!boxed_field_long(value, "Gtk4\\GdkRectangle", f, &v)) return true;
   if (phpgtk::check_range<int>(v, 0)) *p = static_cast<int>(v);
   return true;
 }

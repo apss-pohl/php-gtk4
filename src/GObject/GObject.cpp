@@ -116,6 +116,7 @@ ZEND_METHOD(Gtk4_GObject, set_property) {
   GObject *obj = PHPGTK_SELF(GObject, G_TYPE_OBJECT);
   GParamSpec *spec = require_property(obj, name);
   if (spec == nullptr) RETURN_THROWS();
+  if (!property_writable(spec, ZSTR_VAL(Z_OBJCE_P(ZEND_THIS)->name), spec->name)) RETURN_THROWS();
   GValue v = G_VALUE_INIT;
   if (!to_gvalue(value, spec->value_type, &v)) RETURN_THROWS();
   const std::string what = std::string(ZSTR_VAL(Z_OBJCE_P(ZEND_THIS)->name)) + "::$" + spec->name;

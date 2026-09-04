@@ -57,6 +57,13 @@ void boxed_handlers_init();
 void register_boxed(const BoxedClass &info);
 const BoxedClass *boxed_class_for_type(GType type);
 
+// Field writers: the PHP value for a scalar struct field, converted like a typed parameter -
+// strict_types where the assignment is written, weak coercion otherwise (core/marshal). False
+// with a TypeError pending, naming `Class::$field` and the type.
+bool boxed_field_long(zval *v, const char *class_name, const char *field, zend_long *out);
+bool boxed_field_double(zval *v, const char *class_name, const char *field, double *out);
+bool boxed_field_bool(zval *v, const char *class_name, const char *field, bool *out);
+
 // Give a freshly created (constructor) handle its data: takes ownership of `data`
 // (already allocated with the type's allocator, e.g. g_new0 or a copy).
 void boxed_adopt(Boxed *self, GType type, gpointer data);

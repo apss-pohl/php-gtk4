@@ -898,7 +898,13 @@ final class Generator
                 $this->skip($n, 'property ' . $p['name'], 'property type ' . $p['type']->name . ' not mappable');
                 continue;
             }
-            $tag = $p['writable'] ? '@property' : '@property-read';
+            // the access PHPDoc can state: a read is what the getter answers, a write converts like
+            // the setter's parameter; a write-only property (GtkTextTag's colour names) refuses a read
+            $tag = match (true) {
+                $p['readable'] && $p['writable'] => '@property',
+                $p['readable'] => '@property-read',
+                default => '@property-write',
+            };
             $props[] = " * $tag $pt \$" . str_replace('-', '_', $p['name']);
         }
         $docLines = docLines(docSummary($n->doc), '');
@@ -1433,10 +1439,18 @@ final class Generator
             };
             $reads[] = "  if (strcmp(field, \"{$fd['name']}\") == 0) {\n    $zv\n    return true;\n  }";
             if ($fd['writable']) {
+                // converted like a parameter (core/boxed: strict where the assignment is written)
+                // and, for an integer field, checked against the C type's range; a refused value
+                // leaves the field alone with the TypeError/ValueError pending
+                $who = "\"Gtk4\\\\$php\", \"{$fd['name']}\"";
                 $set = match ($fd['kind']) {
-                    'bool' => "value->{$fd['name']} = zend_is_true(v) ? TRUE : FALSE;",
-                    'float' => "value->{$fd['name']} = static_cast<{$fd['ctype']}>(zval_get_double(v));",
-                    default => "value->{$fd['name']} = static_cast<{$fd['ctype']}>(zval_get_long(v));",
+                    'bool' => "bool b = false;\n    if (boxed_field_bool(v, $who, &b)) "
+                        . "value->{$fd['name']} = b ? TRUE : FALSE;",
+                    'float' => "double d = 0;\n    if (boxed_field_double(v, $who, &d)) "
+                        . "value->{$fd['name']} = static_cast<{$fd['ctype']}>(d);",
+                    default => "zend_long l = 0;\n    if (boxed_field_long(v, $who, &l) && "
+                        . "phpgtk::check_range<{$fd['ctype']}>(l, 0)) "
+                        . "value->{$fd['name']} = static_cast<{$fd['ctype']}>(l);",
                 };
                 $writes[] = "  if (strcmp(field, \"{$fd['name']}\") == 0) {\n    $set\n    return true;\n  }";
             }
@@ -1448,7 +1462,7 @@ final class Generator
                 ? "  auto *value = static_cast<$ctype *>(data);\n" . implode("\n", $reads) . "\n"
                 : "  (void)data;\n  (void)field;\n  (void)rv;\n")
             . "  return false;\n}\n\n"
-            . "// Boxed field writer: coerces to the field's C type.\n"
+            . "// Boxed field writer: each field converts like a parameter of its type (core/boxed).\n"
             . "bool write(gpointer data, const char *field, zval *v) {\n"
             . ($writes !== []
                 ? "  auto *value = static_cast<$ctype *>(data);\n" . implode("\n", $writes) . "\n"

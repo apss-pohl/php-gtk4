@@ -25,15 +25,19 @@ bool read(gpointer data, const char *field, zval *rv) {
   return false;
 }
 
-// Boxed field writer: coerces to the field's C type.
+// Boxed field writer: each field converts like a parameter of its type (core/boxed).
 bool write(gpointer data, const char *field, zval *v) {
   auto *value = static_cast<GtkRequisition *>(data);
   if (strcmp(field, "width") == 0) {
-    value->width = static_cast<int>(zval_get_long(v));
+    zend_long l = 0;
+    if (boxed_field_long(v, "Gtk4\\GtkRequisition", "width", &l) && phpgtk::check_range<int>(l, 0))
+      value->width = static_cast<int>(l);
     return true;
   }
   if (strcmp(field, "height") == 0) {
-    value->height = static_cast<int>(zval_get_long(v));
+    zend_long l = 0;
+    if (boxed_field_long(v, "Gtk4\\GtkRequisition", "height", &l) && phpgtk::check_range<int>(l, 0))
+      value->height = static_cast<int>(l);
     return true;
   }
   return false;
