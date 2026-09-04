@@ -1,4 +1,5 @@
 #include "boxed.h"
+#include "object.h"
 
 #include <string>
 #include <unordered_map>
@@ -25,7 +26,7 @@ zend_object *create_object(zend_class_entry *ce) {
   auto *self = static_cast<Boxed *>(zend_object_alloc(sizeof(Boxed), ce));
   self->type = 0;
   self->data = nullptr;
-  self->owner = nullptr;
+  ZVAL_UNDEF(&self->owner);
   zend_object_std_init(&self->std, ce);
   object_properties_init(&self->std, ce);
   self->std.handlers = &handlers;
@@ -46,7 +47,7 @@ zend_function *get_constructor(zend_object *o) {
 void free_obj(zend_object *o) {
   Boxed *self = boxed_from_zend(o);
   if (self->data != nullptr) g_boxed_free(self->type, self->data);
-  if (self->owner != nullptr) g_object_unref(self->owner);
+  zval_ptr_dtor(&self->owner);
   zend_object_std_dtor(o);
 }
 
@@ -63,8 +64,7 @@ zend_object *clone_obj(zend_object *o) {
     other->data = info != nullptr && info->copy != nullptr ? info->copy(self->data)
                                                            : g_boxed_copy(self->type, self->data);
   }
-  other->owner = self->owner;
-  if (other->owner != nullptr) g_object_ref(other->owner);
+  ZVAL_COPY(&other->owner, &self->owner);
   zend_objects_clone_members(copy, o);
   return copy;
 }
@@ -177,6 +177,29 @@ int compare_objects(zval *a, zval *b) {
 
 }  // namespace
 
+namespace {
+// The owner as a *handle* (wrap), not a GObject reference: a PHP GtkTextBuffer subclass storing
+// one of its own iters ($this->cursor = $this->get_start_iter()) is then a cycle of zvals the
+// collector sees through get_gc, where a g_object_ref() from the iter to the buffer's GObject -
+// which holds the buffer's handle - was uncollectable until RSHUTDOWN. The handle keeps the
+// GObject alive exactly as the reference did (its toggle ref).
+void take_owner(Boxed *self, const BoxedClass *info) {
+  ZVAL_UNDEF(&self->owner);
+  GObject *owner = info != nullptr && info->owner != nullptr ? info->owner(self->data) : nullptr;
+  if (owner != nullptr) wrap(owner, &self->owner);
+}
+
+// get_gc handler: the owner handle is the one reference this object holds besides its data.
+HashTable *get_gc(zend_object *o, zval **table, int *n) {
+  Boxed *self = boxed_from_zend(o);
+  if (Z_TYPE(self->owner) != IS_OBJECT) return zend_std_get_gc(o, table, n);
+  zend_get_gc_buffer *buffer = zend_get_gc_buffer_create();
+  zend_get_gc_buffer_add_zval(buffer, &self->owner);
+  zend_get_gc_buffer_use(buffer, table, n);
+  return zend_std_get_properties(o);
+}
+}  // namespace
+
 // MINIT: build the shared handler table for all boxed classes.
 void boxed_handlers_init() {
   memcpy(&handlers, &std_object_handlers, sizeof(zend_object_handlers));
@@ -190,6 +213,7 @@ void boxed_handlers_init() {
   handlers.get_property_ptr_ptr = get_property_ptr_ptr;
   handlers.unset_property = unset_property;
   handlers.get_debug_info = get_debug_info;
+  handlers.get_gc = get_gc;
   handlers.compare = compare_objects;
 }
 
@@ -208,12 +232,11 @@ const BoxedClass *boxed_class_for_type(GType type) {
 // Constructor helper: give a fresh handle its (already allocated) data.
 void boxed_adopt(Boxed *self, GType type, gpointer data) {
   if (self->data != nullptr) g_boxed_free(self->type, self->data);
-  if (self->owner != nullptr) g_object_unref(self->owner);
+  zval_ptr_dtor(&self->owner);
   self->type = type;
   self->data = data;
   const BoxedClass *info = boxed_class_for_type(type);
-  self->owner = info != nullptr && info->owner != nullptr ? info->owner(data) : nullptr;
-  if (self->owner != nullptr) g_object_ref(self->owner);
+  take_owner(self, info);
 }
 
 // C -> PHP: new handle holding a copy of `data`; null for nullptr, TypeError for unregistered
@@ -233,8 +256,7 @@ void wrap_boxed(GType type, gconstpointer data, zval *rv) {
   Boxed *self = boxed_from_zval(rv);
   self->type = type;
   self->data = g_boxed_copy(type, data);
-  self->owner = info->owner != nullptr ? info->owner(self->data) : nullptr;
-  if (self->owner != nullptr) g_object_ref(self->owner);
+  take_owner(self, info);
 }
 
 // PHP -> C: borrowed data pointer of a handle of exactly `expected`, else TypeError + nullptr.

@@ -12,8 +12,8 @@ namespace phpgtk {
 
 struct Boxed {
   GType type;
-  gpointer data;   // owned copy, never nullptr once constructed
-  GObject *owner;  // the object the value points into (BoxedClass::owner), ref held; or nullptr
+  gpointer data;  // owned copy, never nullptr once constructed
+  zval owner;  // handle of the object the value points into (BoxedClass::owner), IS_UNDEF if none
   zend_object std;
 };
 

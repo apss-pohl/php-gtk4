@@ -63,6 +63,7 @@ std::unordered_set<guint> sources;
 std::unordered_map<gpointer, phpgtk::TrackedNotified> notified;
 std::unordered_set<struct _PhpValue *> phpvalues;  // live PhpValue instances
 std::unordered_set<phpgtk::Object *> held;         // handles their GObject holds a ref on (toggle)
+std::unordered_set<phpgtk::Object *> owner_holders;  // handles with an `owner` (object_hold_owner)
 std::unordered_map<gpointer, zend_object *> fundamental_handles;  // instance -> its live handle
 std::vector<phpgtk::Diagnostic> diagnostics;  // recorded, waiting for a VM safe point
 phpgtk::DiagnosticsMode diagnostics_mode;     // gtk4.diagnostics

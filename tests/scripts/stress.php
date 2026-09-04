@@ -161,6 +161,21 @@ for ($i = 0; $i < $rounds; $i++) {
     }
     unset($list, $factory, $selection, $tree, $strings, $set, $union);
 
+    // owner-holding handles (object_hold_owner, BOXED_OWNERS): a composite widget and the private
+    // child it handed out, a buffer and one of its iters - dropped together, collected together
+    $owner = new \Gtk4\GtkScale(\Gtk4\GtkOrientation::Horizontal, null);
+    $gizmo = $owner->get_first_child();
+    unset($owner, $gizmo);
+    $buffer = new \Gtk4\GtkTextBuffer(null);
+    $buffer->set_text('owner');
+    $iter = $buffer->get_start_iter();
+    unset($buffer);
+    $iter->forward_char();
+    unset($iter);
+    if ($i % 10 === 0) {
+        gc_collect_cycles();
+    }
+
     // identity + object property round trip
     $other = new GtkWindow();
     $w->set_property('transient-for', $other);

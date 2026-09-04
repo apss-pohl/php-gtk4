@@ -207,6 +207,7 @@ zend_object *create_object(zend_class_entry *ce) {
 void free_obj(zend_object *o) {
   Object *self = object_from_zend(o);
   detach(self);
+  if (Z_TYPE(self->owner) == IS_OBJECT) GTK4_G(owner_holders).erase(self);
   zval_ptr_dtor(&self->owner);  // the owner outlives us by exactly this reference
   callback_drain();             // the unref may have run destroy notifies
   zend_object_std_dtor(o);
@@ -354,15 +355,32 @@ int compare_objects(zval *a, zval *b) {
   return Z_OBJ_P(a) == Z_OBJ_P(b) ? 0 : 1;
 }
 
-// get_gc handler: report the owner reference to the cycle collector. Nothing the binding does
-// makes a cycle through it - an owner never points back - but a PHP subclass storing the object
-// it got from itself ($this->row = $this->get_first_child()) does, and Zend can only collect
-// what it is shown.
+// Whether `dep`'s hold - GTK's reference on the handle, one GC_ADDREF - is `self`'s doing: the
+// dependent is a widget whose parent is self's GObject. Only then may self's get_gc claim that
+// reference as its own edge; claiming one that a different holder owns would let the collector
+// free a handle GTK still hands out.
+bool holds_dependent(const Object *self, const Object *dep) {
+  if (!dep->held || dep->obj == nullptr || self->obj == nullptr) return false;
+  // NOLINTNEXTLINE(bugprone-assignment-in-if-condition) GTK_IS_WIDGET() macro expansion
+  if (!GTK_IS_WIDGET(dep->obj)) return false;
+  return gtk_widget_get_parent(GTK_WIDGET(dep->obj)) == reinterpret_cast<GtkWidget *>(self->obj);
+}
+
+// get_gc handler: the cycle collector sees the owner reference and, from the owner's side, the
+// held dependents it is responsible for (holds_dependent). A parent handle whose child handle
+// holds it as owner is a cycle through C - parent handle -> parent GObject -> child GObject ->
+// child handle -> owner - that was uncollectable until RSHUTDOWN without that second edge.
 HashTable *get_gc(zend_object *o, zval **table, int *n) {
   Object *self = object_from_zend(o);
-  if (Z_TYPE(self->owner) != IS_OBJECT) return zend_std_get_gc(o, table, n);
+  const bool has_owner = Z_TYPE(self->owner) == IS_OBJECT;
+  if (!has_owner && GTK4_G(owner_holders).empty()) return zend_std_get_gc(o, table, n);
   zend_get_gc_buffer *buffer = zend_get_gc_buffer_create();
-  zend_get_gc_buffer_add_zval(buffer, &self->owner);
+  if (has_owner) zend_get_gc_buffer_add_zval(buffer, &self->owner);
+  for (Object *dep : GTK4_G(owner_holders)) {
+    if (Z_OBJ(dep->owner) == o && holds_dependent(self, dep)) {
+      zend_get_gc_buffer_add_obj(buffer, &dep->std);
+    }
+  }
   zend_get_gc_buffer_use(buffer, table, n);
   return zend_std_get_properties(o);
 }
@@ -390,6 +408,7 @@ void object_hold_owner(zval *handle, zval *owner) {
   if (Z_TYPE(self->owner) == IS_OBJECT && Z_OBJ(self->owner) == Z_OBJ_P(owner)) return;
   zval_ptr_dtor(&self->owner);  // reparented: the new owner is the one that matters now
   ZVAL_COPY(&self->owner, owner);
+  GTK4_G(owner_holders).insert(self);  // for the owner's get_gc
 }
 
 // MINIT: build the shared handler table for all GObject classes.

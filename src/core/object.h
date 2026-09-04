@@ -41,8 +41,11 @@ inline Object *object_from_zval(const zval *zv) {
 // memory. The object analogue of BOXED_OWNERS (gen/gir/config.php), and deliberately held
 // between the *handles* rather than between the GObjects: a parent already owns its child, so a
 // GObject-level back-reference would be an uncollectable cycle, while this one is an ordinary
-// zval the cycle collector can see (get_gc). Emitted by the generator for the members listed in
-// RETURNS_HOLD_SELF; a second call with the same owner is a no-op.
+// zval the cycle collector can see (get_gc). The other half of that cycle runs through C - the
+// parent GObject holds the child GObject, which holds the child handle (`held`) - so the owner's
+// get_gc reports every held dependent whose GTK reference is the owner's own (the child of a
+// parent widget), the one edge Zend cannot see by itself. Emitted by the generator for the
+// members listed in RETURNS_HOLD_SELF; a second call with the same owner is a no-op.
 void object_hold_owner(zval *handle, zval *owner);
 
 // A converted property value against the pspec's own bounds (a float's minimum/maximum, an

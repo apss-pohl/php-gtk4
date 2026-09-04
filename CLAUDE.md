@@ -421,7 +421,9 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   (`gtk_stack_get_pages()`, a composite widget's `get_first_child()` — `RETURNS_HOLD_SELF` in
   `gen/gir/config.php`, the object counterpart of `BOXED_OWNERS`): the reference is held between
   the *handles*, not the GObjects, because a parent already owns its child and a GObject-level
-  back-reference would be an uncollectable cycle — `get_gc` shows it to the collector; the
+  back-reference would be an uncollectable cycle — `get_gc` shows it to the collector, and the
+  owner's `get_gc` reports the held child handles it is the parent of, the edge that runs
+  through C (`OwnerCycleTest`); a boxed value holds its owner's *handle* for the same reason; the
   GType-name → `zend_class_entry` registry; `wrap()`/`unwrap()`/
   `PHPGTK_SELF`; when no class up the parent chain is registered but a registered *interface* is,
   `wrap()` uses that interface's generated `Gtk4\<Interface>Object` fallback class, most derived
