@@ -13,7 +13,7 @@ namespace Gtk4;
 /**
  * `GAction` represents a single named action.
  *
- * @property-read ?bool $enabled
+ * @property-read bool $enabled
  * @property-read ?string $name
  * @property-read ?string $parameter_type
  * @property-read mixed $state
@@ -289,11 +289,11 @@ final class GActionMapObject extends GObject implements GActionMap
  *
  * @property ?GActionGroup $action_group
  * @property ?string $application_id
- * @property ?int $flags
- * @property ?int $inactivity_timeout
- * @property-read ?bool $is_busy
- * @property-read ?bool $is_registered
- * @property-read ?bool $is_remote
+ * @property int $flags
+ * @property int $inactivity_timeout
+ * @property-read bool $is_busy
+ * @property-read bool $is_registered
+ * @property-read bool $is_remote
  * @property ?string $resource_base_path
  * @property ?string $version
  */
@@ -688,7 +688,7 @@ final class GListModelObject extends GObject implements GListModel
  * `GListStore` is a simple implementation of `ListModel` that stores all items in memory.
  *
  * @property ?string $item_type
- * @property-read ?int $n_items
+ * @property-read int $n_items
  */
 class GListStore extends GObject implements GListModel
 {
@@ -940,7 +940,7 @@ class GMenuModel extends GObject
  * A `GSimpleAction` is the obvious simple implementation of the `Action` interface. This is the
  * easiest way to create an action for purposes of adding it to a `SimpleActionGroup`.
  *
- * @property ?bool $enabled
+ * @property bool $enabled
  * @property ?string $name
  * @property ?string $parameter_type
  * @property mixed $state
@@ -994,7 +994,7 @@ class GSimpleAction extends GObject implements GAction
 /**
  * A `GTask` represents and manages a cancellable ‘task’.
  *
- * @property-read ?bool $completed
+ * @property-read bool $completed
  */
 class GTask extends GObject implements GAsyncResult
 {

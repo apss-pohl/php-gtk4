@@ -473,10 +473,14 @@ gboolean vfunc_thunk_get_selection_bounds(GtkEditable *self, int *start_pos, int
       result = TRUE;
       if (zval *e0 = zend_hash_index_find(Z_ARRVAL(ret), 0);
           e0 != nullptr && start_pos != nullptr) {
-        *start_pos = static_cast<int>(zval_get_long(e0));
+        *start_pos = phpgtk::check_range<int>(zval_get_long(e0), 0)
+                         ? static_cast<int>(zval_get_long(e0))
+                         : *start_pos;
       }
       if (zval *e1 = zend_hash_index_find(Z_ARRVAL(ret), 1); e1 != nullptr && end_pos != nullptr) {
-        *end_pos = static_cast<int>(zval_get_long(e1));
+        *end_pos = phpgtk::check_range<int>(zval_get_long(e1), 0)
+                       ? static_cast<int>(zval_get_long(e1))
+                       : *end_pos;
       }
     }
   }
@@ -507,7 +511,7 @@ const char *vfunc_thunk_get_text(GtkEditable *self) {
   const char *result = nullptr;
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
-    if (Z_TYPE(ret) == IS_STRING) {
+    if (Z_TYPE(ret) == IS_STRING && phpgtk::check_utf8(Z_STR(ret), 0)) {
       result = subtype_keep_string(G_OBJECT(self), "get_text", Z_STRVAL(ret));
     }
   }

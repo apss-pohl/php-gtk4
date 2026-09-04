@@ -274,14 +274,18 @@ final class TypeMap
         $outLines = function (string $arrayExpr) use ($outs): array {
             $l = [];
             foreach ($outs as $i => $o) {
+                $ct = $o['ctype'];
+                $name = $o['name'];
+                assert(is_string($ct) && is_string($name));
                 $get = match ($o['kind']) {
-                    'long' => "static_cast<{$o['ctype']}>(zval_get_long(e$i))",
+                    'long' => "phpgtk::check_range<$ct>(zval_get_long(e$i), 0) ? "
+                        . "static_cast<$ct>(zval_get_long(e$i)) : *$name",
                     'bool' => "zend_is_true(e$i) ? TRUE : FALSE",
-                    default => "static_cast<{$o['ctype']}>(zval_get_double(e$i))",
+                    default => "static_cast<$ct>(zval_get_double(e$i))",
                 };
                 $l[] = "if (zval *e$i = zend_hash_index_find(Z_ARRVAL($arrayExpr), $i);"
-                    . " e$i != nullptr && {$o['name']} != nullptr) {";
-                $l[] = "  *{$o['name']} = $get;";
+                    . " e$i != nullptr && $name != nullptr) {";
+                $l[] = "  *$name = $get;";
                 $l[] = '}';
             }
             return $l;
@@ -311,19 +315,24 @@ final class TypeMap
             $conv = $ct === 'double' ? 'zval_get_double(&ret)' : "static_cast<$ct>(zval_get_double(&ret))";
             return [['decl' => "$ct result = 0;", 'default' => '0'], ["result = $conv;"], 'result'];
         }
+        // PHP's answer has to fit the C type, like an argument does: a PHP get_n_items()
+        // answering -1 reached GTK as 4294967295 (check_range reports the ValueError, the slot
+        // yields its default), a get_name() with a NUL or invalid UTF-8 was stored as-is.
         if (preg_match(INT_TYPES, $t->name)) {
             return [['decl' => "$ct result = 0;", 'default' => '0'],
-                ["result = static_cast<$ct>(zval_get_long(&ret));"], 'result'];
+                ["if (Z_TYPE(ret) == IS_LONG && phpgtk::check_range<$ct>(Z_LVAL(ret), 0)) {",
+                    "  result = static_cast<$ct>(Z_LVAL(ret));", '}'], 'result'];
         }
         if (in_array($t->name, ['utf8', 'filename'], true) && !$t->isArray && $v->retTransfer === 'full') {
             return [['decl' => 'char *result = nullptr;', 'default' => 'nullptr'],
-                ['if (Z_TYPE(ret) == IS_STRING) result = g_strdup(Z_STRVAL(ret));'], 'result'];
+                ['if (Z_TYPE(ret) == IS_STRING && phpgtk::check_utf8(Z_STR(ret), 0)) {',
+                    '  result = g_strdup(Z_STRVAL(ret));', '}'], 'result'];
         }
         // Borrowed returns (GAction.get_name, GtkEditable.get_text): the instance keeps the C copy
         // of PHP's answer (core/subtype), replaced only when the answer changes.
         if (in_array($t->name, ['utf8', 'filename'], true) && !$t->isArray && $v->retTransfer === 'none') {
             return [['decl' => 'const char *result = nullptr;', 'default' => 'nullptr'],
-                ['if (Z_TYPE(ret) == IS_STRING) {',
+                ['if (Z_TYPE(ret) == IS_STRING && phpgtk::check_utf8(Z_STR(ret), 0)) {',
                     "  result = subtype_keep_string(G_OBJECT(self), \"{$v->name}\", Z_STRVAL(ret));", '}'],
                 'result'];
         }

@@ -255,7 +255,7 @@ const gchar *vfunc_thunk_get_name(GAction *self) {
   const char *result = nullptr;
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
-    if (Z_TYPE(ret) == IS_STRING) {
+    if (Z_TYPE(ret) == IS_STRING && phpgtk::check_utf8(Z_STR(ret), 0)) {
       result = subtype_keep_string(G_OBJECT(self), "get_name", Z_STRVAL(ret));
     }
   }

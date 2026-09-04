@@ -55,6 +55,13 @@
     parameter GIR marks nullable that the function refuses with a `g_return_if_fail()` (the
     `GAsyncReadyCallback` of `gdk_clipboard_read_async()` and friends). Dropping the `?` makes
     null an ordinary TypeError;
+  - `PARAM_DOMAINS` — `<C identifier>.<param>` -> `[min, max]` (`null` for an open end, a float
+    bound for a float check), for parameters whose function accepts less than their type
+    (`gtk_calendar_set_month()`: 0..11). GTK states these as `g_return_if_fail()` — a CRITICAL and
+    a call that silently does nothing — so the generator emits `check_domain()` /
+    `check_domain_double()` after the type's own `check_range<T>()`, a `ValueError` naming the
+    argument. Every bound is copied from the assertion GTK printed under `RobustnessTest`
+    (`tests/robustness-criticals.txt`), never from documentation alone;
   - `RETURNS_HOLD_SELF` — C identifier -> reason, for members whose returned object keeps a bare
     pointer to the object it came from (`gtk_stack_get_pages()`, `gtk_widget_get_first_child()`
     on a composite widget). The emitted `object_hold_owner(return_value, ZEND_THIS)` makes the

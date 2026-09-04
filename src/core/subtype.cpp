@@ -372,7 +372,7 @@ GType subtype_for_class(zend_class_entry *ce) {
   }
   GTypeQuery query;
   g_type_query(parent, &query);
-  // NOLINTNEXTLINE(cppcoreguidelines-owning-memory) process-lifetime class_data, see php_types()
+  // process-lifetime class_data, see php_types()
   const auto *cname = new std::string(ZSTR_VAL(ce->name), ZSTR_LEN(ce->name));
   const GTypeInfo info = {
       .class_size = static_cast<guint16>(query.class_size),
@@ -410,7 +410,7 @@ GType subtype_for_class(zend_class_entry *ce) {
   return type;
 }
 
-// NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg) mirrors g_object_new()
+// mirrors g_object_new()
 GObject *subtype_new(zval *self, const char *first_property, ...) {
   zend_class_entry *ce = Z_OBJCE_P(self);
   const GType type = subtype_for_class(ce);

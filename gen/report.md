@@ -688,7 +688,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio.Task`: propagate_boolean, propagate_int, return_boolean, return_error, return_int
 - `Graphene.Rect`: inset, normalize, offset
 - `Gtk.Box`: get_children
-- `Gtk.Builder`: add_from_string, add_objects_from_string, set_current_object, set_handlers
+- `Gtk.Builder`: __construct, add_from_string, add_objects_from_string, set_current_object, set_handlers
 - `Gtk.CustomFilter`: __construct, set_filter_func
 - `Gtk.CustomSorter`: __construct, set_sort_func
 - `Gtk.DrawingArea`: set_draw_func

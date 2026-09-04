@@ -72,6 +72,9 @@ const NULLABLE_RETURNS = [
     // priv->widget is NULL until gtk_event_controller_set_widget(); a controller that has not
     // been handed to gtk_widget_add_controller() yet answers NULL, and PHP can hold one.
     'gtk_event_controller_get_widget' => 'NULL until the controller is added to a widget',
+    // both answer NULL, without a CRITICAL, for a widget that is not a child of the container
+    'gtk_stack_get_page' => 'NULL for a widget that is not a child of the stack',
+    'gtk_notebook_get_page' => 'NULL for a widget that is not a page of the notebook',
 ];
 
 /**

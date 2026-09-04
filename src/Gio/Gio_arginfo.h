@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 105fa01d077ee03cb56e1b3a5397b256f0ebc474 */
+ * Stub hash: 919493fc2272cafccaed96a98fe412120935f8c8 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_change_state, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")

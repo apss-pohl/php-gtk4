@@ -887,7 +887,13 @@ final class Generator
         // ---- stub
         $props = [];
         foreach ($n->props as $p) {
-            $pt = $this->typeMap->phpType($p['type'], true);
+            // nullable where to_gvalue() accepts null and a getter can answer it (an object, a
+            // string, a boxed record, a variant); a scalar or enum property is never null, and
+            // declaring it so made `$label->xalign = null` a runtime TypeError PHPStan could not see
+            $scalar = $this->typeMap->phpType($p['type'], false);
+            $kind = ($this->gir->types[$p['type']->name] ?? null)?->kind;
+            $nullable = !in_array($scalar, ['int', 'float', 'bool'], true) && $kind !== 'enum' && $kind !== 'bitfield';
+            $pt = $this->typeMap->phpType($p['type'], $nullable);
             if ($pt === null) {
                 $this->skip($n, 'property ' . $p['name'], 'property type ' . $p['type']->name . ' not mappable');
                 continue;
