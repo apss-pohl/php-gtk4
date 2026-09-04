@@ -2,6 +2,7 @@
 #include "php_gtk4.h"
 #include "classes.h"
 #include "core/boxed.h"
+#include "core/marshal.h"
 
 #include <cstring>
 
@@ -28,11 +29,22 @@ bool read(gpointer data, const char *f, zval *rv) {
   return true;
 }
 
-// Boxed field writer: coerces to int.
+// Boxed field writer: like an `int` parameter - strict_types where the assignment is written,
+// weak coercion otherwise, then the C `int` range. True for a field even when the value was
+// refused (the TypeError/ValueError is pending), so the write never falls through to a dynamic
+// PHP property of the same name.
 bool write(gpointer data, const char *f, zval *value) {
   int *p = field_ptr(static_cast<GdkRectangle *>(data), f);
   if (p == nullptr) return false;
-  *p = static_cast<int>(zval_get_long(value));
+  zend_long v = 0;
+  if (Z_TYPE_P(value) == IS_LONG) {
+    v = Z_LVAL_P(value);
+  } else if (caller_is_strict() || !zend_parse_arg_long_weak(value, &v, 0)) {
+    zend_type_error("Cannot assign %s to property GdkRectangle::$%s of type int",
+                    zend_zval_value_name(value), f);
+    return true;
+  }
+  if (phpgtk::check_range<int>(v, 0)) *p = static_cast<int>(v);
   return true;
 }
 
@@ -60,6 +72,10 @@ ZEND_METHOD(Gtk4_GdkRectangle, __construct) {
   Z_PARAM_LONG(width)
   Z_PARAM_LONG(height)
   ZEND_PARSE_PARAMETERS_END();
+  if (!phpgtk::check_range<int>(x, 1) || !phpgtk::check_range<int>(y, 2) ||
+      !phpgtk::check_range<int>(width, 3) || !phpgtk::check_range<int>(height, 4)) {
+    RETURN_THROWS();
+  }
   auto *r = g_new0(GdkRectangle, 1);
   r->x = static_cast<int>(x);
   r->y = static_cast<int>(y);
@@ -114,6 +130,7 @@ ZEND_METHOD(Gtk4_GdkRectangle, contains_point) {
   Z_PARAM_LONG(y)
   ZEND_PARSE_PARAMETERS_END();
   GdkRectangle *self = PHPGTK_BOXED_SELF(GdkRectangle);
+  if (!phpgtk::check_range<int>(x, 1) || !phpgtk::check_range<int>(y, 2)) RETURN_THROWS();
   RETURN_BOOL(gdk_rectangle_contains_point(self, static_cast<int>(x), static_cast<int>(y)));
 }
 

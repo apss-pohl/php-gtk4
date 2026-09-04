@@ -421,18 +421,6 @@ parameters:
 			path: gen/gir/type-map.php
 
 		-
-			message: '#^Part \$o\[''ctype''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 2
-			path: gen/gir/type-map.php
-
-		-
-			message: '#^Part \$o\[''name''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 2
-			path: gen/gir/type-map.php
-
-		-
 			message: '#^Part \$subtype\[''call''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
 			identifier: encapsedStringPart.nonString
 			count: 1

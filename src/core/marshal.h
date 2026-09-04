@@ -20,4 +20,9 @@ zend_string *php_name_for_gtype(GType type);
 // Returns false (exception thrown) if the value cannot be converted.
 bool to_gvalue(zval *pv, GType t, GValue *out);
 
+// The coercion rules a property write shares with every other conversion (core/variant): whether
+// the assigning PHP code declared strict_types, and what weak mode accepts for a string.
+bool caller_is_strict();
+bool weak_to_string_ok(const zval *pv);
+
 }  // namespace phpgtk

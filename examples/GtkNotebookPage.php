@@ -51,6 +51,7 @@ return Demo::page(
             }
             // get_page($child) is the record; asking twice gives the same object.
             $page = $notebook->get_page($child);
+            assert($page !== null);  // null only for a widget that is not a page of this notebook
             $same = $notebook->get_page($child) === $page;
             $notebook->set_current_page($index);
             $status->set_markup(sprintf(

@@ -51,7 +51,7 @@ return Demo::page(
             $current = $button->direction;
             Demo::status(sprintf(
                 '%s · %s',
-                $current instanceof GtkArrowType ? $current->name : '?',
+                $current->name,
                 implode(' · ', array_map(static fn(GtkArrowType $a): string => $a->name, $cases)),
             ));
         };

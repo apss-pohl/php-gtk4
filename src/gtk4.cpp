@@ -84,12 +84,12 @@ static void pin_gtk_library() {
   // Same idea with the Win32 loader: pin the module that contains gtk_init so FreeLibrary()
   // (which PHP calls on every extension at MSHUTDOWN) never unmaps libgtk-4 and its deps.
   HMODULE module = nullptr;
-  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast) GetModuleHandleEx wants an LPCSTR
+  // GetModuleHandleEx wants an LPCSTR
   (void)GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
                            reinterpret_cast<LPCSTR>(&gtk_init), &module);
 #else
   Dl_info info{};
-  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast) dladdr wants a data pointer
+  // dladdr wants a data pointer
   if (dladdr(reinterpret_cast<const void *>(&gtk_init), &info) != 0 && info.dli_fname != nullptr) {
     void *handle = dlopen(info.dli_fname, RTLD_NOW | RTLD_NOLOAD | RTLD_NODELETE);
     (void)handle;  // deliberately leaked: the reference is the point

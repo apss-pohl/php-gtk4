@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: ede9d341cadd6905c56dcf3b54de555a84df2790 */
+ * Stub hash: 1d4c5ebe776104d1d4a2dd3f26fd037393114743 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkClipboard___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()

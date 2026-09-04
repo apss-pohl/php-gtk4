@@ -229,7 +229,9 @@ guint vfunc_thunk_delete_text(GtkEntryBuffer *self, guint position, guint n_char
   guint result = 0;
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 2, args.data());
   if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
-    result = static_cast<guint>(zval_get_long(&ret));
+    if (Z_TYPE(ret) == IS_LONG && phpgtk::check_range<guint>(Z_LVAL(ret), 0)) {
+      result = static_cast<guint>(Z_LVAL(ret));
+    }
   }
   for (zval &arg : args) zval_ptr_dtor(&arg);
   zval_ptr_dtor(&ret);
@@ -290,7 +292,9 @@ guint vfunc_thunk_get_length(GtkEntryBuffer *self) {
   guint result = 0;
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
-    result = static_cast<guint>(zval_get_long(&ret));
+    if (Z_TYPE(ret) == IS_LONG && phpgtk::check_range<guint>(Z_LVAL(ret), 0)) {
+      result = static_cast<guint>(Z_LVAL(ret));
+    }
   }
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
@@ -329,7 +333,9 @@ guint vfunc_thunk_insert_text(GtkEntryBuffer *self, guint position, const char *
   guint result = 0;
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 3, args.data());
   if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
-    result = static_cast<guint>(zval_get_long(&ret));
+    if (Z_TYPE(ret) == IS_LONG && phpgtk::check_range<guint>(Z_LVAL(ret), 0)) {
+      result = static_cast<guint>(Z_LVAL(ret));
+    }
   }
   for (zval &arg : args) zval_ptr_dtor(&arg);
   zval_ptr_dtor(&ret);

@@ -275,7 +275,9 @@ int vfunc_thunk_get_intrinsic_height(GdkPaintable *self) {
   int result = 0;
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
-    result = static_cast<int>(zval_get_long(&ret));
+    if (Z_TYPE(ret) == IS_LONG && phpgtk::check_range<int>(Z_LVAL(ret), 0)) {
+      result = static_cast<int>(Z_LVAL(ret));
+    }
   }
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
@@ -306,7 +308,9 @@ int vfunc_thunk_get_intrinsic_width(GdkPaintable *self) {
   int result = 0;
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
-    result = static_cast<int>(zval_get_long(&ret));
+    if (Z_TYPE(ret) == IS_LONG && phpgtk::check_range<int>(Z_LVAL(ret), 0)) {
+      result = static_cast<int>(Z_LVAL(ret));
+    }
   }
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);

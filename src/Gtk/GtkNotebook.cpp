@@ -203,7 +203,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, get_nth_page) {
 }
 
 /**
- * Gtk4\GtkNotebook::get_page(GtkWidget $child): GtkNotebookPage
+ * Gtk4\GtkNotebook::get_page(GtkWidget $child): ?GtkNotebookPage
  *
  * Returns the `GtkNotebookPage` for $child.
  */

@@ -131,7 +131,7 @@ ZEND_METHOD(Gtk4_GtkStack, get_interpolate_size) {
 }
 
 /**
- * Gtk4\GtkStack::get_page(GtkWidget $child): GtkStackPage
+ * Gtk4\GtkStack::get_page(GtkWidget $child): ?GtkStackPage
  *
  * Returns the `GtkStackPage` object for $child.
  */

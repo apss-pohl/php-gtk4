@@ -47,8 +47,8 @@ bool to_php_supported(GType t) {
 // GValue -> zval. Unsupported types: TypeError + null.
 void to_php(const GValue *v, zval *rv) {
   GType t = G_VALUE_TYPE(v);
-  if (t == G_TYPE_GTYPE) {  // not a fundamental
-    ZVAL_LONG(rv, static_cast<zend_long>(g_value_get_gtype(v)));
+  if (t == G_TYPE_GTYPE) {  // not a fundamental; the name, as get_item_type() answers it
+    ZVAL_STR(rv, php_name_for_gtype(g_value_get_gtype(v)));
     return;
   }
   switch (G_TYPE_FUNDAMENTAL(t)) {
@@ -169,6 +169,12 @@ void to_php(const GValue *v, zval *rv) {
 // to ask is the one currently executing.
 bool caller_is_strict() {
   const zend_execute_data *ex = EG(current_execute_data);
+  // A property write runs in the assigning PHP frame; a method (activate(), a constructor taking
+  // a list<string>) has its own internal frame on top, whose strictness is meaningless - the PHP
+  // code that made the call is what declared strict_types, as ZEND_ARG_USES_STRICT_TYPES() reads.
+  while (ex != nullptr && ex->func != nullptr && ex->func->type == ZEND_INTERNAL_FUNCTION) {
+    ex = ex->prev_execute_data;
+  }
   return ex != nullptr && ex->func != nullptr && ZEND_CALL_USES_STRICT_TYPES(ex);
 }
 
@@ -292,6 +298,21 @@ zend_string *php_name_for_gtype(GType type) {
 // zval -> GValue of type `t`. Returns false (TypeError thrown, *out unset) on failure.
 bool to_gvalue(zval *pv, GType t, GValue *out) {
   g_value_init(out, t);
+  if (t == G_TYPE_GTYPE) {  // not a fundamental; a type name, as GListStore's constructor takes it
+    if (Z_TYPE_P(pv) != IS_STRING) {
+      g_value_unset(out);
+      zend_type_error("cannot assign %s to a value of type GType (a type name)",
+                      zend_zval_value_name(pv));
+      return false;
+    }
+    const GType named = gtype_from_php_name(Z_STR_P(pv), 0);
+    if (named == 0) {
+      g_value_unset(out);
+      return false;
+    }
+    g_value_set_gtype(out, named);
+    return true;
+  }
   switch (G_TYPE_FUNDAMENTAL(t)) {
     case G_TYPE_CHAR:
       return set_or_unset<gint8>(pv, t, out, g_value_set_schar);
@@ -393,8 +414,9 @@ bool to_gvalue(zval *pv, GType t, GValue *out) {
       return true;
     }
     case G_TYPE_BOXED: {
-      if (t == G_TYPE_BYTES) {
-        if (Z_TYPE_P(pv) == IS_ARRAY || Z_TYPE_P(pv) == IS_OBJECT) {
+      if (t ==
+          G_TYPE_BYTES) {  // binary: a string, under the caller's coercion rules, no UTF-8 check
+        if (Z_TYPE_P(pv) != IS_STRING && (caller_is_strict() || !weak_to_string_ok(pv))) {
           g_value_unset(out);
           zend_type_error("expected string for GBytes, %s given", zend_zval_value_name(pv));
           return false;

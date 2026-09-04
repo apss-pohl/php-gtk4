@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 9273eef4729ffca87a0ba81b0c46b8be809c42f3 */
+ * Stub hash: eb7adb1b4af4cda5b788ec3f442b973df3509bc2 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -552,8 +552,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkBoxLayout_set_orientation arginfo_class_Gtk4_GtkBox_set_orientation
 
-#define arginfo_class_Gtk4_GtkBuilder___construct arginfo_class_Gtk4_GtkAboutDialog___construct
-
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkBuilder_add_from_file, 0, 1, _IS_BOOL, 0)
 	ZEND_ARG_TYPE_INFO(0, filename, IS_STRING, 0)
 ZEND_END_ARG_INFO()
@@ -598,6 +596,8 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkBuilder_set_translation_domain, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, domain, IS_STRING, 1)
 ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkBuilder___construct arginfo_class_Gtk4_GtkAboutDialog___construct
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkBuilder_add_from_string, 0, 1, _IS_BOOL, 0)
 	ZEND_ARG_TYPE_INFO(0, buffer, IS_STRING, 0)
@@ -2773,7 +2773,7 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkNotebook_get_nth_pa
 	ZEND_ARG_TYPE_INFO(0, page_num, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkNotebook_get_page, 0, 1, Gtk4\\GtkNotebookPage, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkNotebook_get_page, 0, 1, Gtk4\\GtkNotebookPage, 1)
 	ZEND_ARG_OBJ_INFO(0, child, Gtk4\\GtkWidget, 0)
 ZEND_END_ARG_INFO()
 
@@ -3981,7 +3981,9 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkStack_get_interpolate_size arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
 
-#define arginfo_class_Gtk4_GtkStack_get_page arginfo_class_Gtk4_GtkStack_add_child
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkStack_get_page, 0, 1, Gtk4\\GtkStackPage, 1)
+	ZEND_ARG_OBJ_INFO(0, child, Gtk4\\GtkWidget, 0)
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkStack_get_pages, 0, 0, Gtk4\\GtkSelectionModel, 0)
 ZEND_END_ARG_INFO()
@@ -5946,7 +5948,6 @@ ZEND_METHOD(Gtk4_GtkBoxLayout, set_baseline_child);
 ZEND_METHOD(Gtk4_GtkBoxLayout, set_baseline_position);
 ZEND_METHOD(Gtk4_GtkBoxLayout, set_homogeneous);
 ZEND_METHOD(Gtk4_GtkBoxLayout, set_spacing);
-ZEND_METHOD(Gtk4_GtkBuilder, __construct);
 ZEND_METHOD(Gtk4_GtkBuilder, add_from_file);
 ZEND_METHOD(Gtk4_GtkBuilder, add_from_resource);
 ZEND_METHOD(Gtk4_GtkBuilder, add_objects_from_file);
@@ -5959,6 +5960,7 @@ ZEND_METHOD(Gtk4_GtkBuilder, get_scope);
 ZEND_METHOD(Gtk4_GtkBuilder, get_translation_domain);
 ZEND_METHOD(Gtk4_GtkBuilder, set_scope);
 ZEND_METHOD(Gtk4_GtkBuilder, set_translation_domain);
+ZEND_METHOD(Gtk4_GtkBuilder, __construct);
 ZEND_METHOD(Gtk4_GtkBuilder, add_from_string);
 ZEND_METHOD(Gtk4_GtkBuilder, add_objects_from_string);
 ZEND_METHOD(Gtk4_GtkBuilder, set_current_object);
@@ -7814,7 +7816,6 @@ static const zend_function_entry class_Gtk4_GtkBoxLayout_methods[] = {
 };
 
 static const zend_function_entry class_Gtk4_GtkBuilder_methods[] = {
-	ZEND_ME(Gtk4_GtkBuilder, __construct, arginfo_class_Gtk4_GtkBuilder___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkBuilder, add_from_file, arginfo_class_Gtk4_GtkBuilder_add_from_file, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkBuilder, add_from_resource, arginfo_class_Gtk4_GtkBuilder_add_from_resource, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkBuilder, add_objects_from_file, arginfo_class_Gtk4_GtkBuilder_add_objects_from_file, ZEND_ACC_PUBLIC)
@@ -7827,6 +7828,7 @@ static const zend_function_entry class_Gtk4_GtkBuilder_methods[] = {
 	ZEND_ME(Gtk4_GtkBuilder, get_translation_domain, arginfo_class_Gtk4_GtkBuilder_get_translation_domain, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkBuilder, set_scope, arginfo_class_Gtk4_GtkBuilder_set_scope, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkBuilder, set_translation_domain, arginfo_class_Gtk4_GtkBuilder_set_translation_domain, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkBuilder, __construct, arginfo_class_Gtk4_GtkBuilder___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkBuilder, add_from_string, arginfo_class_Gtk4_GtkBuilder_add_from_string, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkBuilder, add_objects_from_string, arginfo_class_Gtk4_GtkBuilder_add_objects_from_string, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkBuilder, set_current_object, arginfo_class_Gtk4_GtkBuilder_set_current_object, ZEND_ACC_PUBLIC)

@@ -186,10 +186,13 @@ inline zend_string *absolute_filename(zend_string *path, uint32_t arg) {
 // was also a read of the wrong type. Found on a ZTS run where GTK happened to deliver
 // GTK_SYSTEM_SETTING_ICON_THEME to a PHP vfunc_system_setting_changed().
 inline bool check_enum_member(GType type, zend_long value, uint32_t arg) {
-  auto *klass = static_cast<GEnumClass *>(g_type_class_ref(type));
+  // peek first: the class exists once anything of the type was touched, and a ref/unref pair
+  // per argument is a GLib lock round trip on every call
+  gpointer peeked = g_type_class_peek(type);
+  auto *klass = static_cast<GEnumClass *>(peeked != nullptr ? peeked : g_type_class_ref(type));
   const bool known = value >= klass->minimum && value <= klass->maximum &&
                      g_enum_get_value(klass, static_cast<gint>(value)) != nullptr;
-  g_type_class_unref(klass);
+  if (peeked == nullptr) g_type_class_unref(klass);
   if (known) return true;
   if (arg != 0) {
     zend_argument_value_error(arg, "must be a valid %s value, " ZEND_LONG_FMT " given",
@@ -203,9 +206,10 @@ inline bool check_enum_member(GType type, zend_long value, uint32_t arg) {
 // A flags value must be a combination of the type's own bits: GLib otherwise rejects the
 // whole assignment with a CRITICAL and carries on with the default, telling PHP nothing.
 inline bool check_flags(GType type, zend_long bits, uint32_t arg) {
-  auto *klass = static_cast<GFlagsClass *>(g_type_class_ref(type));
+  gpointer peeked = g_type_class_peek(type);  // as in check_enum_member()
+  auto *klass = static_cast<GFlagsClass *>(peeked != nullptr ? peeked : g_type_class_ref(type));
   const guint mask = klass->mask;
-  g_type_class_unref(klass);
+  if (peeked == nullptr) g_type_class_unref(klass);
   if (bits >= 0 && (static_cast<guint64>(bits) & ~static_cast<guint64>(mask)) == 0) {
     return true;
   }

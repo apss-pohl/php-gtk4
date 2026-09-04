@@ -5,6 +5,8 @@
 #include "core/object.h"
 #include "core/subtype.h"
 
+#include <string>
+
 using namespace phpgtk;
 
 /**
@@ -116,6 +118,9 @@ ZEND_METHOD(Gtk4_GObject, set_property) {
   if (spec == nullptr) RETURN_THROWS();
   GValue v = G_VALUE_INIT;
   if (!to_gvalue(value, spec->value_type, &v)) RETURN_THROWS();
-  g_object_set_property(obj, spec->name, &v);
+  const std::string what = std::string(ZSTR_VAL(Z_OBJCE_P(ZEND_THIS)->name)) + "::$" + spec->name;
+  const bool ok = property_value_in_range(spec, &v, what.c_str());
+  if (ok) g_object_set_property(obj, spec->name, &v);
   g_value_unset(&v);
+  if (!ok) RETURN_THROWS();
 }

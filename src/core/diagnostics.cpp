@@ -130,6 +130,8 @@ void diagnostics_mshutdown() {
 
 // Claim this thread: from here on its GLib messages are reported instead of printed.
 void diagnostics_request_init() {
+  // a fatal flush bails out before resetting this; the next request must not inherit it
+  GTK4_G(reporting_diagnostic) = false;
   owning_thread.store(g_thread_self());
 }
 

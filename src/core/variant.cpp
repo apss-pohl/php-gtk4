@@ -1,4 +1,5 @@
 #include "variant.h"
+#include "marshal.h"
 
 #include <string>
 
@@ -215,31 +216,63 @@ static GVariant *php_to_variant_at(zval *value, const GVariantType *type, int de
   if (g_variant_type_is_basic(type)) {
     if (Z_TYPE_P(value) == IS_ARRAY || Z_TYPE_P(value) == IS_OBJECT) return fail(value, type);
     const gchar c = g_variant_type_peek_string(type)[0];
+    // Scalars convert exactly like a typed parameter - strict_types honoured where the value was
+    // written, weak coercion otherwise - and then have to fit the C width (check_range): -1 for
+    // a `u` used to reach GLib as 4294967295, 'abc' for an `i` as 0, silently.
+    zend_long l = 0;
+    const auto integer = [&](auto width) -> bool {
+      using T = decltype(width);
+      if (Z_TYPE_P(value) == IS_LONG) {
+        l = Z_LVAL_P(value);
+      } else if (caller_is_strict() || !zend_parse_arg_long_weak(value, &l, 0)) {
+        fail(value, type);
+        return false;
+      }
+      return check_range<T>(l, 0);
+    };
     switch (c) {
-      case 'b':
-        return g_variant_new_boolean(zend_is_true(value));
+      case 'b': {
+        bool b = false;
+        if (Z_TYPE_P(value) == IS_TRUE || Z_TYPE_P(value) == IS_FALSE) {
+          b = Z_TYPE_P(value) == IS_TRUE;
+        } else if (caller_is_strict() || !zend_parse_arg_bool_weak(value, &b, 0)) {
+          return fail(value, type);
+        }
+        return g_variant_new_boolean(b ? TRUE : FALSE);
+      }
       case 'y':
-        return g_variant_new_byte(static_cast<guint8>(zval_get_long(value)));
+        return integer(guint8{}) ? g_variant_new_byte(static_cast<guint8>(l)) : nullptr;
       case 'n':
-        return g_variant_new_int16(static_cast<gint16>(zval_get_long(value)));
+        return integer(gint16{}) ? g_variant_new_int16(static_cast<gint16>(l)) : nullptr;
       case 'q':
-        return g_variant_new_uint16(static_cast<guint16>(zval_get_long(value)));
+        return integer(guint16{}) ? g_variant_new_uint16(static_cast<guint16>(l)) : nullptr;
       case 'i':
-        return g_variant_new_int32(static_cast<gint32>(zval_get_long(value)));
+        return integer(gint32{}) ? g_variant_new_int32(static_cast<gint32>(l)) : nullptr;
       case 'u':
-        return g_variant_new_uint32(static_cast<guint32>(zval_get_long(value)));
+        return integer(guint32{}) ? g_variant_new_uint32(static_cast<guint32>(l)) : nullptr;
       case 'x':
-        return g_variant_new_int64(zval_get_long(value));
+        return integer(gint64{}) ? g_variant_new_int64(l) : nullptr;
       case 't':
-        return g_variant_new_uint64(static_cast<guint64>(zval_get_long(value)));
+        return integer(guint64{}) ? g_variant_new_uint64(static_cast<guint64>(l)) : nullptr;
       case 'h':
-        return g_variant_new_handle(static_cast<gint32>(zval_get_long(value)));
-      case 'd':
-        return g_variant_new_double(zval_get_double(value));
+        return integer(gint32{}) ? g_variant_new_handle(static_cast<gint32>(l)) : nullptr;
+      case 'd': {
+        double d = 0;
+        if (Z_TYPE_P(value) == IS_DOUBLE) {
+          d = Z_DVAL_P(value);
+        } else if (Z_TYPE_P(value) == IS_LONG) {  // widening: allowed under strict_types too
+          d = static_cast<double>(Z_LVAL_P(value));
+        } else if (caller_is_strict() || !zend_parse_arg_double_weak(value, &d, 0)) {
+          return fail(value, type);
+        }
+        return g_variant_new_double(d);
+      }
       case 's':
       case 'o':
       case 'g': {
-        if (Z_TYPE_P(value) == IS_ARRAY || Z_TYPE_P(value) == IS_OBJECT) return fail(value, type);
+        if (Z_TYPE_P(value) != IS_STRING && (caller_is_strict() || !weak_to_string_ok(value))) {
+          return fail(value, type);
+        }
         zend_string *s = zval_get_string(value);
         if (!check_utf8(s, 0)) {
           zend_string_release(s);

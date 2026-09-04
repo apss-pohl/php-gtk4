@@ -16,7 +16,7 @@ namespace Gtk4;
  * @property-read ?GdkContentProvider $content
  * @property ?GdkDisplay $display
  * @property-read ?GdkContentFormats $formats
- * @property-read ?bool $local
+ * @property-read bool $local
  */
 class GdkClipboard extends GObject
 {
@@ -230,8 +230,8 @@ enum GdkCrossingMode: int
  * `GdkCursor` is used to create and destroy cursors.
  *
  * @property ?GdkCursor $fallback
- * @property ?int $hotspot_x
- * @property ?int $hotspot_y
+ * @property int $hotspot_x
+ * @property int $hotspot_y
  * @property ?string $name
  * @property ?GdkTexture $texture
  */
@@ -265,10 +265,10 @@ class GdkCursor extends GObject
 /**
  * `GdkDisplay` objects are the GDK representation of a workstation.
  *
- * @property-read ?bool $composited
- * @property-read ?bool $input_shapes
- * @property-read ?bool $rgba
- * @property-read ?bool $shadow_width
+ * @property-read bool $composited
+ * @property-read bool $input_shapes
+ * @property-read bool $rgba
+ * @property-read bool $shadow_width
  */
 class GdkDisplay extends GObject
 {
@@ -339,11 +339,11 @@ class GdkDisplay extends GObject
 /**
  * The `GdkDrag` object represents the source of an ongoing DND operation.
  *
- * @property ?int $actions
+ * @property int $actions
  * @property ?GdkContentProvider $content
  * @property-read ?GdkDisplay $display
  * @property ?GdkContentFormats $formats
- * @property ?int $selected_action
+ * @property int $selected_action
  * @property ?GdkSurface $surface
  */
 class GdkDrag extends GObject
@@ -404,7 +404,7 @@ enum GdkDragCancelReason: int
 /**
  * The `GdkDrop` object represents the target of an ongoing DND operation.
  *
- * @property ?int $actions
+ * @property int $actions
  * @property-read ?GdkDisplay $display
  * @property ?GdkDrag $drag
  * @property ?GdkContentFormats $formats
@@ -561,15 +561,15 @@ final class GdkModifierType
  * @property-read ?string $description
  * @property ?GdkDisplay $display
  * @property-read ?GdkRectangle $geometry
- * @property-read ?int $height_mm
+ * @property-read int $height_mm
  * @property-read ?string $manufacturer
  * @property-read ?string $model
- * @property-read ?int $refresh_rate
- * @property-read ?float $scale
- * @property-read ?int $scale_factor
- * @property-read ?GdkSubpixelLayout $subpixel_layout
- * @property-read ?bool $valid
- * @property-read ?int $width_mm
+ * @property-read int $refresh_rate
+ * @property-read float $scale
+ * @property-read int $scale_factor
+ * @property-read GdkSubpixelLayout $subpixel_layout
+ * @property-read bool $valid
+ * @property-read int $width_mm
  */
 class GdkMonitor extends GObject
 {
@@ -751,11 +751,11 @@ enum GdkSubpixelLayout: int
  *
  * @property ?GdkCursor $cursor
  * @property ?GdkDisplay $display
- * @property-read ?int $height
- * @property-read ?bool $mapped
- * @property-read ?float $scale
- * @property-read ?int $scale_factor
- * @property-read ?int $width
+ * @property-read int $height
+ * @property-read bool $mapped
+ * @property-read float $scale
+ * @property-read int $scale_factor
+ * @property-read int $width
  */
 class GdkSurface extends GObject
 {
@@ -820,8 +820,8 @@ class GdkSurface extends GObject
 /**
  * `GdkTexture` is the basic element used to refer to pixel data.
  *
- * @property ?int $height
- * @property ?int $width
+ * @property int $height
+ * @property int $width
  */
 class GdkTexture extends GObject implements GdkPaintable
 {

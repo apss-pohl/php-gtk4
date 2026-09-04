@@ -143,7 +143,7 @@ ZEND_METHOD(Gtk4_Gtk, testing_iterate_nested) {
 }
 
 /**
- * static Gtk4\Gtk::testing_run_dispose(GObject $object): void
+ * static Gtk4\Gtk::testing_run_dispose(GtkWidget $object): void
  *
  * A test hook, not part of the supported surface: run `g_object_run_dispose()` on $object from C
  * while PHP still holds it, the way GTK guts a widget that a C owner destroys. The handle turns
@@ -152,9 +152,11 @@ ZEND_METHOD(Gtk4_Gtk, testing_iterate_nested) {
 ZEND_METHOD(Gtk4_Gtk, testing_run_dispose) {
   zval *object;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_OBJECT_OF_CLASS(object, class_for_gtype(G_TYPE_OBJECT))
+  Z_PARAM_OBJECT_OF_CLASS(object, class_for_gtype(GTK_TYPE_WIDGET))
   ZEND_PARSE_PARAMETERS_END();
-  GObject *obj = unwrap(object, G_TYPE_OBJECT);
+  // Widgets only: disposing a GdkDisplay, GtkSettings or GtkApplication from here gutted a
+  // singleton GTK goes on using, and the next `new GtkWindow()` was a SIGSEGV.
+  GObject *obj = unwrap(object, GTK_TYPE_WIDGET);
   if (obj == nullptr) RETURN_THROWS();
   g_object_run_dispose(obj);
 }

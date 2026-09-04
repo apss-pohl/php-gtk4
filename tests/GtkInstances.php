@@ -248,7 +248,9 @@ final class GtkInstances
         $notebook = self::pin(new \Gtk4\GtkNotebook());
         $child = new \Gtk4\GtkButton();
         $notebook->append_page($child, null);
-        return $notebook->get_page($child);
+        $page = $notebook->get_page($child);
+        assert($page !== null);  // null only for a widget that is not a page of the notebook
+        return $page;
     }
 
     /** The per-child state a layout manager keeps - one concrete class per manager. */

@@ -45,6 +45,11 @@ inline Object *object_from_zval(const zval *zv) {
 // RETURNS_HOLD_SELF; a second call with the same owner is a no-op.
 void object_hold_owner(zval *handle, zval *owner);
 
+// A converted property value against the pspec's own bounds (a float's minimum/maximum, an
+// enum's members): GLib would otherwise refuse it with a warning and keep the old value, telling
+// PHP nothing. False with a ValueError pending, naming `what` (`GtkLabel::$xalign`).
+bool property_value_in_range(GParamSpec *spec, const GValue *value, const char *what);
+
 // The handle registered on a GObject (qdata back-pointer), nullptr if none.
 Object *object_handle(GObject *obj);
 // subtype.cpp instance_init: bind the handle under construction to its instance before

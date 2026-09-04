@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c56b81718965009dfd0dec1bfdab0117aa8d01da */
+ * Stub hash: cc9cb48d469ac7247551900adabb138ded2a82ec */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GObject___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -79,7 +79,7 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_Gtk_testing_iterate_n
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_Gtk_testing_run_dispose, 0, 1, IS_VOID, 0)
-	ZEND_ARG_OBJ_INFO(0, object, Gtk4\\GObject, 0)
+	ZEND_ARG_OBJ_INFO(0, object, Gtk4\\GtkWidget, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GLib_idle_add, 0, 1, IS_LONG, 0)

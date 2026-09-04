@@ -1,4 +1,5 @@
 #include "collections.h"
+#include "marshal.h"
 
 #include "boxed.h"
 #include "object.h"
@@ -103,12 +104,19 @@ char **strv_from_php(zval *value) {
   zval *item;
   // NOLINTNEXTLINE(readability-math-missing-parentheses) Zend macro expansion
   ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(value), item) {
-    if (Z_TYPE_P(item) == IS_ARRAY || Z_TYPE_P(item) == IS_OBJECT) {
+    // each element like a string parameter: strict_types where the array was written, weak
+    // coercion otherwise, and no NUL / invalid UTF-8 (a GStrv element is a C string)
+    if (Z_TYPE_P(item) != IS_STRING && (caller_is_strict() || !weak_to_string_ok(item))) {
       g_strv_builder_unref(builder);
       zend_type_error("expected an array of strings, element is %s", zend_zval_value_name(item));
       return nullptr;
     }
     zend_string *s = zval_get_string(item);
+    if (!check_utf8(s, 0)) {
+      zend_string_release(s);
+      g_strv_builder_unref(builder);
+      return nullptr;
+    }
     g_strv_builder_add(builder, ZSTR_VAL(s));
     zend_string_release(s);
   }

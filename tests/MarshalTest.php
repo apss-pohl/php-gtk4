@@ -15,13 +15,9 @@ final class MarshalTest extends GtkTestCase
         yield 'string'          => ['title', 'hello', 'hello'];
         yield 'string null'     => ['title', null, null];
         yield 'int'             => ['default-width', 321, 321];
-        // set_property() takes `mixed`, so the marshaller applies PHP's weak rules; a float
-        // that would lose precision is E_DEPRECATED there, as it is for any int parameter.
-        yield 'int from float'  => ['default-width', 12.0, 12];
         yield 'bool true'       => ['resizable', true, true];
         yield 'bool false'      => ['resizable', false, false];
-        yield 'bool from int'   => ['resizable', 0, false];
-        yield 'double from int' => ['opacity', 1, 1.0];
+        yield 'double from int' => ['opacity', 1, 1.0];  // widening: allowed under strict_types too
         yield 'enum from int'   => ['halign', 2, \Gtk4\GtkAlign::End];   // GTK_ALIGN_END -> PHP enum
         yield 'enum from case'  => ['halign', \Gtk4\GtkAlign::Center, \Gtk4\GtkAlign::Center];
     }
@@ -33,6 +29,42 @@ final class MarshalTest extends GtkTestCase
         $w->set_property($property, $set);
         $got = $w->get_property($property);
         self::assertSame($expected, $got);
+    }
+
+    /**
+     * The value converts like the equivalent setter's parameter, under the rules of the file that
+     * makes the call: weak coercion where strict_types is not declared (an eval'd closure runs
+     * without this file's declaration), a TypeError here.
+     *
+     * @return iterable<string, array{string, mixed, mixed}>
+     */
+    public static function coercedProperties(): iterable
+    {
+        yield 'int from float' => ['default-width', 12.0, 12];
+        yield 'bool from int'  => ['resizable', 0, false];
+        yield 'string from int' => ['title', 42, '42'];
+    }
+
+    #[DataProvider('coercedProperties')]
+    public function testWeakCallersAreCoerced(string $property, mixed $set, mixed $expected): void
+    {
+        $w = $this->window();
+        $weak = eval('return static fn(\Gtk4\GObject $o, string $n, mixed $v) => $o->set_property($n, $v);');
+        self::assertIsCallable($weak);
+
+        $weak($w, $property, $set);
+
+        self::assertSame($expected, $w->get_property($property));
+    }
+
+    #[DataProvider('coercedProperties')]
+    public function testStrictCallersAreNot(string $property, mixed $set, mixed $expected): void
+    {
+        $w = $this->window();
+        self::assertNotSame($set, $expected, 'the row is a coercion');
+
+        $this->expectException(\TypeError::class);
+        $w->set_property($property, $set);
     }
 
     public function testDoubleRoundTrip(): void
@@ -81,13 +113,17 @@ final class MarshalTest extends GtkTestCase
      * It comes back as the numeric GType, which is what the marshaller has to offer - there
      * is no PHP class for a GType itself.
      */
-    public function testGTypePropertyReadsAsAnInt(): void
+    /** A `GType` property is a type name, as the constructor takes it and get_item_type() answers. */
+    public function testGTypePropertyIsATypeName(): void
     {
         $store = new \Gtk4\GListStore(\Gtk4\PhpValue::class);
-        $type = $store->get_property('item-type');
-        self::assertIsInt($type);
-        self::assertGreaterThan(0, $type);
-        self::assertSame($type, $store->item_type, 'the property handler agrees with get_property()');
+
+        self::assertSame('PhpValue', $store->get_property('item-type'));
+        self::assertSame($store->get_item_type(), $store->item_type, 'the property handler agrees');
+
+        $filter = new \Gtk4\GtkFilterListModel(null, null);
+        $filter->set_property('model', new \Gtk4\GListStore('GtkLabel'));
+        self::assertSame('GtkLabel', $filter->get_model()?->get_item_type());
     }
 
     /**
@@ -118,12 +154,6 @@ final class MarshalTest extends GtkTestCase
         self::assertSame([1, 2, 3, 4], [$got->x, $got->y, $got->width, $got->height]);
     }
 
-    public function testStringCoercion(): void
-    {
-        $w = $this->window();
-        $w->set_property('title', 42);
-        self::assertSame('42', $w->get_property('title'));
-    }
     /**
      * A `GVariantType` property is its type string (GSimpleAction's `parameter-type` and
      * `state-type`), both ways: read as a string or null, and written as the construct

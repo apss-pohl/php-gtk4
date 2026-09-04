@@ -83,7 +83,13 @@ class GObject
      * Emit a signal on this object with the given arguments (converted to the
      * signal's parameter types) and return the signal's return value, if any.
      *
-     * @throws \ValueError If the signal does not exist or the argument count is wrong
+     * The class handler runs too, so this is GTK's own code being driven with PHP's values:
+     * an `int` that follows a `string` parameter (`insert-text`'s length) is bounded by that
+     * string, but a signal whose handler needs the object in a state PHP cannot check
+     * (`realize`, `map`) is not guarded beyond what GTK asserts.
+     *
+     * @throws \ValueError If the signal does not exist, the argument count is wrong, or a
+     *                     length exceeds the string before it
      */
     public function emit(string $signal, mixed ...$args): mixed {}
 
@@ -210,7 +216,7 @@ final class Gtk
      * handle turns *disposed*: method calls and passing it as an argument throw an `Error` from
      * then on.
      */
-    public static function testing_run_dispose(GObject $object): void {}
+    public static function testing_run_dispose(GtkWidget $object): void {}
 }
 
 /**

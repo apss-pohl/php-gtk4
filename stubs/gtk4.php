@@ -78,7 +78,13 @@ class GObject
      * Emit a signal on this object with the given arguments (converted to the
      * signal's parameter types) and return the signal's return value, if any.
      *
-     * @throws \ValueError If the signal does not exist or the argument count is wrong
+     * The class handler runs too, so this is GTK's own code being driven with PHP's values:
+     * an `int` that follows a `string` parameter (`insert-text`'s length) is bounded by that
+     * string, but a signal whose handler needs the object in a state PHP cannot check
+     * (`realize`, `map`) is not guarded beyond what GTK asserts.
+     *
+     * @throws \ValueError If the signal does not exist, the argument count is wrong, or a
+     *                     length exceeds the string before it
      */
     public function emit(string $signal, mixed ...$args): mixed
     {
@@ -262,7 +268,7 @@ final class Gtk
      * handle turns *disposed*: method calls and passing it as an argument throw an `Error` from
      * then on.
      */
-    public static function testing_run_dispose(GObject $object): void
+    public static function testing_run_dispose(GtkWidget $object): void
     {
         unset($object);
     }
@@ -1083,7 +1089,7 @@ final class GtkCssSection
  * @property-read ?GdkContentProvider $content
  * @property ?GdkDisplay $display
  * @property-read ?GdkContentFormats $formats
- * @property-read ?bool $local
+ * @property-read bool $local
  */
 class GdkClipboard extends GObject
 {
@@ -1397,8 +1403,8 @@ enum GdkCrossingMode : int
  * `GdkCursor` is used to create and destroy cursors.
  *
  * @property ?GdkCursor $fallback
- * @property ?int $hotspot_x
- * @property ?int $hotspot_y
+ * @property int $hotspot_x
+ * @property int $hotspot_y
  * @property ?string $name
  * @property ?GdkTexture $texture
  */
@@ -1453,10 +1459,10 @@ class GdkCursor extends GObject
 /**
  * `GdkDisplay` objects are the GDK representation of a workstation.
  *
- * @property-read ?bool $composited
- * @property-read ?bool $input_shapes
- * @property-read ?bool $rgba
- * @property-read ?bool $shadow_width
+ * @property-read bool $composited
+ * @property-read bool $input_shapes
+ * @property-read bool $rgba
+ * @property-read bool $shadow_width
  */
 class GdkDisplay extends GObject
 {
@@ -1560,11 +1566,11 @@ class GdkDisplay extends GObject
 /**
  * The `GdkDrag` object represents the source of an ongoing DND operation.
  *
- * @property ?int $actions
+ * @property int $actions
  * @property ?GdkContentProvider $content
  * @property-read ?GdkDisplay $display
  * @property ?GdkContentFormats $formats
- * @property ?int $selected_action
+ * @property int $selected_action
  * @property ?GdkSurface $surface
  */
 class GdkDrag extends GObject
@@ -1643,7 +1649,7 @@ enum GdkDragCancelReason : int
 /**
  * The `GdkDrop` object represents the target of an ongoing DND operation.
  *
- * @property ?int $actions
+ * @property int $actions
  * @property-read ?GdkDisplay $display
  * @property ?GdkDrag $drag
  * @property ?GdkContentFormats $formats
@@ -1817,15 +1823,15 @@ final class GdkModifierType
  * @property-read ?string $description
  * @property ?GdkDisplay $display
  * @property-read ?GdkRectangle $geometry
- * @property-read ?int $height_mm
+ * @property-read int $height_mm
  * @property-read ?string $manufacturer
  * @property-read ?string $model
- * @property-read ?int $refresh_rate
- * @property-read ?float $scale
- * @property-read ?int $scale_factor
- * @property-read ?GdkSubpixelLayout $subpixel_layout
- * @property-read ?bool $valid
- * @property-read ?int $width_mm
+ * @property-read int $refresh_rate
+ * @property-read float $scale
+ * @property-read int $scale_factor
+ * @property-read GdkSubpixelLayout $subpixel_layout
+ * @property-read bool $valid
+ * @property-read int $width_mm
  */
 class GdkMonitor extends GObject
 {
@@ -2037,11 +2043,11 @@ enum GdkSubpixelLayout : int
  *
  * @property ?GdkCursor $cursor
  * @property ?GdkDisplay $display
- * @property-read ?int $height
- * @property-read ?bool $mapped
- * @property-read ?float $scale
- * @property-read ?int $scale_factor
- * @property-read ?int $width
+ * @property-read int $height
+ * @property-read bool $mapped
+ * @property-read float $scale
+ * @property-read int $scale_factor
+ * @property-read int $width
  */
 class GdkSurface extends GObject
 {
@@ -2137,8 +2143,8 @@ class GdkSurface extends GObject
 /**
  * `GdkTexture` is the basic element used to refer to pixel data.
  *
- * @property ?int $height
- * @property ?int $width
+ * @property int $height
+ * @property int $width
  */
 class GdkTexture extends GObject implements GdkPaintable
 {
@@ -2268,7 +2274,7 @@ enum GdkTouchpadGesturePhase : int
 /**
  * `GAction` represents a single named action.
  *
- * @property-read ?bool $enabled
+ * @property-read bool $enabled
  * @property-read ?string $name
  * @property-read ?string $parameter_type
  * @property-read mixed $state
@@ -2555,11 +2561,11 @@ final class GActionMapObject extends GObject implements GActionMap
  *
  * @property ?GActionGroup $action_group
  * @property ?string $application_id
- * @property ?int $flags
- * @property ?int $inactivity_timeout
- * @property-read ?bool $is_busy
- * @property-read ?bool $is_registered
- * @property-read ?bool $is_remote
+ * @property int $flags
+ * @property int $inactivity_timeout
+ * @property-read bool $is_busy
+ * @property-read bool $is_registered
+ * @property-read bool $is_remote
  * @property ?string $resource_base_path
  * @property ?string $version
  */
@@ -3082,7 +3088,7 @@ final class GListModelObject extends GObject implements GListModel
  * `GListStore` is a simple implementation of `ListModel` that stores all items in memory.
  *
  * @property ?string $item_type
- * @property-read ?int $n_items
+ * @property-read int $n_items
  */
 class GListStore extends GObject implements GListModel
 {
@@ -3466,7 +3472,7 @@ class GMenuModel extends GObject
  * A `GSimpleAction` is the obvious simple implementation of the `Action` interface. This is the
  * easiest way to create an action for purposes of adding it to a `SimpleActionGroup`.
  *
- * @property ?bool $enabled
+ * @property bool $enabled
  * @property ?string $name
  * @property ?string $parameter_type
  * @property mixed $state
@@ -3542,7 +3548,7 @@ class GSimpleAction extends GObject implements GAction
 /**
  * A `GTask` represents and manages a cancellable ‘task’.
  *
- * @property-read ?bool $completed
+ * @property-read bool $completed
  */
 class GTask extends GObject implements GAsyncResult
 {
@@ -4115,7 +4121,7 @@ enum GskScalingFilter : int
  * @property ?string $copyright
  * @property ?array $documenters
  * @property ?string $license
- * @property ?GtkLicense $license_type
+ * @property GtkLicense $license_type
  * @property ?GdkPaintable $logo
  * @property ?string $logo_icon_name
  * @property ?string $program_name
@@ -4124,7 +4130,7 @@ enum GskScalingFilter : int
  * @property ?string $version
  * @property ?string $website
  * @property ?string $website_label
- * @property ?bool $wrap_license
+ * @property bool $wrap_license
  */
 class GtkAboutDialog extends GtkWindow implements GtkNative, GtkRoot
 {
@@ -4353,12 +4359,12 @@ enum GtkAccessiblePlatformState : int
 /**
  * `GtkAdjustment` is a model for a numeric value.
  *
- * @property ?float $lower
- * @property ?float $page_increment
- * @property ?float $page_size
- * @property ?float $step_increment
- * @property ?float $upper
- * @property ?float $value
+ * @property float $lower
+ * @property float $page_increment
+ * @property float $page_size
+ * @property float $step_increment
+ * @property float $upper
+ * @property float $value
  */
 class GtkAdjustment extends GObject
 {
@@ -4476,11 +4482,11 @@ class GtkAdjustment extends GObject
  * user.
  *
  * @property ?array $buttons
- * @property ?int $cancel_button
- * @property ?int $default_button
+ * @property int $cancel_button
+ * @property int $default_button
  * @property ?string $detail
  * @property ?string $message
- * @property ?bool $modal
+ * @property bool $modal
  */
 class GtkAlertDialog extends GObject
 {
@@ -4588,8 +4594,8 @@ enum GtkAlign : int
  *
  * @property-read ?GtkWindow $active_window
  * @property ?GMenuModel $menubar
- * @property ?bool $register_session
- * @property-read ?bool $screensaver_active
+ * @property bool $register_session
+ * @property-read bool $screensaver_active
  */
 class GtkApplication extends GApplication implements GActionGroup, GActionMap
 {
@@ -4778,7 +4784,7 @@ class GtkApplication extends GApplication implements GActionGroup, GActionMap
 /**
  * `GtkApplicationWindow` is a `GtkWindow` subclass that integrates with `GtkApplication`.
  *
- * @property ?bool $show_menubar
+ * @property bool $show_menubar
  */
 class GtkApplicationWindow extends GtkWindow implements GActionMap, GtkNative, GtkRoot
 {
@@ -5050,10 +5056,10 @@ final class GtkBitset
 /**
  * The `GtkBox` widget arranges child widgets into a single row or column.
  *
- * @property ?int $baseline_child
- * @property ?GtkBaselinePosition $baseline_position
- * @property ?bool $homogeneous
- * @property ?int $spacing
+ * @property int $baseline_child
+ * @property GtkBaselinePosition $baseline_position
+ * @property bool $homogeneous
+ * @property int $spacing
  */
 class GtkBox extends GtkWidget implements GtkOrientable
 {
@@ -5151,10 +5157,10 @@ class GtkBox extends GtkWidget implements GtkOrientable
 /**
  * `GtkBoxLayout` is a layout manager that arranges children in a single row or column.
  *
- * @property ?int $baseline_child
- * @property ?GtkBaselinePosition $baseline_position
- * @property ?bool $homogeneous
- * @property ?int $spacing
+ * @property int $baseline_child
+ * @property GtkBaselinePosition $baseline_position
+ * @property bool $homogeneous
+ * @property int $spacing
  */
 class GtkBoxLayout extends GtkLayoutManager implements GtkOrientable
 {
@@ -5222,10 +5228,6 @@ class GtkBoxLayout extends GtkLayoutManager implements GtkOrientable
  */
 class GtkBuilder extends GObject
 {
-    /** Creates a new empty builder object. */
-    public function __construct()
-    {
-    }
     /**
      * Parses a file containing a UI definition and merges it with the current contents of
      * $builder.
@@ -5314,6 +5316,15 @@ class GtkBuilder extends GObject
         unset($domain);
     }
     /**
+     * Creates a new empty builder object.
+     *
+     * Signal handlers named by a `.ui` document resolve only through `set_handlers()`: the builder
+     * gets php-gtk4's own scope here, never GTK's C-symbol lookup.
+     */
+    public function __construct()
+    {
+    }
+    /**
      * Parse $buffer and merge what it describes into $builder.
      *
      * GTK takes the length separately; a PHP string carries its own, and letting the script pass one
@@ -5351,9 +5362,11 @@ class GtkBuilder extends GObject
      * Resolve every `<signal handler="name">` in what is parsed next against $handlers.
      *
      * GTK 4 connects the signals of a .ui document while parsing it and asks its GtkBuilderScope for
-     * each handler, so this has to be called *before* `add_from_string()`/`add_from_file()`; a handler
-     * a later call does not find still fails the way GTK words it. `swapped="yes"` and `object="..."`
-     * are refused for a PHP handler - a closure already carries what it captured with `use`.
+     * each handler, so this has to be called *before* `add_from_string()`/`add_from_file()`. A
+     * handler name the array does not have is a `GError` from the parse - it is never looked up as
+     * a C function the way GTK's own scope would, so a document cannot name what it may call.
+     * `swapped="yes"` and `object="..."` are refused for a PHP handler - a closure already carries
+     * what it captured with `use`.
      */
     public function set_handlers(array $handlers): void
     {
@@ -5390,12 +5403,12 @@ final class GtkBuilderScopeObject extends GObject implements GtkBuilderScope
  * The `GtkButton` widget is generally used to trigger a callback function that is called when the
  * button is pressed.
  *
- * @property ?bool $can_shrink
+ * @property bool $can_shrink
  * @property ?GtkWidget $child
- * @property ?bool $has_frame
+ * @property bool $has_frame
  * @property ?string $icon_name
  * @property ?string $label
- * @property ?bool $use_underline
+ * @property bool $use_underline
  */
 class GtkButton extends GtkWidget
 {
@@ -5501,12 +5514,12 @@ class GtkButton extends GtkWidget
 /**
  * `GtkCalendar` is a widget that displays a Gregorian calendar, one month at a time.
  *
- * @property ?int $day
- * @property ?int $month
- * @property ?bool $show_day_names
- * @property ?bool $show_heading
- * @property ?bool $show_week_numbers
- * @property ?int $year
+ * @property int $day
+ * @property int $month
+ * @property bool $show_day_names
+ * @property bool $show_heading
+ * @property bool $show_week_numbers
+ * @property int $year
  */
 class GtkCalendar extends GtkWidget
 {
@@ -5598,7 +5611,7 @@ class GtkCalendar extends GtkWidget
 /**
  * `GtkCenterLayout` is a layout manager that manages up to three children.
  *
- * @property ?bool $shrink_center_last
+ * @property bool $shrink_center_last
  */
 class GtkCenterLayout extends GtkLayoutManager
 {
@@ -5670,12 +5683,12 @@ class GtkCenterLayout extends GtkLayoutManager
 /**
  * A `GtkCheckButton` places a label next to an indicator.
  *
- * @property ?bool $active
+ * @property bool $active
  * @property ?GtkWidget $child
  * @property ?GtkCheckButton $group
- * @property ?bool $inconsistent
+ * @property bool $inconsistent
  * @property ?string $label
- * @property ?bool $use_underline
+ * @property bool $use_underline
  */
 class GtkCheckButton extends GtkWidget
 {
@@ -5769,9 +5782,9 @@ class GtkCheckButton extends GtkWidget
  * A `GtkColorDialog` object collects the arguments that are needed to present a color chooser
  * dialog to the user, such as a title for the dialog and whether it should be modal.
  *
- * @property ?bool $modal
+ * @property bool $modal
  * @property ?string $title
- * @property ?bool $with_alpha
+ * @property bool $with_alpha
  */
 class GtkColorDialog extends GObject
 {
@@ -5837,16 +5850,16 @@ class GtkColorDialog extends GObject
  * `GtkColumnView` presents a large dynamic list of items using multiple columns with headers.
  *
  * @property-read ?GListModel $columns
- * @property ?bool $enable_rubberband
+ * @property bool $enable_rubberband
  * @property ?GtkListItemFactory $header_factory
  * @property ?GtkSelectionModel $model
- * @property ?bool $reorderable
+ * @property bool $reorderable
  * @property ?GtkListItemFactory $row_factory
- * @property ?bool $show_column_separators
- * @property ?bool $show_row_separators
- * @property ?bool $single_click_activate
+ * @property bool $show_column_separators
+ * @property bool $show_row_separators
+ * @property bool $single_click_activate
  * @property-read ?GtkSorter $sorter
- * @property ?GtkListTabBehavior $tab_behavior
+ * @property GtkListTabBehavior $tab_behavior
  */
 class GtkColumnView extends GtkWidget implements GtkScrollable
 {
@@ -6031,15 +6044,15 @@ class GtkColumnView extends GtkWidget implements GtkScrollable
  * `GtkColumnViewColumn` represents the columns being added to a `GtkColumnView`.
  *
  * @property-read ?GtkColumnView $column_view
- * @property ?bool $expand
+ * @property bool $expand
  * @property ?GtkListItemFactory $factory
- * @property ?int $fixed_width
+ * @property int $fixed_width
  * @property ?GMenuModel $header_menu
  * @property ?string $id
- * @property ?bool $resizable
+ * @property bool $resizable
  * @property ?GtkSorter $sorter
  * @property ?string $title
- * @property ?bool $visible
+ * @property bool $visible
  */
 class GtkColumnViewColumn extends GObject
 {
@@ -6333,7 +6346,7 @@ class GtkDragIcon extends GtkWidget implements GtkNative, GtkRoot
 /**
  * `GtkDragSource` is an event controller to initiate Drag-And-Drop operations.
  *
- * @property ?int $actions
+ * @property int $actions
  * @property ?GdkContentProvider $content
  */
 class GtkDragSource extends GtkGestureSingle
@@ -6382,8 +6395,8 @@ class GtkDragSource extends GtkGestureSingle
 /**
  * `GtkDrawingArea` is a widget that allows drawing with cairo.
  *
- * @property ?int $content_height
- * @property ?int $content_width
+ * @property int $content_height
+ * @property int $content_width
  */
 class GtkDrawingArea extends GtkWidget
 {
@@ -6432,15 +6445,15 @@ class GtkDrawingArea extends GtkWidget
 /**
  * `GtkDropDown` is a widget that allows the user to choose an item from a list of options.
  *
- * @property ?bool $enable_search
+ * @property bool $enable_search
  * @property ?GtkListItemFactory $factory
  * @property ?GtkListItemFactory $header_factory
  * @property ?GtkListItemFactory $list_factory
  * @property ?GListModel $model
- * @property ?GtkStringFilterMatchMode $search_match_mode
- * @property ?int $selected
+ * @property GtkStringFilterMatchMode $search_match_mode
+ * @property int $selected
  * @property-read ?GObject $selected_item
- * @property ?bool $show_arrow
+ * @property bool $show_arrow
  */
 class GtkDropDown extends GtkWidget
 {
@@ -6546,11 +6559,11 @@ class GtkDropDown extends GtkWidget
 /**
  * `GtkDropTarget` is an event controller to receive Drag-and-Drop operations.
  *
- * @property ?int $actions
+ * @property int $actions
  * @property-read ?GdkDrop $current_drop
  * @property-read ?GdkDrop $drop
  * @property ?GdkContentFormats $formats
- * @property ?bool $preload
+ * @property bool $preload
  */
 class GtkDropTarget extends GtkEventController
 {
@@ -6629,7 +6642,7 @@ class GtkDropTarget extends GtkEventController
 /**
  * `GtkDropTargetAsync` is an event controller to receive Drag-and-Drop operations, asynchronously.
  *
- * @property ?int $actions
+ * @property int $actions
  * @property ?GdkContentFormats $formats
  */
 class GtkDropTargetAsync extends GtkEventController
@@ -6676,14 +6689,14 @@ class GtkDropTargetAsync extends GtkEventController
 /**
  * `GtkEditable` is an interface for text editing widgets.
  *
- * @property-read ?int $cursor_position
- * @property ?bool $editable
- * @property ?bool $enable_undo
- * @property ?int $max_width_chars
- * @property-read ?int $selection_bound
+ * @property-read int $cursor_position
+ * @property bool $editable
+ * @property bool $enable_undo
+ * @property int $max_width_chars
+ * @property-read int $selection_bound
  * @property ?string $text
- * @property ?int $width_chars
- * @property ?float $xalign
+ * @property int $width_chars
+ * @property float $xalign
  */
 interface GtkEditable
 {
@@ -6810,40 +6823,40 @@ final class GtkEditableObject extends GObject implements GtkEditable
 /**
  * `GtkEntry` is a single line text entry widget.
  *
- * @property ?bool $activates_default
+ * @property bool $activates_default
  * @property ?GtkEntryBuffer $buffer
- * @property ?bool $enable_emoji_completion
+ * @property bool $enable_emoji_completion
  * @property ?GMenuModel $extra_menu
- * @property ?bool $has_frame
+ * @property bool $has_frame
  * @property ?string $im_module
- * @property ?int $input_hints
- * @property ?GtkInputPurpose $input_purpose
- * @property ?int $invisible_char
- * @property ?bool $invisible_char_set
- * @property ?int $max_length
- * @property ?bool $overwrite_mode
+ * @property int $input_hints
+ * @property GtkInputPurpose $input_purpose
+ * @property int $invisible_char
+ * @property bool $invisible_char_set
+ * @property int $max_length
+ * @property bool $overwrite_mode
  * @property ?string $placeholder_text
- * @property ?bool $primary_icon_activatable
+ * @property bool $primary_icon_activatable
  * @property ?string $primary_icon_name
  * @property ?GdkPaintable $primary_icon_paintable
- * @property ?bool $primary_icon_sensitive
- * @property-read ?GtkImageType $primary_icon_storage_type
+ * @property bool $primary_icon_sensitive
+ * @property-read GtkImageType $primary_icon_storage_type
  * @property ?string $primary_icon_tooltip_markup
  * @property ?string $primary_icon_tooltip_text
- * @property ?float $progress_fraction
- * @property ?float $progress_pulse_step
- * @property-read ?int $scroll_offset
- * @property ?bool $secondary_icon_activatable
+ * @property float $progress_fraction
+ * @property float $progress_pulse_step
+ * @property-read int $scroll_offset
+ * @property bool $secondary_icon_activatable
  * @property ?string $secondary_icon_name
  * @property ?GdkPaintable $secondary_icon_paintable
- * @property ?bool $secondary_icon_sensitive
- * @property-read ?GtkImageType $secondary_icon_storage_type
+ * @property bool $secondary_icon_sensitive
+ * @property-read GtkImageType $secondary_icon_storage_type
  * @property ?string $secondary_icon_tooltip_markup
  * @property ?string $secondary_icon_tooltip_text
- * @property ?bool $show_emoji_icon
- * @property-read ?int $text_length
- * @property ?bool $truncate_multiline
- * @property ?bool $visibility
+ * @property bool $show_emoji_icon
+ * @property-read int $text_length
+ * @property bool $truncate_multiline
+ * @property bool $visibility
  */
 class GtkEntry extends GtkWidget implements GtkEditable
 {
@@ -7232,8 +7245,8 @@ class GtkEntry extends GtkWidget implements GtkEditable
 /**
  * A `GtkEntryBuffer` hold the text displayed in a `GtkText` widget.
  *
- * @property-read ?int $length
- * @property ?int $max_length
+ * @property-read int $length
+ * @property int $max_length
  * @property ?string $text
  */
 class GtkEntryBuffer extends GObject
@@ -7372,8 +7385,8 @@ enum GtkEntryIconPosition : int
  * `GtkEventController` is the base class for event controllers.
  *
  * @property ?string $name
- * @property ?GtkPropagationLimit $propagation_limit
- * @property ?GtkPropagationPhase $propagation_phase
+ * @property GtkPropagationLimit $propagation_limit
+ * @property GtkPropagationPhase $propagation_phase
  * @property-read ?GtkWidget $widget
  */
 class GtkEventController extends GObject
@@ -7445,8 +7458,8 @@ class GtkEventController extends GObject
 /**
  * `GtkEventControllerFocus` is an event controller to keep track of keyboard focus.
  *
- * @property-read ?bool $contains_focus
- * @property-read ?bool $is_focus
+ * @property-read bool $contains_focus
+ * @property-read bool $is_focus
  */
 class GtkEventControllerFocus extends GtkEventController
 {
@@ -7506,8 +7519,8 @@ class GtkEventControllerLegacy extends GtkEventController
 /**
  * `GtkEventControllerMotion` is an event controller tracking the pointer position.
  *
- * @property-read ?bool $contains_pointer
- * @property-read ?bool $is_pointer
+ * @property-read bool $contains_pointer
+ * @property-read bool $is_pointer
  */
 class GtkEventControllerMotion extends GtkEventController
 {
@@ -7529,7 +7542,7 @@ class GtkEventControllerMotion extends GtkEventController
 /**
  * `GtkEventControllerScroll` is an event controller that handles scroll events.
  *
- * @property ?int $flags
+ * @property int $flags
  */
 class GtkEventControllerScroll extends GtkEventController
 {
@@ -7585,7 +7598,7 @@ enum GtkEventSequenceState : int
  * @property ?GtkFileFilter $default_filter
  * @property ?GListModel $filters
  * @property ?string $initial_name
- * @property ?bool $modal
+ * @property bool $modal
  * @property ?string $title
  */
 class GtkFileDialog extends GObject
@@ -7896,10 +7909,10 @@ enum GtkFilterChange : int
  * to a `GtkFilter`.
  *
  * @property ?GtkFilter $filter
- * @property ?bool $incremental
+ * @property bool $incremental
  * @property ?GListModel $model
- * @property-read ?int $n_items
- * @property-read ?int $pending
+ * @property-read int $n_items
+ * @property-read int $pending
  */
 class GtkFilterListModel extends GObject implements GListModel
 {
@@ -8040,7 +8053,7 @@ class GtkFixedLayoutChild extends GtkLayoutChild
  * to the user, such as a title for the dialog and whether it should be modal.
  *
  * @property ?GtkFilter $filter
- * @property ?bool $modal
+ * @property bool $modal
  * @property ?string $title
  */
 class GtkFontDialog extends GObject
@@ -8120,7 +8133,7 @@ class GtkFontDialog extends GObject
  * @property ?GtkWidget $child
  * @property ?string $label
  * @property ?GtkWidget $label_widget
- * @property ?float $label_xalign
+ * @property float $label_xalign
  */
 class GtkFrame extends GtkWidget
 {
@@ -8173,7 +8186,7 @@ class GtkFrame extends GtkWidget
 /**
  * `GtkGesture` is the base class for gesture recognition.
  *
- * @property ?int $n_points
+ * @property int $n_points
  */
 class GtkGesture extends GtkEventController
 {
@@ -8327,7 +8340,7 @@ class GtkGestureDrag extends GtkGestureSingle
 /**
  * `GtkGestureLongPress` is a `GtkGesture` for long presses.
  *
- * @property ?float $delay_factor
+ * @property float $delay_factor
  */
 class GtkGestureLongPress extends GtkGestureSingle
 {
@@ -8349,7 +8362,7 @@ class GtkGestureLongPress extends GtkGestureSingle
 /**
  * `GtkGesturePan` is a `GtkGesture` for pan gestures.
  *
- * @property ?GtkOrientation $orientation
+ * @property GtkOrientation $orientation
  */
 class GtkGesturePan extends GtkGestureDrag
 {
@@ -8387,9 +8400,9 @@ class GtkGestureRotate extends GtkGesture
 /**
  * `GtkGestureSingle` is a `GtkGestures` subclass optimized for singe-touch and mouse gestures.
  *
- * @property ?int $button
- * @property ?bool $exclusive
- * @property ?bool $touch_only
+ * @property int $button
+ * @property bool $exclusive
+ * @property bool $touch_only
  */
 class GtkGestureSingle extends GtkGesture
 {
@@ -8475,11 +8488,11 @@ class GtkGestureZoom extends GtkGesture
 /**
  * `GtkGrid` is a container which arranges its child widgets in rows and columns.
  *
- * @property ?int $baseline_row
- * @property ?bool $column_homogeneous
- * @property ?int $column_spacing
- * @property ?bool $row_homogeneous
- * @property ?int $row_spacing
+ * @property int $baseline_row
+ * @property bool $column_homogeneous
+ * @property int $column_spacing
+ * @property bool $row_homogeneous
+ * @property int $row_spacing
  */
 class GtkGrid extends GtkWidget implements GtkOrientable
 {
@@ -8630,11 +8643,11 @@ class GtkGrid extends GtkWidget implements GtkOrientable
 /**
  * `GtkGridLayout` is a layout manager which arranges child widgets in rows and columns.
  *
- * @property ?int $baseline_row
- * @property ?bool $column_homogeneous
- * @property ?int $column_spacing
- * @property ?bool $row_homogeneous
- * @property ?int $row_spacing
+ * @property int $baseline_row
+ * @property bool $column_homogeneous
+ * @property int $column_spacing
+ * @property bool $row_homogeneous
+ * @property int $row_spacing
  */
 class GtkGridLayout extends GtkLayoutManager
 {
@@ -8711,10 +8724,10 @@ class GtkGridLayout extends GtkLayoutManager
 /**
  * `GtkLayoutChild` subclass for children in a `GtkGridLayout`.
  *
- * @property ?int $column
- * @property ?int $column_span
- * @property ?int $row
- * @property ?int $row_span
+ * @property int $column
+ * @property int $column_span
+ * @property int $row
+ * @property int $row_span
  */
 class GtkGridLayoutChild extends GtkLayoutChild
 {
@@ -8766,13 +8779,13 @@ class GtkGridLayoutChild extends GtkLayoutChild
 /**
  * `GtkGridView` presents a large dynamic grid of items.
  *
- * @property ?bool $enable_rubberband
+ * @property bool $enable_rubberband
  * @property ?GtkListItemFactory $factory
- * @property ?int $max_columns
- * @property ?int $min_columns
+ * @property int $max_columns
+ * @property int $min_columns
  * @property ?GtkSelectionModel $model
- * @property ?bool $single_click_activate
- * @property ?GtkListTabBehavior $tab_behavior
+ * @property bool $single_click_activate
+ * @property GtkListTabBehavior $tab_behavior
  */
 class GtkGridView extends GtkWidget implements GtkOrientable, GtkScrollable
 {
@@ -8904,7 +8917,7 @@ class GtkGridView extends GtkWidget implements GtkOrientable, GtkScrollable
  * `GtkHeaderBar` is a widget for creating custom title bars for windows.
  *
  * @property ?string $decoration_layout
- * @property ?bool $show_title_buttons
+ * @property bool $show_title_buttons
  * @property ?GtkWidget $title_widget
  */
 class GtkHeaderBar extends GtkWidget
@@ -8972,7 +8985,7 @@ final class GtkIconLookupFlags
  * Contains information found when looking up an icon in `GtkIconTheme`.
  *
  * @property ?string $icon_name
- * @property ?bool $is_symbolic
+ * @property bool $is_symbolic
  */
 class GtkIconPaintable extends GObject implements GdkPaintable
 {
@@ -9157,12 +9170,12 @@ class GtkIconTheme extends GObject
  *
  * @property ?string $file
  * @property ?string $icon_name
- * @property ?GtkIconSize $icon_size
+ * @property GtkIconSize $icon_size
  * @property ?GdkPaintable $paintable
- * @property ?int $pixel_size
+ * @property int $pixel_size
  * @property ?string $resource
- * @property-read ?GtkImageType $storage_type
- * @property ?bool $use_fallback
+ * @property-read GtkImageType $storage_type
+ * @property bool $use_fallback
  */
 class GtkImage extends GtkWidget
 {
@@ -9313,24 +9326,24 @@ enum GtkJustification : int
 /**
  * The `GtkLabel` widget displays a small amount of text.
  *
- * @property ?PangoEllipsizeMode $ellipsize
+ * @property PangoEllipsizeMode $ellipsize
  * @property ?GMenuModel $extra_menu
- * @property ?GtkJustification $justify
+ * @property GtkJustification $justify
  * @property ?string $label
- * @property ?int $lines
- * @property ?int $max_width_chars
- * @property-read ?int $mnemonic_keyval
+ * @property int $lines
+ * @property int $max_width_chars
+ * @property-read int $mnemonic_keyval
  * @property ?GtkWidget $mnemonic_widget
- * @property ?GtkNaturalWrapMode $natural_wrap_mode
- * @property ?bool $selectable
- * @property ?bool $single_line_mode
- * @property ?bool $use_markup
- * @property ?bool $use_underline
- * @property ?int $width_chars
- * @property ?bool $wrap
- * @property ?PangoWrapMode $wrap_mode
- * @property ?float $xalign
- * @property ?float $yalign
+ * @property GtkNaturalWrapMode $natural_wrap_mode
+ * @property bool $selectable
+ * @property bool $single_line_mode
+ * @property bool $use_markup
+ * @property bool $use_underline
+ * @property int $width_chars
+ * @property bool $wrap
+ * @property PangoWrapMode $wrap_mode
+ * @property float $xalign
+ * @property float $yalign
  */
 class GtkLabel extends GtkWidget
 {
@@ -9757,13 +9770,13 @@ enum GtkLicense : int
  *
  * @property ?string $accessible_description
  * @property ?string $accessible_label
- * @property ?bool $activatable
+ * @property bool $activatable
  * @property ?GtkWidget $child
- * @property ?bool $focusable
+ * @property bool $focusable
  * @property-read ?GObject $item
- * @property-read ?int $position
- * @property ?bool $selectable
- * @property-read ?bool $selected
+ * @property-read int $position
+ * @property bool $selectable
+ * @property-read bool $selected
  */
 class GtkListItem extends GObject
 {
@@ -9881,13 +9894,13 @@ enum GtkListTabBehavior : int
 /**
  * `GtkListView` presents a large dynamic list of items.
  *
- * @property ?bool $enable_rubberband
+ * @property bool $enable_rubberband
  * @property ?GtkListItemFactory $factory
  * @property ?GtkListItemFactory $header_factory
  * @property ?GtkSelectionModel $model
- * @property ?bool $show_separators
- * @property ?bool $single_click_activate
- * @property ?GtkListTabBehavior $tab_behavior
+ * @property bool $show_separators
+ * @property bool $single_click_activate
+ * @property GtkListTabBehavior $tab_behavior
  */
 class GtkListView extends GtkWidget implements GtkOrientable, GtkScrollable
 {
@@ -10021,18 +10034,18 @@ class GtkListView extends GtkWidget implements GtkOrientable, GtkScrollable
 /**
  * The `GtkMenuButton` widget is used to display a popup when clicked.
  *
- * @property ?bool $active
- * @property ?bool $always_show_arrow
- * @property ?bool $can_shrink
+ * @property bool $active
+ * @property bool $always_show_arrow
+ * @property bool $can_shrink
  * @property ?GtkWidget $child
- * @property ?GtkArrowType $direction
- * @property ?bool $has_frame
+ * @property GtkArrowType $direction
+ * @property bool $has_frame
  * @property ?string $icon_name
  * @property ?string $label
  * @property ?GMenuModel $menu_model
  * @property ?GtkPopover $popover
- * @property ?bool $primary
- * @property ?bool $use_underline
+ * @property bool $primary
+ * @property bool $use_underline
  */
 class GtkMenuButton extends GtkWidget
 {
@@ -10171,7 +10184,7 @@ class GtkMenuButton extends GtkWidget
  * `GtkMultiSelection` is a `GtkSelectionModel` that allows selecting multiple elements.
  *
  * @property ?GListModel $model
- * @property-read ?int $n_items
+ * @property-read int $n_items
  */
 class GtkMultiSelection extends GObject implements GListModel, GtkSelectionModel
 {
@@ -10326,7 +10339,7 @@ enum GtkNaturalWrapMode : int
  * `GtkNoSelection` is a `GtkSelectionModel` that does not allow selecting anything.
  *
  * @property ?GListModel $model
- * @property-read ?int $n_items
+ * @property-read int $n_items
  */
 class GtkNoSelection extends GObject implements GListModel, GtkSelectionModel
 {
@@ -10426,14 +10439,14 @@ class GtkNoSelection extends GObject implements GListModel, GtkSelectionModel
 /**
  * `GtkNotebook` is a container whose children are pages switched between using tabs.
  *
- * @property ?bool $enable_popup
+ * @property bool $enable_popup
  * @property ?string $group_name
- * @property ?int $page
+ * @property int $page
  * @property-read ?GListModel $pages
- * @property ?bool $scrollable
- * @property ?bool $show_border
- * @property ?bool $show_tabs
- * @property ?GtkPositionType $tab_pos
+ * @property bool $scrollable
+ * @property bool $show_border
+ * @property bool $show_tabs
+ * @property GtkPositionType $tab_pos
  */
 class GtkNotebook extends GtkWidget
 {
@@ -10501,7 +10514,7 @@ class GtkNotebook extends GtkWidget
         return null;
     }
     /** Returns the `GtkNotebookPage` for $child. */
-    public function get_page(GtkWidget $child): GtkNotebookPage
+    public function get_page(GtkWidget $child): ?GtkNotebookPage
     {
         unset($child);
         return null;
@@ -10703,14 +10716,14 @@ class GtkNotebook extends GtkWidget
  * `GtkNotebookPage` is an auxiliary object used by `GtkNotebook`.
  *
  * @property ?GtkWidget $child
- * @property ?bool $detachable
+ * @property bool $detachable
  * @property ?GtkWidget $menu
  * @property ?string $menu_label
- * @property ?int $position
- * @property ?bool $reorderable
+ * @property int $position
+ * @property bool $reorderable
  * @property ?GtkWidget $tab
- * @property ?bool $tab_expand
- * @property ?bool $tab_fill
+ * @property bool $tab_expand
+ * @property bool $tab_fill
  * @property ?string $tab_label
  */
 class GtkNotebookPage extends GObject
@@ -10738,7 +10751,7 @@ enum GtkOrdering : int
  * The `GtkOrientable` interface is implemented by all widgets that can be oriented horizontally or
  * vertically.
  *
- * @property ?GtkOrientation $orientation
+ * @property GtkOrientation $orientation
  */
 interface GtkOrientable
 {
@@ -10854,8 +10867,8 @@ class GtkOverlayLayout extends GtkLayoutManager
 /**
  * `GtkLayoutChild` subclass for children in a `GtkOverlayLayout`.
  *
- * @property ?bool $clip_overlay
- * @property ?bool $measure
+ * @property bool $clip_overlay
+ * @property bool $measure
  */
 class GtkOverlayLayoutChild extends GtkLayoutChild
 {
@@ -10906,16 +10919,16 @@ enum GtkPanDirection : int
  * A widget with two panes, arranged either horizontally or vertically.
  *
  * @property ?GtkWidget $end_child
- * @property-read ?int $max_position
- * @property-read ?int $min_position
- * @property ?int $position
- * @property ?bool $position_set
- * @property ?bool $resize_end_child
- * @property ?bool $resize_start_child
- * @property ?bool $shrink_end_child
- * @property ?bool $shrink_start_child
+ * @property-read int $max_position
+ * @property-read int $min_position
+ * @property int $position
+ * @property bool $position_set
+ * @property bool $resize_end_child
+ * @property bool $resize_start_child
+ * @property bool $shrink_end_child
+ * @property bool $shrink_start_child
  * @property ?GtkWidget $start_child
- * @property ?bool $wide_handle
+ * @property bool $wide_handle
  */
 class GtkPaned extends GtkWidget implements GtkOrientable
 {
@@ -11016,10 +11029,10 @@ class GtkPaned extends GtkWidget implements GtkOrientable
 /**
  * `GtkPasswordEntry` is an entry that has been tailored for entering secrets.
  *
- * @property ?bool $activates_default
+ * @property bool $activates_default
  * @property ?GMenuModel $extra_menu
  * @property ?string $placeholder_text
- * @property ?bool $show_peek_icon
+ * @property bool $show_peek_icon
  */
 class GtkPasswordEntry extends GtkWidget implements GtkEditable
 {
@@ -11155,9 +11168,9 @@ final class GtkPickFlags
  * The `GtkPicture` widget displays a `GdkPaintable`.
  *
  * @property ?string $alternative_text
- * @property ?bool $can_shrink
- * @property ?GtkContentFit $content_fit
- * @property ?bool $keep_aspect_ratio
+ * @property bool $can_shrink
+ * @property GtkContentFit $content_fit
+ * @property bool $keep_aspect_ratio
  * @property ?GdkPaintable $paintable
  */
 class GtkPicture extends GtkWidget
@@ -11265,14 +11278,14 @@ enum GtkPolicyType : int
 /**
  * `GtkPopover` is a bubble-like context popup.
  *
- * @property ?bool $autohide
- * @property ?bool $cascade_popdown
+ * @property bool $autohide
+ * @property bool $cascade_popdown
  * @property ?GtkWidget $child
  * @property ?GtkWidget $default_widget
- * @property ?bool $has_arrow
- * @property ?bool $mnemonics_visible
+ * @property bool $has_arrow
+ * @property bool $mnemonics_visible
  * @property ?GdkRectangle $pointing_to
- * @property ?GtkPositionType $position
+ * @property GtkPositionType $position
  */
 class GtkPopover extends GtkWidget implements GtkNative
 {
@@ -11433,7 +11446,7 @@ class GtkPopover extends GtkWidget implements GtkNative
 /**
  * `GtkPopoverMenu` is a subclass of `GtkPopover` that implements menu behavior.
  *
- * @property ?int $flags
+ * @property int $flags
  * @property ?GMenuModel $menu_model
  * @property ?string $visible_submenu
  */
@@ -11566,11 +11579,11 @@ enum GtkPositionType : int
 /**
  * `GtkProgressBar` is typically used to display the progress of a long running operation.
  *
- * @property ?PangoEllipsizeMode $ellipsize
- * @property ?float $fraction
- * @property ?bool $inverted
- * @property ?float $pulse_step
- * @property ?bool $show_text
+ * @property PangoEllipsizeMode $ellipsize
+ * @property float $fraction
+ * @property bool $inverted
+ * @property float $pulse_step
+ * @property bool $show_text
  * @property ?string $text
  */
 class GtkProgressBar extends GtkWidget implements GtkOrientable
@@ -11674,11 +11687,11 @@ enum GtkPropagationPhase : int
  * `GtkRange` is the common base class for widgets which visualize an adjustment.
  *
  * @property ?GtkAdjustment $adjustment
- * @property ?float $fill_level
- * @property ?bool $inverted
- * @property ?bool $restrict_to_fill_level
- * @property ?int $round_digits
- * @property ?bool $show_fill_level
+ * @property float $fill_level
+ * @property bool $inverted
+ * @property bool $restrict_to_fill_level
+ * @property int $round_digits
+ * @property bool $show_fill_level
  */
 class GtkRange extends GtkWidget implements GtkOrientable
 {
@@ -11887,10 +11900,10 @@ final class GtkRequisition
  * A `GtkRevealer` animates the transition of its child from invisible to visible.
  *
  * @property ?GtkWidget $child
- * @property-read ?bool $child_revealed
- * @property ?bool $reveal_child
- * @property ?int $transition_duration
- * @property ?GtkRevealerTransitionType $transition_type
+ * @property-read bool $child_revealed
+ * @property bool $reveal_child
+ * @property int $transition_duration
+ * @property GtkRevealerTransitionType $transition_type
  */
 class GtkRevealer extends GtkWidget
 {
@@ -12018,10 +12031,10 @@ final class GtkRootObject extends GObject implements GtkRoot
 /**
  * A `GtkScale` is a slider control used to select a numeric value.
  *
- * @property ?int $digits
- * @property ?bool $draw_value
- * @property ?bool $has_origin
- * @property ?GtkPositionType $value_pos
+ * @property int $digits
+ * @property bool $draw_value
+ * @property bool $has_origin
+ * @property GtkPositionType $value_pos
  */
 class GtkScale extends GtkRange implements GtkOrientable
 {
@@ -12164,9 +12177,9 @@ final class GtkScrollInfo
  * `GtkScrollable` is an interface for widgets with native scrolling ability.
  *
  * @property ?GtkAdjustment $hadjustment
- * @property ?GtkScrollablePolicy $hscroll_policy
+ * @property GtkScrollablePolicy $hscroll_policy
  * @property ?GtkAdjustment $vadjustment
- * @property ?GtkScrollablePolicy $vscroll_policy
+ * @property GtkScrollablePolicy $vscroll_policy
  */
 interface GtkScrollable
 {
@@ -12230,19 +12243,19 @@ enum GtkScrollablePolicy : int
  *
  * @property ?GtkWidget $child
  * @property ?GtkAdjustment $hadjustment
- * @property ?bool $has_frame
- * @property ?GtkPolicyType $hscrollbar_policy
- * @property ?bool $kinetic_scrolling
- * @property ?int $max_content_height
- * @property ?int $max_content_width
- * @property ?int $min_content_height
- * @property ?int $min_content_width
- * @property ?bool $overlay_scrolling
- * @property ?bool $propagate_natural_height
- * @property ?bool $propagate_natural_width
+ * @property bool $has_frame
+ * @property GtkPolicyType $hscrollbar_policy
+ * @property bool $kinetic_scrolling
+ * @property int $max_content_height
+ * @property int $max_content_width
+ * @property int $min_content_height
+ * @property int $min_content_width
+ * @property bool $overlay_scrolling
+ * @property bool $propagate_natural_height
+ * @property bool $propagate_natural_width
  * @property ?GtkAdjustment $vadjustment
- * @property ?GtkPolicyType $vscrollbar_policy
- * @property ?GtkCornerType $window_placement
+ * @property GtkPolicyType $vscrollbar_policy
+ * @property GtkCornerType $window_placement
  */
 class GtkScrolledWindow extends GtkWidget
 {
@@ -12568,11 +12581,11 @@ class GtkSignalListItemFactory extends GtkListItemFactory
 /**
  * `GtkSingleSelection` is a `GtkSelectionModel` that allows selecting a single item.
  *
- * @property ?bool $autoselect
- * @property ?bool $can_unselect
+ * @property bool $autoselect
+ * @property bool $can_unselect
  * @property ?GListModel $model
- * @property-read ?int $n_items
- * @property ?int $selected
+ * @property-read int $n_items
+ * @property int $selected
  * @property-read ?GObject $selected_item
  */
 class GtkSingleSelection extends GObject implements GListModel, GtkSelectionModel
@@ -12716,7 +12729,7 @@ class GtkSingleSelection extends GObject implements GListModel, GtkSelectionMode
 /**
  * `GtkSizeGroup` groups widgets together so they all request the same size.
  *
- * @property ?GtkSizeGroupMode $mode
+ * @property GtkSizeGroupMode $mode
  */
 class GtkSizeGroup extends GObject
 {
@@ -12924,10 +12937,10 @@ class GtkSnapshot extends GdkSnapshot
 /**
  * A `GListModel` that sorts the elements of an underlying model according to a `GtkSorter`.
  *
- * @property ?bool $incremental
+ * @property bool $incremental
  * @property ?GListModel $model
- * @property-read ?int $n_items
- * @property-read ?int $pending
+ * @property-read int $n_items
+ * @property-read int $pending
  * @property ?GtkSorter $section_sorter
  * @property ?GtkSorter $sorter
  */
@@ -13080,15 +13093,15 @@ enum GtkSorterOrder : int
 /**
  * A `GtkSpinButton` is an ideal way to allow the user to set the value of some attribute.
  *
- * @property ?bool $activates_default
+ * @property bool $activates_default
  * @property ?GtkAdjustment $adjustment
- * @property ?float $climb_rate
- * @property ?int $digits
- * @property ?bool $numeric
- * @property ?bool $snap_to_ticks
- * @property ?GtkSpinButtonUpdatePolicy $update_policy
- * @property ?float $value
- * @property ?bool $wrap
+ * @property float $climb_rate
+ * @property int $digits
+ * @property bool $numeric
+ * @property bool $snap_to_ticks
+ * @property GtkSpinButtonUpdatePolicy $update_policy
+ * @property float $value
+ * @property bool $wrap
  */
 class GtkSpinButton extends GtkWidget implements GtkEditable, GtkOrientable
 {
@@ -13392,7 +13405,7 @@ enum GtkSpinType : int
 /**
  * A `GtkSpinner` widget displays an icon-size spinning animation.
  *
- * @property ?bool $spinning
+ * @property bool $spinning
  */
 class GtkSpinner extends GtkWidget
 {
@@ -13422,13 +13435,13 @@ class GtkSpinner extends GtkWidget
 /**
  * `GtkStack` is a container which only shows one of its children at a time.
  *
- * @property ?bool $hhomogeneous
- * @property ?bool $interpolate_size
+ * @property bool $hhomogeneous
+ * @property bool $interpolate_size
  * @property-read ?GtkSelectionModel $pages
- * @property ?int $transition_duration
- * @property-read ?bool $transition_running
- * @property ?GtkStackTransitionType $transition_type
- * @property ?bool $vhomogeneous
+ * @property int $transition_duration
+ * @property-read bool $transition_running
+ * @property GtkStackTransitionType $transition_type
+ * @property bool $vhomogeneous
  * @property ?GtkWidget $visible_child
  * @property ?string $visible_child_name
  */
@@ -13479,7 +13492,7 @@ class GtkStack extends GtkWidget
         return false;
     }
     /** Returns the `GtkStackPage` object for $child. */
-    public function get_page(GtkWidget $child): GtkStackPage
+    public function get_page(GtkWidget $child): ?GtkStackPage
     {
         unset($child);
         return null;
@@ -13575,10 +13588,10 @@ class GtkStack extends GtkWidget
  * @property ?GtkWidget $child
  * @property ?string $icon_name
  * @property ?string $name
- * @property ?bool $needs_attention
+ * @property bool $needs_attention
  * @property ?string $title
- * @property ?bool $use_underline
- * @property ?bool $visible
+ * @property bool $use_underline
+ * @property bool $visible
  */
 class GtkStackPage extends GObject
 {
@@ -13767,7 +13780,7 @@ enum GtkStringFilterMatchMode : int
 /**
  * `GtkStringList` is a list model that wraps an array of strings.
  *
- * @property-read ?int $n_items
+ * @property-read int $n_items
  * @property ?array $strings
  */
 class GtkStringList extends GObject implements GListModel
@@ -13865,22 +13878,22 @@ final class GtkStyleProviderObject extends GObject implements GtkStyleProvider
 /**
  * The `GtkText` widget is a single-line text entry widget.
  *
- * @property ?bool $activates_default
+ * @property bool $activates_default
  * @property ?GtkEntryBuffer $buffer
- * @property ?bool $enable_emoji_completion
+ * @property bool $enable_emoji_completion
  * @property ?GMenuModel $extra_menu
  * @property ?string $im_module
- * @property ?int $input_hints
- * @property ?GtkInputPurpose $input_purpose
- * @property ?int $invisible_char
- * @property ?bool $invisible_char_set
- * @property ?int $max_length
- * @property ?bool $overwrite_mode
+ * @property int $input_hints
+ * @property GtkInputPurpose $input_purpose
+ * @property int $invisible_char
+ * @property bool $invisible_char_set
+ * @property int $max_length
+ * @property bool $overwrite_mode
  * @property ?string $placeholder_text
- * @property ?bool $propagate_text_width
- * @property-read ?int $scroll_offset
- * @property ?bool $truncate_multiline
- * @property ?bool $visibility
+ * @property bool $propagate_text_width
+ * @property-read int $scroll_offset
+ * @property bool $truncate_multiline
+ * @property bool $visibility
  */
 class GtkText extends GtkWidget implements GtkEditable
 {
@@ -14153,11 +14166,11 @@ class GtkText extends GtkWidget implements GtkEditable
 /**
  * Stores text and attributes for display in a `GtkTextView`.
  *
- * @property-read ?bool $can_redo
- * @property-read ?bool $can_undo
- * @property-read ?int $cursor_position
- * @property ?bool $enable_undo
- * @property-read ?bool $has_selection
+ * @property-read bool $can_redo
+ * @property-read bool $can_undo
+ * @property-read int $cursor_position
+ * @property bool $enable_undo
+ * @property-read bool $has_selection
  * @property ?GtkTextTagTable $tag_table
  * @property ?string $text
  */
@@ -15293,7 +15306,7 @@ final class GtkTextIter
 /**
  * A `GtkTextMark` is a position in a `GtkTextbuffer` that is preserved across modifications.
  *
- * @property ?bool $left_gravity
+ * @property bool $left_gravity
  * @property ?string $name
  */
 class GtkTextMark extends GObject
@@ -15346,94 +15359,94 @@ final class GtkTextSearchFlags
 /**
  * A tag that can be applied to text contained in a `GtkTextBuffer`.
  *
- * @property ?bool $accumulative_margin
- * @property ?bool $allow_breaks
- * @property ?bool $allow_breaks_set
+ * @property bool $accumulative_margin
+ * @property bool $allow_breaks
+ * @property bool $allow_breaks_set
  * @property ?string $background
- * @property ?bool $background_full_height
- * @property ?bool $background_full_height_set
+ * @property bool $background_full_height
+ * @property bool $background_full_height_set
  * @property ?GdkRGBA $background_rgba
- * @property ?bool $background_set
- * @property ?GtkTextDirection $direction
- * @property ?bool $editable
- * @property ?bool $editable_set
- * @property ?bool $fallback
- * @property ?bool $fallback_set
+ * @property bool $background_set
+ * @property GtkTextDirection $direction
+ * @property bool $editable
+ * @property bool $editable_set
+ * @property bool $fallback
+ * @property bool $fallback_set
  * @property ?string $family
- * @property ?bool $family_set
+ * @property bool $family_set
  * @property ?string $font
  * @property ?PangoFontDescription $font_desc
  * @property ?string $font_features
- * @property ?bool $font_features_set
+ * @property bool $font_features_set
  * @property ?string $foreground
  * @property ?GdkRGBA $foreground_rgba
- * @property ?bool $foreground_set
- * @property ?int $indent
- * @property ?bool $indent_set
- * @property ?bool $insert_hyphens
- * @property ?bool $insert_hyphens_set
- * @property ?bool $invisible
- * @property ?bool $invisible_set
- * @property ?GtkJustification $justification
- * @property ?bool $justification_set
+ * @property bool $foreground_set
+ * @property int $indent
+ * @property bool $indent_set
+ * @property bool $insert_hyphens
+ * @property bool $insert_hyphens_set
+ * @property bool $invisible
+ * @property bool $invisible_set
+ * @property GtkJustification $justification
+ * @property bool $justification_set
  * @property ?string $language
- * @property ?bool $language_set
- * @property ?int $left_margin
- * @property ?bool $left_margin_set
- * @property ?int $letter_spacing
- * @property ?bool $letter_spacing_set
- * @property ?float $line_height
- * @property ?bool $line_height_set
+ * @property bool $language_set
+ * @property int $left_margin
+ * @property bool $left_margin_set
+ * @property int $letter_spacing
+ * @property bool $letter_spacing_set
+ * @property float $line_height
+ * @property bool $line_height_set
  * @property ?string $name
- * @property ?int $overline
+ * @property int $overline
  * @property ?GdkRGBA $overline_rgba
- * @property ?bool $overline_rgba_set
- * @property ?bool $overline_set
+ * @property bool $overline_rgba_set
+ * @property bool $overline_set
  * @property ?string $paragraph_background
  * @property ?GdkRGBA $paragraph_background_rgba
- * @property ?bool $paragraph_background_set
- * @property ?int $pixels_above_lines
- * @property ?bool $pixels_above_lines_set
- * @property ?int $pixels_below_lines
- * @property ?bool $pixels_below_lines_set
- * @property ?int $pixels_inside_wrap
- * @property ?bool $pixels_inside_wrap_set
- * @property ?int $right_margin
- * @property ?bool $right_margin_set
- * @property ?int $rise
- * @property ?bool $rise_set
- * @property ?float $scale
- * @property ?bool $scale_set
- * @property ?bool $sentence
- * @property ?bool $sentence_set
- * @property ?int $show_spaces
- * @property ?bool $show_spaces_set
- * @property ?int $size
- * @property ?float $size_points
- * @property ?bool $size_set
- * @property ?PangoStretch $stretch
- * @property ?bool $stretch_set
- * @property ?bool $strikethrough
+ * @property bool $paragraph_background_set
+ * @property int $pixels_above_lines
+ * @property bool $pixels_above_lines_set
+ * @property int $pixels_below_lines
+ * @property bool $pixels_below_lines_set
+ * @property int $pixels_inside_wrap
+ * @property bool $pixels_inside_wrap_set
+ * @property int $right_margin
+ * @property bool $right_margin_set
+ * @property int $rise
+ * @property bool $rise_set
+ * @property float $scale
+ * @property bool $scale_set
+ * @property bool $sentence
+ * @property bool $sentence_set
+ * @property int $show_spaces
+ * @property bool $show_spaces_set
+ * @property int $size
+ * @property float $size_points
+ * @property bool $size_set
+ * @property PangoStretch $stretch
+ * @property bool $stretch_set
+ * @property bool $strikethrough
  * @property ?GdkRGBA $strikethrough_rgba
- * @property ?bool $strikethrough_rgba_set
- * @property ?bool $strikethrough_set
- * @property ?PangoStyle $style
- * @property ?bool $style_set
- * @property ?bool $tabs_set
- * @property ?int $text_transform
- * @property ?bool $text_transform_set
- * @property ?int $underline
+ * @property bool $strikethrough_rgba_set
+ * @property bool $strikethrough_set
+ * @property PangoStyle $style
+ * @property bool $style_set
+ * @property bool $tabs_set
+ * @property int $text_transform
+ * @property bool $text_transform_set
+ * @property int $underline
  * @property ?GdkRGBA $underline_rgba
- * @property ?bool $underline_rgba_set
- * @property ?bool $underline_set
- * @property ?PangoVariant $variant
- * @property ?bool $variant_set
- * @property ?int $weight
- * @property ?bool $weight_set
- * @property ?bool $word
- * @property ?bool $word_set
- * @property ?GtkWrapMode $wrap_mode
- * @property ?bool $wrap_mode_set
+ * @property bool $underline_rgba_set
+ * @property bool $underline_set
+ * @property PangoVariant $variant
+ * @property bool $variant_set
+ * @property int $weight
+ * @property bool $weight_set
+ * @property bool $word
+ * @property bool $word_set
+ * @property GtkWrapMode $wrap_mode
+ * @property bool $wrap_mode_set
  */
 class GtkTextTag extends GObject
 {
@@ -15501,26 +15514,26 @@ class GtkTextTagTable extends GObject
 /**
  * A widget that displays the contents of a `TextBuffer`.
  *
- * @property ?bool $accepts_tab
- * @property ?int $bottom_margin
+ * @property bool $accepts_tab
+ * @property int $bottom_margin
  * @property ?GtkTextBuffer $buffer
- * @property ?bool $cursor_visible
- * @property ?bool $editable
+ * @property bool $cursor_visible
+ * @property bool $editable
  * @property ?GMenuModel $extra_menu
  * @property ?string $im_module
- * @property ?int $indent
- * @property ?int $input_hints
- * @property ?GtkInputPurpose $input_purpose
- * @property ?GtkJustification $justification
- * @property ?int $left_margin
- * @property ?bool $monospace
- * @property ?bool $overwrite
- * @property ?int $pixels_above_lines
- * @property ?int $pixels_below_lines
- * @property ?int $pixels_inside_wrap
- * @property ?int $right_margin
- * @property ?int $top_margin
- * @property ?GtkWrapMode $wrap_mode
+ * @property int $indent
+ * @property int $input_hints
+ * @property GtkInputPurpose $input_purpose
+ * @property GtkJustification $justification
+ * @property int $left_margin
+ * @property bool $monospace
+ * @property bool $overwrite
+ * @property int $pixels_above_lines
+ * @property int $pixels_below_lines
+ * @property int $pixels_inside_wrap
+ * @property int $right_margin
+ * @property int $top_margin
+ * @property GtkWrapMode $wrap_mode
  */
 class GtkTextView extends GtkWidget implements GtkScrollable
 {
@@ -16117,7 +16130,7 @@ enum GtkTextWindowType : int
 /**
  * A `GtkToggleButton` is a button which remains “pressed-in” when clicked.
  *
- * @property ?bool $active
+ * @property bool $active
  * @property ?GtkToggleButton $group
  */
 class GtkToggleButton extends GtkButton
@@ -16158,9 +16171,9 @@ class GtkToggleButton extends GtkButton
  * `GtkTreeExpander` is a widget that provides an expander for a list.
  *
  * @property ?GtkWidget $child
- * @property ?bool $hide_expander
- * @property ?bool $indent_for_depth
- * @property ?bool $indent_for_icon
+ * @property bool $hide_expander
+ * @property bool $indent_for_depth
+ * @property bool $indent_for_icon
  * @property-read ?GObject $item
  * @property ?GtkTreeListRow $list_row
  */
@@ -16232,10 +16245,10 @@ class GtkTreeExpander extends GtkWidget
 /**
  * `GtkTreeListModel` is a list model that can create child models on demand.
  *
- * @property ?bool $autoexpand
+ * @property bool $autoexpand
  * @property-read ?GListModel $model
- * @property-read ?int $n_items
- * @property ?bool $passthrough
+ * @property-read int $n_items
+ * @property bool $passthrough
  */
 class GtkTreeListModel extends GObject implements GListModel
 {
@@ -16307,9 +16320,9 @@ class GtkTreeListModel extends GObject implements GListModel
  * `GtkTreeListRow` is used by `GtkTreeListModel` to represent items.
  *
  * @property-read ?GListModel $children
- * @property-read ?int $depth
- * @property-read ?bool $expandable
- * @property ?bool $expanded
+ * @property-read int $depth
+ * @property-read bool $expandable
+ * @property bool $expanded
  * @property-read ?GObject $item
  */
 class GtkTreeListRow extends GObject
@@ -16372,7 +16385,7 @@ class GtkTreeListRow extends GObject
  * `GtkViewport` implements scrollability for widgets that lack their own scrolling capabilities.
  *
  * @property ?GtkWidget $child
- * @property ?bool $scroll_to_focus
+ * @property bool $scroll_to_focus
  */
 class GtkViewport extends GtkWidget implements GtkScrollable
 {
@@ -16444,40 +16457,40 @@ class GtkViewport extends GtkWidget implements GtkScrollable
 /**
  * The base class for all widgets.
  *
- * @property ?bool $can_focus
- * @property ?bool $can_target
+ * @property bool $can_focus
+ * @property bool $can_target
  * @property ?array $css_classes
  * @property ?string $css_name
  * @property ?GdkCursor $cursor
- * @property ?bool $focus_on_click
- * @property ?bool $focusable
- * @property ?GtkAlign $halign
- * @property-read ?bool $has_default
- * @property-read ?bool $has_focus
- * @property ?bool $has_tooltip
- * @property ?int $height_request
- * @property ?bool $hexpand
- * @property ?bool $hexpand_set
+ * @property bool $focus_on_click
+ * @property bool $focusable
+ * @property GtkAlign $halign
+ * @property-read bool $has_default
+ * @property-read bool $has_focus
+ * @property bool $has_tooltip
+ * @property int $height_request
+ * @property bool $hexpand
+ * @property bool $hexpand_set
  * @property ?GtkLayoutManager $layout_manager
- * @property ?int $margin_bottom
- * @property ?int $margin_end
- * @property ?int $margin_start
- * @property ?int $margin_top
+ * @property int $margin_bottom
+ * @property int $margin_end
+ * @property int $margin_start
+ * @property int $margin_top
  * @property ?string $name
- * @property ?float $opacity
- * @property ?GtkOverflow $overflow
+ * @property float $opacity
+ * @property GtkOverflow $overflow
  * @property-read ?GtkWidget $parent
- * @property ?bool $receives_default
+ * @property bool $receives_default
  * @property-read ?GtkRoot $root
- * @property-read ?int $scale_factor
- * @property ?bool $sensitive
+ * @property-read int $scale_factor
+ * @property bool $sensitive
  * @property ?string $tooltip_markup
  * @property ?string $tooltip_text
- * @property ?GtkAlign $valign
- * @property ?bool $vexpand
- * @property ?bool $vexpand_set
- * @property ?bool $visible
- * @property ?int $width_request
+ * @property GtkAlign $valign
+ * @property bool $vexpand
+ * @property bool $vexpand_set
+ * @property bool $visible
+ * @property int $width_request
  */
 class GtkWidget extends GObject
 {
@@ -17473,26 +17486,26 @@ class GtkWidget extends GObject
  *
  * @property ?GtkApplication $application
  * @property ?GtkWidget $child
- * @property ?bool $decorated
- * @property ?int $default_height
+ * @property bool $decorated
+ * @property int $default_height
  * @property ?GtkWidget $default_widget
- * @property ?int $default_width
- * @property ?bool $deletable
- * @property ?bool $destroy_with_parent
+ * @property int $default_width
+ * @property bool $deletable
+ * @property bool $destroy_with_parent
  * @property ?GdkDisplay $display
- * @property ?bool $focus_visible
+ * @property bool $focus_visible
  * @property ?GtkWidget $focus_widget
- * @property ?bool $fullscreened
- * @property ?bool $handle_menubar_accel
- * @property ?bool $hide_on_close
+ * @property bool $fullscreened
+ * @property bool $handle_menubar_accel
+ * @property bool $hide_on_close
  * @property ?string $icon_name
- * @property-read ?bool $is_active
- * @property ?bool $maximized
- * @property ?bool $mnemonics_visible
- * @property ?bool $modal
- * @property ?bool $resizable
+ * @property-read bool $is_active
+ * @property bool $maximized
+ * @property bool $mnemonics_visible
+ * @property bool $modal
+ * @property bool $resizable
  * @property ?string $startup_id
- * @property-read ?bool $suspended
+ * @property-read bool $suspended
  * @property ?string $title
  * @property ?GtkWidget $titlebar
  * @property ?GtkWindow $transient_for

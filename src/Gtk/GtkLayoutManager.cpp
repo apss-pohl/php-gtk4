@@ -329,18 +329,26 @@ void vfunc_thunk_measure(GtkLayoutManager *self, GtkWidget *widget, GtkOrientati
   if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
     if (Z_TYPE(ret) == IS_ARRAY) {
       if (zval *e0 = zend_hash_index_find(Z_ARRVAL(ret), 0); e0 != nullptr && minimum != nullptr) {
-        *minimum = static_cast<int>(zval_get_long(e0));
+        *minimum = phpgtk::check_range<int>(zval_get_long(e0), 0)
+                       ? static_cast<int>(zval_get_long(e0))
+                       : *minimum;
       }
       if (zval *e1 = zend_hash_index_find(Z_ARRVAL(ret), 1); e1 != nullptr && natural != nullptr) {
-        *natural = static_cast<int>(zval_get_long(e1));
+        *natural = phpgtk::check_range<int>(zval_get_long(e1), 0)
+                       ? static_cast<int>(zval_get_long(e1))
+                       : *natural;
       }
       if (zval *e2 = zend_hash_index_find(Z_ARRVAL(ret), 2);
           e2 != nullptr && minimum_baseline != nullptr) {
-        *minimum_baseline = static_cast<int>(zval_get_long(e2));
+        *minimum_baseline = phpgtk::check_range<int>(zval_get_long(e2), 0)
+                                ? static_cast<int>(zval_get_long(e2))
+                                : *minimum_baseline;
       }
       if (zval *e3 = zend_hash_index_find(Z_ARRVAL(ret), 3);
           e3 != nullptr && natural_baseline != nullptr) {
-        *natural_baseline = static_cast<int>(zval_get_long(e3));
+        *natural_baseline = phpgtk::check_range<int>(zval_get_long(e3), 0)
+                                ? static_cast<int>(zval_get_long(e3))
+                                : *natural_baseline;
       }
     }
   }

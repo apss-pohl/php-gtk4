@@ -320,10 +320,12 @@ void vfunc_thunk_get_layout_offsets(GtkScale *self, int *x, int *y) {
   if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
     if (Z_TYPE(ret) == IS_ARRAY) {
       if (zval *e0 = zend_hash_index_find(Z_ARRVAL(ret), 0); e0 != nullptr && x != nullptr) {
-        *x = static_cast<int>(zval_get_long(e0));
+        *x = phpgtk::check_range<int>(zval_get_long(e0), 0) ? static_cast<int>(zval_get_long(e0))
+                                                            : *x;
       }
       if (zval *e1 = zend_hash_index_find(Z_ARRVAL(ret), 1); e1 != nullptr && y != nullptr) {
-        *y = static_cast<int>(zval_get_long(e1));
+        *y = phpgtk::check_range<int>(zval_get_long(e1), 0) ? static_cast<int>(zval_get_long(e1))
+                                                            : *y;
       }
     }
   }

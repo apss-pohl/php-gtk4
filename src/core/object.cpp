@@ -215,7 +215,7 @@ void free_obj(zend_object *o) {
 
 // "$obj->default_width" -> GParamSpec "default-width" (nullptr if no such property)
 GParamSpec *find_property(Object *self, zend_string *member) {
-  if (self->obj == nullptr) return nullptr;
+  if (self->obj == nullptr) return nullptr;  // only ever between detach() and free: no PHP frame
   // On the $obj->prop path for every access: translate into a stack buffer, no heap.
   std::array<char, 96> buf{};
   const size_t len = ZSTR_LEN(member);
@@ -235,6 +235,20 @@ GParamSpec *find_property(Object *self, zend_string *member) {
   return spec;
 }
 
+// A handle GTK disposed underneath (a C owner destroyed the widget): the C object is still
+// allocated, so g_object_get/set would run on the gutted instance - a read or write is the same
+// Error a method call gets (self_object()).
+bool dead(const Object *self) {
+  return self->disposed;
+}
+// The Error for a read/write of `member` on such a handle; false when the handle is fine.
+bool refuse_dead(Object *self, zend_string *member) {
+  if (!dead(self)) return false;
+  zend_throw_error(nullptr, "%s::$%s: this GObject was disposed", ZSTR_VAL(self->std.ce->name),
+                   ZSTR_VAL(member));
+  return true;
+}
+
 // read_property handler: GObject properties first, then standard (declared/dynamic) ones.
 zval *read_property(zend_object *o, zend_string *member, int type, void **cache_slot, zval *rv) {
   Object *self = object_from_zend(o);
@@ -242,6 +256,8 @@ zval *read_property(zend_object *o, zend_string *member, int type, void **cache_
   if (spec == nullptr || (spec->flags & G_PARAM_READABLE) == 0) {
     return zend_std_read_property(o, member, type, cache_slot, rv);
   }
+  if (type == BP_VAR_IS && dead(self)) return &EG(uninitialized_zval);  // isset(): not set
+  if (refuse_dead(self, member)) return &EG(uninitialized_zval);
   GValue v = G_VALUE_INIT;
   g_value_init(&v, spec->value_type);
   g_object_get_property(self->obj, spec->name, &v);
@@ -257,9 +273,12 @@ zval *write_property(zend_object *o, zend_string *member, zval *value, void **ca
   if (spec == nullptr || (spec->flags & G_PARAM_WRITABLE) == 0) {
     return zend_std_write_property(o, member, value, cache_slot);
   }
+  if (refuse_dead(self, member)) return value;
   GValue v = G_VALUE_INIT;
   if (to_gvalue(value, spec->value_type, &v)) {
-    g_object_set_property(self->obj, spec->name, &v);
+    const std::string what = std::string(ZSTR_VAL(o->ce->name)) + "::$" + ZSTR_VAL(member);
+    if (property_value_in_range(spec, &v, what.c_str()))
+      g_object_set_property(self->obj, spec->name, &v);
     g_value_unset(&v);
   }
   return value;
@@ -271,6 +290,7 @@ int has_property(zend_object *o, zend_string *member, int has_set_exists, void *
   GParamSpec *spec = find_property(self, member);
   if (spec == nullptr) return zend_std_has_property(o, member, has_set_exists, cache_slot);
   if (has_set_exists == ZEND_PROPERTY_EXISTS) return 1;
+  if (dead(self)) return 0;
   zval rv;
   read_property(o, member, BP_VAR_IS, nullptr, &rv);
   int result = has_set_exists == ZEND_PROPERTY_NOT_EMPTY ? zend_is_true(&rv) : !Z_ISNULL(rv);
@@ -347,6 +367,18 @@ HashTable *get_gc(zend_object *o, zval **table, int *n) {
   return zend_std_get_properties(o);
 }
 }  // namespace
+
+// g_param_value_validate() clamps a copy; a copy that changed was out of range.
+bool property_value_in_range(GParamSpec *spec, const GValue *value, const char *what) {
+  GValue probe = G_VALUE_INIT;
+  g_value_init(&probe, G_VALUE_TYPE(value));
+  g_value_copy(value, &probe);
+  const bool clamped = g_param_value_validate(spec, &probe) == TRUE;
+  g_value_unset(&probe);
+  if (!clamped) return true;
+  zend_value_error("%s: value is outside the range the property accepts", what);
+  return false;
+}
 
 // Keep `owner`'s handle alive for as long as `handle`'s: see the header for why the reference
 // sits between the handles and not between the GObjects.
@@ -463,8 +495,7 @@ void wrap(GObject *obj, zval *rv) {
     return;
   }
   for (GType t = G_OBJECT_TYPE(obj); t != 0; t = g_type_parent(t)) {
-    zend_class_entry *ce =
-        is_php_type(t) ? subtype_class_for_gtype(t) : class_for_gtype_name(g_type_name(t));
+    zend_class_entry *ce = is_php_type(t) ? subtype_class_for_gtype(t) : class_for_gtype(t);
     if (t == G_TYPE_OBJECT && ce != nullptr) {  // nothing more specific: an interface's class?
       if (zend_class_entry *fb = fallback_for(G_OBJECT_TYPE(obj))) ce = fb;
     }
