@@ -50,9 +50,11 @@ summary: `docs/CONTRIBUTING.md`. Keep all three consistent.
 ./buildall.sh                          # build + install for every enabled version in its table (sudo for install)
 phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(nproc)"   # by hand
 ./configure ... --enable-gtk4-sanitize | --enable-gtk4-coverage | --enable-gtk4-webkit
-bear -- make                           # compile_commands.json for clangd / clang-tidy
 ```
 
+- `./ci.sh --only=build` also writes `compile_commands.json` (from `make -Bn`, no `bear`
+  needed) — the include paths clangd in `.vscode/settings.json` reads; without it every
+  header reports `'php_gtk4.h' file not found`. Rebuild after `config.m4` changes.
 - Requires `php8.4-dev` (phpize/php-config) and `libgtk-4-dev`. `config.m4` refuses PHP < 8.4 and
   GTK < 4.14. Build metadata (git hash, date, features) is baked in at configure time
   (`PHPGTK_BUILD_INFO` in config.h).

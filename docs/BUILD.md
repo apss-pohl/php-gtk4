@@ -61,7 +61,8 @@ Variants rebuild in place; `ci.sh` stashes the finished `.so` files around `make
   mirrors written by `./ci.sh --only=version --fix`; `configure` aborts on a mismatch.
 - **Generated files are committed and checked**: `src/gtk4_arginfo.h` and `stubs/gtk4.php` come
   from `src/gtk4.stub.php` via `./ci.sh --only=stubs --fix`. Never edit them by hand.
-- `bear -- make` produces `compile_commands.json` for clangd / clang-tidy.
+- `./ci.sh --only=build` also writes `compile_commands.json` for clangd (from `make -Bn`, so
+  `bear` is not needed); `.vscode/settings.json` points clangd at it.
 
 ## Running what you built
 

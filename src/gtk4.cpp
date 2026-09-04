@@ -55,7 +55,7 @@ static PHP_GSHUTDOWN_FUNCTION(gtk4) {
 
 // gtk4.diagnostics: map the name to the mode the writer reads (src/core/diagnostics.h).
 // Rejecting an unknown value makes a typo a startup error rather than a silent default.
-static PHP_INI_MH(OnUpdateDiagnostics) {
+static PHP_INI_MH(on_update_diagnostics) {
   phpgtk::DiagnosticsMode mode{};
   if (new_value == nullptr ||
       !phpgtk::diagnostics_mode_from_name(ZSTR_VAL(new_value), ZSTR_LEN(new_value), &mode)) {
@@ -68,7 +68,7 @@ static PHP_INI_MH(OnUpdateDiagnostics) {
 PHP_INI_BEGIN()
 PHP_INI_ENTRY("gtk4.build_info", PHPGTK_BUILD_INFO, PHP_INI_SYSTEM, nullptr)
 PHP_INI_ENTRY("gtk4.features", PHPGTK_BUILD_FEATURES, PHP_INI_SYSTEM, nullptr)
-PHP_INI_ENTRY("gtk4.diagnostics", "warning", PHP_INI_ALL, OnUpdateDiagnostics)
+PHP_INI_ENTRY("gtk4.diagnostics", "warning", PHP_INI_ALL, on_update_diagnostics)
 PHP_INI_END()
 
 // GTK, like GLib, cannot be unloaded from a process: it registers GTypes, atexit handlers

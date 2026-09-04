@@ -5,12 +5,14 @@
 #include "diagnostics.h"
 #include "object.h"
 
+#include <algorithm>
 #include <atomic>
 #include <cstring>
 #include <deque>
 #include <mutex>
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace phpgtk {
@@ -65,44 +67,30 @@ bool interface_requires(GType it, GType other) {
 // The interfaces a PHP class declares that are registered GTK interfaces with slots, ordered so
 // that every prerequisite comes before what requires it. `ce->interfaces` is in no particular
 // order, and adding GtkSelectionModel to a type that does not implement GListModel yet is a
-// GLib CRITICAL and a half-built GType.
+// GLib CRITICAL and a half-built GType. Prerequisites are transitive and cannot form a cycle, so
+// "how many of the others does this one require" is already the order to add them in.
 std::vector<GType> php_interfaces(zend_class_entry *ce) {
-  std::vector<GType> found;
+  std::vector<GType> out;
   for (uint32_t i = 0; i < ce->num_interfaces; i++) {
     const GType it = gtype_for_class(ce->interfaces[i]);
     if (it == 0 || G_TYPE_IS_INTERFACE(it) == FALSE) continue;
     for (const Vfunc &vf : iface_vfuncs()) {
       if (vf.owner == it) {
-        found.push_back(it);
+        out.push_back(it);
         break;
       }
     }
   }
-
-  std::vector<GType> out;
-  out.reserve(found.size());
-  std::vector<bool> placed(found.size(), false);
-  while (out.size() < found.size()) {
-    const size_t before = out.size();
-    for (size_t i = 0; i < found.size(); i++) {
-      if (placed[i]) continue;
-      bool waiting = false;
-      for (size_t j = 0; j < found.size() && !waiting; j++) {
-        waiting = !placed[j] && j != i && interface_requires(found[i], found[j]);
-      }
-      if (waiting) continue;
-      out.push_back(found[i]);
-      placed[i] = true;
-    }
-    if (out.size() == before) {  // prerequisites cannot form a cycle; keep the rest as declared
-      for (size_t i = 0; i < found.size(); i++) {
-        if (!placed[i]) {
-          out.push_back(found[i]);
-          placed[i] = true;
-        }
-      }
-    }
+  std::vector<std::pair<long, GType>> ranked;  // how many of the others it requires, then itself
+  ranked.reserve(out.size());
+  for (const GType it : out) {
+    ranked.emplace_back(std::count_if(out.begin(), out.end(),
+                                      [it](GType other) { return interface_requires(it, other); }),
+                        it);
   }
+  std::ranges::stable_sort(ranked, [](const auto &a, const auto &b) { return a.first < b.first; });
+  out.clear();
+  for (const auto &[required, it] : ranked) out.push_back(it);
   return out;
 }
 

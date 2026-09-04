@@ -447,10 +447,38 @@ build_variant() {  # build_variant <output.so> [configure args...]
     cp -f modules/gtk4.so "$out"
 }
 
+# clangd (.vscode/settings.json points it at ./compile_commands.json) needs the real
+# include paths - PHP's, GTK's, ./ and ./src - or every header it opens reports
+# "'php_gtk4.h' file not found". bear would record them from a real build; the Makefile
+# already knows them, so a dry run of the whole build (make -Bn) lists every compile
+# command, libtool wrapper and all, and that is what gets written. Only the default
+# build writes it: the sanitizer/coverage variants change the flags. Rewritten only when
+# the content changed so clangd does not reindex after a no-op build.
+write_compile_commands() {
+    local out=compile_commands.json tmp n=0 line cmd file
+    tmp=$(mktemp)
+    printf '[\n' > "$tmp"
+    while IFS= read -r line; do
+        [[ $line == *"--mode=compile "* ]] || continue
+        cmd=${line#*--mode=compile }
+        [[ $cmd =~ -c\ ([^[:space:]]+\.cpp) ]] || continue
+        file=${BASH_REMATCH[1]}
+        cmd=${cmd//\\/\\\\}; cmd=${cmd//\"/\\\"}
+        [[ $n -gt 0 ]] && printf ',\n' >> "$tmp"
+        printf '  {"directory": "%s", "command": "%s", "file": "%s"}' "$PWD" "$cmd" "$file" >> "$tmp"
+        n=$((n + 1))
+    done < <(make -Bn 2>/dev/null)
+    printf '\n]\n' >> "$tmp"
+    [[ $n -gt 0 ]] || { rm -f "$tmp"; fail "compile_commands.json: no compile commands in make -Bn"; }
+    if cmp -s "$tmp" "$out"; then rm -f "$tmp"; else mv -f "$tmp" "$out"; fi
+    echo "  compile_commands.json: $n translation units"
+}
+
 # GTK4_CONFIGURE_ARGS: extra configure switches for the default build.
 stage_build() {
     # shellcheck disable=SC2086
     build_variant gtk4.so ${GTK4_CONFIGURE_ARGS:-}
+    write_compile_commands
 }
 
 # ---------------------------------------------------------------- asan
