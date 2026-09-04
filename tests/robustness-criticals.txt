@@ -80,3 +80,8 @@ Gtk4\GtkWidget::insert_after#arguments
 Gtk4\GtkWidget::insert_before#arguments
 Gtk4\PangoFontDescription::set_absolute_size#arguments
 Gtk4\GtkTextTag::$size_points#properties
+Gtk4\GtkDropTarget::enter#emit
+Gtk4\GtkDropTarget::motion#emit
+Gtk4\GtkEntry::delete-text#emit
+Gtk4\GtkPasswordEntry::delete-text#emit
+Gtk4\GtkSpinButton::delete-text#emit

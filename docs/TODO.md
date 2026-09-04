@@ -533,9 +533,11 @@ fixes. The interface-property routing and the `GVariant` thunks landed the same 
       its declared type, with `@property-read`/`@property-write` held to their word. The sweep found
       the generated boxed field writers coercing under strict_types, read-only writes growing a
       dynamic property, construct-only writes reaching GLib, write-only reads answering "undefined
-      property", and the `is-remote` read asserting before register() - all closed.) Still unswept:
-      `emit()` arguments, vfunc return values and typed `GVariant` conversions;
-      `ConverterGuardTest` pins those cases.
+      property", and the `is-remote` read asserting before register() - all closed. The next day
+      `emit()` arguments (`GObject::list_signals()` is what made the signals enumerable; 1,052
+      rows, 5 pins: a drop target's `enter`/`motion` without a drop, `delete-text` with a negative
+      start) and scalar vfunc returns (`#return`) joined.) Still unswept: typed `GVariant`
+      conversions, which `ConverterGuardTest` pins case by case.
 - [ ] `gen/gir.php` emitters (`emitClass` 317 lines, `emitRecord` 218, `vfuncThunk` 151) still sit
       in one file exempt from three phpcs sniffs and baselined in PHPStan; split them out so the
       exclusions can shrink with the baseline. Header declarations in `src/core/*.h` carry no

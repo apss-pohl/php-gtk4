@@ -324,7 +324,8 @@ display, and calls `Gtk::init()` once.
   fails it and so does a declaration nothing matched. `RobustnessTest` gates itself against
   **`tests/robustness-criticals.txt`** instead, which pins the `<class>::<method>#<sweep>` keys
   GTK is known to complain about (`#arguments` / `#values` for the two method sweeps,
-  `<class>::$<property>#properties` for the property-write sweep) and fails on an
+  `<class>::$<property>#properties`, `<class>::<signal>#emit` and `<class>::vfunc_<slot>#return`
+  for the property-write, signal-emission and vfunc-return sweeps) and fails on an
   unlisted complaint or a line that has gone quiet — a review surface, not a suppression file
   (`tests/README-robustness-pin.md`). The `fatal` and `stderr` modes and the mode switching are
   asserted in **`tests/phpt/`** (`diagnostics-fatal.phpt`, `diagnostics-modes.phpt`,

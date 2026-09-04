@@ -36,7 +36,8 @@ sort -u /tmp/pin.txt        # merge into tests/robustness-criticals.txt, keeping
 ```
 
 and revert the branch. Keys are `<class>::<method>#arguments` or `#values` for the two method
-sweeps and `<class>::$<property>#properties` for the property-write sweep.
+sweeps, `<class>::$<property>#properties` for the property-write sweep, `<class>::<signal>#emit`
+for the signal-emission sweep and `<class>::vfunc_<slot>#return` for the vfunc-return sweep.
 
 Recording is deliberately *not* a committed switch: regenerating
 wholesale is how a real leak gets pinned by accident, so it should cost a patch and a diff you

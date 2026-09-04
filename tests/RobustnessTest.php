@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpGtk4\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionClass;
 use ReflectionEnum;
 use ReflectionExtension;
 use ReflectionMethod;
@@ -248,6 +249,258 @@ final class RobustnessTest extends GtkTestCase
             }
         }
         $this->addToAssertionCount(1);
+    }
+
+    /**
+     * Signals whose class handler needs the widget in a state PHP cannot put it in from a bare
+     * instance - realized, mapped, in a toplevel - and which GTK asserts on rather than refuses:
+     * emitting them is the lifecycle running backwards, never something a script means to do.
+     */
+    private const LIFECYCLE_SIGNALS = ['realize', 'unrealize', 'map', 'unmap', 'destroy', 'show', 'hide'];
+
+    /**
+     * Every signal of every class {@see GtkInstances} can build, with what list_signals() says
+     * about it.
+     *
+     * @return iterable<string, array{class-string, string, array{params: list<string>, return: ?string,
+     *     action: bool, detailed: bool}}>
+     */
+    public static function signals(): iterable
+    {
+        foreach (new ReflectionExtension('gtk4')->getClasses() as $class) {
+            if ($class->isEnum() || $class->isInterface() || !$class->isSubclassOf(\Gtk4\GObject::class)) {
+                continue;
+            }
+            $name = $class->getName();
+            $instance = $name === \Gtk4\GtkWindow::class ? new \Gtk4\GtkWindow() : GtkInstances::make($name);
+            if (!$instance instanceof \Gtk4\GObject) {
+                continue;
+            }
+            foreach ($instance->list_signals() as $signal => $info) {
+                yield "$name::$signal" => [$name, $signal, $info];
+            }
+            if ($instance instanceof \Gtk4\GtkWindow) {
+                $instance->destroy();
+            }
+        }
+        GtkInstances::release();
+    }
+
+    /**
+     * A value a signal parameter of GType `$gtype` accepts, or null when the sweep cannot build
+     * one (an object of an unbound class, a boxed record without a constructor).
+     */
+    private static function signalValueFor(string $gtype): mixed
+    {
+        return match ($gtype) {
+            'gchararray' => 'x',
+            'gint', 'guint', 'glong', 'gulong', 'gint64', 'guint64', 'gsize', 'gssize', 'gchar', 'guchar' => 1,
+            'gdouble', 'gfloat' => 1.0,
+            'gboolean' => true,
+            'GStrv' => ['x'],
+            'GVariant' => 'v',
+            // an enum's first case, an instance of a class with a no-argument constructor, or
+            // nothing (the row is then skipped, naming the type)
+            default => self::sampleOf('Gtk4\\' . $gtype),
+        };
+    }
+
+    /**
+     * emit() converts every argument like a typed parameter and then runs GTK's own class
+     * handler with it: each string parameter has to refuse a NUL and invalid UTF-8, each
+     * parameter has to refuse a value of another type, and the hostile values of the right
+     * type are survived. What GTK's handler complains about is pinned as `<class>::<signal>#emit`.
+     *
+     * @param class-string $class
+     * @param array{params: list<string>, return: ?string, action: bool, detailed: bool} $info
+     */
+    #[DataProvider('signals')]
+    public function testHostileSignalEmissionsAreRefusedOrSurvived(string $class, string $signal, array $info): void
+    {
+        $this->sweeping = $class . '::' . $signal . '#emit';
+        if (in_array($signal, self::LIFECYCLE_SIGNALS, true)) {
+            $this->sweeping = '';
+            self::markTestSkipped("$signal is the widget lifecycle, not something a script emits");
+        }
+        $target = $this->instance($class);
+        if (!$target instanceof \Gtk4\GObject) {
+            self::markTestSkipped(self::whyNoInstance($class));
+        }
+        $valid = [];
+        foreach ($info['params'] as $gtype) {
+            $value = self::signalValueFor($gtype);
+            if ($value === null) {
+                $this->sweeping = '';
+                self::markTestSkipped("no value for a $gtype parameter");
+            }
+            $valid[] = $value;
+        }
+        foreach ($info['params'] as $i => $gtype) {
+            $hostile = match ($gtype) {
+                'gchararray' => [["a\0b", true], ["\xff\xfe", true], [[], true]],
+                'gint', 'guint', 'glong', 'gulong', 'gint64', 'guint64', 'gsize', 'gssize' => [
+                    [-1, false], [PHP_INT_MAX, false], [PHP_INT_MIN, false], [[], true],
+                ],
+                'gdouble', 'gfloat' => [[INF, false], [-INF, false], [[], true]],
+                'gboolean' => [[[], true]],
+                default => [[new \stdClass(), true]],
+            };
+            foreach ($hostile as [$bad, $mustThrow]) {
+                $args = $valid;
+                $args[$i] = $bad;
+                try {
+                    $target->emit($signal, ...$args);
+                    if ($mustThrow) {
+                        self::fail(sprintf(
+                            '%s::%s accepted %s for parameter #%d (%s)',
+                            $class,
+                            $signal,
+                            get_debug_type($bad),
+                            $i + 1,
+                            $gtype,
+                        ));
+                    }
+                } catch (\ValueError | \TypeError | \Error | \LogicException | \Gtk4\GError) {
+                    // refused, which is the point; a crash would end the process
+                }
+            }
+        }
+        $this->addToAssertionCount(1);
+    }
+
+    /**
+     * Every native `vfunc_*()` with a scalar return that a public method of the same name
+     * drives: a PHP subclass overriding it answers a hostile value of the declared type, and the
+     * thunk has to refuse what the C type cannot hold (check_range, check_utf8) rather than hand
+     * it to GTK.
+     *
+     * @return iterable<string, array{class-string, string, string}>
+     */
+    public static function vfuncReturns(): iterable
+    {
+        foreach (new ReflectionExtension('gtk4')->getClasses() as $class) {
+            if ($class->isEnum() || $class->isInterface() || $class->isFinal()) {
+                continue;
+            }
+            foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $m) {
+                $name = $m->getName();
+                if (!str_starts_with($name, 'vfunc_') || $m->getDeclaringClass()->getName() !== $class->getName()) {
+                    continue;
+                }
+                $ret = $m->getReturnType();
+                if (!$ret instanceof ReflectionNamedType) {
+                    continue;
+                }
+                if (!in_array($ret->getName(), ['int', 'string', 'float'], true)) {
+                    continue;
+                }
+                $public = substr($name, 6);
+                if (!$class->hasMethod($public) || $class->getMethod($public)->isStatic()) {
+                    continue;
+                }
+                yield $class->getName() . '::' . $name => [$class->getName(), $name, $ret->getName()];
+            }
+        }
+    }
+
+    /**
+     * @param class-string $class
+     */
+    #[DataProvider('vfuncReturns')]
+    public function testHostileVfuncReturnsAreRefusedOrSurvived(string $class, string $vfunc, string $type): void
+    {
+        $this->sweeping = $class . '::' . $vfunc . '#return';
+        $subclass = self::answeringSubclass($class, $vfunc);
+        $instance = self::inventInstance($subclass);
+        if ($instance === null) {
+            $this->sweeping = '';
+            self::markTestSkipped("$class has no constructor arguments this sweep can invent");
+        }
+        $method = new ReflectionMethod($class, substr($vfunc, 6));
+        $args = [];
+        foreach (array_slice($method->getParameters(), 0, $method->getNumberOfRequiredParameters()) as $p) {
+            $args[] = self::validValueFor($p);
+        }
+        $hostile = match ($type) {
+            'int' => [-1, PHP_INT_MAX, PHP_INT_MIN],
+            'string' => ["a\0b", "\xff\xfe", ''],
+            default => [INF, -INF, NAN],
+        };
+        foreach ($hostile as $answer) {
+            $subclass::$answer = $answer;
+            try {
+                $this->captureHandlerException(fn() => $method->invokeArgs($instance, $args));
+            } catch (\ValueError | \TypeError | \Error | \LogicException | \Gtk4\GError) {
+                // the public method refused before reaching the slot: fine
+            }
+        }
+        $this->addToAssertionCount(1);
+    }
+
+    /**
+     * An eval'd subclass of $class whose $vfunc override answers with its static $answer, typed
+     * as the native method declares (the engine enforces that much; the thunk the rest).
+     *
+     * @param class-string $class
+     * @return class-string
+     */
+    private static function answeringSubclass(string $class, string $vfunc): string
+    {
+        $short = 'Answer_' . str_replace('\\', '_', $class) . '_' . $vfunc;
+        $fqcn = 'PhpGtk4\\Tests\\Sweep\\' . $short;
+        if (!class_exists($fqcn, false)) {
+            $m = new ReflectionMethod($class, $vfunc);
+            $params = [];
+            foreach ($m->getParameters() as $p) {
+                $t = (string) $p->getType();
+                $bare = ltrim($t, '?');
+                $decl = in_array($bare, ['void', 'bool', 'int', 'float', 'string', 'array', 'mixed'], true)
+                    ? $t : (str_starts_with($t, '?') ? '?' : '') . '\\' . $bare;
+                $params[] = "$decl \$" . $p->getName()
+                    . ($p->isDefaultValueAvailable() ? ' = ' . var_export($p->getDefaultValue(), true) : '');
+            }
+            $ret = (string) $m->getReturnType();
+            eval("namespace PhpGtk4\\Tests\\Sweep; final class $short extends \\$class {\n"
+                . "    public static mixed \$answer = null;\n"
+                . "    public function $vfunc(" . implode(', ', $params) . "): $ret { return self::\$answer; }\n}");
+        }
+        /** @var class-string $fqcn */
+        return $fqcn;
+    }
+
+    /**
+     * An instance of $class from invented scalar constructor arguments (the way
+     * TypeDeclarationTest builds what GtkInstances does not name), or null.
+     *
+     * @param class-string $class
+     */
+    private static function inventInstance(string $class): ?object
+    {
+        $constructor = new ReflectionClass($class)->getConstructor();
+        if ($constructor === null || !$constructor->isPublic()) {
+            return null;
+        }
+        $arguments = [];
+        foreach ($constructor->getParameters() as $p) {
+            if ($p->isOptional()) {
+                break;
+            }
+            $t = $p->getType();
+            if ($t instanceof ReflectionNamedType && $t->allowsNull()) {
+                $arguments[] = null;
+                continue;
+            }
+            $value = self::validValueFor($p);
+            if ($value === null) {
+                return null;
+            }
+            $arguments[] = $value;
+        }
+        try {
+            return new $class(...$arguments);
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     /**
