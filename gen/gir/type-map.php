@@ -227,6 +227,15 @@ final class TypeMap
         if (in_array($t->name, ['GObject.GType', 'Gio.GType', 'GLib.GType', 'GType'], true)) {
             return ["ZVAL_STRING(&$zv, g_type_name($c));"];
         }
+        // A variant is a plain PHP value (core/variant), a variant type its type string - the
+        // same shapes the public methods take (GAction::activate(mixed), get_state_type(): ?string).
+        if ($t->name === 'GLib.Variant') {
+            return ["if ($c == nullptr) {", "  ZVAL_NULL(&$zv);", '} else {', "  variant_to_php($c, &$zv);", '}'];
+        }
+        if ($t->name === 'GLib.VariantType') {
+            return ["if ($c == nullptr) {", "  ZVAL_NULL(&$zv);", '} else {',
+                "  ZVAL_STRINGL(&$zv, g_variant_type_peek_string($c), g_variant_type_get_string_length($c));", '}'];
+        }
         $node = $this->gir->types[$t->name] ?? null;
         if ($node === null || $t->isArray) {
             return null;
@@ -248,12 +257,13 @@ final class TypeMap
     }
 
     /**
-     * Return value + out parameters of a thunk from the PHP result (`ret`).
+     * Return value + out parameters of a thunk from the PHP result (`ret`). `$slot` is the
+     * "Ns.Type.vfunc" key (VFUNC_VARIANT_TYPE), `$origin` the PHP name error messages carry.
      *
      * @param list<array<string, mixed>> $outs
      * @return array{array{decl: string, default: string}|null, list<string>, string}
      */
-    public function zvalToC(Func $v, array $outs): array
+    public function zvalToC(Func $v, array $outs, string $slot = '', string $origin = ''): array
     {
         $t = $v->ret;
         foreach ($outs as $o) {
@@ -308,6 +318,35 @@ final class TypeMap
         if (in_array($t->name, ['utf8', 'filename'], true) && !$t->isArray && $v->retTransfer === 'full') {
             return [['decl' => 'char *result = nullptr;', 'default' => 'nullptr'],
                 ['if (Z_TYPE(ret) == IS_STRING) result = g_strdup(Z_STRVAL(ret));'], 'result'];
+        }
+        // Borrowed returns (GAction.get_name, GtkEditable.get_text): the instance keeps the C copy
+        // of PHP's answer (core/subtype), replaced only when the answer changes.
+        if (in_array($t->name, ['utf8', 'filename'], true) && !$t->isArray && $v->retTransfer === 'none') {
+            return [['decl' => 'const char *result = nullptr;', 'default' => 'nullptr'],
+                ['if (Z_TYPE(ret) == IS_STRING) {',
+                    "  result = subtype_keep_string(G_OBJECT(self), \"{$v->name}\", Z_STRVAL(ret));", '}'],
+                'result'];
+        }
+        // GActionGroup.list_actions: GLib walks the result without a NULL check, so a refused
+        // value (TypeError reported) still yields an empty list rather than a crash.
+        if (self::isStrv($t) && $v->retTransfer === 'full') {
+            return [['decl' => 'char **result = nullptr;', 'default' => 'g_new0(char *, 1)'],
+                ['if (Z_TYPE(ret) == IS_ARRAY) result = strv_from_php(&ret);',
+                    'if (result == nullptr) result = g_new0(char *, 1);'], 'result'];
+        }
+        if ($t->name === 'GLib.Variant' && $v->retTransfer === 'full') {
+            // converted against the type the object itself declares for the value where there is
+            // one (VFUNC_VARIANT_TYPE), inferred from the PHP value otherwise (core/variant)
+            $type = VFUNC_VARIANT_TYPE[$slot] ?? 'nullptr';
+            return [['decl' => 'GVariant *result = nullptr;', 'default' => 'nullptr'],
+                ['if (Z_TYPE(ret) != IS_NULL) {', "  result = php_to_variant(&ret, $type);",
+                    '  if (result != nullptr) g_variant_ref_sink(result);  // transfer full', '}'], 'result'];
+        }
+        if ($t->name === 'GLib.VariantType' && $v->retTransfer === 'none') {
+            return [['decl' => 'const GVariantType *result = nullptr;', 'default' => 'nullptr'],
+                ['if (Z_TYPE(ret) == IS_STRING) {',
+                    "  result = subtype_keep_variant_type(G_OBJECT(self), \"$origin\", \"{$v->name}\", Z_STRVAL(ret));",
+                    '}'], 'result'];
         }
         if (in_array($t->name, ['GObject.GType', 'Gio.GType', 'GLib.GType', 'GType'], true)) {
             // the PHP side names the type ("GObject", a registered class' GType name)

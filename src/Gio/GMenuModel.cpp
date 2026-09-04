@@ -156,6 +156,58 @@ ZEND_METHOD(Gtk4_GMenuModel, get_item_link) {
 // vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
 namespace {
 
+// vfunc thunk: G_MENU_MODEL_CLASS->get_item_attribute_value ->
+// $this->vfunc_get_item_attribute_value() on a PHP subclass
+GVariant *vfunc_thunk_get_item_attribute_value(GMenuModel *self, gint item_index,
+                                               const gchar *attribute,
+                                               const GVariantType *expected_type) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_get_item_attribute_value", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = G_MENU_MODEL_CLASS(subtype_native_class(G_OBJECT(self)));
+    return native->get_item_attribute_value != nullptr
+               ? native->get_item_attribute_value(self, item_index, attribute, expected_type)
+               : nullptr;
+  }
+  std::array<zval, 3> args{};
+  zval *argv = args.data();
+  ZVAL_LONG(&argv[0], static_cast<zend_long>(item_index));
+  if (attribute == nullptr) {
+    ZVAL_NULL(&argv[1]);
+  } else {
+    ZVAL_STRING(&argv[1], attribute);
+  }
+  if (expected_type == nullptr) {
+    ZVAL_NULL(&argv[2]);
+  } else {
+    ZVAL_STRINGL(&argv[2], g_variant_type_peek_string(expected_type),
+                 g_variant_type_get_string_length(expected_type));
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  GVariant *result = nullptr;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 3, args.data());
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    if (Z_TYPE(ret) != IS_NULL) {
+      result = php_to_variant(&ret, nullptr);
+      if (result != nullptr) g_variant_ref_sink(result);  // transfer full
+    }
+  }
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GMenuModel::vfunc_get_item_attribute_value");
+  return result;
+}
+
+// vfunc installer: G_MENU_MODEL_CLASS->get_item_attribute_value (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_get_item_attribute_value(gpointer klass) {
+  G_MENU_MODEL_CLASS(klass)->get_item_attribute_value = vfunc_thunk_get_item_attribute_value;
+}
+
 // vfunc thunk: G_MENU_MODEL_CLASS->get_item_link -> $this->vfunc_get_item_link() on a PHP subclass
 GMenuModel *vfunc_thunk_get_item_link(GMenuModel *self, gint item_index, const gchar *link) {
   zval zself;
@@ -260,11 +312,64 @@ void vfunc_install_is_mutable(gpointer klass) {
 }  // namespace
 
 /**
+ * Gtk4\GMenuModel::vfunc_get_item_attribute_value(int $item_index, string $attribute, ?string
+ * $expected_type): mixed
+ *
+ * Native `get_item_attribute_value` (MenuModelClass.get_item_attribute_value): the GTK
+ * implementation below any PHP subclass, for `parent::vfunc_get_item_attribute_value()` from an
+ * override. Queries the item at position $item_index in $model for the attribute specified by
+ * $attribute. GMenuModel itself cannot be subclassed (its constructor is private); override this
+ * from a PHP subclass of `GMenu`, which fills the slot natively.
+ */
+ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_item_attribute_value) {
+  zend_long item_index;
+  zend_string *attribute;
+  zend_string *expected_type = nullptr;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_LONG(item_index)
+  Z_PARAM_STR(attribute)
+  Z_PARAM_STR_OR_NULL(expected_type)
+  ZEND_PARSE_PARAMETERS_END();
+  GMenuModel *self = PHPGTK_SELF(GMenuModel, G_TYPE_MENU_MODEL);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GMenuModel::vfunc_get_item_attribute_value(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = G_MENU_MODEL_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->get_item_attribute_value == nullptr) {
+    RETURN_NULL();
+  }
+  if (!phpgtk::check_range<gint>(item_index, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(attribute, 2)) RETURN_THROWS();
+  GVariantType *expected_type_t = nullptr;
+  if (expected_type != nullptr) {
+    if (!g_variant_type_string_is_valid(ZSTR_VAL(expected_type))) {
+      zend_argument_value_error(3, "must be a valid GVariant type string, \"%s\" given",
+                                ZSTR_VAL(expected_type));
+      RETURN_THROWS();
+    }
+    expected_type_t = g_variant_type_new(ZSTR_VAL(expected_type));
+  }
+  GVariant *call_result = klass->get_item_attribute_value(self, static_cast<gint>(item_index),
+                                                          ZSTR_VAL(attribute), expected_type_t);
+  if (expected_type_t != nullptr) g_variant_type_free(expected_type_t);
+  GVariant *phpgtk_ret = call_result;
+  if (phpgtk_ret == nullptr) RETURN_NULL();
+  variant_to_php(phpgtk_ret, return_value);
+  g_variant_unref(phpgtk_ret);
+}
+
+/**
  * Gtk4\GMenuModel::vfunc_get_item_link(int $item_index, string $link): ?GMenuModel
  *
  * Native `get_item_link` (MenuModelClass.get_item_link): the GTK implementation below any PHP
  * subclass, for `parent::vfunc_get_item_link()` from an override. Queries the item at position
- * $item_index in $model for the link specified by $link.
+ * $item_index in $model for the link specified by $link. GMenuModel itself cannot be subclassed
+ * (its constructor is private); override this from a PHP subclass of `GMenu`, which fills the slot
+ * natively.
  */
 ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_item_link) {
   zend_long item_index;
@@ -298,7 +403,8 @@ ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_item_link) {
  *
  * Native `get_n_items` (MenuModelClass.get_n_items): the GTK implementation below any PHP
  * subclass, for `parent::vfunc_get_n_items()` from an override. Query the number of items in
- * $model.
+ * $model. GMenuModel itself cannot be subclassed (its constructor is private); override this from
+ * a PHP subclass of `GMenu`, which fills the slot natively.
  */
 ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_n_items) {
   ZEND_PARSE_PARAMETERS_NONE();
@@ -321,7 +427,9 @@ ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_n_items) {
  * Gtk4\GMenuModel::vfunc_is_mutable(): bool
  *
  * Native `is_mutable` (MenuModelClass.is_mutable): the GTK implementation below any PHP subclass,
- * for `parent::vfunc_is_mutable()` from an override. Queries if $model is mutable.
+ * for `parent::vfunc_is_mutable()` from an override. Queries if $model is mutable. GMenuModel
+ * itself cannot be subclassed (its constructor is private); override this from a PHP subclass of
+ * `GMenu`, which fills the slot natively.
  */
 ZEND_METHOD(Gtk4_GMenuModel, vfunc_is_mutable) {
   ZEND_PARSE_PARAMETERS_NONE();
@@ -342,6 +450,8 @@ ZEND_METHOD(Gtk4_GMenuModel, vfunc_is_mutable) {
 
 // MINIT: the vfunc thunks of GMenuModel (core/subtype.h).
 void register_vfuncs_GMenuModel() {
+  register_vfunc(G_TYPE_MENU_MODEL, "get_item_attribute_value",
+                 vfunc_install_get_item_attribute_value);
   register_vfunc(G_TYPE_MENU_MODEL, "get_item_link", vfunc_install_get_item_link);
   register_vfunc(G_TYPE_MENU_MODEL, "get_n_items", vfunc_install_get_n_items);
   register_vfunc(G_TYPE_MENU_MODEL, "is_mutable", vfunc_install_is_mutable);

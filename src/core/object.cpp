@@ -222,7 +222,17 @@ GParamSpec *find_property(Object *self, zend_string *member) {
   if (len >= buf.size()) return nullptr;  // no GObject property name is that long
   size_t i = 0;
   for (const char c : std::string_view(ZSTR_VAL(member), len)) buf.at(i++) = c == '_' ? '-' : c;
-  return g_object_class_find_property(G_OBJECT_GET_CLASS(self->obj), buf.data());
+  GParamSpec *spec = g_object_class_find_property(G_OBJECT_GET_CLASS(self->obj), buf.data());
+  // A property of an interface the PHP class implements (GAction's `state`) is answered *by*
+  // PHP: GObject routes it to the PHP getter/setter (core/subtype). On the PHP side it is an
+  // ordinary property, or the getter reading $this->state would call itself. (The interface's
+  // own pspec comes back, so "implemented by PHP" = the native ancestor lacks the interface.)
+  if (spec != nullptr && G_TYPE_IS_INTERFACE(spec->owner_type) &&
+      is_php_type(G_OBJECT_TYPE(self->obj)) &&
+      g_type_is_a(G_TYPE_FROM_CLASS(subtype_native_class(self->obj)), spec->owner_type) == FALSE) {
+    return nullptr;
+  }
+  return spec;
 }
 
 // read_property handler: GObject properties first, then standard (declared/dynamic) ones.

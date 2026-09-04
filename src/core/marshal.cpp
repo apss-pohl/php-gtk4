@@ -123,6 +123,14 @@ void to_php(const GValue *v, zval *rv) {
           ZVAL_STRINGL(rv, data, size);
         return;
       }
+      if (t == G_TYPE_VARIANT_TYPE) {  // a type string, as the GAction getters answer it
+        const auto *vt = static_cast<const GVariantType *>(g_value_get_boxed(v));
+        if (vt == nullptr)
+          ZVAL_NULL(rv);
+        else
+          ZVAL_STRINGL(rv, g_variant_type_peek_string(vt), g_variant_type_get_string_length(vt));
+        return;
+      }
       if (t == G_TYPE_ERROR) {
         auto *error = static_cast<GError *>(g_value_get_boxed(v));
         if (error == nullptr)
@@ -407,6 +415,16 @@ bool to_gvalue(zval *pv, GType t, GValue *out) {
       }
       if (Z_TYPE_P(pv) == IS_NULL) {
         g_value_set_boxed(out, nullptr);
+        return true;
+      }
+      if (t == G_TYPE_VARIANT_TYPE) {  // a type string, as the GAction getters take it
+        if (Z_TYPE_P(pv) != IS_STRING || g_variant_type_string_is_valid(Z_STRVAL_P(pv)) == FALSE) {
+          g_value_unset(out);
+          zend_type_error("expected a GVariant type string for GVariantType, %s given",
+                          zend_zval_value_name(pv));
+          return false;
+        }
+        g_value_take_boxed(out, g_variant_type_new(Z_STRVAL_P(pv)));
         return true;
       }
       if (boxed_class_for_type(t) == nullptr && fundamental_class_for_type(t) != nullptr) {

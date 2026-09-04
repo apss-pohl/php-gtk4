@@ -170,7 +170,13 @@ GTK4 / GLib C API
   `get_n_items()`, `get_item()`); the PHP interface declares only those vfunc-backed methods,
   the utility methods (`items_changed()`, `get_object()`) stay on the generated implementors via
   `@implementation-alias` (a PHP model announces changes with `emit('items-changed', …)`).
-  `GObject::__construct()` exists for exactly this (`new M()` builds the subtype).
+  `GObject::__construct()` exists for exactly this (`new M()` builds the subtype). Thunks convert
+  `GVariant`/`GVariantType` too (2026-09-04), so `GAction` and `GActionGroup` are complete from
+  PHP: a variant return is converted against the type the object itself declares (`get_state()`
+  against `get_state_type()`), a borrowed return (`get_name()`) is a copy the instance keeps. An
+  interface's properties are overridden on the GType and routed to the PHP accessors of the same
+  name (`state` → `get_state()`), which is what GObject demands of an implementor; on the PHP side
+  they stay ordinary properties, or `$this->state` inside the getter would recurse.
 - **Not covered (yet)**: declaring GObject properties or signals in PHP, `snapshot()` (needs
   `GtkSnapshot`, wave 4/milestone 4), vfuncs whose arguments are pointers to scalars without a
   GIR direction (`compute_expand`). `GObject`'s own vfuncs (`dispose`, `set_property`, …) are

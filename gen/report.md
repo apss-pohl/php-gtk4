@@ -8,25 +8,10 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `name_is_valid` — static function on an interface (PHP interfaces have no bodies)
 - `parse_detailed_name` — static function on an interface (PHP interfaces have no bodies)
 - `print_detailed_name` — static function on an interface (PHP interfaces have no bodies)
-- `vfunc activate` — return or argument type not convertible in a thunk
-- `vfunc change_state` — return or argument type not convertible in a thunk
-- `vfunc get_name` — return or argument type not convertible in a thunk
-- `vfunc get_parameter_type` — return or argument type not convertible in a thunk
-- `vfunc get_state` — return or argument type not convertible in a thunk
-- `vfunc get_state_hint` — return or argument type not convertible in a thunk
-- `vfunc get_state_type` — return or argument type not convertible in a thunk
 
 ## GActionGroup
 
 - `query_action` — out parameter `parameter_type` of type GLib.VariantType
-- `vfunc action_state_changed` — return or argument type not convertible in a thunk
-- `vfunc activate_action` — return or argument type not convertible in a thunk
-- `vfunc change_action_state` — return or argument type not convertible in a thunk
-- `vfunc get_action_parameter_type` — return or argument type not convertible in a thunk
-- `vfunc get_action_state` — return or argument type not convertible in a thunk
-- `vfunc get_action_state_hint` — return or argument type not convertible in a thunk
-- `vfunc get_action_state_type` — return or argument type not convertible in a thunk
-- `vfunc list_actions` — return or argument type not convertible in a thunk
 - `vfunc query_action` — out parameter `parameter_type` of type GLib.VariantType
 
 ## GActionMap
@@ -43,8 +28,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `send_notification` — parameter `notification` of type Gio.Notification
 - `set_action_group` — deprecated (2.32)
 - `vfunc add_platform_data` — parameter `builder` of type GLib.VariantBuilder
-- `vfunc after_emit` — return or argument type not convertible in a thunk
-- `vfunc before_emit` — return or argument type not convertible in a thunk
 - `vfunc command_line` — parameter `command_line` of type Gio.ApplicationCommandLine
 - `vfunc dbus_register` — GError out parameter
 - `vfunc dbus_unregister` — parameter `connection` of type Gio.DBusConnection
@@ -95,8 +78,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_item_attribute` — varargs
 - `iterate_item_attributes` — return type Gio.MenuAttributeIter (not in the closure)
 - `iterate_item_links` — return type Gio.MenuLinkIter (not in the closure)
-- `__construct` — skip.txt: abstract with NULL class-struct slots (get_n_items ...) and vfuncs on GHashTables that cannot be thunked; a PHP subtype would segfault on first use - build menus with GMenu
-- `vfunc get_item_attribute_value` — return or argument type not convertible in a thunk
+- `__construct` — skip.txt: abstract with NULL class-struct slots (get_n_items ...) and vfuncs on GHashTables that cannot be thunked; a PHP subtype would segfault on first use - build menus with GMenu, whose PHP subclasses do reach the vfunc_* slots (GMenuVfuncTest)
 - `vfunc get_item_attributes` — out parameter `attributes` of type GLib.HashTable
 - `vfunc get_item_links` — out parameter `links` of type GLib.HashTable
 - `vfunc_iterate_item_attributes` — return type Gio.MenuAttributeIter (not in the closure)
@@ -337,7 +319,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `install_properties` — static function on an interface (PHP interfaces have no bodies)
 - `insert_text` — inout parameter position
 - `vfunc do_insert_text` — inout parameter position
-- `vfunc get_text` — return or argument type not convertible in a thunk
 - `vfunc insert_text` — inout parameter position
 
 ## GtkEntry
@@ -652,7 +633,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkWidget
 
-- `activate_action` — shadowed by activate_action_variant
 - `add_tick_callback` — callback parameter (needs an override)
 - `compute_transform` — caller-allocates out parameter `out_transform` of type Graphene.Matrix
 - `create_pango_context` — return type Pango.Context (not in the closure)
@@ -730,7 +710,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.TextIter`: set_line_index, set_line_offset
 - `Gtk.TextView`: get_extra_menu
 - `Gtk.TreeListModel`: __construct
-- `Gtk.Widget`: allocate, insert_action_group
+- `Gtk.Widget`: activate_action, allocate, insert_action_group
 
 ## Emitted files
 

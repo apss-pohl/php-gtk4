@@ -74,9 +74,16 @@
   with GIR scope `async` (released after one invocation) or `call` (released after the call) whose
   arguments convert become `callable` parameters with a generated trampoline (`GAsyncReadyCallback`
   of every `*_async`/`choose()`-style method); `notified` scope still needs an override (the owner's
-  clear function). An **interface** with vfuncs (`GListModel`) can be implemented from PHP: its PHP
-  interface declares only the vfunc-backed methods, `core/subtype` adds the GTK interface to the
-  implementing class' GType and generated thunks call the PHP methods of the same name.
+  clear function). An **interface** with vfuncs (`GListModel`, `GAction`) can be implemented from
+  PHP: its PHP interface declares only the vfunc-backed methods, `core/subtype` adds the GTK
+  interface to the implementing class' GType and generated thunks call the PHP methods of the same
+  name; a thunk converts strings, scalars, enums, objects, registered boxed records, `GVariant`
+  (a plain value) and `GVariantType` (a type string) in both directions, a `GVariant` return
+  against the type the object declares for it where the interface has one (`VFUNC_VARIANT_TYPE`
+  in `gen/gir/config.php`), and a borrowed return (`get_name()`'s `const char *`) is kept by the
+  instance. The interface's *properties* (`GAction`'s `name`, `state`, ...) are overridden on the
+  GType and routed to the PHP accessors of the same name (`GtkOrientable`, all property, is
+  implementable for that reason alone).
   Every GIR `<virtual-method>` of a non-final class whose types are in the closure becomes a
   thunk + installer (`vfunc_thunk_x`/`vfunc_install_x`, registered by `register_vfuncs_<Class>()`
   from `gen_minit.inc`) and a native `vfunc_x()` method for `parent::` chaining; the rest is

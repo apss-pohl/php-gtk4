@@ -27,6 +27,10 @@ const BOXED_OWNERS = [
     'Gtk.TextIter' => 'gtk_text_iter_get_buffer',
 ];
 
+/** GMenuModel refuses `new` (gen/skip.txt); its slots are overridden from a subclass of GMenu. */
+const MENU_MODEL_SLOT_NOTE = 'GMenuModel itself cannot be subclassed (its constructor is private); '
+    . 'override this from a PHP subclass of `GMenu`, which fills the slot natively.';
+
 /**
  * Caveats appended to a generated `vfunc_<name>()` docblock: "Ns.Type.vfunc" -> the sentence.
  * For slots GTK does not always route through the class struct, so that an override which
@@ -39,6 +43,22 @@ const VFUNC_NOTES = [
         . 'GtkDrawingArea and a direct GtkWidget subclass have none and do reach it.',
     'Gtk.Widget.measure' => 'A widget that has a layout manager is measured by it and never '
         . 'reaches this slot, exactly as with `vfunc_size_allocate()`.',
+    'Gio.MenuModel.get_n_items' => MENU_MODEL_SLOT_NOTE,
+    'Gio.MenuModel.is_mutable' => MENU_MODEL_SLOT_NOTE,
+    'Gio.MenuModel.get_item_link' => MENU_MODEL_SLOT_NOTE,
+    'Gio.MenuModel.get_item_attribute_value' => MENU_MODEL_SLOT_NOTE,
+];
+
+
+/**
+ * Thunks returning a GVariant convert the PHP value against the type the object declares for
+ * it, when the interface has a slot that names one: "Ns.Type.vfunc" -> the C expression of that
+ * `const GVariantType *` (the thunk's arguments are in scope). A slot not listed here infers
+ * the type from the value (core/variant).
+ */
+const VFUNC_VARIANT_TYPE = [
+    'Gio.Action.get_state' => 'g_action_get_state_type(G_ACTION(self))',
+    'Gio.ActionGroup.get_action_state' => 'g_action_group_get_action_state_type(G_ACTION_GROUP(self), action_name)',
 ];
 
 /**

@@ -448,7 +448,8 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   → PHP lists with GIR transfer semantics),
   `subtype` (PHP subclasses as real GTypes, registered at first `new`, and GTK interfaces
   implemented from PHP — `implements GListModel` adds the interface to the GType with thunks into
-  the PHP methods; constructors go through
+  the PHP methods, and the interface's properties (`GAction`'s `state`) are overridden and routed
+  to the PHP accessors of the same name, plain PHP properties on the PHP side; constructors go through
   `subtype_new()` with the arguments as construct properties (`gen/ctor-props.txt` for renames),
   `vfunc_<name>()` methods override class-struct slots through generated thunks, the generated
   native `vfunc_<name>()` on the owning class is what `parent::` chains to; abstract GTK classes

@@ -49,6 +49,16 @@ zend_function *subtype_vfunc(GObject *obj, const char *method, zval *self);
 // and for thunks chaining to GTK).
 gpointer subtype_native_class(GObject *obj);
 
+// Thunks whose slot returns a borrowed pointer (transfer none: GAction.get_name's
+// `const char *`, get_state_type's `const GVariantType *`): the instance owns the C copy of
+// PHP's answer (qdata per slot), replaced only when the answer changes, so a caller keeping
+// the pointer sees it live for as long as GLib's contract - a constant name, a constant
+// type - lets it. The type variant validates the string first: nullptr with a TypeError
+// (naming `origin`, the PHP method) when it is not a GVariant type string.
+const char *subtype_keep_string(GObject *obj, const char *slot, const char *value);
+const GVariantType *subtype_keep_variant_type(GObject *obj, const char *origin, const char *slot,
+                                              const char *value);
+
 // wrap(): the PHP class registered for a PHP GType in this request, nullptr if the class
 // does not exist here (a different request declared it) - fall back to the native parent.
 zend_class_entry *subtype_class_for_gtype(GType type);

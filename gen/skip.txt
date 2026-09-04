@@ -10,7 +10,7 @@ Gtk.NotebookPage.__construct GtkNotebook creates its pages (get_page()); a page 
 Gtk.ApplicationWindow.implements:Gio.ActionGroup   GtkWidget::activate_action(string, mixed): bool is incompatible with the interface's activate_action(): void; the window stays a GActionMap (add/lookup/remove_action) and the widget method reaches its actions ("win.x")
 Gtk.MenuButton.get_direction   gtk_menu_button_get_direction (GtkArrowType) clashes with GtkWidget::get_direction (GtkTextDirection) in PHP; the `direction` property still reads the arrow
 Gtk.MenuButton.set_direction   same; `$button->direction = GtkArrowType::Left` sets the arrow
-Gio.MenuModel.__construct   abstract with NULL class-struct slots (get_n_items ...) and vfuncs on GHashTables that cannot be thunked; a PHP subtype would segfault on first use - build menus with GMenu
+Gio.MenuModel.__construct   abstract with NULL class-struct slots (get_n_items ...) and vfuncs on GHashTables that cannot be thunked; a PHP subtype would segfault on first use - build menus with GMenu, whose PHP subclasses do reach the vfunc_* slots (GMenuVfuncTest)
 Gio.Cancellable.release_fd   aborts the process (GLib-GIO:ERROR "priv->fd_refcount > 0") unless get_fd() was called first, and the refcount is not observable from here
 Gtk.ListItem.__construct    a list item belongs to the factory that created it (the setup/bind handlers get it); a standalone one has no item and no position
 Gtk.TreeListRow.__construct GtkTreeListModel creates its rows (get_row()/get_child_row()); a row without a model has nothing to expand

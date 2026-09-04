@@ -124,4 +124,25 @@ final class MarshalTest extends GtkTestCase
         $w->set_property('title', 42);
         self::assertSame('42', $w->get_property('title'));
     }
+    /**
+     * A `GVariantType` property is its type string (GSimpleAction's `parameter-type` and
+     * `state-type`), both ways: read as a string or null, and written as the construct
+     * property a PHP subclass' constructor hands to g_object_new() - the only writable shape
+     * GLib gives it. (A string that is no type string is refused by the constructor itself; the
+     * marshaller's own refusal is what PhpActionTest sees on an interface property.)
+     */
+    public function testVariantTypePropertyIsATypeString(): void
+    {
+        $action = new \Gtk4\GSimpleAction('typed', 's');
+
+        self::assertSame('s', $action->parameter_type);
+        self::assertNull($action->state_type);
+        self::assertSame('s', $action->get_property('parameter-type'));
+        self::assertSame('b', \Gtk4\GSimpleAction::new_stateful('flag', null, true)->state_type);
+
+        $sub = new class ('sub', 'as') extends \Gtk4\GSimpleAction {
+            // a PHP subtype: the constructor arguments travel as construct properties
+        };
+        self::assertSame('as', $sub->parameter_type);
+    }
 }

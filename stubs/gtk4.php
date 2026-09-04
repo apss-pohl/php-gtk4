@@ -2845,6 +2845,26 @@ class GApplication extends GObject implements GActionGroup, GActionMap
     {
     }
     /**
+     * Native `after_emit` (ApplicationClass.after_emit): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_after_emit()` from an override. invoked on the primary instance
+     * after 'activate', 'open', 'command-line' or any action invocation, gets the 'platform data'
+     * from the calling instance
+     */
+    public function vfunc_after_emit(mixed $platform_data = null): void
+    {
+        unset($platform_data);
+    }
+    /**
+     * Native `before_emit` (ApplicationClass.before_emit): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_before_emit()` from an override. invoked on the primary
+     * instance before 'activate', 'open', 'command-line' or any action invocation, gets the
+     * 'platform data' from the calling instance
+     */
+    public function vfunc_before_emit(mixed $platform_data = null): void
+    {
+        unset($platform_data);
+    }
+    /**
      * Native `name_lost` (ApplicationClass.name_lost): the GTK implementation below any PHP
      * subclass, for `parent::vfunc_name_lost()` from an override. invoked when another instance is
      * taking over the name. Since: 2.60
@@ -3395,9 +3415,25 @@ class GMenuModel extends GObject
         return null;
     }
     /**
+     * Native `get_item_attribute_value` (MenuModelClass.get_item_attribute_value): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_get_item_attribute_value()` from
+     * an override. Queries the item at position $item_index in $model for the attribute specified
+     * by $attribute. GMenuModel itself cannot be subclassed (its constructor is private); override
+     * this from a PHP subclass of `GMenu`, which fills the slot natively.
+     */
+    public function vfunc_get_item_attribute_value(int $item_index, string $attribute, ?string $expected_type): mixed
+    {
+        unset($item_index);
+        unset($attribute);
+        unset($expected_type);
+        return null;
+    }
+    /**
      * Native `get_item_link` (MenuModelClass.get_item_link): the GTK implementation below any PHP
      * subclass, for `parent::vfunc_get_item_link()` from an override. Queries the item at position
-     * $item_index in $model for the link specified by $link.
+     * $item_index in $model for the link specified by $link. GMenuModel itself cannot be
+     * subclassed (its constructor is private); override this from a PHP subclass of `GMenu`, which
+     * fills the slot natively.
      */
     public function vfunc_get_item_link(int $item_index, string $link): ?GMenuModel
     {
@@ -3408,7 +3444,8 @@ class GMenuModel extends GObject
     /**
      * Native `get_n_items` (MenuModelClass.get_n_items): the GTK implementation below any PHP
      * subclass, for `parent::vfunc_get_n_items()` from an override. Query the number of items in
-     * $model.
+     * $model. GMenuModel itself cannot be subclassed (its constructor is private); override this
+     * from a PHP subclass of `GMenu`, which fills the slot natively.
      */
     public function vfunc_get_n_items(): int
     {
@@ -3417,6 +3454,8 @@ class GMenuModel extends GObject
     /**
      * Native `is_mutable` (MenuModelClass.is_mutable): the GTK implementation below any PHP
      * subclass, for `parent::vfunc_is_mutable()` from an override. Queries if $model is mutable.
+     * GMenuModel itself cannot be subclassed (its constructor is private); override this from a
+     * PHP subclass of `GMenu`, which fills the slot natively.
      */
     public function vfunc_is_mutable(): bool
     {
@@ -16470,16 +16509,6 @@ class GtkWidget extends GObject
     {
         return false;
     }
-    /**
-     * Looks up the action in the action groups associated with $widget and its ancestors, and
-     * activates it.
-     */
-    public function activate_action(string $name, mixed $args = null): bool
-    {
-        unset($name);
-        unset($args);
-        return false;
-    }
     /** Activates the `default.activate` action from $widget. */
     public function activate_default(): void
     {
@@ -17207,6 +17236,23 @@ class GtkWidget extends GObject
     public function unset_state_flags(int $flags): void
     {
         unset($flags);
+    }
+    /**
+     * Looks up the action in the action groups associated with $widget and its ancestors, and
+     * activates it.
+     *
+     * $args is converted to the parameter type the action declares - a class action's
+     * (`list.activate-item` takes a `u`, `list.select-item` a `(ubb)` tuple from a list), or the
+     * type the group inserted under the name's prefix, the application window (`win.`) or the
+     * application (`app.`) declares for it - and inferred from the value only when nothing answers
+     * to the name. A value that does not fit is a TypeError, a missing required parameter a
+     * ValueError.
+     */
+    public function activate_action(string $name, mixed $args = null): bool
+    {
+        unset($name);
+        unset($args);
+        return false;
     }
     /**
      * Assign the widget its size and position inside its parent's allocation.

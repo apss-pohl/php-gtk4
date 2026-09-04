@@ -3,7 +3,9 @@
 #include "php_gtk4.h"
 #include "core/object.h"
 #include "core/gerror.h"
+#include "core/variant.h"
 #include "core/subtype.h"
+#include <array>
 
 using namespace phpgtk;
 
@@ -578,6 +580,72 @@ void vfunc_install_activate(gpointer klass) {
   G_APPLICATION_CLASS(klass)->activate = vfunc_thunk_activate;
 }
 
+// vfunc thunk: G_APPLICATION_CLASS->after_emit -> $this->vfunc_after_emit() on a PHP subclass
+void vfunc_thunk_after_emit(GApplication *self, GVariant *platform_data) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_after_emit", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->after_emit != nullptr) native->after_emit(self, platform_data);
+    return;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  if (platform_data == nullptr) {
+    ZVAL_NULL(&argv[0]);
+  } else {
+    variant_to_php(platform_data, &argv[0]);
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GApplication::vfunc_after_emit");
+}
+
+// vfunc installer: G_APPLICATION_CLASS->after_emit (called from class_init / iface_init of a PHP
+// subtype)
+void vfunc_install_after_emit(gpointer klass) {
+  G_APPLICATION_CLASS(klass)->after_emit = vfunc_thunk_after_emit;
+}
+
+// vfunc thunk: G_APPLICATION_CLASS->before_emit -> $this->vfunc_before_emit() on a PHP subclass
+void vfunc_thunk_before_emit(GApplication *self, GVariant *platform_data) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "vfunc_before_emit", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->before_emit != nullptr) native->before_emit(self, platform_data);
+    return;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  if (platform_data == nullptr) {
+    ZVAL_NULL(&argv[0]);
+  } else {
+    variant_to_php(platform_data, &argv[0]);
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GApplication::vfunc_before_emit");
+}
+
+// vfunc installer: G_APPLICATION_CLASS->before_emit (called from class_init / iface_init of a PHP
+// subtype)
+void vfunc_install_before_emit(gpointer klass) {
+  G_APPLICATION_CLASS(klass)->before_emit = vfunc_thunk_before_emit;
+}
+
 // vfunc thunk: G_APPLICATION_CLASS->name_lost -> $this->vfunc_name_lost() on a PHP subclass
 gboolean vfunc_thunk_name_lost(GApplication *self) {
   zval zself;
@@ -730,6 +798,78 @@ ZEND_METHOD(Gtk4_GApplication, vfunc_activate) {
 }
 
 /**
+ * Gtk4\GApplication::vfunc_after_emit(mixed $platform_data = null): void
+ *
+ * Native `after_emit` (ApplicationClass.after_emit): the GTK implementation below any PHP
+ * subclass, for `parent::vfunc_after_emit()` from an override. invoked on the primary instance
+ * after 'activate', 'open', 'command-line' or any action invocation, gets the 'platform data' from
+ * the calling instance
+ */
+ZEND_METHOD(Gtk4_GApplication, vfunc_after_emit) {
+  zval *platform_data = nullptr;
+  ZEND_PARSE_PARAMETERS_START(0, 1)
+  Z_PARAM_OPTIONAL
+  Z_PARAM_ZVAL(platform_data)
+  ZEND_PARSE_PARAMETERS_END();
+  GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GApplication::vfunc_after_emit(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->after_emit == nullptr) {
+    return;
+  }
+  GVariant *platform_data_v = nullptr;
+  if (platform_data != nullptr && Z_TYPE_P(platform_data) != IS_NULL) {
+    platform_data_v = php_to_variant(platform_data, nullptr);
+    if (platform_data_v == nullptr) RETURN_THROWS();
+    g_variant_ref_sink(platform_data_v);
+  }
+  klass->after_emit(self, platform_data_v);
+  if (platform_data_v != nullptr) g_variant_unref(platform_data_v);
+}
+
+/**
+ * Gtk4\GApplication::vfunc_before_emit(mixed $platform_data = null): void
+ *
+ * Native `before_emit` (ApplicationClass.before_emit): the GTK implementation below any PHP
+ * subclass, for `parent::vfunc_before_emit()` from an override. invoked on the primary instance
+ * before 'activate', 'open', 'command-line' or any action invocation, gets the 'platform data'
+ * from the calling instance
+ */
+ZEND_METHOD(Gtk4_GApplication, vfunc_before_emit) {
+  zval *platform_data = nullptr;
+  ZEND_PARSE_PARAMETERS_START(0, 1)
+  Z_PARAM_OPTIONAL
+  Z_PARAM_ZVAL(platform_data)
+  ZEND_PARSE_PARAMETERS_END();
+  GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GApplication::vfunc_before_emit(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->before_emit == nullptr) {
+    return;
+  }
+  GVariant *platform_data_v = nullptr;
+  if (platform_data != nullptr && Z_TYPE_P(platform_data) != IS_NULL) {
+    platform_data_v = php_to_variant(platform_data, nullptr);
+    if (platform_data_v == nullptr) RETURN_THROWS();
+    g_variant_ref_sink(platform_data_v);
+  }
+  klass->before_emit(self, platform_data_v);
+  if (platform_data_v != nullptr) g_variant_unref(platform_data_v);
+}
+
+/**
  * Gtk4\GApplication::vfunc_name_lost(): bool
  *
  * Native `name_lost` (ApplicationClass.name_lost): the GTK implementation below any PHP subclass,
@@ -854,6 +994,8 @@ ZEND_METHOD(Gtk4_GApplication, vfunc_startup) {
 // MINIT: the vfunc thunks of GApplication (core/subtype.h).
 void register_vfuncs_GApplication() {
   register_vfunc(G_TYPE_APPLICATION, "activate", vfunc_install_activate);
+  register_vfunc(G_TYPE_APPLICATION, "after_emit", vfunc_install_after_emit);
+  register_vfunc(G_TYPE_APPLICATION, "before_emit", vfunc_install_before_emit);
   register_vfunc(G_TYPE_APPLICATION, "name_lost", vfunc_install_name_lost);
   register_vfunc(G_TYPE_APPLICATION, "quit_mainloop", vfunc_install_quit_mainloop);
   register_vfunc(G_TYPE_APPLICATION, "run_mainloop", vfunc_install_run_mainloop);

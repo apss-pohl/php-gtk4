@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: a626cf3011f343722b04bb729e37daa1a17f6294 */
+ * Stub hash: 105fa01d077ee03cb56e1b3a5397b256f0ebc474 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_change_state, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
@@ -277,6 +277,12 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GApplication_vfunc_activate arginfo_class_Gtk4_GApplication_activate
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GApplication_vfunc_after_emit, 0, 0, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, platform_data, IS_MIXED, 0, "null")
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GApplication_vfunc_before_emit arginfo_class_Gtk4_GApplication_vfunc_after_emit
+
 #define arginfo_class_Gtk4_GApplication_vfunc_name_lost arginfo_class_Gtk4_GAction_get_enabled
 
 #define arginfo_class_Gtk4_GApplication_vfunc_quit_mainloop arginfo_class_Gtk4_GApplication_activate
@@ -511,6 +517,8 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GMenuModel_get_item_li
 	ZEND_ARG_TYPE_INFO(0, link, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+#define arginfo_class_Gtk4_GMenuModel_vfunc_get_item_attribute_value arginfo_class_Gtk4_GMenuModel_get_item_attribute_value
+
 #define arginfo_class_Gtk4_GMenuModel_vfunc_get_item_link arginfo_class_Gtk4_GMenuModel_get_item_link
 
 #define arginfo_class_Gtk4_GMenuModel_vfunc_get_n_items arginfo_class_Gtk4_GApplication_get_flags
@@ -658,6 +666,8 @@ ZEND_METHOD(Gtk4_GApplication, get_dbus_object_path);
 ZEND_METHOD(Gtk4_GApplication, get_is_remote);
 ZEND_METHOD(Gtk4_GApplication, run);
 ZEND_METHOD(Gtk4_GApplication, vfunc_activate);
+ZEND_METHOD(Gtk4_GApplication, vfunc_after_emit);
+ZEND_METHOD(Gtk4_GApplication, vfunc_before_emit);
 ZEND_METHOD(Gtk4_GApplication, vfunc_name_lost);
 ZEND_METHOD(Gtk4_GApplication, vfunc_quit_mainloop);
 ZEND_METHOD(Gtk4_GApplication, vfunc_run_mainloop);
@@ -719,6 +729,7 @@ ZEND_METHOD(Gtk4_GMenuModel, is_mutable);
 ZEND_METHOD(Gtk4_GMenuModel, items_changed);
 ZEND_METHOD(Gtk4_GMenuModel, get_item_attribute_value);
 ZEND_METHOD(Gtk4_GMenuModel, get_item_link);
+ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_item_attribute_value);
 ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_item_link);
 ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_n_items);
 ZEND_METHOD(Gtk4_GMenuModel, vfunc_is_mutable);
@@ -875,6 +886,8 @@ static const zend_function_entry class_Gtk4_GApplication_methods[] = {
 	ZEND_RAW_FENTRY("lookup_action", zim_Gtk4_GActionMap_lookup_action, arginfo_class_Gtk4_GApplication_lookup_action, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("remove_action", zim_Gtk4_GActionMap_remove_action, arginfo_class_Gtk4_GApplication_remove_action, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_ME(Gtk4_GApplication, vfunc_activate, arginfo_class_Gtk4_GApplication_vfunc_activate, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GApplication, vfunc_after_emit, arginfo_class_Gtk4_GApplication_vfunc_after_emit, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GApplication, vfunc_before_emit, arginfo_class_Gtk4_GApplication_vfunc_before_emit, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, vfunc_name_lost, arginfo_class_Gtk4_GApplication_vfunc_name_lost, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, vfunc_quit_mainloop, arginfo_class_Gtk4_GApplication_vfunc_quit_mainloop, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, vfunc_run_mainloop, arginfo_class_Gtk4_GApplication_vfunc_run_mainloop, ZEND_ACC_PUBLIC)
@@ -984,6 +997,7 @@ static const zend_function_entry class_Gtk4_GMenuModel_methods[] = {
 	ZEND_ME(Gtk4_GMenuModel, items_changed, arginfo_class_Gtk4_GMenuModel_items_changed, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMenuModel, get_item_attribute_value, arginfo_class_Gtk4_GMenuModel_get_item_attribute_value, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMenuModel, get_item_link, arginfo_class_Gtk4_GMenuModel_get_item_link, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuModel, vfunc_get_item_attribute_value, arginfo_class_Gtk4_GMenuModel_vfunc_get_item_attribute_value, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMenuModel, vfunc_get_item_link, arginfo_class_Gtk4_GMenuModel_vfunc_get_item_link, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMenuModel, vfunc_get_n_items, arginfo_class_Gtk4_GMenuModel_vfunc_get_n_items, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMenuModel, vfunc_is_mutable, arginfo_class_Gtk4_GMenuModel_vfunc_is_mutable, ZEND_ACC_PUBLIC)

@@ -3,6 +3,7 @@
 #include "error.h"
 #include "globals.h"
 #include "diagnostics.h"
+#include "marshal.h"
 #include "object.h"
 
 #include <algorithm>
@@ -74,12 +75,17 @@ std::vector<GType> php_interfaces(zend_class_entry *ce) {
   for (uint32_t i = 0; i < ce->num_interfaces; i++) {
     const GType it = gtype_for_class(ce->interfaces[i]);
     if (it == 0 || G_TYPE_IS_INTERFACE(it) == FALSE) continue;
-    for (const Vfunc &vf : iface_vfuncs()) {
-      if (vf.owner == it) {
-        out.push_back(it);
-        break;
-      }
+    // an interface PHP can implement: one with slots php-gtk4 thunks, or with properties
+    // (GtkOrientable has only `orientation`) that override_interface_properties() backs
+    if (std::ranges::any_of(iface_vfuncs(), [it](const Vfunc &vf) { return vf.owner == it; })) {
+      out.push_back(it);
+      continue;
     }
+    gpointer iface = g_type_default_interface_ref(it);
+    guint n_props = 0;
+    g_free(static_cast<gpointer>(g_object_interface_list_properties(iface, &n_props)));
+    g_type_default_interface_unref(iface);
+    if (n_props > 0) out.push_back(it);
   }
   std::vector<std::pair<long, GType>> ranked;  // how many of the others it requires, then itself
   ranked.reserve(out.size());
@@ -160,6 +166,103 @@ void warn_about_unbound_vfuncs(zend_class_entry *ce, GType type) {
   ZEND_HASH_FOREACH_END();
 }
 
+// The PHP method a property of an interface the class implements maps to: GAction's
+// `state-type` is answered by get_state_type() and GtkOrientable's `orientation` set by
+// set_orientation() - the interface declares the accessor next to the property.
+std::string property_accessor(const char *prefix, const char *property) {
+  std::string method = prefix;
+  for (const char *c = property; *c != '\0'; c++) method += *c == '-' ? '_' : *c;
+  return method;
+}
+
+// The accessor to call for an interface property, with the handle as `self` (owned): nullptr
+// without a handle (mid-construction, after shutdown - the property keeps its default, like a
+// vfunc chains to nothing) or, with a diagnostic, when the class has no such method.
+zend_function *property_accessor_of(GObject *obj, const std::string &method, GParamSpec *pspec,
+                                    zval *self) {
+  Object *handle = object_handle(obj);
+  if (handle == nullptr) return nullptr;
+  auto *fn = static_cast<zend_function *>(
+      zend_hash_str_find_ptr(&handle->std.ce->function_table, method.c_str(), method.size()));
+  if (fn == nullptr) {
+    diagnostic("php-gtk4: %s has no %s() to back the property '%s' of %s",
+               ZSTR_VAL(handle->std.ce->name), method.c_str(), pspec->name,
+               g_type_name(pspec->owner_type));
+    return nullptr;
+  }
+  ZVAL_OBJ_COPY(self, &handle->std);
+  return fn;
+}
+
+// GObjectClass.get_property for the properties of the interfaces a PHP class implements: what
+// the PHP getter of the same name answers, converted like a property write (core/marshal).
+void iface_get_property(GObject *obj, guint /*id*/, GValue *value, GParamSpec *pspec) {
+  const std::string method = property_accessor("get_", pspec->name);
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? property_accessor_of(obj, method, pspec, &zself) : nullptr;
+  if (fn == nullptr) return;
+  const std::string origin = std::string(ZSTR_VAL(Z_OBJCE(zself)->name)) + "::" + method;
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    GValue converted = G_VALUE_INIT;
+    if (to_gvalue(&ret, G_VALUE_TYPE(value), &converted)) {
+      g_value_copy(&converted, value);
+      g_value_unset(&converted);
+    }
+  }
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception(origin.c_str());
+}
+
+// GObjectClass.set_property for the same properties: the PHP setter of the same name gets the
+// value as PHP data (core/marshal).
+void iface_set_property(GObject *obj, guint /*id*/, const GValue *value, GParamSpec *pspec) {
+  const std::string method = property_accessor("set_", pspec->name);
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? property_accessor_of(obj, method, pspec, &zself) : nullptr;
+  if (fn == nullptr) return;
+  const std::string origin = std::string(ZSTR_VAL(Z_OBJCE(zself)->name)) + "::" + method;
+  zval arg;
+  to_php(value, &arg);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  if (EG(exception) == nullptr) zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, &arg);
+  zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception(origin.c_str());
+}
+
+// class_init: the properties of every interface the PHP class adds (GAction's name/state/...,
+// GtkOrientable's orientation). GObject requires an implementation to override each of them -
+// it warns about every one it does not find - and routes them to the class' own
+// get_property/set_property, which here are the PHP accessors of the same name.
+void override_interface_properties(GObjectClass *oc, GType type) {
+  // installed before the first override (GObject asserts that), and inert without one: a
+  // parent's property keeps dispatching to the parent's class
+  oc->get_property = iface_get_property;
+  oc->set_property = iface_set_property;
+  guint n_ifaces = 0;
+  GType *ifaces = g_type_interfaces(type, &n_ifaces);
+  guint next_id = 1;
+  for (guint i = 0; i < n_ifaces; i++) {
+    if (g_type_is_a(g_type_parent(type), ifaces[i]) == TRUE) continue;  // the parent's: inherited
+    gpointer iface = g_type_default_interface_ref(ifaces[i]);
+    guint n_props = 0;
+    GParamSpec **props = g_object_interface_list_properties(iface, &n_props);
+    for (guint p = 0; p < n_props; p++)
+      g_object_class_override_property(oc, next_id++, props[p]->name);
+    g_free(static_cast<gpointer>(props));
+    g_type_default_interface_unref(iface);
+  }
+  g_free(ifaces);
+}
+
 // GTypeClassInit: install a thunk for every vfunc the PHP class defines as vfunc_<name>().
 void class_init(gpointer klass, gpointer class_data) {
   const auto *name = static_cast<const std::string *>(class_data);
@@ -179,6 +282,7 @@ void class_init(gpointer klass, gpointer class_data) {
         zend_hash_str_find_ptr(&ce->function_table, method.c_str(), method.size()));
     if (fn != nullptr && fn->type == ZEND_USER_FUNCTION) vf.install(klass);
   }
+  override_interface_properties(G_OBJECT_CLASS(klass), type);
   warn_about_unbound_vfuncs(ce, type);
 }
 
@@ -347,6 +451,37 @@ gpointer subtype_native_class(GObject *obj) {
   GType type = G_OBJECT_TYPE(obj);
   while (is_php_type(type)) type = g_type_parent(type);
   return g_type_class_peek(type);
+}
+
+// qdata key of the borrowed value slot `slot` keeps (interned once per slot name).
+static GQuark keep_quark(const char *slot) {
+  return g_quark_from_string((std::string("php-gtk4-keep-") + slot).c_str());
+}
+
+// Thunks returning a borrowed `const char *`: the instance's copy of PHP's answer.
+const char *subtype_keep_string(GObject *obj, const char *slot, const char *value) {
+  const GQuark q = keep_quark(slot);
+  auto *kept = static_cast<char *>(g_object_get_qdata(obj, q));
+  if (kept != nullptr && std::strcmp(kept, value) == 0) return kept;
+  kept = g_strdup(value);
+  g_object_set_qdata_full(obj, q, kept, g_free);
+  return kept;
+}
+
+// Thunks returning a borrowed `const GVariantType *`: the instance's copy of PHP's answer.
+const GVariantType *subtype_keep_variant_type(GObject *obj, const char *origin, const char *slot,
+                                              const char *value) {
+  if (g_variant_type_string_is_valid(value) == FALSE) {
+    zend_type_error("%s(): Return value must be a valid GVariant type string, \"%s\" returned",
+                    origin, value);
+    return nullptr;
+  }
+  const GQuark q = keep_quark(slot);
+  auto *kept = static_cast<GVariantType *>(g_object_get_qdata(obj, q));
+  if (kept != nullptr && g_variant_type_equal(kept, value) == TRUE) return kept;
+  kept = g_variant_type_new(value);
+  g_object_set_qdata_full(obj, q, kept, reinterpret_cast<GDestroyNotify>(g_variant_type_free));
+  return kept;
 }
 
 // wrap(): the PHP class behind a PHP GType in this request (no autoload), or nullptr.

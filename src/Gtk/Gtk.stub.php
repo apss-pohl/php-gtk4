@@ -8681,12 +8681,6 @@ class GtkWidget extends GObject
      */
     public function activate(): bool {}
 
-    /**
-     * Looks up the action in the action groups associated with $widget and its ancestors, and
-     * activates it.
-     */
-    public function activate_action(string $name, mixed $args = null): bool {}
-
     /** Activates the `default.activate` action from $widget. */
     public function activate_default(): void {}
 
@@ -9134,6 +9128,19 @@ class GtkWidget extends GObject
 
     /** Turns off flag values for the current widget state. */
     public function unset_state_flags(int $flags): void {}
+
+    /**
+     * Looks up the action in the action groups associated with $widget and its ancestors, and
+     * activates it.
+     *
+     * $args is converted to the parameter type the action declares - a class action's
+     * (`list.activate-item` takes a `u`, `list.select-item` a `(ubb)` tuple from a list), or the
+     * type the group inserted under the name's prefix, the application window (`win.`) or the
+     * application (`app.`) declares for it - and inferred from the value only when nothing answers
+     * to the name. A value that does not fit is a TypeError, a missing required parameter a
+     * ValueError.
+     */
+    public function activate_action(string $name, mixed $args = null): bool {}
 
     /**
      * Assign the widget its size and position inside its parent's allocation.

@@ -1,13 +1,16 @@
 // The GtkBuilderScope that resolves a <signal handler="..."> to a PHP callable.
 //
 // GTK 4 replaced gtk_builder_connect_signals() with GtkBuilderScope, and the default
-// implementation (GtkBuilderCScope) looks a handler up as a C symbol - so every .ui document with
-// a <signal> element failed with "No function named `on_click`". This scope answers from the array
-// GtkBuilder::set_handlers() was given and delegates the rest of the interface (resolving
-// class="GtkLabel" to a GType) to a GtkBuilderCScope it owns: GtkBuilderCScope is a final type, so
-// composition is the only way to keep GTK's own resolution.
+// implementation (GtkBuilderCScope) looks a handler up as a C symbol in the whole process - with
+// it, a .ui document could name `abort` or any other exported function and have it called with a
+// widget as its argument. So every builder gets this scope from its constructor on: a handler
+// resolves from the array GtkBuilder::set_handlers() was given and from nothing else; the rest of
+// the interface (resolving class="GtkLabel" to a GType) is delegated to a GtkBuilderCScope it owns,
+// GtkBuilderCScope being a final type. The closures it hands GTK are tracked for RSHUTDOWN like
+// connect()'s, so a .ui-connected handler never runs once Zend is gone.
 #include "core/callback.h"
 #include "core/gsignal.h"
+#include "core/teardown.h"
 
 namespace {
 
@@ -41,15 +44,18 @@ GType scope_type_from_function(GtkBuilderScope *self, GtkBuilder *builder, const
   return c_iface(scope)->get_type_from_function(scope->c, builder, name);
 }
 
-// GtkBuilderScopeInterface.create_closure: the handler array first, GTK's C lookup after.
-GClosure *scope_create_closure(GtkBuilderScope *self, GtkBuilder *builder, const char *name,
+// GtkBuilderScopeInterface.create_closure: the handler array, and nothing else - never the C
+// scope, whose lookup would turn a handler name in the document into a call of any C symbol.
+GClosure *scope_create_closure(GtkBuilderScope *self, GtkBuilder * /*builder*/, const char *name,
                                GtkBuilderClosureFlags flags, GObject *object, GError **error) {
   auto *scope = reinterpret_cast<PhpBuilderScope *>(self);
   zval *handler = Z_TYPE(scope->handlers) == IS_ARRAY
                       ? zend_hash_str_find(Z_ARRVAL(scope->handlers), name, strlen(name))
                       : nullptr;
-  if (handler == nullptr) {  // not ours: let the C scope report it in GTK's own words
-    return c_iface(scope)->create_closure(scope->c, builder, name, flags, object, error);
+  if (handler == nullptr) {
+    g_set_error(error, GTK_BUILDER_ERROR, GTK_BUILDER_ERROR_INVALID_FUNCTION,
+                "No handler named '%s' was given to GtkBuilder::set_handlers()", name);
+    return nullptr;
   }
   // swapped="yes" and object="..." rebind what the handler runs on; a PHP callable is already
   // bound (a closure captures with `use`), so honouring either would be a lie.
@@ -64,7 +70,9 @@ GClosure *scope_create_closure(GtkBuilderScope *self, GtkBuilder *builder, const
   zend_string *origin = zend_string_init(name, strlen(name), false);
   GClosure *closure = phpgtk::php_closure_new(handler, origin);
   zend_string_release(origin);
-
+  // GTK connects it and keeps the handler id to itself: tracked by the closure alone, which
+  // teardown invalidates (that disconnects it) instead of disconnecting by id.
+  phpgtk::teardown_track_closure(closure, nullptr, 0);
   return closure;
 }
 
@@ -125,6 +133,27 @@ GType php_builder_scope_type() {
     g_once_init_leave(&once, type);
   }
   return static_cast<GType>(once);
+}
+
+// The PHP scope on `builder`, installed if the builder does not have one yet (a constructor, or
+// set_scope(null)), with `handlers` (may be nullptr: no handler resolves) as its array.
+void install_php_scope(GtkBuilder *builder, zval *handlers) {
+  GtkBuilderScope *current = gtk_builder_get_scope(builder);
+  PhpBuilderScope *scope = nullptr;
+  if (current != nullptr && G_OBJECT_TYPE(current) == php_builder_scope_type()) {
+    scope = reinterpret_cast<PhpBuilderScope *>(current);
+    if (Z_TYPE(scope->handlers) != IS_UNDEF) {
+      zval old;
+      ZVAL_COPY_VALUE(&old, &scope->handlers);
+      ZVAL_UNDEF(&scope->handlers);
+      zval_ptr_dtor(&old);
+    }
+  } else {
+    scope = reinterpret_cast<PhpBuilderScope *>(g_object_new(php_builder_scope_type(), nullptr));
+    gtk_builder_set_scope(builder, GTK_BUILDER_SCOPE(scope));
+    g_object_unref(scope);  // the builder holds it now
+  }
+  if (handlers != nullptr) ZVAL_COPY(&scope->handlers, handlers);
 }
 
 }  // namespace

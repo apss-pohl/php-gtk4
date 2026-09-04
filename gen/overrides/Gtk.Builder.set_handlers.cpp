@@ -3,9 +3,11 @@
  * Resolve every `<signal handler="name">` in what is parsed next against $handlers.
  *
  * GTK 4 connects the signals of a .ui document while parsing it and asks its GtkBuilderScope for
- * each handler, so this has to be called *before* `add_from_string()`/`add_from_file()`; a handler
- * a later call does not find still fails the way GTK words it. `swapped="yes"` and `object="..."`
- * are refused for a PHP handler - a closure already carries what it captured with `use`.
+ * each handler, so this has to be called *before* `add_from_string()`/`add_from_file()`. A
+ * handler name the array does not have is a `GError` from the parse - it is never looked up as
+ * a C function the way GTK's own scope would, so a document cannot name what it may call.
+ * `swapped="yes"` and `object="..."` are refused for a PHP handler - a closure already carries
+ * what it captured with `use`.
  */
 ZEND_METHOD(Gtk4_GtkBuilder, set_handlers) {
   zval *handlers;
@@ -29,8 +31,5 @@ ZEND_METHOD(Gtk4_GtkBuilder, set_handlers) {
   }
   ZEND_HASH_FOREACH_END();
 
-  auto *scope = reinterpret_cast<PhpBuilderScope *>(g_object_new(php_builder_scope_type(), nullptr));
-  ZVAL_COPY(&scope->handlers, handlers);
-  gtk_builder_set_scope(self, GTK_BUILDER_SCOPE(scope));
-  g_object_unref(scope);  // the builder holds it now
+  install_php_scope(self, handlers);
 }

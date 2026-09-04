@@ -50,7 +50,9 @@ final class VfuncTest extends GtkTestCase
         GtkSorter::class => ['vfunc_get_order'],
         GtkAdjustment::class => ['vfunc_changed', 'vfunc_value_changed'],
         GtkApplication::class => [],
-        GApplication::class => [],
+        // before/after_emit frame a *remote* activation (the D-Bus path) and nothing local
+        // reaches them; on GApplication itself the slots are empty, so the native call is a no-op
+        GApplication::class => ['vfunc_before_emit', 'vfunc_after_emit'],
     ];
 
     /**
@@ -79,7 +81,8 @@ final class VfuncTest extends GtkTestCase
             $params = [];
             $args = [];
             foreach ($m->getParameters() as $p) {
-                $params[] = self::typeDecl((string) $p->getType()) . ' $' . $p->getName();
+                $params[] = self::typeDecl((string) $p->getType()) . ' $' . $p->getName()
+                    . ($p->isDefaultValueAvailable() ? ' = ' . var_export($p->getDefaultValue(), true) : '');
                 $args[] = '$' . $p->getName();
             }
             $ret = (string) $m->getReturnType();
@@ -101,7 +104,7 @@ final class VfuncTest extends GtkTestCase
     private static function typeDecl(string $type): string
     {
         $bare = ltrim($type, '?');
-        if (in_array($bare, ['void', 'bool', 'int', 'float', 'string', 'array'], true)) {
+        if (in_array($bare, ['void', 'bool', 'int', 'float', 'string', 'array', 'mixed'], true)) {
             return $type;
         }
         return (str_starts_with($type, '?') ? '?' : '') . '\\' . $bare;

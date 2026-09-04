@@ -85,6 +85,16 @@ GClosure *php_closure_new(zval *callable, zend_string *origin) {
   return &pc->closure;
 }
 
+// RSHUTDOWN: the callable goes now, the GClosure shell whenever its last holder drops it.
+void php_closure_release(GClosure *closure) {
+  auto *pc = reinterpret_cast<PhpClosure *>(closure);
+  if (Z_ISUNDEF(pc->callable)) return;
+  zval callable;
+  ZVAL_COPY_VALUE(&callable, &pc->callable);
+  ZVAL_UNDEF(&pc->callable);
+  zval_ptr_dtor(&callable);
+}
+
 // Shared body of GObject::connect() / connect_after().
 void signal_connect_method(INTERNAL_FUNCTION_PARAMETERS, bool after) {
   zend_string *signal;
@@ -148,6 +158,27 @@ void signal_emit_method(INTERNAL_FUNCTION_PARAMETERS) {
   if (query.n_params != argc) {
     zend_argument_count_error("signal '%s' takes %u argument(s), %u given", ZSTR_VAL(signal),
                               query.n_params, argc);
+    RETURN_THROWS();
+  }
+
+  // A signal whose class handler takes (text, length) - GtkTextBuffer::insert-text,
+  // GtkEditable::insert-text - reads `length` bytes of `text` without looking: the methods bound
+  // that pair (check_text_len) and so does emit(), or a length past the string was a heap
+  // over-read inside GTK's own handler.
+  for (uint32_t i = 1; i < argc; i++) {
+    const GType prev = G_TYPE_FUNDAMENTAL(query.param_types[i - 1] & ~G_SIGNAL_TYPE_STATIC_SCOPE);
+    const GType cur = G_TYPE_FUNDAMENTAL(query.param_types[i] & ~G_SIGNAL_TYPE_STATIC_SCOPE);
+    const bool int_after_string =
+        prev == G_TYPE_STRING && (cur == G_TYPE_INT || cur == G_TYPE_LONG || cur == G_TYPE_INT64);
+    if (!int_after_string || Z_TYPE(args[i - 1]) != IS_STRING || Z_TYPE(args[i]) != IS_LONG)
+      continue;
+    const auto size = static_cast<zend_long>(Z_STRLEN(args[i - 1]));
+    const zend_long len = Z_LVAL(args[i]);
+    if (len == -1 || (len >= 0 && len <= size)) continue;
+    zend_argument_value_error(i + 2,
+                              "must be -1 or between 0 and the byte length of the string before "
+                              "it (" ZEND_LONG_FMT ")",
+                              size);
     RETURN_THROWS();
   }
 

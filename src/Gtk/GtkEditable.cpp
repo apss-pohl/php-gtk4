@@ -493,6 +493,36 @@ void vfunc_install_get_selection_bounds(gpointer klass) {
       vfunc_thunk_get_selection_bounds;
 }
 
+// vfunc thunk: static_cast<GtkEditableInterface *>->get_text -> $this->get_text() on a PHP subclass
+const char *vfunc_thunk_get_text(GtkEditable *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "get_text", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return nullptr;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  const char *result = nullptr;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    if (Z_TYPE(ret) == IS_STRING) {
+      result = subtype_keep_string(G_OBJECT(self), "get_text", Z_STRVAL(ret));
+    }
+  }
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkEditable::get_text");
+  return result;
+}
+
+// vfunc installer: static_cast<GtkEditableInterface *>->get_text (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_get_text(gpointer klass) {
+  static_cast<GtkEditableInterface *>(klass)->get_text = vfunc_thunk_get_text;
+}
+
 // vfunc thunk: static_cast<GtkEditableInterface *>->set_selection_bounds ->
 // $this->set_selection_bounds() on a PHP subclass
 void vfunc_thunk_set_selection_bounds(GtkEditable *self, int start_pos, int end_pos) {
@@ -534,6 +564,7 @@ void register_vfuncs_GtkEditable() {
   register_iface_vfunc(GTK_TYPE_EDITABLE, "get_delegate", vfunc_install_get_delegate);
   register_iface_vfunc(GTK_TYPE_EDITABLE, "get_selection_bounds",
                        vfunc_install_get_selection_bounds);
+  register_iface_vfunc(GTK_TYPE_EDITABLE, "get_text", vfunc_install_get_text);
   register_iface_vfunc(GTK_TYPE_EDITABLE, "set_selection_bounds",
                        vfunc_install_set_selection_bounds);
 }

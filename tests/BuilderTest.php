@@ -97,11 +97,11 @@ final class BuilderTest extends GtkTestCase
         self::assertSame(['click', 'click'], $seen);
     }
 
-    public function testAnUnknownHandlerIsReportedTheWayGtkWordsIt(): void
+    public function testAnUnknownHandlerIsAParseError(): void
     {
         $builder = new GtkBuilder();
         $builder->set_handlers(['something_else' => fn() => null]);
-        $this->expectExceptionMessage('No function named `on_click`');
+        $this->expectExceptionMessage("No handler named 'on_click' was given to GtkBuilder::set_handlers()");
         $builder->add_from_string(self::UI);
     }
 
@@ -109,8 +109,36 @@ final class BuilderTest extends GtkTestCase
     {
         // GTK connects while parsing, so a scope installed afterwards is too late to help.
         $builder = new GtkBuilder();
-        $this->expectExceptionMessage('No function named `on_click`');
+        $this->expectExceptionMessage("No handler named 'on_click'");
         $builder->add_from_string(self::UI);
+    }
+
+    /**
+     * GTK's own scope resolves a handler name as a C symbol of the whole process, so a document
+     * could name `abort` (or anything else exported) and have it called with the widget as its
+     * argument. Every builder gets php-gtk4's scope from its constructor on: a name resolves
+     * from set_handlers() or not at all.
+     */
+    public function testADocumentCannotNameACFunction(): void
+    {
+        $builder = new GtkBuilder();
+        $builder->set_handlers(['on_click' => fn() => null]);
+        $this->expectExceptionMessage("No handler named 'abort'");
+        $builder->add_from_string(str_replace('handler="on_click"', 'handler="abort"', self::UI));
+    }
+
+    /** A handler connected by the document is disconnected at shutdown like connect()'s. */
+    public function testDocumentHandlersAreTornDownWithTheRequest(): void
+    {
+        $builder = new GtkBuilder();
+        $builder->set_handlers(['on_click' => fn() => null]);
+        $builder->add_from_string(self::UI);
+
+        self::assertInstanceOf(GtkButton::class, $builder->get_object('btn'));
+        // the real assertion is tests/scripts/shutdown.php, which keeps such a widget alive into
+        // RSHUTDOWN; here: setting handlers twice replaces the array, it does not stack scopes
+        $builder->set_handlers(['on_click' => fn() => null]);
+        self::assertTrue($builder->get_scope() === $builder->get_scope());
     }
 
     public function testSwappedIsRefusedForAPhpHandler(): void

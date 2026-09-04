@@ -5,6 +5,7 @@
 #include "core/variant.h"
 #include "core/subtype.h"
 #include "core/error.h"
+#include <array>
 
 using namespace phpgtk;
 
@@ -148,6 +149,69 @@ ZEND_METHOD(Gtk4_GAction, activate) {
 // vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
 namespace {
 
+// vfunc thunk: static_cast<GActionInterface *>->activate -> $this->activate() on a PHP subclass
+void vfunc_thunk_activate(GAction *self, GVariant *parameter) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "activate", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  if (parameter == nullptr) {
+    ZVAL_NULL(&argv[0]);
+  } else {
+    variant_to_php(parameter, &argv[0]);
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GAction::activate");
+}
+
+// vfunc installer: static_cast<GActionInterface *>->activate (called from class_init / iface_init
+// of a PHP subtype)
+void vfunc_install_activate(gpointer klass) {
+  static_cast<GActionInterface *>(klass)->activate = vfunc_thunk_activate;
+}
+
+// vfunc thunk: static_cast<GActionInterface *>->change_state -> $this->change_state() on a PHP
+// subclass
+void vfunc_thunk_change_state(GAction *self, GVariant *value) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "change_state", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return;
+  }
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  if (value == nullptr) {
+    ZVAL_NULL(&argv[0]);
+  } else {
+    variant_to_php(value, &argv[0]);
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GAction::change_state");
+}
+
+// vfunc installer: static_cast<GActionInterface *>->change_state (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_change_state(gpointer klass) {
+  static_cast<GActionInterface *>(klass)->change_state = vfunc_thunk_change_state;
+}
+
 // vfunc thunk: static_cast<GActionInterface *>->get_enabled -> $this->get_enabled() on a PHP
 // subclass
 gboolean vfunc_thunk_get_enabled(GAction *self) {
@@ -177,11 +241,176 @@ void vfunc_install_get_enabled(gpointer klass) {
   static_cast<GActionInterface *>(klass)->get_enabled = vfunc_thunk_get_enabled;
 }
 
+// vfunc thunk: static_cast<GActionInterface *>->get_name -> $this->get_name() on a PHP subclass
+const gchar *vfunc_thunk_get_name(GAction *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "get_name", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return nullptr;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  const char *result = nullptr;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    if (Z_TYPE(ret) == IS_STRING) {
+      result = subtype_keep_string(G_OBJECT(self), "get_name", Z_STRVAL(ret));
+    }
+  }
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GAction::get_name");
+  return result;
+}
+
+// vfunc installer: static_cast<GActionInterface *>->get_name (called from class_init / iface_init
+// of a PHP subtype)
+void vfunc_install_get_name(gpointer klass) {
+  static_cast<GActionInterface *>(klass)->get_name = vfunc_thunk_get_name;
+}
+
+// vfunc thunk: static_cast<GActionInterface *>->get_parameter_type -> $this->get_parameter_type()
+// on a PHP subclass
+const GVariantType *vfunc_thunk_get_parameter_type(GAction *self) {
+  zval zself;
+  zend_function *fn = EG(exception) == nullptr
+                          ? subtype_vfunc(G_OBJECT(self), "get_parameter_type", &zself)
+                          : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return nullptr;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  const GVariantType *result = nullptr;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    if (Z_TYPE(ret) == IS_STRING) {
+      result = subtype_keep_variant_type(G_OBJECT(self), "GAction::get_parameter_type",
+                                         "get_parameter_type", Z_STRVAL(ret));
+    }
+  }
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GAction::get_parameter_type");
+  return result;
+}
+
+// vfunc installer: static_cast<GActionInterface *>->get_parameter_type (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_get_parameter_type(gpointer klass) {
+  static_cast<GActionInterface *>(klass)->get_parameter_type = vfunc_thunk_get_parameter_type;
+}
+
+// vfunc thunk: static_cast<GActionInterface *>->get_state -> $this->get_state() on a PHP subclass
+GVariant *vfunc_thunk_get_state(GAction *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "get_state", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return nullptr;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  GVariant *result = nullptr;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    if (Z_TYPE(ret) != IS_NULL) {
+      result = php_to_variant(&ret, g_action_get_state_type(G_ACTION(self)));
+      if (result != nullptr) g_variant_ref_sink(result);  // transfer full
+    }
+  }
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GAction::get_state");
+  return result;
+}
+
+// vfunc installer: static_cast<GActionInterface *>->get_state (called from class_init / iface_init
+// of a PHP subtype)
+void vfunc_install_get_state(gpointer klass) {
+  static_cast<GActionInterface *>(klass)->get_state = vfunc_thunk_get_state;
+}
+
+// vfunc thunk: static_cast<GActionInterface *>->get_state_hint -> $this->get_state_hint() on a PHP
+// subclass
+GVariant *vfunc_thunk_get_state_hint(GAction *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "get_state_hint", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return nullptr;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  GVariant *result = nullptr;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    if (Z_TYPE(ret) != IS_NULL) {
+      result = php_to_variant(&ret, nullptr);
+      if (result != nullptr) g_variant_ref_sink(result);  // transfer full
+    }
+  }
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GAction::get_state_hint");
+  return result;
+}
+
+// vfunc installer: static_cast<GActionInterface *>->get_state_hint (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_get_state_hint(gpointer klass) {
+  static_cast<GActionInterface *>(klass)->get_state_hint = vfunc_thunk_get_state_hint;
+}
+
+// vfunc thunk: static_cast<GActionInterface *>->get_state_type -> $this->get_state_type() on a PHP
+// subclass
+const GVariantType *vfunc_thunk_get_state_type(GAction *self) {
+  zval zself;
+  zend_function *fn =
+      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "get_state_type", &zself) : nullptr;
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+    // an interface implemented in PHP has no native implementation below it
+    return nullptr;
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  const GVariantType *result = nullptr;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    if (Z_TYPE(ret) == IS_STRING) {
+      result = subtype_keep_variant_type(G_OBJECT(self), "GAction::get_state_type",
+                                         "get_state_type", Z_STRVAL(ret));
+    }
+  }
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GAction::get_state_type");
+  return result;
+}
+
+// vfunc installer: static_cast<GActionInterface *>->get_state_type (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_get_state_type(gpointer klass) {
+  static_cast<GActionInterface *>(klass)->get_state_type = vfunc_thunk_get_state_type;
+}
+
 }  // namespace
 
 // MINIT: the vfunc thunks of GAction (core/subtype.h).
 void register_vfuncs_GAction() {
+  register_iface_vfunc(G_TYPE_ACTION, "activate", vfunc_install_activate);
+  register_iface_vfunc(G_TYPE_ACTION, "change_state", vfunc_install_change_state);
   register_iface_vfunc(G_TYPE_ACTION, "get_enabled", vfunc_install_get_enabled);
+  register_iface_vfunc(G_TYPE_ACTION, "get_name", vfunc_install_get_name);
+  register_iface_vfunc(G_TYPE_ACTION, "get_parameter_type", vfunc_install_get_parameter_type);
+  register_iface_vfunc(G_TYPE_ACTION, "get_state", vfunc_install_get_state);
+  register_iface_vfunc(G_TYPE_ACTION, "get_state_hint", vfunc_install_get_state_hint);
+  register_iface_vfunc(G_TYPE_ACTION, "get_state_type", vfunc_install_get_state_type);
 }
 
 /**

@@ -10,6 +10,8 @@
 
 namespace phpgtk {
 
+// `instance`/`handler_id` are what connect() got back; nullptr/0 for a closure GTK connected
+// itself (a GtkBuilder <signal>), which teardown invalidates instead of disconnecting by id.
 void teardown_track_closure(GClosure *closure, GObject *instance, gulong handler_id);
 void teardown_untrack_closure(GClosure *closure);
 void teardown_track_source(guint source_id);

@@ -481,6 +481,22 @@ class GApplication extends GObject implements GActionGroup, GActionMap
     public function vfunc_activate(): void {}
 
     /**
+     * Native `after_emit` (ApplicationClass.after_emit): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_after_emit()` from an override. invoked on the primary instance
+     * after 'activate', 'open', 'command-line' or any action invocation, gets the 'platform data'
+     * from the calling instance
+     */
+    public function vfunc_after_emit(mixed $platform_data = null): void {}
+
+    /**
+     * Native `before_emit` (ApplicationClass.before_emit): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_before_emit()` from an override. invoked on the primary
+     * instance before 'activate', 'open', 'command-line' or any action invocation, gets the
+     * 'platform data' from the calling instance
+     */
+    public function vfunc_before_emit(mixed $platform_data = null): void {}
+
+    /**
      * Native `name_lost` (ApplicationClass.name_lost): the GTK implementation below any PHP
      * subclass, for `parent::vfunc_name_lost()` from an override. invoked when another instance is
      * taking over the name. Since: 2.60
@@ -886,22 +902,36 @@ class GMenuModel extends GObject
     public function get_item_link(int $item_index, string $link): ?GMenuModel {}
 
     /**
+     * Native `get_item_attribute_value` (MenuModelClass.get_item_attribute_value): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_get_item_attribute_value()` from
+     * an override. Queries the item at position $item_index in $model for the attribute specified
+     * by $attribute. GMenuModel itself cannot be subclassed (its constructor is private); override
+     * this from a PHP subclass of `GMenu`, which fills the slot natively.
+     */
+    public function vfunc_get_item_attribute_value(int $item_index, string $attribute, ?string $expected_type): mixed {}
+
+    /**
      * Native `get_item_link` (MenuModelClass.get_item_link): the GTK implementation below any PHP
      * subclass, for `parent::vfunc_get_item_link()` from an override. Queries the item at position
-     * $item_index in $model for the link specified by $link.
+     * $item_index in $model for the link specified by $link. GMenuModel itself cannot be
+     * subclassed (its constructor is private); override this from a PHP subclass of `GMenu`, which
+     * fills the slot natively.
      */
     public function vfunc_get_item_link(int $item_index, string $link): ?GMenuModel {}
 
     /**
      * Native `get_n_items` (MenuModelClass.get_n_items): the GTK implementation below any PHP
      * subclass, for `parent::vfunc_get_n_items()` from an override. Query the number of items in
-     * $model.
+     * $model. GMenuModel itself cannot be subclassed (its constructor is private); override this
+     * from a PHP subclass of `GMenu`, which fills the slot natively.
      */
     public function vfunc_get_n_items(): int {}
 
     /**
      * Native `is_mutable` (MenuModelClass.is_mutable): the GTK implementation below any PHP
      * subclass, for `parent::vfunc_is_mutable()` from an override. Queries if $model is mutable.
+     * GMenuModel itself cannot be subclassed (its constructor is private); override this from a
+     * PHP subclass of `GMenu`, which fills the slot natively.
      */
     public function vfunc_is_mutable(): bool {}
 }

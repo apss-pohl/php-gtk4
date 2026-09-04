@@ -19,11 +19,11 @@ ZEND_METHOD(Gtk4_GtkWidget, insert_action_group) {
     if (group_o == nullptr) RETURN_THROWS();
     // GTK reads the group's action list the moment it is inserted, and walks the result
     // without checking it: a group that answers NULL there is a SIGSEGV inside the action
-    // muxer, not a warning. Two groups PHP can build do exactly that - an unregistered
-    // GApplication (g_action_group_list_actions() is a g_return_val_if_fail until `startup`)
-    // and a PHP class implementing GActionGroup (php-gtk4 binds no list_actions slot for it,
-    // so the interface's function pointer stays NULL and calling it crashes on its own).
-    // Both are the handle being in the wrong state for the call: a LogicException.
+    // muxer, not a warning. One group PHP can build does exactly that - an unregistered
+    // GApplication (g_action_group_list_actions() is a g_return_val_if_fail until `startup`).
+    // The handle is in the wrong state for the call: a LogicException. (A PHP class
+    // implementing GActionGroup always answers: its list_actions slot is a thunk that yields
+    // an empty list rather than NULL when PHP cannot be asked.)
     // NOLINTNEXTLINE(bugprone-assignment-in-if-condition) G_IS_APPLICATION() macro expansion
     if (G_IS_APPLICATION(group_o) && g_application_get_is_registered(G_APPLICATION(group_o)) == FALSE) {
       zend_throw_exception_ex(spl_ce_LogicException, 0,
@@ -32,14 +32,9 @@ ZEND_METHOD(Gtk4_GtkWidget, insert_action_group) {
                               ZSTR_VAL(EX(func)->common.function_name));
       RETURN_THROWS();
     }
-    if (G_ACTION_GROUP_GET_IFACE(G_ACTION_GROUP(group_o))->list_actions == nullptr) {
-      zend_throw_exception_ex(spl_ce_LogicException, 0,
-                              "%s(): the action group cannot list its actions, which GTK reads "
-                              "when the group is inserted",
-                              ZSTR_VAL(EX(func)->common.function_name));
-      RETURN_THROWS();
-    }
   }
   gtk_widget_insert_action_group(self, ZSTR_VAL(name),
                                  group_o != nullptr ? G_ACTION_GROUP(group_o) : nullptr);
+  // for activate_action(): the type a `name.action` parameter converts to (class prelude)
+  remember_inserted_group(self, ZSTR_VAL(name), group_o != nullptr ? G_ACTION_GROUP(group_o) : nullptr);
 }

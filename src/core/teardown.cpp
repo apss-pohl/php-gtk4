@@ -3,6 +3,7 @@
 #include "callback.h"
 #include "error.h"
 #include "globals.h"
+#include "gsignal.h"
 #include "object.h"
 
 #include <unordered_map>
@@ -67,7 +68,15 @@ void teardown_request() {
   while (!closures().empty()) {
     const auto [closure, h] = *closures().begin();
     closures().erase(closure);  // in case the disconnect does not finalize it right away
-    if (g_signal_handler_is_connected(h.instance, h.id)) {
+    if (h.instance == nullptr) {
+      // Connected by GTK itself (a GtkBuilder <signal>): no handler id, so invalidating the
+      // closure is the disconnect, and the callable is released here rather than in a finalize
+      // that may only come after Zend is gone.
+      g_closure_ref(closure);
+      g_closure_invalidate(closure);
+      php_closure_release(closure);
+      g_closure_unref(closure);
+    } else if (g_signal_handler_is_connected(h.instance, h.id)) {
       g_signal_handler_disconnect(h.instance, h.id);
     }
   }

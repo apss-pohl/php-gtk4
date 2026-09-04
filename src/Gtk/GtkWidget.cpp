@@ -12,6 +12,92 @@
 
 using namespace phpgtk;
 
+// Action-group bookkeeping for activate_action(): the groups insert_action_group() put on a
+// widget, by prefix, so the parameter of a `prefix.action` can be converted to the type the
+// group declares for it - the GTK action muxer that resolves such names is private API.
+#include <cstring>
+#include <string>
+
+namespace {
+
+// qdata key of a widget's inserted groups: GHashTable prefix -> GActionGroup (a ref of ours;
+// the muxer holds its own).
+GQuark inserted_groups_quark() {
+  static GQuark q = g_quark_from_static_string("php-gtk4-inserted-action-groups");
+  return q;
+}
+
+// insert_action_group(): remember the group under `prefix`, or forget it (group == nullptr).
+void remember_inserted_group(GtkWidget *widget, const char *prefix, GActionGroup *group) {
+  auto *groups =
+      static_cast<GHashTable *>(g_object_get_qdata(G_OBJECT(widget), inserted_groups_quark()));
+  if (groups == nullptr) {
+    if (group == nullptr) return;
+    groups = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
+    g_object_set_qdata_full(G_OBJECT(widget), inserted_groups_quark(), groups,
+                            reinterpret_cast<GDestroyNotify>(g_hash_table_unref));
+  }
+  if (group == nullptr) {
+    g_hash_table_remove(groups, prefix);
+  } else {
+    g_hash_table_insert(groups, g_strdup(prefix), g_object_ref(group));
+  }
+}
+
+// The parameter type of `action` in `group`; nullptr when the group has no such action.
+const GVariantType *group_parameter_type(GActionGroup *group, const char *action) {
+  if (g_action_group_has_action(group, action) == FALSE) return nullptr;
+  return g_action_group_get_action_parameter_type(group, action);
+}
+
+// The parameter type `name` expects when activated on `widget`, resolved the way GTK's action
+// muxer resolves the name: the class actions of the widget and of every ancestor
+// (gtk_widget_class_query_action), a group inserted under the name's prefix on any of them,
+// and at a window the application window itself ("win.") and its registered application
+// ("app."). nullptr when nothing answers to the name: the value is then converted by inference
+// and GTK reports the unknown action as it always did.
+const GVariantType *widget_action_parameter_type(GtkWidget *widget, const char *name) {
+  const char *dot = std::strchr(name, '.');
+  const std::string prefix = dot != nullptr ? std::string(name, dot - name) : std::string();
+  const char *unprefixed = dot != nullptr ? dot + 1 : nullptr;
+  for (GtkWidget *w = widget; w != nullptr; w = gtk_widget_get_parent(w)) {
+    GtkWidgetClass *klass = GTK_WIDGET_GET_CLASS(w);
+    for (guint i = 0;; i++) {
+      GType owner = 0;
+      const char *action_name = nullptr;
+      const GVariantType *parameter_type = nullptr;
+      const char *property_name = nullptr;
+      if (gtk_widget_class_query_action(klass, i, &owner, &action_name, &parameter_type,
+                                        &property_name) == FALSE) {
+        break;
+      }
+      if (std::strcmp(action_name, name) == 0) return parameter_type;
+    }
+    if (unprefixed == nullptr) continue;
+    if (auto *groups =
+            static_cast<GHashTable *>(g_object_get_qdata(G_OBJECT(w), inserted_groups_quark()))) {
+      if (auto *group = static_cast<GActionGroup *>(g_hash_table_lookup(groups, prefix.c_str()))) {
+        return group_parameter_type(group, unprefixed);
+      }
+    }
+    // NOLINTNEXTLINE(bugprone-assignment-in-if-condition) GTK_IS_WINDOW() macro expansion
+    if (!GTK_IS_WINDOW(w)) continue;
+    // NOLINTNEXTLINE(bugprone-assignment-in-if-condition) G_IS_ACTION_GROUP() macro expansion
+    if (prefix == "win" && G_IS_ACTION_GROUP(w)) {
+      return group_parameter_type(G_ACTION_GROUP(w), unprefixed);
+    }
+    if (prefix == "app") {
+      GtkApplication *app = gtk_window_get_application(GTK_WINDOW(w));
+      if (app != nullptr && g_application_get_is_registered(G_APPLICATION(app)) == TRUE) {
+        return group_parameter_type(G_ACTION_GROUP(app), unprefixed);
+      }
+    }
+  }
+  return nullptr;
+}
+
+}  // namespace
+
 /**
  * Gtk4\GtkWidget::__construct()
  *
@@ -81,33 +167,6 @@ ZEND_METHOD(Gtk4_GtkWidget, activate) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
   RETURN_BOOL(gtk_widget_activate(self));
-}
-
-/**
- * Gtk4\GtkWidget::activate_action(string $name, mixed $args = null): bool
- *
- * Looks up the action in the action groups associated with $widget and its ancestors, and
- * activates it.
- */
-ZEND_METHOD(Gtk4_GtkWidget, activate_action) {
-  zend_string *name;
-  zval *args = nullptr;
-  ZEND_PARSE_PARAMETERS_START(1, 2)
-  Z_PARAM_STR(name)
-  Z_PARAM_OPTIONAL
-  Z_PARAM_ZVAL(args)
-  ZEND_PARSE_PARAMETERS_END();
-  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
-  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
-  GVariant *args_v = nullptr;
-  if (args != nullptr && Z_TYPE_P(args) != IS_NULL) {
-    args_v = php_to_variant(args, nullptr);
-    if (args_v == nullptr) RETURN_THROWS();
-    g_variant_ref_sink(args_v);
-  }
-  gboolean call_result = gtk_widget_activate_action_variant(self, ZSTR_VAL(name), args_v);
-  if (args_v != nullptr) g_variant_unref(args_v);
-  RETURN_BOOL(call_result);
 }
 
 /**
@@ -1969,6 +2028,46 @@ ZEND_METHOD(Gtk4_GtkWidget, unset_state_flags) {
 }
 
 /**
+ * public function activate_action(string $name, mixed $args = null): bool
+ * Looks up the action in the action groups associated with $widget and its ancestors, and
+ * activates it.
+ *
+ * $args is converted to the parameter type the action declares - a class action's
+ * (`list.activate-item` takes a `u`, `list.select-item` a `(ubb)` tuple from a list), or the
+ * type the group inserted under the name's prefix, the application window (`win.`) or the
+ * application (`app.`) declares for it - and inferred from the value only when nothing answers
+ * to the name. A value that does not fit is a TypeError, a missing required parameter a
+ * ValueError.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, activate_action) {
+  zend_string *name;
+  zval *args = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 2)
+  Z_PARAM_STR(name)
+  Z_PARAM_OPTIONAL
+  Z_PARAM_ZVAL(args)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
+  const GVariantType *type = widget_action_parameter_type(self, ZSTR_VAL(name));
+  const bool null_given = args == nullptr || Z_TYPE_P(args) == IS_NULL;
+  if (type != nullptr && null_given && g_variant_type_is_maybe(type) == FALSE) {
+    zend_argument_value_error(2, "is required: action '%s' takes a parameter of type %s",
+                              ZSTR_VAL(name), g_variant_type_peek_string(type));
+    RETURN_THROWS();
+  }
+  GVariant *args_v = nullptr;
+  if (!null_given) {
+    args_v = php_to_variant(args, type);
+    if (args_v == nullptr) RETURN_THROWS();
+    g_variant_ref_sink(args_v);
+  }
+  gboolean call_result = gtk_widget_activate_action_variant(self, ZSTR_VAL(name), args_v);
+  if (args_v != nullptr) g_variant_unref(args_v);
+  RETURN_BOOL(call_result);
+}
+
+/**
  * public function allocate(int $width, int $height, int $baseline = -1, int $x = 0, int $y = 0):
  * void Assign the widget its size and position inside its parent's allocation.
  *
@@ -2026,11 +2125,11 @@ ZEND_METHOD(Gtk4_GtkWidget, insert_action_group) {
     if (group_o == nullptr) RETURN_THROWS();
     // GTK reads the group's action list the moment it is inserted, and walks the result
     // without checking it: a group that answers NULL there is a SIGSEGV inside the action
-    // muxer, not a warning. Two groups PHP can build do exactly that - an unregistered
-    // GApplication (g_action_group_list_actions() is a g_return_val_if_fail until `startup`)
-    // and a PHP class implementing GActionGroup (php-gtk4 binds no list_actions slot for it,
-    // so the interface's function pointer stays NULL and calling it crashes on its own).
-    // Both are the handle being in the wrong state for the call: a LogicException.
+    // muxer, not a warning. One group PHP can build does exactly that - an unregistered
+    // GApplication (g_action_group_list_actions() is a g_return_val_if_fail until `startup`).
+    // The handle is in the wrong state for the call: a LogicException. (A PHP class
+    // implementing GActionGroup always answers: its list_actions slot is a thunk that yields
+    // an empty list rather than NULL when PHP cannot be asked.)
     // NOLINTNEXTLINE(bugprone-assignment-in-if-condition) G_IS_APPLICATION() macro expansion
     if (G_IS_APPLICATION(group_o) &&
         g_application_get_is_registered(G_APPLICATION(group_o)) == FALSE) {
@@ -2040,16 +2139,12 @@ ZEND_METHOD(Gtk4_GtkWidget, insert_action_group) {
                               ZSTR_VAL(EX(func)->common.function_name));
       RETURN_THROWS();
     }
-    if (G_ACTION_GROUP_GET_IFACE(G_ACTION_GROUP(group_o))->list_actions == nullptr) {
-      zend_throw_exception_ex(spl_ce_LogicException, 0,
-                              "%s(): the action group cannot list its actions, which GTK reads "
-                              "when the group is inserted",
-                              ZSTR_VAL(EX(func)->common.function_name));
-      RETURN_THROWS();
-    }
   }
   gtk_widget_insert_action_group(self, ZSTR_VAL(name),
                                  group_o != nullptr ? G_ACTION_GROUP(group_o) : nullptr);
+  // for activate_action(): the type a `name.action` parameter converts to (class prelude)
+  remember_inserted_group(self, ZSTR_VAL(name),
+                          group_o != nullptr ? G_ACTION_GROUP(group_o) : nullptr);
 }
 
 // vfunc thunks and installers: file-local, installed by class_init of a PHP subtype

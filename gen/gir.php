@@ -1610,6 +1610,7 @@ final class Generator
                 $phpRet === 'int' => ['RETURN_LONG(0);'],
                 $phpRet === 'float' => ['RETURN_DOUBLE(0);'],
                 $phpRet === 'string' => ['RETURN_EMPTY_STRING();'],
+                $phpRet === 'mixed' => ['RETURN_NULL();'],
                 $phpRet === 'array' => ['array_init_size(return_value, ' . count($outs) . ');',
                     ...array_map(
                         fn($o) => ($o['kind'] === 'bool' ? 'add_next_index_bool' : ($o['kind'] === 'double'
@@ -1701,7 +1702,12 @@ final class Generator
             $argIndex++;
         }
         $argc = $argIndex;
-        [$resultDecl, $resultConv, $resultRet] = $this->typeMap->zvalToC($v, $outs);
+        [$resultDecl, $resultConv, $resultRet] = $this->typeMap->zvalToC(
+            $v,
+            $outs,
+            $n->qname() . '.' . $v->name,
+            "$php::$phpName",
+        );
         if ($resultDecl === null) {
             return null;
         }

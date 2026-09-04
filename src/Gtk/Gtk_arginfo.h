@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 384e99517c31a843963ddc71cdcc13edf8d7a9bc */
+ * Stub hash: 9273eef4729ffca87a0ba81b0c46b8be809c42f3 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -5193,11 +5193,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkWidget_activate arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWidget_activate_action, 0, 1, _IS_BOOL, 0)
-	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, args, IS_MIXED, 0, "null")
-ZEND_END_ARG_INFO()
-
 #define arginfo_class_Gtk4_GtkWidget_activate_default arginfo_class_Gtk4_GtkAboutDialog_realize
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWidget_add_controller, 0, 1, IS_VOID, 0)
@@ -5555,6 +5550,11 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GtkWidget_unrealize arginfo_class_Gtk4_GtkAboutDialog_realize
 
 #define arginfo_class_Gtk4_GtkWidget_unset_state_flags arginfo_class_Gtk4_GtkEventControllerScroll_set_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWidget_activate_action, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, args, IS_MIXED, 0, "null")
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWidget_allocate, 0, 2, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, width, IS_LONG, 0)
@@ -7379,7 +7379,6 @@ ZEND_METHOD(Gtk4_GtkWidget, get_default_direction);
 ZEND_METHOD(Gtk4_GtkWidget, set_default_direction);
 ZEND_METHOD(Gtk4_GtkWidget, action_set_enabled);
 ZEND_METHOD(Gtk4_GtkWidget, activate);
-ZEND_METHOD(Gtk4_GtkWidget, activate_action);
 ZEND_METHOD(Gtk4_GtkWidget, activate_default);
 ZEND_METHOD(Gtk4_GtkWidget, add_controller);
 ZEND_METHOD(Gtk4_GtkWidget, add_css_class);
@@ -7513,6 +7512,7 @@ ZEND_METHOD(Gtk4_GtkWidget, unmap);
 ZEND_METHOD(Gtk4_GtkWidget, unparent);
 ZEND_METHOD(Gtk4_GtkWidget, unrealize);
 ZEND_METHOD(Gtk4_GtkWidget, unset_state_flags);
+ZEND_METHOD(Gtk4_GtkWidget, activate_action);
 ZEND_METHOD(Gtk4_GtkWidget, allocate);
 ZEND_METHOD(Gtk4_GtkWidget, insert_action_group);
 ZEND_METHOD(Gtk4_GtkWidget, vfunc_contains);
@@ -9982,7 +9982,6 @@ static const zend_function_entry class_Gtk4_GtkWidget_methods[] = {
 	ZEND_ME(Gtk4_GtkWidget, set_default_direction, arginfo_class_Gtk4_GtkWidget_set_default_direction, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GtkWidget, action_set_enabled, arginfo_class_Gtk4_GtkWidget_action_set_enabled, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, activate, arginfo_class_Gtk4_GtkWidget_activate, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GtkWidget, activate_action, arginfo_class_Gtk4_GtkWidget_activate_action, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, activate_default, arginfo_class_Gtk4_GtkWidget_activate_default, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, add_controller, arginfo_class_Gtk4_GtkWidget_add_controller, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, add_css_class, arginfo_class_Gtk4_GtkWidget_add_css_class, ZEND_ACC_PUBLIC)
@@ -10116,6 +10115,7 @@ static const zend_function_entry class_Gtk4_GtkWidget_methods[] = {
 	ZEND_ME(Gtk4_GtkWidget, unparent, arginfo_class_Gtk4_GtkWidget_unparent, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, unrealize, arginfo_class_Gtk4_GtkWidget_unrealize, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, unset_state_flags, arginfo_class_Gtk4_GtkWidget_unset_state_flags, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkWidget, activate_action, arginfo_class_Gtk4_GtkWidget_activate_action, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, allocate, arginfo_class_Gtk4_GtkWidget_allocate, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, insert_action_group, arginfo_class_Gtk4_GtkWidget_insert_action_group, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, vfunc_contains, arginfo_class_Gtk4_GtkWidget_vfunc_contains, ZEND_ACC_PUBLIC)
