@@ -317,9 +317,10 @@ display, and calls `Gtk::init()` once.
   **`tests/robustness-criticals.txt`** instead, which pins the `<class>::<method>#<sweep>` keys
   GTK is known to complain about (`#arguments` / `#values` for the two sweeps) and fails on an
   unlisted complaint or a line that has gone quiet — a review surface, not a suppression file
-  (`tests/README-robustness-pin.md`). The `fatal` mode and the mode switching are asserted in
-  **`tests/phpt/`** (`diagnostics-fatal.phpt`, `diagnostics-modes.phpt`), where run-tests.php can
-  compare a whole process's output and an `E_ERROR` may end it. `tests/run.sh` sets
+  (`tests/README-robustness-pin.md`). The `fatal` and `stderr` modes and the mode switching are
+  asserted in **`tests/phpt/`** (`diagnostics-fatal.phpt`, `diagnostics-modes.phpt`,
+  `diagnostics-stderr.phpt`), where run-tests.php can compare a whole process's output — stderr
+  included — and an `E_ERROR` may end it. `tests/run.sh` sets
   `GSK_RENDERER=cairo` so GTK does not try EGL under Xvfb.
 - `tests/phpt/` (`make test` / `./ci.sh --only=phpt`, see `tests/phpt/README.md`): one process per
   test, expected output covers stdout **and** stderr. Put a test here only for what PHPUnit cannot

@@ -76,6 +76,48 @@ final class MarshalTest extends GtkTestCase
         new \Gtk4\GtkLabel()->set_property('attributes', 'x');
     }
 
+    /**
+     * G_TYPE_GTYPE: GListStore:item-type is the only GType-valued property PHP can reach.
+     * It comes back as the numeric GType, which is what the marshaller has to offer - there
+     * is no PHP class for a GType itself.
+     */
+    public function testGTypePropertyReadsAsAnInt(): void
+    {
+        $store = new \Gtk4\GListStore(\Gtk4\PhpValue::class);
+        $type = $store->get_property('item-type');
+        self::assertIsInt($type);
+        self::assertGreaterThan(0, $type);
+        self::assertSame($type, $store->item_type, 'the property handler agrees with get_property()');
+    }
+
+    /**
+     * G_TYPE_VARIANT, both ways: core/variant converts on the way in and on the way back out,
+     * so a stateful action's state is a plain PHP value at the property boundary.
+     */
+    public function testVariantPropertyRoundTrip(): void
+    {
+        $action = \Gtk4\GSimpleAction::new_stateful('mode', null, 'hello');
+        self::assertSame('hello', $action->get_property('state'));
+
+        $action->set_property('state', 'world');
+        self::assertSame('world', $action->get_property('state'));
+        self::assertSame('world', $action->state, 'the property handler agrees with get_property()');
+    }
+
+    /**
+     * A boxed type with a bound class travels in a GValue as itself: GtkPopover:pointing-to is
+     * a GdkRectangle in and a GdkRectangle out, not an array and not an opaque handle.
+     */
+    public function testBoxedPropertyRoundTrip(): void
+    {
+        $popover = new \Gtk4\GtkPopover();
+        $popover->set_property('pointing-to', new \Gtk4\GdkRectangle(1, 2, 3, 4));
+
+        $got = $popover->get_property('pointing-to');
+        self::assertInstanceOf(\Gtk4\GdkRectangle::class, $got);
+        self::assertSame([1, 2, 3, 4], [$got->x, $got->y, $got->width, $got->height]);
+    }
+
     public function testStringCoercion(): void
     {
         $w = $this->window();

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 5ce1d633c3255dbb1532c7436497b0fca2f7354d */
+ * Stub hash: 384e99517c31a843963ddc71cdcc13edf8d7a9bc */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -1495,11 +1495,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkEntry_vfunc_activate arginfo_class_Gtk4_GtkAboutDialog_realize
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkEntryBuffer___construct, 0, 0, 2)
-	ZEND_ARG_TYPE_INFO(0, initial_chars, IS_STRING, 1)
-	ZEND_ARG_TYPE_INFO(0, n_initial_chars, IS_LONG, 0)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkEntryBuffer_delete_text, 0, 2, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, position, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, n_chars, IS_LONG, 0)
@@ -1537,6 +1532,11 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkEntryBuffer_set_text, 0, 2, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, chars, IS_STRING, 0)
 	ZEND_ARG_TYPE_INFO(0, n_chars, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkEntryBuffer___construct, 0, 0, 2)
+	ZEND_ARG_TYPE_INFO(0, initial_chars, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, n_initial_chars, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkEntryBuffer_vfunc_delete_text arginfo_class_Gtk4_GtkEntryBuffer_delete_text
@@ -5373,11 +5373,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkWidget_init_template arginfo_class_Gtk4_GtkAboutDialog_realize
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWidget_insert_action_group, 0, 2, IS_VOID, 0)
-	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
-	ZEND_ARG_OBJ_INFO(0, group, Gtk4\\GActionGroup, 1)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWidget_insert_after, 0, 2, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, parent, Gtk4\\GtkWidget, 0)
 	ZEND_ARG_OBJ_INFO(0, previous_sibling, Gtk4\\GtkWidget, 1)
@@ -5567,6 +5562,11 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWidget_allocate, 0
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, baseline, IS_LONG, 0, "-1")
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, x, IS_LONG, 0, "0")
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, y, IS_LONG, 0, "0")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkWidget_insert_action_group, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, group, Gtk4\\GActionGroup, 1)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkWidget_vfunc_contains arginfo_class_Gtk4_GtkWidget_contains
@@ -6232,7 +6232,6 @@ ZEND_METHOD(Gtk4_GtkEntry, set_visibility);
 ZEND_METHOD(Gtk4_GtkEntry, unset_invisible_char);
 ZEND_METHOD(Gtk4_GtkEntry, grab_focus_without_selecting);
 ZEND_METHOD(Gtk4_GtkEntry, vfunc_activate);
-ZEND_METHOD(Gtk4_GtkEntryBuffer, __construct);
 ZEND_METHOD(Gtk4_GtkEntryBuffer, delete_text);
 ZEND_METHOD(Gtk4_GtkEntryBuffer, emit_deleted_text);
 ZEND_METHOD(Gtk4_GtkEntryBuffer, emit_inserted_text);
@@ -6243,6 +6242,7 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, get_text);
 ZEND_METHOD(Gtk4_GtkEntryBuffer, insert_text);
 ZEND_METHOD(Gtk4_GtkEntryBuffer, set_max_length);
 ZEND_METHOD(Gtk4_GtkEntryBuffer, set_text);
+ZEND_METHOD(Gtk4_GtkEntryBuffer, __construct);
 ZEND_METHOD(Gtk4_GtkEntryBuffer, vfunc_delete_text);
 ZEND_METHOD(Gtk4_GtkEntryBuffer, vfunc_deleted_text);
 ZEND_METHOD(Gtk4_GtkEntryBuffer, vfunc_get_length);
@@ -7450,7 +7450,6 @@ ZEND_METHOD(Gtk4_GtkWidget, has_focus);
 ZEND_METHOD(Gtk4_GtkWidget, has_visible_focus);
 ZEND_METHOD(Gtk4_GtkWidget, in_destruction);
 ZEND_METHOD(Gtk4_GtkWidget, init_template);
-ZEND_METHOD(Gtk4_GtkWidget, insert_action_group);
 ZEND_METHOD(Gtk4_GtkWidget, insert_after);
 ZEND_METHOD(Gtk4_GtkWidget, insert_before);
 ZEND_METHOD(Gtk4_GtkWidget, is_ancestor);
@@ -7515,6 +7514,7 @@ ZEND_METHOD(Gtk4_GtkWidget, unparent);
 ZEND_METHOD(Gtk4_GtkWidget, unrealize);
 ZEND_METHOD(Gtk4_GtkWidget, unset_state_flags);
 ZEND_METHOD(Gtk4_GtkWidget, allocate);
+ZEND_METHOD(Gtk4_GtkWidget, insert_action_group);
 ZEND_METHOD(Gtk4_GtkWidget, vfunc_contains);
 ZEND_METHOD(Gtk4_GtkWidget, vfunc_direction_changed);
 ZEND_METHOD(Gtk4_GtkWidget, vfunc_focus);
@@ -8220,7 +8220,6 @@ static const zend_function_entry class_Gtk4_GtkEntry_methods[] = {
 };
 
 static const zend_function_entry class_Gtk4_GtkEntryBuffer_methods[] = {
-	ZEND_ME(Gtk4_GtkEntryBuffer, __construct, arginfo_class_Gtk4_GtkEntryBuffer___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntryBuffer, delete_text, arginfo_class_Gtk4_GtkEntryBuffer_delete_text, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntryBuffer, emit_deleted_text, arginfo_class_Gtk4_GtkEntryBuffer_emit_deleted_text, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntryBuffer, emit_inserted_text, arginfo_class_Gtk4_GtkEntryBuffer_emit_inserted_text, ZEND_ACC_PUBLIC)
@@ -8231,6 +8230,7 @@ static const zend_function_entry class_Gtk4_GtkEntryBuffer_methods[] = {
 	ZEND_ME(Gtk4_GtkEntryBuffer, insert_text, arginfo_class_Gtk4_GtkEntryBuffer_insert_text, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntryBuffer, set_max_length, arginfo_class_Gtk4_GtkEntryBuffer_set_max_length, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntryBuffer, set_text, arginfo_class_Gtk4_GtkEntryBuffer_set_text, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkEntryBuffer, __construct, arginfo_class_Gtk4_GtkEntryBuffer___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntryBuffer, vfunc_delete_text, arginfo_class_Gtk4_GtkEntryBuffer_vfunc_delete_text, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntryBuffer, vfunc_deleted_text, arginfo_class_Gtk4_GtkEntryBuffer_vfunc_deleted_text, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntryBuffer, vfunc_get_length, arginfo_class_Gtk4_GtkEntryBuffer_vfunc_get_length, ZEND_ACC_PUBLIC)
@@ -10053,7 +10053,6 @@ static const zend_function_entry class_Gtk4_GtkWidget_methods[] = {
 	ZEND_ME(Gtk4_GtkWidget, has_visible_focus, arginfo_class_Gtk4_GtkWidget_has_visible_focus, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, in_destruction, arginfo_class_Gtk4_GtkWidget_in_destruction, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, init_template, arginfo_class_Gtk4_GtkWidget_init_template, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GtkWidget, insert_action_group, arginfo_class_Gtk4_GtkWidget_insert_action_group, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, insert_after, arginfo_class_Gtk4_GtkWidget_insert_after, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, insert_before, arginfo_class_Gtk4_GtkWidget_insert_before, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, is_ancestor, arginfo_class_Gtk4_GtkWidget_is_ancestor, ZEND_ACC_PUBLIC)
@@ -10118,6 +10117,7 @@ static const zend_function_entry class_Gtk4_GtkWidget_methods[] = {
 	ZEND_ME(Gtk4_GtkWidget, unrealize, arginfo_class_Gtk4_GtkWidget_unrealize, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, unset_state_flags, arginfo_class_Gtk4_GtkWidget_unset_state_flags, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, allocate, arginfo_class_Gtk4_GtkWidget_allocate, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkWidget, insert_action_group, arginfo_class_Gtk4_GtkWidget_insert_action_group, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, vfunc_contains, arginfo_class_Gtk4_GtkWidget_vfunc_contains, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, vfunc_direction_changed, arginfo_class_Gtk4_GtkWidget_vfunc_direction_changed, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkWidget, vfunc_focus, arginfo_class_Gtk4_GtkWidget_vfunc_focus, ZEND_ACC_PUBLIC)

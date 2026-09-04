@@ -7199,12 +7199,6 @@ class GtkEntry extends GtkWidget implements GtkEditable
  */
 class GtkEntryBuffer extends GObject
 {
-    /** Create a new `GtkEntryBuffer` object. */
-    public function __construct(?string $initial_chars, int $n_initial_chars)
-    {
-        unset($initial_chars);
-        unset($n_initial_chars);
-    }
     /** Deletes a sequence of characters from the buffer. */
     public function delete_text(int $position, int $n_chars): int
     {
@@ -7266,6 +7260,14 @@ class GtkEntryBuffer extends GObject
     {
         unset($chars);
         unset($n_chars);
+    }
+    /**
+     * Create a new `GtkEntryBuffer` object.
+     */
+    public function __construct(?string $initial_chars, int $n_initial_chars)
+    {
+        unset($initial_chars);
+        unset($n_initial_chars);
     }
     /**
      * Native `delete_text` (EntryBufferClass.delete_text): the GTK implementation below any PHP
@@ -16870,12 +16872,6 @@ class GtkWidget extends GObject
     public function init_template(): void
     {
     }
-    /** Inserts $group into $widget. */
-    public function insert_action_group(string $name, ?GActionGroup $group): void
-    {
-        unset($name);
-        unset($group);
-    }
     /** Inserts $widget into the child widget list of $parent. */
     public function insert_after(GtkWidget $parent, ?GtkWidget $previous_sibling): void
     {
@@ -17227,6 +17223,16 @@ class GtkWidget extends GObject
         unset($baseline);
         unset($x);
         unset($y);
+    }
+    /**
+     * Inserts $group into $widget.
+     *
+     * Passing `null` removes the group inserted under $name.
+     */
+    public function insert_action_group(string $name, ?GActionGroup $group): void
+    {
+        unset($name);
+        unset($group);
     }
     /**
      * Native `contains` (WidgetClass.contains): the GTK implementation below any PHP subclass, for

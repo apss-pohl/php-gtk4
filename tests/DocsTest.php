@@ -65,6 +65,30 @@ final class DocsTest extends TestCase
     }
 
     /**
+     * The index in `tests/phpt/README.md` is the only record of why each process-level test
+     * cannot live in PHPUnit, so it names every one of them and nothing else. Three tests had
+     * been added without a row before this assertion existed.
+     */
+    public function testPhptReadmeListsEveryTest(): void
+    {
+        $md = (string) file_get_contents(self::ROOT . '/tests/phpt/README.md');
+        $table = substr($md, (int) strpos($md, 'What is here'));
+
+        $paths = glob(self::ROOT . '/tests/phpt/*.phpt');
+        self::assertNotFalse($paths, 'tests/phpt is unreadable');
+        $files = array_map(static fn(string $p): string => basename($p, '.phpt'), $paths);
+        sort($files);
+
+        // Test names are the only all-lowercase backticked words in the table; anything else it
+        // quotes carries a dot, an equals sign, a dash pair or a capital (`--INI--`, `E_ERROR`).
+        preg_match_all('/`([a-z0-9][a-z0-9-]*)`/', $table, $m);
+        $listed = array_values(array_unique($m[1]));
+        sort($listed);
+
+        self::assertSame($files, $listed, 'tests/phpt/README.md must have a row for every .phpt and no other');
+    }
+
+    /**
      * Whether git ignores $path: paths the build downloads or generates on demand
      * (gen/PHP-Parser-*, gtk4.so, ...) exist locally but never in a fresh CI
      * checkout, so documenting them is right and asserting they exist is not.

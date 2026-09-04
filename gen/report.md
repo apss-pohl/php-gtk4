@@ -358,7 +358,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkEntryBuffer
 
-- `PHP subclasses` — constructor argument initial_chars is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GtkEntryBuffer
 - `vfunc get_text` — parameter n_bytes is a pointer to a scalar without direction
 
 ## GtkEventController
@@ -716,6 +715,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.DropTarget`: __construct, get_gtypes, get_value, set_gtypes
 - `Gtk.DropTargetAsync`: get_formats
 - `Gtk.Entry`: grab_focus_without_selecting
+- `Gtk.EntryBuffer`: __construct
 - `Gtk.EventControllerKey`: get_group
 - `Gtk.FileFilter`: new_from_gvariant
 - `Gtk.Gesture`: get_bounding_box_center
@@ -730,7 +730,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.TextIter`: set_line_index, set_line_offset
 - `Gtk.TextView`: get_extra_menu
 - `Gtk.TreeListModel`: __construct
-- `Gtk.Widget`: allocate
+- `Gtk.Widget`: allocate, insert_action_group
 
 ## Emitted files
 

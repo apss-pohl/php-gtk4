@@ -50,16 +50,56 @@ void iface_init(gpointer iface, gpointer iface_data) {
   }
 }
 
-// The interfaces a PHP class declares that are registered GTK interfaces with slots.
+// Whether `it` names `other` among its prerequisites - GtkSelectionModel requires GListModel,
+// GActionMap requires GActionGroup. GLib refuses to add an interface to a type that does not
+// implement its prerequisites yet, so the one that is required has to go on first.
+bool interface_requires(GType it, GType other) {
+  guint n = 0;
+  GType *prerequisites = g_type_interface_prerequisites(it, &n);
+  bool found = false;
+  for (guint i = 0; i < n && !found; i++) found = g_type_is_a(prerequisites[i], other) == TRUE;
+  g_free(prerequisites);
+  return found;
+}
+
+// The interfaces a PHP class declares that are registered GTK interfaces with slots, ordered so
+// that every prerequisite comes before what requires it. `ce->interfaces` is in no particular
+// order, and adding GtkSelectionModel to a type that does not implement GListModel yet is a
+// GLib CRITICAL and a half-built GType.
 std::vector<GType> php_interfaces(zend_class_entry *ce) {
-  std::vector<GType> out;
+  std::vector<GType> found;
   for (uint32_t i = 0; i < ce->num_interfaces; i++) {
     const GType it = gtype_for_class(ce->interfaces[i]);
     if (it == 0 || G_TYPE_IS_INTERFACE(it) == FALSE) continue;
     for (const Vfunc &vf : iface_vfuncs()) {
       if (vf.owner == it) {
-        out.push_back(it);
+        found.push_back(it);
         break;
+      }
+    }
+  }
+
+  std::vector<GType> out;
+  out.reserve(found.size());
+  std::vector<bool> placed(found.size(), false);
+  while (out.size() < found.size()) {
+    const size_t before = out.size();
+    for (size_t i = 0; i < found.size(); i++) {
+      if (placed[i]) continue;
+      bool waiting = false;
+      for (size_t j = 0; j < found.size() && !waiting; j++) {
+        waiting = !placed[j] && j != i && interface_requires(found[i], found[j]);
+      }
+      if (waiting) continue;
+      out.push_back(found[i]);
+      placed[i] = true;
+    }
+    if (out.size() == before) {  // prerequisites cannot form a cycle; keep the rest as declared
+      for (size_t i = 0; i < found.size(); i++) {
+        if (!placed[i]) {
+          out.push_back(found[i]);
+          placed[i] = true;
+        }
       }
     }
   }
