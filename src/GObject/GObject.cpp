@@ -54,6 +54,18 @@ ZEND_METHOD(Gtk4_GObject, emit) {
 }
 
 /**
+ * Gtk4\GObject::list_signals(): array
+ *
+ * Every signal this object can emit - its class', its ancestors' and its interfaces' - keyed by
+ * name: the parameter GTypes in order (`gchararray`, `gint`, `GtkWidget`, ...), the return GType
+ * or null, whether it is an action signal (meant to be emitted by the application, `activate`,
+ * `move-cursor`) and whether it takes a detail (`notify::title`).
+ */
+ZEND_METHOD(Gtk4_GObject, list_signals) {
+  signal_list_method(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+}
+
+/**
  * Gtk4\GObject::handler_disconnect(int $handler_id): void
  *
  * Disconnect a handler previously returned by connect(). No-op if already disconnected.

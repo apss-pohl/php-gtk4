@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: cc9cb48d469ac7247551900adabb138ded2a82ec */
+ * Stub hash: 839cbaab92b1bf8c53bacc7dc71b7e22c2ce50a1 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GObject___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -18,6 +18,9 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GObject_handler_disconnect, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, handler_id, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GObject_list_signals, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GObject_get_property, 0, 1, IS_MIXED, 0)
@@ -207,8 +210,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkScrollEvent_get_direction, 0, 0, Gtk4\\GdkScrollDirection, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkScrollEvent_get_deltas, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_GdkScrollEvent_get_deltas arginfo_class_Gtk4_GObject_list_signals
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkScrollEvent_get_unit, 0, 0, Gtk4\\GdkScrollUnit, 0)
 ZEND_END_ARG_INFO()
@@ -232,18 +234,18 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkTouchpadEvent_get_n_fingers arginfo_class_Gtk4_GParamSpec_get_flags
 
-#define arginfo_class_Gtk4_GdkTouchpadEvent_get_deltas arginfo_class_Gtk4_GdkScrollEvent_get_deltas
+#define arginfo_class_Gtk4_GdkTouchpadEvent_get_deltas arginfo_class_Gtk4_GObject_list_signals
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkTouchpadEvent_get_pinch_angle_delta, 0, 0, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkTouchpadEvent_get_pinch_scale arginfo_class_Gtk4_GdkTouchpadEvent_get_pinch_angle_delta
 
-#define arginfo_class_Gtk4_GdkPadEvent_get_axis_value arginfo_class_Gtk4_GdkScrollEvent_get_deltas
+#define arginfo_class_Gtk4_GdkPadEvent_get_axis_value arginfo_class_Gtk4_GObject_list_signals
 
 #define arginfo_class_Gtk4_GdkPadEvent_get_button arginfo_class_Gtk4_GParamSpec_get_flags
 
-#define arginfo_class_Gtk4_GdkPadEvent_get_group_mode arginfo_class_Gtk4_GdkScrollEvent_get_deltas
+#define arginfo_class_Gtk4_GdkPadEvent_get_group_mode arginfo_class_Gtk4_GObject_list_signals
 
 #define arginfo_class_Gtk4_GdkGrabBrokenEvent_get_implicit arginfo_class_Gtk4_GParamSpec_is_readable
 
@@ -347,15 +349,16 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkCssSection_get_parent, 0, 0, Gtk4\\GtkCssSection, 1)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_Gtk4_GtkCssSection_get_start_location arginfo_class_Gtk4_GdkScrollEvent_get_deltas
+#define arginfo_class_Gtk4_GtkCssSection_get_start_location arginfo_class_Gtk4_GObject_list_signals
 
-#define arginfo_class_Gtk4_GtkCssSection_get_end_location arginfo_class_Gtk4_GdkScrollEvent_get_deltas
+#define arginfo_class_Gtk4_GtkCssSection_get_end_location arginfo_class_Gtk4_GObject_list_signals
 
 ZEND_METHOD(Gtk4_GObject, __construct);
 ZEND_METHOD(Gtk4_GObject, connect);
 ZEND_METHOD(Gtk4_GObject, connect_after);
 ZEND_METHOD(Gtk4_GObject, emit);
 ZEND_METHOD(Gtk4_GObject, handler_disconnect);
+ZEND_METHOD(Gtk4_GObject, list_signals);
 ZEND_METHOD(Gtk4_GObject, get_property);
 ZEND_METHOD(Gtk4_GObject, set_property);
 ZEND_METHOD(Gtk4_GParamSpec, get_name);
@@ -467,6 +470,7 @@ static const zend_function_entry class_Gtk4_GObject_methods[] = {
 	ZEND_ME(Gtk4_GObject, connect_after, arginfo_class_Gtk4_GObject_connect_after, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GObject, emit, arginfo_class_Gtk4_GObject_emit, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GObject, handler_disconnect, arginfo_class_Gtk4_GObject_handler_disconnect, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GObject, list_signals, arginfo_class_Gtk4_GObject_list_signals, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GObject, get_property, arginfo_class_Gtk4_GObject_get_property, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GObject, set_property, arginfo_class_Gtk4_GObject_set_property, ZEND_ACC_PUBLIC)
 	ZEND_FE_END

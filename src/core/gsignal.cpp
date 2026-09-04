@@ -5,6 +5,8 @@
 #include "object.h"
 #include "teardown.h"
 
+#include <vector>
+
 namespace phpgtk {
 
 struct PhpClosure {
@@ -208,6 +210,55 @@ void signal_emit_method(INTERNAL_FUNCTION_PARAMETERS) {
   }
   efree(values);
   if (EG(exception) != nullptr) RETURN_THROWS();  // Rethrow mode, or a conversion error
+}
+
+// Body of GObject::list_signals(): g_signal_list_ids() over the type chain and the interfaces.
+void signal_list_method(INTERNAL_FUNCTION_PARAMETERS) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GObject *obj = phpgtk::self_object(execute_data, G_TYPE_OBJECT, "list_signals");
+  if (obj == nullptr) RETURN_THROWS();
+  std::vector<GType> types;
+  for (GType t = G_OBJECT_TYPE(obj); t != 0; t = g_type_parent(t)) types.push_back(t);
+  guint n_ifaces = 0;
+  GType *ifaces = g_type_interfaces(G_OBJECT_TYPE(obj), &n_ifaces);
+  for (guint i = 0; i < n_ifaces; i++) types.push_back(ifaces[i]);
+  g_free(ifaces);
+  array_init(return_value);
+  for (const GType t : types) {
+    // g_signal_list_ids() wants the type's class (or default vtable) loaded; the instance's own
+    // chain is, an interface's default vtable may not be yet
+    const bool iface = G_TYPE_IS_INTERFACE(t) == TRUE;
+    gpointer klass = iface ? g_type_default_interface_ref(t) : g_type_class_ref(t);
+    guint n_ids = 0;
+    guint *ids = g_signal_list_ids(t, &n_ids);
+    for (guint i = 0; i < n_ids; i++) {
+      GSignalQuery q;
+      g_signal_query(ids[i], &q);
+      zval entry;
+      array_init(&entry);
+      zval params;
+      array_init(&params);
+      for (guint p = 0; p < q.n_params; p++) {
+        add_next_index_string(&params, g_type_name(q.param_types[p] & ~G_SIGNAL_TYPE_STATIC_SCOPE));
+      }
+      add_assoc_zval(&entry, "params", &params);
+      const GType ret = q.return_type & ~G_SIGNAL_TYPE_STATIC_SCOPE;
+      if (ret == G_TYPE_NONE) {
+        add_assoc_null(&entry, "return");
+      } else {
+        add_assoc_string(&entry, "return", g_type_name(ret));
+      }
+      add_assoc_bool(&entry, "action", (q.signal_flags & G_SIGNAL_ACTION) != 0);
+      add_assoc_bool(&entry, "detailed", (q.signal_flags & G_SIGNAL_DETAILED) != 0);
+      add_assoc_zval(return_value, q.signal_name, &entry);
+    }
+    g_free(ids);
+    if (iface) {
+      g_type_default_interface_unref(klass);
+    } else {
+      g_type_class_unref(klass);
+    }
+  }
 }
 
 }  // namespace phpgtk

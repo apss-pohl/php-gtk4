@@ -97,6 +97,16 @@ class GObject
     public function handler_disconnect(int $handler_id): void {}
 
     /**
+     * Every signal this object can emit - its class', its ancestors' and its interfaces' -
+     * keyed by name: the parameter GTypes in order (`gchararray`, `gint`, `GtkWidget`, ...),
+     * the return GType or null, whether it is an action signal (meant to be emitted by the
+     * application, `activate`, `move-cursor`) and whether it takes a detail (`notify::title`).
+     *
+     * @return array<string, array{params: list<string>, return: ?string, action: bool, detailed: bool}>
+     */
+    public function list_signals(): array {}
+
+    /**
      * Read a GObject property by name, converted to the matching PHP type.
      *
      * @throws \ValueError If the property does not exist

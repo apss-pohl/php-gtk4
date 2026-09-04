@@ -22,5 +22,7 @@ void php_closure_release(GClosure *closure);
 void signal_connect_method(INTERNAL_FUNCTION_PARAMETERS, bool after);
 // Implements emit(); parses its own arguments.
 void signal_emit_method(INTERNAL_FUNCTION_PARAMETERS);
+// Implements list_signals(); parses its own (no) arguments.
+void signal_list_method(INTERNAL_FUNCTION_PARAMETERS);
 
 }  // namespace phpgtk
