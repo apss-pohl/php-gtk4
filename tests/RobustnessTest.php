@@ -180,6 +180,77 @@ final class RobustnessTest extends GtkTestCase
     }
 
     /**
+     * Every `@property` the IDE stub declares, with its type and access - `read` for a
+     * `@property-read` tag, `write` for `@property-write`, `both` for a plain `@property`.
+     *
+     * @return iterable<string, array{class-string, string, string, string}>
+     */
+    public static function properties(): iterable
+    {
+        $stub = (string) file_get_contents(__DIR__ . '/../stubs/gtk4.php');
+        preg_match_all('#/\*\*(.*?)\*/\s*(?:final\s+)?class\s+(\w+)#s', $stub, $classes, PREG_SET_ORDER);
+        foreach ($classes as [, $doc, $short]) {
+            /** @var class-string $class */
+            $class = 'Gtk4\\' . $short;
+            preg_match_all('/@property(-read|-write)?\\s+(\\S+)\\s+\\$(\\w+)/', $doc, $tags, PREG_SET_ORDER);
+            foreach ($tags as [, $access, $type, $name]) {
+                yield "$class::\$$name" => [$class, $name, $type, $access === '' ? 'both' : ltrim($access, '-')];
+            }
+        }
+    }
+
+    /**
+     * A property write converts like the equivalent setter's parameter, so the same hostile
+     * values are refused or survived - and a read-only or construct-only property refuses every
+     * write with an Error rather than growing a dynamic property or warning from GLib.
+     *
+     * @param class-string $class
+     */
+    #[DataProvider('properties')]
+    public function testHostilePropertyWritesAreRefusedOrSurvived(
+        string $class,
+        string $name,
+        string $type,
+        string $access,
+    ): void {
+        $this->sweeping = $class . '::$' . $name . '#properties';
+        $target = $this->instance($class);
+        if ($target === null) {
+            self::markTestSkipped(self::whyNoInstance($class));
+        }
+        if ($access === 'read') {
+            try {
+                $target->$name = null;
+                self::fail("$class::\$$name is declared read-only but took a write");
+            } catch (\Error $e) {
+                self::assertStringContainsString('Cannot modify', $e->getMessage());
+            }
+            return;
+        }
+        // value, must be refused
+        $hostile = match (ltrim($type, '?')) {
+            'string' => [["a\0b", true], ["\xff\xfe", true], [5, true]],
+            'int' => [[PHP_INT_MAX, false], [PHP_INT_MIN, false], [-1, false], ['x', true]],
+            'float' => [[1e308, false], [-1e308, false], ['x', true]],
+            'bool' => [['yes', true]],
+            'array' => [[["a\0b"], true], [[[1]], true]],
+            default => [],
+        };
+        $hostile[] = [new \stdClass(), true];  // never the declared type
+        foreach ($hostile as [$bad, $mustThrow]) {
+            try {
+                $target->$name = $bad;
+                if ($mustThrow) {
+                    self::fail(sprintf('%s::$%s accepted %s', $class, $name, get_debug_type($bad)));
+                }
+            } catch (\ValueError | \TypeError | \Error | \LogicException | \Gtk4\GError) {
+                // refused, which is the point; a crash would end the process
+            }
+        }
+        $this->addToAssertionCount(1);
+    }
+
+    /**
      * The sweep target. Everything but the window comes from {@see GtkInstances}, which the
      * getter sweep shares: a class either has a live instance in both or is skipped by both.
      *

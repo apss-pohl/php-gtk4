@@ -79,3 +79,4 @@ Gtk4\GtkWidget::allocate#values
 Gtk4\GtkWidget::insert_after#arguments
 Gtk4\GtkWidget::insert_before#arguments
 Gtk4\PangoFontDescription::set_absolute_size#arguments
+Gtk4\GtkTextTag::$size_points#properties

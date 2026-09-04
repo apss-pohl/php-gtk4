@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpGtk4\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
 use ReflectionClass;
 use ReflectionEnum;
 use ReflectionExtension;
@@ -107,6 +108,47 @@ final class TypeDeclarationTest extends GtkTestCase
         // in RobustnessTest ends the same way).
         $this->addToAssertionCount(1);
         unset($checked);
+    }
+
+    /**
+     * Every `@property` the stub declares reads as the type it declares - the same promise a
+     * getter makes, and as unverified by the engine: the tag is what PHPStan believes.
+     *
+     * @param class-string $class
+     */
+    #[DataProviderExternal(RobustnessTest::class, 'properties')]
+    public function testPropertiesReadWhatTheyDeclare(string $class, string $name, string $type, string $access): void
+    {
+        $object = $this->construct(new ReflectionClass($class));
+        if ($object === null) {
+            self::markTestSkipped("$class has no instance this test can build");
+        }
+        if ($access === 'write') {   // declared write-only: a read is the Error, not a value
+            self::assertFalse(isset($object->$name));
+            $this->expectException(\Error::class);
+            $this->expectExceptionMessage('write-only');
+            self::assertNull($object->$name);   // never reached: the read throws
+        }
+        try {
+            $value = $object->$name;
+        } catch (\Throwable) {
+            $this->addToAssertionCount(1);   // refusing to answer is fine; the wrong type is not
+            return;
+        }
+        $nullable = str_starts_with($type, '?');
+        $declared = ltrim($type, '?');
+        $ok = match (true) {
+            $value === null => $nullable || $declared === 'mixed',
+            $declared === 'mixed' => true,
+            $declared === get_debug_type($value) => true,
+            $declared === 'float' && is_int($value) => true,
+            default => (class_exists('Gtk4\\' . $declared) || interface_exists('Gtk4\\' . $declared))
+                && $value instanceof ('Gtk4\\' . $declared),
+        };
+        self::assertTrue(
+            $ok,
+            sprintf('%s::$%s declares %s but reads as %s', $class, $name, $type, get_debug_type($value)),
+        );
     }
 
     /**

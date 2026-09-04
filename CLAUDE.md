@@ -74,9 +74,10 @@ phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(n
   `stubs/gtk4.php` for IDEs. Both generated files are committed; `./ci.sh --only=stubs` (and CI)
   fail if they are stale (`--fix` regenerates). **Never edit the generated files.** Adding a
   method = declare it in the stub, regenerate, implement the `ZEND_METHOD(Gtk4_Class, name)`.
-- GObject properties exposed as PHP properties are declared with `@property` tags on the class in
-  the stub (the generator will emit them from GIR); the IDE stub adds `__get/__set/__isset` to
-  `GObject` so PHPStan/IDEs honour them (`StubsTest` ignores those three).
+- GObject properties exposed as PHP properties are declared with `@property` tags on the class in the stub
+  (the generator emits them from GIR, `@property-read` / `@property-write` where GIR says the property is
+  one-way, and both sweeps hold the tag to its word); the IDE stub adds `__get/__set/__isset` to `GObject` so
+  PHPStan/IDEs honour them (`StubsTest` ignores those three).
 - **Every C++ function has a comment block directly above it.** For `ZEND_METHOD`s the block is
   generated from the stub (`php gen/method-comments.php`, run by `./ci.sh --only=stubs --fix`):
   PHP signature + first docblock paragraph — never edit those by hand, edit the stub. Helpers,
@@ -322,7 +323,8 @@ display, and calls `Gtk::init()` once.
   **`expectsGtkCritical($substring)`** — asserted both ways, so a *new* complaint in that test
   fails it and so does a declaration nothing matched. `RobustnessTest` gates itself against
   **`tests/robustness-criticals.txt`** instead, which pins the `<class>::<method>#<sweep>` keys
-  GTK is known to complain about (`#arguments` / `#values` for the two sweeps) and fails on an
+  GTK is known to complain about (`#arguments` / `#values` for the two method sweeps,
+  `<class>::$<property>#properties` for the property-write sweep) and fails on an
   unlisted complaint or a line that has gone quiet — a review surface, not a suppression file
   (`tests/README-robustness-pin.md`). The `fatal` and `stderr` modes and the mode switching are
   asserted in **`tests/phpt/`** (`diagnostics-fatal.phpt`, `diagnostics-modes.phpt`,

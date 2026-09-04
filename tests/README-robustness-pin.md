@@ -35,7 +35,8 @@ PHP_GTK4_ENV=GTK4_PIN_CRITICALS=/tmp/pin.txt ./tests/run.sh --filter RobustnessT
 sort -u /tmp/pin.txt        # merge into tests/robustness-criticals.txt, keeping the header
 ```
 
-and revert the branch. Keys are `<class>::<method>#arguments` or `#values`, one per sweep.
+and revert the branch. Keys are `<class>::<method>#arguments` or `#values` for the two method
+sweeps and `<class>::$<property>#properties` for the property-write sweep.
 
 Recording is deliberately *not* a committed switch: regenerating
 wholesale is how a real leak gets pinned by accident, so it should cost a patch and a diff you

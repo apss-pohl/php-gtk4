@@ -527,11 +527,15 @@ fixes. The interface-property routing and the `GVariant` thunks landed the same 
       then meets the toggle release inside the parent's finalize; dropping `owner` while held brings
       back the `GtkScale` gizmo use-after-free. Needs its own design and an ASan run; pin the
       current behaviour with a test first.
-- [ ] **Sweeps for what the converters now guard**: `RobustnessTest` sweeps methods only - no
-      property writes, no `emit()` arguments, no vfunc return values, no typed `GVariant`
-      conversions - and `TypeDeclarationTest` skips `@property` reads and getters with parameters.
-      Every converter finding of the review was invisible to the sweeps; `ConverterGuardTest` pins
-      the cases, a sweep would keep them closed.
+- [x] **Sweeps for what the converters now guard** (property side closed the same day: every
+      `@property` tag is now swept both ways - `RobustnessTest` writes hostile values to each
+      (`<class>::$<prop>#properties` in the pin file) and `TypeDeclarationTest` reads each against
+      its declared type, with `@property-read`/`@property-write` held to their word. The sweep found
+      the generated boxed field writers coercing under strict_types, read-only writes growing a
+      dynamic property, construct-only writes reaching GLib, write-only reads answering "undefined
+      property", and the `is-remote` read asserting before register() - all closed.) Still unswept:
+      `emit()` arguments, vfunc return values and typed `GVariant` conversions;
+      `ConverterGuardTest` pins those cases.
 - [ ] `gen/gir.php` emitters (`emitClass` 317 lines, `emitRecord` 218, `vfuncThunk` 151) still sit
       in one file exempt from three phpcs sniffs and baselined in PHPStan; split them out so the
       exclusions can shrink with the baseline. Header declarations in `src/core/*.h` carry no
