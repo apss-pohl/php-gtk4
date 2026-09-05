@@ -552,9 +552,9 @@ fixes. The interface-property routing and the `GVariant` thunks landed the same 
 - [ ] Performance, all single-digit percent: the signal marshaller re-resolves the callable and
       allocates the argument array per emission, `subtype_vfunc()` hashes the method name per call,
       the PHP-GType snapshots are O(N²) in PHP subclasses and never freed.
-- [ ] The whole-tree clang-tidy pass could not be run on the development machine for this batch
+- [x] The whole-tree clang-tidy pass could not be run on the development machine for this batch
       (killed for memory three times after the header changes); the changed TUs were linted
-      directly and are clean, CI's `cpp-lint` job is the verification.
+      directly, and CI's `cpp-lint` job passed the whole tree on 2026-09-04.
 
 ## 10. Keep (verified good, do not "clean up")
 
