@@ -1206,6 +1206,14 @@ final class Generator
                 $lines[] = '  ' . $l;
             }
         }
+        if ($f->kind === 'method' && isset(SELF_PRECONDITIONS[$f->cid])) {
+            [$predicate, $wording] = SELF_PRECONDITIONS[$f->cid];
+            $lines[] = "  if (!($predicate)) {";
+            $lines[] = '    zend_throw_exception_ex(spl_ce_LogicException, 0, "%s(): ' . $wording . '",';
+            $lines[] = '                            ZSTR_VAL(EX(func)->common.function_name));';
+            $lines[] = '    RETURN_THROWS();';
+            $lines[] = '  }';
+        }
         if ($f->kind === 'method' && isset(SELF_UNPARENTED_OR[$f->cid])) {
             $parent = SELF_UNPARENTED_OR[$f->cid] . '_o';
             $lines[] = '  if (gtk_widget_get_parent(GTK_WIDGET(self)) != nullptr &&';

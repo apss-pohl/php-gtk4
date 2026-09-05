@@ -20,10 +20,7 @@ Gtk4\GApplication::add_main_option#arguments
 Gtk4\GApplication::add_main_option#values
 Gtk4\GApplication::bind_busy_property#arguments
 Gtk4\GApplication::run#arguments
-Gtk4\GApplication::set_application_id#arguments
-Gtk4\GApplication::set_resource_base_path#arguments
 Gtk4\GApplication::unbind_busy_property#arguments
-Gtk4\GApplication::withdraw_notification#arguments
 Gtk4\GCancellable::disconnect#arguments
 Gtk4\GCancellable::disconnect#values
 Gtk4\GListStore::insert#arguments

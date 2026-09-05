@@ -149,6 +149,29 @@ const CHILD_PARAMS = [
 ];
 
 /**
+ * String parameters GLib validates with a predicate of its own, as `<C identifier>.<param>` ->
+ * [the C predicate over `%s` (the `const char *`), the ValueError's wording]. GLib asserts them
+ * with g_return_if_fail() - a CRITICAL and nothing done - so the generator emits the predicate
+ * after check_utf8(). Every line retired an entry from tests/robustness-criticals.txt.
+ */
+const PARAM_VALIDATORS = [
+    'g_application_set_application_id.application_id' => ['g_application_id_is_valid(%s)',
+        'must be a valid application id (reverse-DNS, org.example.App)'],
+    'g_application_set_resource_base_path.resource_path' => ["%s[0] == '/'",  // not g_str_has_prefix(): a macro here
+        'must be an absolute resource path'],
+];
+
+/**
+ * Methods whose object must be in a state GLib asserts with g_return_if_fail(): `<C identifier>`
+ * -> [the C predicate over `self` that has to hold, the LogicException's wording]. The handle is
+ * in the wrong state for the call (CLAUDE.md's vocabulary).
+ */
+const SELF_PRECONDITIONS = [
+    'g_application_withdraw_notification' => ['g_application_get_is_registered(self) == TRUE',
+        'the application is not registered yet - notifications exist from `startup` on'],
+];
+
+/**
  * Methods that reparent `$this`: it must have no parent yet, or the one in the named parameter -
  * GTK otherwise warns "Can't set new parent" and does nothing. `<C identifier>` -> the parameter.
  */

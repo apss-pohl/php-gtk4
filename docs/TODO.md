@@ -469,8 +469,14 @@ failed parse into a `__builtin_unreachable`. Three generator tables came with th
 `NULLABLE_RETURNS`, `NON_NULLABLE_PARAMS`, `PARAM_DOMAINS` — plus `check_enum_member()` for the six
 unbound enums that were being read as `GFlagsClass`. `tests/robustness-criticals.txt` went 158 → 77.
 
-- [ ] **The 63 remaining pin lines** (77 until 2026-09-04), classified by the message GTK actually
-      prints (the numeric family is done). Done 2026-09-04: the *widget-in-the-wrong-place* family -
+- [ ] **The 60 remaining method pin lines** (77 until 2026-09-04, 63 until 2026-09-05; the file
+      also carries six lines from the property and emission sweeps), classified by the message GTK
+      actually prints (the numeric family is done). 2026-09-05: `PARAM_VALIDATORS`
+      (an application id, a resource path) and `SELF_PRECONDITIONS` (`withdraw_notification()`
+      before registration) retired three more; what stays pinned has no public predicate -
+      `!task->ever_returned`, a text view's private center child, a busy-property name GLib
+      looks up itself, and `run()`'s complaint about a missing `activate` handler, which is
+      about the script. Done 2026-09-04: the *widget-in-the-wrong-place* family -
       `list != NULL` on the seven `GtkNotebook` child methods, `gtk_widget_get_parent(child) ==
       box` on reorder/move/attach/overlay, the sibling checks of `insert_after/before` - is
       `CHILD_PARAMS` + `SELF_UNPARENTED_OR` in `gen/gir/config.php`, emitted as a `LogicException`

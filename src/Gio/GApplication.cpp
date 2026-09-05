@@ -303,6 +303,10 @@ ZEND_METHOD(Gtk4_GApplication, set_application_id) {
   ZEND_PARSE_PARAMETERS_END();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
   if (application_id != nullptr && !phpgtk::check_utf8(application_id, 1)) RETURN_THROWS();
+  if (application_id != nullptr && !(g_application_id_is_valid(ZSTR_VAL(application_id)))) {
+    zend_argument_value_error(1, "must be a valid application id (reverse-DNS, org.example.App)");
+    RETURN_THROWS();
+  }
   g_application_set_application_id(self,
                                    application_id != nullptr ? ZSTR_VAL(application_id) : nullptr);
 }
@@ -408,6 +412,10 @@ ZEND_METHOD(Gtk4_GApplication, set_resource_base_path) {
   ZEND_PARSE_PARAMETERS_END();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
   if (resource_path != nullptr && !phpgtk::check_utf8(resource_path, 1)) RETURN_THROWS();
+  if (resource_path != nullptr && !(ZSTR_VAL(resource_path)[0] == '/')) {
+    zend_argument_value_error(1, "must be an absolute resource path");
+    RETURN_THROWS();
+  }
   g_application_set_resource_base_path(
       self, resource_path != nullptr ? ZSTR_VAL(resource_path) : nullptr);
 }
@@ -471,6 +479,13 @@ ZEND_METHOD(Gtk4_GApplication, withdraw_notification) {
   ZEND_PARSE_PARAMETERS_END();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
   if (!phpgtk::check_utf8(id, 1)) RETURN_THROWS();
+  if (!(g_application_get_is_registered(self) == TRUE)) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "%s(): the application is not registered yet - notifications exist from `startup` on",
+        ZSTR_VAL(EX(func)->common.function_name));
+    RETURN_THROWS();
+  }
   g_application_withdraw_notification(self, ZSTR_VAL(id));
 }
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use Gtk4\GApplication;
+use Gtk4\GApplicationFlags;
 use Gtk4\GdkClipboard;
 use Gtk4\GdkDisplay;
 use Gtk4\GdkTexture;
@@ -626,5 +628,33 @@ final class ArgumentGuardTest extends GtkTestCase
         $second->insert_after($box, $first);
 
         self::assertSame($second, $first->get_next_sibling());
+    }
+    // ---- GLib's own value predicates and state preconditions (PARAM_VALIDATORS / SELF_PRECONDITIONS)
+
+    public function testAnApplicationIdHasToBeValid(): void
+    {
+        $app = new GApplication(null, GApplicationFlags::NON_UNIQUE);
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('Argument #1 ($application_id) must be a valid application id');
+        $app->set_application_id('not valid!');
+    }
+
+    public function testAResourceBasePathHasToBeAbsolute(): void
+    {
+        $app = new GApplication(null, GApplicationFlags::NON_UNIQUE);
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('must be an absolute resource path');
+        $app->set_resource_base_path('relative');
+    }
+
+    public function testWithdrawingANotificationNeedsARegisteredApplication(): void
+    {
+        $app = new GApplication(null, GApplicationFlags::NON_UNIQUE);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('not registered yet');
+        $app->withdraw_notification('x');
     }
 }

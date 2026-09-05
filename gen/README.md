@@ -55,7 +55,10 @@
     parameter GIR marks nullable that the function refuses with a `g_return_if_fail()` (the
     `GAsyncReadyCallback` of `gdk_clipboard_read_async()` and friends). Dropping the `?` makes
     null an ordinary TypeError;
-  - `CHILD_PARAMS` / `SELF_UNPARENTED_OR` — widget parameters GTK requires in a place (a child of
+  - `PARAM_VALIDATORS` / `SELF_PRECONDITIONS` — a string parameter GLib validates with a predicate of
+  its own (an application id, an absolute resource path): a `ValueError` naming the argument; a
+  method whose object must be in a state (registered): a `LogicException`.
+- `CHILD_PARAMS` / `SELF_UNPARENTED_OR` — widget parameters GTK requires in a place (a child of
   `$this`, a page of the notebook, a child of another parameter; `$this` unparented or under the
   given parent): a `LogicException` naming the argument, where GTK would CRITICAL and do nothing.
 - `PARAM_DOMAINS` — `<C identifier>.<param>` -> `[min, max]` (`null` for an open end, a float

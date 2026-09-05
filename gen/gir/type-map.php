@@ -678,6 +678,17 @@ final class TypeMap
             if ($t->name === 'utf8') {
                 $guard = $nullable ? "$name != nullptr && " : '';
                 $utf8Check = ["if ({$guard}!phpgtk::check_utf8($name, $argNum)) RETURN_THROWS();"];
+                // GLib's own predicate for the value (PARAM_VALIDATORS): a ValueError naming the
+                // argument, where GLib would g_return_if_fail() and do nothing
+                $validator = PARAM_VALIDATORS[$cid . '.' . $name] ?? null;
+                if ($validator !== null) {
+                    [$predicate, $wording] = $validator;
+                    $test = sprintf($predicate, "ZSTR_VAL($name)");
+                    $utf8Check[] = "if ({$guard}!($test)) {";
+                    $utf8Check[] = "  zend_argument_value_error($argNum, \"$wording\");";
+                    $utf8Check[] = '  RETURN_THROWS();';
+                    $utf8Check[] = '}';
+                }
             }
             // A relative filename has to be resolved against PHP's own cwd before GTK sees it:
             // under ZTS chdir() moves a per-thread virtual cwd that a C library knows nothing
