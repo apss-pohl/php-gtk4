@@ -333,6 +333,11 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, delete_mark_by_name) {
   ZEND_PARSE_PARAMETERS_END();
   GtkTextBuffer *self = PHPGTK_SELF(GtkTextBuffer, GTK_TYPE_TEXT_BUFFER);
   if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
+  const bool precondition_0 = gtk_text_buffer_get_mark(self, ZSTR_VAL(name)) != nullptr;
+  if (!precondition_0) {
+    zend_argument_value_error(1, "is not the name of a mark in this buffer");
+    RETURN_THROWS();
+  }
   gtk_text_buffer_delete_mark_by_name(self, ZSTR_VAL(name));
 }
 

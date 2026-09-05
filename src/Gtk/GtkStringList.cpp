@@ -77,6 +77,11 @@ ZEND_METHOD(Gtk4_GtkStringList, remove) {
   ZEND_PARSE_PARAMETERS_END();
   GtkStringList *self = PHPGTK_SELF(GtkStringList, GTK_TYPE_STRING_LIST);
   if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
+  const bool precondition_0 = position < g_list_model_get_n_items(G_LIST_MODEL(self));
+  if (!precondition_0) {
+    zend_argument_value_error(1, "must be the position of a string");
+    RETURN_THROWS();
+  }
   gtk_string_list_remove(self, static_cast<guint>(position));
 }
 
@@ -101,6 +106,11 @@ ZEND_METHOD(Gtk4_GtkStringList, splice) {
   if (additions != nullptr) {
     additions_v = strv_from_php(additions);
     if (additions_v == nullptr) RETURN_THROWS();
+  }
+  const bool precondition_0 = position + n_removals <= g_list_model_get_n_items(G_LIST_MODEL(self));
+  if (!precondition_0) {
+    zend_argument_value_error(2, "must not remove past the end of the list");
+    RETURN_THROWS();
   }
   gtk_string_list_splice(self, static_cast<guint>(position), static_cast<guint>(n_removals),
                          const_cast<const char **>(additions_v));

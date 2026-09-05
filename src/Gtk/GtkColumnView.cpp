@@ -203,6 +203,12 @@ ZEND_METHOD(Gtk4_GtkColumnView, insert_column) {
   if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
   GObject *column_o = unwrap(column, GTK_TYPE_COLUMN_VIEW_COLUMN);
   if (column_o == nullptr) RETURN_THROWS();
+  const bool precondition_0 =
+      position <= g_list_model_get_n_items(gtk_column_view_get_columns(self));
+  if (!precondition_0) {
+    zend_argument_value_error(1, "must not be past the last column");
+    RETURN_THROWS();
+  }
   gtk_column_view_insert_column(self, static_cast<guint>(position),
                                 GTK_COLUMN_VIEW_COLUMN(column_o));
 }
@@ -255,6 +261,13 @@ ZEND_METHOD(Gtk4_GtkColumnView, scroll_to) {
     if (scroll_b == nullptr) RETURN_THROWS();
   }
   if (scroll_b != nullptr) scroll_b = g_boxed_copy(GTK_TYPE_SCROLL_INFO, scroll_b);
+  const bool precondition_0 =
+      gtk_column_view_get_model(self) != nullptr &&
+      pos < g_list_model_get_n_items(G_LIST_MODEL(gtk_column_view_get_model(self)));
+  if (!precondition_0) {
+    zend_argument_value_error(1, "must be the position of an item");
+    RETURN_THROWS();
+  }
   gtk_column_view_scroll_to(self, static_cast<guint>(pos),
                             column_o != nullptr ? GTK_COLUMN_VIEW_COLUMN(column_o) : nullptr,
                             static_cast<GtkListScrollFlags>(flags),

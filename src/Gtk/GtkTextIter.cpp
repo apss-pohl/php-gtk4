@@ -1232,6 +1232,10 @@ ZEND_METHOD(Gtk4_GtkTextIter, set_line_index) {
     zend_argument_value_error(1, "must be greater than or equal to 0");
     RETURN_THROWS();
   }
+  if (byte_on_line > gtk_text_iter_get_bytes_in_line(self)) {  // GTK asserts this one
+    zend_argument_value_error(1, "must not be past the end of the line");
+    RETURN_THROWS();
+  }
   gtk_text_iter_set_line_index(self, static_cast<int>(byte_on_line));
 }
 
@@ -1249,6 +1253,10 @@ ZEND_METHOD(Gtk4_GtkTextIter, set_line_offset) {
   if (!phpgtk::check_range<int>(char_on_line, 1)) RETURN_THROWS();
   if (char_on_line < 0) {
     zend_argument_value_error(1, "must be greater than or equal to 0");
+    RETURN_THROWS();
+  }
+  if (char_on_line > gtk_text_iter_get_chars_in_line(self)) {  // GTK asserts this one
+    zend_argument_value_error(1, "must not be past the end of the line");
     RETURN_THROWS();
   }
   gtk_text_iter_set_line_offset(self, static_cast<int>(char_on_line));

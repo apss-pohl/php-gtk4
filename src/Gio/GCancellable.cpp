@@ -69,6 +69,13 @@ ZEND_METHOD(Gtk4_GCancellable, disconnect) {
   ZEND_PARSE_PARAMETERS_END();
   GCancellable *self = PHPGTK_SELF(GCancellable, G_TYPE_CANCELLABLE);
   if (!phpgtk::check_range<gulong>(handler_id, 1)) RETURN_THROWS();
+  const bool precondition_0 =
+      handler_id == 0 ||
+      g_signal_handler_is_connected(G_OBJECT(self), static_cast<gulong>(handler_id));
+  if (!precondition_0) {
+    zend_argument_value_error(1, "is not a connected handler id");
+    RETURN_THROWS();
+  }
   g_cancellable_disconnect(self, static_cast<gulong>(handler_id));
 }
 

@@ -60,6 +60,11 @@ ZEND_METHOD(Gtk4_GtkSpinButton, new_with_range) {
   Z_PARAM_DOUBLE(max)
   Z_PARAM_DOUBLE(step)
   ZEND_PARSE_PARAMETERS_END();
+  const bool precondition_0 = min <= max;
+  if (!precondition_0) {
+    zend_argument_value_error(2, "must not be below $min");
+    RETURN_THROWS();
+  }
   GObject *obj = G_OBJECT(gtk_spin_button_new_with_range(min, max, step));
   wrap(obj, return_value);
 }
@@ -292,6 +297,7 @@ ZEND_METHOD(Gtk4_GtkSpinButton, set_climb_rate) {
   Z_PARAM_DOUBLE(climb_rate)
   ZEND_PARSE_PARAMETERS_END();
   GtkSpinButton *self = PHPGTK_SELF(GtkSpinButton, GTK_TYPE_SPIN_BUTTON);
+  if (!phpgtk::check_domain_double(climb_rate, 0.0, HUGE_VAL, 1)) RETURN_THROWS();
   gtk_spin_button_set_climb_rate(self, climb_rate);
 }
 

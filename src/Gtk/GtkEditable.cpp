@@ -246,6 +246,7 @@ ZEND_METHOD(Gtk4_GtkEditable, set_alignment) {
   Z_PARAM_DOUBLE(xalign)
   ZEND_PARSE_PARAMETERS_END();
   GtkEditable *self = PHPGTK_SELF(GtkEditable, GTK_TYPE_EDITABLE);
+  if (!phpgtk::check_domain_double(xalign, 0.0, 1.0, 1)) RETURN_THROWS();
   gtk_editable_set_alignment(self, static_cast<float>(xalign));
 }
 

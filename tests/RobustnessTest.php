@@ -107,6 +107,13 @@ final class RobustnessTest extends GtkTestCase
         if ($key === '') {
             return;
         }
+        // GTK4_PIN_REPORT=<file>: append what GTK said for every key, pinned or not - the review
+        // surface behind the pin file, since a line pins the *method* and not GTK's wording
+        // (tests/README-robustness-pin.md).
+        $report = getenv('GTK4_PIN_REPORT');
+        if (is_string($report) && $report !== '' && $seen !== []) {
+            file_put_contents($report, $key . "\t" . implode(' | ', array_unique($seen)) . "\n", FILE_APPEND);
+        }
         // GTK reporting about the *machine*, not about the value it was handed: the same call
         // is silent on a desktop and a complaint on a CI runner, so neither direction of the pin
         // can hold it. Only what is genuinely environmental belongs here.

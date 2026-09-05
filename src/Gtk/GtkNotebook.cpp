@@ -553,7 +553,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, reorder_child) {
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
-  if (child_o != nullptr && gtk_notebook_page_num(self, GTK_WIDGET(child_o)) == -1) {
+  if (child_o != nullptr && (gtk_notebook_page_num(self, GTK_WIDGET(child_o)) == -1)) {
     zend_throw_exception_ex(spl_ce_LogicException, 0,
                             "%s(): Argument #1 ($child) is not a page of this notebook",
                             ZSTR_VAL(EX(func)->common.function_name));
@@ -628,7 +628,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, set_menu_label) {
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
-  if (child_o != nullptr && gtk_notebook_page_num(self, GTK_WIDGET(child_o)) == -1) {
+  if (child_o != nullptr && (gtk_notebook_page_num(self, GTK_WIDGET(child_o)) == -1)) {
     zend_throw_exception_ex(spl_ce_LogicException, 0,
                             "%s(): Argument #1 ($child) is not a page of this notebook",
                             ZSTR_VAL(EX(func)->common.function_name));
@@ -658,7 +658,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, set_menu_label_text) {
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
-  if (child_o != nullptr && gtk_notebook_page_num(self, GTK_WIDGET(child_o)) == -1) {
+  if (child_o != nullptr && (gtk_notebook_page_num(self, GTK_WIDGET(child_o)) == -1)) {
     zend_throw_exception_ex(spl_ce_LogicException, 0,
                             "%s(): Argument #1 ($child) is not a page of this notebook",
                             ZSTR_VAL(EX(func)->common.function_name));
@@ -726,7 +726,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, set_tab_detachable) {
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
-  if (child_o != nullptr && gtk_notebook_page_num(self, GTK_WIDGET(child_o)) == -1) {
+  if (child_o != nullptr && (gtk_notebook_page_num(self, GTK_WIDGET(child_o)) == -1)) {
     zend_throw_exception_ex(spl_ce_LogicException, 0,
                             "%s(): Argument #1 ($child) is not a page of this notebook",
                             ZSTR_VAL(EX(func)->common.function_name));
@@ -750,7 +750,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, set_tab_label) {
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
-  if (child_o != nullptr && gtk_notebook_page_num(self, GTK_WIDGET(child_o)) == -1) {
+  if (child_o != nullptr && (gtk_notebook_page_num(self, GTK_WIDGET(child_o)) == -1)) {
     zend_throw_exception_ex(spl_ce_LogicException, 0,
                             "%s(): Argument #1 ($child) is not a page of this notebook",
                             ZSTR_VAL(EX(func)->common.function_name));
@@ -780,7 +780,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, set_tab_label_text) {
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
-  if (child_o != nullptr && gtk_notebook_page_num(self, GTK_WIDGET(child_o)) == -1) {
+  if (child_o != nullptr && (gtk_notebook_page_num(self, GTK_WIDGET(child_o)) == -1)) {
     zend_throw_exception_ex(spl_ce_LogicException, 0,
                             "%s(): Argument #1 ($child) is not a page of this notebook",
                             ZSTR_VAL(EX(func)->common.function_name));
@@ -821,7 +821,7 @@ ZEND_METHOD(Gtk4_GtkNotebook, set_tab_reorderable) {
   GtkNotebook *self = PHPGTK_SELF(GtkNotebook, GTK_TYPE_NOTEBOOK);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
-  if (child_o != nullptr && gtk_notebook_page_num(self, GTK_WIDGET(child_o)) == -1) {
+  if (child_o != nullptr && (gtk_notebook_page_num(self, GTK_WIDGET(child_o)) == -1)) {
     zend_throw_exception_ex(spl_ce_LogicException, 0,
                             "%s(): Argument #1 ($child) is not a page of this notebook",
                             ZSTR_VAL(EX(func)->common.function_name));

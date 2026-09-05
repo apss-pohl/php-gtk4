@@ -280,6 +280,7 @@ ZEND_METHOD(Gtk4_PangoFontDescription, set_absolute_size) {
   Z_PARAM_DOUBLE(size)
   ZEND_PARSE_PARAMETERS_END();
   PangoFontDescription *self = PHPGTK_BOXED_SELF(PangoFontDescription);
+  if (!phpgtk::check_domain_double(size, 0.0, HUGE_VAL, 1)) RETURN_THROWS();
   pango_font_description_set_absolute_size(self, size);
 }
 

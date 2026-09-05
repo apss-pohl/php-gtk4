@@ -141,6 +141,10 @@ ZEND_METHOD(Gtk4_GMenuItem, get_link) {
   ZEND_PARSE_PARAMETERS_END();
   GMenuItem *self = PHPGTK_SELF(GMenuItem, G_TYPE_MENU_ITEM);
   if (!phpgtk::check_utf8(link, 1)) RETURN_THROWS();
+  if (!(phpgtk::valid_menu_attribute_name(ZSTR_VAL(link)))) {
+    zend_argument_value_error(1, "must be a letter followed by letters, digits and dashes");
+    RETURN_THROWS();
+  }
   GMenuModel *phpgtk_ret = g_menu_item_get_link(self, ZSTR_VAL(link));
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
   if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
@@ -187,6 +191,10 @@ ZEND_METHOD(Gtk4_GMenuItem, set_attribute_value) {
   ZEND_PARSE_PARAMETERS_END();
   GMenuItem *self = PHPGTK_SELF(GMenuItem, G_TYPE_MENU_ITEM);
   if (!phpgtk::check_utf8(attribute, 1)) RETURN_THROWS();
+  if (!(phpgtk::valid_menu_attribute_name(ZSTR_VAL(attribute)))) {
+    zend_argument_value_error(1, "must be a letter followed by letters, digits and dashes");
+    RETURN_THROWS();
+  }
   GVariant *value_v = nullptr;
   if (value != nullptr && Z_TYPE_P(value) != IS_NULL) {
     value_v = php_to_variant(value, nullptr);
@@ -241,6 +249,10 @@ ZEND_METHOD(Gtk4_GMenuItem, set_link) {
   ZEND_PARSE_PARAMETERS_END();
   GMenuItem *self = PHPGTK_SELF(GMenuItem, G_TYPE_MENU_ITEM);
   if (!phpgtk::check_utf8(link, 1)) RETURN_THROWS();
+  if (!(phpgtk::valid_menu_attribute_name(ZSTR_VAL(link)))) {
+    zend_argument_value_error(1, "must be a letter followed by letters, digits and dashes");
+    RETURN_THROWS();
+  }
   GObject *model_o = nullptr;
   if (model != nullptr) {
     model_o = unwrap(model, G_TYPE_MENU_MODEL);

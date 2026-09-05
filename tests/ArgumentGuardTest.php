@@ -6,13 +6,18 @@ namespace PhpGtk4\Tests;
 
 use Gtk4\GApplication;
 use Gtk4\GApplicationFlags;
+use Gtk4\GCancellable;
 use Gtk4\GdkClipboard;
 use Gtk4\GdkDisplay;
 use Gtk4\GdkTexture;
 use Gtk4\GListStore;
 use Gtk4\GMenu;
+use Gtk4\GMenuItem;
 use Gtk4\GMenuModel;
+use Gtk4\GObject;
 use Gtk4\GSimpleAction;
+use Gtk4\GTask;
+use Gtk4\GtkApplication;
 use Gtk4\GtkBox;
 use Gtk4\GtkButton;
 use Gtk4\GtkCalendar;
@@ -23,10 +28,14 @@ use Gtk4\GtkGrid;
 use Gtk4\GtkLabel;
 use Gtk4\GtkNotebook;
 use Gtk4\GtkOrientation;
+use Gtk4\GtkScale;
 use Gtk4\GtkSingleSelection;
+use Gtk4\GtkStack;
 use Gtk4\GtkStringList;
 use Gtk4\GtkTextBuffer;
 use Gtk4\GtkTextIter;
+use Gtk4\GtkTextView;
+use Gtk4\GtkTextWindowType;
 use Gtk4\GtkWindow;
 use Gtk4\PangoFontDescription;
 use Gtk4\PhpValue;
@@ -656,5 +665,120 @@ final class ArgumentGuardTest extends GtkTestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('not registered yet');
         $app->withdraw_notification('x');
+    }
+    // ---- what GLib asserts about the arguments after the type check (ARG_PRECONDITIONS)
+
+    public function testAStorePositionPastTheEndIsAValueError(): void
+    {
+        $store = new GListStore(GObject::class);
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('Argument #1 ($position) must not be past the end of the store');
+        $store->insert(1, new GObject());
+    }
+
+    public function testARangeMinimumAboveTheMaximumIsAValueError(): void
+    {
+        $scale = new GtkScale(GtkOrientation::Horizontal, null);
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('Argument #2 ($max) must not be below $min');
+        $scale->set_range(10.0, 1.0);
+    }
+
+    public function testAStackChildNameNothingAnswersToIsAValueError(): void
+    {
+        $stack = new GtkStack();
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('is not the name of a child of this stack');
+        $stack->set_visible_child_name('nope');
+    }
+
+    public function testADuplicateStackChildNameIsAValueError(): void
+    {
+        $stack = new GtkStack();
+        $stack->add_titled(new GtkLabel('a'), 'same', 'A');
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('Argument #2 ($name) is already the name of a child');
+        $stack->add_titled(new GtkLabel('b'), 'same', 'B');
+    }
+
+    public function testAnIterOffsetPastTheLineIsAValueError(): void
+    {
+        $buffer = new GtkTextBuffer(null);
+        $buffer->set_text('ab');
+        $iter = $buffer->get_start_iter();
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('must not be past the end of the line');
+        $iter->set_line_offset(7);
+    }
+
+    public function testATaskReturnsOnce(): void
+    {
+        $task = new GTask(null, null, static fn() => null);
+        $task->return_int(1);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('already has a result');
+        $task->return_int(2);
+    }
+
+    public function testDisconnectingAnUnknownHandlerIsAValueError(): void
+    {
+        $cancellable = new GCancellable();
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('is not a connected handler id');
+        $cancellable->disconnect(12345);
+    }
+
+    public function testAMenuLinkNameFollowsGlibsRule(): void
+    {
+        $item = new GMenuItem('x', null);
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('must be a letter followed by letters, digits and dashes');
+        $item->set_link('9bad', new GMenu());
+    }
+
+    public function testAnAcceleratorStringHasToParse(): void
+    {
+        $app = new GtkApplication(null, GApplicationFlags::NON_UNIQUE);
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('must be a valid accelerator string');
+        $app->get_actions_for_accel('not an accel');
+    }
+
+    public function testAGutterHasToBeABorderWindow(): void
+    {
+        $view = new GtkTextView();
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('must be one of the four border windows');
+        $view->set_gutter(GtkTextWindowType::Text, null);
+    }
+
+    public function testMovingAForeignOverlayIsALogicException(): void
+    {
+        $view = new GtkTextView();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('is not a child of this GtkTextView');
+        $view->move_overlay(new GtkButton(), 1, 1);
+    }
+
+    public function testMovingAnOverlayWorks(): void
+    {
+        $view = new GtkTextView();
+        $overlay = new GtkButton();
+        $view->add_overlay($overlay, 0, 0);
+
+        $view->move_overlay($overlay, 5, 6);
+
+        self::assertSame($overlay, $view->get_first_child()?->get_first_child() ?? $overlay);
     }
 }

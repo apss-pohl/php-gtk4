@@ -86,6 +86,10 @@ ZEND_METHOD(Gtk4_GtkApplication, get_actions_for_accel) {
   ZEND_PARSE_PARAMETERS_END();
   GtkApplication *self = PHPGTK_SELF(GtkApplication, GTK_TYPE_APPLICATION);
   if (!phpgtk::check_utf8(accel, 1)) RETURN_THROWS();
+  if (!(gtk_accelerator_parse(ZSTR_VAL(accel), nullptr, nullptr))) {
+    zend_argument_value_error(1, "must be a valid accelerator string (like <Control>q)");
+    RETURN_THROWS();
+  }
   strv_to_php(gtk_application_get_actions_for_accel(self, ZSTR_VAL(accel)), Transfer::Full,
               return_value);
 }
@@ -220,6 +224,14 @@ ZEND_METHOD(Gtk4_GtkApplication, set_menubar) {
   if (menubar != nullptr) {
     menubar_o = unwrap(menubar, G_TYPE_MENU_MODEL);
     if (menubar_o == nullptr) RETURN_THROWS();
+  }
+  const bool state_holds = g_application_get_is_registered(G_APPLICATION(self)) == TRUE;
+  if (!state_holds) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "%s(): the application is not registered yet - the menubar exists from `startup` on",
+        ZSTR_VAL(EX(func)->common.function_name));
+    RETURN_THROWS();
   }
   gtk_application_set_menubar(self, menubar_o != nullptr ? G_MENU_MODEL(menubar_o) : nullptr);
 }

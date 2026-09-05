@@ -170,7 +170,7 @@ ZEND_METHOD(Gtk4_GtkBox, reorder_child_after) {
   GtkBox *self = PHPGTK_SELF(GtkBox, GTK_TYPE_BOX);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
-  if (child_o != nullptr && gtk_widget_get_parent(GTK_WIDGET(child_o)) != GTK_WIDGET(self)) {
+  if (child_o != nullptr && (gtk_widget_get_parent(GTK_WIDGET(child_o)) != GTK_WIDGET(self))) {
     zend_throw_exception_ex(spl_ce_LogicException, 0,
                             "%s(): Argument #1 ($child) is not a child of this %s",
                             ZSTR_VAL(EX(func)->common.function_name), G_OBJECT_TYPE_NAME(self));
@@ -181,7 +181,7 @@ ZEND_METHOD(Gtk4_GtkBox, reorder_child_after) {
     sibling_o = unwrap(sibling, GTK_TYPE_WIDGET);
     if (sibling_o == nullptr) RETURN_THROWS();
   }
-  if (sibling_o != nullptr && gtk_widget_get_parent(GTK_WIDGET(sibling_o)) != GTK_WIDGET(self)) {
+  if (sibling_o != nullptr && (gtk_widget_get_parent(GTK_WIDGET(sibling_o)) != GTK_WIDGET(self))) {
     zend_throw_exception_ex(spl_ce_LogicException, 0,
                             "%s(): Argument #2 ($sibling) is not a child of this %s",
                             ZSTR_VAL(EX(func)->common.function_name), G_OBJECT_TYPE_NAME(self));

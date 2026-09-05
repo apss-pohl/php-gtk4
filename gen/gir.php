@@ -1206,9 +1206,18 @@ final class Generator
                 $lines[] = '  ' . $l;
             }
         }
+        foreach (ARG_PRECONDITIONS[$f->cid] ?? [] as $i => [$argNum, $predicate, $wording]) {
+            // a named bool rather than `if (!(a || b))`: clang-tidy would rewrite the latter
+            $lines[] = "  const bool precondition_$i = $predicate;";
+            $lines[] = "  if (!precondition_$i) {";
+            $lines[] = "    zend_argument_value_error($argNum, \"$wording\");";
+            $lines[] = '    RETURN_THROWS();';
+            $lines[] = '  }';
+        }
         if ($f->kind === 'method' && isset(SELF_PRECONDITIONS[$f->cid])) {
             [$predicate, $wording] = SELF_PRECONDITIONS[$f->cid];
-            $lines[] = "  if (!($predicate)) {";
+            $lines[] = "  const bool state_holds = $predicate;";
+            $lines[] = '  if (!state_holds) {';
             $lines[] = '    zend_throw_exception_ex(spl_ce_LogicException, 0, "%s(): ' . $wording . '",';
             $lines[] = '                            ZSTR_VAL(EX(func)->common.function_name));';
             $lines[] = '    RETURN_THROWS();';

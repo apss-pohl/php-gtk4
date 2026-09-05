@@ -75,6 +75,11 @@ ZEND_METHOD(Gtk4_GListStore, insert) {
   if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
   GObject *item_o = unwrap(item, G_TYPE_OBJECT);
   if (item_o == nullptr) RETURN_THROWS();
+  const bool precondition_0 = position <= g_list_model_get_n_items(G_LIST_MODEL(self));
+  if (!precondition_0) {
+    zend_argument_value_error(1, "must not be past the end of the store");
+    RETURN_THROWS();
+  }
   g_list_store_insert(self, static_cast<guint>(position), G_OBJECT(item_o));
 }
 
@@ -91,6 +96,11 @@ ZEND_METHOD(Gtk4_GListStore, remove) {
   ZEND_PARSE_PARAMETERS_END();
   GListStore *self = PHPGTK_SELF(GListStore, G_TYPE_LIST_STORE);
   if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
+  const bool precondition_0 = position < g_list_model_get_n_items(G_LIST_MODEL(self));
+  if (!precondition_0) {
+    zend_argument_value_error(1, "must be the position of an item");
+    RETURN_THROWS();
+  }
   g_list_store_remove(self, static_cast<guint>(position));
 }
 

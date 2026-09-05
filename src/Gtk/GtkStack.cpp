@@ -86,6 +86,12 @@ ZEND_METHOD(Gtk4_GtkStack, add_titled) {
   if (child_o == nullptr) RETURN_THROWS();
   if (name != nullptr && !phpgtk::check_utf8(name, 2)) RETURN_THROWS();
   if (!phpgtk::check_utf8(title, 3)) RETURN_THROWS();
+  const bool precondition_0 =
+      name == nullptr || gtk_stack_get_child_by_name(self, ZSTR_VAL(name)) == nullptr;
+  if (!precondition_0) {
+    zend_argument_value_error(2, "is already the name of a child of this stack");
+    RETURN_THROWS();
+  }
   GtkStackPage *phpgtk_ret = gtk_stack_add_titled(
       self, GTK_WIDGET(child_o), name != nullptr ? ZSTR_VAL(name) : nullptr, ZSTR_VAL(title));
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
@@ -350,6 +356,11 @@ ZEND_METHOD(Gtk4_GtkStack, set_visible_child_full) {
   if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   gint transition_v = 0;
   if (!enum_from_php(transition, GTK_TYPE_STACK_TRANSITION_TYPE, &transition_v)) RETURN_THROWS();
+  const bool precondition_0 = gtk_stack_get_child_by_name(self, ZSTR_VAL(name)) != nullptr;
+  if (!precondition_0) {
+    zend_argument_value_error(1, "is not the name of a child of this stack");
+    RETURN_THROWS();
+  }
   gtk_stack_set_visible_child_full(self, ZSTR_VAL(name),
                                    static_cast<GtkStackTransitionType>(transition_v));
 }
@@ -366,5 +377,10 @@ ZEND_METHOD(Gtk4_GtkStack, set_visible_child_name) {
   ZEND_PARSE_PARAMETERS_END();
   GtkStack *self = PHPGTK_SELF(GtkStack, GTK_TYPE_STACK);
   if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
+  const bool precondition_0 = gtk_stack_get_child_by_name(self, ZSTR_VAL(name)) != nullptr;
+  if (!precondition_0) {
+    zend_argument_value_error(1, "is not the name of a child of this stack");
+    RETURN_THROWS();
+  }
   gtk_stack_set_visible_child_name(self, ZSTR_VAL(name));
 }

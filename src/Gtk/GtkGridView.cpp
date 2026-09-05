@@ -159,6 +159,13 @@ ZEND_METHOD(Gtk4_GtkGridView, scroll_to) {
     if (scroll_b == nullptr) RETURN_THROWS();
   }
   if (scroll_b != nullptr) scroll_b = g_boxed_copy(GTK_TYPE_SCROLL_INFO, scroll_b);
+  const bool precondition_0 =
+      gtk_grid_view_get_model(self) != nullptr &&
+      pos < g_list_model_get_n_items(G_LIST_MODEL(gtk_grid_view_get_model(self)));
+  if (!precondition_0) {
+    zend_argument_value_error(1, "must be the position of an item");
+    RETURN_THROWS();
+  }
   gtk_grid_view_scroll_to(self, static_cast<guint>(pos), static_cast<GtkListScrollFlags>(flags),
                           static_cast<GtkScrollInfo *>(scroll_b));
 }

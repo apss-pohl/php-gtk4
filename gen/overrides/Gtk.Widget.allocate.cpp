@@ -21,6 +21,11 @@ ZEND_METHOD(Gtk4_GtkWidget, allocate) {
   Z_PARAM_LONG(x)
   Z_PARAM_LONG(y)
   ZEND_PARSE_PARAMETERS_END();
+  // gtk_widget_size_allocate() warns about a negative size and does nothing (PARAM_DOMAINS does
+  // not reach an override, so the domain is spelled out here)
+  if (!check_domain(width, 0, ZEND_LONG_MAX, 1) || !check_domain(height, 0, ZEND_LONG_MAX, 2)) {
+    RETURN_THROWS();
+  }
   if (!check_range<int>(width, 1) || !check_range<int>(height, 2) ||
       !check_range<int>(baseline, 3) || !check_range<int>(x, 4) || !check_range<int>(y, 5)) {
     RETURN_THROWS();

@@ -635,10 +635,13 @@ final class TypeMap
         [$test, $message, $args] = match ($kind) {
             'parent' => ["gtk_widget_get_parent($widget) != GTK_WIDGET(self)",
                 'is not a child of this %s', "$fn, G_OBJECT_TYPE_NAME(self)"],
+            'grandchild' => ["gtk_widget_get_parent($widget) == nullptr || "
+                . "gtk_widget_get_parent(gtk_widget_get_parent($widget)) != GTK_WIDGET(self)",
+                'is not a child of this %s', "$fn, G_OBJECT_TYPE_NAME(self)"],
             'page' => ["gtk_notebook_page_num(self, $widget) == -1", 'is not a page of this notebook', $fn],
             default => ["gtk_widget_get_parent($widget) != GTK_WIDGET({$of}_o)", 'is not a child of $' . $of, $fn],
         };
-        return ["if ({$name}_o != nullptr && $test) {",
+        return ["if ({$name}_o != nullptr && ($test)) {",
             '  zend_throw_exception_ex(spl_ce_LogicException, 0, "%s(): Argument #' . $argNum
                 . ' ($' . $name . ') ' . $message . '", ' . $args . ');',
             '  RETURN_THROWS();', '}'];

@@ -118,6 +118,11 @@ ZEND_METHOD(Gtk4_GtkScale, new_with_range) {
   ZEND_PARSE_PARAMETERS_END();
   gint orientation_v = 0;
   if (!enum_from_php(orientation, GTK_TYPE_ORIENTATION, &orientation_v)) RETURN_THROWS();
+  const bool precondition_0 = min < max;
+  if (!precondition_0) {
+    zend_argument_value_error(3, "must be above $min");
+    RETURN_THROWS();
+  }
   GObject *obj = G_OBJECT(
       gtk_scale_new_with_range(static_cast<GtkOrientation>(orientation_v), min, max, step));
   wrap(obj, return_value);

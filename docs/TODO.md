@@ -295,13 +295,6 @@ GTK4 GIR only). Every open item here is generator output and is ticked when its 
       `GdkContentProvider` and the typed clipboard payloads that share its machinery. Still out:
       `GdkDevice`/`GdkSeat` (which is why `GdkDrag::get_device()` and the drop's device-aware
       members stay skipped) and the `Gio.InputStream` half of `read_finish`.
-- [ ] **Intermittent `tests/phpt/init-no-display.phpt` segfault** (seen twice on 2026-08-29 in full
-      `./ci.sh` runs while the PHPUnit suite loaded the machine; "still alive" is printed, the
-      process dies afterwards - request or module shutdown after a *failed* `Gtk::init()`). Not
-      reproduced in 130+ loops (raw `php -n`, single-test and full `run-tests.php`, under load, on
-      this tree and on 5cd0eae), no core (apport keeps one report per binary). Same family as the
-      warm-up-thread crash `pin_gtk_library()` fixed; next step when it recurs: run the phpt stage
-      with `ulimit -c unlimited` after clearing `/var/crash/_usr_bin_php8.4.*` and take the core.
 - [x] **Interface-only handles** (2026-08-30): `wrap()` falls back to a generated
       `Gtk4\<Interface>Object` class (private constructor, every interface method aliased) when an
       object's own classes are unregistered but a registered interface matches - most derived first
@@ -469,14 +462,17 @@ failed parse into a `__builtin_unreachable`. Three generator tables came with th
 `NULLABLE_RETURNS`, `NON_NULLABLE_PARAMS`, `PARAM_DOMAINS` — plus `check_enum_member()` for the six
 unbound enums that were being read as `GFlagsClass`. `tests/robustness-criticals.txt` went 158 → 77.
 
-- [ ] **The 60 remaining method pin lines** (77 until 2026-09-04, 63 until 2026-09-05; the file
-      also carries six lines from the property and emission sweeps), classified by the message GTK
-      actually prints (the numeric family is done). 2026-09-05: `PARAM_VALIDATORS`
-      (an application id, a resource path) and `SELF_PRECONDITIONS` (`withdraw_notification()`
-      before registration) retired three more; what stays pinned has no public predicate -
-      `!task->ever_returned`, a text view's private center child, a busy-property name GLib
-      looks up itself, and `run()`'s complaint about a missing `activate` handler, which is
-      about the script. Done 2026-09-04: the *widget-in-the-wrong-place* family -
+- [x] **The method pin lines** (77 on 2026-09-04, 17 on 2026-09-05; the file also carries six
+      lines from the property and emission sweeps). Closed by mirroring GTK's own assertion in a
+      generator table - `ARG_PRECONDITIONS` (a position past the end, a minimum above the
+      maximum, a name nothing answers to, an unconnected handler id), `PARAM_VALIDATORS` (an
+      application id, a resource path, a menu attribute name, an accelerator string),
+      `SELF_PRECONDITIONS` (registration), `PARAM_DOMAINS` (alignments, climb rate, font size) -
+      or by hand where the method is an override (`GtkWidget::allocate()`, the `GtkTextIter` line
+      setters, a `GTask` returning twice). The 17 that stay are GTK reporting about the *data* or
+      about a state it keeps private, listed with their reasons in
+      tests/README-robustness-pin.md; `GTK4_PIN_REPORT=<file>` prints what GTK says per line.
+      Done 2026-09-04: the *widget-in-the-wrong-place* family -
       `list != NULL` on the seven `GtkNotebook` child methods, `gtk_widget_get_parent(child) ==
       box` on reorder/move/attach/overlay, the sibling checks of `insert_after/before` - is
       `CHILD_PARAMS` + `SELF_UNPARENTED_OR` in `gen/gir/config.php`, emitted as a `LogicException`

@@ -297,6 +297,12 @@ ZEND_METHOD(Gtk4_GMenu, remove) {
   ZEND_PARSE_PARAMETERS_END();
   GMenu *self = PHPGTK_SELF(GMenu, G_TYPE_MENU);
   if (!phpgtk::check_range<gint>(position, 1)) RETURN_THROWS();
+  const bool precondition_0 =
+      position >= 0 && position < g_menu_model_get_n_items(G_MENU_MODEL(self));
+  if (!precondition_0) {
+    zend_argument_value_error(1, "must be the position of an item");
+    RETURN_THROWS();
+  }
   g_menu_remove(self, static_cast<gint>(position));
 }
 

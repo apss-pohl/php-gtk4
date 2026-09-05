@@ -118,6 +118,11 @@ ZEND_METHOD(Gtk4_GApplication, add_main_option) {
   if (!phpgtk::check_range<char>(short_name, 2)) RETURN_THROWS();
   if (!phpgtk::check_utf8(description, 5)) RETURN_THROWS();
   if (arg_description != nullptr && !phpgtk::check_utf8(arg_description, 6)) RETURN_THROWS();
+  const bool precondition_0 = short_name == 0 || g_ascii_isalnum(static_cast<gchar>(short_name));
+  if (!precondition_0) {
+    zend_argument_value_error(2, "must be 0 or a letter or digit");
+    RETURN_THROWS();
+  }
   g_application_add_main_option(self, ZSTR_VAL(long_name), static_cast<char>(short_name),
                                 static_cast<GOptionFlags>(flags), static_cast<GOptionArg>(arg),
                                 ZSTR_VAL(description),
@@ -140,6 +145,11 @@ ZEND_METHOD(Gtk4_GApplication, bind_busy_property) {
   GObject *object_o = unwrap(object, G_TYPE_OBJECT);
   if (object_o == nullptr) RETURN_THROWS();
   if (!phpgtk::check_utf8(property, 2)) RETURN_THROWS();
+  const bool precondition_0 = phpgtk::has_boolean_property(object_o, ZSTR_VAL(property));
+  if (!precondition_0) {
+    zend_argument_value_error(2, "must name a boolean property of the object");
+    RETURN_THROWS();
+  }
   g_application_bind_busy_property(self, G_OBJECT(object_o), ZSTR_VAL(property));
 }
 
@@ -479,7 +489,8 @@ ZEND_METHOD(Gtk4_GApplication, withdraw_notification) {
   ZEND_PARSE_PARAMETERS_END();
   GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
   if (!phpgtk::check_utf8(id, 1)) RETURN_THROWS();
-  if (!(g_application_get_is_registered(self) == TRUE)) {
+  const bool state_holds = g_application_get_is_registered(self) == TRUE;
+  if (!state_holds) {
     zend_throw_exception_ex(
         spl_ce_LogicException, 0,
         "%s(): the application is not registered yet - notifications exist from `startup` on",

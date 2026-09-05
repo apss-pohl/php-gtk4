@@ -1091,7 +1091,7 @@ ZEND_METHOD(Gtk4_GtkWidget, insert_after) {
     if (previous_sibling_o == nullptr) RETURN_THROWS();
   }
   if (previous_sibling_o != nullptr &&
-      gtk_widget_get_parent(GTK_WIDGET(previous_sibling_o)) != GTK_WIDGET(parent_o)) {
+      (gtk_widget_get_parent(GTK_WIDGET(previous_sibling_o)) != GTK_WIDGET(parent_o))) {
     zend_throw_exception_ex(spl_ce_LogicException, 0,
                             "%s(): Argument #2 ($previous_sibling) is not a child of $parent",
                             ZSTR_VAL(EX(func)->common.function_name));
@@ -1129,7 +1129,7 @@ ZEND_METHOD(Gtk4_GtkWidget, insert_before) {
     if (next_sibling_o == nullptr) RETURN_THROWS();
   }
   if (next_sibling_o != nullptr &&
-      gtk_widget_get_parent(GTK_WIDGET(next_sibling_o)) != GTK_WIDGET(parent_o)) {
+      (gtk_widget_get_parent(GTK_WIDGET(next_sibling_o)) != GTK_WIDGET(parent_o))) {
     zend_throw_exception_ex(spl_ce_LogicException, 0,
                             "%s(): Argument #2 ($next_sibling) is not a child of $parent",
                             ZSTR_VAL(EX(func)->common.function_name));
@@ -2118,6 +2118,11 @@ ZEND_METHOD(Gtk4_GtkWidget, allocate) {
   Z_PARAM_LONG(x)
   Z_PARAM_LONG(y)
   ZEND_PARSE_PARAMETERS_END();
+  // gtk_widget_size_allocate() warns about a negative size and does nothing (PARAM_DOMAINS does
+  // not reach an override, so the domain is spelled out here)
+  if (!check_domain(width, 0, ZEND_LONG_MAX, 1) || !check_domain(height, 0, ZEND_LONG_MAX, 2)) {
+    RETURN_THROWS();
+  }
   if (!check_range<int>(width, 1) || !check_range<int>(height, 2) ||
       !check_range<int>(baseline, 3) || !check_range<int>(x, 4) || !check_range<int>(y, 5)) {
     RETURN_THROWS();

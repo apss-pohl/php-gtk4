@@ -203,6 +203,22 @@ inline bool check_enum_member(GType type, zend_long value, uint32_t arg) {
   return false;
 }
 
+// GMenu's rule for an attribute or link name (gmenu.c valid_attribute_name(), which it asserts
+// with g_return_if_fail): a letter, then letters, digits and dashes.
+inline bool valid_menu_attribute_name(const char *name) {
+  if (name == nullptr || !g_ascii_isalpha(name[0])) return false;
+  for (const char *c = name + 1; *c != '\0'; c++) {
+    if (!g_ascii_isalnum(*c) && *c != '-') return false;
+  }
+  return true;
+}
+
+// g_application_bind_busy_property() asserts the property exists and is a boolean.
+inline bool has_boolean_property(GObject *object, const char *property) {
+  GParamSpec *spec = g_object_class_find_property(G_OBJECT_GET_CLASS(object), property);
+  return spec != nullptr && spec->value_type == G_TYPE_BOOLEAN;
+}
+
 // A flags value must be a combination of the type's own bits: GLib otherwise rejects the
 // whole assignment with a CRITICAL and carries on with the default, telling PHP nothing.
 inline bool check_flags(GType type, zend_long bits, uint32_t arg) {

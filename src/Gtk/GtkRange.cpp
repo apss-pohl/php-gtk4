@@ -251,6 +251,11 @@ ZEND_METHOD(Gtk4_GtkRange, set_range) {
   Z_PARAM_DOUBLE(max)
   ZEND_PARSE_PARAMETERS_END();
   GtkRange *self = PHPGTK_SELF(GtkRange, GTK_TYPE_RANGE);
+  const bool precondition_0 = min <= max;
+  if (!precondition_0) {
+    zend_argument_value_error(2, "must not be below $min");
+    RETURN_THROWS();
+  }
   gtk_range_set_range(self, min, max);
 }
 

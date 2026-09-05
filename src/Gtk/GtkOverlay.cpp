@@ -138,7 +138,7 @@ ZEND_METHOD(Gtk4_GtkOverlay, set_clip_overlay) {
   GtkOverlay *self = PHPGTK_SELF(GtkOverlay, GTK_TYPE_OVERLAY);
   GObject *widget_o = unwrap(widget, GTK_TYPE_WIDGET);
   if (widget_o == nullptr) RETURN_THROWS();
-  if (widget_o != nullptr && gtk_widget_get_parent(GTK_WIDGET(widget_o)) != GTK_WIDGET(self)) {
+  if (widget_o != nullptr && (gtk_widget_get_parent(GTK_WIDGET(widget_o)) != GTK_WIDGET(self))) {
     zend_throw_exception_ex(spl_ce_LogicException, 0,
                             "%s(): Argument #1 ($widget) is not a child of this %s",
                             ZSTR_VAL(EX(func)->common.function_name), G_OBJECT_TYPE_NAME(self));
@@ -162,7 +162,7 @@ ZEND_METHOD(Gtk4_GtkOverlay, set_measure_overlay) {
   GtkOverlay *self = PHPGTK_SELF(GtkOverlay, GTK_TYPE_OVERLAY);
   GObject *widget_o = unwrap(widget, GTK_TYPE_WIDGET);
   if (widget_o == nullptr) RETURN_THROWS();
-  if (widget_o != nullptr && gtk_widget_get_parent(GTK_WIDGET(widget_o)) != GTK_WIDGET(self)) {
+  if (widget_o != nullptr && (gtk_widget_get_parent(GTK_WIDGET(widget_o)) != GTK_WIDGET(self))) {
     zend_throw_exception_ex(spl_ce_LogicException, 0,
                             "%s(): Argument #1 ($widget) is not a child of this %s",
                             ZSTR_VAL(EX(func)->common.function_name), G_OBJECT_TYPE_NAME(self));

@@ -613,6 +613,14 @@ ZEND_METHOD(Gtk4_GtkTextView, move_overlay) {
   GtkTextView *self = PHPGTK_SELF(GtkTextView, GTK_TYPE_TEXT_VIEW);
   GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
   if (child_o == nullptr) RETURN_THROWS();
+  if (child_o != nullptr &&
+      (gtk_widget_get_parent(GTK_WIDGET(child_o)) == nullptr ||
+       gtk_widget_get_parent(gtk_widget_get_parent(GTK_WIDGET(child_o))) != GTK_WIDGET(self))) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "%s(): Argument #1 ($child) is not a child of this %s",
+                            ZSTR_VAL(EX(func)->common.function_name), G_OBJECT_TYPE_NAME(self));
+    RETURN_THROWS();
+  }
   if (!phpgtk::check_range<int>(xpos, 2)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(ypos, 3)) RETURN_THROWS();
   gtk_text_view_move_overlay(self, GTK_WIDGET(child_o), static_cast<int>(xpos),
@@ -874,6 +882,12 @@ ZEND_METHOD(Gtk4_GtkTextView, set_gutter) {
   if (widget != nullptr) {
     widget_o = unwrap(widget, GTK_TYPE_WIDGET);
     if (widget_o == nullptr) RETURN_THROWS();
+  }
+  const bool precondition_0 = win_v >= GTK_TEXT_WINDOW_LEFT && win_v <= GTK_TEXT_WINDOW_BOTTOM;
+  if (!precondition_0) {
+    zend_argument_value_error(1,
+                              "must be one of the four border windows (Left, Right, Top, Bottom)");
+    RETURN_THROWS();
   }
   gtk_text_view_set_gutter(self, static_cast<GtkTextWindowType>(win_v),
                            widget_o != nullptr ? GTK_WIDGET(widget_o) : nullptr);

@@ -144,6 +144,7 @@ const CHILD_PARAMS = [
     'gtk_notebook_set_menu_label_text.child' => 'page',
     'gtk_notebook_set_tab_reorderable.child' => 'page',
     'gtk_notebook_set_tab_detachable.child' => 'page',
+    'gtk_text_view_move_overlay.child' => 'grandchild',  // overlays sit in the view's centre child
     'gtk_widget_insert_after.previous_sibling' => 'child-of:parent',
     'gtk_widget_insert_before.next_sibling' => 'child-of:parent',
 ];
@@ -155,6 +156,14 @@ const CHILD_PARAMS = [
  * after check_utf8(). Every line retired an entry from tests/robustness-criticals.txt.
  */
 const PARAM_VALIDATORS = [
+    'g_menu_item_get_link.link' => ['phpgtk::valid_menu_attribute_name(%s)',
+        'must be a letter followed by letters, digits and dashes'],
+    'g_menu_item_set_link.link' => ['phpgtk::valid_menu_attribute_name(%s)',
+        'must be a letter followed by letters, digits and dashes'],
+    'g_menu_item_set_attribute_value.attribute' => ['phpgtk::valid_menu_attribute_name(%s)',
+        'must be a letter followed by letters, digits and dashes'],
+    'gtk_application_get_actions_for_accel.accel' => ['gtk_accelerator_parse(%s, nullptr, nullptr)',
+        'must be a valid accelerator string (like <Control>q)'],
     'g_application_set_application_id.application_id' => ['g_application_id_is_valid(%s)',
         'must be a valid application id (reverse-DNS, org.example.App)'],
     'g_application_set_resource_base_path.resource_path' => ["%s[0] == '/'",  // not g_str_has_prefix(): a macro here
@@ -169,6 +178,61 @@ const PARAM_VALIDATORS = [
 const SELF_PRECONDITIONS = [
     'g_application_withdraw_notification' => ['g_application_get_is_registered(self) == TRUE',
         'the application is not registered yet - notifications exist from `startup` on'],
+    'gtk_application_set_menubar' => ['g_application_get_is_registered(G_APPLICATION(self)) == TRUE',
+        'the application is not registered yet - the menubar exists from `startup` on'],
+];
+
+/**
+ * Preconditions over the *arguments* GLib asserts with g_return_if_fail() after the type check -
+ * a position past the end, a minimum above the maximum, a name nothing answers to - as
+ * `<C identifier>` -> a list of [argument number, the C predicate that has to hold, the
+ * ValueError's wording]. The predicate sees every parsed parameter by its name (a `zend_long`,
+ * a `double`, a `zend_string *` - use ZSTR_VAL(), an unwrapped object as `<name>_o`) and `self`.
+ * Every line retired an entry from tests/robustness-criticals.txt; GTK's own assertion, which the
+ * pin report (GTK4_PIN_REPORT) prints, is what each predicate mirrors.
+ */
+const ARG_PRECONDITIONS = [
+    'g_list_store_insert' => [[1, 'position <= g_list_model_get_n_items(G_LIST_MODEL(self))',
+        'must not be past the end of the store']],
+    'g_list_store_remove' => [[1, 'position < g_list_model_get_n_items(G_LIST_MODEL(self))',
+        'must be the position of an item']],
+    'g_menu_remove' => [[1, 'position >= 0 && position < g_menu_model_get_n_items(G_MENU_MODEL(self))',
+        'must be the position of an item']],
+    'g_cancellable_disconnect' => [[1, 'handler_id == 0 || g_signal_handler_is_connected(G_OBJECT(self), '
+        . 'static_cast<gulong>(handler_id))', 'is not a connected handler id']],
+    'g_application_bind_busy_property' => [[2, 'phpgtk::has_boolean_property(object_o, ZSTR_VAL(property))',
+        'must name a boolean property of the object']],
+    'g_application_add_main_option' => [[2, 'short_name == 0 || g_ascii_isalnum(static_cast<gchar>(short_name))',
+        'must be 0 or a letter or digit']],
+    'gtk_column_view_insert_column' => [[1,
+        'position <= g_list_model_get_n_items(gtk_column_view_get_columns(self))',
+        'must not be past the last column']],
+    'gtk_column_view_scroll_to' => [[1, 'gtk_column_view_get_model(self) != nullptr && '
+        . 'pos < g_list_model_get_n_items(G_LIST_MODEL(gtk_column_view_get_model(self)))',
+        'must be the position of an item']],
+    'gtk_grid_view_scroll_to' => [[1, 'gtk_grid_view_get_model(self) != nullptr && '
+        . 'pos < g_list_model_get_n_items(G_LIST_MODEL(gtk_grid_view_get_model(self)))',
+        'must be the position of an item']],
+    'gtk_list_view_scroll_to' => [[1, 'gtk_list_view_get_model(self) != nullptr && '
+        . 'pos < g_list_model_get_n_items(G_LIST_MODEL(gtk_list_view_get_model(self)))',
+        'must be the position of an item']],
+    'gtk_string_list_remove' => [[1, 'position < g_list_model_get_n_items(G_LIST_MODEL(self))',
+        'must be the position of a string']],
+    'gtk_string_list_splice' => [[2, 'position + n_removals <= g_list_model_get_n_items(G_LIST_MODEL(self))',
+        'must not remove past the end of the list']],
+    'gtk_range_set_range' => [[2, 'min <= max', 'must not be below $min']],
+    'gtk_scale_new_with_range' => [[3, 'min < max', 'must be above $min']],
+    'gtk_spin_button_new_with_range' => [[2, 'min <= max', 'must not be below $min']],
+    'gtk_stack_set_visible_child_name' => [[1, 'gtk_stack_get_child_by_name(self, ZSTR_VAL(name)) != nullptr',
+        'is not the name of a child of this stack']],
+    'gtk_stack_set_visible_child_full' => [[1, 'gtk_stack_get_child_by_name(self, ZSTR_VAL(name)) != nullptr',
+        'is not the name of a child of this stack']],
+    'gtk_stack_add_titled' => [[2, 'name == nullptr || gtk_stack_get_child_by_name(self, ZSTR_VAL(name)) == nullptr',
+        'is already the name of a child of this stack']],
+    'gtk_text_buffer_delete_mark_by_name' => [[1, 'gtk_text_buffer_get_mark(self, ZSTR_VAL(name)) != nullptr',
+        'is not the name of a mark in this buffer']],
+    'gtk_text_view_set_gutter' => [[1, 'win_v >= GTK_TEXT_WINDOW_LEFT && win_v <= GTK_TEXT_WINDOW_BOTTOM',
+        'must be one of the four border windows (Left, Right, Top, Bottom)']],
 ];
 
 /**
@@ -205,6 +269,14 @@ const PARAM_DOMAINS = [
     'gtk_gesture_long_press_set_delay_factor.delay_factor' => [0.5, 2.0],
     'gtk_icon_theme_lookup_icon.scale' => [1, null],
     'pango_font_description_set_size.size' => [0, null],
+    'gtk_spin_button_set_climb_rate.climb_rate' => [0.0, null],
+    'pango_font_description_set_absolute_size.size' => [0.0, null],
+    'gtk_entry_set_alignment.xalign' => [0.0, 1.0],
+    'gtk_editable_set_alignment.xalign' => [0.0, 1.0],  // GtkText, GtkPasswordEntry, GtkSpinButton
+    'gtk_password_entry_set_alignment.xalign' => [0.0, 1.0],
+    'gtk_spin_button_set_alignment.xalign' => [0.0, 1.0],
+    'gtk_text_set_alignment.xalign' => [0.0, 1.0],
+
 ];
 
 const NS_GIR = 'http://www.gtk.org/introspection/core/1.0';

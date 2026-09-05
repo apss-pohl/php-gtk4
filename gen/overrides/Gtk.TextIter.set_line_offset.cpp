@@ -14,5 +14,9 @@ ZEND_METHOD(Gtk4_GtkTextIter, set_line_offset) {
     zend_argument_value_error(1, "must be greater than or equal to 0");
     RETURN_THROWS();
   }
+  if (char_on_line > gtk_text_iter_get_chars_in_line(self)) {  // GTK asserts this one
+    zend_argument_value_error(1, "must not be past the end of the line");
+    RETURN_THROWS();
+  }
   gtk_text_iter_set_line_offset(self, static_cast<int>(char_on_line));
 }
