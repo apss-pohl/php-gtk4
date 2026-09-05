@@ -1,6 +1,6 @@
 # gen/gir.php's pre-existing findings (untyped array shapes in the emitters) are baselined so new
 # code in it is analysed at level max; regenerate the baseline after reducing it:
-#   vendor/bin/phpstan analyse --generate-baseline=phpstan-baseline-gir.neon gen/gir.php
+#   vendor/bin/phpstan analyse -c phpstan.neon --generate-baseline=phpstan-baseline-gir.neon gen/gir.php gen/gir
 includes:
     - phpstan-baseline-gir.neon
 

@@ -540,11 +540,12 @@ fixes. The interface-property routing and the `GVariant` thunks landed the same 
       rows, 5 pins: a drop target's `enter`/`motion` without a drop, `delete-text` with a negative
       start) and scalar vfunc returns (`#return`) joined.) Still unswept: typed `GVariant`
       conversions, which `ConverterGuardTest` pins case by case.
-- [ ] `gen/gir.php` emitters (`emitClass` 317 lines, `emitRecord` 218, `vfuncThunk` 151) still sit
-      in one file exempt from three phpcs sniffs and baselined in PHPStan; split them out so the
-      exclusions can shrink with the baseline. Header declarations in `src/core/*.h` carry no
-      comment (the gate covers definitions only); `.clang-tidy` explains its macro exclusions but
-      not the style choices.
+- [x] `gen/gir.php` emitters split out (2026-09-05): four traits of `Generator`, moved verbatim -
+      `gen/gir/emit-class.php`, `emit-record.php`, `emit-vfunc.php`, `emit-tests.php` (2 028 lines
+      became 534 + 692 + 272 + 284 + 312); every generated file stayed byte-identical and the
+      PHPStan baseline holds the same 115 findings over the new paths. Still open from the same
+      finding: header declarations in `src/core/*.h` carry no comment (the gate covers definitions
+      only); `.clang-tidy` explains its macro exclusions but not the style choices.
 - [ ] Performance, all single-digit percent: the signal marshaller re-resolves the callable and
       allocates the argument array per emission, `subtype_vfunc()` hashes the method name per call,
       the PHP-GType snapshots are O(N²) in PHP subclasses and never freed.
