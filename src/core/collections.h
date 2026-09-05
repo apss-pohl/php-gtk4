@@ -13,8 +13,11 @@ namespace phpgtk {
 
 enum class Transfer { None, Container, Full };
 
+// GList -> list, elements converted by `element_type`, the list released per `transfer`.
 void glist_to_php(GList *list, GType element_type, Transfer transfer, zval *rv);
+// GSList -> list, likewise.
 void gslist_to_php(GSList *list, GType element_type, Transfer transfer, zval *rv);
+// GPtrArray -> list, likewise.
 void gptrarray_to_php(GPtrArray *array, GType element_type, Transfer transfer, zval *rv);
 // NULL-terminated char**; Full frees it with g_strfreev().
 void strv_to_php(char **strv, Transfer transfer, zval *rv);

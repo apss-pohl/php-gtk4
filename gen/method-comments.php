@@ -84,6 +84,32 @@ $problems = [];
 // Generated files carry their ZEND_METHOD comment blocks from gen/gir.php (same stub, same
 // format): the generator owns those, so they are neither checked nor rewritten here - but
 // every other function in them (thunks, installers, prelude helpers) needs its comment too.
+// --- declarations in the core headers: a comment above, or a trailing `// ...` on the line
+foreach (glob($root . '/src/core/*.h') ?: [] as $header) {
+    $lines = explode("\n", (string) file_get_contents($header));
+    foreach ($lines as $i => $line) {
+        $declaration = '/^[A-Za-z_][\w:<>\*&, ]*\s\*?&?\b(\w+)\s*\(.*$/';
+        $notADeclaration = '/^(?:inline|template|using|return|if|for|while|namespace|struct|class|enum|#)/';
+        if (!preg_match($declaration, $line, $dm) || preg_match($notADeclaration, $line)) {
+            continue;
+        }
+        if (str_contains($line, '{') || str_contains($line, '=')) {
+            continue;   // an inline definition (checked by its .cpp twin) or a variable
+        }
+        $trailing = preg_match('#\)\s*;\s*//#', $line) === 1;
+        $prev = $i - 1;
+        $above = $prev >= 0 && preg_match('#^\s*(//|\*/)#', $lines[$prev]) === 1;
+        if (!$trailing && !$above) {
+            $problems[] = sprintf(
+                '%s:%d: declaration %s() has no comment above it',
+                substr($header, strlen($root) + 1),
+                $i + 1,
+                $dm[1],
+            );
+        }
+    }
+}
+
 $files = array_merge(glob($root . '/src/*.cpp') ?: [], glob($root . '/src/*/*.cpp') ?: []);
 sort($files);
 foreach ($files as $file) {

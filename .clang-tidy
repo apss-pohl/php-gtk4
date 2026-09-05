@@ -49,6 +49,22 @@ Checks: >-
 # zval union access, multi-declarations, array decay, signed/unsigned compares
 # and huge cognitive complexity; PHP_INI_BEGIN/zend_function_entry tables are C
 # arrays by API contract; G_OBJECT_GET_CLASS() expands to type-trait-like casts.
+# The rest of the deny-list is house style, decided rather than forced by a macro:
+#  - use-trailing-return-type, use-auto, type-traits, use-integer-sign-comparison: C++20
+#    written in the C idiom the GLib/Zend APIs are, explicit types where a GObject cast is
+#    involved; std::cmp_* would litter every Zend macro comparison.
+#  - use-default-member-init, use-equals-default, loop-convert, init-variables: handle structs
+#    are initialised by create_object(), out-parameters by ZPP; the C-style loops walk GLib lists.
+#  - braces-around-statements, else-after-return, isolate-declaration, named-parameter,
+#    identifier-length: one-line guards (`if (x == nullptr) RETURN_THROWS();`) are the pattern of
+#    every method; clang-format keeps them readable.
+#  - implicit-bool-conversion: gboolean is an int by API contract.
+#  - convert-member-functions-to-static, make-member-function-const, noexcept-swap: Zend handler
+#    and GLib callback signatures are fixed.
+#  - easily-swappable-parameters: (x, y), (width, height), (min, max) pairs are GTK's own.
+#  - casting-through-void, avoid-non-const-global-variables: gpointer user data and the module
+#    globals (GTK4_G) are the GLib and Zend idioms.
+#  - avoid-c-arrays, magic-numbers: zend_function_entry / PHP_INI tables and GType ids.
 # Everything else is enforced - CI fails on findings.
 # Every enabled check is an error, locally (ci.sh) and in CI (cpp-linter) alike.
 WarningsAsErrors: '*'

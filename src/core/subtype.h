@@ -56,8 +56,12 @@ gpointer subtype_native_class(GObject *obj);
 // type - lets it. The type variant validates the string first: nullptr with a TypeError
 // (naming `origin`, the PHP method) when it is not a GVariant type string.
 const char *subtype_keep_string(GObject *obj, const char *slot, const char *value);
+// The GVariantType twin: validated first, nullptr with a TypeError naming `origin` otherwise.
 const GVariantType *subtype_keep_variant_type(GObject *obj, const char *origin, const char *slot,
                                               const char *value);
+
+// RSHUTDOWN: drop the per-request vfunc lookup cache (keyed by class entries that die now).
+void subtype_request_shutdown();
 
 // wrap(): the PHP class registered for a PHP GType in this request, nullptr if the class
 // does not exist here (a different request declared it) - fall back to the native parent.

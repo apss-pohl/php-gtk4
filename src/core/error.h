@@ -37,8 +37,11 @@ enum class ExceptionMode : zend_long { Log = 0, Rethrow = 1 };
 extern zend_class_entry *ce_ExceptionMode;  // the PHP enum, set in MINIT
 
 void set_exception_handler(zval *handler);  // ADDREF'd copy, nullptr clears
+// Whether a handler is installed (inspects the slot only - never calls into PHP).
 bool has_exception_handler();
+// Gtk::set_exception_mode() / get_exception_mode(): the Log-or-Rethrow policy of this request.
 void set_exception_mode(ExceptionMode mode);
+// The mode in force for this request.
 ExceptionMode exception_mode();
 void exception_state_shutdown();  // RSHUTDOWN
 

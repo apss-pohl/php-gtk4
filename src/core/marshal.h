@@ -7,6 +7,7 @@ namespace phpgtk {
 
 // GValue -> zval. On an unsupported GType throws (TypeError) and sets rv to null.
 void to_php(const GValue *v, zval *rv);
+// Whether to_php() can convert a value of this GType (var_dump() skips the fields it cannot).
 bool to_php_supported(GType type);
 
 // A GType named the way PHP names one: "string", "int", "float"/"double", "bool", or the name
@@ -23,6 +24,7 @@ bool to_gvalue(zval *pv, GType t, GValue *out);
 // The coercion rules a property write shares with every other conversion (core/variant): whether
 // the assigning PHP code declared strict_types, and what weak mode accepts for a string.
 bool caller_is_strict();
+// What PHP's weak mode accepts for a string parameter: scalars, and objects with __toString().
 bool weak_to_string_ok(const zval *pv);
 
 }  // namespace phpgtk

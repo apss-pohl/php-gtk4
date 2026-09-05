@@ -36,6 +36,7 @@ bool assert_gui_thread(const char *what);
 // Whether this is the thread Gtk::init() ran on. A GLib log writer is process-wide and GTK
 // calls it from whatever thread logged, so anything that touches per-request state has to ask.
 bool on_gui_thread();
+// Gtk::init() succeeded on this thread: it is the GUI thread from now on (first caller wins).
 void record_gui_thread();
 
 }  // namespace phpgtk

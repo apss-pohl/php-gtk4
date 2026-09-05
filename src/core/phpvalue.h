@@ -14,6 +14,8 @@ G_END_DECLS
 namespace phpgtk {
 GObject *php_value_new(zval *value);  // new instance holding a copy of value
 zval *php_value_get(PhpValue *self);  // borrowed
+// Replace the stored value (ADDREF the new one, release the old one afterwards).
 void php_value_set(PhpValue *self, zval *value);
+// RSHUTDOWN: drain the values of the instances GTK still holds, before Zend is gone.
 void phpvalue_request_shutdown();
 }  // namespace phpgtk

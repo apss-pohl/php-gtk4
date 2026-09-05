@@ -5,6 +5,7 @@
 #include "object.h"
 #include "teardown.h"
 
+#include <array>
 #include <vector>
 
 namespace phpgtk {
@@ -13,6 +14,8 @@ struct PhpClosure {
   GClosure closure;  // must be first
   zval callable;     // keeps the handler alive
   zend_string *signal_name;
+  zend_fcall_info_cache fcc;  // the callable resolved once (php_closure_new), see there
+  bool resolved;
 };
 
 namespace {
@@ -25,6 +28,10 @@ void closure_finalize(gpointer, GClosure *c) {
   zend_string_release(pc->signal_name);
 }
 
+// The handler's arguments: on the stack for the signals there are (GTK's widest takes five),
+// on the heap for anything wider.
+constexpr guint inline_args = 8;
+
 // GClosure marshaller: GValue params -> zvals, call the handler, convert its return value.
 void closure_marshal(GClosure *c, GValue *return_value, guint n_params, const GValue *params,
                      gpointer, gpointer) {
@@ -35,14 +42,20 @@ void closure_marshal(GClosure *c, GValue *return_value, guint n_params, const GV
   // would not run this one anyway, and we must not touch the pending state.
   if (EG(exception) != nullptr) return;
 
-  zend_fcall_info fci;
-  zend_fcall_info_cache fcc;
-  if (zend_fcall_info_init(&pc->callable, 0, &fci, &fcc, nullptr, nullptr) != SUCCESS) {
-    diagnostic("php-gtk4: handler for '%s' is no longer callable", origin);
-    return;
+  zend_fcall_info_cache per_call;
+  if (!pc->resolved) {  // a __call trampoline (php_closure_new): resolve it for this call only
+    zend_fcall_info fci;
+    if (zend_fcall_info_init(&pc->callable, 0, &fci, &per_call, nullptr, nullptr) != SUCCESS) {
+      diagnostic("php-gtk4: handler for '%s' is no longer callable", origin);
+      return;
+    }
   }
+  zend_fcall_info_cache *fcc = pc->resolved ? &pc->fcc : &per_call;
 
-  auto *args = static_cast<zval *>(safe_emalloc(n_params, sizeof(zval), 0));
+  std::array<zval, inline_args> inline_storage{};
+  zval *args = n_params <= inline_args
+                   ? inline_storage.data()
+                   : static_cast<zval *>(safe_emalloc(n_params, sizeof(zval), 0));
   uint32_t filled = 0;
   for (guint i = 0; i < n_params; i++) {
     to_php(&params[i], &args[i]);
@@ -52,10 +65,7 @@ void closure_marshal(GClosure *c, GValue *return_value, guint n_params, const GV
   if (EG(exception) == nullptr) {
     zval retval;
     ZVAL_UNDEF(&retval);
-    fci.retval = &retval;
-    fci.params = args;
-    fci.param_count = n_params;
-    zend_call_function(&fci, &fcc);
+    zend_call_known_fcc(fcc, &retval, n_params, args, nullptr);
 
     if (EG(exception) == nullptr && return_value != nullptr && !Z_ISUNDEF(retval) &&
         G_VALUE_TYPE(return_value) != G_TYPE_INVALID) {
@@ -68,7 +78,7 @@ void closure_marshal(GClosure *c, GValue *return_value, guint n_params, const GV
     zval_ptr_dtor(&retval);
   }
   for (uint32_t i = 0; i < filled; i++) zval_ptr_dtor(&args[i]);
-  efree(args);
+  if (args != inline_storage.data()) efree(args);
 
   // Whatever happened above - marshalling, the handler, the return conversion -
   // goes through the exception policy; nothing unwinds into GLib.
@@ -82,6 +92,15 @@ GClosure *php_closure_new(zval *callable, zend_string *origin) {
   auto *pc = reinterpret_cast<PhpClosure *>(g_closure_new_simple(sizeof(PhpClosure), nullptr));
   ZVAL_COPY(&pc->callable, callable);
   pc->signal_name = zend_string_copy(origin);
+  // Resolve the callable now, not per emission. The cache points at what `callable` already
+  // keeps alive (a closure, its bound object, a method's class) for exactly as long as the
+  // closure lives, so it takes no references of its own: zend_fcc_addref() would add one Zend
+  // cannot see - a handler bound to an object that owns the emitter would then never be
+  // collected. A __call trampoline is per-call scratch and is resolved at each emission instead.
+  zend_fcall_info fci;
+  pc->fcc = empty_fcall_info_cache;
+  pc->resolved = zend_fcall_info_init(callable, 0, &fci, &pc->fcc, nullptr, nullptr) == SUCCESS &&
+                 (pc->fcc.function_handler->common.fn_flags & ZEND_ACC_CALL_VIA_TRAMPOLINE) == 0;
   g_closure_add_finalize_notifier(&pc->closure, nullptr, closure_finalize);
   g_closure_set_marshal(&pc->closure, closure_marshal);
   return &pc->closure;

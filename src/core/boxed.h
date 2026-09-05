@@ -53,15 +53,20 @@ struct BoxedClass {
   BoxedEqual equal = nullptr;
 };
 
+// MINIT: build the shared handler table for all boxed classes.
 void boxed_handlers_init();
+// MINIT: bind a PHP class to a boxed GType with its field accessors.
 void register_boxed(const BoxedClass &info);
+// Registry lookup by GType; nullptr for an unregistered one.
 const BoxedClass *boxed_class_for_type(GType type);
 
 // Field writers: the PHP value for a scalar struct field, converted like a typed parameter -
 // strict_types where the assignment is written, weak coercion otherwise (core/marshal). False
 // with a TypeError pending, naming `Class::$field` and the type.
 bool boxed_field_long(zval *v, const char *class_name, const char *field, zend_long *out);
+// A float field: an int widens, anything else follows the caller's coercion rules.
 bool boxed_field_double(zval *v, const char *class_name, const char *field, double *out);
+// A bool field: true/false, or what weak mode accepts where strict_types is not declared.
 bool boxed_field_bool(zval *v, const char *class_name, const char *field, bool *out);
 
 // Give a freshly created (constructor) handle its data: takes ownership of `data`

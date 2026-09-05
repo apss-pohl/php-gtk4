@@ -102,6 +102,10 @@ std::vector<GType> php_interfaces(zend_class_entry *ce) {
 
 // Process-wide (GTypes cannot be unregistered): PHP GType -> PHP class name. The strings
 // are leaked on purpose: class_data of the GTypeInfo points at them for the process' life.
+// Every registration copies the whole map into a new snapshot that is never freed, so the
+// retained size grows with the square of the number of PHP subclasses a process registers:
+// ~1 MB at 200, ~25 MB at 1 000. That is the price of a lock-free read on the wrap() path
+// (an atomic shared_ptr would take a lock there), and a desktop process registers dozens.
 // Copy-on-write: readers (wrap() walks the parent chain of every wrapped object, on hot
 // paths) load the current snapshot pointer and never lock; writers (rare: first `new` of a
 // class) serialise on the mutex and publish a new map. Every snapshot ever published stays
@@ -439,11 +443,26 @@ GObject *subtype_new(zval *self, const char *first_property, ...) {
 zend_function *subtype_vfunc(GObject *obj, const char *method, zval *self) {
   Object *handle = object_handle(obj);
   if (handle == nullptr) return nullptr;
-  auto *fn = static_cast<zend_function *>(
-      zend_hash_str_find_ptr(&handle->std.ce->function_table, method, strlen(method)));
-  if (fn == nullptr || fn->type != ZEND_USER_FUNCTION) return nullptr;
+  // Per class and slot, once per request: a PHP widget's measure/snapshot/size_allocate slots
+  // run every frame, and the method table cannot change under a running request. `method` is
+  // the thunk's string literal, so its address is the key.
+  auto &per_class = GTK4_G(vfunc_cache)[handle->std.ce];
+  auto it = per_class.find(method);
+  if (it == per_class.end()) {
+    auto *found = static_cast<zend_function *>(
+        zend_hash_str_find_ptr(&handle->std.ce->function_table, method, strlen(method)));
+    if (found != nullptr && found->type != ZEND_USER_FUNCTION) found = nullptr;
+    it = per_class.emplace(method, found).first;
+  }
+  zend_function *fn = it->second;
+  if (fn == nullptr) return nullptr;
   ZVAL_OBJ_COPY(self, &handle->std);
   return fn;
+}
+
+// RSHUTDOWN: the class entries the cache is keyed by die with the request.
+void subtype_request_shutdown() {
+  GTK4_G(vfunc_cache).clear();
 }
 
 // Class struct of the nearest GTK (non-PHP) ancestor type of the instance.

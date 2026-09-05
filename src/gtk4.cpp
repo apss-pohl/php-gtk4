@@ -10,6 +10,7 @@
 #include "core/globals.h"
 #include "core/object.h"
 #include "core/phpvalue.h"
+#include "core/subtype.h"
 #include "core/teardown.h"
 #include <Zend/zend_modules.h>
 
@@ -180,6 +181,7 @@ static PHP_RINIT_FUNCTION(gtk4) {
 static PHP_RSHUTDOWN_FUNCTION(gtk4) {
   phpgtk::teardown_request();  // before anything that holds callables could finalize later
   phpgtk::phpvalue_request_shutdown();
+  phpgtk::subtype_request_shutdown();
   phpgtk::exception_state_shutdown();
   phpgtk::diagnostics_request_shutdown();  // last: the three above can still report
   return SUCCESS;

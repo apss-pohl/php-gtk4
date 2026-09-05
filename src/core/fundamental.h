@@ -33,8 +33,12 @@ struct FundamentalClass {
   UnrefFn unref;
 };
 
+// MINIT: build the shared handler table for all fundamental handle classes.
 void fundamental_handlers_init();
+// MINIT: bind a PHP class to a fundamental GType with its ref/unref pair.
 void register_fundamental(const FundamentalClass &info);
+// Registry lookup by GType, walking up to the nearest registered ancestor (a GdkKeyEvent is
+// handled by the GdkEvent class, like wrap() does for GObjects).
 const FundamentalClass *fundamental_class_for_type(GType type);
 
 // C -> PHP: new handle holding a ref on `instance` (null for nullptr; TypeError

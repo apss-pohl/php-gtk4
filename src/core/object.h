@@ -92,6 +92,7 @@ void register_interface(const char *gtype_name, zend_class_entry *ce, GType type
 // The concrete class wrap() uses for a GObject whose own classes are all unregistered but which
 // implements `iface` (generated as Gtk4\<Interface>Object, private constructor).
 void register_interface_fallback(GType iface, zend_class_entry *ce);
+// Registry lookup by GType name (gtype_from_php_name(); wrap() uses class_for_gtype()).
 zend_class_entry *class_for_gtype_name(const char *gtype_name);
 // Registered class of exactly this GType (no parent walk - for Z_PARAM_OBJECT_OF_CLASS).
 zend_class_entry *class_for_gtype(GType type);
