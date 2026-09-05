@@ -500,9 +500,17 @@ unbound enums that were being read as `GFlagsClass`. `tests/robustness-criticals
       hands out a class it calls unbuildable, which is how `GtkBuilderScopeObject` turned out to be
       reachable), but only through arg-less getters on classes the factory can build. A class
       reachable *only* through a method with arguments would keep a stale excuse.
-- [ ] Windows and PHP 8.5 unverified locally for this work: no new `src/*.cpp`, so `config.m4` and
-      `config.w32` need no change, but `<cmath>`, `<zend_strtod.h>` and `HUGE_VAL` in
-      `src/php_gtk4.h` first meet MSVC and the `/W3` gate in `windows.yml`.
+- [x] Windows and PHP 8.5 unverified locally for this work - answered by CI on 2026-09-04: PHP 8.5
+      NTS/ZTS green on Linux; the four Windows jobs build and load the DLL and then die in
+      PHPUnit at `PhpSelectionModelTest` with `gtk_list_item_manager_clear_model: assertion
+      failed: (gtk_rb_tree_get_root (self->items) == NULL)`, exit 0xC0000409, the same way
+      before and after every push that day.
+- [ ] **The Windows list-view abort** (from the line above). The assertion exists in the newer
+      GTK gvsbuild ships, not in the 4.14 Linux CI runs, so Linux may be leaking silently where
+      Windows aborts. Hypothesis: a PHP-implemented `GtkSelectionModel` slot answers its default
+      (zero items) once the handle is unavailable, leaving GTK's item manager with items it
+      believes gone. Needs a run against that GTK; a workflow run with the test class excluded
+      would also show the two earlier failures the abort hides.
 
 ## 9d. Review 2026-09-04 — leftovers
 
@@ -543,9 +551,9 @@ fixes. The interface-property routing and the `GVariant` thunks landed the same 
 - [x] `gen/gir.php` emitters split out (2026-09-05): four traits of `Generator`, moved verbatim -
       `gen/gir/emit-class.php`, `emit-record.php`, `emit-vfunc.php`, `emit-tests.php` (2 028 lines
       became 534 + 692 + 272 + 284 + 312); every generated file stayed byte-identical and the
-      PHPStan baseline holds the same 115 findings over the new paths. Still open from the same
-      finding: header declarations in `src/core/*.h` carry no comment (the gate covers definitions
-      only); `.clang-tidy` explains its macro exclusions but not the style choices.
+      PHPStan baseline holds the same 115 findings over the new paths.
+- [ ] Header declarations in `src/core/*.h` carry no comment (the gate covers definitions only);
+      `.clang-tidy` explains its macro exclusions but not the style choices.
 - [ ] Performance, all single-digit percent: the signal marshaller re-resolves the callable and
       allocates the argument array per emission, `subtype_vfunc()` hashes the method name per call,
       the PHP-GType snapshots are O(N²) in PHP subclasses and never freed.
