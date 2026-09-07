@@ -19,7 +19,10 @@ jobs:
   cpp-static-analysis:
     name: C++ static analysis
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    # A cold run lints every translation unit; src/WebKit + src/JavaScriptCore (74 of the 314,
+    # and the slowest, webkit/webkit.h being what it is) took the old 30-minute budget past the
+    # end. The cache below makes every warm run a fraction of this.
+    timeout-minutes: 60
     env:
       PHP: php
       PHP_CONFIG: php-config
@@ -83,7 +86,14 @@ jobs:
 
       # Same stage as the pre-commit hook and `./ci.sh --only=cpp-lint`: clang-tidy with
       # WarningsAsErrors '*' and clang-format --dry-run over src/. Any finding fails the job.
+      #
+      # The step timeout is deliberately below the job's: a step that runs out of time *fails*,
+      # and the post-cache step then still saves the files ci.sh got through (ci.sh appends each
+      # one as it passes), so the next run starts where this one stopped. A *job* timeout is a
+      # cancellation - post steps are skipped and the whole pass is lost, which is how the
+      # 30-minute budget above turned into a run that could never finish.
       - name: clang-tidy + clang-format
+        timeout-minutes: 50
         env:
           PHP_CONFIG: php-config
           CLANG_TIDY: clang-tidy-20

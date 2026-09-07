@@ -336,8 +336,12 @@ stage_cpp_lint() {
                     [[ $FAIL_FAST -eq 1 ]] && touch "$err_dir/stop"
                 else
                     # Remembered by content: an edit that changes nothing but whitespace
-                    # still gets linted again, an untouched file never does.
-                    printf '%s %s\n' "$(sha256sum "$f" | cut -d' ' -f1)" "$f" >> "$err_dir/ok"
+                    # still gets linted again, an untouched file never does. Appended as the file
+                    # passes, not collected at the end: a run that is killed halfway (CI's step
+                    # timeout) keeps what it got through, so the next one continues instead of
+                    # starting over. One short line with O_APPEND is atomic, so the parallel jobs
+                    # may share the file; the selection loop above has already read it.
+                    printf '%s %s\n' "$(sha256sum "$f" | cut -d' ' -f1)" "$f" >> "$tidy_cache"
                 fi
             ) &
             active=$((active + 1))
@@ -347,7 +351,6 @@ stage_cpp_lint() {
             if [[ $active -ge $tidy_jobs ]]; then wait -n || true; active=$((active - 1)); fi  # a failed job is recorded via err_dir
         done
         wait
-        [[ -f "$err_dir/ok" ]] && cat "$err_dir/ok" >> "$tidy_cache"
     fi
 
     if substep format; then

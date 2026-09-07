@@ -29,6 +29,14 @@ export GTK_A11Y=${GTK_A11Y:-none}
 # too, or GDK still finds the compositor.
 export GDK_BACKEND=x11
 unset WAYLAND_DISPLAY
+# WebKitGTK runs its web and network processes inside a bubblewrap sandbox. A GitHub runner
+# denies the network-namespace setup it wants ("bwrap: loopback: Failed RTM_NEWADDR: Operation
+# not permitted"), and a launch that fails that way takes the whole PHP process down with it:
+# "ERROR **: Connection: failed to receive credentials", SIGTRAP, no test named. The suite loads
+# nothing but its own local HTML, so the sandbox buys it nothing - turn it off. Defaulted rather
+# than forced: an environment that already sets the variable keeps its own value.
+# Ignored entirely by a build without --enable-gtk4-webkit.
+export WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=${WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS:-1}
 # Never run the suite under xdebug: its develop-mode observer segfaults at
 # request shutdown after ReflectionMethod::invoke() on internal methods
 # (EveryClassTest), and it slows everything down. The stress/ASan runs use
