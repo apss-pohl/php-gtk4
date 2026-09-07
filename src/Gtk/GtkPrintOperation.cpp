@@ -505,14 +505,15 @@ namespace {
 // subclass
 void vfunc_thunk_begin_print(GtkPrintOperation *self, GtkPrintContext *context) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_begin_print", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_begin_print", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->begin_print != nullptr) native->begin_print(self, context);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(context != nullptr ? G_OBJECT(context) : nullptr, &argv[0]);
@@ -523,6 +524,7 @@ void vfunc_thunk_begin_print(GtkPrintOperation *self, GtkPrintContext *context) 
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkPrintOperation::vfunc_begin_print");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_PRINT_OPERATION_CLASS->begin_print (called from class_init / iface_init of a
@@ -535,13 +537,14 @@ void vfunc_install_begin_print(gpointer klass) {
 // $this->vfunc_create_custom_widget() on a PHP subclass
 GtkWidget *vfunc_thunk_create_custom_widget(GtkPrintOperation *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_create_custom_widget", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_create_custom_widget", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->create_custom_widget != nullptr ? native->create_custom_widget(self) : nullptr;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   GtkWidget *result = nullptr;
@@ -555,6 +558,7 @@ GtkWidget *vfunc_thunk_create_custom_widget(GtkPrintOperation *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkPrintOperation::vfunc_create_custom_widget");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -568,14 +572,15 @@ void vfunc_install_create_custom_widget(gpointer klass) {
 // on a PHP subclass
 void vfunc_thunk_custom_widget_apply(GtkPrintOperation *self, GtkWidget *widget) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_custom_widget_apply", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_custom_widget_apply", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->custom_widget_apply != nullptr) native->custom_widget_apply(self, widget);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(widget != nullptr ? G_OBJECT(widget) : nullptr, &argv[0]);
@@ -586,6 +591,7 @@ void vfunc_thunk_custom_widget_apply(GtkPrintOperation *self, GtkWidget *widget)
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkPrintOperation::vfunc_custom_widget_apply");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_PRINT_OPERATION_CLASS->custom_widget_apply (called from class_init /
@@ -597,13 +603,15 @@ void vfunc_install_custom_widget_apply(gpointer klass) {
 // vfunc thunk: GTK_PRINT_OPERATION_CLASS->done -> $this->vfunc_done() on a PHP subclass
 void vfunc_thunk_done(GtkPrintOperation *self, GtkPrintOperationResult result) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_done", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_done", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->done != nullptr) native->done(self, result);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   enum_to_php(GTK_TYPE_PRINT_OPERATION_RESULT, static_cast<gint>(result), &argv[0]);
@@ -614,6 +622,7 @@ void vfunc_thunk_done(GtkPrintOperation *self, GtkPrintOperationResult result) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkPrintOperation::vfunc_done");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_PRINT_OPERATION_CLASS->done (called from class_init / iface_init of a PHP
@@ -625,13 +634,15 @@ void vfunc_install_done(gpointer klass) {
 // vfunc thunk: GTK_PRINT_OPERATION_CLASS->draw_page -> $this->vfunc_draw_page() on a PHP subclass
 void vfunc_thunk_draw_page(GtkPrintOperation *self, GtkPrintContext *context, int page_nr) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_draw_page", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_draw_page", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->draw_page != nullptr) native->draw_page(self, context, page_nr);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap(context != nullptr ? G_OBJECT(context) : nullptr, &argv[0]);
@@ -643,6 +654,7 @@ void vfunc_thunk_draw_page(GtkPrintOperation *self, GtkPrintContext *context, in
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkPrintOperation::vfunc_draw_page");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_PRINT_OPERATION_CLASS->draw_page (called from class_init / iface_init of a
@@ -654,13 +666,15 @@ void vfunc_install_draw_page(gpointer klass) {
 // vfunc thunk: GTK_PRINT_OPERATION_CLASS->end_print -> $this->vfunc_end_print() on a PHP subclass
 void vfunc_thunk_end_print(GtkPrintOperation *self, GtkPrintContext *context) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_end_print", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_end_print", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->end_print != nullptr) native->end_print(self, context);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(context != nullptr ? G_OBJECT(context) : nullptr, &argv[0]);
@@ -671,6 +685,7 @@ void vfunc_thunk_end_print(GtkPrintOperation *self, GtkPrintContext *context) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkPrintOperation::vfunc_end_print");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_PRINT_OPERATION_CLASS->end_print (called from class_init / iface_init of a
@@ -682,12 +697,14 @@ void vfunc_install_end_print(gpointer klass) {
 // vfunc thunk: GTK_PRINT_OPERATION_CLASS->paginate -> $this->vfunc_paginate() on a PHP subclass
 gboolean vfunc_thunk_paginate(GtkPrintOperation *self, GtkPrintContext *context) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_paginate", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_paginate", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->paginate != nullptr ? native->paginate(self, context) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(context != nullptr ? G_OBJECT(context) : nullptr, &argv[0]);
@@ -702,6 +719,7 @@ gboolean vfunc_thunk_paginate(GtkPrintOperation *self, GtkPrintContext *context)
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkPrintOperation::vfunc_paginate");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -716,15 +734,16 @@ void vfunc_install_paginate(gpointer klass) {
 void vfunc_thunk_request_page_setup(GtkPrintOperation *self, GtkPrintContext *context, int page_nr,
                                     GtkPageSetup *setup) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_request_page_setup", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_request_page_setup", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->request_page_setup != nullptr)
       native->request_page_setup(self, context, page_nr, setup);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   wrap(context != nullptr ? G_OBJECT(context) : nullptr, &argv[0]);
@@ -737,6 +756,7 @@ void vfunc_thunk_request_page_setup(GtkPrintOperation *self, GtkPrintContext *co
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkPrintOperation::vfunc_request_page_setup");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_PRINT_OPERATION_CLASS->request_page_setup (called from class_init /
@@ -749,20 +769,22 @@ void vfunc_install_request_page_setup(gpointer klass) {
 // subclass
 void vfunc_thunk_status_changed(GtkPrintOperation *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_status_changed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_status_changed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->status_changed != nullptr) native->status_changed(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkPrintOperation::vfunc_status_changed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_PRINT_OPERATION_CLASS->status_changed (called from class_init / iface_init
@@ -776,15 +798,16 @@ void vfunc_install_status_changed(gpointer klass) {
 void vfunc_thunk_update_custom_widget(GtkPrintOperation *self, GtkWidget *widget,
                                       GtkPageSetup *setup, GtkPrintSettings *settings) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_update_custom_widget", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_update_custom_widget", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->update_custom_widget != nullptr)
       native->update_custom_widget(self, widget, setup, settings);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   wrap(widget != nullptr ? G_OBJECT(widget) : nullptr, &argv[0]);
@@ -797,6 +820,7 @@ void vfunc_thunk_update_custom_widget(GtkPrintOperation *self, GtkWidget *widget
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkPrintOperation::vfunc_update_custom_widget");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_PRINT_OPERATION_CLASS->update_custom_widget (called from class_init /

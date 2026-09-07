@@ -179,20 +179,22 @@ namespace {
 // subclass
 void vfunc_thunk_area_prepared(GdkPixbufLoader *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_area_prepared", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_area_prepared", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GDK_PIXBUF_LOADER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->area_prepared != nullptr) native->area_prepared(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GdkPixbufLoader::vfunc_area_prepared");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GDK_PIXBUF_LOADER_CLASS->area_prepared (called from class_init / iface_init of a
@@ -205,14 +207,15 @@ void vfunc_install_area_prepared(gpointer klass) {
 // subclass
 void vfunc_thunk_area_updated(GdkPixbufLoader *self, int x, int y, int width, int height) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_area_updated", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_area_updated", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GDK_PIXBUF_LOADER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->area_updated != nullptr) native->area_updated(self, x, y, width, height);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 4> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(x));
@@ -226,6 +229,7 @@ void vfunc_thunk_area_updated(GdkPixbufLoader *self, int x, int y, int width, in
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GdkPixbufLoader::vfunc_area_updated");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GDK_PIXBUF_LOADER_CLASS->area_updated (called from class_init / iface_init of a
@@ -237,19 +241,22 @@ void vfunc_install_area_updated(gpointer klass) {
 // vfunc thunk: GDK_PIXBUF_LOADER_CLASS->closed -> $this->vfunc_closed() on a PHP subclass
 void vfunc_thunk_closed(GdkPixbufLoader *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_closed", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_closed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GDK_PIXBUF_LOADER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->closed != nullptr) native->closed(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GdkPixbufLoader::vfunc_closed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GDK_PIXBUF_LOADER_CLASS->closed (called from class_init / iface_init of a PHP
@@ -262,14 +269,15 @@ void vfunc_install_closed(gpointer klass) {
 // subclass
 void vfunc_thunk_size_prepared(GdkPixbufLoader *self, int width, int height) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_size_prepared", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_size_prepared", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GDK_PIXBUF_LOADER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->size_prepared != nullptr) native->size_prepared(self, width, height);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(width));
@@ -281,6 +289,7 @@ void vfunc_thunk_size_prepared(GdkPixbufLoader *self, int width, int height) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GdkPixbufLoader::vfunc_size_prepared");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GDK_PIXBUF_LOADER_CLASS->size_prepared (called from class_init / iface_init of a

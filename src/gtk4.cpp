@@ -31,6 +31,9 @@
 // the per-namespace arginfo of src/<Ns>/<Ns>.stub.php.
 #include "gen_prototypes.h"
 #include "gen_arginfo.h"
+// ...and the MINIT block of every conditional namespace, one function per feature: a build
+// without the feature compiles none of it, and MINIT keeps its size.
+#include "gen_minit_defs.inc"
 
 ZEND_DECLARE_MODULE_GLOBALS(gtk4)
 
@@ -148,7 +151,8 @@ static PHP_MINIT_FUNCTION(gtk4) {
   phpgtk::register_GdkEventSequence(register_class_Gtk4_GdkEventSequence());
   register_class_Gtk4_GtkStyleProviderPriority();
   phpgtk::register_flags(G_TYPE_IO_CONDITION, register_class_Gtk4_GIOCondition());
-  // Generated classes (gen/gir.php): enums first, then interfaces and classes parents first.
+  // Generated classes (gen/gir.php): enums first, then interfaces and classes parents first;
+  // a conditional namespace registers from its own function in gen_minit_defs.inc.
 #include "gen_minit.inc"
 
   // libgtk-3 and libgtk-4 export the same C symbols; whichever loaded first

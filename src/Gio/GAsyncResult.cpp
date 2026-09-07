@@ -46,13 +46,14 @@ namespace {
 // a PHP subclass
 GObject *vfunc_thunk_get_source_object(GAsyncResult *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "get_source_object", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_source_object", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return nullptr;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   GObject *result = nullptr;
@@ -67,6 +68,7 @@ GObject *vfunc_thunk_get_source_object(GAsyncResult *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GAsyncResult::get_source_object");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 

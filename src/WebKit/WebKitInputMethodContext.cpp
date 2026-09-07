@@ -219,13 +219,15 @@ namespace {
 // subclass
 void vfunc_thunk_committed(WebKitInputMethodContext *self, const char *text) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_committed", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_committed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->committed != nullptr) native->committed(self, text);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (text == nullptr) {
@@ -240,6 +242,7 @@ void vfunc_thunk_committed(WebKitInputMethodContext *self, const char *text) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_committed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->committed (called from class_init /
@@ -252,14 +255,15 @@ void vfunc_install_committed(gpointer klass) {
 // $this->vfunc_delete_surrounding() on a PHP subclass
 void vfunc_thunk_delete_surrounding(WebKitInputMethodContext *self, int offset, guint n_chars) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_delete_surrounding", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_delete_surrounding", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->delete_surrounding != nullptr) native->delete_surrounding(self, offset, n_chars);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(offset));
@@ -271,6 +275,7 @@ void vfunc_thunk_delete_surrounding(WebKitInputMethodContext *self, int offset, 
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_delete_surrounding");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->delete_surrounding (called from class_init /
@@ -283,13 +288,14 @@ void vfunc_install_delete_surrounding(gpointer klass) {
 // $this->vfunc_filter_key_event() on a PHP subclass
 gboolean vfunc_thunk_filter_key_event(WebKitInputMethodContext *self, GdkEvent *key_event) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_filter_key_event", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_filter_key_event", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->filter_key_event != nullptr ? native->filter_key_event(self, key_event) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(key_event != nullptr ? G_OBJECT(key_event) : nullptr, &argv[0]);
@@ -304,6 +310,7 @@ gboolean vfunc_thunk_filter_key_event(WebKitInputMethodContext *self, GdkEvent *
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_filter_key_event");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -318,15 +325,16 @@ void vfunc_install_filter_key_event(gpointer klass) {
 void vfunc_thunk_notify_cursor_area(WebKitInputMethodContext *self, int x, int y, int width,
                                     int height) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_notify_cursor_area", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_notify_cursor_area", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->notify_cursor_area != nullptr)
       native->notify_cursor_area(self, x, y, width, height);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 4> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(x));
@@ -340,6 +348,7 @@ void vfunc_thunk_notify_cursor_area(WebKitInputMethodContext *self, int x, int y
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_notify_cursor_area");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->notify_cursor_area (called from class_init /
@@ -352,20 +361,22 @@ void vfunc_install_notify_cursor_area(gpointer klass) {
 // on a PHP subclass
 void vfunc_thunk_notify_focus_in(WebKitInputMethodContext *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_notify_focus_in", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_notify_focus_in", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->notify_focus_in != nullptr) native->notify_focus_in(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_notify_focus_in");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->notify_focus_in (called from class_init /
@@ -378,20 +389,22 @@ void vfunc_install_notify_focus_in(gpointer klass) {
 // $this->vfunc_notify_focus_out() on a PHP subclass
 void vfunc_thunk_notify_focus_out(WebKitInputMethodContext *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_notify_focus_out", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_notify_focus_out", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->notify_focus_out != nullptr) native->notify_focus_out(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_notify_focus_out");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->notify_focus_out (called from class_init /
@@ -405,15 +418,16 @@ void vfunc_install_notify_focus_out(gpointer klass) {
 void vfunc_thunk_notify_surrounding(WebKitInputMethodContext *self, const gchar *text, guint length,
                                     guint cursor_index, guint selection_index) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_notify_surrounding", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_notify_surrounding", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->notify_surrounding != nullptr)
       native->notify_surrounding(self, text, length, cursor_index, selection_index);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 4> args{};
   zval *argv = args.data();
   if (text == nullptr) {
@@ -431,6 +445,7 @@ void vfunc_thunk_notify_surrounding(WebKitInputMethodContext *self, const gchar 
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_notify_surrounding");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->notify_surrounding (called from class_init /
@@ -443,20 +458,22 @@ void vfunc_install_notify_surrounding(gpointer klass) {
 // on a PHP subclass
 void vfunc_thunk_preedit_changed(WebKitInputMethodContext *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_preedit_changed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_preedit_changed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->preedit_changed != nullptr) native->preedit_changed(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_preedit_changed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->preedit_changed (called from class_init /
@@ -469,20 +486,22 @@ void vfunc_install_preedit_changed(gpointer klass) {
 // $this->vfunc_preedit_finished() on a PHP subclass
 void vfunc_thunk_preedit_finished(WebKitInputMethodContext *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_preedit_finished", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_preedit_finished", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->preedit_finished != nullptr) native->preedit_finished(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_preedit_finished");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->preedit_finished (called from class_init /
@@ -495,20 +514,22 @@ void vfunc_install_preedit_finished(gpointer klass) {
 // on a PHP subclass
 void vfunc_thunk_preedit_started(WebKitInputMethodContext *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_preedit_started", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_preedit_started", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->preedit_started != nullptr) native->preedit_started(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_preedit_started");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->preedit_started (called from class_init /
@@ -520,19 +541,22 @@ void vfunc_install_preedit_started(gpointer klass) {
 // vfunc thunk: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->reset -> $this->vfunc_reset() on a PHP subclass
 void vfunc_thunk_reset(WebKitInputMethodContext *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_reset", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_reset", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->reset != nullptr) native->reset(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_reset");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->reset (called from class_init / iface_init of
@@ -545,14 +569,15 @@ void vfunc_install_reset(gpointer klass) {
 // $this->vfunc_set_enable_preedit() on a PHP subclass
 void vfunc_thunk_set_enable_preedit(WebKitInputMethodContext *self, gboolean enabled) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_set_enable_preedit", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_set_enable_preedit", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->set_enable_preedit != nullptr) native->set_enable_preedit(self, enabled);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   ZVAL_BOOL(&argv[0], enabled != FALSE);
@@ -563,6 +588,7 @@ void vfunc_thunk_set_enable_preedit(WebKitInputMethodContext *self, gboolean ena
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_set_enable_preedit");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->set_enable_preedit (called from class_init /

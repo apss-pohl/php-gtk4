@@ -74,14 +74,15 @@ namespace {
 // vfunc thunk: GTK_FILTER_CLASS->get_strictness -> $this->vfunc_get_strictness() on a PHP subclass
 GtkFilterMatch vfunc_thunk_get_strictness(GtkFilter *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_get_strictness", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_get_strictness", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_FILTER_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->get_strictness != nullptr ? native->get_strictness(self)
                                              : static_cast<GtkFilterMatch>(0);
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   GtkFilterMatch result = static_cast<GtkFilterMatch>(0);
@@ -93,6 +94,7 @@ GtkFilterMatch vfunc_thunk_get_strictness(GtkFilter *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkFilter::vfunc_get_strictness");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -105,12 +107,14 @@ void vfunc_install_get_strictness(gpointer klass) {
 // vfunc thunk: GTK_FILTER_CLASS->match -> $this->vfunc_match() on a PHP subclass
 gboolean vfunc_thunk_match(GtkFilter *self, gpointer item) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_match", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_match", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_FILTER_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->match != nullptr ? native->match(self, item) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(item != nullptr ? G_OBJECT(item) : nullptr, &argv[0]);
@@ -125,6 +129,7 @@ gboolean vfunc_thunk_match(GtkFilter *self, gpointer item) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkFilter::vfunc_match");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 

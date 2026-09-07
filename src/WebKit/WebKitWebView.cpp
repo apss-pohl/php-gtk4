@@ -1523,13 +1523,14 @@ namespace {
 // vfunc thunk: WEBKIT_WEB_VIEW_CLASS->authenticate -> $this->vfunc_authenticate() on a PHP subclass
 gboolean vfunc_thunk_authenticate(WebKitWebView *self, WebKitAuthenticationRequest *request) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_authenticate", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_authenticate", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->authenticate != nullptr ? native->authenticate(self, request) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(request != nullptr ? G_OBJECT(request) : nullptr, &argv[0]);
@@ -1544,6 +1545,7 @@ gboolean vfunc_thunk_authenticate(WebKitWebView *self, WebKitAuthenticationReque
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_authenticate");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1556,19 +1558,22 @@ void vfunc_install_authenticate(gpointer klass) {
 // vfunc thunk: WEBKIT_WEB_VIEW_CLASS->close -> $this->vfunc_close() on a PHP subclass
 void vfunc_thunk_close(WebKitWebView *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_close", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_close", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->close != nullptr) native->close(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_close");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->close (called from class_init / iface_init of a PHP
@@ -1581,15 +1586,16 @@ void vfunc_install_close(gpointer klass) {
 gboolean vfunc_thunk_context_menu(WebKitWebView *self, WebKitContextMenu *context_menu,
                                   WebKitHitTestResult *hit_test_result) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_context_menu", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_context_menu", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->context_menu != nullptr
                ? native->context_menu(self, context_menu, hit_test_result)
                : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap(context_menu != nullptr ? G_OBJECT(context_menu) : nullptr, &argv[0]);
@@ -1605,6 +1611,7 @@ gboolean vfunc_thunk_context_menu(WebKitWebView *self, WebKitContextMenu *contex
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_context_menu");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1618,20 +1625,22 @@ void vfunc_install_context_menu(gpointer klass) {
 // $this->vfunc_context_menu_dismissed() on a PHP subclass
 void vfunc_thunk_context_menu_dismissed(WebKitWebView *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_context_menu_dismissed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_context_menu_dismissed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->context_menu_dismissed != nullptr) native->context_menu_dismissed(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_context_menu_dismissed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->context_menu_dismissed (called from class_init /
@@ -1643,12 +1652,14 @@ void vfunc_install_context_menu_dismissed(gpointer klass) {
 // vfunc thunk: WEBKIT_WEB_VIEW_CLASS->create -> $this->vfunc_create() on a PHP subclass
 GtkWidget *vfunc_thunk_create(WebKitWebView *self, WebKitNavigationAction *navigation_action) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_create", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_create", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->create != nullptr ? native->create(self, navigation_action) : nullptr;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap_boxed(WEBKIT_TYPE_NAVIGATION_ACTION, navigation_action, &argv[0]);
@@ -1666,6 +1677,7 @@ GtkWidget *vfunc_thunk_create(WebKitWebView *self, WebKitNavigationAction *navig
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_create");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1680,13 +1692,14 @@ void vfunc_install_create(gpointer klass) {
 gboolean vfunc_thunk_decide_policy(WebKitWebView *self, WebKitPolicyDecision *decision,
                                    WebKitPolicyDecisionType type) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_decide_policy", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_decide_policy", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->decide_policy != nullptr ? native->decide_policy(self, decision, type) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap(decision != nullptr ? G_OBJECT(decision) : nullptr, &argv[0]);
@@ -1702,6 +1715,7 @@ gboolean vfunc_thunk_decide_policy(WebKitWebView *self, WebKitPolicyDecision *de
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_decide_policy");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1715,13 +1729,14 @@ void vfunc_install_decide_policy(gpointer klass) {
 // subclass
 gboolean vfunc_thunk_enter_fullscreen(WebKitWebView *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_enter_fullscreen", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_enter_fullscreen", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->enter_fullscreen != nullptr ? native->enter_fullscreen(self) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -1732,6 +1747,7 @@ gboolean vfunc_thunk_enter_fullscreen(WebKitWebView *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_enter_fullscreen");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1745,15 +1761,16 @@ void vfunc_install_enter_fullscreen(gpointer klass) {
 // $this->vfunc_insecure_content_detected() on a PHP subclass
 void vfunc_thunk_insecure_content_detected(WebKitWebView *self, WebKitInsecureContentEvent event) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_insecure_content_detected", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_insecure_content_detected", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->insecure_content_detected != nullptr)
       native->insecure_content_detected(self, event);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   enum_to_php(WEBKIT_TYPE_INSECURE_CONTENT_EVENT, static_cast<gint>(event), &argv[0]);
@@ -1764,6 +1781,7 @@ void vfunc_thunk_insecure_content_detected(WebKitWebView *self, WebKitInsecureCo
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_insecure_content_detected");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->insecure_content_detected (called from class_init /
@@ -1776,13 +1794,14 @@ void vfunc_install_insecure_content_detected(gpointer klass) {
 // subclass
 gboolean vfunc_thunk_leave_fullscreen(WebKitWebView *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_leave_fullscreen", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_leave_fullscreen", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->leave_fullscreen != nullptr ? native->leave_fullscreen(self) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -1793,6 +1812,7 @@ gboolean vfunc_thunk_leave_fullscreen(WebKitWebView *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_leave_fullscreen");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1805,14 +1825,15 @@ void vfunc_install_leave_fullscreen(gpointer klass) {
 // vfunc thunk: WEBKIT_WEB_VIEW_CLASS->load_changed -> $this->vfunc_load_changed() on a PHP subclass
 void vfunc_thunk_load_changed(WebKitWebView *self, WebKitLoadEvent load_event) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_load_changed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_load_changed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->load_changed != nullptr) native->load_changed(self, load_event);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   enum_to_php(WEBKIT_TYPE_LOAD_EVENT, static_cast<gint>(load_event), &argv[0]);
@@ -1823,6 +1844,7 @@ void vfunc_thunk_load_changed(WebKitWebView *self, WebKitLoadEvent load_event) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_load_changed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->load_changed (called from class_init / iface_init of a
@@ -1835,15 +1857,16 @@ void vfunc_install_load_changed(gpointer klass) {
 gboolean vfunc_thunk_load_failed(WebKitWebView *self, WebKitLoadEvent load_event,
                                  const gchar *failing_uri, GError *error) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_load_failed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_load_failed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->load_failed != nullptr
                ? native->load_failed(self, load_event, failing_uri, error)
                : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   enum_to_php(WEBKIT_TYPE_LOAD_EVENT, static_cast<gint>(load_event), &argv[0]);
@@ -1864,6 +1887,7 @@ gboolean vfunc_thunk_load_failed(WebKitWebView *self, WebKitLoadEvent load_event
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_load_failed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1878,15 +1902,16 @@ void vfunc_install_load_failed(gpointer klass) {
 void vfunc_thunk_mouse_target_changed(WebKitWebView *self, WebKitHitTestResult *hit_test_result,
                                       guint modifiers) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_mouse_target_changed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_mouse_target_changed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->mouse_target_changed != nullptr)
       native->mouse_target_changed(self, hit_test_result, modifiers);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap(hit_test_result != nullptr ? G_OBJECT(hit_test_result) : nullptr, &argv[0]);
@@ -1898,6 +1923,7 @@ void vfunc_thunk_mouse_target_changed(WebKitWebView *self, WebKitHitTestResult *
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_mouse_target_changed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->mouse_target_changed (called from class_init / iface_init
@@ -1911,15 +1937,16 @@ void vfunc_install_mouse_target_changed(gpointer klass) {
 gboolean vfunc_thunk_permission_request(WebKitWebView *self,
                                         WebKitPermissionRequest *permission_request) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_permission_request", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_permission_request", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->permission_request != nullptr
                ? native->permission_request(self, permission_request)
                : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(permission_request != nullptr ? G_OBJECT(permission_request) : nullptr, &argv[0]);
@@ -1934,6 +1961,7 @@ gboolean vfunc_thunk_permission_request(WebKitWebView *self,
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_permission_request");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1946,12 +1974,14 @@ void vfunc_install_permission_request(gpointer klass) {
 // vfunc thunk: WEBKIT_WEB_VIEW_CLASS->print -> $this->vfunc_print() on a PHP subclass
 gboolean vfunc_thunk_print(WebKitWebView *self, WebKitPrintOperation *print_operation) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_print", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_print", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->print != nullptr ? native->print(self, print_operation) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(print_operation != nullptr ? G_OBJECT(print_operation) : nullptr, &argv[0]);
@@ -1966,6 +1996,7 @@ gboolean vfunc_thunk_print(WebKitWebView *self, WebKitPrintOperation *print_oper
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_print");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1980,14 +2011,15 @@ void vfunc_install_print(gpointer klass) {
 gboolean vfunc_thunk_query_permission_state(WebKitWebView *self,
                                             WebKitPermissionStateQuery *query) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_query_permission_state", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_query_permission_state", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->query_permission_state != nullptr ? native->query_permission_state(self, query)
                                                      : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap_boxed(WEBKIT_TYPE_PERMISSION_STATE_QUERY, query, &argv[0]);
@@ -2002,6 +2034,7 @@ gboolean vfunc_thunk_query_permission_state(WebKitWebView *self,
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_query_permission_state");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2015,20 +2048,22 @@ void vfunc_install_query_permission_state(gpointer klass) {
 // subclass
 void vfunc_thunk_ready_to_show(WebKitWebView *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_ready_to_show", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_ready_to_show", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->ready_to_show != nullptr) native->ready_to_show(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_ready_to_show");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->ready_to_show (called from class_init / iface_init of a
@@ -2042,15 +2077,16 @@ void vfunc_install_ready_to_show(gpointer klass) {
 void vfunc_thunk_resource_load_started(WebKitWebView *self, WebKitWebResource *resource,
                                        WebKitURIRequest *request) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_resource_load_started", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_resource_load_started", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->resource_load_started != nullptr)
       native->resource_load_started(self, resource, request);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap(resource != nullptr ? G_OBJECT(resource) : nullptr, &argv[0]);
@@ -2062,6 +2098,7 @@ void vfunc_thunk_resource_load_started(WebKitWebView *self, WebKitWebResource *r
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_resource_load_started");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->resource_load_started (called from class_init /
@@ -2073,20 +2110,22 @@ void vfunc_install_resource_load_started(gpointer klass) {
 // vfunc thunk: WEBKIT_WEB_VIEW_CLASS->run_as_modal -> $this->vfunc_run_as_modal() on a PHP subclass
 void vfunc_thunk_run_as_modal(WebKitWebView *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_run_as_modal", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_run_as_modal", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->run_as_modal != nullptr) native->run_as_modal(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_run_as_modal");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->run_as_modal (called from class_init / iface_init of a
@@ -2099,13 +2138,14 @@ void vfunc_install_run_as_modal(gpointer klass) {
 // PHP subclass
 gboolean vfunc_thunk_run_color_chooser(WebKitWebView *self, WebKitColorChooserRequest *request) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_run_color_chooser", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_run_color_chooser", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->run_color_chooser != nullptr ? native->run_color_chooser(self, request) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(request != nullptr ? G_OBJECT(request) : nullptr, &argv[0]);
@@ -2120,6 +2160,7 @@ gboolean vfunc_thunk_run_color_chooser(WebKitWebView *self, WebKitColorChooserRe
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_run_color_chooser");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2133,13 +2174,14 @@ void vfunc_install_run_color_chooser(gpointer klass) {
 // subclass
 gboolean vfunc_thunk_run_file_chooser(WebKitWebView *self, WebKitFileChooserRequest *request) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_run_file_chooser", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_run_file_chooser", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->run_file_chooser != nullptr ? native->run_file_chooser(self, request) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(request != nullptr ? G_OBJECT(request) : nullptr, &argv[0]);
@@ -2154,6 +2196,7 @@ gboolean vfunc_thunk_run_file_chooser(WebKitWebView *self, WebKitFileChooserRequ
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_run_file_chooser");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2167,13 +2210,14 @@ void vfunc_install_run_file_chooser(gpointer klass) {
 // subclass
 gboolean vfunc_thunk_script_dialog(WebKitWebView *self, WebKitScriptDialog *dialog) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_script_dialog", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_script_dialog", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->script_dialog != nullptr ? native->script_dialog(self, dialog) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap_boxed(WEBKIT_TYPE_SCRIPT_DIALOG, dialog, &argv[0]);
@@ -2188,6 +2232,7 @@ gboolean vfunc_thunk_script_dialog(WebKitWebView *self, WebKitScriptDialog *dial
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_script_dialog");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2201,14 +2246,15 @@ void vfunc_install_script_dialog(gpointer klass) {
 // PHP subclass
 gboolean vfunc_thunk_show_notification(WebKitWebView *self, WebKitNotification *notification) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_show_notification", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_show_notification", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->show_notification != nullptr ? native->show_notification(self, notification)
                                                 : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(notification != nullptr ? G_OBJECT(notification) : nullptr, &argv[0]);
@@ -2223,6 +2269,7 @@ gboolean vfunc_thunk_show_notification(WebKitWebView *self, WebKitNotification *
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_show_notification");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2237,14 +2284,15 @@ void vfunc_install_show_notification(gpointer klass) {
 gboolean vfunc_thunk_show_option_menu(WebKitWebView *self, WebKitOptionMenu *menu,
                                       GdkRectangle *rectangle) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_show_option_menu", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_show_option_menu", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->show_option_menu != nullptr ? native->show_option_menu(self, menu, rectangle)
                                                : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap(menu != nullptr ? G_OBJECT(menu) : nullptr, &argv[0]);
@@ -2260,6 +2308,7 @@ gboolean vfunc_thunk_show_option_menu(WebKitWebView *self, WebKitOptionMenu *men
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_show_option_menu");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2272,14 +2321,15 @@ void vfunc_install_show_option_menu(gpointer klass) {
 // vfunc thunk: WEBKIT_WEB_VIEW_CLASS->submit_form -> $this->vfunc_submit_form() on a PHP subclass
 void vfunc_thunk_submit_form(WebKitWebView *self, WebKitFormSubmissionRequest *request) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_submit_form", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_submit_form", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->submit_form != nullptr) native->submit_form(self, request);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(request != nullptr ? G_OBJECT(request) : nullptr, &argv[0]);
@@ -2290,6 +2340,7 @@ void vfunc_thunk_submit_form(WebKitWebView *self, WebKitFormSubmissionRequest *r
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_submit_form");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->submit_form (called from class_init / iface_init of a PHP
@@ -2302,14 +2353,15 @@ void vfunc_install_submit_form(gpointer klass) {
 // on a PHP subclass
 gboolean vfunc_thunk_user_message_received(WebKitWebView *self, WebKitUserMessage *message) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_user_message_received", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_user_message_received", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->user_message_received != nullptr ? native->user_message_received(self, message)
                                                     : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(message != nullptr ? G_OBJECT(message) : nullptr, &argv[0]);
@@ -2324,6 +2376,7 @@ gboolean vfunc_thunk_user_message_received(WebKitWebView *self, WebKitUserMessag
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_user_message_received");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2337,13 +2390,14 @@ void vfunc_install_user_message_received(gpointer klass) {
 // a PHP subclass
 gboolean vfunc_thunk_web_process_crashed(WebKitWebView *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_web_process_crashed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_web_process_crashed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->web_process_crashed != nullptr ? native->web_process_crashed(self) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -2354,6 +2408,7 @@ gboolean vfunc_thunk_web_process_crashed(WebKitWebView *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_web_process_crashed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2368,14 +2423,15 @@ void vfunc_install_web_process_crashed(gpointer klass) {
 void vfunc_thunk_web_process_terminated(WebKitWebView *self,
                                         WebKitWebProcessTerminationReason reason) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_web_process_terminated", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_web_process_terminated", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->web_process_terminated != nullptr) native->web_process_terminated(self, reason);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   enum_to_php(WEBKIT_TYPE_WEB_PROCESS_TERMINATION_REASON, static_cast<gint>(reason), &argv[0]);
@@ -2386,6 +2442,7 @@ void vfunc_thunk_web_process_terminated(WebKitWebView *self,
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_web_process_terminated");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->web_process_terminated (called from class_init /

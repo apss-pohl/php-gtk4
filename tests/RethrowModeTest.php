@@ -235,7 +235,9 @@ final class RethrowModeTest extends GtkTestCase
     public function testVfuncThunksReportOneThrowableOnce(): void
     {
         // Two PHP vfuncs run in one GTK call (measure() calls get_request_mode() and measure);
-        // the first throws, the second must chain to GTK instead of reporting the same Throwable again.
+        // the first throws. The second still runs - a slot that answered its default because PHP
+        // happens to be unwinding would be lying to GTK about the object - with the first
+        // Throwable parked for the duration, so it is reported once and propagates once.
         $w = new class extends GtkWidget {
             public int $calls = 0;
 
@@ -265,6 +267,6 @@ final class RethrowModeTest extends GtkTestCase
             Gtk::set_exception_handler(null);
         }
         self::assertSame(1, $seen, 'the handler saw the Throwable exactly once');
-        self::assertSame(1, $w->calls, 'the second vfunc was skipped (exception pending)');
+        self::assertSame(2, $w->calls, 'the second vfunc ran with the first Throwable parked');
     }
 }

@@ -537,7 +537,10 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   by `<Ns>.<Type>.<method>`, a GObject property's `@property` tag by
   `<Ns>.<Type>.property:<name>`, an interface by `<Ns>.<Type>.implements:<Ns>.<Iface>`); every
   skip is listed in `gen/report.md`. `src/core/` holds no `ZEND_METHOD`s. Registration lives in
-  `src/gtk4.cpp` MINIT (hand-written classes) and the generated `src/gen_minit.inc`, in four
+  `src/gtk4.cpp` MINIT (hand-written classes) and the generated `src/gen_minit.inc` — a
+  conditional namespace registers from its own `register_<feature>_classes()` in
+  `src/gen_minit_defs.inc` instead, taking the class entries it inherits from the always-built
+  block as parameters, so MINIT stays one readable function — in four
   shapes:
   `register_class("GTypeName", register_class_Gtk4_X(parent_ce), G_TYPE_X)` for GObject handles,
   parents first — `register_class()` installs `create_object` (inherited by subclasses registered
@@ -556,10 +559,11 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   in the stub with `/** @implementation-alias Gtk4\<Interface>::m */` — gen_stub emits a
   `ZEND_MALIAS`, no per-class C++. `G_TYPE_POINTER` is unsupported on purpose.
 - `gen/` — `gir.php` (the GIR generator: per-namespace stubs, `src/<Ns>/<Class>.cpp`, `gen_minit.inc`,
-  `gen_prototypes.h`, vfunc thunks, smoke tests, example skeletons, `report.md`, the map's status
-  column via `map-status.php`) with its inputs `allowlist.txt`, `handwritten.txt`, `skip.txt`,
-  `ctor-props.txt`, `smoke-skip.txt` and `overrides/`; `gen_stub.php` (vendored from php-src),
-  `ide-stub.php`, `method-comments.php`. `gen/README.md` has the flow diagram.
+  `gen_minit_defs.inc`, `gen_prototypes.h`, vfunc thunks, smoke tests, example skeletons,
+  `report.md`, the map's status column via `map-status.php`) with its inputs `allowlist.txt`,
+  `handwritten.txt`, `skip.txt`, `ctor-props.txt`, `smoke-skip.txt` and `overrides/`;
+  `gen_stub.php` (vendored from php-src), `ide-stub.php`, `method-comments.php`.
+  `gen/README.md` has the flow diagram.
 - **Everything PHP-visible is in the `Gtk4\` namespace**; PHP class name = `Gtk4\<GTypeName>`, and
   `wrap()` walks the GType parent chain to the nearest registered class. Constants:
   `Gtk4\VERSION`, `BUILD_INFO`, `FEATURES`. One `Object` struct serves every class (all per-class
@@ -570,6 +574,11 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   (handler, else an `E_WARNING` through `core/diagnostics`; GTK continues) or `Rethrow` (handler,
   then the Throwable stays pending, `quit_running_loops()` stops
   `GMainLoop::run`/`GtkApplication::run`, and it propagates to PHP).
+  A vfunc thunk *parks* a Throwable that is already pending (`zend_exception_save()` around the
+  call, restored after): Zend refuses to run PHP while one is in flight, and answering GTK with
+  the slot's default instead is a lie about the object — a `GListModel` that says "0 items"
+  because PHP happens to be unwinding leaves `GtkListView`'s item manager holding rows GTK
+  believes gone, which a GTK built with assertions aborts on.
   Non-signal callbacks go through `src/core/callback.*` with the installing method as origin;
   typed C callbacks (`GtkDrawingAreaDrawFunc`, `GtkCustomFilterFunc`, `GCompareDataFunc`) follow
   the trampoline rule in gen/README.md ("Typed C callbacks") — `gen/overrides/Gtk.DrawingArea.cpp`,

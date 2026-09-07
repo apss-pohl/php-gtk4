@@ -75,12 +75,14 @@ namespace {
 // vfunc thunk: static_cast<GListModelInterface *>->get_item -> $this->get_item() on a PHP subclass
 gpointer vfunc_thunk_get_item(GListModel *self, guint position) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "get_item", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_item", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return nullptr;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(position));
@@ -99,6 +101,7 @@ gpointer vfunc_thunk_get_item(GListModel *self, guint position) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GListModel::get_item");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -112,12 +115,14 @@ void vfunc_install_get_item(gpointer klass) {
 // subclass
 GType vfunc_thunk_get_item_type(GListModel *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "get_item_type", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_item_type", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return G_TYPE_OBJECT;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   GType result = G_TYPE_OBJECT;
@@ -131,6 +136,7 @@ GType vfunc_thunk_get_item_type(GListModel *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GListModel::get_item_type");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -144,12 +150,14 @@ void vfunc_install_get_item_type(gpointer klass) {
 // subclass
 guint vfunc_thunk_get_n_items(GListModel *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "get_n_items", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_n_items", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return 0;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   guint result = 0;
@@ -162,6 +170,7 @@ guint vfunc_thunk_get_n_items(GListModel *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GListModel::get_n_items");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 

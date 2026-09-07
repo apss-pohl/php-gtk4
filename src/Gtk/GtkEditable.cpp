@@ -344,18 +344,21 @@ namespace {
 // vfunc thunk: static_cast<GtkEditableInterface *>->changed -> $this->changed() on a PHP subclass
 void vfunc_thunk_changed(GtkEditable *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "changed", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "changed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEditable::changed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GtkEditableInterface *>->changed (called from class_init /
@@ -368,12 +371,14 @@ void vfunc_install_changed(gpointer klass) {
 // subclass
 void vfunc_thunk_delete_text(GtkEditable *self, int start_pos, int end_pos) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "delete_text", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "delete_text", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(start_pos));
@@ -385,6 +390,7 @@ void vfunc_thunk_delete_text(GtkEditable *self, int start_pos, int end_pos) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEditable::delete_text");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GtkEditableInterface *>->delete_text (called from class_init /
@@ -397,12 +403,14 @@ void vfunc_install_delete_text(gpointer klass) {
 // PHP subclass
 void vfunc_thunk_do_delete_text(GtkEditable *self, int start_pos, int end_pos) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "do_delete_text", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "do_delete_text", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(start_pos));
@@ -414,6 +422,7 @@ void vfunc_thunk_do_delete_text(GtkEditable *self, int start_pos, int end_pos) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEditable::do_delete_text");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GtkEditableInterface *>->do_delete_text (called from class_init /
@@ -426,12 +435,14 @@ void vfunc_install_do_delete_text(gpointer klass) {
 // subclass
 GtkEditable *vfunc_thunk_get_delegate(GtkEditable *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "get_delegate", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_delegate", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return nullptr;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   GtkEditable *result = nullptr;
@@ -445,6 +456,7 @@ GtkEditable *vfunc_thunk_get_delegate(GtkEditable *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEditable::get_delegate");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -458,13 +470,14 @@ void vfunc_install_get_delegate(gpointer klass) {
 // $this->get_selection_bounds() on a PHP subclass
 gboolean vfunc_thunk_get_selection_bounds(GtkEditable *self, int *start_pos, int *end_pos) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "get_selection_bounds", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_selection_bounds", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -488,6 +501,7 @@ gboolean vfunc_thunk_get_selection_bounds(GtkEditable *self, int *start_pos, int
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEditable::get_selection_bounds");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -501,12 +515,14 @@ void vfunc_install_get_selection_bounds(gpointer klass) {
 // vfunc thunk: static_cast<GtkEditableInterface *>->get_text -> $this->get_text() on a PHP subclass
 const char *vfunc_thunk_get_text(GtkEditable *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "get_text", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_text", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return nullptr;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   const char *result = nullptr;
@@ -519,6 +535,7 @@ const char *vfunc_thunk_get_text(GtkEditable *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEditable::get_text");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -532,13 +549,14 @@ void vfunc_install_get_text(gpointer klass) {
 // $this->set_selection_bounds() on a PHP subclass
 void vfunc_thunk_set_selection_bounds(GtkEditable *self, int start_pos, int end_pos) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "set_selection_bounds", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "set_selection_bounds", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(start_pos));
@@ -550,6 +568,7 @@ void vfunc_thunk_set_selection_bounds(GtkEditable *self, int start_pos, int end_
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEditable::set_selection_bounds");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GtkEditableInterface *>->set_selection_bounds (called from

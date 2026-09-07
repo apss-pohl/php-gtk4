@@ -82,8 +82,12 @@ CheckOptions:
   readability-identifier-naming.FunctionIgnoredRegexp: '^register_vfuncs_[A-Z]'
   readability-identifier-naming.GlobalFunctionIgnoredRegexp: '^register_vfuncs_[A-Z]'
   readability-identifier-naming.VariableCase: lower_case
-  # ce_<GTypeName>: class entries named after the GType they wrap (MINIT, registries).
+  # ce_<GTypeName>: class entries named after the GType they wrap (MINIT, registries) - as
+  # locals, and as the parameters a conditional namespace's registration function takes
+  # (src/gen_minit_defs.inc).
   readability-identifier-naming.VariableIgnoredRegexp: '^ce_[A-Z]'
+  readability-identifier-naming.ParameterIgnoredRegexp: '^ce_[A-Z]'
+  readability-identifier-naming.PointerParameterIgnoredRegexp: '^ce_[A-Z]'
   readability-identifier-naming.LocalPointerIgnoredRegexp: '^ce_[A-Z]'
   readability-identifier-naming.GlobalPointerIgnoredRegexp: '^ce_[A-Z]'
   readability-identifier-naming.StaticVariableIgnoredRegexp: '^ce_[A-Z]'

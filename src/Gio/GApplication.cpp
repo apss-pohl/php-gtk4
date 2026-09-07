@@ -585,19 +585,22 @@ namespace {
 // vfunc thunk: G_APPLICATION_CLASS->activate -> $this->vfunc_activate() on a PHP subclass
 void vfunc_thunk_activate(GApplication *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_activate", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_activate", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->activate != nullptr) native->activate(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_activate");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_APPLICATION_CLASS->activate (called from class_init / iface_init of a PHP
@@ -609,14 +612,15 @@ void vfunc_install_activate(gpointer klass) {
 // vfunc thunk: G_APPLICATION_CLASS->after_emit -> $this->vfunc_after_emit() on a PHP subclass
 void vfunc_thunk_after_emit(GApplication *self, GVariant *platform_data) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_after_emit", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_after_emit", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->after_emit != nullptr) native->after_emit(self, platform_data);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (platform_data == nullptr) {
@@ -631,6 +635,7 @@ void vfunc_thunk_after_emit(GApplication *self, GVariant *platform_data) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_after_emit");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_APPLICATION_CLASS->after_emit (called from class_init / iface_init of a PHP
@@ -642,14 +647,15 @@ void vfunc_install_after_emit(gpointer klass) {
 // vfunc thunk: G_APPLICATION_CLASS->before_emit -> $this->vfunc_before_emit() on a PHP subclass
 void vfunc_thunk_before_emit(GApplication *self, GVariant *platform_data) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_before_emit", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_before_emit", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->before_emit != nullptr) native->before_emit(self, platform_data);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (platform_data == nullptr) {
@@ -664,6 +670,7 @@ void vfunc_thunk_before_emit(GApplication *self, GVariant *platform_data) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_before_emit");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_APPLICATION_CLASS->before_emit (called from class_init / iface_init of a PHP
@@ -675,12 +682,14 @@ void vfunc_install_before_emit(gpointer klass) {
 // vfunc thunk: G_APPLICATION_CLASS->name_lost -> $this->vfunc_name_lost() on a PHP subclass
 gboolean vfunc_thunk_name_lost(GApplication *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_name_lost", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_name_lost", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->name_lost != nullptr ? native->name_lost(self) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -691,6 +700,7 @@ gboolean vfunc_thunk_name_lost(GApplication *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_name_lost");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -703,20 +713,22 @@ void vfunc_install_name_lost(gpointer klass) {
 // vfunc thunk: G_APPLICATION_CLASS->quit_mainloop -> $this->vfunc_quit_mainloop() on a PHP subclass
 void vfunc_thunk_quit_mainloop(GApplication *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_quit_mainloop", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_quit_mainloop", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->quit_mainloop != nullptr) native->quit_mainloop(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_quit_mainloop");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_APPLICATION_CLASS->quit_mainloop (called from class_init / iface_init of a PHP
@@ -728,20 +740,22 @@ void vfunc_install_quit_mainloop(gpointer klass) {
 // vfunc thunk: G_APPLICATION_CLASS->run_mainloop -> $this->vfunc_run_mainloop() on a PHP subclass
 void vfunc_thunk_run_mainloop(GApplication *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_run_mainloop", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_run_mainloop", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->run_mainloop != nullptr) native->run_mainloop(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_run_mainloop");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_APPLICATION_CLASS->run_mainloop (called from class_init / iface_init of a PHP
@@ -753,19 +767,22 @@ void vfunc_install_run_mainloop(gpointer klass) {
 // vfunc thunk: G_APPLICATION_CLASS->shutdown -> $this->vfunc_shutdown() on a PHP subclass
 void vfunc_thunk_shutdown(GApplication *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_shutdown", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_shutdown", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->shutdown != nullptr) native->shutdown(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_shutdown");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_APPLICATION_CLASS->shutdown (called from class_init / iface_init of a PHP
@@ -777,19 +794,22 @@ void vfunc_install_shutdown(gpointer klass) {
 // vfunc thunk: G_APPLICATION_CLASS->startup -> $this->vfunc_startup() on a PHP subclass
 void vfunc_thunk_startup(GApplication *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_startup", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_startup", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->startup != nullptr) native->startup(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_startup");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_APPLICATION_CLASS->startup (called from class_init / iface_init of a PHP

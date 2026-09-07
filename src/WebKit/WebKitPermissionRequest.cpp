@@ -39,18 +39,21 @@ namespace {
 // subclass
 void vfunc_thunk_allow(WebKitPermissionRequest *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "allow", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "allow", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitPermissionRequest::allow");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<WebKitPermissionRequestInterface *>->allow (called from class_init /
@@ -63,18 +66,21 @@ void vfunc_install_allow(gpointer klass) {
 // subclass
 void vfunc_thunk_deny(WebKitPermissionRequest *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "deny", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "deny", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitPermissionRequest::deny");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<WebKitPermissionRequestInterface *>->deny (called from class_init /

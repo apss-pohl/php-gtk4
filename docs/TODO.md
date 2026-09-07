@@ -12,14 +12,18 @@ history; an item leaves this file when it is done or decided against, it is not 
   and writes no JUnit file. `tests.yml` now streams `--log-events-text` and prints its tail on a
   failed job, so the next occurrence names the test that was running. Until then there is
   nothing to reproduce.
-- **The Windows list-view abort.** The four Windows CI jobs build and load the DLL and then die in
-  PHPUnit at `PhpSelectionModelTest` with `gtk_list_item_manager_clear_model: assertion failed:
-  (gtk_rb_tree_get_root (self->items) == NULL)`, exit `0xC0000409`. The assertion exists in the
-  newer GTK gvsbuild ships, not in the 4.14 Linux CI runs, so Linux may be leaking silently where
-  Windows aborts. Hypothesis: a PHP-implemented `GtkSelectionModel` slot answers its default (zero
-  items) once the handle is unavailable, leaving GTK's item manager with items it believes gone.
-  Needs a run against that GTK; a workflow run with the test class excluded would also show the
-  failures the abort hides.
+- **The robustness pin is written for GTK 4.14, and Windows runs GTK 4.22.** With the vfunc
+  parking fix the Windows jobs no longer abort, but `tests/robustness-criticals.txt` records what
+  *the CI floor* complains about, and a newer GTK complains differently: measured against 4.22.4,
+  five method sweeps carry a message the file does not list - `GtkWidget::measure` ("Allocating
+  size ... without calling gtk_widget_measure()" comes from a GTK built with consistency checks),
+  `GtkEntry::set_extra_menu` (`g_object_ref: assertion 'G_IS_OBJECT (object)' failed`),
+  `GtkIconPaintable::new_for_file` (`size`/`scale` reject -1: a missing `check_domain`, worth
+  closing at the boundary), `GtkSpinButton::set_range` (`lower + page_size <= upper`). Either the
+  pin grows a per-version dimension or those four boundaries are closed so no GTK complains.
+  Reproduce without Windows: Arch's `gtk4` package is 4.22.4, and a `meson --buildtype=debugoptimized`
+  build of GTK is what turns the assertions back on (a distro release build compiles them out,
+  which is why the Linux CI never saw the abort).
 - **WebKitGTK, what the first wave left out** (`gen/report.md`, sections `WebKit*`/`JSC*`): the
   URI scheme handler (`WebKitWebContext::register_uri_scheme()` and the request/response pair need
   `GInputStream`), the Soup types (`WebKitCookieManager::add_cookie()`, the HTTP headers of a

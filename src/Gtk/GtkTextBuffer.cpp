@@ -1240,13 +1240,15 @@ namespace {
 void vfunc_thunk_apply_tag(GtkTextBuffer *self, GtkTextTag *tag, const GtkTextIter *start,
                            const GtkTextIter *end) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_apply_tag", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_apply_tag", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->apply_tag != nullptr) native->apply_tag(self, tag, start, end);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   wrap(tag != nullptr ? G_OBJECT(tag) : nullptr, &argv[0]);
@@ -1259,6 +1261,7 @@ void vfunc_thunk_apply_tag(GtkTextBuffer *self, GtkTextTag *tag, const GtkTextIt
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkTextBuffer::vfunc_apply_tag");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_TEXT_BUFFER_CLASS->apply_tag (called from class_init / iface_init of a PHP
@@ -1271,20 +1274,22 @@ void vfunc_install_apply_tag(gpointer klass) {
 // PHP subclass
 void vfunc_thunk_begin_user_action(GtkTextBuffer *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_begin_user_action", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_begin_user_action", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->begin_user_action != nullptr) native->begin_user_action(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkTextBuffer::vfunc_begin_user_action");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_TEXT_BUFFER_CLASS->begin_user_action (called from class_init / iface_init of
@@ -1296,19 +1301,22 @@ void vfunc_install_begin_user_action(gpointer klass) {
 // vfunc thunk: GTK_TEXT_BUFFER_CLASS->changed -> $this->vfunc_changed() on a PHP subclass
 void vfunc_thunk_changed(GtkTextBuffer *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_changed", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_changed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->changed != nullptr) native->changed(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkTextBuffer::vfunc_changed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_TEXT_BUFFER_CLASS->changed (called from class_init / iface_init of a PHP
@@ -1320,14 +1328,15 @@ void vfunc_install_changed(gpointer klass) {
 // vfunc thunk: GTK_TEXT_BUFFER_CLASS->delete_range -> $this->vfunc_delete_range() on a PHP subclass
 void vfunc_thunk_delete_range(GtkTextBuffer *self, GtkTextIter *start, GtkTextIter *end) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_delete_range", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_delete_range", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->delete_range != nullptr) native->delete_range(self, start, end);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap_boxed(GTK_TYPE_TEXT_ITER, start, &argv[0]);
@@ -1339,6 +1348,7 @@ void vfunc_thunk_delete_range(GtkTextBuffer *self, GtkTextIter *start, GtkTextIt
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkTextBuffer::vfunc_delete_range");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_TEXT_BUFFER_CLASS->delete_range (called from class_init / iface_init of a
@@ -1351,20 +1361,22 @@ void vfunc_install_delete_range(gpointer klass) {
 // subclass
 void vfunc_thunk_end_user_action(GtkTextBuffer *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_end_user_action", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_end_user_action", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->end_user_action != nullptr) native->end_user_action(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkTextBuffer::vfunc_end_user_action");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_TEXT_BUFFER_CLASS->end_user_action (called from class_init / iface_init of a
@@ -1377,14 +1389,15 @@ void vfunc_install_end_user_action(gpointer klass) {
 // subclass
 void vfunc_thunk_insert_paintable(GtkTextBuffer *self, GtkTextIter *iter, GdkPaintable *paintable) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_insert_paintable", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_insert_paintable", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->insert_paintable != nullptr) native->insert_paintable(self, iter, paintable);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap_boxed(GTK_TYPE_TEXT_ITER, iter, &argv[0]);
@@ -1396,6 +1409,7 @@ void vfunc_thunk_insert_paintable(GtkTextBuffer *self, GtkTextIter *iter, GdkPai
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkTextBuffer::vfunc_insert_paintable");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_TEXT_BUFFER_CLASS->insert_paintable (called from class_init / iface_init of
@@ -1408,14 +1422,15 @@ void vfunc_install_insert_paintable(gpointer klass) {
 void vfunc_thunk_insert_text(GtkTextBuffer *self, GtkTextIter *pos, const char *new_text,
                              int new_text_length) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_insert_text", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_insert_text", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->insert_text != nullptr) native->insert_text(self, pos, new_text, new_text_length);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   wrap_boxed(GTK_TYPE_TEXT_ITER, pos, &argv[0]);
@@ -1432,6 +1447,7 @@ void vfunc_thunk_insert_text(GtkTextBuffer *self, GtkTextIter *pos, const char *
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkTextBuffer::vfunc_insert_text");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_TEXT_BUFFER_CLASS->insert_text (called from class_init / iface_init of a PHP
@@ -1443,14 +1459,15 @@ void vfunc_install_insert_text(gpointer klass) {
 // vfunc thunk: GTK_TEXT_BUFFER_CLASS->mark_deleted -> $this->vfunc_mark_deleted() on a PHP subclass
 void vfunc_thunk_mark_deleted(GtkTextBuffer *self, GtkTextMark *mark) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_mark_deleted", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_mark_deleted", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->mark_deleted != nullptr) native->mark_deleted(self, mark);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(mark != nullptr ? G_OBJECT(mark) : nullptr, &argv[0]);
@@ -1461,6 +1478,7 @@ void vfunc_thunk_mark_deleted(GtkTextBuffer *self, GtkTextMark *mark) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkTextBuffer::vfunc_mark_deleted");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_TEXT_BUFFER_CLASS->mark_deleted (called from class_init / iface_init of a
@@ -1472,13 +1490,15 @@ void vfunc_install_mark_deleted(gpointer klass) {
 // vfunc thunk: GTK_TEXT_BUFFER_CLASS->mark_set -> $this->vfunc_mark_set() on a PHP subclass
 void vfunc_thunk_mark_set(GtkTextBuffer *self, const GtkTextIter *location, GtkTextMark *mark) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_mark_set", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_mark_set", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->mark_set != nullptr) native->mark_set(self, location, mark);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap_boxed(GTK_TYPE_TEXT_ITER, location, &argv[0]);
@@ -1490,6 +1510,7 @@ void vfunc_thunk_mark_set(GtkTextBuffer *self, const GtkTextIter *location, GtkT
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkTextBuffer::vfunc_mark_set");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_TEXT_BUFFER_CLASS->mark_set (called from class_init / iface_init of a PHP
@@ -1502,20 +1523,22 @@ void vfunc_install_mark_set(gpointer klass) {
 // subclass
 void vfunc_thunk_modified_changed(GtkTextBuffer *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_modified_changed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_modified_changed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->modified_changed != nullptr) native->modified_changed(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkTextBuffer::vfunc_modified_changed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_TEXT_BUFFER_CLASS->modified_changed (called from class_init / iface_init of
@@ -1527,14 +1550,15 @@ void vfunc_install_modified_changed(gpointer klass) {
 // vfunc thunk: GTK_TEXT_BUFFER_CLASS->paste_done -> $this->vfunc_paste_done() on a PHP subclass
 void vfunc_thunk_paste_done(GtkTextBuffer *self, GdkClipboard *clipboard) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_paste_done", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_paste_done", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->paste_done != nullptr) native->paste_done(self, clipboard);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(clipboard != nullptr ? G_OBJECT(clipboard) : nullptr, &argv[0]);
@@ -1545,6 +1569,7 @@ void vfunc_thunk_paste_done(GtkTextBuffer *self, GdkClipboard *clipboard) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkTextBuffer::vfunc_paste_done");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_TEXT_BUFFER_CLASS->paste_done (called from class_init / iface_init of a PHP
@@ -1556,19 +1581,22 @@ void vfunc_install_paste_done(gpointer klass) {
 // vfunc thunk: GTK_TEXT_BUFFER_CLASS->redo -> $this->vfunc_redo() on a PHP subclass
 void vfunc_thunk_redo(GtkTextBuffer *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_redo", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_redo", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->redo != nullptr) native->redo(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkTextBuffer::vfunc_redo");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_TEXT_BUFFER_CLASS->redo (called from class_init / iface_init of a PHP
@@ -1581,14 +1609,15 @@ void vfunc_install_redo(gpointer klass) {
 void vfunc_thunk_remove_tag(GtkTextBuffer *self, GtkTextTag *tag, const GtkTextIter *start,
                             const GtkTextIter *end) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_remove_tag", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_remove_tag", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->remove_tag != nullptr) native->remove_tag(self, tag, start, end);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   wrap(tag != nullptr ? G_OBJECT(tag) : nullptr, &argv[0]);
@@ -1601,6 +1630,7 @@ void vfunc_thunk_remove_tag(GtkTextBuffer *self, GtkTextTag *tag, const GtkTextI
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkTextBuffer::vfunc_remove_tag");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_TEXT_BUFFER_CLASS->remove_tag (called from class_init / iface_init of a PHP
@@ -1612,19 +1642,22 @@ void vfunc_install_remove_tag(gpointer klass) {
 // vfunc thunk: GTK_TEXT_BUFFER_CLASS->undo -> $this->vfunc_undo() on a PHP subclass
 void vfunc_thunk_undo(GtkTextBuffer *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_undo", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_undo", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->undo != nullptr) native->undo(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkTextBuffer::vfunc_undo");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_TEXT_BUFFER_CLASS->undo (called from class_init / iface_init of a PHP

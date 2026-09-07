@@ -1688,6 +1688,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `JavaScriptCore/JSCValue.cpp`
 - `JavaScriptCore/JSCVirtualMachine.cpp`
 - `JavaScriptCore/JavaScriptCore.stub.php`
+- `gen_minit_defs.inc`
 - `gen_minit.inc`
 - `gen_prototypes.h`
 - `gen_arginfo.h`

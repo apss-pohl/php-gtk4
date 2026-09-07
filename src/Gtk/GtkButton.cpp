@@ -238,19 +238,22 @@ namespace {
 // vfunc thunk: GTK_BUTTON_CLASS->activate -> $this->vfunc_activate() on a PHP subclass
 void vfunc_thunk_activate(GtkButton *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_activate", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_activate", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_BUTTON_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->activate != nullptr) native->activate(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkButton::vfunc_activate");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_BUTTON_CLASS->activate (called from class_init / iface_init of a PHP
@@ -262,19 +265,22 @@ void vfunc_install_activate(gpointer klass) {
 // vfunc thunk: GTK_BUTTON_CLASS->clicked -> $this->vfunc_clicked() on a PHP subclass
 void vfunc_thunk_clicked(GtkButton *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_clicked", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_clicked", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_BUTTON_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->clicked != nullptr) native->clicked(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkButton::vfunc_clicked");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_BUTTON_CLASS->clicked (called from class_init / iface_init of a PHP subtype)

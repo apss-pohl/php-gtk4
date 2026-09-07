@@ -337,14 +337,15 @@ namespace {
 // vfunc thunk: GTK_RANGE_CLASS->adjust_bounds -> $this->vfunc_adjust_bounds() on a PHP subclass
 void vfunc_thunk_adjust_bounds(GtkRange *self, double new_value) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_adjust_bounds", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_adjust_bounds", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_RANGE_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->adjust_bounds != nullptr) native->adjust_bounds(self, new_value);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   ZVAL_DOUBLE(&argv[0], new_value);
@@ -355,6 +356,7 @@ void vfunc_thunk_adjust_bounds(GtkRange *self, double new_value) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkRange::vfunc_adjust_bounds");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_RANGE_CLASS->adjust_bounds (called from class_init / iface_init of a PHP
@@ -366,13 +368,14 @@ void vfunc_install_adjust_bounds(gpointer klass) {
 // vfunc thunk: GTK_RANGE_CLASS->change_value -> $this->vfunc_change_value() on a PHP subclass
 gboolean vfunc_thunk_change_value(GtkRange *self, GtkScrollType scroll, double new_value) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_change_value", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_change_value", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_RANGE_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->change_value != nullptr ? native->change_value(self, scroll, new_value) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(scroll));
@@ -388,6 +391,7 @@ gboolean vfunc_thunk_change_value(GtkRange *self, GtkScrollType scroll, double n
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkRange::vfunc_change_value");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -400,14 +404,15 @@ void vfunc_install_change_value(gpointer klass) {
 // vfunc thunk: GTK_RANGE_CLASS->move_slider -> $this->vfunc_move_slider() on a PHP subclass
 void vfunc_thunk_move_slider(GtkRange *self, GtkScrollType scroll) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_move_slider", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_move_slider", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_RANGE_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->move_slider != nullptr) native->move_slider(self, scroll);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(scroll));
@@ -418,6 +423,7 @@ void vfunc_thunk_move_slider(GtkRange *self, GtkScrollType scroll) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkRange::vfunc_move_slider");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_RANGE_CLASS->move_slider (called from class_init / iface_init of a PHP
@@ -429,20 +435,22 @@ void vfunc_install_move_slider(gpointer klass) {
 // vfunc thunk: GTK_RANGE_CLASS->value_changed -> $this->vfunc_value_changed() on a PHP subclass
 void vfunc_thunk_value_changed(GtkRange *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_value_changed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_value_changed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_RANGE_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->value_changed != nullptr) native->value_changed(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkRange::vfunc_value_changed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_RANGE_CLASS->value_changed (called from class_init / iface_init of a PHP

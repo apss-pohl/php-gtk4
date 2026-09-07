@@ -162,15 +162,16 @@ GVariant *vfunc_thunk_get_item_attribute_value(GMenuModel *self, gint item_index
                                                const gchar *attribute,
                                                const GVariantType *expected_type) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_get_item_attribute_value", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_get_item_attribute_value", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = G_MENU_MODEL_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->get_item_attribute_value != nullptr
                ? native->get_item_attribute_value(self, item_index, attribute, expected_type)
                : nullptr;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(item_index));
@@ -199,6 +200,7 @@ GVariant *vfunc_thunk_get_item_attribute_value(GMenuModel *self, gint item_index
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GMenuModel::vfunc_get_item_attribute_value");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -211,14 +213,15 @@ void vfunc_install_get_item_attribute_value(gpointer klass) {
 // vfunc thunk: G_MENU_MODEL_CLASS->get_item_link -> $this->vfunc_get_item_link() on a PHP subclass
 GMenuModel *vfunc_thunk_get_item_link(GMenuModel *self, gint item_index, const gchar *link) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_get_item_link", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_get_item_link", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = G_MENU_MODEL_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->get_item_link != nullptr ? native->get_item_link(self, item_index, link)
                                             : nullptr;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(item_index));
@@ -242,6 +245,7 @@ GMenuModel *vfunc_thunk_get_item_link(GMenuModel *self, gint item_index, const g
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GMenuModel::vfunc_get_item_link");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -254,13 +258,14 @@ void vfunc_install_get_item_link(gpointer klass) {
 // vfunc thunk: G_MENU_MODEL_CLASS->get_n_items -> $this->vfunc_get_n_items() on a PHP subclass
 gint vfunc_thunk_get_n_items(GMenuModel *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_get_n_items", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_get_n_items", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = G_MENU_MODEL_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->get_n_items != nullptr ? native->get_n_items(self) : 0;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   gint result = 0;
@@ -273,6 +278,7 @@ gint vfunc_thunk_get_n_items(GMenuModel *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GMenuModel::vfunc_get_n_items");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -285,13 +291,14 @@ void vfunc_install_get_n_items(gpointer klass) {
 // vfunc thunk: G_MENU_MODEL_CLASS->is_mutable -> $this->vfunc_is_mutable() on a PHP subclass
 gboolean vfunc_thunk_is_mutable(GMenuModel *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_is_mutable", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_is_mutable", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = G_MENU_MODEL_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->is_mutable != nullptr ? native->is_mutable(self) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -302,6 +309,7 @@ gboolean vfunc_thunk_is_mutable(GMenuModel *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GMenuModel::vfunc_is_mutable");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 

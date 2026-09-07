@@ -160,19 +160,22 @@ namespace {
 // vfunc thunk: G_CANCELLABLE_CLASS->cancelled -> $this->vfunc_cancelled() on a PHP subclass
 void vfunc_thunk_cancelled(GCancellable *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_cancelled", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_cancelled", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = G_CANCELLABLE_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->cancelled != nullptr) native->cancelled(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GCancellable::vfunc_cancelled");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_CANCELLABLE_CLASS->cancelled (called from class_init / iface_init of a PHP

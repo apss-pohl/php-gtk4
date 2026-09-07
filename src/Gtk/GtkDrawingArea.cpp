@@ -146,13 +146,15 @@ namespace {
 // vfunc thunk: GTK_DRAWING_AREA_CLASS->resize -> $this->vfunc_resize() on a PHP subclass
 void vfunc_thunk_resize(GtkDrawingArea *self, int width, int height) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_resize", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_resize", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_DRAWING_AREA_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->resize != nullptr) native->resize(self, width, height);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(width));
@@ -164,6 +166,7 @@ void vfunc_thunk_resize(GtkDrawingArea *self, int width, int height) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkDrawingArea::vfunc_resize");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_DRAWING_AREA_CLASS->resize (called from class_init / iface_init of a PHP

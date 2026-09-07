@@ -332,12 +332,14 @@ namespace {
 // subclass
 void vfunc_thunk_action_added(GActionGroup *self, const gchar *action_name) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "action_added", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "action_added", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -352,6 +354,7 @@ void vfunc_thunk_action_added(GActionGroup *self, const gchar *action_name) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::action_added");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GActionGroupInterface *>->action_added (called from class_init /
@@ -365,13 +368,14 @@ void vfunc_install_action_added(gpointer klass) {
 void vfunc_thunk_action_enabled_changed(GActionGroup *self, const gchar *action_name,
                                         gboolean enabled) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "action_enabled_changed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "action_enabled_changed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -387,6 +391,7 @@ void vfunc_thunk_action_enabled_changed(GActionGroup *self, const gchar *action_
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::action_enabled_changed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GActionGroupInterface *>->action_enabled_changed (called from
@@ -400,12 +405,14 @@ void vfunc_install_action_enabled_changed(gpointer klass) {
 // PHP subclass
 void vfunc_thunk_action_removed(GActionGroup *self, const gchar *action_name) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "action_removed", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "action_removed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -420,6 +427,7 @@ void vfunc_thunk_action_removed(GActionGroup *self, const gchar *action_name) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::action_removed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GActionGroupInterface *>->action_removed (called from class_init /
@@ -433,13 +441,14 @@ void vfunc_install_action_removed(gpointer klass) {
 void vfunc_thunk_action_state_changed(GActionGroup *self, const gchar *action_name,
                                       GVariant *state) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "action_state_changed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "action_state_changed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -459,6 +468,7 @@ void vfunc_thunk_action_state_changed(GActionGroup *self, const gchar *action_na
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::action_state_changed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GActionGroupInterface *>->action_state_changed (called from
@@ -473,12 +483,14 @@ void vfunc_install_action_state_changed(gpointer klass) {
 void vfunc_thunk_activate_action(GActionGroup *self, const gchar *action_name,
                                  GVariant *parameter) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "activate_action", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "activate_action", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -498,6 +510,7 @@ void vfunc_thunk_activate_action(GActionGroup *self, const gchar *action_name,
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::activate_action");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GActionGroupInterface *>->activate_action (called from class_init /
@@ -511,13 +524,14 @@ void vfunc_install_activate_action(gpointer klass) {
 void vfunc_thunk_change_action_state(GActionGroup *self, const gchar *action_name,
                                      GVariant *value) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "change_action_state", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "change_action_state", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -537,6 +551,7 @@ void vfunc_thunk_change_action_state(GActionGroup *self, const gchar *action_nam
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::change_action_state");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GActionGroupInterface *>->change_action_state (called from
@@ -550,13 +565,14 @@ void vfunc_install_change_action_state(gpointer klass) {
 // $this->get_action_enabled() on a PHP subclass
 gboolean vfunc_thunk_get_action_enabled(GActionGroup *self, const gchar *action_name) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "get_action_enabled", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_action_enabled", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -575,6 +591,7 @@ gboolean vfunc_thunk_get_action_enabled(GActionGroup *self, const gchar *action_
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::get_action_enabled");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -589,13 +606,14 @@ void vfunc_install_get_action_enabled(gpointer klass) {
 const GVariantType *vfunc_thunk_get_action_parameter_type(GActionGroup *self,
                                                           const gchar *action_name) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "get_action_parameter_type", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_action_parameter_type", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return nullptr;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -617,6 +635,7 @@ const GVariantType *vfunc_thunk_get_action_parameter_type(GActionGroup *self,
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::get_action_parameter_type");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -631,13 +650,14 @@ void vfunc_install_get_action_parameter_type(gpointer klass) {
 // on a PHP subclass
 GVariant *vfunc_thunk_get_action_state(GActionGroup *self, const gchar *action_name) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "get_action_state", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_action_state", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return nullptr;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -660,6 +680,7 @@ GVariant *vfunc_thunk_get_action_state(GActionGroup *self, const gchar *action_n
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::get_action_state");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -673,13 +694,14 @@ void vfunc_install_get_action_state(gpointer klass) {
 // $this->get_action_state_hint() on a PHP subclass
 GVariant *vfunc_thunk_get_action_state_hint(GActionGroup *self, const gchar *action_name) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "get_action_state_hint", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_action_state_hint", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return nullptr;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -701,6 +723,7 @@ GVariant *vfunc_thunk_get_action_state_hint(GActionGroup *self, const gchar *act
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::get_action_state_hint");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -716,13 +739,14 @@ void vfunc_install_get_action_state_hint(gpointer klass) {
 const GVariantType *vfunc_thunk_get_action_state_type(GActionGroup *self,
                                                       const gchar *action_name) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "get_action_state_type", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_action_state_type", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return nullptr;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -744,6 +768,7 @@ const GVariantType *vfunc_thunk_get_action_state_type(GActionGroup *self,
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::get_action_state_type");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -758,12 +783,14 @@ void vfunc_install_get_action_state_type(gpointer klass) {
 // subclass
 gboolean vfunc_thunk_has_action(GActionGroup *self, const gchar *action_name) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "has_action", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "has_action", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -782,6 +809,7 @@ gboolean vfunc_thunk_has_action(GActionGroup *self, const gchar *action_name) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::has_action");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -795,12 +823,14 @@ void vfunc_install_has_action(gpointer klass) {
 // subclass
 gchar **vfunc_thunk_list_actions(GActionGroup *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "list_actions", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "list_actions", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return g_new0(char *, 1);
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   char **result = nullptr;
@@ -812,6 +842,7 @@ gchar **vfunc_thunk_list_actions(GActionGroup *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::list_actions");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 

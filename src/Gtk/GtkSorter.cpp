@@ -79,13 +79,15 @@ namespace {
 // vfunc thunk: GTK_SORTER_CLASS->compare -> $this->vfunc_compare() on a PHP subclass
 GtkOrdering vfunc_thunk_compare(GtkSorter *self, gpointer item1, gpointer item2) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_compare", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_compare", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_SORTER_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->compare != nullptr ? native->compare(self, item1, item2)
                                       : static_cast<GtkOrdering>(0);
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap(item1 != nullptr ? G_OBJECT(item1) : nullptr, &argv[0]);
@@ -102,6 +104,7 @@ GtkOrdering vfunc_thunk_compare(GtkSorter *self, gpointer item1, gpointer item2)
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkSorter::vfunc_compare");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -113,12 +116,14 @@ void vfunc_install_compare(gpointer klass) {
 // vfunc thunk: GTK_SORTER_CLASS->get_order -> $this->vfunc_get_order() on a PHP subclass
 GtkSorterOrder vfunc_thunk_get_order(GtkSorter *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_get_order", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_get_order", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_SORTER_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->get_order != nullptr ? native->get_order(self) : static_cast<GtkSorterOrder>(0);
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   GtkSorterOrder result = static_cast<GtkSorterOrder>(0);
@@ -130,6 +135,7 @@ GtkSorterOrder vfunc_thunk_get_order(GtkSorter *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkSorter::vfunc_get_order");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 

@@ -242,14 +242,15 @@ namespace {
 // vfunc thunk: GTK_APPLICATION_CLASS->window_added -> $this->vfunc_window_added() on a PHP subclass
 void vfunc_thunk_window_added(GtkApplication *self, GtkWindow *window) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_window_added", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_window_added", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->window_added != nullptr) native->window_added(self, window);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(window != nullptr ? G_OBJECT(window) : nullptr, &argv[0]);
@@ -260,6 +261,7 @@ void vfunc_thunk_window_added(GtkApplication *self, GtkWindow *window) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkApplication::vfunc_window_added");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_APPLICATION_CLASS->window_added (called from class_init / iface_init of a
@@ -272,14 +274,15 @@ void vfunc_install_window_added(gpointer klass) {
 // subclass
 void vfunc_thunk_window_removed(GtkApplication *self, GtkWindow *window) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_window_removed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_window_removed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->window_removed != nullptr) native->window_removed(self, window);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(window != nullptr ? G_OBJECT(window) : nullptr, &argv[0]);
@@ -290,6 +293,7 @@ void vfunc_thunk_window_removed(GtkApplication *self, GtkWindow *window) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkApplication::vfunc_window_removed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_APPLICATION_CLASS->window_removed (called from class_init / iface_init of a

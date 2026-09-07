@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use Gtk4\ExceptionMode;
 use Gtk4\GApplication;
 use Gtk4\GApplicationFlags;
 use Gtk4\GLib;
 use Gtk4\GListStore;
+use Gtk4\Gtk;
 use Gtk4\GtkAdjustment;
 use Gtk4\GtkApplication;
 use Gtk4\GtkBox;
@@ -24,6 +26,7 @@ use Gtk4\GtkTextDirection;
 use Gtk4\GtkWidget;
 use Gtk4\GtkWindow;
 use Gtk4\PhpValue;
+use PhpGtk4\Tests\Subclass\RecordingTextBuffer;
 
 /**
  * Every generated vfunc thunk and native vfunc_*() method (src/core/subtype, gen/gir.php): a
@@ -307,6 +310,32 @@ final class VfuncTest extends GtkTestCase
         $a->set_value(5.0);
         $a->set_upper(20.0);
         $this->checkAllVfuncs(GtkAdjustment::class, $a, ['vfunc_value_changed', 'vfunc_changed']);
+    }
+
+    public function testASlotStillAnswersWhileAThrowIsOnItsWayOut(): void
+    {
+        // Zend refuses to run PHP while an exception is pending, so a thunk used to answer GTK
+        // with the slot's default instead - and a GListModel that says "0 items" because PHP
+        // happens to be unwinding leaves GtkListView's item manager holding rows GTK believes
+        // gone (an assertion in a GTK built with them, a silent leak in one without). The
+        // throw below unwinds through the dispose of the window, the list view and the model.
+        $buffer = new RecordingTextBuffer();
+        $buffer->connect('insert-text', static function (): void {
+            throw new \RuntimeException('from the handler');
+        });
+        Gtk::set_exception_mode(ExceptionMode::Rethrow);
+        try {
+            // insert-text is RUN_LAST: the handler above throws, and GTK then runs the class
+            // closure of the same emission - vfunc_insert_text - with that throwable pending.
+            $buffer->insert_at_cursor('hello');
+            self::fail('Rethrow mode was supposed to hand the throwable back');
+        } catch (\RuntimeException $e) {
+            self::assertSame('from the handler', $e->getMessage());
+        } finally {
+            Gtk::set_exception_mode(ExceptionMode::Log);
+        }
+
+        self::assertContains('insert_text', $buffer->calls, 'the slot ran with the throwable pending');
     }
 
     public function testApplications(): void

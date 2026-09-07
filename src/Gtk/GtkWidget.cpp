@@ -2186,12 +2186,14 @@ namespace {
 // vfunc thunk: GTK_WIDGET_CLASS->contains -> $this->vfunc_contains() on a PHP subclass
 gboolean vfunc_thunk_contains(GtkWidget *self, double x, double y) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_contains", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_contains", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->contains != nullptr ? native->contains(self, x, y) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_DOUBLE(&argv[0], x);
@@ -2207,6 +2209,7 @@ gboolean vfunc_thunk_contains(GtkWidget *self, double x, double y) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_contains");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2220,14 +2223,15 @@ void vfunc_install_contains(gpointer klass) {
 // subclass
 void vfunc_thunk_direction_changed(GtkWidget *self, GtkTextDirection previous_direction) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_direction_changed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_direction_changed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->direction_changed != nullptr) native->direction_changed(self, previous_direction);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   enum_to_php(GTK_TYPE_TEXT_DIRECTION, static_cast<gint>(previous_direction), &argv[0]);
@@ -2238,6 +2242,7 @@ void vfunc_thunk_direction_changed(GtkWidget *self, GtkTextDirection previous_di
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_direction_changed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->direction_changed (called from class_init / iface_init of a
@@ -2249,12 +2254,14 @@ void vfunc_install_direction_changed(gpointer klass) {
 // vfunc thunk: GTK_WIDGET_CLASS->focus -> $this->vfunc_focus() on a PHP subclass
 gboolean vfunc_thunk_focus(GtkWidget *self, GtkDirectionType direction) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_focus", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_focus", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->focus != nullptr ? native->focus(self, direction) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   enum_to_php(GTK_TYPE_DIRECTION_TYPE, static_cast<gint>(direction), &argv[0]);
@@ -2269,6 +2276,7 @@ gboolean vfunc_thunk_focus(GtkWidget *self, GtkDirectionType direction) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_focus");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2281,14 +2289,15 @@ void vfunc_install_focus(gpointer klass) {
 // subclass
 GtkSizeRequestMode vfunc_thunk_get_request_mode(GtkWidget *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_get_request_mode", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_get_request_mode", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->get_request_mode != nullptr ? native->get_request_mode(self)
                                                : static_cast<GtkSizeRequestMode>(0);
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   GtkSizeRequestMode result = static_cast<GtkSizeRequestMode>(0);
@@ -2301,6 +2310,7 @@ GtkSizeRequestMode vfunc_thunk_get_request_mode(GtkWidget *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_get_request_mode");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2313,13 +2323,14 @@ void vfunc_install_get_request_mode(gpointer klass) {
 // vfunc thunk: GTK_WIDGET_CLASS->grab_focus -> $this->vfunc_grab_focus() on a PHP subclass
 gboolean vfunc_thunk_grab_focus(GtkWidget *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_grab_focus", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_grab_focus", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->grab_focus != nullptr ? native->grab_focus(self) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -2330,6 +2341,7 @@ gboolean vfunc_thunk_grab_focus(GtkWidget *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_grab_focus");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2342,13 +2354,14 @@ void vfunc_install_grab_focus(gpointer klass) {
 // vfunc thunk: GTK_WIDGET_CLASS->keynav_failed -> $this->vfunc_keynav_failed() on a PHP subclass
 gboolean vfunc_thunk_keynav_failed(GtkWidget *self, GtkDirectionType direction) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_keynav_failed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_keynav_failed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->keynav_failed != nullptr ? native->keynav_failed(self, direction) : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   enum_to_php(GTK_TYPE_DIRECTION_TYPE, static_cast<gint>(direction), &argv[0]);
@@ -2363,6 +2376,7 @@ gboolean vfunc_thunk_keynav_failed(GtkWidget *self, GtkDirectionType direction) 
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_keynav_failed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2375,19 +2389,22 @@ void vfunc_install_keynav_failed(gpointer klass) {
 // vfunc thunk: GTK_WIDGET_CLASS->map -> $this->vfunc_map() on a PHP subclass
 void vfunc_thunk_map(GtkWidget *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_map", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_map", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->map != nullptr) native->map(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_map");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->map (called from class_init / iface_init of a PHP subtype)
@@ -2399,15 +2416,17 @@ void vfunc_install_map(gpointer klass) {
 void vfunc_thunk_measure(GtkWidget *self, GtkOrientation orientation, int for_size, int *minimum,
                          int *natural, int *minimum_baseline, int *natural_baseline) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_measure", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_measure", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->measure != nullptr)
       native->measure(self, orientation, for_size, minimum, natural, minimum_baseline,
                       natural_baseline);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   enum_to_php(GTK_TYPE_ORIENTATION, static_cast<gint>(orientation), &argv[0]);
@@ -2445,6 +2464,7 @@ void vfunc_thunk_measure(GtkWidget *self, GtkOrientation orientation, int for_si
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_measure");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->measure (called from class_init / iface_init of a PHP subtype)
@@ -2456,14 +2476,15 @@ void vfunc_install_measure(gpointer klass) {
 // subclass
 gboolean vfunc_thunk_mnemonic_activate(GtkWidget *self, gboolean group_cycling) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_mnemonic_activate", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_mnemonic_activate", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->mnemonic_activate != nullptr ? native->mnemonic_activate(self, group_cycling)
                                                 : FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   ZVAL_BOOL(&argv[0], group_cycling != FALSE);
@@ -2478,6 +2499,7 @@ gboolean vfunc_thunk_mnemonic_activate(GtkWidget *self, gboolean group_cycling) 
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_mnemonic_activate");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2490,14 +2512,15 @@ void vfunc_install_mnemonic_activate(gpointer klass) {
 // vfunc thunk: GTK_WIDGET_CLASS->move_focus -> $this->vfunc_move_focus() on a PHP subclass
 void vfunc_thunk_move_focus(GtkWidget *self, GtkDirectionType direction) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_move_focus", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_move_focus", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->move_focus != nullptr) native->move_focus(self, direction);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   enum_to_php(GTK_TYPE_DIRECTION_TYPE, static_cast<gint>(direction), &argv[0]);
@@ -2508,6 +2531,7 @@ void vfunc_thunk_move_focus(GtkWidget *self, GtkDirectionType direction) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_move_focus");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->move_focus (called from class_init / iface_init of a PHP
@@ -2519,19 +2543,22 @@ void vfunc_install_move_focus(gpointer klass) {
 // vfunc thunk: GTK_WIDGET_CLASS->realize -> $this->vfunc_realize() on a PHP subclass
 void vfunc_thunk_realize(GtkWidget *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_realize", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_realize", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->realize != nullptr) native->realize(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_realize");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->realize (called from class_init / iface_init of a PHP subtype)
@@ -2542,19 +2569,22 @@ void vfunc_install_realize(gpointer klass) {
 // vfunc thunk: GTK_WIDGET_CLASS->root -> $this->vfunc_root() on a PHP subclass
 void vfunc_thunk_root(GtkWidget *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_root", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_root", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->root != nullptr) native->root(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_root");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->root (called from class_init / iface_init of a PHP subtype)
@@ -2566,14 +2596,15 @@ void vfunc_install_root(gpointer klass) {
 // subclass
 void vfunc_thunk_set_focus_child(GtkWidget *self, GtkWidget *child) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_set_focus_child", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_set_focus_child", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->set_focus_child != nullptr) native->set_focus_child(self, child);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(child != nullptr ? G_OBJECT(child) : nullptr, &argv[0]);
@@ -2584,6 +2615,7 @@ void vfunc_thunk_set_focus_child(GtkWidget *self, GtkWidget *child) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_set_focus_child");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->set_focus_child (called from class_init / iface_init of a PHP
@@ -2595,14 +2627,15 @@ void vfunc_install_set_focus_child(gpointer klass) {
 // vfunc thunk: GTK_WIDGET_CLASS->size_allocate -> $this->vfunc_size_allocate() on a PHP subclass
 void vfunc_thunk_size_allocate(GtkWidget *self, int width, int height, int baseline) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_size_allocate", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_size_allocate", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->size_allocate != nullptr) native->size_allocate(self, width, height, baseline);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(width));
@@ -2615,6 +2648,7 @@ void vfunc_thunk_size_allocate(GtkWidget *self, int width, int height, int basel
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_size_allocate");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->size_allocate (called from class_init / iface_init of a PHP
@@ -2626,13 +2660,15 @@ void vfunc_install_size_allocate(gpointer klass) {
 // vfunc thunk: GTK_WIDGET_CLASS->snapshot -> $this->vfunc_snapshot() on a PHP subclass
 void vfunc_thunk_snapshot(GtkWidget *self, GtkSnapshot *snapshot) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_snapshot", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_snapshot", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->snapshot != nullptr) native->snapshot(self, snapshot);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(snapshot != nullptr ? G_OBJECT(snapshot) : nullptr, &argv[0]);
@@ -2643,6 +2679,7 @@ void vfunc_thunk_snapshot(GtkWidget *self, GtkSnapshot *snapshot) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_snapshot");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->snapshot (called from class_init / iface_init of a PHP
@@ -2655,15 +2692,16 @@ void vfunc_install_snapshot(gpointer klass) {
 // subclass
 void vfunc_thunk_state_flags_changed(GtkWidget *self, GtkStateFlags previous_state_flags) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_state_flags_changed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_state_flags_changed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->state_flags_changed != nullptr)
       native->state_flags_changed(self, previous_state_flags);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(previous_state_flags));
@@ -2674,6 +2712,7 @@ void vfunc_thunk_state_flags_changed(GtkWidget *self, GtkStateFlags previous_sta
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_state_flags_changed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->state_flags_changed (called from class_init / iface_init of a
@@ -2686,14 +2725,15 @@ void vfunc_install_state_flags_changed(gpointer klass) {
 // a PHP subclass
 void vfunc_thunk_system_setting_changed(GtkWidget *self, GtkSystemSetting settings) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_system_setting_changed", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_system_setting_changed", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->system_setting_changed != nullptr) native->system_setting_changed(self, settings);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(settings));
@@ -2704,6 +2744,7 @@ void vfunc_thunk_system_setting_changed(GtkWidget *self, GtkSystemSetting settin
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_system_setting_changed");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->system_setting_changed (called from class_init / iface_init of
@@ -2715,19 +2756,22 @@ void vfunc_install_system_setting_changed(gpointer klass) {
 // vfunc thunk: GTK_WIDGET_CLASS->unmap -> $this->vfunc_unmap() on a PHP subclass
 void vfunc_thunk_unmap(GtkWidget *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_unmap", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_unmap", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->unmap != nullptr) native->unmap(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_unmap");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->unmap (called from class_init / iface_init of a PHP subtype)
@@ -2738,19 +2782,22 @@ void vfunc_install_unmap(gpointer klass) {
 // vfunc thunk: GTK_WIDGET_CLASS->unrealize -> $this->vfunc_unrealize() on a PHP subclass
 void vfunc_thunk_unrealize(GtkWidget *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_unrealize", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_unrealize", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->unrealize != nullptr) native->unrealize(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_unrealize");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->unrealize (called from class_init / iface_init of a PHP
@@ -2762,19 +2809,22 @@ void vfunc_install_unrealize(gpointer klass) {
 // vfunc thunk: GTK_WIDGET_CLASS->unroot -> $this->vfunc_unroot() on a PHP subclass
 void vfunc_thunk_unroot(GtkWidget *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_unroot", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_unroot", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->unroot != nullptr) native->unroot(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_unroot");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->unroot (called from class_init / iface_init of a PHP subtype)

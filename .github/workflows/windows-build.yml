@@ -188,17 +188,27 @@ jobs:
         run: composer install --no-interaction --no-progress --prefer-dist
 
       # The runner session has a desktop, which is all GDK's win32 backend needs.
+      # --log-events-text is written as the run goes: a GTK assertion ends the process with
+      # 0xC0000409 and PHPUnit writes no JUnit file, so this is what names the test that was
+      # running (tests.yml does the same for the Linux jobs).
       - name: Run PHPUnit
         if: inputs.run-tests
         shell: cmd
-        run: tests\run.cmd --log-junit phpunit-junit.xml --display-warnings
+        run: tests\run.cmd --log-junit phpunit-junit.xml --log-events-text phpunit-events.txt --display-warnings
+
+      - name: Name the last test on a crash
+        if: inputs.run-tests && failure()
+        shell: pwsh
+        run: Get-Content phpunit-events.txt -Tail 20 -ErrorAction SilentlyContinue
 
       - name: Upload PHPUnit report
         if: inputs.run-tests && always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: phpunit-junit-windows-php${{ inputs.php }}-${{ inputs.ts }}
-          path: phpunit-junit.xml
+          path: |
+            phpunit-junit.xml
+            phpunit-events.txt
           if-no-files-found: ignore
 
       - name: Stage the dll under its artifact name

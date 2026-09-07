@@ -211,12 +211,14 @@ namespace {
 // PHP subclass
 gboolean vfunc_thunk_is_selected(GtkSelectionModel *self, guint position) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "is_selected", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "is_selected", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(position));
@@ -231,6 +233,7 @@ gboolean vfunc_thunk_is_selected(GtkSelectionModel *self, guint position) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkSelectionModel::is_selected");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -244,12 +247,14 @@ void vfunc_install_is_selected(gpointer klass) {
 // PHP subclass
 gboolean vfunc_thunk_select_all(GtkSelectionModel *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "select_all", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "select_all", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -260,6 +265,7 @@ gboolean vfunc_thunk_select_all(GtkSelectionModel *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkSelectionModel::select_all");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -273,12 +279,14 @@ void vfunc_install_select_all(gpointer klass) {
 // PHP subclass
 gboolean vfunc_thunk_select_item(GtkSelectionModel *self, guint position, gboolean unselect_rest) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "select_item", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "select_item", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(position));
@@ -294,6 +302,7 @@ gboolean vfunc_thunk_select_item(GtkSelectionModel *self, guint position, gboole
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkSelectionModel::select_item");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -308,12 +317,14 @@ void vfunc_install_select_item(gpointer klass) {
 gboolean vfunc_thunk_select_range(GtkSelectionModel *self, guint position, guint n_items,
                                   gboolean unselect_rest) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "select_range", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "select_range", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(position));
@@ -330,6 +341,7 @@ gboolean vfunc_thunk_select_range(GtkSelectionModel *self, guint position, guint
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkSelectionModel::select_range");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -343,12 +355,14 @@ void vfunc_install_select_range(gpointer klass) {
 // on a PHP subclass
 gboolean vfunc_thunk_set_selection(GtkSelectionModel *self, GtkBitset *selected, GtkBitset *mask) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "set_selection", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "set_selection", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap_boxed(GTK_TYPE_BITSET, selected, &argv[0]);
@@ -364,6 +378,7 @@ gboolean vfunc_thunk_set_selection(GtkSelectionModel *self, GtkBitset *selected,
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkSelectionModel::set_selection");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -377,12 +392,14 @@ void vfunc_install_set_selection(gpointer klass) {
 // a PHP subclass
 gboolean vfunc_thunk_unselect_all(GtkSelectionModel *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "unselect_all", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "unselect_all", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -393,6 +410,7 @@ gboolean vfunc_thunk_unselect_all(GtkSelectionModel *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkSelectionModel::unselect_all");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -406,12 +424,14 @@ void vfunc_install_unselect_all(gpointer klass) {
 // on a PHP subclass
 gboolean vfunc_thunk_unselect_item(GtkSelectionModel *self, guint position) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "unselect_item", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "unselect_item", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(position));
@@ -426,6 +446,7 @@ gboolean vfunc_thunk_unselect_item(GtkSelectionModel *self, guint position) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkSelectionModel::unselect_item");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -439,12 +460,14 @@ void vfunc_install_unselect_item(gpointer klass) {
 // on a PHP subclass
 gboolean vfunc_thunk_unselect_range(GtkSelectionModel *self, guint position, guint n_items) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "unselect_range", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "unselect_range", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return FALSE;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(position));
@@ -460,6 +483,7 @@ gboolean vfunc_thunk_unselect_range(GtkSelectionModel *self, guint position, gui
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkSelectionModel::unselect_range");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 

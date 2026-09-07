@@ -197,13 +197,15 @@ namespace {
 void vfunc_thunk_allocate(GtkLayoutManager *self, GtkWidget *widget, int width, int height,
                           int baseline) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_allocate", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_allocate", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_LAYOUT_MANAGER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->allocate != nullptr) native->allocate(self, widget, width, height, baseline);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 4> args{};
   zval *argv = args.data();
   wrap(widget != nullptr ? G_OBJECT(widget) : nullptr, &argv[0]);
@@ -217,6 +219,7 @@ void vfunc_thunk_allocate(GtkLayoutManager *self, GtkWidget *widget, int width, 
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkLayoutManager::vfunc_allocate");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_LAYOUT_MANAGER_CLASS->allocate (called from class_init / iface_init of a PHP
@@ -230,15 +233,16 @@ void vfunc_install_allocate(gpointer klass) {
 GtkLayoutChild *vfunc_thunk_create_layout_child(GtkLayoutManager *self, GtkWidget *widget,
                                                 GtkWidget *for_child) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_create_layout_child", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_create_layout_child", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_LAYOUT_MANAGER_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->create_layout_child != nullptr
                ? native->create_layout_child(self, widget, for_child)
                : nullptr;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap(widget != nullptr ? G_OBJECT(widget) : nullptr, &argv[0]);
@@ -258,6 +262,7 @@ GtkLayoutChild *vfunc_thunk_create_layout_child(GtkLayoutManager *self, GtkWidge
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkLayoutManager::vfunc_create_layout_child");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -271,14 +276,15 @@ void vfunc_install_create_layout_child(gpointer klass) {
 // PHP subclass
 GtkSizeRequestMode vfunc_thunk_get_request_mode(GtkLayoutManager *self, GtkWidget *widget) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "vfunc_get_request_mode", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_get_request_mode", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_LAYOUT_MANAGER_CLASS(subtype_native_class(G_OBJECT(self)));
     return native->get_request_mode != nullptr ? native->get_request_mode(self, widget)
                                                : static_cast<GtkSizeRequestMode>(0);
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(widget != nullptr ? G_OBJECT(widget) : nullptr, &argv[0]);
@@ -295,6 +301,7 @@ GtkSizeRequestMode vfunc_thunk_get_request_mode(GtkLayoutManager *self, GtkWidge
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkLayoutManager::vfunc_get_request_mode");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -309,15 +316,17 @@ void vfunc_thunk_measure(GtkLayoutManager *self, GtkWidget *widget, GtkOrientati
                          int for_size, int *minimum, int *natural, int *minimum_baseline,
                          int *natural_baseline) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_measure", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_measure", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_LAYOUT_MANAGER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->measure != nullptr)
       native->measure(self, widget, orientation, for_size, minimum, natural, minimum_baseline,
                       natural_baseline);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   wrap(widget != nullptr ? G_OBJECT(widget) : nullptr, &argv[0]);
@@ -356,6 +365,7 @@ void vfunc_thunk_measure(GtkLayoutManager *self, GtkWidget *widget, GtkOrientati
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkLayoutManager::vfunc_measure");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_LAYOUT_MANAGER_CLASS->measure (called from class_init / iface_init of a PHP
@@ -367,19 +377,22 @@ void vfunc_install_measure(gpointer klass) {
 // vfunc thunk: GTK_LAYOUT_MANAGER_CLASS->root -> $this->vfunc_root() on a PHP subclass
 void vfunc_thunk_root(GtkLayoutManager *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_root", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_root", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_LAYOUT_MANAGER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->root != nullptr) native->root(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkLayoutManager::vfunc_root");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_LAYOUT_MANAGER_CLASS->root (called from class_init / iface_init of a PHP
@@ -391,19 +404,22 @@ void vfunc_install_root(gpointer klass) {
 // vfunc thunk: GTK_LAYOUT_MANAGER_CLASS->unroot -> $this->vfunc_unroot() on a PHP subclass
 void vfunc_thunk_unroot(GtkLayoutManager *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "vfunc_unroot", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_unroot", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     auto *native = GTK_LAYOUT_MANAGER_CLASS(subtype_native_class(G_OBJECT(self)));
     if (native->unroot != nullptr) native->unroot(self);
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkLayoutManager::vfunc_unroot");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_LAYOUT_MANAGER_CLASS->unroot (called from class_init / iface_init of a PHP

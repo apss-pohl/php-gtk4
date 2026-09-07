@@ -169,13 +169,14 @@ namespace {
 // $this->get_current_image() on a PHP subclass
 GdkPaintable *vfunc_thunk_get_current_image(GdkPaintable *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "get_current_image", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_current_image", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return nullptr;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   GdkPaintable *result = nullptr;
@@ -190,6 +191,7 @@ GdkPaintable *vfunc_thunk_get_current_image(GdkPaintable *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GdkPaintable::get_current_image");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -203,12 +205,14 @@ void vfunc_install_get_current_image(gpointer klass) {
 // subclass
 GdkPaintableFlags vfunc_thunk_get_flags(GdkPaintable *self) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "get_flags", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_flags", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return static_cast<GdkPaintableFlags>(0);
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   GdkPaintableFlags result = static_cast<GdkPaintableFlags>(0);
@@ -219,6 +223,7 @@ GdkPaintableFlags vfunc_thunk_get_flags(GdkPaintable *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GdkPaintable::get_flags");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -232,13 +237,14 @@ void vfunc_install_get_flags(gpointer klass) {
 // $this->get_intrinsic_aspect_ratio() on a PHP subclass
 double vfunc_thunk_get_intrinsic_aspect_ratio(GdkPaintable *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "get_intrinsic_aspect_ratio", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_intrinsic_aspect_ratio", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return 0;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   double result = 0;
@@ -249,6 +255,7 @@ double vfunc_thunk_get_intrinsic_aspect_ratio(GdkPaintable *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GdkPaintable::get_intrinsic_aspect_ratio");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -263,13 +270,14 @@ void vfunc_install_get_intrinsic_aspect_ratio(gpointer klass) {
 // $this->get_intrinsic_height() on a PHP subclass
 int vfunc_thunk_get_intrinsic_height(GdkPaintable *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "get_intrinsic_height", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_intrinsic_height", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return 0;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   int result = 0;
@@ -282,6 +290,7 @@ int vfunc_thunk_get_intrinsic_height(GdkPaintable *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GdkPaintable::get_intrinsic_height");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -296,13 +305,14 @@ void vfunc_install_get_intrinsic_height(gpointer klass) {
 // $this->get_intrinsic_width() on a PHP subclass
 int vfunc_thunk_get_intrinsic_width(GdkPaintable *self) {
   zval zself;
-  zend_function *fn = EG(exception) == nullptr
-                          ? subtype_vfunc(G_OBJECT(self), "get_intrinsic_width", &zself)
-                          : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "get_intrinsic_width", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return 0;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   zval ret;
   ZVAL_UNDEF(&ret);
   int result = 0;
@@ -315,6 +325,7 @@ int vfunc_thunk_get_intrinsic_width(GdkPaintable *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GdkPaintable::get_intrinsic_width");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -329,12 +340,14 @@ void vfunc_install_get_intrinsic_width(gpointer klass) {
 // subclass
 void vfunc_thunk_snapshot(GdkPaintable *self, GdkSnapshot *snapshot, double width, double height) {
   zval zself;
-  zend_function *fn =
-      EG(exception) == nullptr ? subtype_vfunc(G_OBJECT(self), "snapshot", &zself) : nullptr;
-  if (fn == nullptr) {  // no handle (mid-construction, after shutdown) or exception pending
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "snapshot", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
     // an interface implemented in PHP has no native implementation below it
     return;
   }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   wrap(snapshot != nullptr ? G_OBJECT(snapshot) : nullptr, &argv[0]);
@@ -347,6 +360,7 @@ void vfunc_thunk_snapshot(GdkPaintable *self, GdkSnapshot *snapshot, double widt
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GdkPaintable::snapshot");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GdkPaintableInterface *>->snapshot (called from class_init /

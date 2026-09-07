@@ -489,6 +489,17 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Fixed
 
+- **A vfunc slot answered GTK with its default whenever a PHP exception was in flight**, which
+  is a lie about the object rather than a safe fallback: a PHP `GListModel` asked how many rows
+  it has while a throw was unwinding said "0", and `GtkListView`'s item manager was left holding
+  rows GTK believes gone - `gtk_list_item_manager_clear_model: assertion failed
+  (gtk_rb_tree_get_root (self->items) == NULL)` and `0xC0000409` on a GTK built with assertions
+  (every Windows CI job died there, in `PhpSelectionModelTest`), a silent leak on one without.
+  The generated thunks now *park* a pending Throwable for the duration of the call
+  (`zend_exception_save()` / `zend_exception_restore()`, what Zend does around a `__destruct()`),
+  so the slot answers with the object's own state and the parked Throwable comes back as the
+  previous of anything the call itself threw - reported exactly once, as before.
+
 - **`GtkFixedLayoutChild::$transform` read through the property system was a GLib CRITICAL** -
   GTK 4.14's getter hands the GValue the address of its pointer. The `@property` tag is gone
   (a new `<Ns>.<Type>.property:<name>` key in `gen/skip.txt`); `get_transform()`/`set_transform()`
