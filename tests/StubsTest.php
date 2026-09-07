@@ -110,7 +110,7 @@ final class StubsTest extends TestCase
 
     public function testStubNamesAreSnakeCase(): void
     {
-        // docs/PLAN.md: one spelling, snake_case, no camelCase - parameter names are API (named arguments).
+        // README.md "Design": one spelling, snake_case, no camelCase - parameter names are API (named arguments).
         $src = self::source();
         preg_match_all('/function\s+(\w+)\s*\(([^)]*)\)/', $src, $m, PREG_SET_ORDER);
         self::assertNotEmpty($m);

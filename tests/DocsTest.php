@@ -34,7 +34,7 @@ final class DocsTest extends TestCase
     {
         // CHANGELOG.md is deliberately absent: it records history, so it names files that were
         // renamed or deleted on purpose (`tests/TestPng.php` -> `tests/PngFixture.php`).
-        $docs = ['CLAUDE.md', 'README.md', 'docs/PLAN.md', 'docs/TODO.md',
+        $docs = ['CLAUDE.md', 'README.md', 'docs/TODO.md',
             'docs/RELEASING.md', 'docs/BUILD.md', 'docs/GTK3-MAP.md',
             'docs/INSTALL.md', 'docs/CONTRIBUTING.md', 'gen/README.md',
             'examples/README.md', 'stubs/README.md', 'tests/phpt/README.md'];

@@ -47,7 +47,7 @@ have to read.
 
 ## What stays pinned, and why
 
-The method lines left after 2026-09-05 are GTK reporting about the *data* it was handed, or
+The remaining method lines are GTK reporting about the *data* it was handed, or
 about a state it keeps private, so no boundary check can stand in for them:
 
 - `GtkCssProvider::load_*` - the theme parser's own diagnostics about the CSS; a script that

@@ -6,6 +6,18 @@
 using namespace phpgtk;
 
 /**
+ * Gtk4\GtkNative::get_renderer(): ?GskRenderer
+ *
+ * Returns the renderer that is used for this `GtkNative`.
+ */
+ZEND_METHOD(Gtk4_GtkNative, get_renderer) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkNative *self = PHPGTK_SELF(GtkNative, GTK_TYPE_NATIVE);
+  GskRenderer *phpgtk_ret = gtk_native_get_renderer(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkNative::get_surface(): ?GdkSurface
  *
  * Returns the surface of this `GtkNative`.

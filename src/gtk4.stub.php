@@ -401,6 +401,61 @@ final class GdkRectangle
 }
 
 /**
+ * A rectangle with a size per corner (a boxed value type: cloneable, compared by value) - what
+ * {@see GskRoundedClipNode}, {@see GskBorderNode}, the shadow nodes and
+ * {@see GtkSnapshot::push_rounded_clip()} take. GSK gives the struct no GType; the binding
+ * registers one. The GSK calls that rewrite the rectangle in place (normalize, offset, shrink)
+ * answer with a copy here, like graphene's do: a value handle never changes under you.
+ *
+ * @link https://docs.gtk.org/gsk4/struct.RoundedRect.html
+ * @not-serializable
+ */
+final class GskRoundedRect
+{
+    /** A rectangle with a (circular) radius per corner; a radius of 0.0 keeps that corner square. */
+    public function __construct(
+        GrapheneRect $bounds,
+        float $top_left = 0.0,
+        float $top_right = 0.0,
+        float $bottom_right = 0.0,
+        float $bottom_left = 0.0,
+    ) {}
+
+    /** The rectangle without its corners. */
+    public function get_bounds(): GrapheneRect {}
+
+    /** The horizontal and vertical radius of one corner. */
+    public function get_corner(GskCorner $corner): GrapheneSize {}
+
+    /** Whether every corner is square (all radii 0.0). */
+    public function is_rectilinear(): bool {}
+
+    /** Whether the point lies inside the rounded rectangle. */
+    public function contains_point(GraphenePoint $point): bool {}
+
+    /** Whether the whole rectangle lies inside the rounded rectangle. */
+    public function contains_rect(GrapheneRect $rect): bool {}
+
+    /** Whether the rectangle overlaps the rounded rectangle anywhere. */
+    public function intersects_rect(GrapheneRect $rect): bool {}
+
+    /** A copy with a non-negative size and corners no larger than the sides allow. */
+    public function normalize(): GskRoundedRect {}
+
+    /** A copy moved by ($dx, $dy). */
+    public function offset(float $dx, float $dy): GskRoundedRect {}
+
+    /**
+     * A copy inset by the given amounts on each side, the corners shrinking with it (negative
+     * values grow it).
+     */
+    public function shrink(float $top, float $right, float $bottom, float $left): GskRoundedRect {}
+
+    /** Same bounds and the same four corners (what `==` compares too). */
+    public function equal(GskRoundedRect $other): bool {}
+}
+
+/**
  * An input event, as GTK 4 delivers it to event controllers: an opaque, refcounted handle with
  * typed getters (there are no fields to copy and no `new`). The class tells the kind — a
  * {@see GdkKeyEvent}, {@see GdkButtonEvent}, ... — and {@see get_event_type()} the exact type.

@@ -535,6 +535,42 @@ enum GdkMemoryFormat: int
 }
 
 /**
+ * A `GdkTexture` representing image data in memory.
+ */
+class GdkMemoryTexture extends GdkTexture implements GdkPaintable
+{
+    /** Creates a new texture for a blob of image data. */
+    public function __construct(int $width, int $height, GdkMemoryFormat $format, string $bytes, int $stride) {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::compute_concrete_size */
+    public function compute_concrete_size(float $specified_width, float $specified_height, float $default_width, float $default_height): array {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::get_current_image */
+    public function get_current_image(): GdkPaintable {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::get_flags */
+    public function get_flags(): int {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::get_intrinsic_aspect_ratio */
+    public function get_intrinsic_aspect_ratio(): float {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::get_intrinsic_height */
+    public function get_intrinsic_height(): int {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::get_intrinsic_width */
+    public function get_intrinsic_width(): int {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::invalidate_contents */
+    public function invalidate_contents(): void {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::invalidate_size */
+    public function invalidate_size(): void {}
+
+    /** @implementation-alias Gtk4\GdkPaintable::snapshot */
+    public function snapshot(GdkSnapshot $snapshot, float $width, float $height): void {}
+}
+
+/**
  * Flags to indicate the state of modifier keys and mouse buttons in events.
  */
 final class GdkModifierType
@@ -828,6 +864,9 @@ class GdkTexture extends GObject implements GdkPaintable
     /** GdkTexture is abstract in GTK: instances come from GTK, never from `new`. */
     private function __construct() {}
 
+    /** Creates a new texture object representing the `GdkPixbuf`. */
+    public static function new_for_pixbuf(GdkPixbuf $pixbuf): GdkTexture {}
+
     /** Creates a new texture by loading an image from memory, */
     public static function new_from_bytes(string $bytes): GdkTexture {}
 
@@ -895,6 +934,37 @@ class GdkTexture extends GObject implements GdkPaintable
 
     /** @implementation-alias Gtk4\GdkPaintable::snapshot */
     public function snapshot(GdkSnapshot $snapshot, float $width, float $height): void {}
+}
+
+/**
+ * The `GdkTextureDownloader` is used to download the contents of a `Texture`.
+ * @not-serializable
+ */
+final class GdkTextureDownloader
+{
+    /** Creates a new texture downloader for $texture. */
+    public function __construct(GdkTexture $texture) {}
+
+    /** Gets the format that the data will be downloaded in. */
+    public function get_format(): GdkMemoryFormat {}
+
+    /** Gets the texture that the downloader will download. */
+    public function get_texture(): GdkTexture {}
+
+    /** Sets the format the downloader will download. */
+    public function set_format(GdkMemoryFormat $format): void {}
+
+    /** Changes the texture the downloader will download. */
+    public function set_texture(GdkTexture $texture): void {}
+
+    /**
+     * The texture's pixels in the downloader's format (set_format(); GdkMemoryFormat::B8g8r8a8Premultiplied
+     * by default) as `[string $bytes, int $stride]` - the row stride is what GdkPixbuf::new_from_bytes()
+     * or GdkMemoryTexture::new() need next to the bytes.
+     *
+     * @return array{string, int}
+     */
+    public function download_bytes(): array {}
 }
 
 /**

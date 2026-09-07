@@ -4,7 +4,7 @@
  * The model: what a GIR <type>, <parameter>, <method> and type node become in PHP,
  * and the naming helpers that turn them into PHP and C names.
  *
- * Part of gen/gir.php, the GObject-Introspection generator (docs/PLAN.md milestone 3);
+ * Part of gen/gir.php, the GObject-Introspection generator (README.md "Design");
  * gen/README.md describes the flow. Split out of the 3 200-line original on 2026-08-30.
  */
 
@@ -64,6 +64,10 @@ final class Func
         // it is called on (gdk_content_formats_union()). A handle owns its value, so the callee
         // has to be given a reference of its own or the handle is left on freed memory.
         public bool $consumesSelf = false,
+        // The instance parameter's C type without const/pointer (`GskRenderNode` on every render
+        // node method, whatever the subclass): what `self` is declared as where it differs from
+        // the class' own c:type.
+        public ?string $selfCtype = null,
     ) {}
 }
 
@@ -78,7 +82,7 @@ final class Node
     /** @var list<array{name: string, type: Type, writable: bool, private: bool}> a boxed record's fields */
     public array $recordFields = [];
     public ?string $structFor = null;   // record: the class this is the class struct of (qualified)
-    /** @var list<array{name: string, type: Type, readable: bool, writable: bool, constructOnly: bool, doc: string}> */
+    /** @var list<array{name: string, type: Type, readable: bool, writable: bool, constructOnly: bool, deprecated: ?string, doc: string}> */
     public array $props = [];
     /** @var list<array{name: string, value: int, deprecated: bool, version: ?string}> */
     public array $members = [];
@@ -89,6 +93,11 @@ final class Node
     public ?string $parent = null;      // qualified
     public bool $abstract = false;
     public bool $final = false;
+    // glib:fundamental: a refcounted instance type of its own, neither GObject nor boxed
+    // (GskRenderNode); ref/unref sit on the root of the hierarchy in GIR (see fundamentalRefPair()).
+    public bool $fundamental = false;
+    public ?string $refFunc = null;
+    public ?string $unrefFunc = null;
     public string $doc = '';
 
     public function __construct(
@@ -113,6 +122,9 @@ final class Node
 /** @return array{string, string} The `GDK_TYPE_EVENT` / `GDK_EVENT` macro pair of a node. */
 function macroParts(Gir $gir, Node $n): array
 {
+    if (isset(TYPE_MACROS[$n->qname()])) {
+        return TYPE_MACROS[$n->qname()];
+    }
     $prefix = $gir->prefixes[$n->ns];
     // The GType name first: it is the one spelled like the macro. Graphene's c:type is the C
     // struct's own snake_case name (`graphene_rect_t`), which yields GRAPHENE_TYPE__RECT_T
@@ -154,7 +166,11 @@ function docSummary(string $doc): string
     return preg_replace('/\s+/', ' ', $para) ?? $para;
 }
 
-/** Wrap a paragraph into docblock lines at 100 columns. */
+/**
+ * Wrap a paragraph into docblock lines at 100 columns.
+ *
+ * @return list<string>
+ */
 function docLines(string $text, string $indent): array
 {
     if ($text === '') {

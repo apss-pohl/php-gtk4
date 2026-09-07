@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 839cbaab92b1bf8c53bacc7dc71b7e22c2ce50a1 */
+ * Stub hash: 3417965319b6b20800241da8298d19739a8aead2 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GObject___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -167,6 +167,52 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkRectangle_equal, 0, 1, _IS_BOOL, 0)
 	ZEND_ARG_OBJ_INFO(0, other, Gtk4\\GdkRectangle, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GskRoundedRect___construct, 0, 0, 1)
+	ZEND_ARG_OBJ_INFO(0, bounds, Gtk4\\GrapheneRect, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, top_left, IS_DOUBLE, 0, "0.0")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, top_right, IS_DOUBLE, 0, "0.0")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, bottom_right, IS_DOUBLE, 0, "0.0")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, bottom_left, IS_DOUBLE, 0, "0.0")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskRoundedRect_get_bounds, 0, 0, Gtk4\\GrapheneRect, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskRoundedRect_get_corner, 0, 1, Gtk4\\GrapheneSize, 0)
+	ZEND_ARG_OBJ_INFO(0, corner, Gtk4\\GskCorner, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GskRoundedRect_is_rectilinear arginfo_class_Gtk4_GParamSpec_is_readable
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GskRoundedRect_contains_point, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, point, Gtk4\\GraphenePoint, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GskRoundedRect_contains_rect, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, rect, Gtk4\\GrapheneRect, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GskRoundedRect_intersects_rect arginfo_class_Gtk4_GskRoundedRect_contains_rect
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskRoundedRect_normalize, 0, 0, Gtk4\\GskRoundedRect, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskRoundedRect_offset, 0, 2, Gtk4\\GskRoundedRect, 0)
+	ZEND_ARG_TYPE_INFO(0, dx, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, dy, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskRoundedRect_shrink, 0, 4, Gtk4\\GskRoundedRect, 0)
+	ZEND_ARG_TYPE_INFO(0, top, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, right, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, bottom, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, left, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GskRoundedRect_equal, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, other, Gtk4\\GskRoundedRect, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkEvent_get_event_type, 0, 0, Gtk4\\GdkEventType, 0)
@@ -400,6 +446,17 @@ ZEND_METHOD(Gtk4_GdkRectangle, intersect);
 ZEND_METHOD(Gtk4_GdkRectangle, union);
 ZEND_METHOD(Gtk4_GdkRectangle, contains_point);
 ZEND_METHOD(Gtk4_GdkRectangle, equal);
+ZEND_METHOD(Gtk4_GskRoundedRect, __construct);
+ZEND_METHOD(Gtk4_GskRoundedRect, get_bounds);
+ZEND_METHOD(Gtk4_GskRoundedRect, get_corner);
+ZEND_METHOD(Gtk4_GskRoundedRect, is_rectilinear);
+ZEND_METHOD(Gtk4_GskRoundedRect, contains_point);
+ZEND_METHOD(Gtk4_GskRoundedRect, contains_rect);
+ZEND_METHOD(Gtk4_GskRoundedRect, intersects_rect);
+ZEND_METHOD(Gtk4_GskRoundedRect, normalize);
+ZEND_METHOD(Gtk4_GskRoundedRect, offset);
+ZEND_METHOD(Gtk4_GskRoundedRect, shrink);
+ZEND_METHOD(Gtk4_GskRoundedRect, equal);
 ZEND_METHOD(Gtk4_GdkEvent, get_event_type);
 ZEND_METHOD(Gtk4_GdkEvent, get_time);
 ZEND_METHOD(Gtk4_GdkEvent, get_modifier_state);
@@ -544,6 +601,21 @@ static const zend_function_entry class_Gtk4_GdkRectangle_methods[] = {
 	ZEND_ME(Gtk4_GdkRectangle, union, arginfo_class_Gtk4_GdkRectangle_union, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkRectangle, contains_point, arginfo_class_Gtk4_GdkRectangle_contains_point, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkRectangle, equal, arginfo_class_Gtk4_GdkRectangle_equal, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GskRoundedRect_methods[] = {
+	ZEND_ME(Gtk4_GskRoundedRect, __construct, arginfo_class_Gtk4_GskRoundedRect___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskRoundedRect, get_bounds, arginfo_class_Gtk4_GskRoundedRect_get_bounds, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskRoundedRect, get_corner, arginfo_class_Gtk4_GskRoundedRect_get_corner, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskRoundedRect, is_rectilinear, arginfo_class_Gtk4_GskRoundedRect_is_rectilinear, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskRoundedRect, contains_point, arginfo_class_Gtk4_GskRoundedRect_contains_point, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskRoundedRect, contains_rect, arginfo_class_Gtk4_GskRoundedRect_contains_rect, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskRoundedRect, intersects_rect, arginfo_class_Gtk4_GskRoundedRect_intersects_rect, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskRoundedRect, normalize, arginfo_class_Gtk4_GskRoundedRect_normalize, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskRoundedRect, offset, arginfo_class_Gtk4_GskRoundedRect_offset, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskRoundedRect, shrink, arginfo_class_Gtk4_GskRoundedRect_shrink, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskRoundedRect, equal, arginfo_class_Gtk4_GskRoundedRect_equal, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -775,6 +847,16 @@ static zend_class_entry *register_class_Gtk4_GdkRectangle(void)
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkRectangle", class_Gtk4_GdkRectangle_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GskRoundedRect(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GskRoundedRect", class_Gtk4_GskRoundedRect_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
 
 	return class_entry;

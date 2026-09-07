@@ -2,6 +2,7 @@
 // Gtk4\GtkFixed
 #include "php_gtk4.h"
 #include "core/object.h"
+#include "core/boxed.h"
 #include "core/subtype.h"
 
 using namespace phpgtk;
@@ -55,6 +56,23 @@ ZEND_METHOD(Gtk4_GtkFixed, get_child_position) {
     ZVAL_DOUBLE(&item, y);
     add_next_index_zval(return_value, &item);
   }
+}
+
+/**
+ * Gtk4\GtkFixed::get_child_transform(GtkWidget $widget): ?GskTransform
+ *
+ * Retrieves the transformation for $widget set using gtk_fixed_set_child_transform().
+ */
+ZEND_METHOD(Gtk4_GtkFixed, get_child_transform) {
+  zval *widget;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(widget, class_for_gtype(GTK_TYPE_WIDGET))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkFixed *self = PHPGTK_SELF(GtkFixed, GTK_TYPE_FIXED);
+  GObject *widget_o = unwrap(widget, GTK_TYPE_WIDGET);
+  if (widget_o == nullptr) RETURN_THROWS();
+  GskTransform *phpgtk_ret = gtk_fixed_get_child_transform(self, GTK_WIDGET(widget_o));
+  wrap_boxed(GSK_TYPE_TRANSFORM, phpgtk_ret, return_value);
 }
 
 /**
@@ -118,4 +136,34 @@ ZEND_METHOD(Gtk4_GtkFixed, remove) {
   GObject *widget_o = unwrap(widget, GTK_TYPE_WIDGET);
   if (widget_o == nullptr) RETURN_THROWS();
   gtk_fixed_remove(self, GTK_WIDGET(widget_o));
+}
+
+/**
+ * Gtk4\GtkFixed::set_child_transform(GtkWidget $widget, ?GskTransform $transform): void
+ *
+ * Sets the transformation for $widget.
+ */
+ZEND_METHOD(Gtk4_GtkFixed, set_child_transform) {
+  zval *widget;
+  zval *transform = nullptr;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(widget, class_for_gtype(GTK_TYPE_WIDGET))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(transform, boxed_class_for_type(GSK_TYPE_TRANSFORM)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkFixed *self = PHPGTK_SELF(GtkFixed, GTK_TYPE_FIXED);
+  GObject *widget_o = unwrap(widget, GTK_TYPE_WIDGET);
+  if (widget_o == nullptr) RETURN_THROWS();
+  if (widget_o != nullptr && (gtk_widget_get_parent(GTK_WIDGET(widget_o)) != GTK_WIDGET(self))) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "%s(): Argument #1 ($widget) is not a child of this %s",
+                            ZSTR_VAL(EX(func)->common.function_name), G_OBJECT_TYPE_NAME(self));
+    RETURN_THROWS();
+  }
+  gpointer transform_b = nullptr;
+  if (transform != nullptr) {
+    transform_b = unwrap_boxed(transform, GSK_TYPE_TRANSFORM);
+    if (transform_b == nullptr) RETURN_THROWS();
+  }
+  gtk_fixed_set_child_transform(self, GTK_WIDGET(widget_o),
+                                static_cast<GskTransform *>(transform_b));
 }

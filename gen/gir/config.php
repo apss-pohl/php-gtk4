@@ -3,7 +3,7 @@
 /**
  * What the generator reads and what it considers in scope.
  *
- * Part of gen/gir.php, the GObject-Introspection generator (docs/PLAN.md milestone 3);
+ * Part of gen/gir.php, the GObject-Introspection generator (README.md "Design");
  * gen/README.md describes the flow. Split out of the 3 200-line original on 2026-08-30.
  */
 
@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace PhpGtk4\Gen;
 
 const GIR_DIRS = ['/usr/share/gir-1.0', '/usr/lib/x86_64-linux-gnu/gir-1.0', '/usr/lib64/gir-1.0'];
-const GIR_FILES = ['GLib-2.0', 'GObject-2.0', 'Gio-2.0', 'cairo-1.0', 'Pango-1.0', 'Graphene-1.0', 'Gdk-4.0',
-    'Gsk-4.0', 'Gtk-4.0'];
+const GIR_FILES = ['GLib-2.0', 'GObject-2.0', 'Gio-2.0', 'cairo-1.0', 'Pango-1.0', 'Graphene-1.0',
+    'GdkPixbuf-2.0', 'Gdk-4.0', 'Gsk-4.0', 'Gtk-4.0'];
 const GTK_FLOOR = '4.14';           // API newer than this is skipped in this wave
 const PHP_NAMESPACE = 'Gtk4';
 const INT_TYPES = '/^g(u?int(8|16|32|64)?|size|ssize|u?long|u?short|unichar|u?char)$/';
@@ -23,6 +23,33 @@ const INT_TYPES = '/^g(u?int(8|16|32|64)?|size|ssize|u?long|u?short|unichar|u?ch
  * The generated registration hands it to core/boxed, and the handle refs the owner for its
  * lifetime - a GtkTextIter whose buffer the script dropped dangled into freed memory.
  */
+/**
+ * GType / cast macro pairs that do not follow the `<PREFIX>_TYPE_<NAME>` spelling macroParts()
+ * derives: cairo-gobject names its boxed GTypes CAIRO_GOBJECT_TYPE_*.
+ */
+const TYPE_MACROS = [
+    'cairo.Surface' => ['CAIRO_GOBJECT_TYPE_SURFACE', 'CAIRO_SURFACE'],
+    'cairo.Context' => ['CAIRO_GOBJECT_TYPE_CONTEXT', 'CAIRO_CONTEXT'],
+    'Gsk.RoundedRect' => ['PHPGTK_TYPE_GSK_ROUNDED_RECT', 'GSK_ROUNDED_RECT'],
+    'GdkPixbuf.PixbufFormat' => ['gdk_pixbuf_format_get_type()', 'GDK_PIXBUF_FORMAT'],  // no macro in gdk-pixbuf-io.h
+];
+
+/**
+ * Boxed records whose GIR lists fields the C header keeps private (an opaque struct): no field
+ * properties, no constructor from fields - methods only.
+ */
+const OPAQUE_RECORDS = ['GdkPixbuf.PixbufFormat'];
+
+/**
+ * Records GIR gives no GType (no glib:get-type) that the binding registers a boxed type for by
+ * hand, so that generated signatures can take and return them like any boxed record:
+ * qualified name => [glib:type-name to assume, the get-type function]. The class itself is
+ * hand-written (gen/handwritten.txt); TYPE_MACROS names the macro.
+ */
+const SYNTHETIC_GTYPES = [
+    'Gsk.RoundedRect' => ['GskRoundedRect', 'phpgtk::gsk_rounded_rect_php_type'],
+];
+
 const BOXED_OWNERS = [
     'Gtk.TextIter' => 'gtk_text_iter_get_buffer',
 ];
@@ -69,6 +96,10 @@ const VFUNC_VARIANT_TYPE = [
  * arg-less getter and compares.
  */
 const NULLABLE_RETURNS = [
+    'gtk_print_dialog_get_page_setup' => 'NULL until set_page_setup()',
+    'gtk_print_dialog_get_print_settings' => 'NULL until set_print_settings()',
+    'gtk_print_operation_get_default_page_setup' => 'NULL until set_default_page_setup()',
+    'gtk_print_operation_get_print_settings' => 'NULL until set_print_settings()',
     // priv->widget is NULL until gtk_event_controller_set_widget(); a controller that has not
     // been handed to gtk_widget_add_controller() yet answers NULL, and PHP can hold one.
     'gtk_event_controller_get_widget' => 'NULL until the controller is added to a widget',
@@ -86,6 +117,7 @@ const NULLABLE_RETURNS = [
  * that admits it.
  */
 const NON_NULLABLE_PARAMS = [
+    'gdk_pixbuf_get_file_info_async.callback' => 'asserts callback != NULL',
     'gdk_clipboard_read_async.callback' => 'gdk_clipboard_read_async: assertion callback != NULL',
     'gdk_clipboard_read_text_async.callback' => 'gdk_clipboard_read_text_async: assertion callback != NULL',
     'gdk_clipboard_read_texture_async.callback' => 'gdk_clipboard_read_texture_async: assertion callback != NULL',
@@ -134,6 +166,7 @@ const CHILD_PARAMS = [
     'gtk_box_reorder_child_after.child' => 'parent',
     'gtk_box_reorder_child_after.sibling' => 'parent',
     'gtk_fixed_move.widget' => 'parent',
+    'gtk_fixed_set_child_transform.widget' => 'parent',
     'gtk_overlay_set_clip_overlay.widget' => 'parent',
     'gtk_overlay_set_measure_overlay.widget' => 'parent',
     'gtk_grid_attach_next_to.sibling' => 'parent',
@@ -176,6 +209,8 @@ const PARAM_VALIDATORS = [
  * in the wrong state for the call (CLAUDE.md's vocabulary).
  */
 const SELF_PRECONDITIONS = [
+    'gtk_paper_size_set_size' => ['gtk_paper_size_is_custom(self)',
+        'only a custom paper size (GtkPaperSize::new_custom()) can be resized'],
     'g_application_withdraw_notification' => ['g_application_get_is_registered(self) == TRUE',
         'the application is not registered yet - notifications exist from `startup` on'],
     'gtk_application_set_menubar' => ['g_application_get_is_registered(G_APPLICATION(self)) == TRUE',
@@ -192,6 +227,30 @@ const SELF_PRECONDITIONS = [
  * pin report (GTK4_PIN_REPORT) prints, is what each predicate mirrors.
  */
 const ARG_PRECONDITIONS = [
+    // gdk_memory_texture_new() asserts that the bytes cover the image (a short buffer would be
+    // read past its end); bytes_per_pixel() is the prelude's table (gen/overrides/Gdk.MemoryTexture.cpp)
+    'gdk_memory_texture_new' => [
+        [5, 'static_cast<gsize>(stride) >= static_cast<gsize>(width)'
+            . ' * bytes_per_pixel(static_cast<GdkMemoryFormat>(format_v))',
+            'must be at least the width times the bytes per pixel of the format'],
+        [4, 'g_bytes_get_size(bytes_b) >= static_cast<gsize>(stride) * static_cast<gsize>(height - 1)'
+            . ' + static_cast<gsize>(width) * bytes_per_pixel(static_cast<GdkMemoryFormat>(format_v))',
+            'must hold every row of the image (stride * (height - 1) + width * bytes per pixel)'],
+    ],
+    'gdk_pixbuf_new_subpixbuf' => [
+        [1, 'src_x + width <= gdk_pixbuf_get_width(self)', 'plus the width must not pass the right edge'],
+        [2, 'src_y + height <= gdk_pixbuf_get_height(self)', 'plus the height must not pass the bottom edge'],
+    ],
+    // GtkUnit::None is "no unit" for GTK's converters: a g_warning("Unsupported unit") and 0
+    'gtk_page_setup_set_top_margin' => [[2, 'unit_v != GTK_UNIT_NONE', 'must not be GtkUnit::None']],
+    'gtk_page_setup_set_bottom_margin' => [[2, 'unit_v != GTK_UNIT_NONE', 'must not be GtkUnit::None']],
+    'gtk_page_setup_set_left_margin' => [[2, 'unit_v != GTK_UNIT_NONE', 'must not be GtkUnit::None']],
+    'gtk_page_setup_set_right_margin' => [[2, 'unit_v != GTK_UNIT_NONE', 'must not be GtkUnit::None']],
+    'gtk_print_settings_get_length' => [[2, 'unit_v != GTK_UNIT_NONE', 'must not be GtkUnit::None']],
+    'gtk_print_settings_set_length' => [[3, 'unit_v != GTK_UNIT_NONE', 'must not be GtkUnit::None']],
+    'gtk_print_settings_set_paper_height' => [[2, 'unit_v != GTK_UNIT_NONE', 'must not be GtkUnit::None']],
+    'gtk_print_settings_set_paper_width' => [[2, 'unit_v != GTK_UNIT_NONE', 'must not be GtkUnit::None']],
+    'gtk_paper_size_new_custom' => [[5, 'unit_v != GTK_UNIT_NONE', 'must not be GtkUnit::None']],
     'g_list_store_insert' => [[1, 'position <= g_list_model_get_n_items(G_LIST_MODEL(self))',
         'must not be past the end of the store']],
     'g_list_store_remove' => [[1, 'position < g_list_model_get_n_items(G_LIST_MODEL(self))',
@@ -271,6 +330,39 @@ const PARAM_DOMAINS = [
     'pango_font_description_set_size.size' => [0, null],
     'gtk_spin_button_set_climb_rate.climb_rate' => [0.0, null],
     'pango_font_description_set_absolute_size.size' => [0.0, null],
+    // GSK's path builder asserts on its geometry: a third element `open` makes the lower bound
+    // exclusive (`weight > 0`), which check_domain_above() reports as "must be greater than".
+    'gsk_path_builder_add_circle.radius' => [0.0, null],
+    'gsk_path_builder_conic_to.weight' => [0.0, null, 'open'],
+    'gsk_path_builder_rel_conic_to.weight' => [0.0, null, 'open'],
+    'gsk_path_builder_html_arc_to.radius' => [0.0, null, 'open'],
+    'gsk_path_builder_rel_html_arc_to.radius' => [0.0, null, 'open'],
+    'gsk_path_get_closest_point.threshold' => [0.0, null],
+    'gtk_print_operation_set_n_pages.n_pages' => [1, null],
+    'gtk_print_operation_set_current_page.current_page' => [0, null],
+    // GdkPixbuf: 8 bits per sample is the only depth it implements; sizes must be positive
+    'gdk_pixbuf_new_from_bytes.bits_per_sample' => [8, 8],
+    'gdk_pixbuf_new_from_bytes.width' => [1, null],
+    'gdk_pixbuf_new_from_bytes.height' => [1, null],
+    'gdk_pixbuf_new_from_bytes.rowstride' => [1, null],
+    'gdk_pixbuf_calculate_rowstride.bits_per_sample' => [8, 8],
+    'gdk_pixbuf_calculate_rowstride.width' => [1, null],
+    'gdk_pixbuf_calculate_rowstride.height' => [1, null],
+    'gdk_pixbuf_composite_color_simple.dest_width' => [1, null],
+    'gdk_pixbuf_composite_color_simple.dest_height' => [1, null],
+    'gdk_pixbuf_composite_color_simple.overall_alpha' => [0, 255],
+    'gdk_pixbuf_composite_color_simple.check_size' => [0, null],
+    'gdk_pixbuf_scale_simple.dest_width' => [1, null],
+    'gdk_pixbuf_scale_simple.dest_height' => [1, null],
+    'gdk_pixbuf_new_subpixbuf.src_x' => [0, null],
+    'gdk_pixbuf_new_subpixbuf.src_y' => [0, null],
+    'gdk_pixbuf_new_subpixbuf.width' => [1, null],
+    'gdk_pixbuf_new_subpixbuf.height' => [1, null],
+    'gdk_pixbuf_loader_set_size.width' => [0, null],
+    'gdk_pixbuf_loader_set_size.height' => [0, null],
+    'gsk_stroke_new.line_width' => [0.0, null, 'open'],
+    'gsk_stroke_set_line_width.line_width' => [0.0, null, 'open'],
+    'gsk_stroke_set_miter_limit.limit' => [0.0, null],
     'gtk_entry_set_alignment.xalign' => [0.0, 1.0],
     'gtk_editable_set_alignment.xalign' => [0.0, 1.0],  // GtkText, GtkPasswordEntry, GtkSpinButton
     'gtk_password_entry_set_alignment.xalign' => [0.0, 1.0],

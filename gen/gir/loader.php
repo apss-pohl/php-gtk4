@@ -3,7 +3,7 @@
 /**
  * The loader: the installed .gir files parsed into the model.
  *
- * Part of gen/gir.php, the GObject-Introspection generator (docs/PLAN.md milestone 3);
+ * Part of gen/gir.php, the GObject-Introspection generator (README.md "Design");
  * gen/README.md describes the flow. Split out of the 3 200-line original on 2026-08-30.
  */
 
@@ -61,17 +61,23 @@ final class Gir
             // prefix plus the name is the C name GTK declares in either case.
             $ctype = $el->getAttributeNS(NS_C, 'type')
                 ?: ($kind === 'class' ? $this->prefixes[$ns] . $el->getAttribute('name') : null);
+            // A record without a GType the binding registers one for (SYNTHETIC_GTYPES) is
+            // loaded as if GIR had named it, so the boxed arms of the type map apply.
+            $synthetic = SYNTHETIC_GTYPES[$ns . '.' . $el->getAttribute('name')] ?? null;
             $node = new Node(
                 $ns,
                 $el->getAttribute('name'),
                 $kind,
                 $ctype ?: null,
-                $el->getAttributeNS(NS_GLIB, 'type-name') ?: null,
-                $el->getAttributeNS(NS_GLIB, 'get-type') ?: null,
+                ($el->getAttributeNS(NS_GLIB, 'type-name') ?: null) ?? $synthetic[0] ?? null,
+                ($el->getAttributeNS(NS_GLIB, 'get-type') ?: null) ?? $synthetic[1] ?? null,
                 $el->getAttribute('version') ?: null,
             );
             $node->abstract = $el->getAttribute('abstract') === '1';
             $node->final = $el->getAttribute('final') === '1';
+            $node->fundamental = $el->getAttributeNS(NS_GLIB, 'fundamental') === '1';
+            $node->refFunc = $el->getAttributeNS(NS_GLIB, 'ref-func') ?: null;
+            $node->unrefFunc = $el->getAttributeNS(NS_GLIB, 'unref-func') ?: null;
             $node->doc = self::doc($x, $el);
             if ($el->hasAttribute('parent')) {
                 $node->parent = self::qualify($ns, $el->getAttribute('parent'));
@@ -128,6 +134,9 @@ final class Gir
                     'readable' => $p->getAttribute('readable') !== '0',
                     'writable' => $p->getAttribute('writable') === '1',
                     'constructOnly' => $p->getAttribute('construct-only') === '1',
+                    'deprecated' => $p->hasAttribute('deprecated') || $p->hasAttribute('deprecated-version')
+                        ? ($p->getAttribute('deprecated-version') ?: 'yes')
+                        : null,
                     'doc' => self::doc($x, $p),
                 ];
             }
@@ -197,6 +206,14 @@ final class Gir
         $instance = $instances !== false ? $instances->item(0) : null;
         $consumesSelf = $instance instanceof \DOMElement
             && $instance->getAttribute('transfer-ownership') === 'full';
+        $selfCtype = null;
+        if ($instance instanceof \DOMElement) {
+            $instanceTypes = $x->query('g:type', $instance);
+            $instanceType = $instanceTypes === false ? null : $instanceTypes->item(0);
+            if ($instanceType instanceof \DOMElement && $instanceType->getAttributeNS(NS_C, 'type') !== '') {
+                $selfCtype = trim(str_replace(['const', '*'], '', $instanceType->getAttributeNS(NS_C, 'type')));
+            }
+        }
         $identifier = $f->getAttributeNS(NS_C, 'identifier');
         $params = [];
         $varargs = false;
@@ -240,6 +257,7 @@ final class Gir
             $varargs,
             self::doc($x, $f),
             $consumesSelf,
+            $selfCtype,
         );
     }
 }

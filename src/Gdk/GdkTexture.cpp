@@ -22,6 +22,23 @@ ZEND_METHOD(Gtk4_GdkTexture, __construct) {
 }
 
 /**
+ * static Gtk4\GdkTexture::new_for_pixbuf(GdkPixbuf $pixbuf): GdkTexture
+ *
+ * Creates a new texture object representing the `GdkPixbuf`.
+ */
+ZEND_METHOD(Gtk4_GdkTexture, new_for_pixbuf) {
+  zval *pixbuf;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(pixbuf, class_for_gtype(GDK_TYPE_PIXBUF))
+  ZEND_PARSE_PARAMETERS_END();
+  GObject *pixbuf_o = unwrap(pixbuf, GDK_TYPE_PIXBUF);
+  if (pixbuf_o == nullptr) RETURN_THROWS();
+  GObject *obj = G_OBJECT(gdk_texture_new_for_pixbuf(GDK_PIXBUF(pixbuf_o)));
+  wrap(obj, return_value);
+  if (obj != nullptr) g_object_unref(obj);  // the handle took its own reference
+}
+
+/**
  * static Gtk4\GdkTexture::new_from_bytes(string $bytes): GdkTexture
  *
  * Creates a new texture by loading an image from memory,

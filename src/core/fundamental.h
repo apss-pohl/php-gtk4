@@ -47,6 +47,15 @@ void wrap_fundamental(GType type, gpointer instance, zval *rv);
 // PHP -> C: borrowed instance of a handle of `expected`, else TypeError + nullptr.
 gpointer unwrap_fundamental(zval *zv, GType expected);
 
+// A generated constructor (`new GskColorNode(...)`): the handle takes over the instance the C
+// constructor allocated - no extra reference - and registers it for identity. `type` is the
+// class' GType; an instantiatable instance answers its real one.
+void fundamental_adopt(Fundamental *self, GType type, gpointer instance);
+// $this's instance in a ZEND_METHOD of a fundamental class, or nullptr with an Error thrown when
+// the handle never got one (its constructor failed, or a subclass' constructor skipped
+// parent::__construct()) - the counterpart of PHPGTK_BOXED_SELF for generated code.
+gpointer fundamental_self(zend_execute_data *execute_data);
+
 }  // namespace phpgtk
 
 // In a ZEND_METHOD of a fundamental class: `GParamSpec *s = PHPGTK_FUNDAMENTAL_SELF(GParamSpec);`

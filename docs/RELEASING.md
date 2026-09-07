@@ -138,6 +138,24 @@ Tags are created by the workflow and therefore cannot carry a maintainer's GPG s
 `gh attestation verify <file> --repo apss-pohl/php-gtk4`, and it attests the artifact people actually run
 rather than the commit.
 
+## The stubs package
+
+`stubs/` is also a Composer package, `php-gtk4/stubs`, so a project can `composer require --dev` the
+IDE/PHPStan stub instead of pointing its editor at a checkout. Composer cannot install a subdirectory of a
+repository, so the package has a repository of its own, `apss-pohl/php-gtk4-stubs`, that nobody edits: the
+`publish-stubs` job in `release.yml` runs on every **real** release, copies `stubs/gtk4.php`,
+`stubs/composer.json`, `stubs/extension.neon`, `stubs/README.md` and `LICENSE` into a checkout of it,
+commits, tags it with the same `vX.Y.Z` and pushes. Packagist follows the tags, so the stub version always
+equals the extension version. Dev builds are skipped: Composer does not understand the `-dev.<run>` suffix,
+and an editor does not need a stub per merge.
+
+The job needs one secret, `STUBS_DEPLOY_KEY`: the private half of a deploy key with write access on the stubs
+repository (`ssh-keygen -t ed25519`, public key under that repository's *Deploy keys* with *Allow write
+access*, private key as an Actions secret here). Without it the job prints a warning and publishes nothing,
+so a fork without the key still releases. The package is deliberately without an `autoload` section - the
+extension defines every class, loading the stub next to it would redeclare them all - and ships
+`extension.neon` (`scanFiles`) under `extra.phpstan` so `phpstan/extension-installer` registers it.
+
 ## Gating
 
 `release.yml` runs `./ci.sh` in full (PHP 8.4 and 8.5, ubuntu-24.04) before it builds anything for upload,

@@ -150,6 +150,9 @@ class GtkAboutDialog extends GtkWindow implements GtkNative, GtkRoot
     /** Sets whether the license text in the about dialog should be automatically wrapped. */
     public function set_wrap_license(bool $wrap_license): void {}
 
+    /** @implementation-alias Gtk4\GtkNative::get_renderer */
+    public function get_renderer(): ?GskRenderer {}
+
     /** @implementation-alias Gtk4\GtkNative::get_surface */
     public function get_surface(): ?GdkSurface {}
 
@@ -493,6 +496,9 @@ class GtkApplicationWindow extends GtkWindow implements GActionMap, GtkNative, G
 
     /** @implementation-alias Gtk4\GActionMap::remove_action */
     public function remove_action(string $action_name): void {}
+
+    /** @implementation-alias Gtk4\GtkNative::get_renderer */
+    public function get_renderer(): ?GskRenderer {}
 
     /** @implementation-alias Gtk4\GtkNative::get_surface */
     public function get_surface(): ?GdkSurface {}
@@ -1530,6 +1536,9 @@ class GtkDragIcon extends GtkWidget implements GtkNative, GtkRoot
     /** Sets the widget to display as the drag icon. */
     public function set_child(?GtkWidget $child): void {}
 
+    /** @implementation-alias Gtk4\GtkNative::get_renderer */
+    public function get_renderer(): ?GskRenderer {}
+
     /** @implementation-alias Gtk4\GtkNative::get_surface */
     public function get_surface(): ?GdkSurface {}
 
@@ -1702,7 +1711,6 @@ class GtkDropDown extends GtkWidget
  *
  * @property int $actions
  * @property-read ?GdkDrop $current_drop
- * @property-read ?GdkDrop $drop
  * @property ?GdkContentFormats $formats
  * @property bool $preload
  */
@@ -2725,6 +2733,9 @@ class GtkFixed extends GtkWidget
      */
     public function get_child_position(GtkWidget $widget): array {}
 
+    /** Retrieves the transformation for $widget set using gtk_fixed_set_child_transform(). */
+    public function get_child_transform(GtkWidget $widget): ?GskTransform {}
+
     /**
      * Sets a translation transformation to the given $x and $y coordinates to the child $widget of
      * the `GtkFixed`.
@@ -2736,6 +2747,9 @@ class GtkFixed extends GtkWidget
 
     /** Removes a child from $fixed. */
     public function remove(GtkWidget $widget): void {}
+
+    /** Sets the transformation for $widget. */
+    public function set_child_transform(GtkWidget $widget, ?GskTransform $transform): void {}
 }
 
 /**
@@ -2754,6 +2768,12 @@ class GtkFixedLayoutChild extends GtkLayoutChild
 {
     /** GtkFixedLayoutChild has no constructor in GTK: instances come from GTK, never from `new`. */
     private function __construct() {}
+
+    /** Retrieves the transformation of the child. */
+    public function get_transform(): ?GskTransform {}
+
+    /** Sets the transformation of the child of a `GtkFixedLayout`. */
+    public function set_transform(GskTransform $transform): void {}
 }
 
 /**
@@ -4318,6 +4338,9 @@ class GtkMultiSelection extends GObject implements GListModel, GtkSelectionModel
  */
 interface GtkNative
 {
+    /** Returns the renderer that is used for this `GtkNative`. */
+    public function get_renderer(): ?GskRenderer;
+
     /** Returns the surface of this `GtkNative`. */
     public function get_surface(): ?GdkSurface;
 
@@ -4346,6 +4369,9 @@ final class GtkNativeObject extends GObject implements GtkNative
 {
     /** Never called: these handles only come from wrap(). */
     private function __construct() {}
+
+    /** @implementation-alias Gtk4\GtkNative::get_renderer */
+    public function get_renderer(): ?GskRenderer {}
 
     /** @implementation-alias Gtk4\GtkNative::get_surface */
     public function get_surface(): ?GdkSurface {}
@@ -4613,6 +4639,21 @@ class GtkNotebookPage extends GObject
 }
 
 /**
+ * Used to determine the layout of pages on a sheet when printing multiple pages per sheet.
+ */
+enum GtkNumberUpLayout: int
+{
+    case Lrtb = 0;
+    case Lrbt = 1;
+    case Rltb = 2;
+    case Rlbt = 3;
+    case Tblr = 4;
+    case Tbrl = 5;
+    case Btlr = 6;
+    case Btrl = 7;
+}
+
+/**
  * Describes the way two values can be compared.
  */
 enum GtkOrdering: int
@@ -4753,6 +4794,108 @@ enum GtkPackType: int
 }
 
 /**
+ * See also gtk_print_settings_set_orientation().
+ */
+enum GtkPageOrientation: int
+{
+    case Portrait = 0;
+    case Landscape = 1;
+    case ReversePortrait = 2;
+    case ReverseLandscape = 3;
+}
+
+/**
+ * See also gtk_print_job_set_page_set().
+ */
+enum GtkPageSet: int
+{
+    case All = 0;
+    case Even = 1;
+    case Odd = 2;
+}
+
+/**
+ * A `GtkPageSetup` object stores the page size, orientation and margins.
+ */
+class GtkPageSetup extends GObject
+{
+    /** Creates a new `GtkPageSetup`. */
+    public function __construct() {}
+
+    /** Reads the page setup from the file $file_name. */
+    public static function new_from_file(string $file_name): GtkPageSetup {}
+
+    /** Desrialize a page setup from an a{sv} variant. */
+    public static function new_from_gvariant(mixed $variant = null): GtkPageSetup {}
+
+    /** Copies a `GtkPageSetup`. */
+    public function copy(): GtkPageSetup {}
+
+    /** Gets the bottom margin in units of $unit. */
+    public function get_bottom_margin(GtkUnit $unit): float {}
+
+    /** Gets the left margin in units of $unit. */
+    public function get_left_margin(GtkUnit $unit): float {}
+
+    /** Gets the page orientation of the `GtkPageSetup`. */
+    public function get_orientation(): GtkPageOrientation {}
+
+    /** Returns the page height in units of $unit. */
+    public function get_page_height(GtkUnit $unit): float {}
+
+    /** Returns the page width in units of $unit. */
+    public function get_page_width(GtkUnit $unit): float {}
+
+    /** Returns the paper height in units of $unit. */
+    public function get_paper_height(GtkUnit $unit): float {}
+
+    /** Gets the paper size of the `GtkPageSetup`. */
+    public function get_paper_size(): GtkPaperSize {}
+
+    /** Returns the paper width in units of $unit. */
+    public function get_paper_width(GtkUnit $unit): float {}
+
+    /** Gets the right margin in units of $unit. */
+    public function get_right_margin(GtkUnit $unit): float {}
+
+    /** Gets the top margin in units of $unit. */
+    public function get_top_margin(GtkUnit $unit): float {}
+
+    /** Reads the page setup from the file $file_name. */
+    public function load_file(string $file_name): bool {}
+
+    /** Sets the bottom margin of the `GtkPageSetup`. */
+    public function set_bottom_margin(float $margin, GtkUnit $unit): void {}
+
+    /** Sets the left margin of the `GtkPageSetup`. */
+    public function set_left_margin(float $margin, GtkUnit $unit): void {}
+
+    /** Sets the page orientation of the `GtkPageSetup`. */
+    public function set_orientation(GtkPageOrientation $orientation): void {}
+
+    /** Sets the paper size of the `GtkPageSetup` without changing the margins. */
+    public function set_paper_size(GtkPaperSize $size): void {}
+
+    /**
+     * Sets the paper size of the `GtkPageSetup` and modifies the margins according to the new
+     * paper size.
+     */
+    public function set_paper_size_and_default_margins(GtkPaperSize $size): void {}
+
+    /** Sets the right margin of the `GtkPageSetup`. */
+    public function set_right_margin(float $margin, GtkUnit $unit): void {}
+
+    /** Sets the top margin of the `GtkPageSetup`. */
+    public function set_top_margin(float $margin, GtkUnit $unit): void {}
+
+    /** This function saves the information from $setup to $file_name. */
+    public function to_file(string $file_name): bool {}
+
+    /** Serialize page setup to an a{sv} variant. */
+    public function to_gvariant(): mixed {}
+}
+
+/**
  * Describes the panning direction of a `GesturePan`.
  */
 enum GtkPanDirection: int
@@ -4836,6 +4979,84 @@ class GtkPaned extends GtkWidget implements GtkOrientable
 
     /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
     public function set_orientation(GtkOrientation $orientation): void {}
+}
+
+/**
+ * `GtkPaperSize` handles paper sizes.
+ * @not-serializable
+ */
+final class GtkPaperSize
+{
+    /**
+     * Creates a new `GtkPaperSize` object by parsing a [PWG
+     * 5101.1-2002](ftp://ftp.pwg.org/pub/pwg/candidates/cs-pwgmsn10-20020226-5101.1.pdf) paper
+     * name.
+     */
+    public function __construct(?string $name = null) {}
+
+    /** Creates a new `GtkPaperSize` object with the given parameters. */
+    public static function new_custom(string $name, string $display_name, float $width, float $height, GtkUnit $unit): GtkPaperSize {}
+
+    /** Deserialize a paper size from a `GVariant`. */
+    public static function new_from_gvariant(mixed $variant = null): GtkPaperSize {}
+
+    /** Creates a new `GtkPaperSize` object by using IPP information. */
+    public static function new_from_ipp(string $ipp_name, float $width, float $height): GtkPaperSize {}
+
+    /** Creates a new `GtkPaperSize` object by using PPD information. */
+    public static function new_from_ppd(string $ppd_name, string $ppd_display_name, float $width, float $height): GtkPaperSize {}
+
+    /** Gets the default bottom margin for the `GtkPaperSize`. */
+    public function get_default_bottom_margin(GtkUnit $unit): float {}
+
+    /** Gets the default left margin for the `GtkPaperSize`. */
+    public function get_default_left_margin(GtkUnit $unit): float {}
+
+    /** Gets the default right margin for the `GtkPaperSize`. */
+    public function get_default_right_margin(GtkUnit $unit): float {}
+
+    /** Gets the default top margin for the `GtkPaperSize`. */
+    public function get_default_top_margin(GtkUnit $unit): float {}
+
+    /** Gets the human-readable name of the `GtkPaperSize`. */
+    public function get_display_name(): string {}
+
+    /** Gets the paper height of the `GtkPaperSize`, in units of $unit. */
+    public function get_height(GtkUnit $unit): float {}
+
+    /** Gets the name of the `GtkPaperSize`. */
+    public function get_name(): string {}
+
+    /** Gets the PPD name of the `GtkPaperSize`, which may be `null`. */
+    public function get_ppd_name(): string {}
+
+    /** Gets the paper width of the `GtkPaperSize`, in units of $unit. */
+    public function get_width(GtkUnit $unit): float {}
+
+    /** Returns `true` if $size is not a standard paper size. */
+    public function is_custom(): bool {}
+
+    /** Compares two `GtkPaperSize` objects. */
+    public function is_equal(GtkPaperSize $size2): bool {}
+
+    /** Returns `true` if $size is an IPP standard paper size. */
+    public function is_ipp(): bool {}
+
+    /** Changes the dimensions of a $size to $width x $height. */
+    public function set_size(float $width, float $height, GtkUnit $unit): void {}
+
+    /** Serialize a paper size to an `a{sv}` variant. */
+    public function to_gvariant(): mixed {}
+
+    /** Returns the name of the default paper size, which depends on the current locale. */
+    public static function get_default(): string {}
+
+    /**
+     * Creates a list of known paper sizes.
+     *
+     * @return list<GtkPaperSize>
+     */
+    public static function get_paper_sizes(bool $include_custom): array {}
 }
 
 /**
@@ -4949,7 +5170,6 @@ final class GtkPickFlags
  * @property ?string $alternative_text
  * @property bool $can_shrink
  * @property GtkContentFit $content_fit
- * @property bool $keep_aspect_ratio
  * @property ?GdkPaintable $paintable
  */
 class GtkPicture extends GtkWidget
@@ -5118,6 +5338,9 @@ class GtkPopover extends GtkWidget implements GtkNative
      */
     public function popup(): void {}
 
+    /** @implementation-alias Gtk4\GtkNative::get_renderer */
+    public function get_renderer(): ?GskRenderer {}
+
     /** @implementation-alias Gtk4\GtkNative::get_surface */
     public function get_surface(): ?GdkSurface {}
 
@@ -5179,6 +5402,9 @@ class GtkPopoverMenu extends GtkPopover implements GtkNative
     /** Sets a new menu model on $popover. */
     public function set_menu_model(?GMenuModel $model): void {}
 
+    /** @implementation-alias Gtk4\GtkNative::get_renderer */
+    public function get_renderer(): ?GskRenderer {}
+
     /** @implementation-alias Gtk4\GtkNative::get_surface */
     public function get_surface(): ?GdkSurface {}
 
@@ -5236,6 +5462,667 @@ enum GtkPositionType: int
     case Right = 1;
     case Top = 2;
     case Bottom = 3;
+}
+
+/**
+ * A `GtkPrintContext` encapsulates context information that is required when drawing pages for
+ * printing.
+ */
+class GtkPrintContext extends GObject
+{
+    /** GtkPrintContext has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Obtains the cairo context that is associated with the `GtkPrintContext`. */
+    public function get_cairo_context(): CairoContext {}
+
+    /** Obtains the horizontal resolution of the `GtkPrintContext`, in dots per inch. */
+    public function get_dpi_x(): float {}
+
+    /** Obtains the vertical resolution of the `GtkPrintContext`, in dots per inch. */
+    public function get_dpi_y(): float {}
+
+    /**
+     * Obtains the hardware printer margins of the `GtkPrintContext`, in units.
+     *
+     * @return array{float, float, float, float}|null
+     */
+    public function get_hard_margins(): ?array {}
+
+    /** Obtains the height of the `GtkPrintContext`, in pixels. */
+    public function get_height(): float {}
+
+    /** Obtains the `GtkPageSetup` that determines the page dimensions of the `GtkPrintContext`. */
+    public function get_page_setup(): GtkPageSetup {}
+
+    /** Obtains the width of the `GtkPrintContext`, in pixels. */
+    public function get_width(): float {}
+
+    /** Sets a new cairo context on a print context. */
+    public function set_cairo_context(CairoContext $cr, float $dpi_x, float $dpi_y): void {}
+}
+
+/**
+ * A `GtkPrintDialog` object collects the arguments that are needed to present a print dialog to
+ * the user, such as a title for the dialog and whether it should be modal.
+ *
+ * @property ?string $accept_label
+ * @property bool $modal
+ * @property ?GtkPageSetup $page_setup
+ * @property ?GtkPrintSettings $print_settings
+ * @property ?string $title
+ */
+class GtkPrintDialog extends GObject
+{
+    /** Creates a new `GtkPrintDialog` object. */
+    public function __construct() {}
+
+    /** Returns the label that will be shown on the accept button of the print dialog. */
+    public function get_accept_label(): string {}
+
+    /**
+     * Returns whether the print dialog blocks interaction with the parent window while it is
+     * presented.
+     */
+    public function get_modal(): bool {}
+
+    /** Returns the page setup. */
+    public function get_page_setup(): ?GtkPageSetup {}
+
+    /** Returns the print settings for the print dialog. */
+    public function get_print_settings(): ?GtkPrintSettings {}
+
+    /** Returns the title that will be shown on the print dialog. */
+    public function get_title(): string {}
+
+    /** This function prints content from a stream. */
+    public function print(?GtkWindow $parent, ?GtkPrintSetup $setup, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** This function prints a file. */
+    public function print_file(?GtkWindow $parent, ?GtkPrintSetup $setup, string $file, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes the `print_file` call and returns the results. */
+    public function print_file_finish(GAsyncResult $result): bool {}
+
+    /**
+     * Sets the label that will be shown on the accept button of the print dialog shown for
+     * `setup`.
+     */
+    public function set_accept_label(string $accept_label): void {}
+
+    /**
+     * Sets whether the print dialog blocks interaction with the parent window while it is
+     * presented.
+     */
+    public function set_modal(bool $modal): void {}
+
+    /** Set the page setup for the print dialog. */
+    public function set_page_setup(GtkPageSetup $page_setup): void {}
+
+    /** Sets the print settings for the print dialog. */
+    public function set_print_settings(GtkPrintSettings $print_settings): void {}
+
+    /** Sets the title that will be shown on the print dialog. */
+    public function set_title(string $title): void {}
+
+    /**
+     * This function presents a print dialog to let the user select a printer, and set up print
+     * settings and page setup.
+     */
+    public function setup(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes the `setup` call. */
+    public function setup_finish(GAsyncResult $result): ?GtkPrintSetup {}
+}
+
+/**
+ * See also gtk_print_settings_set_duplex().
+ */
+enum GtkPrintDuplex: int
+{
+    case Simplex = 0;
+    case Horizontal = 1;
+    case Vertical = 2;
+}
+
+/**
+ * `GtkPrintOperation` is the high-level, portable printing API.
+ *
+ * @property bool $allow_async
+ * @property int $current_page
+ * @property ?string $custom_tab_label
+ * @property ?GtkPageSetup $default_page_setup
+ * @property bool $embed_page_setup
+ * @property ?string $export_filename
+ * @property bool $has_selection
+ * @property ?string $job_name
+ * @property int $n_pages
+ * @property-read int $n_pages_to_print
+ * @property ?GtkPrintSettings $print_settings
+ * @property bool $show_progress
+ * @property-read GtkPrintStatus $status
+ * @property-read ?string $status_string
+ * @property bool $support_selection
+ * @property bool $track_print_status
+ * @property GtkUnit $unit
+ * @property bool $use_full_page
+ */
+class GtkPrintOperation extends GObject
+{
+    /** Creates a new `GtkPrintOperation`. */
+    public function __construct() {}
+
+    /** Cancels a running print operation. */
+    public function cancel(): void {}
+
+    /** Signal that drawing of particular page is complete. */
+    public function draw_page_finish(): void {}
+
+    /** Returns the default page setup. */
+    public function get_default_page_setup(): ?GtkPageSetup {}
+
+    /** Gets whether page setup selection combos are embedded */
+    public function get_embed_page_setup(): bool {}
+
+    /** Gets whether there is a selection. */
+    public function get_has_selection(): bool {}
+
+    /** Returns the number of pages that will be printed. */
+    public function get_n_pages_to_print(): int {}
+
+    /** Returns the current print settings. */
+    public function get_print_settings(): ?GtkPrintSettings {}
+
+    /** Returns the status of the print operation. */
+    public function get_status(): GtkPrintStatus {}
+
+    /** Returns a string representation of the status of the print operation. */
+    public function get_status_string(): string {}
+
+    /** Gets whether the application supports print of selection */
+    public function get_support_selection(): bool {}
+
+    /** A convenience function to find out if the print operation is finished. */
+    public function is_finished(): bool {}
+
+    /** Sets whether gtk_print_operation_run() may return before the print operation is completed. */
+    public function set_allow_async(bool $allow_async): void {}
+
+    /** Sets the current page. */
+    public function set_current_page(int $current_page): void {}
+
+    /** Sets the label for the tab holding custom widgets. */
+    public function set_custom_tab_label(?string $label): void {}
+
+    /** Makes $default_page_setup the default page setup for $op. */
+    public function set_default_page_setup(?GtkPageSetup $default_page_setup): void {}
+
+    /**
+     * Sets up the `GtkPrintOperation` to wait for calling of
+     * [method@Gtk.PrintOperation.draw_page_finish from application.
+     */
+    public function set_defer_drawing(): void {}
+
+    /** Embed page size combo box and orientation combo box into page setup page. */
+    public function set_embed_page_setup(bool $embed): void {}
+
+    /** Sets up the `GtkPrintOperation` to generate a file instead of showing the print dialog. */
+    public function set_export_filename(string $filename): void {}
+
+    /** Sets whether there is a selection to print. */
+    public function set_has_selection(bool $has_selection): void {}
+
+    /** Sets the name of the print job. */
+    public function set_job_name(string $job_name): void {}
+
+    /** Sets the number of pages in the document. */
+    public function set_n_pages(int $n_pages): void {}
+
+    /** Sets the print settings for $op. */
+    public function set_print_settings(?GtkPrintSettings $print_settings): void {}
+
+    /**
+     * If $show_progress is `true`, the print operation will show a progress dialog during the
+     * print operation.
+     */
+    public function set_show_progress(bool $show_progress): void {}
+
+    /** Sets whether selection is supported by `GtkPrintOperation`. */
+    public function set_support_selection(bool $support_selection): void {}
+
+    /**
+     * If track_status is `true`, the print operation will try to continue report on the status of
+     * the print job in the printer queues and printer.
+     */
+    public function set_track_print_status(bool $track_status): void {}
+
+    /**
+     * Sets up the transformation for the cairo context obtained from `GtkPrintContext` in such a
+     * way that distances are measured in units of $unit.
+     */
+    public function set_unit(GtkUnit $unit): void {}
+
+    /**
+     * If $full_page is `true`, the transformation for the cairo context obtained from
+     * `GtkPrintContext` puts the origin at the top left corner of the page.
+     */
+    public function set_use_full_page(bool $full_page): void {}
+
+    /**
+     * Throws the GError behind a run() that answered GtkPrintOperationResult::Error (the `done`
+     * signal reports the same result); a LogicException when the last run did not end in one.
+     *
+     * GTK asserts when there is no error to propagate, so the binding asks first.
+     *
+     * @throws GError the error of the failed operation
+     */
+    public function get_error(): void {}
+
+    /**
+     * Runs the print operation: ACTION_PRINT_DIALOG shows the print dialog (over $parent), ACTION_PRINT
+     * prints straight away with the current settings, ACTION_PREVIEW shows the preview, ACTION_EXPORT
+     * writes the pages to the file set_export_filename() named - without any dialog. Blocks until the
+     * operation is done unless set_allow_async(true) was called; a failure is a GError.
+     *
+     * An export without a file name is a LogicException here, where GTK would only complain.
+     */
+    public function run(GtkPrintOperationAction $action, ?GtkWindow $parent): GtkPrintOperationResult {}
+
+    /**
+     * Native `begin_print` (PrintOperationClass.begin_print): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_begin_print()` from an override. Signal emitted after the user
+     * has finished changing print settings in the dialog, before the actual rendering starts.
+     */
+    public function vfunc_begin_print(GtkPrintContext $context): void {}
+
+    /**
+     * Native `create_custom_widget` (PrintOperationClass.create_custom_widget): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_create_custom_widget()` from an
+     * override. Signal emitted when displaying the print dialog.
+     */
+    public function vfunc_create_custom_widget(): GtkWidget {}
+
+    /**
+     * Native `custom_widget_apply` (PrintOperationClass.custom_widget_apply): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_custom_widget_apply()` from an
+     * override. Signal emitted right before “begin-print” if you added a custom widget in the
+     * “create-custom-widget” handler.
+     */
+    public function vfunc_custom_widget_apply(GtkWidget $widget): void {}
+
+    /**
+     * Native `done` (PrintOperationClass.done): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_done()` from an override. Signal emitted when the print operation run has
+     * finished doing everything required for printing.
+     */
+    public function vfunc_done(GtkPrintOperationResult $result): void {}
+
+    /**
+     * Native `draw_page` (PrintOperationClass.draw_page): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_draw_page()` from an override. Signal emitted for every page
+     * that is printed.
+     */
+    public function vfunc_draw_page(GtkPrintContext $context, int $page_nr): void {}
+
+    /**
+     * Native `end_print` (PrintOperationClass.end_print): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_end_print()` from an override. Signal emitted after all pages
+     * have been rendered.
+     */
+    public function vfunc_end_print(GtkPrintContext $context): void {}
+
+    /**
+     * Native `paginate` (PrintOperationClass.paginate): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_paginate()` from an override. Signal emitted after the
+     * “begin-print” signal, but before the actual rendering starts.
+     */
+    public function vfunc_paginate(GtkPrintContext $context): bool {}
+
+    /**
+     * Native `request_page_setup` (PrintOperationClass.request_page_setup): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_request_page_setup()` from an override. Emitted
+     * once for every page that is printed, to give the application a chance to modify the page
+     * setup.
+     */
+    public function vfunc_request_page_setup(GtkPrintContext $context, int $page_nr, GtkPageSetup $setup): void {}
+
+    /**
+     * Native `status_changed` (PrintOperationClass.status_changed): the GTK implementation below
+     * any PHP subclass, for `parent::vfunc_status_changed()` from an override. Emitted at between
+     * the various phases of the print operation.
+     */
+    public function vfunc_status_changed(): void {}
+
+    /**
+     * Native `update_custom_widget` (PrintOperationClass.update_custom_widget): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_update_custom_widget()` from an
+     * override. Emitted after change of selected printer.
+     */
+    public function vfunc_update_custom_widget(GtkWidget $widget, GtkPageSetup $setup, GtkPrintSettings $settings): void {}
+}
+
+/**
+ * Determines what action the print operation should perform.
+ */
+enum GtkPrintOperationAction: int
+{
+    case PrintDialog = 0;
+    case Print = 1;
+    case Preview = 2;
+    case Export = 3;
+}
+
+/**
+ * The result of a print operation.
+ */
+enum GtkPrintOperationResult: int
+{
+    case Error = 0;
+    case Apply = 1;
+    case Cancel = 2;
+    case InProgress = 3;
+}
+
+/**
+ * See also gtk_print_job_set_pages()
+ */
+enum GtkPrintPages: int
+{
+    case All = 0;
+    case Current = 1;
+    case Ranges = 2;
+    case Selection = 3;
+}
+
+/**
+ * See also gtk_print_settings_set_quality().
+ */
+enum GtkPrintQuality: int
+{
+    case Low = 0;
+    case Normal = 1;
+    case High = 2;
+    case Draft = 3;
+}
+
+/**
+ * A `GtkPrintSettings` object represents the settings of a print dialog in a system-independent
+ * way.
+ */
+class GtkPrintSettings extends GObject
+{
+    /** Creates a new `GtkPrintSettings` object. */
+    public function __construct() {}
+
+    /** Reads the print settings from $file_name. */
+    public static function new_from_file(string $file_name): GtkPrintSettings {}
+
+    /** Deserialize print settings from an a{sv} variant. */
+    public static function new_from_gvariant(mixed $variant = null): GtkPrintSettings {}
+
+    /** Copies a `GtkPrintSettings` object. */
+    public function copy(): GtkPrintSettings {}
+
+    /** Calls $func for each key-value pair of $settings. */
+    public function foreach(callable $func): void {}
+
+    /** Looks up the string value associated with $key. */
+    public function get(string $key): ?string {}
+
+    /** Returns the boolean represented by the value that is associated with $key. */
+    public function get_bool(string $key): bool {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_COLLATE. */
+    public function get_collate(): bool {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_DEFAULT_SOURCE. */
+    public function get_default_source(): ?string {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_DITHER. */
+    public function get_dither(): ?string {}
+
+    /** Returns the double value associated with $key, or 0. */
+    public function get_double(string $key): float {}
+
+    /**
+     * Returns the floating point number represented by the value that is associated with $key, or
+     * $default_val if the value does not represent a floating point number.
+     */
+    public function get_double_with_default(string $key, float $def): float {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_DUPLEX. */
+    public function get_duplex(): GtkPrintDuplex {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_FINISHINGS. */
+    public function get_finishings(): ?string {}
+
+    /** Returns the integer value of $key, or 0. */
+    public function get_int(string $key): int {}
+
+    /** Returns the value of $key, interpreted as an integer, or the default value. */
+    public function get_int_with_default(string $key, int $def): int {}
+
+    /** Returns the value associated with $key, interpreted as a length. */
+    public function get_length(string $key, GtkUnit $unit): float {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_MEDIA_TYPE. */
+    public function get_media_type(): ?string {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_N_COPIES. */
+    public function get_n_copies(): int {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_NUMBER_UP. */
+    public function get_number_up(): int {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_NUMBER_UP_LAYOUT. */
+    public function get_number_up_layout(): GtkNumberUpLayout {}
+
+    /** Get the value of %GTK_PRINT_SETTINGS_ORIENTATION, converted to a `GtkPageOrientation`. */
+    public function get_orientation(): GtkPageOrientation {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_OUTPUT_BIN. */
+    public function get_output_bin(): ?string {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_PAGE_SET. */
+    public function get_page_set(): GtkPageSet {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_PAPER_HEIGHT, converted to $unit. */
+    public function get_paper_height(GtkUnit $unit): float {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_PAPER_FORMAT, converted to a `GtkPaperSize`. */
+    public function get_paper_size(): ?GtkPaperSize {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_PAPER_WIDTH, converted to $unit. */
+    public function get_paper_width(GtkUnit $unit): float {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_PRINT_PAGES. */
+    public function get_print_pages(): GtkPrintPages {}
+
+    /** Convenience function to obtain the value of %GTK_PRINT_SETTINGS_PRINTER. */
+    public function get_printer(): ?string {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_PRINTER_LPI. */
+    public function get_printer_lpi(): float {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_QUALITY. */
+    public function get_quality(): GtkPrintQuality {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_RESOLUTION. */
+    public function get_resolution(): int {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_RESOLUTION_X. */
+    public function get_resolution_x(): int {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_RESOLUTION_Y. */
+    public function get_resolution_y(): int {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_REVERSE. */
+    public function get_reverse(): bool {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_SCALE. */
+    public function get_scale(): float {}
+
+    /** Gets the value of %GTK_PRINT_SETTINGS_USE_COLOR. */
+    public function get_use_color(): bool {}
+
+    /** Returns `true`, if a value is associated with $key. */
+    public function has_key(string $key): bool {}
+
+    /** Reads the print settings from $file_name. */
+    public function load_file(string $file_name): bool {}
+
+    /** Associates $value with $key. */
+    public function set(string $key, ?string $value): void {}
+
+    /** Sets $key to a boolean value. */
+    public function set_bool(string $key, bool $value): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_COLLATE. */
+    public function set_collate(bool $collate): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_DEFAULT_SOURCE. */
+    public function set_default_source(string $default_source): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_DITHER. */
+    public function set_dither(string $dither): void {}
+
+    /** Sets $key to a double value. */
+    public function set_double(string $key, float $value): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_DUPLEX. */
+    public function set_duplex(GtkPrintDuplex $duplex): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_FINISHINGS. */
+    public function set_finishings(string $finishings): void {}
+
+    /** Sets $key to an integer value. */
+    public function set_int(string $key, int $value): void {}
+
+    /** Associates a length in units of $unit with $key. */
+    public function set_length(string $key, float $value, GtkUnit $unit): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_MEDIA_TYPE. */
+    public function set_media_type(string $media_type): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_N_COPIES. */
+    public function set_n_copies(int $num_copies): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_NUMBER_UP. */
+    public function set_number_up(int $number_up): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_NUMBER_UP_LAYOUT. */
+    public function set_number_up_layout(GtkNumberUpLayout $number_up_layout): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_ORIENTATION. */
+    public function set_orientation(GtkPageOrientation $orientation): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_OUTPUT_BIN. */
+    public function set_output_bin(string $output_bin): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_PAGE_SET. */
+    public function set_page_set(GtkPageSet $page_set): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_PAPER_HEIGHT. */
+    public function set_paper_height(float $height, GtkUnit $unit): void {}
+
+    /**
+     * Sets the value of %GTK_PRINT_SETTINGS_PAPER_FORMAT, %GTK_PRINT_SETTINGS_PAPER_WIDTH and
+     * %GTK_PRINT_SETTINGS_PAPER_HEIGHT.
+     */
+    public function set_paper_size(GtkPaperSize $paper_size): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_PAPER_WIDTH. */
+    public function set_paper_width(float $width, GtkUnit $unit): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_PRINT_PAGES. */
+    public function set_print_pages(GtkPrintPages $pages): void {}
+
+    /** Convenience function to set %GTK_PRINT_SETTINGS_PRINTER to $printer. */
+    public function set_printer(string $printer): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_PRINTER_LPI. */
+    public function set_printer_lpi(float $lpi): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_QUALITY. */
+    public function set_quality(GtkPrintQuality $quality): void {}
+
+    /**
+     * Sets the values of %GTK_PRINT_SETTINGS_RESOLUTION, %GTK_PRINT_SETTINGS_RESOLUTION_X and
+     * %GTK_PRINT_SETTINGS_RESOLUTION_Y.
+     */
+    public function set_resolution(int $resolution): void {}
+
+    /**
+     * Sets the values of %GTK_PRINT_SETTINGS_RESOLUTION, %GTK_PRINT_SETTINGS_RESOLUTION_X and
+     * %GTK_PRINT_SETTINGS_RESOLUTION_Y.
+     */
+    public function set_resolution_xy(int $resolution_x, int $resolution_y): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_REVERSE. */
+    public function set_reverse(bool $reverse): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_SCALE. */
+    public function set_scale(float $scale): void {}
+
+    /** Sets the value of %GTK_PRINT_SETTINGS_USE_COLOR. */
+    public function set_use_color(bool $use_color): void {}
+
+    /** This function saves the print settings from $settings to $file_name. */
+    public function to_file(string $file_name): bool {}
+
+    /** Serialize print settings to an a{sv} variant. */
+    public function to_gvariant(): mixed {}
+
+    /** Removes any value associated with $key. */
+    public function unset(string $key): void {}
+
+    /**
+     * The page ranges set_page_ranges() took, as `[int $start, int $end]` pairs; empty when none.
+     *
+     * @return list<array{int, int}>
+     */
+    public function get_page_ranges(): array {}
+
+    /**
+     * The pages to print, as `[int $start, int $end]` pairs of zero-based, inclusive page numbers
+     * (what GtkPrintPages::Ranges selects).
+     *
+     * GIR takes a C array of GtkPageRange with its length; a PHP list of pairs is the same thing.
+     */
+    public function set_page_ranges(array $page_ranges): void {}
+}
+
+/**
+ * A `GtkPrintSetup` is an auxiliary object for printing that allows decoupling the setup from the
+ * printing.
+ * @not-serializable
+ */
+final class GtkPrintSetup
+{
+    /** GtkPrintSetup values come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Returns the page setup of $setup. */
+    public function get_page_setup(): ?GtkPageSetup {}
+
+    /** Returns the print settings of $setup. */
+    public function get_print_settings(): ?GtkPrintSettings {}
+}
+
+/**
+ * The status gives a rough indication of the completion of a running print operation.
+ */
+enum GtkPrintStatus: int
+{
+    case Initial = 0;
+    case Preparing = 1;
+    case GeneratingData = 2;
+    case SendingData = 3;
+    case Pending = 4;
+    case PendingIssue = 5;
+    case Printing = 6;
+    case Finished = 7;
+    case FinishedAborted = 8;
 }
 
 /**
@@ -5554,6 +6441,9 @@ final class GtkRootObject extends GObject implements GtkRoot
 
     /** @implementation-alias Gtk4\GtkRoot::set_focus */
     public function set_focus(?GtkWidget $focus): void {}
+
+    /** @implementation-alias Gtk4\GtkNative::get_renderer */
+    public function get_renderer(): ?GskRenderer {}
 
     /** @implementation-alias Gtk4\GtkNative::get_surface */
     public function get_surface(): ?GdkSurface {}
@@ -6143,11 +7033,26 @@ class GtkSnapshot extends GdkSnapshot
      */
     public function append_color(GdkRGBA $color, GrapheneRect $bounds): void {}
 
+    /** A convenience method to fill a path with a color. */
+    public function append_fill(GskPath $path, GskFillRule $fill_rule, GdkRGBA $color): void {}
+
+    /** Appends an inset shadow into the box given by $outline. */
+    public function append_inset_shadow(GskRoundedRect $outline, GdkRGBA $color, float $dx, float $dy, float $spread, float $blur_radius): void {}
+
+    /** Appends $node to the current render node of $snapshot, without changing the current node. */
+    public function append_node(GskRenderNode $node): void {}
+
+    /** Appends an outset shadow node around the box given by $outline. */
+    public function append_outset_shadow(GskRoundedRect $outline, GdkRGBA $color, float $dx, float $dy, float $spread, float $blur_radius): void {}
+
     /**
      * Creates a new render node drawing the $texture into the given $bounds and appends it to the
      * current render node of $snapshot.
      */
     public function append_scaled_texture(GdkTexture $texture, GskScalingFilter $filter, GrapheneRect $bounds): void {}
+
+    /** A convenience method to stroke a path with a color. */
+    public function append_stroke(GskPath $path, GskStroke $stroke, GdkRGBA $color): void {}
 
     /**
      * Creates a new render node drawing the $texture into the given $bounds and appends it to the
@@ -6182,6 +7087,12 @@ class GtkSnapshot extends GdkSnapshot
     /** Snapshots a cross-fade operation between two images with the given $progress. */
     public function push_cross_fade(float $progress): void {}
 
+    /**
+     * Fills the area given by $path and $fill_rule with an image and discards everything outside
+     * of it.
+     */
+    public function push_fill(GskPath $path, GskFillRule $fill_rule): void {}
+
     /** Until the first call to `pop`, the mask image for the mask operation will be recorded. */
     public function push_mask(GskMaskMode $mask_mode): void {}
 
@@ -6190,6 +7101,12 @@ class GtkSnapshot extends GdkSnapshot
 
     /** Creates a node that repeats the child node. */
     public function push_repeat(GrapheneRect $bounds, ?GrapheneRect $child_bounds): void {}
+
+    /** Clips an image to a rounded rectangle. */
+    public function push_rounded_clip(GskRoundedRect $bounds): void {}
+
+    /** Strokes the given $path with the attributes given by $stroke and an image. */
+    public function push_stroke(GskPath $path, GskStroke $stroke): void {}
 
     /**
      * Restores $snapshot to the state saved by a preceding call to `save` and removes that state
@@ -6213,11 +7130,25 @@ class GtkSnapshot extends GdkSnapshot
     /** Scales $snapshot's coordinate system by the given factors. */
     public function scale_3d(float $factor_x, float $factor_y, float $factor_z): void {}
 
+    /** Returns the render node that was constructed by $snapshot. */
+    public function to_node(): ?GskRenderNode {}
+
     /** Returns a paintable encapsulating the render node that was constructed by $snapshot. */
     public function to_paintable(?GrapheneSize $size): ?GdkPaintable {}
 
+    /** Transforms $snapshot's coordinate system with the given $transform. */
+    public function transform(?GskTransform $transform): void {}
+
     /** Translates $snapshot's coordinate system by $point in 2-dimensional space. */
     public function translate(GraphenePoint $point): void {}
+
+    /**
+     * Appends a border inside $outline: $widths are the four widths (top, right, bottom, left) as
+     * floats, $colors the four GdkRGBA colours in the same order - what a GskBorderNode is.
+     *
+     * GIR takes two fixed-size C arrays; PHP lists of exactly four are the same thing.
+     */
+    public function append_border(GskRoundedRect $outline, array $widths, array $colors): void {}
 }
 
 /**
@@ -8580,6 +9511,17 @@ class GtkTreeListRow extends GObject
 }
 
 /**
+ * See also gtk_print_settings_set_paper_width().
+ */
+enum GtkUnit: int
+{
+    case None = 0;
+    case Points = 1;
+    case Inch = 2;
+    case Mm = 3;
+}
+
+/**
  * `GtkViewport` implements scrollability for widgets that lack their own scrolling capabilities.
  *
  * @property ?GtkWidget $child
@@ -9543,6 +10485,9 @@ class GtkWindow extends GtkWidget implements GtkNative, GtkRoot
 
     /** Asks to unminimize the specified $window. */
     public function unminimize(): void {}
+
+    /** @implementation-alias Gtk4\GtkNative::get_renderer */
+    public function get_renderer(): ?GskRenderer {}
 
     /** @implementation-alias Gtk4\GtkNative::get_surface */
     public function get_surface(): ?GdkSurface {}

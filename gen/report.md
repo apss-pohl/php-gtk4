@@ -173,6 +173,10 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `property device` — property type Gdk.Device not mappable
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## GdkMemoryTexture
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## GdkMonitor
 
 - `__construct` — skip.txt: GDK owns the monitors (GdkDisplay::get_monitors()); a standalone one answers NULL from get_display(), which its declared type does not allow
@@ -181,6 +185,59 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GdkPaintable
 
 - `new_empty` — static function on an interface (PHP interfaces have no bodies)
+
+## GdkPixbuf
+
+- `new_from_data` — skip.txt: takes a caller-owned pixel buffer with a destroy callback; new_from_bytes() copies the same bytes
+- `new_from_inline` — deprecated (2.32)
+- `new_from_stream` — parameter `stream` of type Gio.InputStream
+- `new_from_stream_at_scale` — parameter `stream` of type Gio.InputStream
+- `get_file_info_finish` — return GdkPixbuf.PixbufFormat plus out parameters
+- `new_from_stream_async` — parameter `stream` of type Gio.InputStream
+- `new_from_stream_at_scale_async` — parameter `stream` of type Gio.InputStream
+- `composite_color` — skip.txt: 17 parameters (the checkerboard-background variant of composite()); composite() and composite_color_simple() cover the same drawing, and a ZEND_METHOD that size trips clang-tidy's function-size gate
+- `get_pixels` — skip.txt: a bare pointer into the pixel buffer (the shadowing get_pixels_with_length is skipped for the same reason); read_pixel_bytes() answers the bytes
+- `get_pixels_with_length` — skip.txt: a bare pointer into the pixel buffer; read_pixel_bytes() answers the same bytes as a PHP string
+- `read_pixels` — skip.txt: a bare pointer into the pixel buffer (GIR types it as a guint8 pointer, which would cross as an integer); read_pixel_bytes() answers the bytes
+- `ref` — deprecated (2.0)
+- `save` — varargs
+- `save_to_buffer` — varargs
+- `save_to_callback` — varargs
+- `save_to_callbackv` — callback parameter (needs an override)
+- `save_to_stream` — varargs
+- `save_to_stream_async` — varargs
+- `save_to_streamv` — parameter `stream` of type Gio.OutputStream
+- `save_to_streamv_async` — parameter `stream` of type Gio.OutputStream
+- `unref` — deprecated (2.0)
+- `property pixels` — property type gpointer not mappable
+- `smoke test` — smoke-skip.txt: the factories need real image data (PixbufTest covers it)
+
+## GdkPixbufAnimation
+
+- `new_from_stream` — parameter `stream` of type Gio.InputStream
+- `new_from_stream_async` — parameter `stream` of type Gio.InputStream
+- `get_iter` — parameter `start_time` of type GLib.TimeVal
+- `ref` — deprecated (2.0)
+- `unref` — deprecated (2.0)
+- `__construct` — skip.txt: abstract with a private class struct (GDK_PIXBUF_ENABLE_BACKEND): a PHP subtype has NULL slots and every getter dereferences them (SIGSEGV); animations come from new_from_file()
+- `vfuncs` — skip.txt: the class struct is behind GDK_PIXBUF_ENABLE_BACKEND (the loader-module API), so no PHP subclass could override a slot
+- `smoke test` — smoke-skip.txt: same: new_from_file() needs an image file
+
+## GdkPixbufAnimationIter
+
+- `advance` — parameter `current_time` of type GLib.TimeVal
+- `__construct` — skip.txt: as GdkPixbufAnimation; iterators come from an animation
+- `vfuncs` — skip.txt: as GdkPixbufAnimation
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GdkPixbufFormat
+
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+
+## GdkPixbufLoader
+
+- `write` — skip.txt: a C byte array with its length; write_bytes() takes the same bytes as a PHP string
 
 ## GdkSurface
 
@@ -201,10 +258,16 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GdkTexture
 
-- `new_for_pixbuf` — parameter `pixbuf` of type GdkPixbuf.Pixbuf
 - `new_from_resource` — skip.txt: g_error()s (aborts the process) on an invalid resource path - not a PHP-safe API
 - `__construct` — skip.txt: abstract for GTK's own subclasses only: a texture needs internal state (color state, 4.16+) that only the factories set - no PHP subtypes, no `new`
 - `smoke test` — smoke-skip.txt: factories need real image data (TextureTest covers it)
+
+## GdkTextureDownloader
+
+- `PHP subclasses` — constructor argument texture is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GdkTextureDownloader
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `download_into` — parameter `data` of type array (C array)
+- `free` — memory management belongs to the handle (clone / destructor)
 
 ## GraphenePoint
 
@@ -228,6 +291,185 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GrapheneSize
 
 - `free` — memory management belongs to the handle (clone / destructor)
+
+## GskBlendNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskBlurNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskBorderNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskCairoNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskClipNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskColorMatrixNode
+
+- `new` — parameter `color_matrix` of type Graphene.Matrix
+- `get_color_matrix` — return type Graphene.Matrix
+- `get_color_offset` — return type Graphene.Vec4
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskColorNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskConicGradientNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskContainerNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskCrossFadeNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskDebugNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskFillNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskInsetShadowNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskLinearGradientNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskMaskNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskOpacityNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskOutsetShadowNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskPath
+
+- `foreach` — callback parameter (needs an override)
+- `print` — parameter `string` of type GLib.String
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## GskPathBuilder
+
+- `add_cairo_path` — parameter `path` of type cairo.Path
+- `add_layout` — parameter `layout` of type Pango.Layout
+- `free_to_path` — skip.txt: unrefs the builder itself (GIR does not say so on the instance parameter), leaving the handle on freed memory - a SEGV on the next call; to_path() gives the same path and keeps the builder
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## GskPathMeasure
+
+- `PHP subclasses` — constructor argument path is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GskPathMeasure
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## GskPathPoint
+
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+- `get_curvature` — return gfloat plus out parameters
+- `get_tangent` — caller-allocates out parameter `tangent` of type Graphene.Vec2
+
+## GskRadialGradientNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskRenderNode
+
+- `ref` — memory management belongs to the handle (destructor)
+- `unref` — memory management belongs to the handle (destructor)
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskRenderer
+
+- `render` — parameter `region` of type cairo.Region
+
+## GskRepeatNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskRepeatingLinearGradientNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskRepeatingRadialGradientNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskRoundedClipNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskShadowNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskStroke
+
+- `PHP subclasses` — constructor argument line_width is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GskStroke
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+- `equal` — gpointer parameter
+
+## GskStrokeNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskSubsurfaceNode
+
+- `new` — gpointer parameter
+- `get_subsurface` — return type gpointer
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskTextNode
+
+- `new` — parameter `font` of type Pango.Font
+- `get_font` — return type Pango.Font (not in the closure)
+- `get_glyphs` — return array plus out parameters
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskTextureNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskTextureScaleNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GskTransform
+
+- `matrix` — parameter `matrix` of type Graphene.Matrix
+- `print` — parameter `string` of type GLib.String
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `rotate_3d` — parameter `axis` of type Graphene.Vec3
+- `to_matrix` — caller-allocates out parameter `out_matrix` of type Graphene.Matrix
+- `translate_3d` — parameter `point` of type Graphene.Point3D
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## GskTransformNode
+
+- `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GtkAdjustment
 
@@ -309,6 +551,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkDropTarget
 
 - `get_drop` — deprecated (4.4)
+- `property drop` — deprecated (4.4)
 - `property value` — property type GObject.Value not mappable
 - `smoke test` — smoke-skip.txt: the constructor takes a *type name* ("string", a registered class), not an arbitrary string; DragDropTest builds it properly
 
@@ -332,7 +575,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `set_icon_from_gicon` — parameter `icon` of type Gio.Icon
 - `set_tabs` — parameter `tabs` of type Pango.TabArray
 - `property attributes` — property type Pango.AttrList not mappable
-- `property completion` — property type Gtk.EntryCompletion not mappable
+- `property completion` — deprecated (4.10)
 - `property primary-icon-gicon` — property type Gio.Icon not mappable
 - `property secondary-icon-gicon` — property type Gio.Icon not mappable
 - `property tabs` — property type Pango.TabArray not mappable
@@ -359,17 +602,10 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `property item-type` — property type Gtk.GType not mappable
 
-## GtkFixed
-
-- `get_child_transform` — return type Gsk.Transform
-- `set_child_transform` — parameter `transform` of type Gsk.Transform
-
 ## GtkFixedLayoutChild
 
-- `get_transform` — return type Gsk.Transform
-- `set_transform` — parameter `transform` of type Gsk.Transform
 - `__construct` — skip.txt: GtkFixedLayout creates its layout children, as Gtk.LayoutChild
-- `property transform` — property type Gsk.Transform not mappable
+- `property transform` — skip.txt: GTK 4.14's getter hands the GValue the address of its pointer (g_value_set_boxed(value, &self->transform)), so a read through the property system is a GLib CRITICAL; get_transform()/set_transform() work and are what the stub promises
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GtkFontDialog
@@ -458,7 +694,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkNative
 
 - `get_for_surface` — static function on an interface (PHP interfaces have no bodies)
-- `get_renderer` — return type Gsk.Renderer (not in the closure)
 
 ## GtkNoSelection
 
@@ -474,9 +709,23 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `__construct` — skip.txt: GtkOverlayLayout creates its layout children, as Gtk.LayoutChild
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## GtkPageSetup
+
+- `new_from_key_file` — parameter `key_file` of type GLib.KeyFile
+- `load_key_file` — parameter `key_file` of type GLib.KeyFile
+- `to_key_file` — parameter `key_file` of type GLib.KeyFile
+
 ## GtkPaned
 
 - `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GtkPaperSize
+
+- `PHP subclasses` — constructor argument name is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GtkPaperSize
+- `new_from_key_file` — parameter `key_file` of type GLib.KeyFile
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+- `to_key_file` — parameter `key_file` of type GLib.KeyFile
 
 ## GtkPicture
 
@@ -485,6 +734,34 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `set_keep_aspect_ratio` — deprecated (4.8)
 - `set_pixbuf` — deprecated (4.12)
 - `property file` — property type Gio.File not mappable
+- `property keep-aspect-ratio` — deprecated (4.8)
+
+## GtkPrintContext
+
+- `create_pango_context` — return type Pango.Context (not in the closure)
+- `create_pango_layout` — return type Pango.Layout (not in the closure)
+- `get_pango_fontmap` — return type Pango.FontMap (not in the closure)
+- `__construct` — skip.txt: GTK creates the context inside a print operation (draw-page hands it over); one from g_object_new() has no page setup or cairo context and its getters dereference NULL (SIGSEGV)
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GtkPrintDialog
+
+- `print_finish` — return type Gio.OutputStream (not in the closure)
+
+## GtkPrintOperation
+
+- `vfunc preview` — parameter `preview` of type Gtk.PrintOperationPreview
+
+## GtkPrintSettings
+
+- `new_from_key_file` — parameter `key_file` of type GLib.KeyFile
+- `load_key_file` — parameter `key_file` of type GLib.KeyFile
+- `to_key_file` — parameter `key_file` of type GLib.KeyFile
+
+## GtkPrintSetup
+
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
 
 ## GtkRange
 
@@ -528,35 +805,24 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkSnapshot
 
-- `append_border` — parameter `outline` of type Gsk.RoundedRect
 - `append_conic_gradient` — parameter `stops` of type array (C array)
-- `append_fill` — parameter `path` of type Gsk.Path
-- `append_inset_shadow` — parameter `outline` of type Gsk.RoundedRect
 - `append_layout` — parameter `layout` of type Pango.Layout
 - `append_linear_gradient` — parameter `stops` of type array (C array)
-- `append_node` — parameter `node` of type Gsk.RenderNode
-- `append_outset_shadow` — parameter `outline` of type Gsk.RoundedRect
 - `append_radial_gradient` — parameter `stops` of type array (C array)
 - `append_repeating_linear_gradient` — parameter `stops` of type array (C array)
 - `append_repeating_radial_gradient` — parameter `stops` of type array (C array)
-- `append_stroke` — parameter `path` of type Gsk.Path
-- `free_to_node` — return type Gsk.RenderNode (not in the closure)
+- `free_to_node` — skip.txt: frees the GtkSnapshot itself like free_to_paintable; to_node() answers with the same node and leaves the object alive
 - `free_to_paintable` — skip.txt: frees the GtkSnapshot itself, so the handle is left on freed memory and its next qdata/toggle-ref touch is a SEGV (ASan caught it); to_paintable() answers with the same paintable and leaves the object alive
 - `push_color_matrix` — parameter `color_matrix` of type Graphene.Matrix
 - `push_debug` — varargs
-- `push_fill` — parameter `path` of type Gsk.Path
 - `push_gl_shader` — parameter `shader` of type Gsk.GLShader
-- `push_rounded_clip` — parameter `bounds` of type Gsk.RoundedRect
 - `push_shadow` — parameter `shadow` of type array (C array)
-- `push_stroke` — parameter `path` of type Gsk.Path
 - `render_background` — deprecated (4.10)
 - `render_focus` — deprecated (4.10)
 - `render_frame` — deprecated (4.10)
 - `render_insertion_cursor` — deprecated (4.10)
 - `render_layout` — deprecated (4.10)
 - `rotate_3d` — parameter `axis` of type Graphene.Vec3
-- `to_node` — return type Gsk.RenderNode (not in the closure)
-- `transform` — parameter `transform` of type Gsk.Transform
 - `transform_matrix` — parameter `matrix` of type Graphene.Matrix
 - `translate_3d` — parameter `point` of type Graphene.Point3D
 
@@ -679,6 +945,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gdk.ContentProvider`: get_value, new_for_value
 - `Gdk.Paintable`: compute_concrete_size
 - `Gdk.Texture`: download
+- `Gdk.TextureDownloader`: download_bytes
+- `GdkPixbuf.Pixbuf`: get_file_info, get_options, save_to_bufferv, savev
 - `Gio.Action`: activate
 - `Gio.ActionGroup`: activate_action, change_action_state, get_action_enabled, get_action_parameter_type, get_action_state, get_action_state_hint, get_action_state_type, has_action, list_actions
 - `Gio.Application`: get_dbus_object_path, get_is_remote, run
@@ -687,6 +955,17 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio.SimpleAction`: set_state
 - `Gio.Task`: propagate_boolean, propagate_int, return_boolean, return_error, return_int
 - `Graphene.Rect`: inset, normalize, offset
+- `Gsk.BorderNode`: __construct, get_widths
+- `Gsk.ConicGradientNode`: __construct, get_color_stops
+- `Gsk.ContainerNode`: __construct
+- `Gsk.LinearGradientNode`: __construct, get_color_stops
+- `Gsk.RadialGradientNode`: __construct, get_color_stops
+- `Gsk.RenderNode`: deserialize
+- `Gsk.RepeatingLinearGradientNode`: __construct
+- `Gsk.RepeatingRadialGradientNode`: __construct
+- `Gsk.ShadowNode`: __construct, get_shadow
+- `Gsk.Stroke`: get_dash, set_dash
+- `Gsk.Transform`: parse
 - `Gtk.Box`: get_children
 - `Gtk.Builder`: __construct, add_from_string, add_objects_from_string, set_current_object, set_handlers
 - `Gtk.CustomFilter`: __construct, set_filter_func
@@ -703,8 +982,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.LayoutManager`: get_layout_child, get_request_mode
 - `Gtk.MenuButton`: set_create_popup_func
 - `Gtk.Popover`: get_pointing_to, popup
+- `Gtk.PrintOperation`: get_error, run
+- `Gtk.PrintSettings`: get_page_ranges, set_page_ranges
 - `Gtk.Scale`: set_format_value_func
 - `Gtk.SelectionModel`: selection_changed
+- `Gtk.Snapshot`: append_border
 - `Gtk.Text`: grab_focus_without_selecting
 - `Gtk.TextBuffer`: insert, insert_at_cursor, insert_interactive, insert_interactive_at_cursor, insert_markup, set_text
 - `Gtk.TextIter`: set_line_index, set_line_offset
@@ -792,12 +1074,19 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkOverlay.cpp`
 - `Gtk/GtkOverlayLayout.cpp`
 - `Gtk/GtkOverlayLayoutChild.cpp`
+- `Gtk/GtkPageSetup.cpp`
 - `Gtk/GtkPaned.cpp`
+- `Gtk/GtkPaperSize.cpp`
 - `Gtk/GtkPasswordEntry.cpp`
 - `Gtk/GtkPicture.cpp`
 - `Gtk/GtkPopover.cpp`
 - `Gtk/GtkPopoverMenu.cpp`
 - `Gtk/GtkPopoverMenuBar.cpp`
+- `Gtk/GtkPrintContext.cpp`
+- `Gtk/GtkPrintDialog.cpp`
+- `Gtk/GtkPrintOperation.cpp`
+- `Gtk/GtkPrintSettings.cpp`
+- `Gtk/GtkPrintSetup.cpp`
 - `Gtk/GtkProgressBar.cpp`
 - `Gtk/GtkRange.cpp`
 - `Gtk/GtkRequisition.cpp`
@@ -862,17 +1151,64 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gdk/GdkDisplay.cpp`
 - `Gdk/GdkDrag.cpp`
 - `Gdk/GdkDrop.cpp`
+- `Gdk/GdkMemoryTexture.cpp`
 - `Gdk/GdkMonitor.cpp`
 - `Gdk/GdkPaintable.cpp`
 - `Gdk/GdkSnapshot.cpp`
 - `Gdk/GdkSurface.cpp`
 - `Gdk/GdkTexture.cpp`
+- `Gdk/GdkTextureDownloader.cpp`
 - `Gdk/Gdk.stub.php`
+- `Gsk/GskBlendNode.cpp`
+- `Gsk/GskBlurNode.cpp`
+- `Gsk/GskBorderNode.cpp`
+- `Gsk/GskCairoNode.cpp`
+- `Gsk/GskCairoRenderer.cpp`
+- `Gsk/GskClipNode.cpp`
+- `Gsk/GskColorMatrixNode.cpp`
+- `Gsk/GskColorNode.cpp`
+- `Gsk/GskConicGradientNode.cpp`
+- `Gsk/GskContainerNode.cpp`
+- `Gsk/GskCrossFadeNode.cpp`
+- `Gsk/GskDebugNode.cpp`
+- `Gsk/GskFillNode.cpp`
+- `Gsk/GskGLRenderer.cpp`
+- `Gsk/GskInsetShadowNode.cpp`
+- `Gsk/GskLinearGradientNode.cpp`
+- `Gsk/GskMaskNode.cpp`
+- `Gsk/GskOpacityNode.cpp`
+- `Gsk/GskOutsetShadowNode.cpp`
+- `Gsk/GskPath.cpp`
+- `Gsk/GskPathBuilder.cpp`
+- `Gsk/GskPathMeasure.cpp`
+- `Gsk/GskPathPoint.cpp`
+- `Gsk/GskRadialGradientNode.cpp`
+- `Gsk/GskRenderNode.cpp`
+- `Gsk/GskRenderer.cpp`
+- `Gsk/GskRepeatNode.cpp`
+- `Gsk/GskRepeatingLinearGradientNode.cpp`
+- `Gsk/GskRepeatingRadialGradientNode.cpp`
+- `Gsk/GskRoundedClipNode.cpp`
+- `Gsk/GskShadowNode.cpp`
+- `Gsk/GskStroke.cpp`
+- `Gsk/GskStrokeNode.cpp`
+- `Gsk/GskSubsurfaceNode.cpp`
+- `Gsk/GskTextNode.cpp`
+- `Gsk/GskTextureNode.cpp`
+- `Gsk/GskTextureScaleNode.cpp`
+- `Gsk/GskTransform.cpp`
+- `Gsk/GskTransformNode.cpp`
 - `Gsk/Gsk.stub.php`
 - `Graphene/GraphenePoint.cpp`
 - `Graphene/GrapheneRect.cpp`
 - `Graphene/GrapheneSize.cpp`
 - `Graphene/Graphene.stub.php`
+- `GdkPixbuf/GdkPixbuf.cpp`
+- `GdkPixbuf/GdkPixbufAnimation.cpp`
+- `GdkPixbuf/GdkPixbufAnimationIter.cpp`
+- `GdkPixbuf/GdkPixbufFormat.cpp`
+- `GdkPixbuf/GdkPixbufLoader.cpp`
+- `GdkPixbuf/GdkPixbuf.stub.php`
 - `gen_minit.inc`
 - `gen_prototypes.h`
 - `gen_arginfo.h`
@@ -937,11 +1273,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkNotebookSmokeTest.php`
 - `tests/Generated/GtkOverlaySmokeTest.php`
 - `tests/Generated/GtkOverlayLayoutSmokeTest.php`
+- `tests/Generated/GtkPageSetupSmokeTest.php`
 - `tests/Generated/GtkPasswordEntrySmokeTest.php`
 - `tests/Generated/GtkPictureSmokeTest.php`
 - `tests/Generated/GtkPopoverSmokeTest.php`
 - `tests/Generated/GtkPopoverMenuSmokeTest.php`
 - `tests/Generated/GtkPopoverMenuBarSmokeTest.php`
+- `tests/Generated/GtkPrintDialogSmokeTest.php`
+- `tests/Generated/GtkPrintOperationSmokeTest.php`
+- `tests/Generated/GtkPrintSettingsSmokeTest.php`
 - `tests/Generated/GtkProgressBarSmokeTest.php`
 - `tests/Generated/GtkRangeSmokeTest.php`
 - `tests/Generated/GtkRevealerSmokeTest.php`
@@ -979,3 +1319,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GdkContentProviderSmokeTest.php`
 - `tests/Generated/GdkCursorSmokeTest.php`
 - `tests/Generated/GdkSnapshotSmokeTest.php`
+- `tests/Generated/GskCairoRendererSmokeTest.php`
+- `tests/Generated/GskGLRendererSmokeTest.php`
+- `tests/Generated/GskRendererSmokeTest.php`
+- `tests/Generated/GdkPixbufLoaderSmokeTest.php`

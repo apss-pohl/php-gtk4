@@ -39,3 +39,6 @@ Gtk4\GtkDropTarget::motion#emit
 Gtk4\GtkEntry::delete-text#emit
 Gtk4\GtkPasswordEntry::delete-text#emit
 Gtk4\GtkSpinButton::delete-text#emit
+Gtk4\GtkPrintOperation::$current_page#properties
+Gtk4\GtkPrintOperation::$n_pages#properties
+Gtk4\GdkPixbuf::new_from_xpm_data#arguments

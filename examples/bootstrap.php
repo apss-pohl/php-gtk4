@@ -156,6 +156,17 @@ final class Demo
         ],
         'Loop' => ['GLib', 'GMainLoop', 'GIOCondition'],
         'Geometry' => ['GtkRequisition'],
+        'Pixbuf' => [
+            'GdkPixbuf', 'GdkPixbufLoader', 'GdkPixbufFormat', 'GdkPixbufAnimation', 'GdkPixbufAnimationIter',
+            'GdkColorspace', 'GdkInterpType', 'GdkPixbufRotation', 'GdkMemoryTexture',
+            'GdkTextureDownloader',
+        ],
+        'Scene graph' => [
+            'GskRenderNode', 'GskColorNode', 'GskContainerNode', 'GskTransformNode', 'GskTransform',
+            'GskRoundedRect', 'GskRoundedClipNode', 'GskBorderNode', 'GskLinearGradientNode',
+            'GskShadowNode', 'GskPath', 'GskPathBuilder', 'GskStroke', 'GskStrokeNode', 'GskFillNode',
+            'GskRenderer', 'GskCairoRenderer', 'GskCorner',
+        ],
         'Dialogs & async' => [
             'GtkAlertDialog', 'GtkFileDialog', 'GtkFileFilter', 'GtkColorDialog', 'GtkFontDialog',
             'GtkAboutDialog', 'GtkLicense', 'PangoFontDescription',

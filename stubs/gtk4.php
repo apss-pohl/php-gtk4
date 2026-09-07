@@ -549,6 +549,91 @@ final class GdkRectangle
     }
 }
 /**
+ * A rectangle with a size per corner (a boxed value type: cloneable, compared by value) - what
+ * {@see GskRoundedClipNode}, {@see GskBorderNode}, the shadow nodes and
+ * {@see GtkSnapshot::push_rounded_clip()} take. GSK gives the struct no GType; the binding
+ * registers one. The GSK calls that rewrite the rectangle in place (normalize, offset, shrink)
+ * answer with a copy here, like graphene's do: a value handle never changes under you.
+ *
+ * @link https://docs.gtk.org/gsk4/struct.RoundedRect.html
+ */
+final class GskRoundedRect
+{
+    /** A rectangle with a (circular) radius per corner; a radius of 0.0 keeps that corner square. */
+    public function __construct(GrapheneRect $bounds, float $top_left = 0.0, float $top_right = 0.0, float $bottom_right = 0.0, float $bottom_left = 0.0)
+    {
+        unset($bounds);
+        unset($top_left);
+        unset($top_right);
+        unset($bottom_right);
+        unset($bottom_left);
+    }
+    /** The rectangle without its corners. */
+    public function get_bounds(): GrapheneRect
+    {
+        return null;
+    }
+    /** The horizontal and vertical radius of one corner. */
+    public function get_corner(GskCorner $corner): GrapheneSize
+    {
+        unset($corner);
+        return null;
+    }
+    /** Whether every corner is square (all radii 0.0). */
+    public function is_rectilinear(): bool
+    {
+        return false;
+    }
+    /** Whether the point lies inside the rounded rectangle. */
+    public function contains_point(GraphenePoint $point): bool
+    {
+        unset($point);
+        return false;
+    }
+    /** Whether the whole rectangle lies inside the rounded rectangle. */
+    public function contains_rect(GrapheneRect $rect): bool
+    {
+        unset($rect);
+        return false;
+    }
+    /** Whether the rectangle overlaps the rounded rectangle anywhere. */
+    public function intersects_rect(GrapheneRect $rect): bool
+    {
+        unset($rect);
+        return false;
+    }
+    /** A copy with a non-negative size and corners no larger than the sides allow. */
+    public function normalize(): GskRoundedRect
+    {
+        return null;
+    }
+    /** A copy moved by ($dx, $dy). */
+    public function offset(float $dx, float $dy): GskRoundedRect
+    {
+        unset($dx);
+        unset($dy);
+        return null;
+    }
+    /**
+     * A copy inset by the given amounts on each side, the corners shrinking with it (negative
+     * values grow it).
+     */
+    public function shrink(float $top, float $right, float $bottom, float $left): GskRoundedRect
+    {
+        unset($top);
+        unset($right);
+        unset($bottom);
+        unset($left);
+        return null;
+    }
+    /** Same bounds and the same four corners (what `==` compares too). */
+    public function equal(GskRoundedRect $other): bool
+    {
+        unset($other);
+        return false;
+    }
+}
+/**
  * An input event, as GTK 4 delivers it to event controllers: an opaque, refcounted handle with
  * typed getters (there are no fields to copy and no `new`). The class tells the kind — a
  * {@see GdkKeyEvent}, {@see GdkButtonEvent}, ... — and {@see get_event_type()} the exact type.
@@ -1810,6 +1895,61 @@ enum GdkMemoryFormat : int
     case NFormats = 33;
 }
 /**
+ * A `GdkTexture` representing image data in memory.
+ */
+class GdkMemoryTexture extends GdkTexture implements GdkPaintable
+{
+    /** Creates a new texture for a blob of image data. */
+    public function __construct(int $width, int $height, GdkMemoryFormat $format, string $bytes, int $stride)
+    {
+        unset($width);
+        unset($height);
+        unset($format);
+        unset($bytes);
+        unset($stride);
+    }
+    public function compute_concrete_size(float $specified_width, float $specified_height, float $default_width, float $default_height): array
+    {
+        unset($specified_width);
+        unset($specified_height);
+        unset($default_width);
+        unset($default_height);
+        return [];
+    }
+    public function get_current_image(): GdkPaintable
+    {
+        return null;
+    }
+    public function get_flags(): int
+    {
+        return 0;
+    }
+    public function get_intrinsic_aspect_ratio(): float
+    {
+        return 0.0;
+    }
+    public function get_intrinsic_height(): int
+    {
+        return 0;
+    }
+    public function get_intrinsic_width(): int
+    {
+        return 0;
+    }
+    public function invalidate_contents(): void
+    {
+    }
+    public function invalidate_size(): void
+    {
+    }
+    public function snapshot(GdkSnapshot $snapshot, float $width, float $height): void
+    {
+        unset($snapshot);
+        unset($width);
+        unset($height);
+    }
+}
+/**
  * Flags to indicate the state of modifier keys and mouse buttons in events.
  */
 final class GdkModifierType
@@ -2164,6 +2304,12 @@ class GdkTexture extends GObject implements GdkPaintable
     private function __construct()
     {
     }
+    /** Creates a new texture object representing the `GdkPixbuf`. */
+    public static function new_for_pixbuf(GdkPixbuf $pixbuf): GdkTexture
+    {
+        unset($pixbuf);
+        return null;
+    }
     /** Creates a new texture by loading an image from memory, */
     public static function new_from_bytes(string $bytes): GdkTexture
     {
@@ -2274,6 +2420,48 @@ class GdkTexture extends GObject implements GdkPaintable
     }
 }
 /**
+ * The `GdkTextureDownloader` is used to download the contents of a `Texture`.
+ */
+final class GdkTextureDownloader
+{
+    /** Creates a new texture downloader for $texture. */
+    public function __construct(GdkTexture $texture)
+    {
+        unset($texture);
+    }
+    /** Gets the format that the data will be downloaded in. */
+    public function get_format(): GdkMemoryFormat
+    {
+        return null;
+    }
+    /** Gets the texture that the downloader will download. */
+    public function get_texture(): GdkTexture
+    {
+        return null;
+    }
+    /** Sets the format the downloader will download. */
+    public function set_format(GdkMemoryFormat $format): void
+    {
+        unset($format);
+    }
+    /** Changes the texture the downloader will download. */
+    public function set_texture(GdkTexture $texture): void
+    {
+        unset($texture);
+    }
+    /**
+     * The texture's pixels in the downloader's format (set_format(); GdkMemoryFormat::B8g8r8a8Premultiplied
+     * by default) as `[string $bytes, int $stride]` - the row stride is what GdkPixbuf::new_from_bytes()
+     * or GdkMemoryTexture::new() need next to the bytes.
+     *
+     * @return array{string, int}
+     */
+    public function download_bytes(): array
+    {
+        return [];
+    }
+}
+/**
  * Specifies the current state of a touchpad gesture.
  */
 enum GdkTouchpadGesturePhase : int
@@ -2282,6 +2470,670 @@ enum GdkTouchpadGesturePhase : int
     case Update = 1;
     case End = 2;
     case Cancel = 3;
+}
+/**
+ * This enumeration defines the color spaces that are supported by the gdk-pixbuf library.
+ */
+enum GdkColorspace : int
+{
+    case Rgb = 0;
+}
+/**
+ * Interpolation modes for scaling functions.
+ */
+enum GdkInterpType : int
+{
+    case Nearest = 0;
+    case Tiles = 1;
+    case Bilinear = 2;
+    case Hyper = 3;
+}
+/**
+ * A pixel buffer.
+ *
+ * @property int $bits_per_sample
+ * @property GdkColorspace $colorspace
+ * @property bool $has_alpha
+ * @property int $height
+ * @property int $n_channels
+ * @property ?string $pixel_bytes
+ * @property int $rowstride
+ * @property int $width
+ */
+class GdkPixbuf extends GObject
+{
+    /** Creates a new `GdkPixbuf` structure and allocates a buffer for it. */
+    public function __construct(GdkColorspace $colorspace, bool $has_alpha, int $bits_per_sample, int $width, int $height)
+    {
+        unset($colorspace);
+        unset($has_alpha);
+        unset($bits_per_sample);
+        unset($width);
+        unset($height);
+    }
+    /** Creates a new #GdkPixbuf out of in-memory readonly image data. */
+    public static function new_from_bytes(string $data, GdkColorspace $colorspace, bool $has_alpha, int $bits_per_sample, int $width, int $height, int $rowstride): GdkPixbuf
+    {
+        unset($data);
+        unset($colorspace);
+        unset($has_alpha);
+        unset($bits_per_sample);
+        unset($width);
+        unset($height);
+        unset($rowstride);
+        return null;
+    }
+    /** Creates a new pixbuf by loading an image from a file. */
+    public static function new_from_file(string $filename): GdkPixbuf
+    {
+        unset($filename);
+        return null;
+    }
+    /** Creates a new pixbuf by loading an image from a file. */
+    public static function new_from_file_at_scale(string $filename, int $width, int $height, bool $preserve_aspect_ratio): GdkPixbuf
+    {
+        unset($filename);
+        unset($width);
+        unset($height);
+        unset($preserve_aspect_ratio);
+        return null;
+    }
+    /** Creates a new pixbuf by loading an image from a file. */
+    public static function new_from_file_at_size(string $filename, int $width, int $height): GdkPixbuf
+    {
+        unset($filename);
+        unset($width);
+        unset($height);
+        return null;
+    }
+    /** Creates a new pixbuf by loading an image from an resource. */
+    public static function new_from_resource(string $resource_path): GdkPixbuf
+    {
+        unset($resource_path);
+        return null;
+    }
+    /** Creates a new pixbuf by loading an image from an resource. */
+    public static function new_from_resource_at_scale(string $resource_path, int $width, int $height, bool $preserve_aspect_ratio): GdkPixbuf
+    {
+        unset($resource_path);
+        unset($width);
+        unset($height);
+        unset($preserve_aspect_ratio);
+        return null;
+    }
+    /**
+     * Finishes an asynchronous pixbuf creation operation started with
+     * gdk_pixbuf_new_from_stream_async().
+     */
+    public static function new_from_stream_finish(GAsyncResult $async_result): GdkPixbuf
+    {
+        unset($async_result);
+        return null;
+    }
+    /** Creates a new pixbuf by parsing XPM data in memory. */
+    public static function new_from_xpm_data(array $data): GdkPixbuf
+    {
+        unset($data);
+        return null;
+    }
+    /** Calculates the rowstride that an image created with those values would have. */
+    public static function calculate_rowstride(GdkColorspace $colorspace, bool $has_alpha, int $bits_per_sample, int $width, int $height): int
+    {
+        unset($colorspace);
+        unset($has_alpha);
+        unset($bits_per_sample);
+        unset($width);
+        unset($height);
+        return 0;
+    }
+    /** Asynchronously parses an image file far enough to determine its format and size. */
+    public static function get_file_info_async(string $filename, ?GCancellable $cancellable, callable $callback): void
+    {
+        unset($filename);
+        unset($cancellable);
+        unset($callback);
+    }
+    /**
+     * Obtains the available information about the image formats supported by GdkPixbuf.
+     *
+     * @return list<GdkPixbufFormat>
+     */
+    public static function get_formats(): array
+    {
+        return [];
+    }
+    /**
+     * Initalizes the gdk-pixbuf loader modules referenced by the `loaders.cache` file present
+     * inside that directory.
+     */
+    public static function init_modules(string $path): bool
+    {
+        unset($path);
+        return false;
+    }
+    /**
+     * Finishes an asynchronous pixbuf save operation started with
+     * gdk_pixbuf_save_to_stream_async().
+     */
+    public static function save_to_stream_finish(GAsyncResult $async_result): bool
+    {
+        unset($async_result);
+        return false;
+    }
+    /** Takes an existing pixbuf and adds an alpha channel to it. */
+    public function add_alpha(bool $substitute_color, int $r, int $g, int $b): GdkPixbuf
+    {
+        unset($substitute_color);
+        unset($r);
+        unset($g);
+        unset($b);
+        return null;
+    }
+    /**
+     * Takes an existing pixbuf and checks for the presence of an associated "orientation" option.
+     */
+    public function apply_embedded_orientation(): ?GdkPixbuf
+    {
+        return null;
+    }
+    /**
+     * Creates a transformation of the source image $src by scaling by $scale_x and $scale_y then
+     * translating by $offset_x and $offset_y.
+     */
+    public function composite(GdkPixbuf $dest, int $dest_x, int $dest_y, int $dest_width, int $dest_height, float $offset_x, float $offset_y, float $scale_x, float $scale_y, GdkInterpType $interp_type, int $overall_alpha): void
+    {
+        unset($dest);
+        unset($dest_x);
+        unset($dest_y);
+        unset($dest_width);
+        unset($dest_height);
+        unset($offset_x);
+        unset($offset_y);
+        unset($scale_x);
+        unset($scale_y);
+        unset($interp_type);
+        unset($overall_alpha);
+    }
+    /**
+     * Creates a new pixbuf by scaling `src` to `dest_width` x `dest_height` and alpha blending the
+     * result with a checkboard of colors `color1` and `color2`.
+     */
+    public function composite_color_simple(int $dest_width, int $dest_height, GdkInterpType $interp_type, int $overall_alpha, int $check_size, int $color1, int $color2): ?GdkPixbuf
+    {
+        unset($dest_width);
+        unset($dest_height);
+        unset($interp_type);
+        unset($overall_alpha);
+        unset($check_size);
+        unset($color1);
+        unset($color2);
+        return null;
+    }
+    /** Creates a new `GdkPixbuf` with a copy of the information in the specified `pixbuf`. */
+    public function copy(): ?GdkPixbuf
+    {
+        return null;
+    }
+    /** Copies a rectangular area from `src_pixbuf` to `dest_pixbuf`. */
+    public function copy_area(int $src_x, int $src_y, int $width, int $height, GdkPixbuf $dest_pixbuf, int $dest_x, int $dest_y): void
+    {
+        unset($src_x);
+        unset($src_y);
+        unset($width);
+        unset($height);
+        unset($dest_pixbuf);
+        unset($dest_x);
+        unset($dest_y);
+    }
+    /** Copies the key/value pair options attached to a `GdkPixbuf` to another `GdkPixbuf`. */
+    public function copy_options(GdkPixbuf $dest_pixbuf): bool
+    {
+        unset($dest_pixbuf);
+        return false;
+    }
+    /**
+     * Clears a pixbuf to the given RGBA value, converting the RGBA value into the pixbuf's pixel
+     * format.
+     */
+    public function fill(int $pixel): void
+    {
+        unset($pixel);
+    }
+    /** Flips a pixbuf horizontally or vertically and returns the result in a new pixbuf. */
+    public function flip(bool $horizontal): ?GdkPixbuf
+    {
+        unset($horizontal);
+        return null;
+    }
+    /** Queries the number of bits per color sample in a pixbuf. */
+    public function get_bits_per_sample(): int
+    {
+        return 0;
+    }
+    /** Returns the length of the pixel data, in bytes. */
+    public function get_byte_length(): int
+    {
+        return 0;
+    }
+    /** Queries the color space of a pixbuf. */
+    public function get_colorspace(): GdkColorspace
+    {
+        return null;
+    }
+    /** Queries whether a pixbuf has an alpha channel (opacity information). */
+    public function get_has_alpha(): bool
+    {
+        return false;
+    }
+    /** Queries the height of a pixbuf. */
+    public function get_height(): int
+    {
+        return 0;
+    }
+    /** Queries the number of channels of a pixbuf. */
+    public function get_n_channels(): int
+    {
+        return 0;
+    }
+    /**
+     * Looks up $key in the list of options that may have been attached to the $pixbuf when it was
+     * loaded, or that may have been attached by another function using gdk_pixbuf_set_option().
+     */
+    public function get_option(string $key): ?string
+    {
+        unset($key);
+        return null;
+    }
+    /**
+     * Queries the rowstride of a pixbuf, which is the number of bytes between the start of a row
+     * and the start of the next row.
+     */
+    public function get_rowstride(): int
+    {
+        return 0;
+    }
+    /** Queries the width of a pixbuf. */
+    public function get_width(): int
+    {
+        return 0;
+    }
+    /** Creates a new pixbuf which represents a sub-region of `src_pixbuf`. */
+    public function new_subpixbuf(int $src_x, int $src_y, int $width, int $height): GdkPixbuf
+    {
+        unset($src_x);
+        unset($src_y);
+        unset($width);
+        unset($height);
+        return null;
+    }
+    /** Provides a #GBytes buffer containing the raw pixel data; the data must not be modified. */
+    public function read_pixel_bytes(): string
+    {
+        return '';
+    }
+    /** Removes the key/value pair option attached to a `GdkPixbuf`. */
+    public function remove_option(string $key): bool
+    {
+        unset($key);
+        return false;
+    }
+    /** Rotates a pixbuf by a multiple of 90 degrees, and returns the result in a new pixbuf. */
+    public function rotate_simple(GdkPixbufRotation $angle): ?GdkPixbuf
+    {
+        unset($angle);
+        return null;
+    }
+    /** Modifies saturation and optionally pixelates `src`, placing the result in `dest`. */
+    public function saturate_and_pixelate(GdkPixbuf $dest, float $saturation, bool $pixelate): void
+    {
+        unset($dest);
+        unset($saturation);
+        unset($pixelate);
+    }
+    /**
+     * Creates a transformation of the source image $src by scaling by $scale_x and $scale_y then
+     * translating by $offset_x and $offset_y, then renders the rectangle ($dest_x, $dest_y,
+     * $dest_width, $dest_height) of the resulting image onto the destination image replacing the
+     * previous contents.
+     */
+    public function scale(GdkPixbuf $dest, int $dest_x, int $dest_y, int $dest_width, int $dest_height, float $offset_x, float $offset_y, float $scale_x, float $scale_y, GdkInterpType $interp_type): void
+    {
+        unset($dest);
+        unset($dest_x);
+        unset($dest_y);
+        unset($dest_width);
+        unset($dest_height);
+        unset($offset_x);
+        unset($offset_y);
+        unset($scale_x);
+        unset($scale_y);
+        unset($interp_type);
+    }
+    /** Create a new pixbuf containing a copy of `src` scaled to `dest_width` x `dest_height`. */
+    public function scale_simple(int $dest_width, int $dest_height, GdkInterpType $interp_type): ?GdkPixbuf
+    {
+        unset($dest_width);
+        unset($dest_height);
+        unset($interp_type);
+        return null;
+    }
+    /** Attaches a key/value pair as an option to a `GdkPixbuf`. */
+    public function set_option(string $key, string $value): bool
+    {
+        unset($key);
+        unset($value);
+        return false;
+    }
+    /**
+     * The format, width and height of an image file, read from its header without decoding it -
+     * `[GdkPixbufFormat $format, int $width, int $height]` - or null when no loader recognises it.
+     *
+     * @return array{GdkPixbufFormat, int, int}|null
+     */
+    public static function get_file_info(string $filename): ?array
+    {
+        unset($filename);
+        return null;
+    }
+    /**
+     * The key/value options the loader attached (an "orientation" from EXIF, "x-dpi"/"y-dpi", the
+     * ICC profile) as a map of option name to string value; empty when there are none.
+     *
+     * @return array<string, string>
+     */
+    public function get_options(): array
+    {
+        return [];
+    }
+    /**
+     * The image encoded as $type ("png", "jpeg", "tiff", "bmp", ...; get_formats() lists what is
+     * writable) with the encoder's $options (a map of option name to string value, "quality" =>
+     * "90" for JPEG), as the file's bytes.
+     *
+     * GIR fills a caller-provided buffer and takes the options as two parallel arrays; PHP gets the
+     * bytes back and passes a map.
+     */
+    public function save_to_bufferv(string $type, array $options = []): string
+    {
+        unset($type);
+        unset($options);
+        return '';
+    }
+    /**
+     * Writes the image to $filename encoded as $type ("png", "jpeg", ...) with the encoder's
+     * $options (a map of option name to string value, "quality" => "90" for JPEG). A failure is a
+     * GError; the boolean is GTK's own (always true when it returns).
+     *
+     * GIR takes the options as two parallel arrays; PHP passes a map.
+     */
+    public function savev(string $filename, string $type, array $options = []): bool
+    {
+        unset($filename);
+        unset($type);
+        unset($options);
+        return false;
+    }
+}
+/**
+ * An opaque object representing an animation.
+ */
+class GdkPixbufAnimation extends GObject
+{
+    /** GdkPixbufAnimation has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Creates a new animation by loading it from a file. */
+    public static function new_from_file(string $filename): GdkPixbufAnimation
+    {
+        unset($filename);
+        return null;
+    }
+    /** Creates a new pixbuf animation by loading an image from an resource. */
+    public static function new_from_resource(string $resource_path): GdkPixbufAnimation
+    {
+        unset($resource_path);
+        return null;
+    }
+    /**
+     * Finishes an asynchronous pixbuf animation creation operation started with
+     * `new_from_stream_async`.
+     */
+    public static function new_from_stream_finish(GAsyncResult $async_result): GdkPixbufAnimation
+    {
+        unset($async_result);
+        return null;
+    }
+    /** Queries the height of the bounding box of a pixbuf animation. */
+    public function get_height(): int
+    {
+        return 0;
+    }
+    /** Retrieves a static image for the animation. */
+    public function get_static_image(): GdkPixbuf
+    {
+        return null;
+    }
+    /** Queries the width of the bounding box of a pixbuf animation. */
+    public function get_width(): int
+    {
+        return 0;
+    }
+    /** Checks whether the animation is a static image. */
+    public function is_static_image(): bool
+    {
+        return false;
+    }
+}
+/**
+ * An opaque object representing an iterator which points to a certain position in an animation.
+ */
+class GdkPixbufAnimationIter extends GObject
+{
+    /** GdkPixbufAnimationIter has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /**
+     * Gets the number of milliseconds the current pixbuf should be displayed, or -1 if the current
+     * pixbuf should be displayed forever.
+     */
+    public function get_delay_time(): int
+    {
+        return 0;
+    }
+    /** Gets the current pixbuf which should be displayed. */
+    public function get_pixbuf(): GdkPixbuf
+    {
+        return null;
+    }
+    /**
+     * Used to determine how to respond to the area_updated signal on #GdkPixbufLoader when loading
+     * an animation.
+     */
+    public function on_currently_loading_frame(): bool
+    {
+        return false;
+    }
+}
+/**
+ * A `GdkPixbufFormat` contains information about the image format accepted by a module.
+ */
+final class GdkPixbufFormat
+{
+    /** GdkPixbufFormat values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Returns a description of the format. */
+    public function get_description(): string
+    {
+        return '';
+    }
+    /**
+     * Returns the filename extensions typically used for files in the given format.
+     *
+     * @return list<string>
+     */
+    public function get_extensions(): array
+    {
+        return [];
+    }
+    /** Returns information about the license of the image loader for the format. */
+    public function get_license(): string
+    {
+        return '';
+    }
+    /**
+     * Returns the mime types supported by the format.
+     *
+     * @return list<string>
+     */
+    public function get_mime_types(): array
+    {
+        return [];
+    }
+    /** Returns the name of the format. */
+    public function get_name(): string
+    {
+        return '';
+    }
+    /** Returns whether this image format is disabled. */
+    public function is_disabled(): bool
+    {
+        return false;
+    }
+    /**
+     * Returns `TRUE` if the save option specified by $option_key is supported when saving a pixbuf
+     * using the module implementing $format.
+     */
+    public function is_save_option_supported(string $option_key): bool
+    {
+        unset($option_key);
+        return false;
+    }
+    /** Returns whether this image format is scalable. */
+    public function is_scalable(): bool
+    {
+        return false;
+    }
+    /** Returns whether pixbufs can be saved in the given format. */
+    public function is_writable(): bool
+    {
+        return false;
+    }
+    /** Disables or enables an image format. */
+    public function set_disabled(bool $disabled): void
+    {
+        unset($disabled);
+    }
+}
+/**
+ * Incremental image loader.
+ */
+class GdkPixbufLoader extends GObject
+{
+    /** Creates a new pixbuf loader object. */
+    public function __construct()
+    {
+    }
+    /**
+     * Creates a new pixbuf loader object that always attempts to parse image data as if it were an
+     * image of MIME type $mime_type, instead of identifying the type automatically.
+     */
+    public static function new_with_mime_type(string $mime_type): GdkPixbufLoader
+    {
+        unset($mime_type);
+        return null;
+    }
+    /**
+     * Creates a new pixbuf loader object that always attempts to parse image data as if it were an
+     * image of type $image_type, instead of identifying the type automatically.
+     */
+    public static function new_with_type(string $image_type): GdkPixbufLoader
+    {
+        unset($image_type);
+        return null;
+    }
+    /**
+     * Informs a pixbuf loader that no further writes with gdk_pixbuf_loader_write() will occur, so
+     * that it can free its internal loading structures.
+     */
+    public function close(): bool
+    {
+        return false;
+    }
+    /** Queries the #GdkPixbufAnimation that a pixbuf loader is currently creating. */
+    public function get_animation(): ?GdkPixbufAnimation
+    {
+        return null;
+    }
+    /** Obtains the available information about the format of the currently loading image file. */
+    public function get_format(): ?GdkPixbufFormat
+    {
+        return null;
+    }
+    /** Queries the #GdkPixbuf that a pixbuf loader is currently creating. */
+    public function get_pixbuf(): ?GdkPixbuf
+    {
+        return null;
+    }
+    /** Causes the image to be scaled while it is loaded. */
+    public function set_size(int $width, int $height): void
+    {
+        unset($width);
+        unset($height);
+    }
+    /** Parses the next contents of the given image buffer. */
+    public function write_bytes(string $buffer): bool
+    {
+        unset($buffer);
+        return false;
+    }
+    /**
+     * Native `area_prepared` (PixbufLoaderClass.area_prepared): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_area_prepared()` from an override.
+     */
+    public function vfunc_area_prepared(): void
+    {
+    }
+    /**
+     * Native `area_updated` (PixbufLoaderClass.area_updated): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_area_updated()` from an override.
+     */
+    public function vfunc_area_updated(int $x, int $y, int $width, int $height): void
+    {
+        unset($x);
+        unset($y);
+        unset($width);
+        unset($height);
+    }
+    /**
+     * Native `closed` (PixbufLoaderClass.closed): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_closed()` from an override.
+     */
+    public function vfunc_closed(): void
+    {
+    }
+    /**
+     * Native `size_prepared` (PixbufLoaderClass.size_prepared): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_size_prepared()` from an override.
+     */
+    public function vfunc_size_prepared(int $width, int $height): void
+    {
+        unset($width);
+        unset($height);
+    }
+}
+/**
+ * The possible rotations which can be passed to gdk_pixbuf_rotate_simple().
+ */
+enum GdkPixbufRotation : int
+{
+    case None = 0;
+    case Counterclockwise = 90;
+    case Upsidedown = 180;
+    case Clockwise = 270;
 }
 /**
  * `GAction` represents a single named action.
@@ -4098,12 +4950,523 @@ enum GskBlendMode : int
     case Luminosity = 15;
 }
 /**
+ * A render node applying a blending function between its two child nodes.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskBlendNode extends GskRenderNode
+{
+    /**
+     * Creates a `GskRenderNode` that will use $blend_mode to blend the $top node onto the $bottom
+     * node.
+     */
+    public function __construct(GskRenderNode $bottom, GskRenderNode $top, GskBlendMode $blend_mode)
+    {
+        unset($bottom);
+        unset($top);
+        unset($blend_mode);
+    }
+    /** Retrieves the blend mode used by $node. */
+    public function get_blend_mode(): GskBlendMode
+    {
+        return null;
+    }
+    /** Retrieves the bottom `GskRenderNode` child of the $node. */
+    public function get_bottom_child(): GskRenderNode
+    {
+        return null;
+    }
+    /** Retrieves the top `GskRenderNode` child of the $node. */
+    public function get_top_child(): GskRenderNode
+    {
+        return null;
+    }
+}
+/**
+ * A render node applying a blur effect to its single child.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskBlurNode extends GskRenderNode
+{
+    /** Creates a render node that blurs the child. */
+    public function __construct(GskRenderNode $child, float $radius)
+    {
+        unset($child);
+        unset($radius);
+    }
+    /** Retrieves the child `GskRenderNode` of the blur $node. */
+    public function get_child(): GskRenderNode
+    {
+        return null;
+    }
+    /** Retrieves the blur radius of the $node. */
+    public function get_radius(): float
+    {
+        return 0.0;
+    }
+}
+/**
+ * A render node for a border.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskBorderNode extends GskRenderNode
+{
+    /** Retrieves the colors of the border. */
+    public function get_colors(): GdkRGBA
+    {
+        return null;
+    }
+    /** Retrieves the outline of the border. */
+    public function get_outline(): GskRoundedRect
+    {
+        return null;
+    }
+    /**
+     * A border drawn inside $outline: $widths are the four widths (top, right, bottom, left) as
+     * floats, $colors the four GdkRGBA colours in the same order.
+     *
+     * GIR takes two fixed-size C arrays; PHP lists of exactly four are the same thing.
+     */
+    public function __construct(GskRoundedRect $outline, array $widths, array $colors)
+    {
+        unset($outline);
+        unset($widths);
+        unset($colors);
+    }
+    /**
+     * The four border widths - top, right, bottom, left - the constructor took.
+     *
+     * @return array{float, float, float, float}
+     */
+    public function get_widths(): array
+    {
+        return [];
+    }
+}
+/**
+ * A render node for a Cairo surface.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskCairoNode extends GskRenderNode
+{
+    /** Creates a `GskRenderNode` that will render a cairo surface into the area given by $bounds. */
+    public function __construct(GrapheneRect $bounds)
+    {
+        unset($bounds);
+    }
+    /** Creates a Cairo context for drawing using the surface associated to the render node. */
+    public function get_draw_context(): CairoContext
+    {
+        return null;
+    }
+    /** Retrieves the Cairo surface used by the render node. */
+    public function get_surface(): CairoSurface
+    {
+        return null;
+    }
+}
+/**
+ * A GSK renderer that is using cairo.
+ */
+class GskCairoRenderer extends GskRenderer
+{
+    /** Creates a new Cairo renderer. */
+    public function __construct()
+    {
+    }
+}
+/**
+ * A render node applying a rectangular clip to its single child node.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskClipNode extends GskRenderNode
+{
+    /** Creates a `GskRenderNode` that will clip the $child to the area given by $clip. */
+    public function __construct(GskRenderNode $child, GrapheneRect $clip)
+    {
+        unset($child);
+        unset($clip);
+    }
+    /** Gets the child node that is getting clipped by the given $node. */
+    public function get_child(): GskRenderNode
+    {
+        return null;
+    }
+    /** Retrieves the clip rectangle for $node. */
+    public function get_clip(): GrapheneRect
+    {
+        return null;
+    }
+}
+/**
+ * A render node controlling the color matrix of its single child node.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskColorMatrixNode extends GskRenderNode
+{
+    /** GskColorMatrixNode has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Gets the child node that is getting its colors modified by the given $node. */
+    public function get_child(): GskRenderNode
+    {
+        return null;
+    }
+}
+/**
+ * A render node for a solid color.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskColorNode extends GskRenderNode
+{
+    /**
+     * Creates a `GskRenderNode` that will render the color specified by $rgba into the area given
+     * by $bounds.
+     */
+    public function __construct(GdkRGBA $rgba, GrapheneRect $bounds)
+    {
+        unset($rgba);
+        unset($bounds);
+    }
+    /** Retrieves the color of the given $node. */
+    public function get_color(): GdkRGBA
+    {
+        return null;
+    }
+}
+/**
+ * A render node for a conic gradient.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskConicGradientNode extends GskRenderNode
+{
+    /** Retrieves the angle for the gradient in radians, normalized in [0, 2 * PI]. */
+    public function get_angle(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the center pointer for the gradient. */
+    public function get_center(): GraphenePoint
+    {
+        return null;
+    }
+    /** Retrieves the number of color stops in the gradient. */
+    public function get_n_color_stops(): int
+    {
+        return 0;
+    }
+    /** Retrieves the rotation for the gradient in degrees. */
+    public function get_rotation(): float
+    {
+        return 0.0;
+    }
+    /**
+     * A conic (angular) gradient around $center over $bounds, starting $rotation degrees from the
+     * top and going clockwise, through $color_stops - at least two `[float $offset, GdkRGBA $color]`
+     * pairs with offsets ascending from 0.0 to 1.0.
+     */
+    public function __construct(GrapheneRect $bounds, GraphenePoint $center, float $rotation, array $color_stops)
+    {
+        unset($bounds);
+        unset($center);
+        unset($rotation);
+        unset($color_stops);
+    }
+    /**
+     * The colour stops, as the `[float $offset, GdkRGBA $color]` pairs the constructor took.
+     *
+     * @return list<array{float, GdkRGBA}>
+     */
+    public function get_color_stops(): array
+    {
+        return [];
+    }
+}
+/**
+ * A render node that can contain other render nodes.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskContainerNode extends GskRenderNode
+{
+    /** Gets one of the children of $container. */
+    public function get_child(int $idx): GskRenderNode
+    {
+        unset($idx);
+        return null;
+    }
+    /** Retrieves the number of direct children of $node. */
+    public function get_n_children(): int
+    {
+        return 0;
+    }
+    /**
+     * A node drawing $children (a list of GskRenderNode) one after the other, in order.
+     *
+     * GIR takes a C array with its length; a PHP list is the same thing. The container references
+     * every child, so the list may be dropped afterwards.
+     */
+    public function __construct(array $children)
+    {
+        unset($children);
+    }
+}
+/**
+ * The corner indices used by `GskRoundedRect`.
+ */
+enum GskCorner : int
+{
+    case TopLeft = 0;
+    case TopRight = 1;
+    case BottomRight = 2;
+    case BottomLeft = 3;
+}
+/**
+ * A render node cross fading between two child nodes.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskCrossFadeNode extends GskRenderNode
+{
+    /** Creates a `GskRenderNode` that will do a cross-fade between $start and $end. */
+    public function __construct(GskRenderNode $start, GskRenderNode $end, float $progress)
+    {
+        unset($start);
+        unset($end);
+        unset($progress);
+    }
+    /** Retrieves the child `GskRenderNode` at the end of the cross-fade. */
+    public function get_end_child(): GskRenderNode
+    {
+        return null;
+    }
+    /** Retrieves the progress value of the cross fade. */
+    public function get_progress(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the child `GskRenderNode` at the beginning of the cross-fade. */
+    public function get_start_child(): GskRenderNode
+    {
+        return null;
+    }
+}
+/**
+ * A render node that emits a debugging message when drawing its child node.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskDebugNode extends GskRenderNode
+{
+    /** Creates a `GskRenderNode` that will add debug information about the given $child. */
+    public function __construct(GskRenderNode $child, string $message)
+    {
+        unset($child);
+        unset($message);
+    }
+    /** Gets the child node that is getting drawn by the given $node. */
+    public function get_child(): GskRenderNode
+    {
+        return null;
+    }
+    /** Gets the debug message that was set on this node */
+    public function get_message(): string
+    {
+        return '';
+    }
+}
+/**
+ * A render node filling the area given by `Path` and `FillRule` with the child node.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskFillNode extends GskRenderNode
+{
+    /**
+     * Creates a `GskRenderNode` that will fill the $child in the area given by $path and
+     * $fill_rule.
+     */
+    public function __construct(GskRenderNode $child, GskPath $path, GskFillRule $fill_rule)
+    {
+        unset($child);
+        unset($path);
+        unset($fill_rule);
+    }
+    /** Gets the child node that is getting drawn by the given $node. */
+    public function get_child(): GskRenderNode
+    {
+        return null;
+    }
+    /** Retrieves the fill rule used to determine how the path is filled. */
+    public function get_fill_rule(): GskFillRule
+    {
+        return null;
+    }
+    /** Retrieves the path used to describe the area filled with the contents of the $node. */
+    public function get_path(): GskPath
+    {
+        return null;
+    }
+}
+/**
  * `GskFillRule` is used to select how paths are filled.
  */
 enum GskFillRule : int
 {
     case Winding = 0;
     case EvenOdd = 1;
+}
+class GskGLRenderer extends GskRenderer
+{
+    /** Creates a new `GskRenderer` using the new OpenGL renderer. */
+    public function __construct()
+    {
+    }
+}
+/**
+ * A render node for an inset shadow.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskInsetShadowNode extends GskRenderNode
+{
+    /** Creates a `GskRenderNode` that will render an inset shadow into the box given by $outline. */
+    public function __construct(GskRoundedRect $outline, GdkRGBA $color, float $dx, float $dy, float $spread, float $blur_radius)
+    {
+        unset($outline);
+        unset($color);
+        unset($dx);
+        unset($dy);
+        unset($spread);
+        unset($blur_radius);
+    }
+    /** Retrieves the blur radius to apply to the shadow. */
+    public function get_blur_radius(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the color of the inset shadow. */
+    public function get_color(): GdkRGBA
+    {
+        return null;
+    }
+    /** Retrieves the horizontal offset of the inset shadow. */
+    public function get_dx(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the vertical offset of the inset shadow. */
+    public function get_dy(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the outline rectangle of the inset shadow. */
+    public function get_outline(): GskRoundedRect
+    {
+        return null;
+    }
+    /** Retrieves how much the shadow spreads inwards. */
+    public function get_spread(): float
+    {
+        return 0.0;
+    }
+}
+/**
+ * Specifies how to render the start and end points of contours or dashes when stroking.
+ */
+enum GskLineCap : int
+{
+    case Butt = 0;
+    case Round = 1;
+    case Square = 2;
+}
+/**
+ * Specifies how to render the junction of two lines when stroking.
+ */
+enum GskLineJoin : int
+{
+    case Miter = 0;
+    case Round = 1;
+    case Bevel = 2;
+}
+/**
+ * A render node for a linear gradient.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskLinearGradientNode extends GskRenderNode
+{
+    /** Retrieves the final point of the linear gradient. */
+    public function get_end(): GraphenePoint
+    {
+        return null;
+    }
+    /** Retrieves the number of color stops in the gradient. */
+    public function get_n_color_stops(): int
+    {
+        return 0;
+    }
+    /** Retrieves the initial point of the linear gradient. */
+    public function get_start(): GraphenePoint
+    {
+        return null;
+    }
+    /**
+     * A linear gradient from $start to $end over $bounds, through $color_stops: at least two
+     * `[float $offset, GdkRGBA $color]` pairs with offsets ascending from 0.0 to 1.0.
+     */
+    public function __construct(GrapheneRect $bounds, GraphenePoint $start, GraphenePoint $end, array $color_stops)
+    {
+        unset($bounds);
+        unset($start);
+        unset($end);
+        unset($color_stops);
+    }
+    /**
+     * The colour stops, as the `[float $offset, GdkRGBA $color]` pairs the constructor took.
+     *
+     * @return list<array{float, GdkRGBA}>
+     */
+    public function get_color_stops(): array
+    {
+        return [];
+    }
 }
 /**
  * The mask modes available for mask nodes.
@@ -4116,6 +5479,830 @@ enum GskMaskMode : int
     case InvertedLuminance = 3;
 }
 /**
+ * A render node masking one child node with another.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskMaskNode extends GskRenderNode
+{
+    /** Creates a `GskRenderNode` that will mask a given node by another. */
+    public function __construct(GskRenderNode $source, GskRenderNode $mask, GskMaskMode $mask_mode)
+    {
+        unset($source);
+        unset($mask);
+        unset($mask_mode);
+    }
+    /** Retrieves the mask `GskRenderNode` child of the $node. */
+    public function get_mask(): GskRenderNode
+    {
+        return null;
+    }
+    /** Retrieves the mask mode used by $node. */
+    public function get_mask_mode(): GskMaskMode
+    {
+        return null;
+    }
+    /** Retrieves the source `GskRenderNode` child of the $node. */
+    public function get_source(): GskRenderNode
+    {
+        return null;
+    }
+}
+/**
+ * A render node controlling the opacity of its single child node.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskOpacityNode extends GskRenderNode
+{
+    /** Creates a `GskRenderNode` that will drawn the $child with reduced $opacity. */
+    public function __construct(GskRenderNode $child, float $opacity)
+    {
+        unset($child);
+        unset($opacity);
+    }
+    /** Gets the child node that is getting opacityed by the given $node. */
+    public function get_child(): GskRenderNode
+    {
+        return null;
+    }
+    /** Gets the transparency factor for an opacity node. */
+    public function get_opacity(): float
+    {
+        return 0.0;
+    }
+}
+/**
+ * A render node for an outset shadow.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskOutsetShadowNode extends GskRenderNode
+{
+    /**
+     * Creates a `GskRenderNode` that will render an outset shadow around the box given by
+     * $outline.
+     */
+    public function __construct(GskRoundedRect $outline, GdkRGBA $color, float $dx, float $dy, float $spread, float $blur_radius)
+    {
+        unset($outline);
+        unset($color);
+        unset($dx);
+        unset($dy);
+        unset($spread);
+        unset($blur_radius);
+    }
+    /** Retrieves the blur radius of the shadow. */
+    public function get_blur_radius(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the color of the outset shadow. */
+    public function get_color(): GdkRGBA
+    {
+        return null;
+    }
+    /** Retrieves the horizontal offset of the outset shadow. */
+    public function get_dx(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the vertical offset of the outset shadow. */
+    public function get_dy(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the outline rectangle of the outset shadow. */
+    public function get_outline(): GskRoundedRect
+    {
+        return null;
+    }
+    /** Retrieves how much the shadow spreads outwards. */
+    public function get_spread(): float
+    {
+        return 0.0;
+    }
+}
+/**
+ * A `GskPath` describes lines and curves that are more complex than simple rectangles.
+ */
+final class GskPath
+{
+    /** GskPath values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Computes the bounds of the given path. */
+    public function get_bounds(): ?GrapheneRect
+    {
+        return null;
+    }
+    /**
+     * Computes the closest point on the path to the given point and sets the $result to it.
+     *
+     * @return array{GskPathPoint, float}|null
+     */
+    public function get_closest_point(GraphenePoint $point, float $threshold): ?array
+    {
+        unset($point);
+        unset($threshold);
+        return null;
+    }
+    /** Gets the end point of the path. */
+    public function get_end_point(): ?GskPathPoint
+    {
+        return null;
+    }
+    /** Gets the start point of the path. */
+    public function get_start_point(): ?GskPathPoint
+    {
+        return null;
+    }
+    /** Computes the bounds for stroking the given path with the parameters in $stroke. */
+    public function get_stroke_bounds(GskStroke $stroke): ?GrapheneRect
+    {
+        unset($stroke);
+        return null;
+    }
+    /**
+     * Returns whether the given point is inside the area that would be affected if the path was
+     * filled according to $fill_rule.
+     */
+    public function in_fill(GraphenePoint $point, GskFillRule $fill_rule): bool
+    {
+        unset($point);
+        unset($fill_rule);
+        return false;
+    }
+    /** Returns if the path represents a single closed contour. */
+    public function is_closed(): bool
+    {
+        return false;
+    }
+    /** Checks if the path is empty, i.e. contains no lines or curves. */
+    public function is_empty(): bool
+    {
+        return false;
+    }
+    /** Appends the given $path to the given cairo context for drawing with Cairo. */
+    public function to_cairo(CairoContext $cr): void
+    {
+        unset($cr);
+    }
+    /** Converts the path into a string that is suitable for printing. */
+    public function to_string(): string
+    {
+        return '';
+    }
+    /** This is a convenience function that constructs a `GskPath` from a serialized form. */
+    public static function parse(string $string): ?GskPath
+    {
+        unset($string);
+        return null;
+    }
+}
+/**
+ * `GskPathBuilder` is an auxiliary object for constructing `GskPath` objects.
+ */
+final class GskPathBuilder
+{
+    /** Create a new `GskPathBuilder` object. */
+    public function __construct()
+    {
+    }
+    /** Adds a circle with the $center and $radius. */
+    public function add_circle(GraphenePoint $center, float $radius): void
+    {
+        unset($center);
+        unset($radius);
+    }
+    /** Appends all of $path to the builder. */
+    public function add_path(GskPath $path): void
+    {
+        unset($path);
+    }
+    /** Adds $rect as a new contour to the path built by the builder. */
+    public function add_rect(GrapheneRect $rect): void
+    {
+        unset($rect);
+    }
+    /** Appends all of $path to the builder, in reverse order. */
+    public function add_reverse_path(GskPath $path): void
+    {
+        unset($path);
+    }
+    /** Adds $rect as a new contour to the path built in $self. */
+    public function add_rounded_rect(GskRoundedRect $rect): void
+    {
+        unset($rect);
+    }
+    /** Adds to $self the segment of $path from $start to $end. */
+    public function add_segment(GskPath $path, GskPathPoint $start, GskPathPoint $end): void
+    {
+        unset($path);
+        unset($start);
+        unset($end);
+    }
+    /**
+     * Adds an elliptical arc from the current point to $x2, $y2 with $x1, $y1 determining the
+     * tangent directions.
+     */
+    public function arc_to(float $x1, float $y1, float $x2, float $y2): void
+    {
+        unset($x1);
+        unset($y1);
+        unset($x2);
+        unset($y2);
+    }
+    /** Ends the current contour with a line back to the start point. */
+    public function close(): void
+    {
+    }
+    /**
+     * Adds a [conic curve](https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline) from the
+     * current point to $x2, $y2 with the given $weight and $x1, $y1 as the control point.
+     */
+    public function conic_to(float $x1, float $y1, float $x2, float $y2, float $weight): void
+    {
+        unset($x1);
+        unset($y1);
+        unset($x2);
+        unset($y2);
+        unset($weight);
+    }
+    /**
+     * Adds a [cubic Bézier curve](https://en.wikipedia.org/wiki/B%C3%A9zier_curve) from the
+     * current point to $x3, $y3 with $x1, $y1 and $x2, $y2 as the control points.
+     */
+    public function cubic_to(float $x1, float $y1, float $x2, float $y2, float $x3, float $y3): void
+    {
+        unset($x1);
+        unset($y1);
+        unset($x2);
+        unset($y2);
+        unset($x3);
+        unset($y3);
+    }
+    /** Gets the current point. */
+    public function get_current_point(): GraphenePoint
+    {
+        return null;
+    }
+    /** Implements arc-to according to the HTML Canvas spec. */
+    public function html_arc_to(float $x1, float $y1, float $x2, float $y2, float $radius): void
+    {
+        unset($x1);
+        unset($y1);
+        unset($x2);
+        unset($y2);
+        unset($radius);
+    }
+    /** Draws a line from the current point to $x, $y and makes it the new current point. */
+    public function line_to(float $x, float $y): void
+    {
+        unset($x);
+        unset($y);
+    }
+    /** Starts a new contour by placing the pen at $x, $y. */
+    public function move_to(float $x, float $y): void
+    {
+        unset($x);
+        unset($y);
+    }
+    /**
+     * Adds a [quadratic Bézier curve](https://en.wikipedia.org/wiki/B%C3%A9zier_curve) from the
+     * current point to $x2, $y2 with $x1, $y1 as the control point.
+     */
+    public function quad_to(float $x1, float $y1, float $x2, float $y2): void
+    {
+        unset($x1);
+        unset($y1);
+        unset($x2);
+        unset($y2);
+    }
+    /**
+     * Adds an elliptical arc from the current point to $x2, $y2 with $x1, $y1 determining the
+     * tangent directions.
+     */
+    public function rel_arc_to(float $x1, float $y1, float $x2, float $y2): void
+    {
+        unset($x1);
+        unset($y1);
+        unset($x2);
+        unset($y2);
+    }
+    /**
+     * Adds a [conic curve](https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline) from the
+     * current point to $x2, $y2 with the given $weight and $x1, $y1 as the control point.
+     */
+    public function rel_conic_to(float $x1, float $y1, float $x2, float $y2, float $weight): void
+    {
+        unset($x1);
+        unset($y1);
+        unset($x2);
+        unset($y2);
+        unset($weight);
+    }
+    /**
+     * Adds a [cubic Bézier curve](https://en.wikipedia.org/wiki/B%C3%A9zier_curve) from the
+     * current point to $x3, $y3 with $x1, $y1 and $x2, $y2 as the control points.
+     */
+    public function rel_cubic_to(float $x1, float $y1, float $x2, float $y2, float $x3, float $y3): void
+    {
+        unset($x1);
+        unset($y1);
+        unset($x2);
+        unset($y2);
+        unset($x3);
+        unset($y3);
+    }
+    /** Implements arc-to according to the HTML Canvas spec. */
+    public function rel_html_arc_to(float $x1, float $y1, float $x2, float $y2, float $radius): void
+    {
+        unset($x1);
+        unset($y1);
+        unset($x2);
+        unset($y2);
+        unset($radius);
+    }
+    /**
+     * Draws a line from the current point to a point offset from it by $x, $y and makes it the new
+     * current point.
+     */
+    public function rel_line_to(float $x, float $y): void
+    {
+        unset($x);
+        unset($y);
+    }
+    /** Starts a new contour by placing the pen at $x, $y relative to the current point. */
+    public function rel_move_to(float $x, float $y): void
+    {
+        unset($x);
+        unset($y);
+    }
+    /**
+     * Adds a [quadratic Bézier curve](https://en.wikipedia.org/wiki/B%C3%A9zier_curve) from the
+     * current point to $x2, $y2 with $x1, $y1 the control point.
+     */
+    public function rel_quad_to(float $x1, float $y1, float $x2, float $y2): void
+    {
+        unset($x1);
+        unset($y1);
+        unset($x2);
+        unset($y2);
+    }
+    /** Implements arc-to according to the SVG spec. */
+    public function rel_svg_arc_to(float $rx, float $ry, float $x_axis_rotation, bool $large_arc, bool $positive_sweep, float $x, float $y): void
+    {
+        unset($rx);
+        unset($ry);
+        unset($x_axis_rotation);
+        unset($large_arc);
+        unset($positive_sweep);
+        unset($x);
+        unset($y);
+    }
+    /** Implements arc-to according to the SVG spec. */
+    public function svg_arc_to(float $rx, float $ry, float $x_axis_rotation, bool $large_arc, bool $positive_sweep, float $x, float $y): void
+    {
+        unset($rx);
+        unset($ry);
+        unset($x_axis_rotation);
+        unset($large_arc);
+        unset($positive_sweep);
+        unset($x);
+        unset($y);
+    }
+    /** Creates a new `GskPath` from the given builder. */
+    public function to_path(): GskPath
+    {
+        return null;
+    }
+}
+/**
+ * The values of the `GskPathDirection` enum are used to pick one of the four tangents at a given
+ * point on the path.
+ */
+enum GskPathDirection : int
+{
+    case FromStart = 0;
+    case ToStart = 1;
+    case ToEnd = 2;
+    case FromEnd = 3;
+}
+/**
+ * Flags that can be passed to gsk_path_foreach() to influence what kinds of operations the path is
+ * decomposed into.
+ */
+final class GskPathForeachFlags
+{
+    public const int ONLY_LINES = 0;
+    public const int QUAD = 1;
+    public const int CUBIC = 2;
+    public const int CONIC = 4;
+}
+/**
+ * `GskPathMeasure` is an object that allows measurements on `GskPath`s such as determining the
+ * length of the path.
+ */
+final class GskPathMeasure
+{
+    /** Creates a measure object for the given $path with the default tolerance. */
+    public function __construct(GskPath $path)
+    {
+        unset($path);
+    }
+    /** Creates a measure object for the given $path and $tolerance. */
+    public static function new_with_tolerance(GskPath $path, float $tolerance): GskPathMeasure
+    {
+        unset($path);
+        unset($tolerance);
+        return null;
+    }
+    /** Gets the length of the path being measured. */
+    public function get_length(): float
+    {
+        return 0.0;
+    }
+    /** Returns the path that the measure was created for. */
+    public function get_path(): GskPath
+    {
+        return null;
+    }
+    /** Sets $result to the point at the given distance into the path. */
+    public function get_point(float $distance): ?GskPathPoint
+    {
+        unset($distance);
+        return null;
+    }
+    /** Returns the tolerance that the measure was created with. */
+    public function get_tolerance(): float
+    {
+        return 0.0;
+    }
+}
+/**
+ * `GskPathPoint` is an opaque type representing a point on a path.
+ */
+final class GskPathPoint
+{
+    /** GskPathPoint values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Returns whether $point1 is before or after $point2. */
+    public function compare(GskPathPoint $point2): int
+    {
+        unset($point2);
+        return 0;
+    }
+    /** Returns whether the two path points refer to the same location on all paths. */
+    public function equal(GskPathPoint $point2): bool
+    {
+        unset($point2);
+        return false;
+    }
+    /** Returns the distance from the beginning of the path to $point. */
+    public function get_distance(GskPathMeasure $measure): float
+    {
+        unset($measure);
+        return 0.0;
+    }
+    /** Gets the position of the point. */
+    public function get_position(GskPath $path): GraphenePoint
+    {
+        unset($path);
+        return null;
+    }
+    /** Gets the direction of the tangent at a given point. */
+    public function get_rotation(GskPath $path, GskPathDirection $direction): float
+    {
+        unset($path);
+        unset($direction);
+        return 0.0;
+    }
+}
+/**
+ * A render node for a radial gradient.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskRadialGradientNode extends GskRenderNode
+{
+    /** Retrieves the center pointer for the gradient. */
+    public function get_center(): GraphenePoint
+    {
+        return null;
+    }
+    /** Retrieves the end value for the gradient. */
+    public function get_end(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the horizontal radius for the gradient. */
+    public function get_hradius(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the number of color stops in the gradient. */
+    public function get_n_color_stops(): int
+    {
+        return 0;
+    }
+    /** Retrieves the start value for the gradient. */
+    public function get_start(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the vertical radius for the gradient. */
+    public function get_vradius(): float
+    {
+        return 0.0;
+    }
+    /**
+     * A radial gradient around $center over $bounds: an ellipse of $hradius by $vradius, painted
+     * from $start to $end (fractions of the radii, 0.0 to 1.0), through $color_stops - at least two
+     * `[float $offset, GdkRGBA $color]` pairs with offsets ascending from 0.0 to 1.0.
+     */
+    public function __construct(GrapheneRect $bounds, GraphenePoint $center, float $hradius, float $vradius, float $start, float $end, array $color_stops)
+    {
+        unset($bounds);
+        unset($center);
+        unset($hradius);
+        unset($vradius);
+        unset($start);
+        unset($end);
+        unset($color_stops);
+    }
+    /**
+     * The colour stops, as the `[float $offset, GdkRGBA $color]` pairs the constructor took.
+     *
+     * @return list<array{float, GdkRGBA}>
+     */
+    public function get_color_stops(): array
+    {
+        return [];
+    }
+}
+/**
+ * `GskRenderNode` is the basic block in a scene graph to be rendered using `Renderer`.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+class GskRenderNode
+{
+    /** GskRenderNode is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Draw the contents of $node to the given cairo context. */
+    public function draw(CairoContext $cr): void
+    {
+        unset($cr);
+    }
+    /** Retrieves the boundaries of the $node. */
+    public function get_bounds(): GrapheneRect
+    {
+        return null;
+    }
+    /** Returns the type of the $node. */
+    public function get_node_type(): GskRenderNodeType
+    {
+        return null;
+    }
+    /**
+     * Serializes the $node for later deserialization via gsk_render_node_deserialize(). No
+     * guarantees are made about the format used other than that the same version of GTK will be
+     * able to deserialize the result of a call to gsk_render_node_serialize() and
+     * gsk_render_node_deserialize() will correctly reject files it cannot open that were created
+     * with previous versions of GTK.
+     */
+    public function serialize(): string
+    {
+        return '';
+    }
+    /** This function is equivalent to calling `serialize` followed by `file_set_contents`. */
+    public function write_to_file(string $filename): bool
+    {
+        unset($filename);
+        return false;
+    }
+    /**
+     * The node tree serialize() wrote, read back; text that is not one is a ValueError.
+     *
+     * GIR takes an error callback next to the bytes; the first error it reports (line, column,
+     * message) is what the ValueError says, so nothing has to be wired up to find out why a
+     * `.node` file did not load.
+     */
+    public static function deserialize(string $bytes): GskRenderNode
+    {
+        unset($bytes);
+        return null;
+    }
+}
+/**
+ * The type of a node determines what the node is rendering.
+ */
+enum GskRenderNodeType : int
+{
+    case NotARenderNode = 0;
+    case ContainerNode = 1;
+    case CairoNode = 2;
+    case ColorNode = 3;
+    case LinearGradientNode = 4;
+    case RepeatingLinearGradientNode = 5;
+    case RadialGradientNode = 6;
+    case RepeatingRadialGradientNode = 7;
+    case ConicGradientNode = 8;
+    case BorderNode = 9;
+    case TextureNode = 10;
+    case InsetShadowNode = 11;
+    case OutsetShadowNode = 12;
+    case TransformNode = 13;
+    case OpacityNode = 14;
+    case ColorMatrixNode = 15;
+    case RepeatNode = 16;
+    case ClipNode = 17;
+    case RoundedClipNode = 18;
+    case ShadowNode = 19;
+    case BlendNode = 20;
+    case CrossFadeNode = 21;
+    case TextNode = 22;
+    case BlurNode = 23;
+    case DebugNode = 24;
+    case GlShaderNode = 25;
+    case TextureScaleNode = 26;
+    case MaskNode = 27;
+    case FillNode = 28;
+    case StrokeNode = 29;
+    case SubsurfaceNode = 30;
+}
+/**
+ * `GskRenderer` is a class that renders a scene graph defined via a tree of `RenderNode`
+ * instances.
+ *
+ * @property-read bool $realized
+ * @property-read ?GdkSurface $surface
+ */
+class GskRenderer extends GObject
+{
+    /** GskRenderer is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    public function __construct()
+    {
+    }
+    /** Creates an appropriate `GskRenderer` instance for the given $surface. */
+    public static function new_for_surface(GdkSurface $surface): GskRenderer
+    {
+        unset($surface);
+        return null;
+    }
+    /** Retrieves the `GdkSurface` set using gsk_enderer_realize(). */
+    public function get_surface(): ?GdkSurface
+    {
+        return null;
+    }
+    /** Checks whether the $renderer is realized or not. */
+    public function is_realized(): bool
+    {
+        return false;
+    }
+    /** Creates the resources needed by the $renderer to render the scene graph. */
+    public function realize(?GdkSurface $surface): bool
+    {
+        unset($surface);
+        return false;
+    }
+    /** Creates the resources needed by the $renderer to render the scene graph. */
+    public function realize_for_display(GdkDisplay $display): bool
+    {
+        unset($display);
+        return false;
+    }
+    /**
+     * Renders the scene graph, described by a tree of `GskRenderNode` instances, to a
+     * `GdkTexture`.
+     */
+    public function render_texture(GskRenderNode $root, ?GrapheneRect $viewport): GdkTexture
+    {
+        unset($root);
+        unset($viewport);
+        return null;
+    }
+    /** Releases all the resources created by gsk_renderer_realize(). */
+    public function unrealize(): void
+    {
+    }
+}
+/**
+ * A render node repeating its single child node.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskRepeatNode extends GskRenderNode
+{
+    /** Creates a `GskRenderNode` that will repeat the drawing of $child across the given $bounds. */
+    public function __construct(GrapheneRect $bounds, GskRenderNode $child, ?GrapheneRect $child_bounds = null)
+    {
+        unset($bounds);
+        unset($child);
+        unset($child_bounds);
+    }
+    /** Retrieves the child of $node. */
+    public function get_child(): GskRenderNode
+    {
+        return null;
+    }
+    /** Retrieves the bounding rectangle of the child of $node. */
+    public function get_child_bounds(): GrapheneRect
+    {
+        return null;
+    }
+}
+/**
+ * A render node for a repeating linear gradient.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskRepeatingLinearGradientNode extends GskRenderNode
+{
+    /**
+     * A linear gradient from $start to $end, repeated over $bounds, through $color_stops: at least two
+     * `[float $offset, GdkRGBA $color]` pairs with offsets ascending from 0.0 to 1.0.
+     */
+    public function __construct(GrapheneRect $bounds, GraphenePoint $start, GraphenePoint $end, array $color_stops)
+    {
+        unset($bounds);
+        unset($start);
+        unset($end);
+        unset($color_stops);
+    }
+}
+/**
+ * A render node for a repeating radial gradient.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskRepeatingRadialGradientNode extends GskRenderNode
+{
+    /**
+     * A radial gradient around $center, repeated over $bounds: an ellipse of $hradius by $vradius, painted
+     * from $start to $end (fractions of the radii, 0.0 to 1.0), through $color_stops - at least two
+     * `[float $offset, GdkRGBA $color]` pairs with offsets ascending from 0.0 to 1.0.
+     */
+    public function __construct(GrapheneRect $bounds, GraphenePoint $center, float $hradius, float $vradius, float $start, float $end, array $color_stops)
+    {
+        unset($bounds);
+        unset($center);
+        unset($hradius);
+        unset($vradius);
+        unset($start);
+        unset($end);
+        unset($color_stops);
+    }
+}
+/**
+ * A render node applying a rounded rectangle clip to its single child.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskRoundedClipNode extends GskRenderNode
+{
+    /** Creates a `GskRenderNode` that will clip the $child to the area given by $clip. */
+    public function __construct(GskRenderNode $child, GskRoundedRect $clip)
+    {
+        unset($child);
+        unset($clip);
+    }
+    /** Gets the child node that is getting clipped by the given $node. */
+    public function get_child(): GskRenderNode
+    {
+        return null;
+    }
+    /** Retrieves the rounded rectangle used to clip the contents of the $node. */
+    public function get_clip(): GskRoundedRect
+    {
+        return null;
+    }
+}
+/**
  * The filters used when scaling texture data.
  */
 enum GskScalingFilter : int
@@ -4123,6 +6310,449 @@ enum GskScalingFilter : int
     case Linear = 0;
     case Nearest = 1;
     case Trilinear = 2;
+}
+/**
+ * A render node drawing one or more shadows behind its single child node.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskShadowNode extends GskRenderNode
+{
+    /** Retrieves the child `GskRenderNode` of the shadow $node. */
+    public function get_child(): GskRenderNode
+    {
+        return null;
+    }
+    /** Retrieves the number of shadows in the $node. */
+    public function get_n_shadows(): int
+    {
+        return 0;
+    }
+    /**
+     * $child drawn with drop shadows behind it: at least one `[GdkRGBA $color, float $dx, float $dy,
+     * float $radius]` list, painted in order.
+     */
+    public function __construct(GskRenderNode $child, array $shadows)
+    {
+        unset($child);
+        unset($shadows);
+    }
+    /**
+     * Shadow number $i (0 to get_n_shadows() - 1) as the `[GdkRGBA $color, float $dx, float $dy,
+     * float $radius]` list the constructor took.
+     *
+     * @return array{GdkRGBA, float, float, float}
+     */
+    public function get_shadow(int $i): array
+    {
+        unset($i);
+        return [];
+    }
+}
+/**
+ * A `GskStroke` struct collects the parameters that influence the operation of stroking a path.
+ */
+final class GskStroke
+{
+    /** Creates a new `GskStroke` with the given $line_width. */
+    public function __construct(float $line_width)
+    {
+        unset($line_width);
+    }
+    /** Returns the dash_offset of a `GskStroke`. */
+    public function get_dash_offset(): float
+    {
+        return 0.0;
+    }
+    /** Gets the line cap used. */
+    public function get_line_cap(): GskLineCap
+    {
+        return null;
+    }
+    /** Gets the line join used. */
+    public function get_line_join(): GskLineJoin
+    {
+        return null;
+    }
+    /** Gets the line width used. */
+    public function get_line_width(): float
+    {
+        return 0.0;
+    }
+    /** Returns the miter limit of a `GskStroke`. */
+    public function get_miter_limit(): float
+    {
+        return 0.0;
+    }
+    /** Sets the offset into the dash pattern where dashing should begin. */
+    public function set_dash_offset(float $offset): void
+    {
+        unset($offset);
+    }
+    /** Sets the line cap to be used when stroking. */
+    public function set_line_cap(GskLineCap $line_cap): void
+    {
+        unset($line_cap);
+    }
+    /** Sets the line join to be used when stroking. */
+    public function set_line_join(GskLineJoin $line_join): void
+    {
+        unset($line_join);
+    }
+    /** Sets the line width to be used when stroking. */
+    public function set_line_width(float $line_width): void
+    {
+        unset($line_width);
+    }
+    /** Sets the limit for the distance from the corner where sharp turns of joins get cut off. */
+    public function set_miter_limit(float $limit): void
+    {
+        unset($limit);
+    }
+    /** A helper function that sets the stroke parameters of $cr from the values found in $self. */
+    public function to_cairo(CairoContext $cr): void
+    {
+        unset($cr);
+    }
+    /**
+     * The dash pattern set_dash() took; an empty list for a solid line.
+     *
+     * @return list<float>
+     */
+    public function get_dash(): array
+    {
+        return [];
+    }
+    /**
+     * The dash pattern: alternating "on" and "off" lengths (a list of floats, none negative and
+     * not all zero); an empty list draws a solid line.
+     */
+    public function set_dash(array $dash): void
+    {
+        unset($dash);
+    }
+}
+/**
+ * A render node that will fill the area determined by stroking the the given `Path` using the
+ * `Stroke` attributes.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskStrokeNode extends GskRenderNode
+{
+    /**
+     * Creates a #GskRenderNode that will fill the outline generated by stroking the given $path
+     * using the attributes defined in $stroke.
+     */
+    public function __construct(GskRenderNode $child, GskPath $path, GskStroke $stroke)
+    {
+        unset($child);
+        unset($path);
+        unset($stroke);
+    }
+    /** Gets the child node that is getting drawn by the given $node. */
+    public function get_child(): GskRenderNode
+    {
+        return null;
+    }
+    /** Retrieves the path that will be stroked with the contents of the $node. */
+    public function get_path(): GskPath
+    {
+        return null;
+    }
+    /** Retrieves the stroke attributes used in this $node. */
+    public function get_stroke(): GskStroke
+    {
+        return null;
+    }
+}
+/**
+ * A render node that potentially diverts a part of the scene graph to a subsurface.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskSubsurfaceNode extends GskRenderNode
+{
+    /** GskSubsurfaceNode has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Gets the child node that is getting drawn by the given $node. */
+    public function get_child(): GskRenderNode
+    {
+        return null;
+    }
+}
+/**
+ * A render node drawing a set of glyphs.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskTextNode extends GskRenderNode
+{
+    /** GskTextNode has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Retrieves the color used by the text $node. */
+    public function get_color(): GdkRGBA
+    {
+        return null;
+    }
+    /** Retrieves the number of glyphs in the text node. */
+    public function get_num_glyphs(): int
+    {
+        return 0;
+    }
+    /** Retrieves the offset applied to the text. */
+    public function get_offset(): GraphenePoint
+    {
+        return null;
+    }
+    /** Checks whether the text $node has color glyphs. */
+    public function has_color_glyphs(): bool
+    {
+        return false;
+    }
+}
+/**
+ * A render node for a `GdkTexture`.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskTextureNode extends GskRenderNode
+{
+    /**
+     * Creates a `GskRenderNode` that will render the given $texture into the area given by
+     * $bounds.
+     */
+    public function __construct(GdkTexture $texture, GrapheneRect $bounds)
+    {
+        unset($texture);
+        unset($bounds);
+    }
+    /** Retrieves the `GdkTexture` used when creating this `GskRenderNode`. */
+    public function get_texture(): GdkTexture
+    {
+        return null;
+    }
+}
+/**
+ * A render node for a `GdkTexture`.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskTextureScaleNode extends GskRenderNode
+{
+    /**
+     * Creates a node that scales the texture to the size given by the bounds using the filter and
+     * then places it at the bounds' position.
+     */
+    public function __construct(GdkTexture $texture, GrapheneRect $bounds, GskScalingFilter $filter)
+    {
+        unset($texture);
+        unset($bounds);
+        unset($filter);
+    }
+    /** Retrieves the `GskScalingFilter` used when creating this `GskRenderNode`. */
+    public function get_filter(): GskScalingFilter
+    {
+        return null;
+    }
+    /** Retrieves the `GdkTexture` used when creating this `GskRenderNode`. */
+    public function get_texture(): GdkTexture
+    {
+        return null;
+    }
+}
+/**
+ * `GskTransform` is an object to describe transform matrices.
+ */
+final class GskTransform
+{
+    public function __construct()
+    {
+    }
+    /** Checks two transforms for equality. */
+    public function equal(?GskTransform $second): bool
+    {
+        unset($second);
+        return false;
+    }
+    /** Returns the category this transform belongs to. */
+    public function get_category(): GskTransformCategory
+    {
+        return null;
+    }
+    /** Inverts the given transform. */
+    public function invert(): ?GskTransform
+    {
+        return null;
+    }
+    /** Applies a perspective projection transform. */
+    public function perspective(float $depth): GskTransform
+    {
+        unset($depth);
+        return null;
+    }
+    /**
+     * Rotates $next $angle degrees in 2D - or in 3D-speak, around the Z axis. The rotation happens
+     * around the origin point of (0, 0).
+     */
+    public function rotate(float $angle): ?GskTransform
+    {
+        unset($angle);
+        return null;
+    }
+    /** Scales $next in 2-dimensional space by the given factors. */
+    public function scale(float $factor_x, float $factor_y): ?GskTransform
+    {
+        unset($factor_x);
+        unset($factor_y);
+        return null;
+    }
+    /** Scales $next by the given factors. */
+    public function scale_3d(float $factor_x, float $factor_y, float $factor_z): ?GskTransform
+    {
+        unset($factor_x);
+        unset($factor_y);
+        unset($factor_z);
+        return null;
+    }
+    /** Applies a skew transform. */
+    public function skew(float $skew_x, float $skew_y): ?GskTransform
+    {
+        unset($skew_x);
+        unset($skew_y);
+        return null;
+    }
+    /**
+     * Converts a `GskTransform` to a 2D transformation matrix.
+     *
+     * @return array{float, float, float, float, float, float}
+     */
+    public function to_2d(): array
+    {
+        return [];
+    }
+    /**
+     * Converts a `GskTransform` to 2D transformation factors.
+     *
+     * @return array{float, float, float, float, float, float, float}
+     */
+    public function to_2d_components(): array
+    {
+        return [];
+    }
+    /**
+     * Converts a `GskTransform` to 2D affine transformation factors.
+     *
+     * @return array{float, float, float, float}
+     */
+    public function to_affine(): array
+    {
+        return [];
+    }
+    /** Converts a matrix into a string that is suitable for printing. */
+    public function to_string(): string
+    {
+        return '';
+    }
+    /**
+     * Converts a `GskTransform` to a translation operation.
+     *
+     * @return array{float, float}
+     */
+    public function to_translate(): array
+    {
+        return [];
+    }
+    /** Applies all the operations from $other to $next. */
+    public function transform(?GskTransform $other): ?GskTransform
+    {
+        unset($other);
+        return null;
+    }
+    /** Transforms a `graphene_rect_t` using the given transform $self. */
+    public function transform_bounds(GrapheneRect $rect): GrapheneRect
+    {
+        unset($rect);
+        return null;
+    }
+    /** Transforms a `graphene_point_t` using the given transform $self. */
+    public function transform_point(GraphenePoint $point): GraphenePoint
+    {
+        unset($point);
+        return null;
+    }
+    /** Translates $next in 2-dimensional space by $point. */
+    public function translate(GraphenePoint $point): ?GskTransform
+    {
+        unset($point);
+        return null;
+    }
+    /**
+     * The transform to_string() wrote (or CSS transform syntax: "translate(5, 5) scale(2)"), or
+     * null when $string is not one - an empty string is the identity, also null.
+     *
+     * GIR answers through an out parameter next to a boolean; PHP gets the transform or null.
+     */
+    public static function parse(string $string): ?GskTransform
+    {
+        unset($string);
+        return null;
+    }
+}
+/**
+ * The categories of matrices relevant for GSK and GTK.
+ */
+enum GskTransformCategory : int
+{
+    case Unknown = 0;
+    case Any = 1;
+    case D3 = 2;
+    case D2 = 3;
+    case DAffine2 = 4;
+    case DTranslate2 = 5;
+    case Identity = 6;
+}
+/**
+ * A render node applying a `GskTransform` to its single child node.
+ *
+ * A handle on a refcounted GTK instance (neither a GObject nor a value type): the same
+ * instance wraps to the same handle while PHP holds it, and there is no PHP subclassing.
+ *
+ */
+final class GskTransformNode extends GskRenderNode
+{
+    /** Creates a `GskRenderNode` that will transform the given $child with the given $transform. */
+    public function __construct(GskRenderNode $child, GskTransform $transform)
+    {
+        unset($child);
+        unset($transform);
+    }
+    /** Gets the child node that is getting transformed by the given $node. */
+    public function get_child(): GskRenderNode
+    {
+        return null;
+    }
+    /** Retrieves the `GskTransform` used by the $node. */
+    public function get_transform(): GskTransform
+    {
+        return null;
+    }
 }
 /**
  * The `GtkAboutDialog` offers a simple way to display information about a program.
@@ -4331,6 +6961,10 @@ class GtkAboutDialog extends GtkWindow implements GtkNative, GtkRoot
     public function set_wrap_license(bool $wrap_license): void
     {
         unset($wrap_license);
+    }
+    public function get_renderer(): ?GskRenderer
+    {
+        return null;
     }
     public function get_surface(): ?GdkSurface
     {
@@ -4832,6 +7466,10 @@ class GtkApplicationWindow extends GtkWindow implements GActionMap, GtkNative, G
     public function remove_action(string $action_name): void
     {
         unset($action_name);
+    }
+    public function get_renderer(): ?GskRenderer
+    {
+        return null;
     }
     public function get_surface(): ?GdkSurface
     {
@@ -6328,6 +8966,10 @@ class GtkDragIcon extends GtkWidget implements GtkNative, GtkRoot
     {
         unset($child);
     }
+    public function get_renderer(): ?GskRenderer
+    {
+        return null;
+    }
     public function get_surface(): ?GdkSurface
     {
         return null;
@@ -6573,7 +9215,6 @@ class GtkDropDown extends GtkWidget
  *
  * @property int $actions
  * @property-read ?GdkDrop $current_drop
- * @property-read ?GdkDrop $drop
  * @property ?GdkContentFormats $formats
  * @property bool $preload
  */
@@ -8017,6 +10658,12 @@ class GtkFixed extends GtkWidget
         unset($widget);
         return [];
     }
+    /** Retrieves the transformation for $widget set using gtk_fixed_set_child_transform(). */
+    public function get_child_transform(GtkWidget $widget): ?GskTransform
+    {
+        unset($widget);
+        return null;
+    }
     /**
      * Sets a translation transformation to the given $x and $y coordinates to the child $widget of
      * the `GtkFixed`.
@@ -8039,6 +10686,12 @@ class GtkFixed extends GtkWidget
     {
         unset($widget);
     }
+    /** Sets the transformation for $widget. */
+    public function set_child_transform(GtkWidget $widget, ?GskTransform $transform): void
+    {
+        unset($widget);
+        unset($transform);
+    }
 }
 /**
  * `GtkFixedLayout` is a layout manager which can place child widgets at fixed positions.
@@ -8058,6 +10711,16 @@ class GtkFixedLayoutChild extends GtkLayoutChild
     /** GtkFixedLayoutChild has no constructor in GTK: instances come from GTK, never from `new`. */
     private function __construct()
     {
+    }
+    /** Retrieves the transformation of the child. */
+    public function get_transform(): ?GskTransform
+    {
+        return null;
+    }
+    /** Sets the transformation of the child of a `GtkFixedLayout`. */
+    public function set_transform(GskTransform $transform): void
+    {
+        unset($transform);
     }
 }
 /**
@@ -10298,6 +12961,8 @@ class GtkMultiSelection extends GObject implements GListModel, GtkSelectionModel
  */
 interface GtkNative
 {
+    /** Returns the renderer that is used for this `GtkNative`. */
+    public function get_renderer(): ?GskRenderer;
     /** Returns the surface of this `GtkNative`. */
     public function get_surface(): ?GdkSurface;
     /**
@@ -10322,6 +12987,10 @@ final class GtkNativeObject extends GObject implements GtkNative
     /** Never called: these handles only come from wrap(). */
     private function __construct()
     {
+    }
+    public function get_renderer(): ?GskRenderer
+    {
+        return null;
     }
     public function get_surface(): ?GdkSurface
     {
@@ -10751,6 +13420,20 @@ class GtkNotebookPage extends GObject
     }
 }
 /**
+ * Used to determine the layout of pages on a sheet when printing multiple pages per sheet.
+ */
+enum GtkNumberUpLayout : int
+{
+    case Lrtb = 0;
+    case Lrbt = 1;
+    case Rltb = 2;
+    case Rlbt = 3;
+    case Tblr = 4;
+    case Tbrl = 5;
+    case Btlr = 6;
+    case Btrl = 7;
+}
+/**
  * Describes the way two values can be compared.
  */
 enum GtkOrdering : int
@@ -10918,6 +13601,169 @@ enum GtkPackType : int
     case End = 1;
 }
 /**
+ * See also gtk_print_settings_set_orientation().
+ */
+enum GtkPageOrientation : int
+{
+    case Portrait = 0;
+    case Landscape = 1;
+    case ReversePortrait = 2;
+    case ReverseLandscape = 3;
+}
+/**
+ * See also gtk_print_job_set_page_set().
+ */
+enum GtkPageSet : int
+{
+    case All = 0;
+    case Even = 1;
+    case Odd = 2;
+}
+/**
+ * A `GtkPageSetup` object stores the page size, orientation and margins.
+ */
+class GtkPageSetup extends GObject
+{
+    /** Creates a new `GtkPageSetup`. */
+    public function __construct()
+    {
+    }
+    /** Reads the page setup from the file $file_name. */
+    public static function new_from_file(string $file_name): GtkPageSetup
+    {
+        unset($file_name);
+        return null;
+    }
+    /** Desrialize a page setup from an a{sv} variant. */
+    public static function new_from_gvariant(mixed $variant = null): GtkPageSetup
+    {
+        unset($variant);
+        return null;
+    }
+    /** Copies a `GtkPageSetup`. */
+    public function copy(): GtkPageSetup
+    {
+        return null;
+    }
+    /** Gets the bottom margin in units of $unit. */
+    public function get_bottom_margin(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Gets the left margin in units of $unit. */
+    public function get_left_margin(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Gets the page orientation of the `GtkPageSetup`. */
+    public function get_orientation(): GtkPageOrientation
+    {
+        return null;
+    }
+    /** Returns the page height in units of $unit. */
+    public function get_page_height(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Returns the page width in units of $unit. */
+    public function get_page_width(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Returns the paper height in units of $unit. */
+    public function get_paper_height(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Gets the paper size of the `GtkPageSetup`. */
+    public function get_paper_size(): GtkPaperSize
+    {
+        return null;
+    }
+    /** Returns the paper width in units of $unit. */
+    public function get_paper_width(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Gets the right margin in units of $unit. */
+    public function get_right_margin(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Gets the top margin in units of $unit. */
+    public function get_top_margin(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Reads the page setup from the file $file_name. */
+    public function load_file(string $file_name): bool
+    {
+        unset($file_name);
+        return false;
+    }
+    /** Sets the bottom margin of the `GtkPageSetup`. */
+    public function set_bottom_margin(float $margin, GtkUnit $unit): void
+    {
+        unset($margin);
+        unset($unit);
+    }
+    /** Sets the left margin of the `GtkPageSetup`. */
+    public function set_left_margin(float $margin, GtkUnit $unit): void
+    {
+        unset($margin);
+        unset($unit);
+    }
+    /** Sets the page orientation of the `GtkPageSetup`. */
+    public function set_orientation(GtkPageOrientation $orientation): void
+    {
+        unset($orientation);
+    }
+    /** Sets the paper size of the `GtkPageSetup` without changing the margins. */
+    public function set_paper_size(GtkPaperSize $size): void
+    {
+        unset($size);
+    }
+    /**
+     * Sets the paper size of the `GtkPageSetup` and modifies the margins according to the new
+     * paper size.
+     */
+    public function set_paper_size_and_default_margins(GtkPaperSize $size): void
+    {
+        unset($size);
+    }
+    /** Sets the right margin of the `GtkPageSetup`. */
+    public function set_right_margin(float $margin, GtkUnit $unit): void
+    {
+        unset($margin);
+        unset($unit);
+    }
+    /** Sets the top margin of the `GtkPageSetup`. */
+    public function set_top_margin(float $margin, GtkUnit $unit): void
+    {
+        unset($margin);
+        unset($unit);
+    }
+    /** This function saves the information from $setup to $file_name. */
+    public function to_file(string $file_name): bool
+    {
+        unset($file_name);
+        return false;
+    }
+    /** Serialize page setup to an a{sv} variant. */
+    public function to_gvariant(): mixed
+    {
+        return null;
+    }
+}
+/**
  * Describes the panning direction of a `GesturePan`.
  */
 enum GtkPanDirection : int
@@ -11036,6 +13882,148 @@ class GtkPaned extends GtkWidget implements GtkOrientable
     public function set_orientation(GtkOrientation $orientation): void
     {
         unset($orientation);
+    }
+}
+/**
+ * `GtkPaperSize` handles paper sizes.
+ */
+final class GtkPaperSize
+{
+    /**
+     * Creates a new `GtkPaperSize` object by parsing a [PWG
+     * 5101.1-2002](ftp://ftp.pwg.org/pub/pwg/candidates/cs-pwgmsn10-20020226-5101.1.pdf) paper
+     * name.
+     */
+    public function __construct(?string $name = null)
+    {
+        unset($name);
+    }
+    /** Creates a new `GtkPaperSize` object with the given parameters. */
+    public static function new_custom(string $name, string $display_name, float $width, float $height, GtkUnit $unit): GtkPaperSize
+    {
+        unset($name);
+        unset($display_name);
+        unset($width);
+        unset($height);
+        unset($unit);
+        return null;
+    }
+    /** Deserialize a paper size from a `GVariant`. */
+    public static function new_from_gvariant(mixed $variant = null): GtkPaperSize
+    {
+        unset($variant);
+        return null;
+    }
+    /** Creates a new `GtkPaperSize` object by using IPP information. */
+    public static function new_from_ipp(string $ipp_name, float $width, float $height): GtkPaperSize
+    {
+        unset($ipp_name);
+        unset($width);
+        unset($height);
+        return null;
+    }
+    /** Creates a new `GtkPaperSize` object by using PPD information. */
+    public static function new_from_ppd(string $ppd_name, string $ppd_display_name, float $width, float $height): GtkPaperSize
+    {
+        unset($ppd_name);
+        unset($ppd_display_name);
+        unset($width);
+        unset($height);
+        return null;
+    }
+    /** Gets the default bottom margin for the `GtkPaperSize`. */
+    public function get_default_bottom_margin(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Gets the default left margin for the `GtkPaperSize`. */
+    public function get_default_left_margin(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Gets the default right margin for the `GtkPaperSize`. */
+    public function get_default_right_margin(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Gets the default top margin for the `GtkPaperSize`. */
+    public function get_default_top_margin(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Gets the human-readable name of the `GtkPaperSize`. */
+    public function get_display_name(): string
+    {
+        return '';
+    }
+    /** Gets the paper height of the `GtkPaperSize`, in units of $unit. */
+    public function get_height(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Gets the name of the `GtkPaperSize`. */
+    public function get_name(): string
+    {
+        return '';
+    }
+    /** Gets the PPD name of the `GtkPaperSize`, which may be `null`. */
+    public function get_ppd_name(): string
+    {
+        return '';
+    }
+    /** Gets the paper width of the `GtkPaperSize`, in units of $unit. */
+    public function get_width(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Returns `true` if $size is not a standard paper size. */
+    public function is_custom(): bool
+    {
+        return false;
+    }
+    /** Compares two `GtkPaperSize` objects. */
+    public function is_equal(GtkPaperSize $size2): bool
+    {
+        unset($size2);
+        return false;
+    }
+    /** Returns `true` if $size is an IPP standard paper size. */
+    public function is_ipp(): bool
+    {
+        return false;
+    }
+    /** Changes the dimensions of a $size to $width x $height. */
+    public function set_size(float $width, float $height, GtkUnit $unit): void
+    {
+        unset($width);
+        unset($height);
+        unset($unit);
+    }
+    /** Serialize a paper size to an `a{sv}` variant. */
+    public function to_gvariant(): mixed
+    {
+        return null;
+    }
+    /** Returns the name of the default paper size, which depends on the current locale. */
+    public static function get_default(): string
+    {
+        return '';
+    }
+    /**
+     * Creates a list of known paper sizes.
+     *
+     * @return list<GtkPaperSize>
+     */
+    public static function get_paper_sizes(bool $include_custom): array
+    {
+        unset($include_custom);
+        return [];
     }
 }
 /**
@@ -11182,7 +14170,6 @@ final class GtkPickFlags
  * @property ?string $alternative_text
  * @property bool $can_shrink
  * @property GtkContentFit $content_fit
- * @property bool $keep_aspect_ratio
  * @property ?GdkPaintable $paintable
  */
 class GtkPicture extends GtkWidget
@@ -11426,6 +14413,10 @@ class GtkPopover extends GtkWidget implements GtkNative
     public function popup(): void
     {
     }
+    public function get_renderer(): ?GskRenderer
+    {
+        return null;
+    }
     public function get_surface(): ?GdkSurface
     {
         return null;
@@ -11514,6 +14505,10 @@ class GtkPopoverMenu extends GtkPopover implements GtkNative
     {
         unset($model);
     }
+    public function get_renderer(): ?GskRenderer
+    {
+        return null;
+    }
     public function get_surface(): ?GdkSurface
     {
         return null;
@@ -11587,6 +14582,979 @@ enum GtkPositionType : int
     case Right = 1;
     case Top = 2;
     case Bottom = 3;
+}
+/**
+ * A `GtkPrintContext` encapsulates context information that is required when drawing pages for
+ * printing.
+ */
+class GtkPrintContext extends GObject
+{
+    /** GtkPrintContext has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Obtains the cairo context that is associated with the `GtkPrintContext`. */
+    public function get_cairo_context(): CairoContext
+    {
+        return null;
+    }
+    /** Obtains the horizontal resolution of the `GtkPrintContext`, in dots per inch. */
+    public function get_dpi_x(): float
+    {
+        return 0.0;
+    }
+    /** Obtains the vertical resolution of the `GtkPrintContext`, in dots per inch. */
+    public function get_dpi_y(): float
+    {
+        return 0.0;
+    }
+    /**
+     * Obtains the hardware printer margins of the `GtkPrintContext`, in units.
+     *
+     * @return array{float, float, float, float}|null
+     */
+    public function get_hard_margins(): ?array
+    {
+        return null;
+    }
+    /** Obtains the height of the `GtkPrintContext`, in pixels. */
+    public function get_height(): float
+    {
+        return 0.0;
+    }
+    /** Obtains the `GtkPageSetup` that determines the page dimensions of the `GtkPrintContext`. */
+    public function get_page_setup(): GtkPageSetup
+    {
+        return null;
+    }
+    /** Obtains the width of the `GtkPrintContext`, in pixels. */
+    public function get_width(): float
+    {
+        return 0.0;
+    }
+    /** Sets a new cairo context on a print context. */
+    public function set_cairo_context(CairoContext $cr, float $dpi_x, float $dpi_y): void
+    {
+        unset($cr);
+        unset($dpi_x);
+        unset($dpi_y);
+    }
+}
+/**
+ * A `GtkPrintDialog` object collects the arguments that are needed to present a print dialog to
+ * the user, such as a title for the dialog and whether it should be modal.
+ *
+ * @property ?string $accept_label
+ * @property bool $modal
+ * @property ?GtkPageSetup $page_setup
+ * @property ?GtkPrintSettings $print_settings
+ * @property ?string $title
+ */
+class GtkPrintDialog extends GObject
+{
+    /** Creates a new `GtkPrintDialog` object. */
+    public function __construct()
+    {
+    }
+    /** Returns the label that will be shown on the accept button of the print dialog. */
+    public function get_accept_label(): string
+    {
+        return '';
+    }
+    /**
+     * Returns whether the print dialog blocks interaction with the parent window while it is
+     * presented.
+     */
+    public function get_modal(): bool
+    {
+        return false;
+    }
+    /** Returns the page setup. */
+    public function get_page_setup(): ?GtkPageSetup
+    {
+        return null;
+    }
+    /** Returns the print settings for the print dialog. */
+    public function get_print_settings(): ?GtkPrintSettings
+    {
+        return null;
+    }
+    /** Returns the title that will be shown on the print dialog. */
+    public function get_title(): string
+    {
+        return '';
+    }
+    /** This function prints content from a stream. */
+    public function print(?GtkWindow $parent, ?GtkPrintSetup $setup, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($parent);
+        unset($setup);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** This function prints a file. */
+    public function print_file(?GtkWindow $parent, ?GtkPrintSetup $setup, string $file, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($parent);
+        unset($setup);
+        unset($file);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes the `print_file` call and returns the results. */
+    public function print_file_finish(GAsyncResult $result): bool
+    {
+        unset($result);
+        return false;
+    }
+    /**
+     * Sets the label that will be shown on the accept button of the print dialog shown for
+     * `setup`.
+     */
+    public function set_accept_label(string $accept_label): void
+    {
+        unset($accept_label);
+    }
+    /**
+     * Sets whether the print dialog blocks interaction with the parent window while it is
+     * presented.
+     */
+    public function set_modal(bool $modal): void
+    {
+        unset($modal);
+    }
+    /** Set the page setup for the print dialog. */
+    public function set_page_setup(GtkPageSetup $page_setup): void
+    {
+        unset($page_setup);
+    }
+    /** Sets the print settings for the print dialog. */
+    public function set_print_settings(GtkPrintSettings $print_settings): void
+    {
+        unset($print_settings);
+    }
+    /** Sets the title that will be shown on the print dialog. */
+    public function set_title(string $title): void
+    {
+        unset($title);
+    }
+    /**
+     * This function presents a print dialog to let the user select a printer, and set up print
+     * settings and page setup.
+     */
+    public function setup(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($parent);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes the `setup` call. */
+    public function setup_finish(GAsyncResult $result): ?GtkPrintSetup
+    {
+        unset($result);
+        return null;
+    }
+}
+/**
+ * See also gtk_print_settings_set_duplex().
+ */
+enum GtkPrintDuplex : int
+{
+    case Simplex = 0;
+    case Horizontal = 1;
+    case Vertical = 2;
+}
+/**
+ * `GtkPrintOperation` is the high-level, portable printing API.
+ *
+ * @property bool $allow_async
+ * @property int $current_page
+ * @property ?string $custom_tab_label
+ * @property ?GtkPageSetup $default_page_setup
+ * @property bool $embed_page_setup
+ * @property ?string $export_filename
+ * @property bool $has_selection
+ * @property ?string $job_name
+ * @property int $n_pages
+ * @property-read int $n_pages_to_print
+ * @property ?GtkPrintSettings $print_settings
+ * @property bool $show_progress
+ * @property-read GtkPrintStatus $status
+ * @property-read ?string $status_string
+ * @property bool $support_selection
+ * @property bool $track_print_status
+ * @property GtkUnit $unit
+ * @property bool $use_full_page
+ */
+class GtkPrintOperation extends GObject
+{
+    /** Creates a new `GtkPrintOperation`. */
+    public function __construct()
+    {
+    }
+    /** Cancels a running print operation. */
+    public function cancel(): void
+    {
+    }
+    /** Signal that drawing of particular page is complete. */
+    public function draw_page_finish(): void
+    {
+    }
+    /** Returns the default page setup. */
+    public function get_default_page_setup(): ?GtkPageSetup
+    {
+        return null;
+    }
+    /** Gets whether page setup selection combos are embedded */
+    public function get_embed_page_setup(): bool
+    {
+        return false;
+    }
+    /** Gets whether there is a selection. */
+    public function get_has_selection(): bool
+    {
+        return false;
+    }
+    /** Returns the number of pages that will be printed. */
+    public function get_n_pages_to_print(): int
+    {
+        return 0;
+    }
+    /** Returns the current print settings. */
+    public function get_print_settings(): ?GtkPrintSettings
+    {
+        return null;
+    }
+    /** Returns the status of the print operation. */
+    public function get_status(): GtkPrintStatus
+    {
+        return null;
+    }
+    /** Returns a string representation of the status of the print operation. */
+    public function get_status_string(): string
+    {
+        return '';
+    }
+    /** Gets whether the application supports print of selection */
+    public function get_support_selection(): bool
+    {
+        return false;
+    }
+    /** A convenience function to find out if the print operation is finished. */
+    public function is_finished(): bool
+    {
+        return false;
+    }
+    /** Sets whether gtk_print_operation_run() may return before the print operation is completed. */
+    public function set_allow_async(bool $allow_async): void
+    {
+        unset($allow_async);
+    }
+    /** Sets the current page. */
+    public function set_current_page(int $current_page): void
+    {
+        unset($current_page);
+    }
+    /** Sets the label for the tab holding custom widgets. */
+    public function set_custom_tab_label(?string $label): void
+    {
+        unset($label);
+    }
+    /** Makes $default_page_setup the default page setup for $op. */
+    public function set_default_page_setup(?GtkPageSetup $default_page_setup): void
+    {
+        unset($default_page_setup);
+    }
+    /**
+     * Sets up the `GtkPrintOperation` to wait for calling of
+     * [method@Gtk.PrintOperation.draw_page_finish from application.
+     */
+    public function set_defer_drawing(): void
+    {
+    }
+    /** Embed page size combo box and orientation combo box into page setup page. */
+    public function set_embed_page_setup(bool $embed): void
+    {
+        unset($embed);
+    }
+    /** Sets up the `GtkPrintOperation` to generate a file instead of showing the print dialog. */
+    public function set_export_filename(string $filename): void
+    {
+        unset($filename);
+    }
+    /** Sets whether there is a selection to print. */
+    public function set_has_selection(bool $has_selection): void
+    {
+        unset($has_selection);
+    }
+    /** Sets the name of the print job. */
+    public function set_job_name(string $job_name): void
+    {
+        unset($job_name);
+    }
+    /** Sets the number of pages in the document. */
+    public function set_n_pages(int $n_pages): void
+    {
+        unset($n_pages);
+    }
+    /** Sets the print settings for $op. */
+    public function set_print_settings(?GtkPrintSettings $print_settings): void
+    {
+        unset($print_settings);
+    }
+    /**
+     * If $show_progress is `true`, the print operation will show a progress dialog during the
+     * print operation.
+     */
+    public function set_show_progress(bool $show_progress): void
+    {
+        unset($show_progress);
+    }
+    /** Sets whether selection is supported by `GtkPrintOperation`. */
+    public function set_support_selection(bool $support_selection): void
+    {
+        unset($support_selection);
+    }
+    /**
+     * If track_status is `true`, the print operation will try to continue report on the status of
+     * the print job in the printer queues and printer.
+     */
+    public function set_track_print_status(bool $track_status): void
+    {
+        unset($track_status);
+    }
+    /**
+     * Sets up the transformation for the cairo context obtained from `GtkPrintContext` in such a
+     * way that distances are measured in units of $unit.
+     */
+    public function set_unit(GtkUnit $unit): void
+    {
+        unset($unit);
+    }
+    /**
+     * If $full_page is `true`, the transformation for the cairo context obtained from
+     * `GtkPrintContext` puts the origin at the top left corner of the page.
+     */
+    public function set_use_full_page(bool $full_page): void
+    {
+        unset($full_page);
+    }
+    /**
+     * Throws the GError behind a run() that answered GtkPrintOperationResult::Error (the `done`
+     * signal reports the same result); a LogicException when the last run did not end in one.
+     *
+     * GTK asserts when there is no error to propagate, so the binding asks first.
+     *
+     * @throws GError the error of the failed operation
+     */
+    public function get_error(): void
+    {
+    }
+    /**
+     * Runs the print operation: ACTION_PRINT_DIALOG shows the print dialog (over $parent), ACTION_PRINT
+     * prints straight away with the current settings, ACTION_PREVIEW shows the preview, ACTION_EXPORT
+     * writes the pages to the file set_export_filename() named - without any dialog. Blocks until the
+     * operation is done unless set_allow_async(true) was called; a failure is a GError.
+     *
+     * An export without a file name is a LogicException here, where GTK would only complain.
+     */
+    public function run(GtkPrintOperationAction $action, ?GtkWindow $parent): GtkPrintOperationResult
+    {
+        unset($action);
+        unset($parent);
+        return null;
+    }
+    /**
+     * Native `begin_print` (PrintOperationClass.begin_print): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_begin_print()` from an override. Signal emitted after the user
+     * has finished changing print settings in the dialog, before the actual rendering starts.
+     */
+    public function vfunc_begin_print(GtkPrintContext $context): void
+    {
+        unset($context);
+    }
+    /**
+     * Native `create_custom_widget` (PrintOperationClass.create_custom_widget): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_create_custom_widget()` from an
+     * override. Signal emitted when displaying the print dialog.
+     */
+    public function vfunc_create_custom_widget(): GtkWidget
+    {
+        return null;
+    }
+    /**
+     * Native `custom_widget_apply` (PrintOperationClass.custom_widget_apply): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_custom_widget_apply()` from an
+     * override. Signal emitted right before “begin-print” if you added a custom widget in the
+     * “create-custom-widget” handler.
+     */
+    public function vfunc_custom_widget_apply(GtkWidget $widget): void
+    {
+        unset($widget);
+    }
+    /**
+     * Native `done` (PrintOperationClass.done): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_done()` from an override. Signal emitted when the print operation run has
+     * finished doing everything required for printing.
+     */
+    public function vfunc_done(GtkPrintOperationResult $result): void
+    {
+        unset($result);
+    }
+    /**
+     * Native `draw_page` (PrintOperationClass.draw_page): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_draw_page()` from an override. Signal emitted for every page
+     * that is printed.
+     */
+    public function vfunc_draw_page(GtkPrintContext $context, int $page_nr): void
+    {
+        unset($context);
+        unset($page_nr);
+    }
+    /**
+     * Native `end_print` (PrintOperationClass.end_print): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_end_print()` from an override. Signal emitted after all pages
+     * have been rendered.
+     */
+    public function vfunc_end_print(GtkPrintContext $context): void
+    {
+        unset($context);
+    }
+    /**
+     * Native `paginate` (PrintOperationClass.paginate): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_paginate()` from an override. Signal emitted after the
+     * “begin-print” signal, but before the actual rendering starts.
+     */
+    public function vfunc_paginate(GtkPrintContext $context): bool
+    {
+        unset($context);
+        return false;
+    }
+    /**
+     * Native `request_page_setup` (PrintOperationClass.request_page_setup): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_request_page_setup()` from an override. Emitted
+     * once for every page that is printed, to give the application a chance to modify the page
+     * setup.
+     */
+    public function vfunc_request_page_setup(GtkPrintContext $context, int $page_nr, GtkPageSetup $setup): void
+    {
+        unset($context);
+        unset($page_nr);
+        unset($setup);
+    }
+    /**
+     * Native `status_changed` (PrintOperationClass.status_changed): the GTK implementation below
+     * any PHP subclass, for `parent::vfunc_status_changed()` from an override. Emitted at between
+     * the various phases of the print operation.
+     */
+    public function vfunc_status_changed(): void
+    {
+    }
+    /**
+     * Native `update_custom_widget` (PrintOperationClass.update_custom_widget): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_update_custom_widget()` from an
+     * override. Emitted after change of selected printer.
+     */
+    public function vfunc_update_custom_widget(GtkWidget $widget, GtkPageSetup $setup, GtkPrintSettings $settings): void
+    {
+        unset($widget);
+        unset($setup);
+        unset($settings);
+    }
+}
+/**
+ * Determines what action the print operation should perform.
+ */
+enum GtkPrintOperationAction : int
+{
+    case PrintDialog = 0;
+    case Print = 1;
+    case Preview = 2;
+    case Export = 3;
+}
+/**
+ * The result of a print operation.
+ */
+enum GtkPrintOperationResult : int
+{
+    case Error = 0;
+    case Apply = 1;
+    case Cancel = 2;
+    case InProgress = 3;
+}
+/**
+ * See also gtk_print_job_set_pages()
+ */
+enum GtkPrintPages : int
+{
+    case All = 0;
+    case Current = 1;
+    case Ranges = 2;
+    case Selection = 3;
+}
+/**
+ * See also gtk_print_settings_set_quality().
+ */
+enum GtkPrintQuality : int
+{
+    case Low = 0;
+    case Normal = 1;
+    case High = 2;
+    case Draft = 3;
+}
+/**
+ * A `GtkPrintSettings` object represents the settings of a print dialog in a system-independent
+ * way.
+ */
+class GtkPrintSettings extends GObject
+{
+    /** Creates a new `GtkPrintSettings` object. */
+    public function __construct()
+    {
+    }
+    /** Reads the print settings from $file_name. */
+    public static function new_from_file(string $file_name): GtkPrintSettings
+    {
+        unset($file_name);
+        return null;
+    }
+    /** Deserialize print settings from an a{sv} variant. */
+    public static function new_from_gvariant(mixed $variant = null): GtkPrintSettings
+    {
+        unset($variant);
+        return null;
+    }
+    /** Copies a `GtkPrintSettings` object. */
+    public function copy(): GtkPrintSettings
+    {
+        return null;
+    }
+    /** Calls $func for each key-value pair of $settings. */
+    public function foreach(callable $func): void
+    {
+        unset($func);
+    }
+    /** Looks up the string value associated with $key. */
+    public function get(string $key): ?string
+    {
+        unset($key);
+        return null;
+    }
+    /** Returns the boolean represented by the value that is associated with $key. */
+    public function get_bool(string $key): bool
+    {
+        unset($key);
+        return false;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_COLLATE. */
+    public function get_collate(): bool
+    {
+        return false;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_DEFAULT_SOURCE. */
+    public function get_default_source(): ?string
+    {
+        return null;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_DITHER. */
+    public function get_dither(): ?string
+    {
+        return null;
+    }
+    /** Returns the double value associated with $key, or 0. */
+    public function get_double(string $key): float
+    {
+        unset($key);
+        return 0.0;
+    }
+    /**
+     * Returns the floating point number represented by the value that is associated with $key, or
+     * $default_val if the value does not represent a floating point number.
+     */
+    public function get_double_with_default(string $key, float $def): float
+    {
+        unset($key);
+        unset($def);
+        return 0.0;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_DUPLEX. */
+    public function get_duplex(): GtkPrintDuplex
+    {
+        return null;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_FINISHINGS. */
+    public function get_finishings(): ?string
+    {
+        return null;
+    }
+    /** Returns the integer value of $key, or 0. */
+    public function get_int(string $key): int
+    {
+        unset($key);
+        return 0;
+    }
+    /** Returns the value of $key, interpreted as an integer, or the default value. */
+    public function get_int_with_default(string $key, int $def): int
+    {
+        unset($key);
+        unset($def);
+        return 0;
+    }
+    /** Returns the value associated with $key, interpreted as a length. */
+    public function get_length(string $key, GtkUnit $unit): float
+    {
+        unset($key);
+        unset($unit);
+        return 0.0;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_MEDIA_TYPE. */
+    public function get_media_type(): ?string
+    {
+        return null;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_N_COPIES. */
+    public function get_n_copies(): int
+    {
+        return 0;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_NUMBER_UP. */
+    public function get_number_up(): int
+    {
+        return 0;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_NUMBER_UP_LAYOUT. */
+    public function get_number_up_layout(): GtkNumberUpLayout
+    {
+        return null;
+    }
+    /** Get the value of %GTK_PRINT_SETTINGS_ORIENTATION, converted to a `GtkPageOrientation`. */
+    public function get_orientation(): GtkPageOrientation
+    {
+        return null;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_OUTPUT_BIN. */
+    public function get_output_bin(): ?string
+    {
+        return null;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_PAGE_SET. */
+    public function get_page_set(): GtkPageSet
+    {
+        return null;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_PAPER_HEIGHT, converted to $unit. */
+    public function get_paper_height(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_PAPER_FORMAT, converted to a `GtkPaperSize`. */
+    public function get_paper_size(): ?GtkPaperSize
+    {
+        return null;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_PAPER_WIDTH, converted to $unit. */
+    public function get_paper_width(GtkUnit $unit): float
+    {
+        unset($unit);
+        return 0.0;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_PRINT_PAGES. */
+    public function get_print_pages(): GtkPrintPages
+    {
+        return null;
+    }
+    /** Convenience function to obtain the value of %GTK_PRINT_SETTINGS_PRINTER. */
+    public function get_printer(): ?string
+    {
+        return null;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_PRINTER_LPI. */
+    public function get_printer_lpi(): float
+    {
+        return 0.0;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_QUALITY. */
+    public function get_quality(): GtkPrintQuality
+    {
+        return null;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_RESOLUTION. */
+    public function get_resolution(): int
+    {
+        return 0;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_RESOLUTION_X. */
+    public function get_resolution_x(): int
+    {
+        return 0;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_RESOLUTION_Y. */
+    public function get_resolution_y(): int
+    {
+        return 0;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_REVERSE. */
+    public function get_reverse(): bool
+    {
+        return false;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_SCALE. */
+    public function get_scale(): float
+    {
+        return 0.0;
+    }
+    /** Gets the value of %GTK_PRINT_SETTINGS_USE_COLOR. */
+    public function get_use_color(): bool
+    {
+        return false;
+    }
+    /** Returns `true`, if a value is associated with $key. */
+    public function has_key(string $key): bool
+    {
+        unset($key);
+        return false;
+    }
+    /** Reads the print settings from $file_name. */
+    public function load_file(string $file_name): bool
+    {
+        unset($file_name);
+        return false;
+    }
+    /** Associates $value with $key. */
+    public function set(string $key, ?string $value): void
+    {
+        unset($key);
+        unset($value);
+    }
+    /** Sets $key to a boolean value. */
+    public function set_bool(string $key, bool $value): void
+    {
+        unset($key);
+        unset($value);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_COLLATE. */
+    public function set_collate(bool $collate): void
+    {
+        unset($collate);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_DEFAULT_SOURCE. */
+    public function set_default_source(string $default_source): void
+    {
+        unset($default_source);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_DITHER. */
+    public function set_dither(string $dither): void
+    {
+        unset($dither);
+    }
+    /** Sets $key to a double value. */
+    public function set_double(string $key, float $value): void
+    {
+        unset($key);
+        unset($value);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_DUPLEX. */
+    public function set_duplex(GtkPrintDuplex $duplex): void
+    {
+        unset($duplex);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_FINISHINGS. */
+    public function set_finishings(string $finishings): void
+    {
+        unset($finishings);
+    }
+    /** Sets $key to an integer value. */
+    public function set_int(string $key, int $value): void
+    {
+        unset($key);
+        unset($value);
+    }
+    /** Associates a length in units of $unit with $key. */
+    public function set_length(string $key, float $value, GtkUnit $unit): void
+    {
+        unset($key);
+        unset($value);
+        unset($unit);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_MEDIA_TYPE. */
+    public function set_media_type(string $media_type): void
+    {
+        unset($media_type);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_N_COPIES. */
+    public function set_n_copies(int $num_copies): void
+    {
+        unset($num_copies);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_NUMBER_UP. */
+    public function set_number_up(int $number_up): void
+    {
+        unset($number_up);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_NUMBER_UP_LAYOUT. */
+    public function set_number_up_layout(GtkNumberUpLayout $number_up_layout): void
+    {
+        unset($number_up_layout);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_ORIENTATION. */
+    public function set_orientation(GtkPageOrientation $orientation): void
+    {
+        unset($orientation);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_OUTPUT_BIN. */
+    public function set_output_bin(string $output_bin): void
+    {
+        unset($output_bin);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_PAGE_SET. */
+    public function set_page_set(GtkPageSet $page_set): void
+    {
+        unset($page_set);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_PAPER_HEIGHT. */
+    public function set_paper_height(float $height, GtkUnit $unit): void
+    {
+        unset($height);
+        unset($unit);
+    }
+    /**
+     * Sets the value of %GTK_PRINT_SETTINGS_PAPER_FORMAT, %GTK_PRINT_SETTINGS_PAPER_WIDTH and
+     * %GTK_PRINT_SETTINGS_PAPER_HEIGHT.
+     */
+    public function set_paper_size(GtkPaperSize $paper_size): void
+    {
+        unset($paper_size);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_PAPER_WIDTH. */
+    public function set_paper_width(float $width, GtkUnit $unit): void
+    {
+        unset($width);
+        unset($unit);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_PRINT_PAGES. */
+    public function set_print_pages(GtkPrintPages $pages): void
+    {
+        unset($pages);
+    }
+    /** Convenience function to set %GTK_PRINT_SETTINGS_PRINTER to $printer. */
+    public function set_printer(string $printer): void
+    {
+        unset($printer);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_PRINTER_LPI. */
+    public function set_printer_lpi(float $lpi): void
+    {
+        unset($lpi);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_QUALITY. */
+    public function set_quality(GtkPrintQuality $quality): void
+    {
+        unset($quality);
+    }
+    /**
+     * Sets the values of %GTK_PRINT_SETTINGS_RESOLUTION, %GTK_PRINT_SETTINGS_RESOLUTION_X and
+     * %GTK_PRINT_SETTINGS_RESOLUTION_Y.
+     */
+    public function set_resolution(int $resolution): void
+    {
+        unset($resolution);
+    }
+    /**
+     * Sets the values of %GTK_PRINT_SETTINGS_RESOLUTION, %GTK_PRINT_SETTINGS_RESOLUTION_X and
+     * %GTK_PRINT_SETTINGS_RESOLUTION_Y.
+     */
+    public function set_resolution_xy(int $resolution_x, int $resolution_y): void
+    {
+        unset($resolution_x);
+        unset($resolution_y);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_REVERSE. */
+    public function set_reverse(bool $reverse): void
+    {
+        unset($reverse);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_SCALE. */
+    public function set_scale(float $scale): void
+    {
+        unset($scale);
+    }
+    /** Sets the value of %GTK_PRINT_SETTINGS_USE_COLOR. */
+    public function set_use_color(bool $use_color): void
+    {
+        unset($use_color);
+    }
+    /** This function saves the print settings from $settings to $file_name. */
+    public function to_file(string $file_name): bool
+    {
+        unset($file_name);
+        return false;
+    }
+    /** Serialize print settings to an a{sv} variant. */
+    public function to_gvariant(): mixed
+    {
+        return null;
+    }
+    /** Removes any value associated with $key. */
+    public function unset(string $key): void
+    {
+        unset($key);
+    }
+    /**
+     * The page ranges set_page_ranges() took, as `[int $start, int $end]` pairs; empty when none.
+     *
+     * @return list<array{int, int}>
+     */
+    public function get_page_ranges(): array
+    {
+        return [];
+    }
+    /**
+     * The pages to print, as `[int $start, int $end]` pairs of zero-based, inclusive page numbers
+     * (what GtkPrintPages::Ranges selects).
+     *
+     * GIR takes a C array of GtkPageRange with its length; a PHP list of pairs is the same thing.
+     */
+    public function set_page_ranges(array $page_ranges): void
+    {
+        unset($page_ranges);
+    }
+}
+/**
+ * A `GtkPrintSetup` is an auxiliary object for printing that allows decoupling the setup from the
+ * printing.
+ */
+final class GtkPrintSetup
+{
+    /** GtkPrintSetup values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Returns the page setup of $setup. */
+    public function get_page_setup(): ?GtkPageSetup
+    {
+        return null;
+    }
+    /** Returns the print settings of $setup. */
+    public function get_print_settings(): ?GtkPrintSettings
+    {
+        return null;
+    }
+}
+/**
+ * The status gives a rough indication of the completion of a running print operation.
+ */
+enum GtkPrintStatus : int
+{
+    case Initial = 0;
+    case Preparing = 1;
+    case GeneratingData = 2;
+    case SendingData = 3;
+    case Pending = 4;
+    case PendingIssue = 5;
+    case Printing = 6;
+    case Finished = 7;
+    case FinishedAborted = 8;
 }
 /**
  * `GtkProgressBar` is typically used to display the progress of a long running operation.
@@ -12024,6 +15992,10 @@ final class GtkRootObject extends GObject implements GtkRoot
     public function set_focus(?GtkWidget $focus): void
     {
         unset($focus);
+    }
+    public function get_renderer(): ?GskRenderer
+    {
+        return null;
     }
     public function get_surface(): ?GdkSurface
     {
@@ -12827,6 +16799,38 @@ class GtkSnapshot extends GdkSnapshot
         unset($color);
         unset($bounds);
     }
+    /** A convenience method to fill a path with a color. */
+    public function append_fill(GskPath $path, GskFillRule $fill_rule, GdkRGBA $color): void
+    {
+        unset($path);
+        unset($fill_rule);
+        unset($color);
+    }
+    /** Appends an inset shadow into the box given by $outline. */
+    public function append_inset_shadow(GskRoundedRect $outline, GdkRGBA $color, float $dx, float $dy, float $spread, float $blur_radius): void
+    {
+        unset($outline);
+        unset($color);
+        unset($dx);
+        unset($dy);
+        unset($spread);
+        unset($blur_radius);
+    }
+    /** Appends $node to the current render node of $snapshot, without changing the current node. */
+    public function append_node(GskRenderNode $node): void
+    {
+        unset($node);
+    }
+    /** Appends an outset shadow node around the box given by $outline. */
+    public function append_outset_shadow(GskRoundedRect $outline, GdkRGBA $color, float $dx, float $dy, float $spread, float $blur_radius): void
+    {
+        unset($outline);
+        unset($color);
+        unset($dx);
+        unset($dy);
+        unset($spread);
+        unset($blur_radius);
+    }
     /**
      * Creates a new render node drawing the $texture into the given $bounds and appends it to the
      * current render node of $snapshot.
@@ -12836,6 +16840,13 @@ class GtkSnapshot extends GdkSnapshot
         unset($texture);
         unset($filter);
         unset($bounds);
+    }
+    /** A convenience method to stroke a path with a color. */
+    public function append_stroke(GskPath $path, GskStroke $stroke, GdkRGBA $color): void
+    {
+        unset($path);
+        unset($stroke);
+        unset($color);
     }
     /**
      * Creates a new render node drawing the $texture into the given $bounds and appends it to the
@@ -12885,6 +16896,15 @@ class GtkSnapshot extends GdkSnapshot
     {
         unset($progress);
     }
+    /**
+     * Fills the area given by $path and $fill_rule with an image and discards everything outside
+     * of it.
+     */
+    public function push_fill(GskPath $path, GskFillRule $fill_rule): void
+    {
+        unset($path);
+        unset($fill_rule);
+    }
     /** Until the first call to `pop`, the mask image for the mask operation will be recorded. */
     public function push_mask(GskMaskMode $mask_mode): void
     {
@@ -12900,6 +16920,17 @@ class GtkSnapshot extends GdkSnapshot
     {
         unset($bounds);
         unset($child_bounds);
+    }
+    /** Clips an image to a rounded rectangle. */
+    public function push_rounded_clip(GskRoundedRect $bounds): void
+    {
+        unset($bounds);
+    }
+    /** Strokes the given $path with the attributes given by $stroke and an image. */
+    public function push_stroke(GskPath $path, GskStroke $stroke): void
+    {
+        unset($path);
+        unset($stroke);
     }
     /**
      * Restores $snapshot to the state saved by a preceding call to `save` and removes that state
@@ -12934,16 +16965,38 @@ class GtkSnapshot extends GdkSnapshot
         unset($factor_y);
         unset($factor_z);
     }
+    /** Returns the render node that was constructed by $snapshot. */
+    public function to_node(): ?GskRenderNode
+    {
+        return null;
+    }
     /** Returns a paintable encapsulating the render node that was constructed by $snapshot. */
     public function to_paintable(?GrapheneSize $size): ?GdkPaintable
     {
         unset($size);
         return null;
     }
+    /** Transforms $snapshot's coordinate system with the given $transform. */
+    public function transform(?GskTransform $transform): void
+    {
+        unset($transform);
+    }
     /** Translates $snapshot's coordinate system by $point in 2-dimensional space. */
     public function translate(GraphenePoint $point): void
     {
         unset($point);
+    }
+    /**
+     * Appends a border inside $outline: $widths are the four widths (top, right, bottom, left) as
+     * floats, $colors the four GdkRGBA colours in the same order - what a GskBorderNode is.
+     *
+     * GIR takes two fixed-size C arrays; PHP lists of exactly four are the same thing.
+     */
+    public function append_border(GskRoundedRect $outline, array $widths, array $colors): void
+    {
+        unset($outline);
+        unset($widths);
+        unset($colors);
     }
 }
 /**
@@ -16394,6 +20447,16 @@ class GtkTreeListRow extends GObject
     }
 }
 /**
+ * See also gtk_print_settings_set_paper_width().
+ */
+enum GtkUnit : int
+{
+    case None = 0;
+    case Points = 1;
+    case Inch = 2;
+    case Mm = 3;
+}
+/**
  * `GtkViewport` implements scrollability for widgets that lack their own scrolling capabilities.
  *
  * @property ?GtkWidget $child
@@ -17836,6 +21899,10 @@ class GtkWindow extends GtkWidget implements GtkNative, GtkRoot
     /** Asks to unminimize the specified $window. */
     public function unminimize(): void
     {
+    }
+    public function get_renderer(): ?GskRenderer
+    {
+        return null;
     }
     public function get_surface(): ?GdkSurface
     {

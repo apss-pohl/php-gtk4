@@ -40,13 +40,21 @@ void register_vfuncs_GtkEntry();
 void register_vfuncs_GtkEntryBuffer();
 void register_vfuncs_GtkFilter();
 void register_vfuncs_GtkLayoutManager();
+ZEND_METHOD(Gtk4_GtkNative, get_renderer);
 ZEND_METHOD(Gtk4_GtkNative, get_surface);
 ZEND_METHOD(Gtk4_GtkNative, get_surface_transform);
 ZEND_METHOD(Gtk4_GtkNative, realize);
 ZEND_METHOD(Gtk4_GtkNative, unrealize);
 ZEND_METHOD(Gtk4_GtkOrientable, get_orientation);
 ZEND_METHOD(Gtk4_GtkOrientable, set_orientation);
+namespace phpgtk {
+void register_GtkPaperSize(zend_class_entry *ce);
+}  // namespace phpgtk
 void register_vfuncs_GtkPopover();
+void register_vfuncs_GtkPrintOperation();
+namespace phpgtk {
+void register_GtkPrintSetup(zend_class_entry *ce);
+}  // namespace phpgtk
 void register_vfuncs_GtkRange();
 namespace phpgtk {
 void register_GtkRequisition(zend_class_entry *ce);
@@ -142,6 +150,117 @@ ZEND_METHOD(Gtk4_GdkPaintable, invalidate_contents);
 ZEND_METHOD(Gtk4_GdkPaintable, invalidate_size);
 ZEND_METHOD(Gtk4_GdkPaintable, snapshot);
 namespace phpgtk {
+void register_GdkTextureDownloader(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskBlendNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskBlurNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskBorderNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskCairoNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskClipNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskColorMatrixNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskColorNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskConicGradientNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskContainerNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskCrossFadeNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskDebugNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskFillNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskInsetShadowNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskLinearGradientNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskMaskNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskOpacityNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskOutsetShadowNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskPath(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskPathBuilder(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskPathMeasure(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskPathPoint(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskRadialGradientNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskRenderNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskRepeatNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskRepeatingLinearGradientNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskRepeatingRadialGradientNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskRoundedClipNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskShadowNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskStroke(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskStrokeNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskSubsurfaceNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskTextNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskTextureNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskTextureScaleNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskTransform(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GskTransformNode(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
 void register_GraphenePoint(zend_class_entry *ce);
 }  // namespace phpgtk
 namespace phpgtk {
@@ -150,3 +269,7 @@ void register_GrapheneRect(zend_class_entry *ce);
 namespace phpgtk {
 void register_GrapheneSize(zend_class_entry *ce);
 }  // namespace phpgtk
+namespace phpgtk {
+void register_GdkPixbufFormat(zend_class_entry *ce);
+}  // namespace phpgtk
+void register_vfuncs_GdkPixbufLoader();

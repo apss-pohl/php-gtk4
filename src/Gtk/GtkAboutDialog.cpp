@@ -27,7 +27,7 @@ ZEND_METHOD(Gtk4_GtkAboutDialog, __construct) {
                      ZSTR_VAL(EX(func)->common.function_name));
     RETURN_THROWS();
   }
-  // GtkRoot: GTK's toplevel list owns the initial reference (see docs/PLAN.md "Ownership").
+  // GtkRoot: GTK's toplevel list owns the initial reference (see README.md "Design").
   attach(object_from_zval(ZEND_THIS), obj);
 }
 

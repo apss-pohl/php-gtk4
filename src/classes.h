@@ -8,12 +8,14 @@
 #include "php_gtk4.h"
 
 namespace phpgtk {
-void register_GMainLoop(zend_class_entry *ce);      // own object layout (GLib/GMainLoop.cpp)
-void register_GParamSpec(zend_class_entry *ce);     // fundamental (core/paramspec.cpp)
-void register_CairoContext(zend_class_entry *ce);   // fundamental (Cairo/CairoContext.cpp)
-void register_CairoSurface(zend_class_entry *ce);   // fundamental (Cairo/CairoSurface.cpp)
-void register_GdkRGBA(zend_class_entry *ce);        // boxed (Gdk/GdkRGBA.cpp)
-void register_GdkRectangle(zend_class_entry *ce);   // boxed (Gdk/GdkRectangle.cpp)
+void register_GMainLoop(zend_class_entry *ce);     // own object layout (GLib/GMainLoop.cpp)
+void register_GParamSpec(zend_class_entry *ce);    // fundamental (core/paramspec.cpp)
+void register_CairoContext(zend_class_entry *ce);  // fundamental (Cairo/CairoContext.cpp)
+void register_CairoSurface(zend_class_entry *ce);  // fundamental (Cairo/CairoSurface.cpp)
+void register_GdkRGBA(zend_class_entry *ce);       // boxed (Gdk/GdkRGBA.cpp)
+void register_GdkRectangle(zend_class_entry *ce);  // boxed (Gdk/GdkRectangle.cpp)
+void register_GskRoundedRect(
+    zend_class_entry *ce);  // boxed, synthetic GType (Gsk/GskRoundedRect.cpp)
 void register_GtkCssSection(zend_class_entry *ce);  // fundamental (Gtk/GtkCssSection.cpp)
 void register_GdkEvent(GType type,
                        zend_class_entry *ce);  // fundamental, per event GType (Gdk/GdkEvent.cpp)

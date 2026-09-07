@@ -84,6 +84,49 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **The GSK scene graph.** The 35 render node classes (`GskColorNode`, `GskContainerNode`, the
+  gradients, shadows, borders, clips, transforms, textures, fills and strokes), `GskRenderer` with
+  the cairo and GL renderers, `GskTransform`, `GskPath` with its builder, measure, point and stroke,
+  and a hand-written `GskRoundedRect`. A scene is built with `new`, rendered to a `GdkTexture` with
+  `GskRenderer::render_texture()`, taken from or appended to a `GtkSnapshot`, and round-tripped
+  through `serialize()`/`deserialize()`. Render nodes are GIR *fundamental* classes (refcounted,
+  neither GObject nor boxed) that the generator now emits onto the fundamental registry - the
+  same identity rules as GObject handles (the same instance is the same handle, a subclass comes
+  back as itself), no PHP subclassing. GSK's C arrays are PHP lists: children, `[offset, GdkRGBA]`
+  colour stops, `[GdkRGBA, dx, dy, radius]` shadows, four border widths and colours. A realized
+  renderer is unrealized when its handle holds the last reference, because GSK aborts the process
+  otherwise. `GtkSnapshot::append_node()`, `push_rounded_clip()`, `append_border()`, the shadow
+  and fill/stroke appenders and `GtkFixed`'s child transforms came back with the types
+  (`RenderNodeTest`, `GskPathTest`, `GskTransformTest`, `GskRoundedRectTest`, `examples/GskRoundedRect.php`).
+- **Printing.** `GtkPrintOperation` with its `begin-print`/`draw-page`/`end-print`/`done` signals
+  and `GtkPrintContext` (its `get_cairo_context()` is the bound `CairoContext`, so a page is drawn
+  like a `GtkDrawingArea`), `GtkPrintSettings` (page ranges as `[start, end]` pairs), `GtkPageSetup`,
+  `GtkPaperSize`, and GTK 4.14's async `GtkPrintDialog` + `GtkPrintSetup`. `ACTION_EXPORT` writes
+  a PDF with no dialog (`PrintTest`, `examples/GtkPrintOperation.php`).
+- **GdkPixbuf.** `GdkPixbuf` with its loader, formats and animations: decode any format from
+  bytes or a file, read the pixels as a string, scale, rotate, flip, crop, composite, encode
+  (`save_to_bufferv()`/`savev()` take the encoder options as a map). The deprecated pixbuf-to-
+  texture calls stay unbound; `GdkMemoryTexture` and `GdkTextureDownloader` move pixels between a
+  pixbuf and a `GdkTexture` as bytes in both directions (`PixbufTest`, `examples/GdkPixbuf.php`).
+- **`DeprecationTest`** holds the extension to its modern-API-only rule against the installed GIR
+  files: no deprecated class is registered, no deprecated method, virtual method, property or
+  enum member is bound, and nothing carries `#[\Deprecated]`. It found two deprecated GObject
+  properties still promised by `@property` tags (`GtkDropTarget:drop`, `GtkPicture:keep-aspect-ratio`);
+  the generator skips those now like it skips deprecated methods.
+
+- **`stubs/` is a Composer package, `php-gtk4/stubs`.** `composer require --dev php-gtk4/stubs` gives
+  an IDE and PHPStan the `Gtk4\` API without a checkout of this repository: `stubs/composer.json`
+  (no autoload - the extension defines the classes), `stubs/extension.neon` (`scanFiles`, registered
+  by `phpstan/extension-installer`) and a README. `release.yml` pushes the directory to the
+  `apss-pohl/php-gtk4-stubs` repository and tags it with the extension's version on every real
+  release (`publish-stubs`, secret `STUBS_DEPLOY_KEY`), so the stub version always equals the
+  extension version (docs/RELEASING.md "The stubs package").
+- **`examples/notes/`, a second application.** Notes is a real program next to the class-by-class
+  showcase: a `GtkApplicationWindow` subclass with a header bar and primary menu, a `GtkPaned`
+  between a searchable, sortable `GtkListView` and a `GtkTextView`, a `GListStore` of PHP objects
+  behind the filter, sort and selection models, a toast with Undo, file dialogs, and a JSON file
+  saved automatically. `tests/NotesAppTest.php` drives it through its actions and entries.
+
 - **`./update-deps.sh`** — one pass over everything this repository pins to a third party.
   `composer.lock` and the `composer.json` constraints (`--major`), the `package.json` pins, and
   every `uses: owner/repo@v<N>` in the workflows are updated in place; the pins Dependabot cannot
@@ -421,6 +464,18 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   named-argument callers using the old camelCase spellings break.
 
 ### Fixed
+
+- **`GtkFixedLayoutChild::$transform` read through the property system was a GLib CRITICAL** -
+  GTK 4.14's getter hands the GValue the address of its pointer. The `@property` tag is gone
+  (a new `<Ns>.<Type>.property:<name>` key in `gen/skip.txt`); `get_transform()`/`set_transform()`
+  are what the stub promises.
+
+- **A PHP property declared on a GObject subclass was hidden by a GObject property of the same
+  name.** `class NotesWindow extends GtkApplicationWindow { private GtkEntry $title; }` wrote
+  `GtkWindow`'s gchararray `title` (a `TypeError`, or a silent success for a string) and never read
+  its own. The object handlers now leave a name the PHP class declares to the engine, so the
+  author's property wins and GTK's stays reachable through its methods; `var_dump()` shows the
+  PHP properties too, and leaves out the GObject ones they shadow (`PropertyAccessTest`).
 
 - **Six unbound enums were checked as if they were flags.** `GtkSystemSetting`, `GtkScrollType`,
   `GtkDeleteType`, `GtkMovementStep`, `GtkTextExtendSelection` and `GtkTextViewLayer` are GIR

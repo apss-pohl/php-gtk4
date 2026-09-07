@@ -49,6 +49,15 @@ final class GtkInstances
         \Gtk4\GdkDrag::class => 'needs a pointer grab a headless X server cannot give',
         \Gtk4\GdkDrop::class => 'needs a drag from another client',
         \Gtk4\GtkDragIcon::class => 'GtkDragIcon::get_for_drag() needs a GdkDrag',
+        // Two render nodes whose constructor takes what the binding does not speak.
+        \Gtk4\GskTextNode::class => 'needs a PangoFont and glyph string (Pango is not bound)',
+        \Gtk4\GskSubsurfaceNode::class => 'needs a GdkSubsurface, a gpointer GDK keeps private',
+        \Gtk4\GskColorMatrixNode::class => 'needs a graphene matrix and vec4 (not bound)',
+        // An animation iterator needs a GTimeVal start time (GLib.TimeVal is not bound).
+        \Gtk4\GdkPixbufAnimationIter::class => 'GdkPixbufAnimation::get_iter() takes a GTimeVal, which is not bound',
+        // Printing hands these out while a print job runs and nowhere else.
+        \Gtk4\GtkPrintContext::class => 'only exists inside GtkPrintOperation\'s draw-page (PrintTest)',
+        \Gtk4\GtkPrintSetup::class => 'only GtkPrintDialog::setup_finish() makes one, after a dialog',
         // wrap() only falls back to an interface class when *no* class up the GType chain is
         // registered. Every widget descends from the registered GtkWidget, so the fallbacks
         // for widget interfaces can never be reached - GtkEntry::get_delegate() answers with
@@ -98,6 +107,135 @@ final class GtkInstances
             \Gtk4\GSimpleAction::class => new \Gtk4\GSimpleAction('a', 's'),
             \Gtk4\PhpValue::class => new \Gtk4\PhpValue('v'),
             \Gtk4\GdkTexture::class => \Gtk4\GdkTexture::new_from_bytes(PngFixture::red(2, 1)),
+            // GSK: a render node is built from its parts (the base class through a colour node),
+            // a renderer through the cairo one, a path through its builder.
+            \Gtk4\GskRenderNode::class => self::colorNode(),
+            \Gtk4\GskColorNode::class => self::colorNode(),
+            \Gtk4\GskOpacityNode::class => new \Gtk4\GskOpacityNode(self::colorNode(), 0.5),
+            \Gtk4\GskBlurNode::class => new \Gtk4\GskBlurNode(self::colorNode(), 2.0),
+            \Gtk4\GskClipNode::class => new \Gtk4\GskClipNode(self::colorNode(), self::rect()),
+            \Gtk4\GskRoundedClipNode::class => new \Gtk4\GskRoundedClipNode(
+                self::colorNode(),
+                self::rounded(),
+            ),
+            \Gtk4\GskContainerNode::class => new \Gtk4\GskContainerNode([self::colorNode(), self::colorNode()]),
+            \Gtk4\GskTransformNode::class => new \Gtk4\GskTransformNode(self::colorNode(), new \Gtk4\GskTransform()),
+            \Gtk4\GskDebugNode::class => new \Gtk4\GskDebugNode(self::colorNode(), 'debug'),
+            \Gtk4\GskCairoNode::class => new \Gtk4\GskCairoNode(self::rect()),
+            \Gtk4\GskCrossFadeNode::class => new \Gtk4\GskCrossFadeNode(self::colorNode(), self::colorNode(), 0.5),
+            \Gtk4\GskBlendNode::class => new \Gtk4\GskBlendNode(
+                self::colorNode(),
+                self::colorNode(),
+                \Gtk4\GskBlendMode::Multiply,
+            ),
+            \Gtk4\GskMaskNode::class => new \Gtk4\GskMaskNode(
+                self::colorNode(),
+                self::colorNode(),
+                \Gtk4\GskMaskMode::Alpha,
+            ),
+            \Gtk4\GskRepeatNode::class => new \Gtk4\GskRepeatNode(self::rect(), self::colorNode()),
+            \Gtk4\GskBorderNode::class => new \Gtk4\GskBorderNode(
+                self::rounded(),
+                [1.0, 1.0, 1.0, 1.0],
+                [self::rgba(), self::rgba(), self::rgba(), self::rgba()],
+            ),
+            \Gtk4\GskInsetShadowNode::class => new \Gtk4\GskInsetShadowNode(
+                self::rounded(),
+                self::rgba(),
+                1.0,
+                1.0,
+                1.0,
+                2.0,
+            ),
+            \Gtk4\GskOutsetShadowNode::class => new \Gtk4\GskOutsetShadowNode(
+                self::rounded(),
+                self::rgba(),
+                1.0,
+                1.0,
+                1.0,
+                2.0,
+            ),
+            \Gtk4\GskShadowNode::class => new \Gtk4\GskShadowNode(self::colorNode(), [[self::rgba(), 1.0, 1.0, 2.0]]),
+            \Gtk4\GskLinearGradientNode::class => new \Gtk4\GskLinearGradientNode(
+                self::rect(),
+                new \Gtk4\GraphenePoint(0.0, 0.0),
+                new \Gtk4\GraphenePoint(4.0, 4.0),
+                self::stops(),
+            ),
+            \Gtk4\GskRepeatingLinearGradientNode::class => new \Gtk4\GskRepeatingLinearGradientNode(
+                self::rect(),
+                new \Gtk4\GraphenePoint(0.0, 0.0),
+                new \Gtk4\GraphenePoint(4.0, 4.0),
+                self::stops(),
+            ),
+            \Gtk4\GskRadialGradientNode::class => new \Gtk4\GskRadialGradientNode(
+                self::rect(),
+                new \Gtk4\GraphenePoint(2.0, 2.0),
+                2.0,
+                2.0,
+                0.0,
+                1.0,
+                self::stops(),
+            ),
+            \Gtk4\GskRepeatingRadialGradientNode::class => new \Gtk4\GskRepeatingRadialGradientNode(
+                self::rect(),
+                new \Gtk4\GraphenePoint(2.0, 2.0),
+                2.0,
+                2.0,
+                0.0,
+                1.0,
+                self::stops(),
+            ),
+            \Gtk4\GskConicGradientNode::class => new \Gtk4\GskConicGradientNode(
+                self::rect(),
+                new \Gtk4\GraphenePoint(2.0, 2.0),
+                0.0,
+                self::stops(),
+            ),
+            \Gtk4\GskTextureNode::class => new \Gtk4\GskTextureNode(
+                \Gtk4\GdkTexture::new_from_bytes(PngFixture::red(2, 1)),
+                self::rect(),
+            ),
+            \Gtk4\GskTextureScaleNode::class => new \Gtk4\GskTextureScaleNode(
+                \Gtk4\GdkTexture::new_from_bytes(PngFixture::red(2, 1)),
+                self::rect(),
+                \Gtk4\GskScalingFilter::Linear,
+            ),
+            \Gtk4\GskFillNode::class => new \Gtk4\GskFillNode(
+                self::colorNode(),
+                self::path(),
+                \Gtk4\GskFillRule::Winding,
+            ),
+            \Gtk4\GskStrokeNode::class => new \Gtk4\GskStrokeNode(
+                self::colorNode(),
+                self::path(),
+                new \Gtk4\GskStroke(1.0),
+            ),
+            \Gtk4\GskRenderer::class => new \Gtk4\GskCairoRenderer(),
+            \Gtk4\GskPath::class => self::path(),
+            \Gtk4\GskPathMeasure::class => new \Gtk4\GskPathMeasure(self::path()),
+            \Gtk4\GskPathPoint::class => self::path()->get_start_point()
+                ?? throw new \RuntimeException('a closed path has a start point'),
+            \Gtk4\GskStroke::class => new \Gtk4\GskStroke(1.0),
+            \Gtk4\GskRoundedRect::class => self::rounded(),
+            // GdkPixbuf: a 2x2 RGBA image, its loader, a format from the registry; the texture
+            // bridge from the same PNG fixture the GdkTexture branch uses.
+            \Gtk4\GdkPixbuf::class => new \Gtk4\GdkPixbuf(\Gtk4\GdkColorspace::Rgb, true, 8, 2, 2),
+            \Gtk4\GdkPixbufFormat::class => \Gtk4\GdkPixbuf::get_formats()[0]
+                ?? throw new \RuntimeException('gdk-pixbuf ships at least the PNG loader'),
+            \Gtk4\GdkPixbufAnimation::class => self::pixbufAnimation(),
+            \Gtk4\GdkMemoryTexture::class => new \Gtk4\GdkMemoryTexture(
+                2,
+                2,
+                \Gtk4\GdkMemoryFormat::R8g8b8a8,
+                str_repeat("\xff\x00\x00\xff", 4),
+                8,
+            ),
+            \Gtk4\GdkTextureDownloader::class => new \Gtk4\GdkTextureDownloader(
+                \Gtk4\GdkTexture::new_from_bytes(PngFixture::red(2, 1)),
+            ),
+            // Printing: a named paper size (null is the locale's default), the rest through `new`.
+            \Gtk4\GtkPaperSize::class => new \Gtk4\GtkPaperSize(null),
             \Gtk4\GError::class => new \Gtk4\GError('x'),
             \Gtk4\GListStore::class => new \Gtk4\GListStore(),
             \Gtk4\GtkFilter::class, \Gtk4\GtkCustomFilter::class => new \Gtk4\GtkCustomFilter(fn() => true),
@@ -215,6 +353,57 @@ final class GtkInstances
      * fails with "An object is already exported for the interface org.gtk.Application". A
      * per-instance id keeps every sweep row on its own application instead of sharing one.
      */
+    /** A still image as an animation: gdk_pixbuf_animation_new_from_file() on the PNG fixture. */
+    private static function pixbufAnimation(): \Gtk4\GdkPixbufAnimation
+    {
+        $file = sys_get_temp_dir() . '/php-gtk4-instances-' . getmypid() . '.png';
+        file_put_contents($file, PngFixture::red(2, 1));
+        try {
+            return \Gtk4\GdkPixbufAnimation::new_from_file($file);
+        } finally {
+            unlink($file);
+        }
+    }
+
+    /** A 4x4 rectangle at the origin, the bounds every GSK sample node uses. */
+    private static function rect(): \Gtk4\GrapheneRect
+    {
+        return \Gtk4\GrapheneRect::alloc()->init(0.0, 0.0, 4.0, 4.0);
+    }
+
+    private static function rounded(): \Gtk4\GskRoundedRect
+    {
+        return new \Gtk4\GskRoundedRect(self::rect(), 1.0, 1.0, 1.0, 1.0);
+    }
+
+    private static function rgba(): \Gtk4\GdkRGBA
+    {
+        return new \Gtk4\GdkRGBA('red');
+    }
+
+    /** The plainest render node: a red square. */
+    private static function colorNode(): \Gtk4\GskColorNode
+    {
+        return new \Gtk4\GskColorNode(self::rgba(), self::rect());
+    }
+
+    /** @return list<array{float, \Gtk4\GdkRGBA}> two colour stops, red to blue */
+    private static function stops(): array
+    {
+        return [[0.0, self::rgba()], [1.0, new \Gtk4\GdkRGBA('blue')]];
+    }
+
+    /** A closed triangle. */
+    private static function path(): \Gtk4\GskPath
+    {
+        $builder = new \Gtk4\GskPathBuilder();
+        $builder->move_to(0.0, 0.0);
+        $builder->line_to(4.0, 0.0);
+        $builder->line_to(4.0, 4.0);
+        $builder->close();
+        return $builder->to_path();
+    }
+
     private static function registeredApp(): \Gtk4\GtkApplication
     {
         /** @var int $n */

@@ -160,6 +160,15 @@ inline bool check_domain_double(double v, double lo, double hi, uint32_t arg) {
   return false;
 }
 
+// An exclusive lower bound (gsk_path_builder_conic_to: `weight > 0`), where the inclusive
+// check_domain_double() would let the boundary through to GTK's assertion.
+inline bool check_domain_above(double v, double lo, uint32_t arg) {
+  if (v > lo) return true;
+  zend_argument_value_error(arg, "must be greater than %s, %s given", DoubleText(lo).c_str(),
+                            DoubleText(v).c_str());
+  return false;
+}
+
 // A filename crossing PHP -> C is made absolute against PHP's *own* working directory first.
 // `chdir()` moves a per-thread virtual cwd under ZTS, while GTK, GLib and cairo are C libraries
 // that read the process cwd - so a relative path would resolve somewhere else entirely there

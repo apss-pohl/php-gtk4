@@ -36,3 +36,7 @@ Gtk.SingleSelection.set_selected   without a model there is nothing to select (G
 Gtk.SingleSelection.selected       same, as a property
 Gtk.TextTag.line_height_set   GTK 4.14 registers the property but its own get_property() switch has no case for it ("invalid property id 62 for line-height-set", gtktexttag.c:1875), so it cannot be read back - GTK's bug, not a round trip the binding can honour
 Gtk.DropTarget.*   the constructor takes a *type name* ("string", a registered class), not an arbitrary string; DragDropTest builds it properly
+Gtk.PrintOperation.current_page   a current page needs n_pages set first (GTK refuses it otherwise)
+Gtk.PrintOperation.set_current_page   same, as the setter
+GdkPixbuf.Pixbuf.*   the factories need real image data (PixbufTest covers it)
+GdkPixbuf.PixbufAnimation.*   same: new_from_file() needs an image file

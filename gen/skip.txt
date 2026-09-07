@@ -34,3 +34,18 @@ Gtk.Text.finish_delegate  pairs with init_delegate
 Gdk.Drag.__construct   GDK creates a drag when a GtkDragSource starts one (get_drag()); a PHP subtype has no device and aborts the process in gdk_drag_set_property ("assertion failed: (priv->device != NULL)")
 Gdk.Drop.__construct   the other end of the same drag, created by GDK; as Gdk.Drag
 Gtk.DragIcon.__construct   GTK creates the icon for a drag (get_for_drag()); a standalone one realizes without a GdkSurface and dies in gtk_drag_icon_realize
+Gsk.PathBuilder.free_to_path   unrefs the builder itself (GIR does not say so on the instance parameter), leaving the handle on freed memory - a SEGV on the next call; to_path() gives the same path and keeps the builder
+Gtk.Snapshot.free_to_node   frees the GtkSnapshot itself like free_to_paintable; to_node() answers with the same node and leaves the object alive
+Gtk.FixedLayoutChild.property:transform   GTK 4.14's getter hands the GValue the address of its pointer (g_value_set_boxed(value, &self->transform)), so a read through the property system is a GLib CRITICAL; get_transform()/set_transform() work and are what the stub promises
+Gtk.PrintContext.__construct   GTK creates the context inside a print operation (draw-page hands it over); one from g_object_new() has no page setup or cairo context and its getters dereference NULL (SIGSEGV)
+Gtk.PrintOperation.implements:Gtk.PrintOperationPreview   the preview slots (render_page, end_preview, is_selected) are only valid inside the `preview` signal, where GTK keeps the state private - outside it they dereference NULL (SIGSEGV); a PHP-driven preview is a follow-up (docs/TODO.md)
+GdkPixbuf.PixbufLoader.write   a C byte array with its length; write_bytes() takes the same bytes as a PHP string
+GdkPixbuf.Pixbuf.get_pixels_with_length   a bare pointer into the pixel buffer; read_pixel_bytes() answers the same bytes as a PHP string
+GdkPixbuf.Pixbuf.new_from_data   takes a caller-owned pixel buffer with a destroy callback; new_from_bytes() copies the same bytes
+GdkPixbuf.PixbufAnimation.vfuncs   the class struct is behind GDK_PIXBUF_ENABLE_BACKEND (the loader-module API), so no PHP subclass could override a slot
+GdkPixbuf.PixbufAnimationIter.vfuncs   as GdkPixbufAnimation
+GdkPixbuf.Pixbuf.get_pixels   a bare pointer into the pixel buffer (the shadowing get_pixels_with_length is skipped for the same reason); read_pixel_bytes() answers the bytes
+GdkPixbuf.Pixbuf.read_pixels   a bare pointer into the pixel buffer (GIR types it as a guint8 pointer, which would cross as an integer); read_pixel_bytes() answers the bytes
+GdkPixbuf.PixbufAnimation.__construct   abstract with a private class struct (GDK_PIXBUF_ENABLE_BACKEND): a PHP subtype has NULL slots and every getter dereferences them (SIGSEGV); animations come from new_from_file()
+GdkPixbuf.PixbufAnimationIter.__construct   as GdkPixbufAnimation; iterators come from an animation
+GdkPixbuf.Pixbuf.composite_color   17 parameters (the checkerboard-background variant of composite()); composite() and composite_color_simple() cover the same drawing, and a ZEND_METHOD that size trips clang-tidy's function-size gate

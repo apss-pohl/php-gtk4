@@ -11,7 +11,7 @@ namespace PhpGtk4\Gen;
 trait EmitsTests
 {
     /**
-     * tests/Generated/<Class>SmokeTest.php per generated class (PLAN.md §3.5): construction, every
+     * tests/Generated/<Class>SmokeTest.php per generated class (gen/README.md): construction, every
      * setter/getter pair and every writable property round-trip with a sample value of its type.
      * Behavioural coverage still comes from hand-written tests; this catches marshalling slips.
      */
@@ -89,7 +89,7 @@ trait EmitsTests
         $subject = null;
         if ($php === 'GtkWindow') {
             $subject = '$this->window()';
-        } elseif (str_contains($stub, 'only works on a PHP subclass')) {
+        } elseif (str_contains($stub, 'only works on a PHP subclass') && !$n->fundamental) {
             $subject = "new class () extends $php {}";  // abstract in GTK: a PHP subtype (core/subtype.h)
         } elseif (isset($byName['__construct']) && str_contains($stub, 'public function __construct')) {
             $args = $this->sampleArgs($byName['__construct']['params']);
@@ -142,7 +142,10 @@ trait EmitsTests
         // --- writable properties (@property tags), construct-only ones excluded
         $props = [];
         foreach ($n->props as $p) {
-            if (!$p['writable'] || !$p['readable'] || $p['constructOnly']) {
+            if (
+                !$p['writable'] || !$p['readable'] || $p['constructOnly'] || $p['deprecated'] !== null
+                || isset($this->skipList[$n->qname() . '.property:' . $p['name']])
+            ) {
                 continue;
             }
             $type = $this->typeMap->phpType($p['type'], true);
@@ -269,7 +272,9 @@ trait EmitsTests
             $constants = $n->kind === 'bitfield'
                 ? "        \$constants = array_filter(new \\ReflectionClass($php::class)->getConstants(), 'is_int');\n"
                 : '';
-            return $head . "use Gtk4\\$php;\nuse Gtk4\\GtkLabel;\nuse Gtk4\\GtkWidget;\nuse Gtk4\\GtkWindow;\n\n"
+            $uses = ["use Gtk4\\$php;", 'use Gtk4\\GtkLabel;', 'use Gtk4\\GtkWidget;', 'use Gtk4\\GtkWindow;'];
+            sort($uses);   // the style tools want imports ordered
+            return $head . implode("\n", $uses) . "\n\n"
                 . "/*\n * Gtk4\\$php - $summary\n *\n"
                 . " * GENERATED skeleton (gen/gir.php): lists every one of the {$n->kind}'s $what. Replace it with a\n"
                 . " * page that shows the {$n->kind} in action and move the class out of the 'Generated' section.\n *\n"

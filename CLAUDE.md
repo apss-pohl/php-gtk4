@@ -5,9 +5,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 php-gtk4 is a PHP extension written in C++20 against the **native Zend API** (no PHP-CPP — see
-docs/TODO.md §1 / docs/PLAN.md for why it was dropped), built with the standard `phpize`/`config.m4` flow.
-It is the successor to `/mnt/share/dev/code/php-gtk3`; `docs/PLAN.md` records the design and what is
-deliberately *not* carried over, `docs/TODO.md` the open review findings. Read both before changing
+README.md "Design" for why it was dropped), built with the standard `phpize`/`config.m4` flow.
+It is the successor to `/mnt/share/dev/code/php-gtk3`; README.md "Design" records the decisions and what is
+deliberately *not* carried over, `docs/TODO.md` what is open. Read both before changing
 anything under `src/core/`.
 
 Module name is **`gtk4`** everywhere: `config.m4`, `zend_module_entry` in `src/gtk4.cpp`,
@@ -38,7 +38,7 @@ Hard constraints:
   `tests/run.cmd` are the Windows launchers. **No header under `src/` may equal a GLib/GTK header
   path case-insensitively** (a former src/Gio/GListModel.h shadowed `gio/glistmodel.h` on Windows — hence
   the generated prototypes live in `src/gen_prototypes.h`; `HeaderNamesTest` enforces it). WebKit
-  follows later (docs/PLAN.md milestone 6).
+  follows later (README.md "Design" §7).
 
 ## Build
 
@@ -72,7 +72,11 @@ phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(n
 - **API declaration = `src/gtk4.stub.php`.** `gen/gen_stub.php` (vendored from php-src) generates
   `src/gtk4_arginfo.h` (class entries, method tables, typed arginfo); `gen/ide-stub.php` generates
   `stubs/gtk4.php` for IDEs. Both generated files are committed; `./ci.sh --only=stubs` (and CI)
-  fail if they are stale (`--fix` regenerates). **Never edit the generated files.** Adding a
+  fail if they are stale (`--fix` regenerates). **Never edit the generated files.** `stubs/` is
+  also the Composer package `php-gtk4/stubs` (`stubs/composer.json`, `stubs/extension.neon` for
+  PHPStan, no autoload - the extension defines the classes): `release.yml` pushes the directory to
+  the `apss-pohl/php-gtk4-stubs` repository and tags it on every real release
+  (docs/RELEASING.md "The stubs package"). Adding a
   method = declare it in the stub, regenerate, implement the `ZEND_METHOD(Gtk4_Class, name)`.
 - GObject properties exposed as PHP properties are declared with `@property` tags on the class in the stub
   (the generator emits them from GIR, `@property-read` / `@property-write` where GIR says the property is
@@ -197,6 +201,13 @@ Every new class, method or constant ships with **all four** in the same change:
    (`GtkWindow.php`, `GParamSpec.php`). `ExampleTest` enforces all of this; `examples/README.md`
    indexes them.
 
+   `examples/notes/` is the second application, **Notes** (`bin/php-gtk4 examples/notes/notes.php`):
+   not a page but a real program that uses the widgets the way an application does - a
+   `GtkApplicationWindow` subclass, header bar and primary menu, list models over a `GListStore` of
+   PHP objects, autosave to JSON. `ExampleTest` ignores the subdirectory; `NotesAppTest` drives the
+   window through its actions and entries. When a new class changes how an application would be
+   written (a widget Notes fakes with something simpler), use it there too.
+
 ### The declared type is a promise the engine does not keep
 
 PHP verifies neither the return type nor the property type of an *internal* class: a wrong
@@ -215,7 +226,8 @@ only as true as the code behind it, and every new element is checked against the
   a property write converts exactly like the equivalent setter's parameter (`core/marshal`,
   `caller_is_strict()`). The same header holds the narrower checks: `check_domain` /
   `check_domain_double` (a bound GTK only enforces with `g_return_if_fail`, listed per parameter
-  in `PARAM_DOMAINS`, `gen/gir/config.php`), `check_enum_member` (a GIR enum that crosses as an
+  in `PARAM_DOMAINS`, `gen/gir/config.php`; a third element `open` makes the lower bound
+  exclusive, `check_domain_above`), `check_enum_member` (a GIR enum that crosses as an
   int) and `absolute_filename` (a path resolved against PHP's own cwd, which under ZTS is not the
   process cwd). The generator emits all of this; hand-written methods must not forget it
   (`GdkRGBA::parse()` did).
@@ -253,8 +265,10 @@ display, and calls `Gtk::init()` once.
   `PropertyAccessTest`, `RethrowModeTest`, `BoxedTest`, `ParamSpecTest`, `EnumTest`, `FoundationTest`,
   `SubclassTest` + `VfuncTest` for `subtype`, `MainLoopTest`, `ShutdownTest`), one per hand-tested
   class (`WidgetTest`, `LabelTest`, `ButtonTest`, `BoxTest`, `ActionTest`, `TextureTest`,
-  `ListStoreTest`, `FilterSortTest`, `DrawingAreaTest`, `ApplicationTest`, …), and the meta tests
-  (`ExtensionTest`, `StubsTest`, `ExampleTest`, `EveryClassTest`, `RobustnessTest`, `DocsTest`,
+  `ListStoreTest`, `FilterSortTest`, `DrawingAreaTest`, `ApplicationTest`, `RenderNodeTest`,
+  `GskPathTest`, `GskTransformTest`, `GskRoundedRectTest`, `PrintTest`, `NotesAppTest`, …), and the
+  meta tests (`ExtensionTest`, `StubsTest`, `ExampleTest`, `EveryClassTest`, `RobustnessTest`,
+  `DeprecationTest` (no deprecated GIR member is bound), `DocsTest`,
   `HeaderNamesTest`, `WorkflowsTest`, `CommitLintTest`, `ReleaseNotesTest`,
   `GeneratorIdempotenceTest`, `VscodeConfigTest`). Every test that touches GTK extends `GtkTestCase`; the meta
   tests that never load a widget extend PHPUnit's `TestCase` directly. Fixtures that subclass GTK
@@ -293,7 +307,7 @@ display, and calls `Gtk::init()` once.
   adding runtime paths. `tests/lsan.supp` and `tests/valgrind.supp` may only contain third-party
   symbols.
 - `tests/run.sh` **forces `GDK_BACKEND=x11`** and unsets `WAYLAND_DISPLAY` (forced, not defaulted;
-  `GSK_RENDERER=cairo` and `GDK_DEBUG=gl-disable` stay overridable — docs/PLAN.md wants a
+  `GSK_RENDERER=cairo` and `GDK_DEBUG=gl-disable` stay overridable — a follow-up wants a
   `GSK_RENDERER=gl` run). A desktop session exports `GDK_BACKEND=wayland`, GDK then prefers the real
   compositor over the display Xvfb provides, and GTK 4.14's Wayland backend corrupts the heap
   partway through the suite (`gtk_widget_queue_draw: assertion 'GTK_IS_WIDGET (widget)' failed`,
@@ -399,7 +413,9 @@ pinned GTK version"), `phpize && configure --with-gtk4 && nmake` with a warning 
 every push to `main`: reads `VERSION` and either publishes an
 immutable `vX.Y.Z-dev.<run>` pre-release (suffix `-dev`; the newest 5 are kept, older ones deleted with their
 tags) or the real `vX.Y.Z` release (no suffix, once),
-after running `./ci.sh` in full itself — it does not key off `tests.yml`. The body is the
+after running `./ci.sh` in full itself — it does not key off `tests.yml`. A real release also runs
+`publish-stubs`, which pushes `stubs/` to the stubs package repository (`STUBS_REPO`, secret
+`STUBS_DEPLOY_KEY`; skipped with a warning when the secret is absent). The body is the
 `CHANGELOG.md` section for the version (required, verbatim) followed by `bin/release-notes`,
 which groups the commits since the previous release by Conventional Commit type. Assets are one `.so` per
 supported PHP named with its whole ABI identity, one `php_gtk4-<ver>-php<X.Y>-nts-vs17-x64.dll`
@@ -416,7 +432,9 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
 
 - `src/core/` — the runtime. `object` (`struct Object { GObject *obj; bool held; zend_object std; }`,
   the object handlers: `free_obj`, no clone, `read/write/has_property` mapping `$obj->prop`
-  (underscores → dashes) to GObject properties, `get_debug_info` for `var_dump`; a **toggle ref** +
+  (underscores → dashes) to GObject properties unless the PHP class declares a property of that
+  name - a declared property is the author's and wins (a `GtkWindow` subclass may have its own
+  `$title`; GTK's stays reachable through `get_title()`), `get_debug_info` for `var_dump`; a **toggle ref** +
   qdata identity: while GTK holds other refs the GObject holds the `zend_object` (`held`), so a
   PHP subclass' state survives the script dropping its reference, released in the toggle notify
   and in RSHUTDOWN (`object_release_holds()`, or Zend reports the handle as a leak);
@@ -464,10 +482,17 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   `vfunc_<name>()` methods override class-struct slots through generated thunks, the generated
   native `vfunc_<name>()` on the owning class is what `parent::` chains to; abstract GTK classes
   have a *public* constructor that refuses the native class and works on a subclass —
-  docs/PLAN.md §2.6), `fundamental` (registry-driven handles for refcounted non-GObject types: `GParamSpec`,
+  README.md "Design"), `fundamental` (registry-driven handles for refcounted non-GObject types: `GParamSpec`,
   `CairoContext` (cairo_t via cairo-gobject; marshal's boxed arm falls back to this registry),
   `GtkCssSection`, `GdkEvent` + subclasses, `GdkEventSequence` as a ref-less identity; `new X()` on
-  them throws; the same instance wraps to the same handle while PHP holds it —
+  the hand-written ones throws; every GIR class marked `glib:fundamental` - `GskRenderNode` and its
+  subclasses - is **generated** onto the same registry (`emitFundamental()` in
+  `gen/gir/emit-class.php`, `fundamental_adopt()` for a generated `new`, `fundamental_self()` for
+  `$this`); a record GIR gives no GType (`GskRoundedRect`) is hand-written on `core/boxed` with a
+  synthetic boxed GType, mapped through `SYNTHETIC_GTYPES`/`TYPE_MACROS` in `gen/gir/config.php`;
+  a realized `GskRenderer` is unrealized in `detach()` when the handle holds the last reference,
+  because `gsk_renderer_dispose()` aborts on one; the same instance wraps to the same handle while
+  PHP holds it —
   `GTK4_G(fundamental_handles)`), `enums` (GEnum ↔ int-backed PHP
   enum via a GType
   registry; cases declared literally in the stub
@@ -488,8 +513,10 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   stay in `src/gtk4.stub.php`.
   Hand code for a generated class goes to `gen/overrides/<Ns>.<Type>.<method>.cpp` (a docblock with
   the stub declaration + the `ZEND_METHOD`) or the class prelude `gen/overrides/<Ns>.<Type>.cpp`
-  (shared trampolines/statics); members deliberately not exposed go to `gen/skip.txt`; every skip
-  is listed in `gen/report.md`. `src/core/` holds no `ZEND_METHOD`s. Registration lives in
+  (shared trampolines/statics); members deliberately not exposed go to `gen/skip.txt` (a method
+  by `<Ns>.<Type>.<method>`, a GObject property's `@property` tag by
+  `<Ns>.<Type>.property:<name>`, an interface by `<Ns>.<Type>.implements:<Ns>.<Iface>`); every
+  skip is listed in `gen/report.md`. `src/core/` holds no `ZEND_METHOD`s. Registration lives in
   `src/gtk4.cpp` MINIT (hand-written classes) and the generated `src/gen_minit.inc`, in four
   shapes:
   `register_class("GTypeName", register_class_Gtk4_X(parent_ce), G_TYPE_X)` for GObject handles,
@@ -525,7 +552,7 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   `GMainLoop::run`/`GtkApplication::run`, and it propagates to PHP).
   Non-signal callbacks go through `src/core/callback.*` with the installing method as origin;
   typed C callbacks (`GtkDrawingAreaDrawFunc`, `GtkCustomFilterFunc`, `GCompareDataFunc`) follow
-  the trampoline rule in docs/PLAN.md ("Typed C callbacks") — `gen/overrides/Gtk.DrawingArea.cpp`,
+  the trampoline rule in gen/README.md ("Typed C callbacks") — `gen/overrides/Gtk.DrawingArea.cpp`,
   `Gtk.CustomFilter.cpp`, `Gtk.CustomSorter.cpp` are the templates.
 - Main loop: `GtkApplication::run()` (preferred) or `GMainLoop` + `GLib::idle_add/timeout_add`;
   `GLib::main_context_iteration()` pumps one iteration without handing over control;
@@ -562,7 +589,7 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   does for readonly/uncloneable. Shared
   helpers: `PHPGTK_RETURN_STRING_OR_NULL(expr)` for nullable C strings (`php_gtk4.h`),
   the generated `?GtkWidget` parameter handling for everything else.
-- **Naming is snake_case, final** (decided 2026-08-25, docs/PLAN.md): methods mirror the GTK C API
+- **Naming is snake_case, final** (decided 2026-08-25, README.md "Design"): methods mirror the GTK C API
   with the type prefix stripped (`gtk_window_set_title` → `set_title`), properties keep GTK's names
   with underscores (`$win->default_width`). Never add camelCase aliases. Two deliberate exceptions:
   `GError::getDomain()` sits next to the inherited `getCode()`/`getMessage()`, and enum *cases* are

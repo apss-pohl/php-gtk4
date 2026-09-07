@@ -2,6 +2,7 @@
 // Included once by src/gtk4.cpp after gen_prototypes.h.
 #pragma once
 #include "Gdk/Gdk_arginfo.h"
+#include "GdkPixbuf/GdkPixbuf_arginfo.h"
 #include "Gio/Gio_arginfo.h"
 #include "Graphene/Graphene_arginfo.h"
 #include "Gsk/Gsk_arginfo.h"

@@ -40,7 +40,7 @@ return Demo::page(
     'GtkTreeExpander',
     'the triangle and the indent of a tree row',
     function (GtkWindow $win): GtkWidget {
-        $children = ['docs' => ['PLAN.md', 'TODO.md'], 'src' => ['core', 'Gtk'], 'core' => ['object.cpp']];
+        $children = ['docs' => ['BUILD.md', 'TODO.md'], 'src' => ['core', 'Gtk'], 'core' => ['object.cpp']];
         $model = new GtkTreeListModel(
             new GtkStringList(['docs', 'src']),
             false,

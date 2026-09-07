@@ -178,7 +178,7 @@ jobs:
           if-no-files-found: ignore
 
   # --enable-gtk4-webkit is analysed by cpp-lint.yml; this leg makes sure it also compiles,
-  # links and loads (no WebKit tests yet - docs/PLAN.md milestone 6).
+  # links and loads (no WebKit tests yet - README.md "Design").
   webkit-build:
     name: WebKitGTK build
     runs-on: ubuntu-24.04

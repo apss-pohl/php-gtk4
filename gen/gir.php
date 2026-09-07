@@ -1,7 +1,7 @@
 <?php
 
 /**
- * gir.php - the GObject-Introspection generator (docs/PLAN.md milestone 3).
+ * gir.php - the GObject-Introspection generator (README.md "Design").
  *
  * Reads the installed GIR files, takes the classes named in gen/allowlist.txt
  * (plus their parents, interfaces and the enums their kept signatures use),
@@ -214,7 +214,12 @@ final class Generator
                         break;
                     case 'interface':
                     case 'class':
-                        [$stubText, $cpp] = $this->emitClass($n, $minit, $protos);
+                        [$stubText, $cpp] = $n->fundamental
+                            ? $this->emitFundamental($n, $minit, $protos)
+                            : $this->emitClass($n, $minit, $protos);
+                        if ($cpp === '') {
+                            break;  // reported
+                        }
                         $stub[] = $stubText;
                         $this->write("$ns/" . phpClass($n) . '.cpp', $cpp);
                         break;

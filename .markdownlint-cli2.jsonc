@@ -17,7 +17,7 @@
     "MD024": { "siblings_only": true },
 
     // MD060 (table pipe padding) is a formatting preference, not a defect, and the
-    // compact tables in docs/PLAN.md are deliberate.
+    // compact tables in docs/GTK3-MAP.md are deliberate.
     "MD060": false,
 
     // The prose here emphasises with *asterisks*, not _underscores_ (underscores

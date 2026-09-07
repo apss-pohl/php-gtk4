@@ -6,7 +6,7 @@
 // registers them with register_vfunc()). Thunks call the PHP method on the existing
 // handle; an instance without a handle (mid-construction, after RSHUTDOWN) chains to
 // the native implementation, as does `parent::vfunc_<name>()` through the generated
-// native methods (subtype_native_class()). Design: docs/PLAN.md §2.6.
+// native methods (subtype_native_class()). Design: README.md "Design".
 //
 // GTypes cannot be unregistered, so the type registry is process-wide (one mutex for
 // ZTS); the PHP class is re-resolved by name per request (subtype_class_for_gtype).

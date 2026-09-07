@@ -7,7 +7,7 @@ implements it.
 Source of truth: php-gtk3 class headers (158 headers, ~2400 exported methods) vs.
 `src/gtk4.stub.php` + the MINIT registration block in `src/gtk4.cpp`.
 
-Status column regenerated 2026-09-05 by `gen/map-status.php` (run by `gen/gir.php --install`);
+Status column regenerated 2026-09-06 by `gen/map-status.php` (run by `gen/gir.php --install`);
 the notes are hand-written and may lag.
 
 ## Legend
@@ -24,9 +24,9 @@ the notes are hand-written and may lag.
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 71 | — |
+| ✅ implemented | 75 | — |
 | 🟡 partial | 1 | — |
-| ❌ to port (GTK 4 equivalent exists) | 22 | ~1750 |
+| ❌ to port (GTK 4 equivalent exists) | 18 | ~1750 |
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 5 | ~130 |
 
@@ -209,9 +209,9 @@ is open work.
 
 | php-gtk3 class | gtk3 methods | GTK 4 replacement | php-gtk4 | Notes |
 | --- | ---: | --- | :---: | --- |
-| `GtkPrintSettings` | 74 | `GtkPrintSettings` | ❌ | Unchanged in GTK 4. |
-| `GtkPageSetup` | 25 | `GtkPageSetup` | ❌ | Unchanged. |
-| `GtkPaperSize` | 24 | `GtkPaperSize` | ❌ | Boxed type. |
+| `GtkPrintSettings` | 74 | `GtkPrintSettings` | ✅ | Unchanged in GTK 4. |
+| `GtkPageSetup` | 25 | `GtkPageSetup` | ✅ | Unchanged. |
+| `GtkPaperSize` | 24 | `GtkPaperSize` | ✅ | Boxed type. |
 
 ## Gdk (`src/Gdk/`)
 
@@ -227,7 +227,7 @@ is open work.
 | `GdkDrawable` | 0 | — | ⛔ | Removed long ago. |
 | `GdkCursor` | 7 | `GdkCursor` | ✅ | `new_from_name`, `new_from_texture`; `get_cursor_type` removed. An unknown name is still a cursor - GDK resolves it against the theme when a surface uses it. |
 | `GdkPixbuf` | 21 | `GdkTexture` / `GdkPaintable` | ✅ | GdkPixbuf still exists as a library but GTK 4 widgets want `GdkPaintable`. |
-| `GdkPixbufFormat` | 1 | `GdkPixbufFormat` | ❌ | |
+| `GdkPixbufFormat` | 1 | `GdkPixbufFormat` | ✅ | |
 | `GdkEvent` + `GdkEventButton/Key/Motion/Scroll/Crossing/Focus/Configure/Touch/Any` | 3 + 8×2 | `GdkEvent` (opaque) + event controllers | ⛔ | **The event unions are gone.** GTK 4 uses `GtkEventControllerKey`, `GtkGestureClick`, `GtkEventControllerMotion`, `GtkEventControllerScroll`, `GtkEventControllerFocus`. Binding these controllers is the port target. |
 | `GdkThreads` | 1 | `g_idle_add` | ⛔ | `GLib::idle_add()` ✅ covers it. |
 | `Gdk::test_simulate_button` | 1 | — | ⛔ | GTK 3 test API. |
@@ -236,20 +236,20 @@ is open work.
 
 | php-gtk3 class | gtk3 methods | GTK 4 replacement | php-gtk4 | Notes |
 | --- | ---: | --- | :---: | --- |
-| `WebKitWebView` (+ `_Unix`, `_Windows`) | 17 | `WebKitWebView` (WebKitGTK 6.0) | 🧩 | `--enable-gtk4-webkit` build flag exists; binding is a later milestone (docs/PLAN.md). |
+| `WebKitWebView` (+ `_Unix`, `_Windows`) | 17 | `WebKitWebView` (WebKitGTK 6.0) | 🧩 | `--enable-gtk4-webkit` build flag exists; binding is a later milestone (README.md "Design"). |
 | `GtkWebView` | 0 | — | 🧩 | php-gtk3 shim. |
 | `GtkSourceView`, `GtkSourceBuffer`, `GtkSourceLanguage`, `GtkSourceLanguageManager` | 48 | GtkSourceView 5 | 🧩 | Separate library; not planned for the first milestones. |
 | `GladeApp`, `GladeDesignView`, `GladeEditor`, `GladePalette`, `GladeProject`, `GladeWidget` | 33 | — | 🧩 | libgladeui has no GTK 4 release; drop. |
 | `WnckScreen`, `WnckWindow`, `WnckClassGroup` | 20 | — | ⛔ | libwnck is X11-only and not part of the GTK 4 story. |
 | `PangoLayout`, `PangoContext`, `PangoAttrList`, `PangoLayoutLine`, `PangoWrapMode` | 18 | Pango (unchanged) | 🧩 | Only needed once `GtkDrawingArea`/custom drawing lands. |
-| `GtkosxApplication` | 19 | — | ⛔ | macOS integration; Linux is the primary target (docs/PLAN.md). |
+| `GtkosxApplication` | 19 | — | ⛔ | macOS integration; Linux is the primary target (README.md "Design"). |
 | `Cef` | 0 | — | ⛔ | Empty in php-gtk3. |
 
 ---
 
 ## Recommended port order
 
-This order is the wave plan of docs/PLAN.md §3 "Rollout": each wave is an allow-list for the
+This order was the wave plan (gen/README.md): each wave is an allow-list for the
 generator, reviewed as a draft, hand-finished through overrides/promotion, merged with CI green.
 
 1. **Layout containers** — `GtkBox` ✅ and `GtkWidget::set_hexpand`/`set_vexpand` ✅ are done (they

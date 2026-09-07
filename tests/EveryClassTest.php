@@ -13,7 +13,7 @@ use ReflectionMethod;
  * Smoke test over the *whole* registered surface: every instantiable class is
  * constructed and every argument-less getter/predicate is called once. Catches
  * a wrapper whose GType/class mapping, factory registration or return-value
- * marshalling is broken - which the generator (docs/PLAN.md milestone 3) makes easy
+ * marshalling is broken - which the generator (README.md "Design") makes easy
  * to get wrong at scale. Deliberately generic: it must not need editing when
  * classes are added.
  */

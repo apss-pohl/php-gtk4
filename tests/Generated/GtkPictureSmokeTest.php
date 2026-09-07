@@ -38,7 +38,5 @@ final class GtkPictureSmokeTest extends GtkTestCase
         self::assertSame('smoke', $o->alternative_text);
         $o->can_shrink = true;
         self::assertTrue($o->can_shrink);
-        $o->keep_aspect_ratio = true;
-        self::assertTrue($o->keep_aspect_ratio);
     }
 }

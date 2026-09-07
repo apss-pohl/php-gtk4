@@ -1,5 +1,29 @@
 # Examples
 
+Two applications. `notes/` is a real one; everything else is the class-by-class showcase.
+
+## Notes: the application-shaped example
+
+```sh
+bin/php-gtk4 examples/notes/notes.php              # your notes (XDG_DATA_HOME or ~/.local/share)
+bin/php-gtk4 examples/notes/notes.php some.json    # a different notes file
+```
+
+A small notes application, written the way an application is written rather than the way a
+showcase is: a `GtkApplication` with actions and accelerators, a `GtkApplicationWindow` subclass
+(`examples/notes/NotesWindow.php`) with a `GtkHeaderBar` and a primary menu (`GMenu` in a
+`GtkMenuButton`, the sort order a stateful action the menu renders as radio items), a `GtkPaned`
+between a searchable `GtkListView` and the editor (a frameless `GtkEntry` over a `GtkTextView`),
+a `GtkStack` for the empty state, a `GtkRevealer` toast with Undo after a delete, `GtkFileDialog`
+import and export, `GtkAboutDialog`, and a `GtkCssProvider` for the few looks the theme has no
+class for. The data is a `GListStore` of PHP objects (`examples/notes/Note.php` extends
+`GObject`) behind `GtkFilterListModel` → `GtkSortListModel` → `GtkSingleSelection`; the window
+only ever changes the models and lets the list widget follow. `examples/notes/NoteStore.php`
+saves the store to a JSON file, automatically, a moment after typing stops and on close.
+`tests/NotesAppTest.php` drives it.
+
+## The showcase
+
 One demo application, one source file per class:
 
 ```sh
@@ -12,11 +36,8 @@ Every `<Class>.php` ends in `return Demo::page(...)` and does nothing else — i
 rather than running one. `demo.php` requires them all, so a file that ran itself would fire on
 import. `ExampleTest` enforces that.
 
-The application is a header row, a sidebar and a content area, all `GtkBox`. That container is what
-made it an application at all: before it, a `GtkWindow` held exactly one child and a `GtkButton` one
-more, so navigation could not sit next to the thing it navigates and the demo had to be a timed
-slideshow. The sidebar shows the current section only and scrolls it (`GtkScrolledWindow`, bound in wave 1 —
-before that, the sections were what kept it on screen); `Demo::SECTIONS` is the grouping and every
+The application is a header row, a sidebar and a content area, all `GtkBox`. The sidebar shows the
+current section only and scrolls it (`GtkScrolledWindow`); `Demo::SECTIONS` is the grouping and every
 registered class must appear in it exactly once.
 
 Each page opens on what its class does rather than printing about it. A window still holds one
@@ -52,6 +73,18 @@ drives a window with no `GtkApplication`. Both pass a standalone override to `De
 | [GtkLabel.php](GtkLabel.php) | Pango markup, wrapping, and live `get_selection_bounds()` |
 | [GtkDrawingArea.php](GtkDrawingArea.php) | a draw func plus `queue_draw()` — a sweeping clock hand |
 | [CairoContext.php](CairoContext.php) | a sampler of every cairo call: paths, sources, matrix, text |
+
+## Scene graph
+
+| File | Shows |
+| ---- | ----- |
+| [GskRenderNode.php](GskRenderNode.php) | one scene wrapped in a different node per click, rendered to a texture |
+| [GskRoundedRect.php](GskRoundedRect.php) | a rounded rectangle clipped and bordered, rendered to a texture by `GskCairoRenderer` |
+| [GskPath.php](GskPath.php) | paths from `GskPathBuilder` and `GskPath::parse()`, drawn through cairo |
+| [GtkPrintOperation.php](GtkPrintOperation.php) | the same drawing routine paints a preview and a 3-page PDF (`ACTION_EXPORT`) |
+| [GdkPixbuf.php](GdkPixbuf.php) | decode, scale, rotate, crop and encode, shown through a `GdkMemoryTexture` |
+
+The other GSK and printing classes have generated pages so far.
 
 ## Application and actions
 

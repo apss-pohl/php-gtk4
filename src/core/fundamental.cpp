@@ -27,9 +27,13 @@ zend_object *create_object(zend_class_entry *ce) {
   return &self->std;
 }
 
-// get_constructor handler: handles only come from C (wrap_fundamental) - `new X()` would
-// otherwise yield an empty handle whose methods dereference nullptr.
+// get_constructor handler: a class that declares a constructor (a generated GskColorNode, whose
+// `new` adopts the C constructor's result through fundamental_adopt()) gets the standard
+// handling; the hand-written ones (GdkEvent) declare none and only come from C
+// (wrap_fundamental) - `new X()` would otherwise yield an empty handle whose methods
+// dereference nullptr.
 zend_function *get_constructor(zend_object *o) {
+  if (o->ce->constructor != nullptr) return zend_std_get_constructor(o);
   zend_throw_error(nullptr, "%s instances are created by the extension, not with new",
                    ZSTR_VAL(o->ce->name));
   return nullptr;
@@ -104,6 +108,36 @@ void wrap_fundamental(GType type, gpointer instance, zval *rv) {
   self->type = type;
   self->instance = info->ref(instance);
   handles[instance] = Z_OBJ_P(rv);
+}
+
+// A generated constructor's result becomes the handle's instance: ownership moves (the C
+// constructor returned a full reference), and the identity map learns the pointer so the same
+// instance wraps back to this handle. A constructor called twice releases the first instance.
+void fundamental_adopt(Fundamental *self, GType type, gpointer instance) {
+  auto &handles = GTK4_G(fundamental_handles);
+  if (self->instance != nullptr) {
+    if (auto it = handles.find(self->instance); it != handles.end() && it->second == &self->std) {
+      handles.erase(it);
+    }
+    const FundamentalClass *old = fundamental_class_for_type(self->type);
+    if (old != nullptr) old->unref(self->instance);
+  }
+  if (G_TYPE_IS_INSTANTIATABLE(type)) type = G_TYPE_FROM_INSTANCE(instance);
+  self->type = type;
+  self->instance = instance;
+  handles[instance] = &self->std;
+}
+
+// $this's instance, or nullptr with the Error a never-initialised handle deserves.
+gpointer fundamental_self(zend_execute_data *execute_data) {
+  Fundamental *self = fundamental_from_zval(ZEND_THIS);
+  if (self->instance == nullptr) {
+    zend_throw_error(nullptr, "%s::%s(): this handle has no instance (its constructor did not run)",
+                     ZSTR_VAL(Z_OBJCE_P(ZEND_THIS)->name),
+                     ZSTR_VAL(EX(func)->common.function_name));
+    return nullptr;
+  }
+  return self->instance;
 }
 
 // PHP -> C: borrowed instance of exactly `expected`.

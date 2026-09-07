@@ -66,7 +66,7 @@ classes automatically and must not be edited for one.
 - `// NOLINTNEXTLINE(check) reason` only for findings inside GLib/Zend macro expansions, never a
   trailing `// NOLINT`. Don't reorder includes.
 - Markdown wraps at 110 columns, emphasis with `*asterisks*`.
-- Read `docs/PLAN.md` and `docs/TODO.md` before touching `src/core/`.
+- Read README.md "Design" and `docs/TODO.md` before touching `src/core/`.
 
 ## Running the checks
 
@@ -205,4 +205,4 @@ so a bug that reproduces in a `tests/` case is the most useful shape of all.
 - Windows: the build is `config.w32` (PHP SDK + gvsbuild GTK, see the Windows section of
   `docs/BUILD.md`). Nothing under `src/` may become platform-specific except `pin_gtk_library()`;
   anything that touches `config.m4` (sources, defines, features) needs the same change in `config.w32`.
-  WebKit: milestone 6 in `docs/PLAN.md` first.
+  WebKit: `docs/TODO.md` first.

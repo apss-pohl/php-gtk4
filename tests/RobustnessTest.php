@@ -38,6 +38,8 @@ final class RobustnessTest extends GtkTestCase
         \Gtk4\GtkCssProvider::class . '::load_from_bytes' => [0],
         \Gtk4\GdkTexture::class . '::new_from_bytes' => [0],
         \Gtk4\GdkContentProvider::class . '::new_for_bytes' => [1],
+        \Gtk4\GdkPixbuf::class . '::new_from_bytes' => [0],
+        \Gtk4\GdkPixbufLoader::class . '::write_bytes' => [0],
     ];
 
     private string $cwd = '';
@@ -180,6 +182,18 @@ final class RobustnessTest extends GtkTestCase
                 // a source is ready - garbage arguments would hang the suite, not throw.
                 $loopDrivers = ['init', 'main', 'run', 'main_context_iteration', 'testing_iterate_nested'];
                 if ($m->isStatic() && in_array($m->getName(), $loopDrivers, true)) {
+                    continue;
+                }
+                // Dialog openers with a well-typed argument set would put a print dialog on the
+                // screen - GtkPrintOperation::run() blocks in it, the GtkPrintDialog ones leave it
+                // open - so their arguments are pinned by PrintTest instead.
+                $dialogOpeners = [
+                    \Gtk4\GtkPrintOperation::class . '::run',
+                    \Gtk4\GtkPrintDialog::class . '::setup',
+                    \Gtk4\GtkPrintDialog::class . '::print',
+                    \Gtk4\GtkPrintDialog::class . '::print_file',
+                ];
+                if (in_array($class->getName() . '::' . $m->getName(), $dialogOpeners, true)) {
                     continue;
                 }
                 yield $class->getName() . '::' . $m->getName() => [$class->getName(), $m->getName()];

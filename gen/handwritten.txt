@@ -11,3 +11,4 @@ Gtk.CssSection
 Gdk.Event
 Gdk.EventSequence
 cairo.Surface
+Gsk.RoundedRect

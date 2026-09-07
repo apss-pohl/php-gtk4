@@ -4,10 +4,17 @@
 #include "core/object.h"
 #include "core/enums.h"
 #include "core/boxed.h"
-#include "Cairo/CairoContext.h"
+#include "core/fundamental.h"
 #include "core/subtype.h"
+#include <cairo-gobject.h>
+#include "Gsk/GskRoundedRectType.h"
 
 using namespace phpgtk;
+
+// append_border(): the four widths and colours come as PHP lists (src/Gsk/GskColorStops.h).
+#include "Gsk/GskColorStops.h"
+
+#include <array>
 
 /**
  * Gtk4\GtkSnapshot::__construct()
@@ -45,9 +52,9 @@ ZEND_METHOD(Gtk4_GtkSnapshot, append_cairo) {
   GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
   gpointer bounds_b = unwrap_boxed(bounds, GRAPHENE_TYPE_RECT);
   if (bounds_b == nullptr) RETURN_THROWS();
-  cairo_t *cr = gtk_snapshot_append_cairo(self, static_cast<graphene_rect_t *>(bounds_b));
-  wrap_cairo(cr, return_value);
-  if (cr != nullptr) cairo_destroy(cr);
+  gpointer phpgtk_ret = gtk_snapshot_append_cairo(self, static_cast<graphene_rect_t *>(bounds_b));
+  wrap_fundamental(CAIRO_GOBJECT_TYPE_CONTEXT, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) cairo_destroy(static_cast<cairo_t *>(phpgtk_ret));
 }
 
 /**
@@ -70,6 +77,111 @@ ZEND_METHOD(Gtk4_GtkSnapshot, append_color) {
   if (bounds_b == nullptr) RETURN_THROWS();
   gtk_snapshot_append_color(self, static_cast<GdkRGBA *>(color_b),
                             static_cast<graphene_rect_t *>(bounds_b));
+}
+
+/**
+ * Gtk4\GtkSnapshot::append_fill(GskPath $path, GskFillRule $fill_rule, GdkRGBA $color): void
+ *
+ * A convenience method to fill a path with a color.
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, append_fill) {
+  zval *path;
+  zval *fill_rule;
+  zval *color;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_OBJECT_OF_CLASS(path, boxed_class_for_type(GSK_TYPE_PATH)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(fill_rule, enum_class_for_type(GSK_TYPE_FILL_RULE))
+  Z_PARAM_OBJECT_OF_CLASS(color, boxed_class_for_type(GDK_TYPE_RGBA)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  gpointer path_b = unwrap_boxed(path, GSK_TYPE_PATH);
+  if (path_b == nullptr) RETURN_THROWS();
+  gint fill_rule_v = 0;
+  if (!enum_from_php(fill_rule, GSK_TYPE_FILL_RULE, &fill_rule_v)) RETURN_THROWS();
+  gpointer color_b = unwrap_boxed(color, GDK_TYPE_RGBA);
+  if (color_b == nullptr) RETURN_THROWS();
+  gtk_snapshot_append_fill(self, static_cast<GskPath *>(path_b),
+                           static_cast<GskFillRule>(fill_rule_v), static_cast<GdkRGBA *>(color_b));
+}
+
+/**
+ * Gtk4\GtkSnapshot::append_inset_shadow(GskRoundedRect $outline, GdkRGBA $color, float $dx, float
+ * $dy, float $spread, float $blur_radius): void
+ *
+ * Appends an inset shadow into the box given by $outline.
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, append_inset_shadow) {
+  zval *outline;
+  zval *color;
+  double dx;
+  double dy;
+  double spread;
+  double blur_radius;
+  ZEND_PARSE_PARAMETERS_START(6, 6)
+  Z_PARAM_OBJECT_OF_CLASS(outline, boxed_class_for_type(PHPGTK_TYPE_GSK_ROUNDED_RECT)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(color, boxed_class_for_type(GDK_TYPE_RGBA)->ce)
+  Z_PARAM_DOUBLE(dx)
+  Z_PARAM_DOUBLE(dy)
+  Z_PARAM_DOUBLE(spread)
+  Z_PARAM_DOUBLE(blur_radius)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  gpointer outline_b = unwrap_boxed(outline, PHPGTK_TYPE_GSK_ROUNDED_RECT);
+  if (outline_b == nullptr) RETURN_THROWS();
+  gpointer color_b = unwrap_boxed(color, GDK_TYPE_RGBA);
+  if (color_b == nullptr) RETURN_THROWS();
+  gtk_snapshot_append_inset_shadow(self, static_cast<GskRoundedRect *>(outline_b),
+                                   static_cast<GdkRGBA *>(color_b), static_cast<float>(dx),
+                                   static_cast<float>(dy), static_cast<float>(spread),
+                                   static_cast<float>(blur_radius));
+}
+
+/**
+ * Gtk4\GtkSnapshot::append_node(GskRenderNode $node): void
+ *
+ * Appends $node to the current render node of $snapshot, without changing the current node.
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, append_node) {
+  zval *node;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(node, fundamental_class_for_type(GSK_TYPE_RENDER_NODE)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  gpointer node_f = unwrap_fundamental(node, GSK_TYPE_RENDER_NODE);
+  if (node_f == nullptr) RETURN_THROWS();
+  gtk_snapshot_append_node(self, static_cast<GskRenderNode *>(node_f));
+}
+
+/**
+ * Gtk4\GtkSnapshot::append_outset_shadow(GskRoundedRect $outline, GdkRGBA $color, float $dx, float
+ * $dy, float $spread, float $blur_radius): void
+ *
+ * Appends an outset shadow node around the box given by $outline.
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, append_outset_shadow) {
+  zval *outline;
+  zval *color;
+  double dx;
+  double dy;
+  double spread;
+  double blur_radius;
+  ZEND_PARSE_PARAMETERS_START(6, 6)
+  Z_PARAM_OBJECT_OF_CLASS(outline, boxed_class_for_type(PHPGTK_TYPE_GSK_ROUNDED_RECT)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(color, boxed_class_for_type(GDK_TYPE_RGBA)->ce)
+  Z_PARAM_DOUBLE(dx)
+  Z_PARAM_DOUBLE(dy)
+  Z_PARAM_DOUBLE(spread)
+  Z_PARAM_DOUBLE(blur_radius)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  gpointer outline_b = unwrap_boxed(outline, PHPGTK_TYPE_GSK_ROUNDED_RECT);
+  if (outline_b == nullptr) RETURN_THROWS();
+  gpointer color_b = unwrap_boxed(color, GDK_TYPE_RGBA);
+  if (color_b == nullptr) RETURN_THROWS();
+  gtk_snapshot_append_outset_shadow(self, static_cast<GskRoundedRect *>(outline_b),
+                                    static_cast<GdkRGBA *>(color_b), static_cast<float>(dx),
+                                    static_cast<float>(dy), static_cast<float>(spread),
+                                    static_cast<float>(blur_radius));
 }
 
 /**
@@ -98,6 +210,31 @@ ZEND_METHOD(Gtk4_GtkSnapshot, append_scaled_texture) {
   gtk_snapshot_append_scaled_texture(self, GDK_TEXTURE(texture_o),
                                      static_cast<GskScalingFilter>(filter_v),
                                      static_cast<graphene_rect_t *>(bounds_b));
+}
+
+/**
+ * Gtk4\GtkSnapshot::append_stroke(GskPath $path, GskStroke $stroke, GdkRGBA $color): void
+ *
+ * A convenience method to stroke a path with a color.
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, append_stroke) {
+  zval *path;
+  zval *stroke;
+  zval *color;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_OBJECT_OF_CLASS(path, boxed_class_for_type(GSK_TYPE_PATH)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(stroke, boxed_class_for_type(GSK_TYPE_STROKE)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(color, boxed_class_for_type(GDK_TYPE_RGBA)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  gpointer path_b = unwrap_boxed(path, GSK_TYPE_PATH);
+  if (path_b == nullptr) RETURN_THROWS();
+  gpointer stroke_b = unwrap_boxed(stroke, GSK_TYPE_STROKE);
+  if (stroke_b == nullptr) RETURN_THROWS();
+  gpointer color_b = unwrap_boxed(color, GDK_TYPE_RGBA);
+  if (color_b == nullptr) RETURN_THROWS();
+  gtk_snapshot_append_stroke(self, static_cast<GskPath *>(path_b),
+                             static_cast<GskStroke *>(stroke_b), static_cast<GdkRGBA *>(color_b));
 }
 
 /**
@@ -221,6 +358,28 @@ ZEND_METHOD(Gtk4_GtkSnapshot, push_cross_fade) {
 }
 
 /**
+ * Gtk4\GtkSnapshot::push_fill(GskPath $path, GskFillRule $fill_rule): void
+ *
+ * Fills the area given by $path and $fill_rule with an image and discards everything outside of
+ * it.
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, push_fill) {
+  zval *path;
+  zval *fill_rule;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(path, boxed_class_for_type(GSK_TYPE_PATH)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(fill_rule, enum_class_for_type(GSK_TYPE_FILL_RULE))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  gpointer path_b = unwrap_boxed(path, GSK_TYPE_PATH);
+  if (path_b == nullptr) RETURN_THROWS();
+  gint fill_rule_v = 0;
+  if (!enum_from_php(fill_rule, GSK_TYPE_FILL_RULE, &fill_rule_v)) RETURN_THROWS();
+  gtk_snapshot_push_fill(self, static_cast<GskPath *>(path_b),
+                         static_cast<GskFillRule>(fill_rule_v));
+}
+
+/**
  * Gtk4\GtkSnapshot::push_mask(GskMaskMode $mask_mode): void
  *
  * Until the first call to `pop`, the mask image for the mask operation will be recorded.
@@ -272,6 +431,43 @@ ZEND_METHOD(Gtk4_GtkSnapshot, push_repeat) {
   }
   gtk_snapshot_push_repeat(self, static_cast<graphene_rect_t *>(bounds_b),
                            static_cast<graphene_rect_t *>(child_bounds_b));
+}
+
+/**
+ * Gtk4\GtkSnapshot::push_rounded_clip(GskRoundedRect $bounds): void
+ *
+ * Clips an image to a rounded rectangle.
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, push_rounded_clip) {
+  zval *bounds;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(bounds, boxed_class_for_type(PHPGTK_TYPE_GSK_ROUNDED_RECT)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  gpointer bounds_b = unwrap_boxed(bounds, PHPGTK_TYPE_GSK_ROUNDED_RECT);
+  if (bounds_b == nullptr) RETURN_THROWS();
+  gtk_snapshot_push_rounded_clip(self, static_cast<GskRoundedRect *>(bounds_b));
+}
+
+/**
+ * Gtk4\GtkSnapshot::push_stroke(GskPath $path, GskStroke $stroke): void
+ *
+ * Strokes the given $path with the attributes given by $stroke and an image.
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, push_stroke) {
+  zval *path;
+  zval *stroke;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(path, boxed_class_for_type(GSK_TYPE_PATH)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(stroke, boxed_class_for_type(GSK_TYPE_STROKE)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  gpointer path_b = unwrap_boxed(path, GSK_TYPE_PATH);
+  if (path_b == nullptr) RETURN_THROWS();
+  gpointer stroke_b = unwrap_boxed(stroke, GSK_TYPE_STROKE);
+  if (stroke_b == nullptr) RETURN_THROWS();
+  gtk_snapshot_push_stroke(self, static_cast<GskPath *>(path_b),
+                           static_cast<GskStroke *>(stroke_b));
 }
 
 /**
@@ -349,6 +545,19 @@ ZEND_METHOD(Gtk4_GtkSnapshot, scale_3d) {
 }
 
 /**
+ * Gtk4\GtkSnapshot::to_node(): ?GskRenderNode
+ *
+ * Returns the render node that was constructed by $snapshot.
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, to_node) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  gpointer phpgtk_ret = gtk_snapshot_to_node(self);
+  wrap_fundamental(GSK_TYPE_RENDER_NODE, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) gsk_render_node_unref(static_cast<GskRenderNode *>(phpgtk_ret));
+}
+
+/**
  * Gtk4\GtkSnapshot::to_paintable(?GrapheneSize $size): ?GdkPaintable
  *
  * Returns a paintable encapsulating the render node that was constructed by $snapshot.
@@ -371,6 +580,25 @@ ZEND_METHOD(Gtk4_GtkSnapshot, to_paintable) {
 }
 
 /**
+ * Gtk4\GtkSnapshot::transform(?GskTransform $transform): void
+ *
+ * Transforms $snapshot's coordinate system with the given $transform.
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, transform) {
+  zval *transform = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(transform, boxed_class_for_type(GSK_TYPE_TRANSFORM)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  gpointer transform_b = nullptr;
+  if (transform != nullptr) {
+    transform_b = unwrap_boxed(transform, GSK_TYPE_TRANSFORM);
+    if (transform_b == nullptr) RETURN_THROWS();
+  }
+  gtk_snapshot_transform(self, static_cast<GskTransform *>(transform_b));
+}
+
+/**
  * Gtk4\GtkSnapshot::translate(GraphenePoint $point): void
  *
  * Translates $snapshot's coordinate system by $point in 2-dimensional space.
@@ -384,4 +612,30 @@ ZEND_METHOD(Gtk4_GtkSnapshot, translate) {
   gpointer point_b = unwrap_boxed(point, GRAPHENE_TYPE_POINT);
   if (point_b == nullptr) RETURN_THROWS();
   gtk_snapshot_translate(self, static_cast<graphene_point_t *>(point_b));
+}
+
+/**
+ * public function append_border(GskRoundedRect $outline, array $widths, array $colors): void
+ * Appends a border inside $outline: $widths are the four widths (top, right, bottom, left) as
+ * floats, $colors the four GdkRGBA colours in the same order - what a GskBorderNode is.
+ *
+ * GIR takes two fixed-size C arrays; PHP lists of exactly four are the same thing.
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, append_border) {
+  zval *outline;
+  zval *widths;
+  zval *colors;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_OBJECT_OF_CLASS(outline, boxed_class_for_type(PHPGTK_TYPE_GSK_ROUNDED_RECT)->ce)
+  Z_PARAM_ARRAY(widths)
+  Z_PARAM_ARRAY(colors)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  std::array<float, 4> border_width{};
+  std::array<GdkRGBA, 4> border_color{};
+  if (!border_from_php(widths, 2, colors, 3, border_width, border_color)) RETURN_THROWS();
+  gtk_snapshot_append_border(
+      self,
+      static_cast<const GskRoundedRect *>(unwrap_boxed(outline, PHPGTK_TYPE_GSK_ROUNDED_RECT)),
+      border_width.data(), border_color.data());
 }

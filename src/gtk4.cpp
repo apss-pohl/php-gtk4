@@ -122,6 +122,7 @@ static PHP_MINIT_FUNCTION(gtk4) {
   phpgtk::register_GMainLoop(register_class_Gtk4_GMainLoop());
   phpgtk::register_GdkRGBA(register_class_Gtk4_GdkRGBA());
   phpgtk::register_GdkRectangle(register_class_Gtk4_GdkRectangle());
+  phpgtk::register_GskRoundedRect(register_class_Gtk4_GskRoundedRect());
   phpgtk::register_GParamSpec(register_class_Gtk4_GParamSpec());
   phpgtk::ce_GError = register_class_Gtk4_GError(spl_ce_RuntimeException);
   phpgtk::register_class("PhpValue", register_class_Gtk4_PhpValue(ce_GObject), PHP_TYPE_VALUE);

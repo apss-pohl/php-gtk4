@@ -16,14 +16,15 @@
   class, `src/Gtk/Gtk.stub.php` the *generated* per-namespace stub (same in `src/Gdk/`); the
   `GENERATED` header is the only distinction. An enum-only namespace (`src/Pango/`) has just the
   stub and its arginfo, no `.cpp`.
-- `gir.php` — the GIR generator (docs/PLAN.md milestone 3), one program in ten files: `gir.php`
+- `gir.php` — the GIR generator (gen/README.md), one program in ten files: `gir.php`
   itself (`Generator`'s state, the pipeline and the CLI) plus `gir/config.php` (what is read, what
   is in scope, the per-member tables), `gir/model.php` (`Type`/`Param`/`Func`/`Node` and the naming
   helpers), `gir/loader.php` (the .gir files parsed into that model, `Gir::locate()`),
   `gir/type-map.php` (`TypeSet`: what is in scope; `TypeMap`: what a GIR type becomes in PHP, the
   ZPP line, the conversions both ways), `gir/writer.php` (clang-format, write-only-on-change, the
   file list `report.md` prints), and the four emitters as traits of `Generator`:
-  `gir/emit-class.php` (a GObject class and the shared `method()`), `gir/emit-record.php` (boxed
+  `gir/emit-class.php` (a GObject class, a GIR *fundamental* class onto `core/fundamental` -
+  `emitFundamental()` - and the shared `method()`), `gir/emit-record.php` (boxed
   records, enums and flags), `gir/emit-vfunc.php` (thunks, installers and the native
   `vfunc_*()`), `gir/emit-tests.php` (the smoke test and the example skeleton).
   `GeneratorTypeMapTest` pins the mappings one at a time; the `gen` stage proves the whole output.
@@ -164,8 +165,7 @@ Which `attach*()` a generated constructor emits is decided by the return type, n
 | a plain `GObject`, `transfer="full"`             | `attach_new()` | adopts the returned ref              |
 | anything else                                    | error          | hand-write it in `overrides/`        |
 
-`GtkRoot` is read from GIR (`implements`), never from a name list. Wave 0 diffed this choice against
-the then hand-written constructors before anything else was generated; `attach_new()` also catches a
+`GtkRoot` is read from GIR (`implements`), never from a name list; `attach_new()` also catches a
 root at runtime with a `diagnostic()`.
 
 Run everything via `./ci.sh --only=stubs [--fix]`.

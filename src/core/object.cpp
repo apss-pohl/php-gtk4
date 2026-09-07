@@ -149,7 +149,7 @@ void attach(Object *self, GObject *obj) {
 }
 
 // Constructor variant of attach(): adopt the initial ref instead of adding one.
-// The ownership rule (docs/PLAN.md "Ownership", gen/README.md): floating -> sink, plain
+// The ownership rule (README.md "Design", gen/README.md): floating -> sink, plain
 // GObject -> adopt, GtkRoot (windows) -> GTK's toplevel list owns the initial reference,
 // so those must use attach(). Enforced here rather than trusted: a root is ref'd like
 // attach() would, with a diagnostic so the misuse shows up in tests.
@@ -185,6 +185,20 @@ void detach(Object *self) {
   }
   g_object_set_qdata(obj, handle_quark(), nullptr);
   if (!self->disposed) g_object_weak_unref(obj, on_dispose, self);  // dispose already consumed it
+  // A realized GskRenderer aborts the process in dispose (gsk_renderer_dispose() asserts that it
+  // was unrealized), and when this handle holds the last reference nobody else is left to do it:
+  // `new GskCairoRenderer()->realize(null)` dropped at the end of a statement must not be fatal.
+  // NOLINTNEXTLINE(bugprone-assignment-in-if-condition) GSK_IS_RENDERER() macro expansion
+  if (g_atomic_int_get(&obj->ref_count) == 1 && GSK_IS_RENDERER(obj) &&
+      gsk_renderer_is_realized(GSK_RENDERER(obj))) {
+    gsk_renderer_unrealize(GSK_RENDERER(obj));
+  }
+  // A GdkPixbufLoader dropped without close() is a g_warning at finalize (a PHP warning here);
+  // closing it first is what GdkPixbuf demands, and a closed loader closes again silently.
+  // NOLINTNEXTLINE(bugprone-assignment-in-if-condition) GDK_IS_PIXBUF_LOADER() macro expansion
+  if (g_atomic_int_get(&obj->ref_count) == 1 && GDK_IS_PIXBUF_LOADER(obj)) {
+    gdk_pixbuf_loader_close(GDK_PIXBUF_LOADER(obj), nullptr);
+  }
   g_object_remove_toggle_ref(obj, on_toggle, self);
 }
 
@@ -214,9 +228,21 @@ void free_obj(zend_object *o) {
   settle_destructor_exception();  // a __destruct of something the callables / properties held
 }
 
-// "$obj->default_width" -> GParamSpec "default-width" (nullptr if no such property)
+// Whether the PHP class (or a parent) declares a property of that name. A declared property is
+// the class author's, so it wins over a GObject property of the same name: a GtkWindow subclass
+// with `private GtkEntry $title` keeps its entry, and the GObject's title stays reachable through
+// get_title()/set_title(). Without this the write went to the GObject (a TypeError against
+// gchararray, or a silent success) and the read never saw the PHP value.
+bool declares_property(const zend_class_entry *ce, zend_string *member) {
+  return zend_hash_num_elements(&ce->properties_info) != 0 &&
+         zend_hash_find_ptr(&ce->properties_info, member) != nullptr;
+}
+
+// "$obj->default_width" -> GParamSpec "default-width" (nullptr if no such property, or if the
+// PHP class declares one of that name - declares_property())
 GParamSpec *find_property(Object *self, zend_string *member) {
   if (self->obj == nullptr) return nullptr;  // only ever between detach() and free: no PHP frame
+  if (declares_property(self->std.ce, member)) return nullptr;
   // On the $obj->prop path for every access: translate into a stack buffer, no heap.
   std::array<char, 96> buf{};
   const size_t len = ZSTR_LEN(member);
@@ -335,12 +361,23 @@ void unset_property(zend_object *o, zend_string *member, void **cache_slot) {
   zend_std_unset_property(o, member, cache_slot);
 }
 
-// var_dump()/print_r(): every readable GObject property that we can convert - that is one
-// g_object_get_property() per property (a GtkWindow has ~80), some of which realize GTK
-// internals; fine for debugging, not something to do inside a draw or measure vfunc.
+// Whether the class declares a PHP property named like this GObject property ("default-width"
+// is $default_width on the PHP side).
+bool shadowed(const zend_class_entry *ce, const char *gname) {
+  if (zend_hash_num_elements(&ce->properties_info) == 0) return false;
+  std::string php(gname);
+  for (char &c : php) c = c == '-' ? '_' : c;
+  return zend_hash_str_find_ptr(&ce->properties_info, php.c_str(), php.size()) != nullptr;
+}
+
+// var_dump()/print_r(): the PHP properties (a subclass' own state, dynamic ones) followed by
+// every readable GObject property that we can convert - that is one g_object_get_property() per
+// property (a GtkWindow has ~80), some of which realize GTK internals; fine for debugging, not
+// something to do inside a draw or measure vfunc. A GObject property the class shadows with a
+// declared one (find_property) is left out, so the dump shows what $obj->prop would answer.
 HashTable *get_debug_info(zend_object *o, int *is_temp) {
   Object *self = object_from_zend(o);
-  HashTable *ht = zend_new_array(8);
+  HashTable *ht = zend_array_dup(zend_std_get_properties(o));
   *is_temp = 1;
   if (self->obj == nullptr) {
     zval z;
@@ -353,6 +390,7 @@ HashTable *get_debug_info(zend_object *o, int *is_temp) {
   for (guint i = 0; i < n; i++) {
     if ((specs[i]->flags & G_PARAM_READABLE) == 0) continue;
     if (!to_php_supported(specs[i]->value_type)) continue;
+    if (shadowed(o->ce, specs[i]->name)) continue;
     GValue v = G_VALUE_INIT;
     g_value_init(&v, specs[i]->value_type);
     g_object_get_property(self->obj, specs[i]->name, &v);
