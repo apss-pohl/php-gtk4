@@ -5,17 +5,23 @@ history; an item leaves this file when it is done or decided against, it is not 
 
 ## Open work
 
-- **An intermittent segfault in the PHP 8.5 ZTS suite**, and the event log now names the test:
+- **The segfault behind the 8.5 ZTS CI job is worked around, not understood.** The event log
+  named it twice in a row:
   `RobustnessTest::testWrongArgumentsThrowInsteadOfCrashing#Gtk4\GtkFontDialog::choose_font`,
-  prepared and never finished (run 34115054496; an earlier occurrence, run 34085363767, died at
-  the same ~46% mark). Only that one job of the matrix, and only sometimes - 8.4 NTS/ZTS, 8.5
-  NTS, ASan and valgrind stay green, and ten local repeats of the same filter on 8.4 pass. The
-  sweep calls the *async* chooser with garbage arguments, so the dialog it opens outlives the
-  test and its callback runs somewhere in the rest of the suite; the print dialogs are already
-  on `RobustnessTest`'s `dialogOpeners` list for the same shape of reason. Either the async
-  choosers (`GtkFontDialog::choose_*`, `GtkColorDialog::choose_rgba`, `GtkFileDialog::*`,
-  `GtkAlertDialog::choose`) join that list, or the lifetime bug behind it is found - which needs
-  a ZTS build to reproduce on.
+  prepared and never finished (runs 34115054496 and 34116287179; an earlier one, 34085363767,
+  died at the same ~46% mark). The async choosers are off the sweep now - every argument may
+  legitimately be null, so the sweep was *opening* a dialog that outlives the test, which a
+  headless argument sweep has no business doing - and that is what makes the job green, not a
+  fix. What is known: it reproduces on no configuration that could be built here. A container
+  matching the job exactly (Ubuntu 24.04, GTK 4.14.5, PHP 8.5.10 built `--enable-zts`, the whole
+  suite under Xvfb and gdb) runs `choose_font` and passes, on the sweep alone and in the full
+  suite; so does 8.4 NTS locally, ten times over. Wrapping the run in `dbus-run-session` - the
+  session bus being the one thing a runner has that the container did not, and what would send
+  `GtkFontDialog` out to xdg-desktop-portal and bring the answer back long after the test that
+  asked - does not reproduce it either. That same run did fail
+  `WrapTest::testDisposedHandleThrowsInsteadOfTouchingTheGuttedObject` (a disposed handle came
+  back as a live `GtkButton`), which the CI job has never got far enough to reach; whether that
+  is a real 8.5 ZTS difference or an artefact of a hand-built PHP is the next thing to find out.
 - **The Windows suite runs to the end now and reports 11 failures**, all of them GTK 4.22 (what
   gvsbuild ships) saying something GTK 4.14 does not. Three groups:
   - *The robustness pin is written for the CI floor.* `tests/robustness-criticals.txt` fails

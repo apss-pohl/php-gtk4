@@ -200,6 +200,21 @@ final class RobustnessTest extends GtkTestCase
                     // dialog at all.
                     \Gtk4\WebKitPrintOperation::class . '::run_dialog',
                     \Gtk4\WebKitPrintOperation::class . '::print',
+                    // The async choosers: every argument may legitimately be null, so the sweep
+                    // ends up *opening* a dialog that outlives the test, and on a machine with a
+                    // session bus that dialog goes out to xdg-desktop-portal and answers over
+                    // D-Bus somewhere in the rest of the suite. The 8.5 ZTS CI job segfaulted
+                    // twice in a row inside the GtkFontDialog::choose_font sweep (docs/TODO.md);
+                    // a headless argument sweep has no business opening a dialog it cannot close.
+                    \Gtk4\GtkAlertDialog::class . '::choose',
+                    \Gtk4\GtkColorDialog::class . '::choose_rgba',
+                    \Gtk4\GtkFileDialog::class . '::open',
+                    \Gtk4\GtkFileDialog::class . '::open_multiple',
+                    \Gtk4\GtkFileDialog::class . '::save',
+                    \Gtk4\GtkFileDialog::class . '::select_folder',
+                    \Gtk4\GtkFileDialog::class . '::select_multiple_folders',
+                    \Gtk4\GtkFontDialog::class . '::choose_font',
+                    \Gtk4\GtkFontDialog::class . '::choose_font_and_features',
                 ];
                 if (in_array($class->getName() . '::' . $m->getName(), $dialogOpeners, true)) {
                     continue;
