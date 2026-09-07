@@ -62,19 +62,6 @@ history; an item leaves this file when it is done or decided against, it is not 
   `.github/ruleset-main.json`; once public or Pro:
   `gh api -X POST repos/apss-pohl/php-gtk4/rulesets --input .github/ruleset-main.json`
   (drop `required_approving_review_count` to 0 while there is a single maintainer).
-- **Robustness pin residue** (`tests/robustness-criticals.txt`, `tests/README-robustness-pin.md`).
-  The remaining method lines are GTK reporting about the data it was handed or about state it keeps
-  private. In the order worth attacking: *state preconditions* (`parent != NULL` on
-  `gtk_layout_manager_get_layout_child()`, `!task->ever_returned`, `is_registered` on the
-  `GApplication` methods, `center_child != NULL` on `GtkTextView::move_overlay()`) are
-  `LogicException` candidates; *lookup misses* ("Child name not found in GtkStack", "no mark named")
-  are a question of whether a miss should raise at all; *parse diagnostics* (theme parser errors,
-  "invalid accelerator string", the `goption.c` warnings) are correctly pinned.
-- **Performance**, all single-digit percent: the signal marshaller allocates the argument array per
-  emission, `subtype_vfunc()` hashes the method name per call, the PHP-GType snapshots are O(N²) in
-  PHP subclasses and never freed.
-- **Comments and lint style**: declarations in `src/core/*.h` carry no comment (the gate covers
-  definitions only); `.clang-tidy` explains its macro exclusions but not the style choices.
 - **A porting guide** for php-gtk3 programs (`docs/GTK3-MAP.md` is the class map; the prose about
   the model differences - no `Gtk::main()`, no containers, signals without user data, async
   dialogs, list views instead of tree views, `GdkTexture` instead of pixbufs in widgets - is not

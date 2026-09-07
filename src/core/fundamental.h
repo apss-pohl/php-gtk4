@@ -23,9 +23,13 @@ inline Fundamental *fundamental_from_zval(const zval *zv) {
   return fundamental_from_zend(Z_OBJ_P(zv));
 }
 
+// The type's own reference pair, as GLib spells it (g_param_spec_ref/_unref,
+// gdk_event_ref/_unref, ...): a registered type hands both to register_fundamental() and the
+// handle calls them, since a fundamental type has no shared refcounting API to call instead.
 using RefFn = gpointer (*)(gpointer);
 using UnrefFn = void (*)(gpointer);
 
+// What one registered fundamental class is: its GType, the PHP class bound to it, and the pair.
 struct FundamentalClass {
   GType type;
   zend_class_entry *ce;

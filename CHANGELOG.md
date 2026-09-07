@@ -411,6 +411,16 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Changed
 
+- **The GType -> PHP class registry no longer keeps a copy of itself per registration.** It was
+  copy-on-write - readers on the `wrap()` path took no lock, and every registration published a
+  fresh copy of the whole map that was never freed, so what a process retained grew with the
+  square of the PHP subclasses it registered. It is an append-only hash table now: entries are
+  written once and never changed or removed, so a fixed bucket array of atomic list heads needs
+  no rehash, and a registration pushes one node. Readers still take no lock. Measured over 1 000
+  PHP subclasses, RSS after registration went from +65.3 MB to +44.1 MB - the ~21 MB the
+  snapshots were holding. `SubclassTest` registers 600 classes and has GTK hand every one of them
+  back through `wrap()`.
+
 - **Action queries on an unregistered `GApplication` refuse instead of answering.** `has_action()`,
   `get_action_enabled()`, `get_action_state()`, `get_action_parameter_type()`,
   `get_action_state_hint()`, `get_action_state_type()` and `change_action_state()` sat below

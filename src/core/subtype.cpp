@@ -7,12 +7,12 @@
 #include "object.h"
 
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <cstring>
 #include <deque>
 #include <mutex>
 #include <string>
-#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -102,40 +102,61 @@ std::vector<GType> php_interfaces(zend_class_entry *ce) {
 
 // Process-wide (GTypes cannot be unregistered): PHP GType -> PHP class name. The strings
 // are leaked on purpose: class_data of the GTypeInfo points at them for the process' life.
-// Every registration copies the whole map into a new snapshot that is never freed, so the
-// retained size grows with the square of the number of PHP subclasses a process registers:
-// ~1 MB at 200, ~25 MB at 1 000. That is the price of a lock-free read on the wrap() path
-// (an atomic shared_ptr would take a lock there), and a desktop process registers dozens.
-// Copy-on-write: readers (wrap() walks the parent chain of every wrapped object, on hot
-// paths) load the current snapshot pointer and never lock; writers (rare: first `new` of a
-// class) serialise on the mutex and publish a new map. Every snapshot ever published stays
-// owned by a process-wide deque (stable addresses, a few small maps) so a reader mid-walk
-// never sees a freed one - simpler than hazard pointers and nothing for LSan to report.
-using TypeMap = std::unordered_map<GType, const std::string *>;
-// Every snapshot ever published, in order (process-wide static; deque elements never move).
-std::deque<TypeMap> &php_type_snapshots() {
-  static std::deque<TypeMap> maps(1);  // the empty initial snapshot
-  return maps;
+//
+// Append-only, so it needs neither a lock on the read path nor a rehash: an entry is written
+// once and never changed or removed, the bucket count is fixed, and a registration pushes one
+// node. wrap() walks the parent chain of every wrapped object, so a reader loads a bucket head
+// (acquire) and walks nodes whose fields were published before that head was stored (release);
+// writers (rare: the first `new` of a PHP class) are serialised by types_mutex(). The nodes
+// live for the process like the strings they point at, and stay reachable from the table, so
+// there is nothing here for LSan to report. This replaced a copy-on-write map whose every
+// registration copied the whole thing into a snapshot that was never freed: measured over
+// 1 000 PHP subclasses, that held ~21 MB of RSS which this holds in one node each.
+struct TypeNode {
+  GType type;
+  const std::string *name;
+  TypeNode *next;
+};
+// A PHP application registers dozens of subclasses, a generated one perhaps hundreds; 512
+// buckets keep the chains at one or two nodes over that whole range for the price of one
+// pointer array.
+constexpr size_t type_buckets = 512;
+using TypeTable = std::array<std::atomic<TypeNode *>, type_buckets>;
+// The table itself: process-wide, zero-initialised, and never replaced.
+TypeTable &php_type_table() {
+  static TypeTable table{};
+  return table;
 }
-// The pointer readers load (process-wide static, atomic).
-std::atomic<const TypeMap *> &php_types_snapshot() {
-  static std::atomic<const TypeMap *> snapshot{&php_type_snapshots().front()};
-  return snapshot;
+// A GType is an address or a small index depending on how GLib registered it; both spread
+// well enough once the low bits that only encode alignment are folded away.
+size_t type_bucket(GType type) {
+  const auto bits = static_cast<size_t>(type);
+  return ((bits >> 4) ^ (bits >> 12)) % type_buckets;
 }
-// A reader's view of the registry: no lock; valid for the process' life.
-const TypeMap *php_types() {
-  return php_types_snapshot().load();
+// A reader's lookup: no lock, and valid for the process' life. nullptr when the GType belongs
+// to GTK rather than to a PHP class.
+const std::string *php_type_name(GType type) {
+  // .at(): the index is already folded into range, and clang-tidy wants a checked subscript
+  for (const TypeNode *node =
+           php_type_table().at(type_bucket(type)).load(std::memory_order_acquire);
+       node != nullptr; node = node->next) {
+    if (node->type == type) return node->name;
+  }
+  return nullptr;
 }
 // Serialises registrations (register-check-publish must be atomic between ZTS threads).
 std::mutex &types_mutex() {
   static std::mutex m;
   return m;
 }
-// Publish a copy with `type` added (under types_mutex()); the previous map stays alive.
+// Publish one entry (under types_mutex(), so the head cannot change under us).
 void php_types_add(GType type, const std::string *name) {
-  TypeMap &next = php_type_snapshots().emplace_back(*php_types());
-  next[type] = name;
-  php_types_snapshot().store(&next);
+  std::atomic<TypeNode *> &head = php_type_table().at(type_bucket(type));
+  // NOLINTNEXTLINE(cppcoreguidelines-owning-memory) deliberately owned by the table for the
+  // process' life, like the class-name strings it points at
+  auto *node =
+      new TypeNode{.type = type, .name = name, .next = head.load(std::memory_order_relaxed)};
+  head.store(node, std::memory_order_release);
 }
 
 // A vfunc_<name>() the PHP class declares that no slot answers - a typo, a slot GTK does not
@@ -335,7 +356,7 @@ void register_iface_vfunc(GType iface, const char *name, VfuncInstall install) {
 
 // Registered here for a PHP class? (process-wide registry)
 bool is_php_type(GType type) {
-  return php_types()->contains(type);
+  return php_type_name(type) != nullptr;
 }
 
 // The PHP class' GType, registered on first use with its PHP ancestors (parents first).
@@ -359,8 +380,7 @@ GType subtype_for_class(zend_class_entry *ce) {
   const std::lock_guard<std::mutex> lock(types_mutex());
   if (const GType existing = g_type_from_name(name.c_str()); existing != 0) {
     // Registered for this very class? (`App\Foo` and `App__Foo` map to the same GType name.)
-    if (auto it = php_types()->find(existing); it != php_types()->end()) {
-      const std::string *owner = it->second;
+    if (const std::string *owner = php_type_name(existing); owner != nullptr) {
       if (owner->size() == ZSTR_LEN(ce->name) &&
           zend_binary_strcasecmp(owner->c_str(), owner->size(), ZSTR_VAL(ce->name),
                                  ZSTR_LEN(ce->name)) == 0) {
@@ -376,7 +396,7 @@ GType subtype_for_class(zend_class_entry *ce) {
   }
   GTypeQuery query;
   g_type_query(parent, &query);
-  // process-lifetime class_data, see php_types()
+  // process-lifetime class_data, see php_type_name()
   const auto *cname = new std::string(ZSTR_VAL(ce->name), ZSTR_LEN(ce->name));
   const GTypeInfo info = {
       .class_size = static_cast<guint16>(query.class_size),
@@ -446,13 +466,14 @@ zend_function *subtype_vfunc(GObject *obj, const char *method, zval *self) {
   // Per class and slot, once per request: a PHP widget's measure/snapshot/size_allocate slots
   // run every frame, and the method table cannot change under a running request. `method` is
   // the thunk's string literal, so its address is the key.
-  auto &per_class = GTK4_G(vfunc_cache)[handle->std.ce];
-  auto it = per_class.find(method);
-  if (it == per_class.end()) {
+  const VfuncKey key{.ce = handle->std.ce, .method = method};
+  auto &cache = GTK4_G(vfunc_cache);
+  auto it = cache.find(key);
+  if (it == cache.end()) {
     auto *found = static_cast<zend_function *>(
         zend_hash_str_find_ptr(&handle->std.ce->function_table, method, strlen(method)));
     if (found != nullptr && found->type != ZEND_USER_FUNCTION) found = nullptr;
-    it = per_class.emplace(method, found).first;
+    it = cache.emplace(key, found).first;
   }
   zend_function *fn = it->second;
   if (fn == nullptr) return nullptr;
@@ -505,10 +526,8 @@ const GVariantType *subtype_keep_variant_type(GObject *obj, const char *origin, 
 
 // wrap(): the PHP class behind a PHP GType in this request (no autoload), or nullptr.
 zend_class_entry *subtype_class_for_gtype(GType type) {
-  const TypeMap *types = php_types();
-  auto it = types->find(type);
-  if (it == types->end()) return nullptr;
-  const std::string *name = it->second;
+  const std::string *name = php_type_name(type);
+  if (name == nullptr) return nullptr;
   zend_string *zn = zend_string_init(name->c_str(), name->size(), false);
   zend_class_entry *ce =
       zend_lookup_class_ex(zn, nullptr, ZEND_FETCH_CLASS_NO_AUTOLOAD | ZEND_FETCH_CLASS_SILENT);

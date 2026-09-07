@@ -52,7 +52,11 @@ void closure_marshal(GClosure *c, GValue *return_value, guint n_params, const GV
   }
   zend_fcall_info_cache *fcc = pc->resolved ? &pc->fcc : &per_call;
 
-  std::array<zval, inline_args> inline_storage{};
+  // Deliberately uninitialised: to_php() writes every slot the loop below counts in `filled`
+  // (it sets rv even when it throws), nothing reads past that, and zeroing eight zvals is not
+  // free on a path that runs for every emission.
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init) see above
+  std::array<zval, inline_args> inline_storage;
   zval *args = n_params <= inline_args
                    ? inline_storage.data()
                    : static_cast<zval *>(safe_emalloc(n_params, sizeof(zval), 0));

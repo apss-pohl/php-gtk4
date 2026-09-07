@@ -33,6 +33,19 @@ struct TrackedHandler {
   GObject *instance;
   gulong id;
 };
+// subtype.cpp: what a vfunc lookup is keyed by - the instance's PHP class and the slot, whose
+// name is the thunk's own string literal, so its address identifies it.
+struct VfuncKey {
+  zend_class_entry *ce;
+  const char *method;
+  bool operator==(const VfuncKey &other) const { return ce == other.ce && method == other.method; }
+};
+struct VfuncKeyHash {
+  size_t operator()(const VfuncKey &key) const {
+    // Two pointers, one shifted: both halves are addresses, so the low bits already differ.
+    return std::hash<const void *>{}(key.ce) ^ (std::hash<const void *>{}(key.method) << 1U);
+  }
+};
 // teardown.cpp: a notified-scope callable.
 struct TrackedNotified {
   GObject *owner;
@@ -64,9 +77,10 @@ std::unordered_map<gpointer, phpgtk::TrackedNotified> notified;
 std::unordered_set<struct _PhpValue *> phpvalues;  // live PhpValue instances
 std::unordered_set<phpgtk::Object *> held;         // handles their GObject holds a ref on (toggle)
 std::unordered_set<phpgtk::Object *> owner_holders;  // handles with an `owner` (object_hold_owner)
-// subtype_vfunc(): the PHP method (or nullptr) per class and slot name, resolved once per request
-std::unordered_map<zend_class_entry *, std::unordered_map<const char *, zend_function *>>
-    vfunc_cache;
+// subtype_vfunc(): the PHP method (or nullptr) per class and slot, resolved once per request.
+// Keyed by both halves at once rather than a map of maps: this is looked up for every vfunc GTK
+// routes through PHP, and a widget's measure/snapshot/size_allocate run on every frame.
+std::unordered_map<phpgtk::VfuncKey, zend_function *, phpgtk::VfuncKeyHash> vfunc_cache;
 std::unordered_map<gpointer, zend_object *> fundamental_handles;  // instance -> its live handle
 std::vector<phpgtk::Diagnostic> diagnostics;  // recorded, waiting for a VM safe point
 phpgtk::DiagnosticsMode diagnostics_mode;     // gtk4.diagnostics

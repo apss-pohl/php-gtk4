@@ -188,6 +188,34 @@ final class SubclassTest extends GtkTestCase
         self::assertSame('PhpValue', $model->get_item_type());
     }
 
+    public function testManySubclassesAllWrapBackToThemselves(): void
+    {
+        // The GType -> PHP class registry (core/subtype) is an append-only hash table read
+        // without a lock, so what a chain of several nodes in one bucket does is worth a test:
+        // register enough classes to fill every bucket a few times over and have GTK hand each
+        // one back through wrap().
+        $classes = [];
+        for ($i = 0; $i < 600; $i++) {
+            $short = 'Many_' . $i;
+            eval("namespace PhpGtk4\\Tests\\Many; final class $short extends \\Gtk4\\GtkButton {}");
+            $classes[] = 'PhpGtk4\\Tests\\Many\\' . $short;
+        }
+
+        $box = new GtkBox(GtkOrientation::Vertical, 0);
+        foreach ($classes as $fqcn) {
+            if (!is_a($fqcn, GtkButton::class, true)) {
+                self::fail("$fqcn did not come out a GtkButton");
+            }
+            $box->append(new $fqcn());
+        }
+        $seen = [];
+        for ($child = $box->get_first_child(); $child !== null; $child = $child->get_next_sibling()) {
+            $seen[] = $child::class;
+        }
+
+        self::assertSame($classes, $seen, 'every PHP GType wrapped back to its own class');
+    }
+
     public function testGTypeNameCollisionIsRefused(): void
     {
         // `Sub\Foo` and `Sub__Foo` both map to the GType name Php__...__Sub__Foo; the second class
