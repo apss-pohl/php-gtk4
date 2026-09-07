@@ -22,8 +22,8 @@ history; an item leaves this file when it is done or decided against, it is not 
   `WrapTest::testDisposedHandleThrowsInsteadOfTouchingTheGuttedObject` (a disposed handle came
   back as a live `GtkButton`), which the CI job has never got far enough to reach; whether that
   is a real 8.5 ZTS difference or an artefact of a hand-built PHP is the next thing to find out.
-- **The Windows suite runs to the end now and reports 11 failures**, all of them GTK 4.22 (what
-  gvsbuild ships) saying something GTK 4.14 does not. Three groups:
+- **The Windows suite runs to the end now and reports 10 failures** (run 34118948682, 8.4 nts),
+  all of them GTK 4.22 (what gvsbuild ships) saying something GTK 4.14 does not. Three groups:
   - *The robustness pin is written for the CI floor.* `tests/robustness-criticals.txt` fails
     both on an unlisted complaint and on a listed line that has gone quiet, so a second GTK
     needs a version dimension in the file (or those boundaries closed so no GTK complains):
@@ -33,9 +33,10 @@ history; an item leaves this file when it is done or decided against, it is not 
     closing at the boundary rather than pinning), `GtkWidget::measure` and `::allocate` (the
     consistency-check warnings below, which the sweep provokes on purpose).
   - *Windows-only behaviour, not yet understood*: `DragDropTest` finds a `GtkTextBuffer` entry
-    in the content formats the serialisation test expects to be `['string']` and its async
-    clipboard callback never runs; `PixbufTest::testEncodingTakesOptionsAsAMap` gets the same
-    size back for both compression levels.
+    in the content formats the serialisation test expects to be `['string']`, and
+    `PixbufTest::testEncodingTakesOptionsAsAMap` gets the same size back for both compression
+    levels. `DragDropTest::testStoringTheClipboardIsAnAnswerEitherWay` ("the async callback
+    ran") failed the run before and passed this one, so that one is intermittent.
   - The measure/allocate misuse in the tests themselves is fixed (`GtkTestCase::allocate()`).
   Reproduce without Windows: Arch's `gtk4` package is 4.22.4, and a
   `meson --buildtype=debugoptimized` build of GTK is what turns the assertions and the
