@@ -73,15 +73,23 @@ jobs:
           php -v | head -1
           pkg-config --modversion gtk4
 
+      # --log-events-text is written as the run goes, so a crash (PHPUnit dies with the
+      # process and writes no JUnit file) still names the test that was running.
       - name: Run PHPUnit
-        run: ./ci.sh --only=test -- --log-junit phpunit-junit.xml --display-warnings
+        run: ./ci.sh --only=test -- --log-junit phpunit-junit.xml --log-events-text phpunit-events.txt --display-warnings
+
+      - name: Name the last test on a crash
+        if: failure()
+        run: tail -20 phpunit-events.txt || true
 
       - name: Upload PHPUnit report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: phpunit-junit-php${{ matrix.php }}-${{ matrix.ts }}
-          path: phpunit-junit.xml
+          path: |
+            phpunit-junit.xml
+            phpunit-events.txt
           if-no-files-found: ignore
 
       # php-src run-tests.php: the process-level assertions PHPUnit cannot make
@@ -219,12 +227,18 @@ jobs:
         run: composer install --no-interaction --no-progress --prefer-dist
 
       - name: Run PHPUnit
-        run: ./ci.sh --only=test -- --log-junit phpunit-junit.xml --display-warnings
+        run: ./ci.sh --only=test -- --log-junit phpunit-junit.xml --log-events-text phpunit-events.txt --display-warnings
+
+      - name: Name the last test on a crash
+        if: failure()
+        run: tail -20 phpunit-events.txt || true
 
       - name: Upload PHPUnit report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: phpunit-junit-php8.4-webkit
-          path: phpunit-junit.xml
+          path: |
+            phpunit-junit.xml
+            phpunit-events.txt
           if-no-files-found: ignore

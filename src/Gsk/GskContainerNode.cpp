@@ -64,7 +64,9 @@ ZEND_METHOD(Gtk4_GskContainerNode, __construct) {
     nodes.push_back(static_cast<GskRenderNode *>(node));
   }
   ZEND_HASH_FOREACH_END();
-  GskRenderNode *self = gsk_container_node_new(nodes.data(), nodes.size());
+  // The count is a guint, not a gsize: MSVC's /W3 fails the Windows build on the implicit
+  // narrowing (GCC does not warn), so it is spelled out here as everywhere else.
+  GskRenderNode *self = gsk_container_node_new(nodes.data(), static_cast<guint>(nodes.size()));
   fundamental_adopt(fundamental_from_zval(ZEND_THIS), GSK_TYPE_CONTAINER_NODE, self);
 }
 

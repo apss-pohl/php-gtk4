@@ -235,6 +235,16 @@ stage_gen() {
     mapfile -t gen_files < <(gen_file_list)
     local after; after=$(md5sum "${gen_files[@]}" 2>/dev/null)
     if [[ "$before" != "$after" ]]; then
+        # Name them: on a runner the tree is thrown away with the job, so "review and commit
+        # them" is only actionable when the message says which files and how they differ.
+        echo "  changed by this run:"
+        diff <(echo "$before") <(echo "$after") | sed -n 's/^> [0-9a-f]* /    /p' | head -20
+        local diff_count; diff_count=$(diff <(echo "$before") <(echo "$after") | grep -c '^>' || true)
+        [[ "$diff_count" -gt 20 ]] && echo "    ... and $((diff_count - 20)) more"
+        if command -v git >/dev/null && git rev-parse --git-dir >/dev/null 2>&1; then
+            git --no-pager diff --stat -- "${gen_files[@]}" | tail -5
+            git --no-pager diff -U2 -- "${gen_files[@]}" | head -40
+        fi
         if [[ $FIX -eq 1 ]]; then echo "  regenerated (commit the result)"; else fail "generated files were out of date (now regenerated - review and commit them)"; fi
     fi
     echo "  up to date (${#gen_files[@]} generated files)"

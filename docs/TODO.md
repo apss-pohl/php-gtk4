@@ -5,6 +5,13 @@ history; an item leaves this file when it is done or decided against, it is not 
 
 ## Open work
 
+- **An intermittent segfault in the PHP 8.5 ZTS suite.** One CI run (2026-09-07, run
+  34085363767) died with `Segmentation fault (core dumped)` about 46% into the PHPUnit suite;
+  the same job re-run on the same commit passed, and 8.4 NTS/ZTS, 8.5 NTS, ASan and valgrind
+  were green. So it is real but rare, and nothing named the test: PHPUnit dies with the process
+  and writes no JUnit file. `tests.yml` now streams `--log-events-text` and prints its tail on a
+  failed job, so the next occurrence names the test that was running. Until then there is
+  nothing to reproduce.
 - **The Windows list-view abort.** The four Windows CI jobs build and load the DLL and then die in
   PHPUnit at `PhpSelectionModelTest` with `gtk_list_item_manager_clear_model: assertion failed:
   (gtk_rb_tree_get_root (self->items) == NULL)`, exit `0xC0000409`. The assertion exists in the
