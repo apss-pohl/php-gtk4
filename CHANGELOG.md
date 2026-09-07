@@ -84,6 +84,24 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **The extension installs with PIE**, and the stubs stay a Composer package:
+
+  ```sh
+  pie install php-gtk4/php-gtk4
+  composer require --dev php-gtk4/stubs
+  ```
+
+  Both come out of this one repository. The root `composer.json` is now `"type": "php-ext"` with a
+  `php-ext` block (`extension-name: gtk4`, spelled out because PIE would otherwise derive
+  `php-gtk4` from the package name; both thread models; `--enable-gtk4-webkit` offered as a
+  configure option) while remaining the development manifest — a consumer ignores `require-dev`,
+  `scripts` and `autoload-dev`. On Linux PIE runs the same `phpize && ./configure && make` you
+  would, so the GTK 4 development headers still have to be installed first; on Windows PIE never
+  builds and takes a release asset instead, so those are now zips named the way PIE looks for them
+  (`php_gtk4-<ver>-<X.Y>-<nts|ts>-vs17-x86_64.zip`, holding the matching `.dll`) and both thread
+  models ship rather than NTS alone. `PiePackageTest` pins the manifest, `config.m4`'s switches and
+  the workflow's asset name to each other, since nothing else fails when those drift apart.
+
 - **WebKitGTK 6, behind `--enable-gtk4-webkit`.** `WebKitWebView` and what an application reaches
   through it - `WebKitSettings`, `WebKitWebContext`, `WebKitNetworkSession` with its cookie and
   website-data managers, `WebKitUserContentManager` with user scripts, style sheets and script

@@ -286,4 +286,6 @@ the CI environment, and WSLg provides the display.
 ## Releases
 
 Bumping `VERSION` on `main` is the only release trigger — `release.yml` builds one `.so` per
-supported PHP and publishes it. Never tag by hand. Details in `docs/RELEASING.md`.
+supported PHP, one Windows zip per PHP and thread model, and publishes them. Never tag by hand.
+The extension is a PIE package (`pie install php-gtk4/php-gtk4`, root `composer.json`) and the
+stubs a Composer one; details in `docs/RELEASING.md` "Shipping".

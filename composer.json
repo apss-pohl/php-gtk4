@@ -1,10 +1,39 @@
 {
     "name": "php-gtk4/php-gtk4",
-    "description": "Test/dev tooling for the php-gtk4 extension (the extension itself is built with make)",
-    "type": "project",
+    "description": "GTK 4 bindings for PHP: desktop applications written in PHP against the native GTK 4 API. Installed with PIE (pie install php-gtk4/php-gtk4); the IDE/PHPStan stubs are the separate php-gtk4/stubs package.",
+    "type": "php-ext",
+    "keywords": [
+        "gtk",
+        "gtk4",
+        "gui",
+        "desktop",
+        "extension",
+        "php-gtk4"
+    ],
+    "homepage": "https://github.com/apss-pohl/php-gtk4",
     "license": "MIT",
+    "support": {
+        "issues": "https://github.com/apss-pohl/php-gtk4/issues",
+        "source": "https://github.com/apss-pohl/php-gtk4"
+    },
     "require": {
         "php": ">=8.4"
+    },
+    "php-ext": {
+        "extension-name": "gtk4",
+        "support-zts": true,
+        "support-nts": true,
+        "os-families": [
+            "linux",
+            "windows"
+        ],
+        "configure-options": [
+            {
+                "name": "enable-gtk4-webkit",
+                "description": "Bind WebKitGTK 6 and JavaScriptCore (WebKit*/JSC* classes). Needs libwebkitgtk-6.0-dev; Linux only.",
+                "needs-value": false
+            }
+        ]
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3",
@@ -20,10 +49,14 @@
         "ci": "./ci.sh"
     },
     "autoload-dev": {
-        "psr-4": { "PhpGtk4\\Tests\\": "tests/" }
+        "psr-4": {
+            "PhpGtk4\\Tests\\": "tests/"
+        }
     },
     "config": {
-        "platform": { "php": "8.4.0" },
+        "platform": {
+            "php": "8.4.0"
+        },
         "process-timeout": 0,
         "sort-packages": true
     }

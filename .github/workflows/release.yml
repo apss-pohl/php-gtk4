@@ -182,24 +182,26 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  # One php_gtk4.dll per supported PHP: the Windows counterpart of `build`, same
-  # recipe as windows.yml (PHP SDK + config.w32 against gvsbuild's MSVC GTK 4).
-  # Bound to the PHP version, NTS, the VS series and x64 - all in the filename.
+  # One php_gtk4.dll per supported PHP and thread model: the Windows counterpart of
+  # `build`, same recipe as windows.yml (PHP SDK + config.w32 against gvsbuild's MSVC
+  # GTK 4). PIE never builds on Windows - it downloads one of these - so both thread
+  # models ship, and the name is the one PIE looks for:
+  # php_<extension>-<version>-<php>-<ts|nts>-<compiler>-<arch>, lower case throughout
+  # (php/pie, Platform/WindowsExtensionAssetName). The zip around it is made in `publish`.
   build-windows:
-    name: Build .dll (PHP ${{ matrix.php }})
+    name: Build .dll (PHP ${{ matrix.php }} ${{ matrix.ts }})
     needs: [plan, verify]
     strategy:
       fail-fast: false
       matrix:
         php: ['8.4', '8.5']
-    # The same recipe as windows.yml (windows-build.yml, GVSBUILD_VERSION pinned there); the
-    # dll is named with its whole ABI identity and checked against the planned version.
+        ts: [nts, ts]
     uses: ./.github/workflows/windows-build.yml
     with:
       php: ${{ matrix.php }}
-      ts: nts
-      artifact: dll-php${{ matrix.php }}
-      dll-name: php_gtk4-${{ needs.plan.outputs.relver }}-php${{ matrix.php }}-nts-vs17-x64.dll
+      ts: ${{ matrix.ts }}
+      artifact: dll-php${{ matrix.php }}-${{ matrix.ts }}
+      dll-name: php_gtk4-${{ needs.plan.outputs.relver }}-${{ matrix.php }}-${{ matrix.ts }}-vs17-x86_64.dll
       expect-version: ${{ needs.plan.outputs.version }}
 
   publish:
@@ -221,6 +223,20 @@ jobs:
           path: dist
           merge-multiple: true
 
+      # PIE installs a Windows extension from a zip named exactly like the dll it holds,
+      # with the dll at the archive root (php/pie, Platform/WindowsExtensionAssetName and
+      # Installing/WindowsInstall). The bare dll is not published: the zip is what both PIE
+      # and a person downloading by hand should take.
+      - name: Zip the Windows builds the way PIE looks for them
+        run: |
+          set -euo pipefail
+          cd dist
+          for dll in php_gtk4-*.dll; do
+            zip -qj "${dll%.dll}.zip" "$dll"
+            rm -- "$dll"
+          done
+          ls -l
+
       # The source dist is the supported install path (phpize layout); the .so
       # files are a convenience for whoever matches the ABI above.
       - name: Source tarball + checksums
@@ -237,7 +253,7 @@ jobs:
         with:
           subject-path: |
             dist/*.so
-            dist/*.dll
+            dist/*.zip
 
       - name: Release notes
         env:
@@ -282,7 +298,17 @@ jobs:
 
           ### Install
 
-          `php-gtk4-*.tar.gz` is the supported install path - the standard phpize layout:
+          ```sh
+          pie install php-gtk4/php-gtk4              # the extension
+          composer require --dev php-gtk4/stubs     # IDE and PHPStan stubs
+          ```
+
+          [PIE](https://github.com/php/pie) builds from source on Linux, so the GTK 4 development
+          headers have to be there first (`libgtk-4-dev`, 4.14 or newer; add
+          `libwebkitgtk-6.0-dev` and `--enable-gtk4-webkit` for the WebKit classes). On Windows it
+          takes one of the `php_gtk4-*.zip` files below - no build tools needed.
+
+          Or by hand: `php-gtk4-*.tar.gz` is the same source in the standard phpize layout.
 
           ```sh
           phpize && ./configure && make && sudo make install
@@ -293,9 +319,10 @@ jobs:
           soname in its filename; built on Ubuntu 24.04 (GTK 4.14, the supported floor), so they run
           on that and newer, not older. Anything else: build from source.
 
-          The `php_gtk4-*.dll` files are the Windows builds (PHP version, NTS, VS17, x64 in the
-          name), compiled against gvsbuild's MSVC GTK 4: they need the `bin\` directory of a
-          gvsbuild GTK 4 tree on `PATH` (docs/BUILD.md "Windows").
+          The `php_gtk4-*.zip` files are the Windows builds - PHP version, thread model, VS17 and
+          x86_64 in the name, each holding the matching `.dll`. They are compiled against gvsbuild's
+          MSVC GTK 4 and need the `bin\` directory of a gvsbuild GTK 4 tree on `PATH`
+          (docs/BUILD.md "Windows"); PIE unpacks one for you.
 
           Verify with `sha256sum -c SHA256SUMS`, and `gh attestation verify <file> --repo OWNER/REPO`
           for build provenance.

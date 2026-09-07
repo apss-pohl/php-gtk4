@@ -281,7 +281,8 @@ display, and calls `Gtk::init()` once.
   meta tests (`ExtensionTest`, `StubsTest`, `ExampleTest`, `EveryClassTest`, `RobustnessTest`,
   `DeprecationTest` (no deprecated GIR member is bound), `DocsTest`,
   `HeaderNamesTest`, `WorkflowsTest`, `CommitLintTest`, `ReleaseNotesTest`,
-  `GeneratorIdempotenceTest`, `VscodeConfigTest`). Every test that touches GTK extends `GtkTestCase`; the meta
+  `GeneratorIdempotenceTest`, `VscodeConfigTest`, `PiePackageTest`). Every test that touches GTK
+  extends `GtkTestCase`; the meta
   tests that never load a widget extend PHPUnit's `TestCase` directly. Fixtures that subclass GTK
   classes live in `tests/Subclass/` (namespace `PhpGtk4\Tests\Subclass`), script-only ones next to
   their script in `tests/scripts/`. `GtkTestCase`
@@ -438,11 +439,17 @@ after running `./ci.sh` in full itself — it does not key off `tests.yml`. A re
 `STUBS_DEPLOY_KEY`; skipped with a warning when the secret is absent). The body is the
 `CHANGELOG.md` section for the version (required, verbatim) followed by `bin/release-notes`,
 which groups the commits since the previous release by Conventional Commit type. Assets are one `.so` per
-supported PHP named with its whole ABI identity, one `php_gtk4-<ver>-php<X.Y>-nts-vs17-x64.dll`
-per supported PHP (the `build-windows` job calling `windows-build.yml` with the release name), plus
-the source tarball
-and `SHA256SUMS`, with
-build provenance attestation instead of a signed tag. **`VERSION` is the only release trigger; never
+supported PHP named with its whole ABI identity, one
+`php_gtk4-<ver>-<X.Y>-<nts|ts>-vs17-x86_64.zip` per supported PHP and thread model (the
+`build-windows` job calling `windows-build.yml`, then zipped in `publish`), plus the source tarball
+and `SHA256SUMS`, with build provenance attestation instead of a signed tag.
+**Two packages ship from this repository**: the extension itself as a PIE package
+(`pie install php-gtk4/php-gtk4` — the root `composer.json` is `"type": "php-ext"` with a
+`php-ext` block, and doubles as the dev manifest) and `stubs/` as the Composer package
+`php-gtk4/stubs`. PIE builds from source on Linux and downloads the Windows zip, whose name it
+derives itself from `php-ext.extension-name` and the package version — `PiePackageTest` pins the
+manifest, `config.m4`'s configure switches and the workflow's asset name to each other, because
+nothing else fails when they drift (docs/RELEASING.md "Shipping"). **`VERSION` is the only release trigger; never
 create a tag or a release by hand.** docs/RELEASING.md is the full description.
 `.github/copilot-instructions.md` is a one-liner pointing at this file — keep project-wide
 conventions here only. `.github/ISSUE_TEMPLATE/` holds two issue forms (bug, feature) with the

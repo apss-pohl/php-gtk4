@@ -64,9 +64,19 @@ with `ini_set()`):
 GTK returns and carries on after a `CRITICAL`, so the default reports without ending your
 application. `fatal` is for development and CI, where an unguarded boundary should stop the run.
 
-## Build & install
+## Install
 
-Requires **PHP 8.4+** (NTS or ZTS) with `php8.4-dev` and `libgtk-4-dev` (GTK ≥ 4.14). Standard `phpize` build:
+Requires **PHP 8.4+** (NTS or ZTS) and GTK ≥ 4.14. With [PIE](https://github.com/php/pie), the PHP
+Foundation's extension installer:
+
+```sh
+sudo apt install php8.4-dev libgtk-4-dev build-essential pkg-config   # PIE builds from source
+pie install php-gtk4/php-gtk4
+composer require --dev php-gtk4/stubs     # IDE and PHPStan stubs for the Gtk4\ namespace
+```
+
+On Windows PIE takes the prebuilt DLL from the release instead of building. Or the standard
+`phpize` build, which is what PIE runs for you:
 
 ```sh
 phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(nproc)" && sudo make install

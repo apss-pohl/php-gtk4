@@ -3,12 +3,27 @@
 php-gtk4 is a PHP extension that binds GTK 4. It is a **CLI** extension: desktop applications are
 started with `php script.php` — web SAPIs (FPM, Apache, CGI) are not a target.
 
-There are two ways to get it, on both platforms:
+There are three ways to get it, on both platforms:
 
 | Route | When |
 | --- | --- |
-| **Prebuilt binary** from the [releases page](https://github.com/apss-pohl/php-gtk4/releases) | Your PHP matches one of the published builds exactly. Fastest path. |
-| **Build from source** | Everything else — a different distribution, a ZTS PHP, a newer GTK, or you want to hack on the extension. |
+| **[PIE](https://github.com/php/pie)**: `pie install php-gtk4/php-gtk4` | The short path. Builds from source on Linux, downloads the prebuilt DLL on Windows. |
+| **Prebuilt binary** from the [releases page](https://github.com/apss-pohl/php-gtk4/releases) | Your PHP matches one of the published builds exactly, and you would rather place the file yourself. |
+| **Build from source** | Everything else — a different distribution, a newer GTK, or you want to hack on the extension. |
+
+PIE is the PHP Foundation's extension installer; it needs PHP 8.1+ to run and can install into any
+PHP 8.4+ you point it at. It does *not* install system dependencies: on Linux the GTK 4 development
+headers below have to be there first, because PIE builds the extension the same way you would.
+
+```sh
+pie install php-gtk4/php-gtk4                          # the extension
+pie install php-gtk4/php-gtk4 --enable-gtk4-webkit     # ...with the WebKit classes (Linux)
+composer require --dev php-gtk4/stubs                  # IDE and PHPStan stubs for the Gtk4\ namespace
+```
+
+The stubs are a separate Composer package and are declarations only — the extension defines the
+classes, so the package is never autoloaded. It is what makes an editor and PHPStan understand
+`Gtk4\` without pointing them at a checkout.
 
 The prebuilt binaries are **not portable**: each one is bound to a PHP version, NTS, and (on Linux)
 the C++ ABI, glibc and GTK 4 soname it was built against — the filename spells all of it out. When
@@ -53,7 +68,19 @@ Arch:
 sudo pacman -S php gtk4 base-devel
 ```
 
-### Option A — a prebuilt `.so`
+### Option A — PIE
+
+With the build dependencies above installed:
+
+```sh
+pie install php-gtk4/php-gtk4
+```
+
+PIE downloads the source of the newest release, runs `phpize && ./configure && make && make install`
+and can enable the extension in your `php.ini` for you. `--enable-gtk4-webkit` is passed straight
+through to `./configure`.
+
+### Option B — a prebuilt `.so`
 
 Pick the asset whose name matches your PHP and distribution, download it together with
 `SHA256SUMS`, verify it, and drop it into PHP's extension directory:
@@ -69,7 +96,7 @@ The assets carry build provenance; `gh attestation verify <file> --repo apss-poh
 If the file does not match your PHP (wrong version, ZTS, another distribution), it will refuse to
 load — that is the naming doing its job. Build from source instead.
 
-### Option B — from source
+### Option C — from source
 
 ```sh
 tar xf php-gtk4-<ver>.tar.gz && cd php-gtk4-<ver>      # or: git clone + cd php-gtk4
@@ -140,20 +167,32 @@ Building additionally needs Visual Studio 2022 with *Desktop development with C+
 *development package* matching your `php.exe`, and
 [php-sdk-binary-tools](https://github.com/php/php-sdk-binary-tools).
 
-### Option A — a prebuilt `.dll`
-
-Download `php_gtk4-<ver>-php8.4-nts-vs17-x64.dll` from the releases page, verify it against
-`SHA256SUMS`, and copy it into PHP's `ext\` directory as `php_gtk4.dll`:
+### Option A — PIE
 
 ```powershell
-Get-FileHash php_gtk4-<ver>-php8.4-nts-vs17-x64.dll -Algorithm SHA256
-Copy-Item php_gtk4-<ver>-php8.4-nts-vs17-x64.dll C:\php\ext\php_gtk4.dll
+pie install php-gtk4/php-gtk4
+```
+
+PIE never builds on Windows: it picks the release zip matching your PHP version, thread model and
+architecture, puts the DLL in `ext\` as `php_gtk4.dll` and can enable it for you. You still need
+`C:\gtk\bin` on `PATH` from step 3 above — the DLL links against GTK, it does not contain it.
+
+### Option B — a prebuilt `.dll`
+
+Download `php_gtk4-<ver>-8.4-nts-vs17-x86_64.zip` from the releases page (`-ts-` if your PHP is
+thread-safe), verify it against `SHA256SUMS`, and copy the DLL inside it into PHP's `ext\`
+directory as `php_gtk4.dll`:
+
+```powershell
+Get-FileHash php_gtk4-<ver>-8.4-nts-vs17-x86_64.zip -Algorithm SHA256
+Expand-Archive php_gtk4-<ver>-8.4-nts-vs17-x86_64.zip -DestinationPath .
+Copy-Item php_gtk4-<ver>-8.4-nts-vs17-x86_64.dll C:\php\ext\php_gtk4.dll
 ```
 
 PHP version, threading (NTS) and compiler series (VS17) in the name must all match your `php.exe`
 — `php -i` prints them. Anything else: build from source.
 
-### Option B — from source
+### Option C — from source
 
 In a `phpsdk-vs17-x64.bat` shell, with the devel pack's `phpize.bat` on `PATH`, from the repo root:
 

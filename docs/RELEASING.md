@@ -119,9 +119,13 @@ carries the git hash, so a build identifies its exact commit from the inside.
 Every release, dev builds included, carries:
 
 ```text
-php-gtk4-0.2.0.tar.gz                                     # source dist - the supported install path
+php-gtk4-0.2.0.tar.gz                                     # source dist - what PIE builds on Linux
 gtk4-0.2.0-php8.4-nts-x86_64-linux-gnu-ubuntu24.04.so
 gtk4-0.2.0-php8.5-nts-x86_64-linux-gnu-ubuntu24.04.so
+php_gtk4-0.2.0-8.4-nts-vs17-x86_64.zip                    # Windows, one per PHP x thread model
+php_gtk4-0.2.0-8.4-ts-vs17-x86_64.zip
+php_gtk4-0.2.0-8.5-nts-vs17-x86_64.zip
+php_gtk4-0.2.0-8.5-ts-vs17-x86_64.zip
 SHA256SUMS
 ```
 
@@ -129,14 +133,41 @@ A dev build is the same set with `0.2.0-dev.7` in place of `0.2.0`.
 
 A `.so` is not portable the way a phar or a manylinux wheel is: it is bound to the PHP `ZEND_MODULE_API`
 number, the thread-safety mode, the C++ ABI, glibc, and the GTK 4 soname it linked against. So the filename
-carries that whole identity, and the release body says out loud that these are a convenience — the tarball is
+carries that whole identity, and the release body says out loud that these are a convenience — the source is
 the supported path. Built on `ubuntu-24.04`, the GTK 4.14 floor CI already targets: the binaries run there and
-newer, not older. NTS only — ZTS builds compile and are tested in CI, but are not shipped as binaries.
+newer, not older. NTS only — a ZTS Linux build comes from source.
+
+The Windows assets are zips rather than bare dlls because that is what PIE downloads, and their names are
+not decoration: PIE builds the name it looks for out of the extension name and the package version
+(`php_<extension>-<version>-<php>-<ts|nts>-<compiler>-<arch>.zip`, lower case, holding a `.dll` of the same
+name at the archive root). `PiePackageTest` pins the workflow to that shape. Both thread models ship,
+because PIE never builds on Windows — an unpublished one is an install that finds nothing. They still need
+a gvsbuild GTK 4 tree's `bin\` on `PATH` (docs/BUILD.md "Windows").
 
 Tags are created by the workflow and therefore cannot carry a maintainer's GPG signature.
 `actions/attest-build-provenance` on the `.so` files is the replacement — verifiable with
 `gh attestation verify <file> --repo apss-pohl/php-gtk4`, and it attests the artifact people actually run
 rather than the commit.
+
+## Shipping
+
+Two packages come out of this one repository, and neither is a second source of truth.
+
+| Package | Registry | Installed with |
+| ------- | -------- | -------------- |
+| `php-gtk4/php-gtk4` | Packagist, from the root `composer.json` | `pie install php-gtk4/php-gtk4` |
+| `php-gtk4/stubs` | Packagist, from the mirror below | `composer require --dev php-gtk4/stubs` |
+
+The root `composer.json` is both the development manifest (`require-dev`, `scripts`, `autoload-dev` — all
+of which a consumer ignores) and the published package: `"type": "php-ext"` plus a `php-ext` block is what
+makes [PIE](https://github.com/php/pie) able to install it. `extension-name` is spelled out because PIE
+would otherwise derive `php-gtk4` from the package name, and the module is `gtk4`. `configure-options`
+is what lets `pie install php-gtk4/php-gtk4 --enable-gtk4-webkit` work.
+
+On Linux and macOS PIE runs `phpize && ./configure && make && make install` against the Composer dist, so
+whoever installs needs the build tools *and* the GTK 4 development headers — PIE does not install system
+dependencies, and `config.m4` refuses anything below GTK 4.14 with a message that says so. On Windows PIE
+does not build at all: it takes one of the release zips above.
 
 ## The stubs package
 
