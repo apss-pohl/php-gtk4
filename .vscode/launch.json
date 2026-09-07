@@ -62,6 +62,23 @@
       }
     },
     {
+      // The other application in examples/: Notes runs itself (it is a program, not a
+      // page), so it is launched directly rather than through demo.php.
+      "name": "Application: Notes",
+      "type": "php",
+      "request": "launch",
+      "program": "${workspaceFolder}/examples/notes/notes.php",
+      "runtimeExecutable": "${workspaceFolder}/bin/php-gtk4",
+      "cwd": "${workspaceFolder}",
+      "port": 9003,
+      "env": {
+        "XDEBUG_MODE": "debug",
+        "XDEBUG_SESSION": "1",
+        "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003",
+        "GDK_BACKEND": "x11"
+      }
+    },
+    {
       // Any script that runs itself - a scratch file, tests/scripts/stress.php.
       "name": "Script: the open PHP file",
       "type": "php",

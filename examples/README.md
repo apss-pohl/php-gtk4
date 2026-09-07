@@ -36,9 +36,11 @@ Every `<Class>.php` ends in `return Demo::page(...)` and does nothing else — i
 rather than running one. `demo.php` requires them all, so a file that ran itself would fire on
 import. `ExampleTest` enforces that.
 
-The application is a header row, a sidebar and a content area, all `GtkBox`. The sidebar shows the
-current section only and scrolls it (`GtkScrolledWindow`); `Demo::SECTIONS` is the grouping and every
-registered class must appear in it exactly once.
+The application is built from the widgets it documents: a `GtkHeaderBar` titlebar carries the page
+buttons and the window title, a `GtkPaned` splits the sidebar from the page, and the page sits in a
+`GtkFrame`. The sidebar picks the section with a `GtkDropDown` and scrolls that section's classes
+(`GtkScrolledWindow`), with the section and the position through the whole set underneath;
+`Demo::SECTIONS` is the grouping and every registered class must appear in it exactly once.
 
 Each page opens on what its class does rather than printing about it. A window still holds one
 child, so a page is usually a Pango-markup `GtkLabel` or a cairo `GtkDrawingArea`, sometimes inside

@@ -17,11 +17,19 @@ use Gtk4\GtkAlign;
 use Gtk4\GtkApplication;
 use Gtk4\GtkBox;
 use Gtk4\GtkButton;
+use Gtk4\GtkCssProvider;
 use Gtk4\GtkDrawingArea;
+use Gtk4\GtkDropDown;
+use Gtk4\GtkFrame;
+use Gtk4\GtkHeaderBar;
 use Gtk4\GtkLabel;
 use Gtk4\GtkOrientation;
+use Gtk4\GtkPaned;
 use Gtk4\GtkPolicyType;
 use Gtk4\GtkScrolledWindow;
+use Gtk4\GtkSeparator;
+use Gtk4\GtkStringList;
+use Gtk4\GtkStyleProviderPriority;
 use Gtk4\GtkWidget;
 use Gtk4\GtkWindow;
 use Gtk4\PhpValue;
@@ -319,14 +327,18 @@ final class Demo
     }
 
     /**
-     * The demo application: a header row, a sidebar of sections, a content area.
+     * The demo application: a header bar, a sidebar of sections, a content area.
      *
-     * This is what GtkBox bought - before it, a window held exactly one child and the
-     * only possible shape was a slideshow. The content is still swapped rather than
-     * stacked (no GtkStack yet), but navigation now lives next to what it navigates.
+     * Every piece of the chrome is a widget the examples themselves document, which is
+     * the point: {@see GtkHeaderBar} for the window controls, {@see GtkPaned} so the
+     * sidebar can be resized, {@see GtkDropDown} over a {@see GtkStringList} to pick a
+     * section without a column of buttons taller than the window,
+     * {@see GtkScrolledWindow} for the section's classes, {@see GtkFrame} to give the
+     * page an edge and {@see GtkCssProvider} for the rest of the styling.
      *
      * Pages are built the first time they are shown and then kept, so a page's
-     * animations pick up where they left off.
+     * animations pick up where they left off. The content is swapped rather than
+     * stacked (a GtkStack would build every page up front).
      *
      * @param list<DemoPage> $pages
      */
@@ -348,24 +360,14 @@ final class Demo
         $app->connect('activate', static function (GtkApplication $app) use ($pages, $byClass): void {
             $win = new GtkWindow();
             $win->set_application($app);
-            $win->set_default_size(940, 660);
+            $win->set_default_size(1040, 720);
             self::$window = $win;
+            self::chrome($win);
 
             /** @var array<string, GtkWidget> $built */
             $built = [];
             $section = (string) array_key_first(self::sections());
             $class = $pages[0]['class'];
-
-            $content = new GtkBox(GtkOrientation::Vertical, 0);
-            $content->set_hexpand(true);
-            $content->set_vexpand(true);
-
-            $heading = new GtkLabel();
-            $heading->set_halign(GtkAlign::Start);
-            $heading->set_hexpand(true);
-
-            $list = new GtkBox(GtkOrientation::Vertical, 2);
-            $sections = new GtkBox(GtkOrientation::Vertical, 2);
 
             // Navigation goes through an action, so nothing here has to hold a
             // reference to anything defined below it.
@@ -374,6 +376,38 @@ final class Demo
             $jump = static function (string $to) use ($app): void {
                 $app->activate_action('select', $to);
             };
+
+            // The sections with at least one page in this build, and where each one
+            // starts (pages() leaves out the classes of a feature the extension was
+            // built without, which can empty a whole section).
+            $sectionNames = [];
+            $opensAt = [];
+            foreach (self::sections() as $name => $members) {
+                $first = array_values(array_filter($members, static fn(string $m): bool => isset($byClass[$m])));
+                if ($first === []) {
+                    continue;
+                }
+                $sectionNames[] = $name;
+                $opensAt[$name] = $first[0];
+            }
+
+            $chooser = new GtkDropDown();
+            $chooser->set_model(new GtkStringList($sectionNames));
+            $chooser->set_tooltip_text('Section');
+
+            $list = new GtkBox(GtkOrientation::Vertical, 2);
+            $count = new GtkLabel();
+            $count->add_css_class('dim-label');
+            $count->set_halign(GtkAlign::Start);
+
+            $heading = new GtkLabel();
+            $heading->set_halign(GtkAlign::Start);
+            $heading->set_hexpand(true);
+            $heading->add_css_class('demo-heading');
+
+            $content = new GtkBox(GtkOrientation::Vertical, 0);
+            $content->set_hexpand(true);
+            $content->set_vexpand(true);
 
             // The sidebar lists the current section only; the list scrolls, so a long
             // section (the layout wave has 27 entries) never pushes the window taller.
@@ -385,8 +419,14 @@ final class Demo
                     if (!isset($byClass[$member])) {
                         continue;
                     }
-                    $button = GtkButton::new_with_label($member);
+                    // A left-aligned label rather than the button's own centred one: a
+                    // column of centred words does not read as a list.
+                    $text = new GtkLabel($member);
+                    $text->set_xalign(0.0);
+                    $button = new GtkButton();
+                    $button->set_child($text);
                     $button->add_css_class($member === $class ? 'suggested-action' : 'flat');
+                    $button->add_css_class('demo-item');
                     $button->connect('clicked', static function () use ($jump, $member): void {
                         $jump($member);
                     });
@@ -400,7 +440,11 @@ final class Demo
                 &$section,
                 $fillList,
                 $byClass,
+                $pages,
+                $chooser,
+                $sectionNames,
                 $content,
+                $count,
                 $heading,
                 $win,
                 $app
@@ -420,20 +464,38 @@ final class Demo
                     $built[$wanted] = $widget instanceof GtkWidget
                         ? $widget
                         : self::label('(this page builds no widget)');
-                    // Natural size, centred - the content box is what expands.
+                    // Natural size, centred in the stage: expand takes the spare room,
+                    // align keeps the widget its own size inside it.
                     $built[$wanted]->set_halign(GtkAlign::Center);
                     $built[$wanted]->set_valign(GtkAlign::Center);
+                    $built[$wanted]->set_hexpand(true);
+                    $built[$wanted]->set_vexpand(true);
                 }
                 foreach ($content->get_children() as $old) {
                     $content->remove($old);   // GTK inserts, it never reparents
                 }
                 $content->append($built[$wanted]);
                 $heading->set_markup(sprintf(
-                    "<span size=\"large\"><b>%s</b></span>  <span alpha=\"55%%\">%s</span>\n<small>%s</small>",
+                    "<span size=\"x-large\"><b>%s</b></span>\n<span alpha=\"60%%\"><small>%s</small></span>",
                     htmlspecialchars($page['class']),
-                    htmlspecialchars($section),
                     htmlspecialchars($page['summary']),
                 ));
+
+                // Where this page sits: which section, and how far through the whole set.
+                $names = array_map(static fn(array $one): string => $one['class'], $pages);
+                $at = array_search($wanted, $names, true);
+                $count->set_text(sprintf(
+                    '%s  ·  %d of %d',
+                    $section,
+                    (is_int($at) ? $at : 0) + 1,
+                    count($names),
+                ));
+
+                $wantedSection = array_search($section, $sectionNames, true);
+                if (is_int($wantedSection) && $chooser->get_selected() !== $wantedSection) {
+                    $chooser->set_selected($wantedSection);
+                }
+
                 self::$prefix = 'php-gtk4 · ' . $page['class'];
                 self::status($section);
                 $fillList();
@@ -445,21 +507,17 @@ final class Demo
                 }
             });
 
-            foreach (self::sections() as $name => $members) {
-                // The first member that has a page in this build (pages() leaves out the
-                // classes of a feature the extension was built without).
-                $first = array_values(array_filter($members, static fn(string $m): bool => isset($byClass[$m])))[0]
-                    ?? null;
-                if ($first === null) {
-                    continue;
-                }
-                $button = GtkButton::new_with_label($name);
-                $button->add_css_class('flat');
-                $button->connect('clicked', static function () use ($jump, $first): void {
-                    $jump($first);
-                });
-                $sections->append($button);
-            }
+            // No guard flag against $show's own set_selected(): by the time that fires,
+            // $section is already the section it moved to, so this asks for nothing.
+            $chooser->connect(
+                'notify::selected',
+                static function (GtkDropDown $self) use (&$section, $sectionNames, $opensAt, $jump): void {
+                    $name = $sectionNames[$self->get_selected()] ?? null;
+                    if ($name !== null && $name !== $section) {
+                        $jump($opensAt[$name]);
+                    }
+                },
+            );
 
             // Previous/Next walk the whole list, not just the section.
             $step = static function (int $delta) use ($pages, &$class, $jump): void {
@@ -481,38 +539,52 @@ final class Demo
                 });
                 $app->add_action($action);
             }
-            $nav = static function (string $label, string $action) use ($app): GtkButton {
+            $nav = static function (string $label, string $action, string $tip) use ($app): GtkButton {
                 $button = GtkButton::new_with_label($label);
+                $button->set_tooltip_text($tip);
                 $button->connect('clicked', static function () use ($app, $action): void {
                     $app->activate_action($action);
                 });
                 return $button;
             };
 
-            $header = new GtkBox(GtkOrientation::Horizontal, 6);
-            $buttons = [$heading, $nav('◀  Previous', 'previous'), $nav('Next  ▶', 'next'), $nav('Quit', 'quit')];
-            foreach ($buttons as $item) {
-                $header->append($item);
-            }
+            // The window controls live in the titlebar, where the theme puts them; the
+            // window title (Demo::status()) is what GtkHeaderBar shows in the middle.
+            $header = new GtkHeaderBar();
+            $header->pack_start($nav('◀', 'previous', 'Previous page'));
+            $header->pack_start($nav('▶', 'next', 'Next page'));
+            $header->pack_end($nav('Quit', 'quit', 'Close the demo'));
 
             $scroller = new GtkScrolledWindow();
             $scroller->set_policy(GtkPolicyType::Never, GtkPolicyType::Automatic);
             $scroller->set_child($list);
             $scroller->set_vexpand(true);
-            $sidebar = new GtkBox(GtkOrientation::Vertical, 10);
-            $sidebar->set_size_request(200, -1);
-            $sidebar->append($sections);
+
+            $sidebar = new GtkBox(GtkOrientation::Vertical, 8);
+            $sidebar->add_css_class('demo-sidebar');
+            $sidebar->append($chooser);
             $sidebar->append($scroller);
+            $sidebar->append($count);
 
-            $body = new GtkBox(GtkOrientation::Horizontal, 16);
-            $body->set_vexpand(true);
-            $body->append($sidebar);
-            $body->append($content);
+            $stage = new GtkFrame();
+            $stage->add_css_class('demo-stage');
+            $stage->set_child($content);
 
-            $root = new GtkBox(GtkOrientation::Vertical, 10);
-            $root->append($header);
-            $root->append($body);
-            $win->set_child($root);
+            $page = new GtkBox(GtkOrientation::Vertical, 10);
+            $page->add_css_class('demo-page');
+            $page->append($heading);
+            $page->append(new GtkSeparator(GtkOrientation::Horizontal));
+            $page->append($stage);
+
+            $paned = new GtkPaned(GtkOrientation::Horizontal);
+            $paned->set_start_child($sidebar);
+            $paned->set_end_child($page);
+            $paned->set_position(220);
+            $paned->set_resize_start_child(false);
+            $paned->set_shrink_start_child(false);
+
+            $win->set_titlebar($header);
+            $win->set_child($paned);
 
             // This is the primary window: closing it ends the application, even
             // though a page may have opened toplevels of its own (GtkWindow does).
@@ -526,6 +598,39 @@ final class Demo
         });
 
         exit($app->run());
+    }
+
+    /**
+     * The showcase's own stylesheet: the borders and spacing that separate the sidebar,
+     * the heading and the page from each other. Everything else is the user's theme -
+     * only `alpha(currentColor, …)` is used for colour, so this reads the same on a
+     * light theme and a dark one.
+     */
+    private static function chrome(GtkWindow $win): void
+    {
+        $provider = new GtkCssProvider();
+        $provider->load_from_string(<<<'CSS'
+            .demo-sidebar {
+                padding: 10px;
+                border-right: 1px solid alpha(currentColor, 0.15);
+            }
+            .demo-item {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            .demo-page {
+                padding: 14px;
+            }
+            .demo-heading {
+                padding-left: 2px;
+            }
+            .demo-stage {
+                border: 1px solid alpha(currentColor, 0.15);
+                border-radius: 8px;
+                background-color: alpha(currentColor, 0.03);
+            }
+            CSS);
+        Gtk::add_provider_for_display($win->get_display(), $provider, GtkStyleProviderPriority::APPLICATION);
     }
 
     /**

@@ -200,8 +200,9 @@ Every new class, method or constant ships with **all four** in the same change:
    and an `$alone` callback for running stand-alone — see `examples/bootstrap.php`)
    and requiring `examples/bootstrap.php` (with `require_once`). The file *describes* a demo and runs
    nothing — `examples/demo.php` requires them all, so anything that ran itself would fire on import.
-   That one application mounts every page (header, sidebar, content — all `GtkBox`); `demo.php
-   <Class>` shows one on its own. Also add the class to `Demo::SECTIONS` in `examples/bootstrap.php`
+   That one application mounts every page (a `GtkHeaderBar` titlebar, a `GtkPaned` over a sidebar
+   whose sections are a `GtkDropDown` and whose classes scroll, and the page in a `GtkFrame`);
+   `demo.php <Class>` shows one on its own. Also add the class to `Demo::SECTIONS` in `examples/bootstrap.php`
    or it is unreachable in the sidebar. Make it *visual*: open a window that shows what the class does
    (a markup `GtkLabel` or a cairo `GtkDrawingArea`, often inside a `GtkButton` so clicking advances
    the demo) rather than printing about it, and use `Demo::status()` rather than `set_title()` for

@@ -103,13 +103,14 @@ included — the call stack then shows your closure above `GtkApplication::run()
 extension (`.vscode/extensions.json` recommends it); how `xdebug.mode` is set in `php.ini` does not
 matter, the launch configuration decides.
 
-`.vscode/launch.json` has five ready configurations:
+`.vscode/launch.json` has six ready configurations:
 
 | Configuration | Runs |
 | ------------- | ---- |
 | **Example: the open file's page** | `examples/demo.php <the open file's class>` — F5 in `examples/GtkCssProvider.php` debugs that page |
 | **Example: pick a class** | the same, asking for the class name |
 | **Example: the whole demo application** | `examples/demo.php` |
+| **Application: Notes** | `examples/notes/notes.php` — the one example that is a program, not a page |
 | **Script: the open PHP file** | `${file}` — a scratch script, `tests/scripts/stress.php` |
 | **PHPUnit: one filtered test** | `vendor/bin/phpunit --filter <what you type>` |
 | **Listen for Xdebug** | nothing; waits for a process you start yourself |
