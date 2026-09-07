@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace PhpGtk4\Tests;
 
 use Gtk4\Gtk;
+use Gtk4\GtkOrientation;
+use Gtk4\GtkWidget;
 use Gtk4\GtkWindow;
 use PHPUnit\Framework\TestCase;
 
@@ -46,6 +48,20 @@ abstract class GtkTestCase extends TestCase
         $w = new GtkWindow();
         $this->windows[] = $w;
         return $w;
+    }
+
+    /**
+     * Allocate $widget the way its parent would: measure it first and never below the minimum
+     * it reports. A GTK built with consistency checks (gvsbuild's, which the Windows jobs use)
+     * warns on either - "Allocating size to GtkBox ... without calling gtk_widget_measure()",
+     * "Allocation height too small" - and GtkTestCase fails the test on a GTK warning.
+     */
+    protected function allocate(GtkWidget $widget, int $width, int $height): void
+    {
+        [$minWidth] = $widget->measure(GtkOrientation::Horizontal, -1);
+        $width = max($width, $minWidth);
+        [$minHeight] = $widget->measure(GtkOrientation::Vertical, $width);
+        $widget->allocate($width, max($height, $minHeight));
     }
 
     /**

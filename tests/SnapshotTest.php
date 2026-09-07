@@ -38,7 +38,7 @@ final class SnapshotTest extends GtkTestCase
         $win = $this->window();
         $win->set_child($box);
         $win->present();
-        $box->allocate(100, 60);
+        $this->allocate($box, 100, 60);
 
         $snapshot = new GtkSnapshot();
         $box->snapshot_child($widget, $snapshot);

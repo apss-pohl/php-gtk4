@@ -36,7 +36,7 @@ final class PhpSelectionModelTest extends GtkTestCase
         $window = $this->window();
         $window->set_child($box);
         $window->present();
-        $box->allocate(200, 200);
+        $this->allocate($box, 200, 200);
         $box->snapshot_child($view, new GtkSnapshot());
 
         return $view;

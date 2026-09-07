@@ -5,25 +5,36 @@ history; an item leaves this file when it is done or decided against, it is not 
 
 ## Open work
 
-- **An intermittent segfault in the PHP 8.5 ZTS suite.** One CI run (2026-09-07, run
-  34085363767) died with `Segmentation fault (core dumped)` about 46% into the PHPUnit suite;
-  the same job re-run on the same commit passed, and 8.4 NTS/ZTS, 8.5 NTS, ASan and valgrind
-  were green. So it is real but rare, and nothing named the test: PHPUnit dies with the process
-  and writes no JUnit file. `tests.yml` now streams `--log-events-text` and prints its tail on a
-  failed job, so the next occurrence names the test that was running. Until then there is
-  nothing to reproduce.
-- **The robustness pin is written for GTK 4.14, and Windows runs GTK 4.22.** With the vfunc
-  parking fix the Windows jobs no longer abort, but `tests/robustness-criticals.txt` records what
-  *the CI floor* complains about, and a newer GTK complains differently: measured against 4.22.4,
-  five method sweeps carry a message the file does not list - `GtkWidget::measure` ("Allocating
-  size ... without calling gtk_widget_measure()" comes from a GTK built with consistency checks),
-  `GtkEntry::set_extra_menu` (`g_object_ref: assertion 'G_IS_OBJECT (object)' failed`),
-  `GtkIconPaintable::new_for_file` (`size`/`scale` reject -1: a missing `check_domain`, worth
-  closing at the boundary), `GtkSpinButton::set_range` (`lower + page_size <= upper`). Either the
-  pin grows a per-version dimension or those four boundaries are closed so no GTK complains.
-  Reproduce without Windows: Arch's `gtk4` package is 4.22.4, and a `meson --buildtype=debugoptimized`
-  build of GTK is what turns the assertions back on (a distro release build compiles them out,
-  which is why the Linux CI never saw the abort).
+- **An intermittent segfault in the PHP 8.5 ZTS suite**, and the event log now names the test:
+  `RobustnessTest::testWrongArgumentsThrowInsteadOfCrashing#Gtk4\GtkFontDialog::choose_font`,
+  prepared and never finished (run 34115054496; an earlier occurrence, run 34085363767, died at
+  the same ~46% mark). Only that one job of the matrix, and only sometimes - 8.4 NTS/ZTS, 8.5
+  NTS, ASan and valgrind stay green, and ten local repeats of the same filter on 8.4 pass. The
+  sweep calls the *async* chooser with garbage arguments, so the dialog it opens outlives the
+  test and its callback runs somewhere in the rest of the suite; the print dialogs are already
+  on `RobustnessTest`'s `dialogOpeners` list for the same shape of reason. Either the async
+  choosers (`GtkFontDialog::choose_*`, `GtkColorDialog::choose_rgba`, `GtkFileDialog::*`,
+  `GtkAlertDialog::choose`) join that list, or the lifetime bug behind it is found - which needs
+  a ZTS build to reproduce on.
+- **The Windows suite runs to the end now and reports 11 failures**, all of them GTK 4.22 (what
+  gvsbuild ships) saying something GTK 4.14 does not. Three groups:
+  - *The robustness pin is written for the CI floor.* `tests/robustness-criticals.txt` fails
+    both on an unlisted complaint and on a listed line that has gone quiet, so a second GTK
+    needs a version dimension in the file (or those boundaries closed so no GTK complains):
+    `GtkAdjustment::configure` and `GtkSpinButton::set_range` (`lower + page_size <= upper`),
+    `GtkEntry::set_extra_menu` (`g_object_ref: assertion 'G_IS_OBJECT (object)' failed`),
+    `GtkIconPaintable::new_for_file` (`size`/`scale` reject -1 - a missing `check_domain`, worth
+    closing at the boundary rather than pinning), `GtkWidget::measure` and `::allocate` (the
+    consistency-check warnings below, which the sweep provokes on purpose).
+  - *Windows-only behaviour, not yet understood*: `DragDropTest` finds a `GtkTextBuffer` entry
+    in the content formats the serialisation test expects to be `['string']` and its async
+    clipboard callback never runs; `PixbufTest::testEncodingTakesOptionsAsAMap` gets the same
+    size back for both compression levels.
+  - The measure/allocate misuse in the tests themselves is fixed (`GtkTestCase::allocate()`).
+  Reproduce without Windows: Arch's `gtk4` package is 4.22.4, and a
+  `meson --buildtype=debugoptimized` build of GTK is what turns the assertions and the
+  consistency checks back on (a distro release build compiles them out, which is why the Linux
+  CI never saw any of this).
 - **WebKitGTK, what the first wave left out** (`gen/report.md`, sections `WebKit*`/`JSC*`): the
   URI scheme handler (`WebKitWebContext::register_uri_scheme()` and the request/response pair need
   `GInputStream`), the Soup types (`WebKitCookieManager::add_cookie()`, the HTTP headers of a
