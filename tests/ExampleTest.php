@@ -162,7 +162,9 @@ final class ExampleTest extends TestCase
             $registered[] = $short;
         }
         sort($registered);
-        $mapped = array_keys($placed);
+        // The map is the same for every build; a class of a feature this build lacks
+        // (tests/Features.php) is mapped and simply has no page to show.
+        $mapped = array_values(array_filter(array_keys($placed), Features::available(...)));
         sort($mapped);
         self::assertSame($registered, $mapped, 'Demo::sections() must list every registered class once');
     }
@@ -176,8 +178,8 @@ final class ExampleTest extends TestCase
         $pages = [];
         foreach (glob(self::DIR . '/*.php') ?: [] as $file) {
             $name = basename($file, '.php');
-            if (in_array($name, ['bootstrap', 'demo'], true)) {
-                continue;
+            if (in_array($name, ['bootstrap', 'demo'], true) || !Features::available($name)) {
+                continue;   // a page of a feature this build lacks (tests/Features.php)
             }
             $pages[] = $name;
         }

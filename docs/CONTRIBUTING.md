@@ -205,4 +205,9 @@ so a bug that reproduces in a `tests/` case is the most useful shape of all.
 - Windows: the build is `config.w32` (PHP SDK + gvsbuild GTK, see the Windows section of
   `docs/BUILD.md`). Nothing under `src/` may become platform-specific except `pin_gtk_library()`;
   anything that touches `config.m4` (sources, defines, features) needs the same change in `config.w32`.
-  WebKit: `docs/TODO.md` first.
+- WebKit (`--enable-gtk4-webkit`): the `WebKit*`/`JSC*` classes are generated like the rest, from
+  `WebKit-6.0.gir` and `JavaScriptCore-6.0.gir` (installed with `libwebkitgtk-6.0-dev`, which the
+  `gen` stage therefore needs), into `src/WebKit/` and `src/JavaScriptCore/` - the two namespaces
+  `CONDITIONAL_NAMESPACES` in `gen/gir/config.php` gates. Their tests skip themselves in a build
+  without the flag (`tests/Features.php`), so run the suite against both builds
+  (`GTK4_CONFIGURE_ARGS=--enable-gtk4-webkit ./ci.sh --only=build,test`) when touching them.

@@ -273,3 +273,76 @@ namespace phpgtk {
 void register_GdkPixbufFormat(zend_class_entry *ce);
 }  // namespace phpgtk
 void register_vfuncs_GdkPixbufLoader();
+
+#ifdef PHPGTK_WITH_WEBKIT
+#include <webkit/webkit.h>
+#include <jsc/jsc.h>
+namespace phpgtk {
+void register_WebKitApplicationInfo(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitCredential(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitFeature(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitFeatureList(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitGeolocationPosition(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitITPFirstParty(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitITPThirdParty(zend_class_entry *ce);
+}  // namespace phpgtk
+void register_vfuncs_WebKitInputMethodContext();
+namespace phpgtk {
+void register_WebKitInputMethodUnderline(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitMemoryPressureSettings(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitNavigationAction(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitNetworkProxySettings(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitOptionMenuItem(zend_class_entry *ce);
+}  // namespace phpgtk
+void register_vfuncs_WebKitPermissionRequest();
+ZEND_METHOD(Gtk4_WebKitPermissionRequest, allow);
+ZEND_METHOD(Gtk4_WebKitPermissionRequest, deny);
+namespace phpgtk {
+void register_WebKitPermissionStateQuery(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitScriptDialog(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitScriptMessageReply(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitSecurityOrigin(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitUserContentFilter(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitUserScript(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitUserStyleSheet(zend_class_entry *ce);
+}  // namespace phpgtk
+void register_vfuncs_WebKitWebView();
+namespace phpgtk {
+void register_WebKitWebViewSessionState(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_WebKitWebsiteData(zend_class_entry *ce);
+}  // namespace phpgtk
+#endif  // PHPGTK_WITH_WEBKIT

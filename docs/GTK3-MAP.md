@@ -7,7 +7,7 @@ implements it.
 Source of truth: php-gtk3 class headers (158 headers, ~2400 exported methods) vs.
 `src/gtk4.stub.php` + the MINIT registration block in `src/gtk4.cpp`.
 
-Status column regenerated 2026-09-06 by `gen/map-status.php` (run by `gen/gir.php --install`);
+Status column regenerated 2026-09-07 by `gen/map-status.php` (run by `gen/gir.php --install`);
 the notes are hand-written and may lag.
 
 ## Legend
@@ -24,11 +24,11 @@ the notes are hand-written and may lag.
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 75 | — |
+| ✅ implemented | 76 | — |
 | 🟡 partial | 1 | — |
 | ❌ to port (GTK 4 equivalent exists) | 18 | ~1750 |
 | ⛔ removed in GTK 4 | 41 | ~520 |
-| 🧩 out of scope / later milestone | 5 | ~130 |
+| 🧩 out of scope / later milestone | 4 | ~130 |
 
 php-gtk4 currently declares (2026-08-28, 65 names): `CairoContext`, `ExceptionMode`, `GAction`,
 `GActionGroup`, `GActionMap`, `GApplication`, `GApplicationFlags`, `GAsyncResult`, `GCancellable`, `GError`,
@@ -236,7 +236,7 @@ is open work.
 
 | php-gtk3 class | gtk3 methods | GTK 4 replacement | php-gtk4 | Notes |
 | --- | ---: | --- | :---: | --- |
-| `WebKitWebView` (+ `_Unix`, `_Windows`) | 17 | `WebKitWebView` (WebKitGTK 6.0) | 🧩 | `--enable-gtk4-webkit` build flag exists; binding is a later milestone (README.md "Design"). |
+| `WebKitWebView` (+ `_Unix`, `_Windows`) | 17 | `WebKitWebView` (WebKitGTK 6.0) | ✅ | Linux only, in a build with `--enable-gtk4-webkit`: the view, its settings, context, network session, user content, find controller, downloads, policy decisions, permission requests and JavaScriptCore's `JSCContext`/`JSCValue` (`evaluate_javascript()` answers with one). No Windows counterpart yet (WebView2 is the plan). |
 | `GtkWebView` | 0 | — | 🧩 | php-gtk3 shim. |
 | `GtkSourceView`, `GtkSourceBuffer`, `GtkSourceLanguage`, `GtkSourceLanguageManager` | 48 | GtkSourceView 5 | 🧩 | Separate library; not planned for the first milestones. |
 | `GladeApp`, `GladeDesignView`, `GladeEditor`, `GladePalette`, `GladeProject`, `GladeWidget` | 33 | — | 🧩 | libgladeui has no GTK 4 release; drop. |

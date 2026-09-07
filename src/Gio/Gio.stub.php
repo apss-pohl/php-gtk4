@@ -1117,3 +1117,34 @@ class GTask extends GObject implements GAsyncResult
     /** @implementation-alias Gtk4\GAsyncResult::legacy_propagate_error */
     public function legacy_propagate_error(): bool {}
 }
+
+/**
+ * A set of flags describing TLS certification validation. This can be used to describe why a
+ * particular certificate was rejected (for example, in #GTlsConnection::accept-certificate).
+ */
+final class GTlsCertificateFlags
+{
+    public const int NO_FLAGS = 0;
+    public const int UNKNOWN_CA = 1;
+    public const int BAD_IDENTITY = 2;
+    public const int NOT_ACTIVATED = 4;
+    public const int EXPIRED = 8;
+    public const int REVOKED = 16;
+    public const int INSECURE = 32;
+    public const int GENERIC_ERROR = 64;
+    public const int VALIDATE_ALL = 127;
+}
+
+/**
+ * Various flags for the password.
+ */
+final class GTlsPasswordFlags
+{
+    public const int NONE = 0;
+    public const int RETRY = 2;
+    public const int MANY_TRIES = 4;
+    public const int FINAL_TRY = 8;
+    public const int PKCS11_USER = 16;
+    public const int PKCS11_SECURITY_OFFICER = 32;
+    public const int PKCS11_CONTEXT_SPECIFIC = 64;
+}

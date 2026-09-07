@@ -3,7 +3,7 @@ dnl
 dnl   phpize && ./configure [--with-php-config=...] && make && make install
 dnl   --enable-gtk4-sanitize   AddressSanitizer + UBSan build (ci.sh --only=asan)
 dnl   --enable-gtk4-coverage   gcov instrumentation (ci.sh --only=coverage)
-dnl   --enable-gtk4-webkit     WebKitGTK 6 support (not implemented yet)
+dnl   --enable-gtk4-webkit     WebKitGTK 6 support (the WebKit* and JSC* classes; Gtk4\FEATURES says webkit=yes)
 
 PHP_ARG_ENABLE([gtk4],
   [whether to enable the gtk4 extension],
@@ -86,7 +86,14 @@ if test "$PHP_GTK4" != "no"; then
   dnl (sorted for a reproducible link order). Every directory under src/ becomes a build dir
   dnl (an out-of-tree build cannot place the objects otherwise) - derived, like the sources,
   dnl so a new GIR namespace directory (src/Pango, src/Gsk) needs no edit here or in config.w32.
-  GTK4_SOURCES=`cd "$srcdir" && find src -name '*.cpp' | LC_ALL=C sort | tr '\n' ' '`
+  dnl The one exception: the namespaces that need WebKitGTK (src/WebKit, src/JavaScriptCore -
+  dnl CONDITIONAL_NAMESPACES in gen/gir/config.php) are left out without --enable-gtk4-webkit;
+  dnl their registration and arginfo are under #ifdef PHPGTK_WITH_WEBKIT in the generated files.
+  if test "$PHP_GTK4_WEBKIT" = "no"; then
+    GTK4_SOURCES=`cd "$srcdir" && find src -name '*.cpp' | grep -v '^src/\(WebKit\|JavaScriptCore\)/' | LC_ALL=C sort | tr '\n' ' '`
+  else
+    GTK4_SOURCES=`cd "$srcdir" && find src -name '*.cpp' | LC_ALL=C sort | tr '\n' ' '`
+  fi
   PHP_NEW_EXTENSION([gtk4], [$GTK4_SOURCES], [$ext_shared], [], [$GTK4_CXXFLAGS], [cxx])
   for gtk4_dir in `cd "$srcdir" && find src -type d -not -name '.libs' | LC_ALL=C sort`; do
     PHP_ADD_BUILD_DIR([$ext_builddir/$gtk4_dir])

@@ -116,6 +116,20 @@
   constructor that only works on a PHP subclass (`Error` on the native class) — a `skip.txt` entry
   for its `__construct` makes it private instead (`GdkTexture`).
 
+## Conditional namespaces
+
+A namespace whose library is a configure option - WebKit and JavaScriptCore behind
+`--enable-gtk4-webkit` - is listed in `CONDITIONAL_NAMESPACES` (`gir/config.php`) with its feature
+name, its config.h macro and the header its C API lives in. The generator treats it like any other
+namespace (its `.gir` must be installed: `gir1.2-webkit-6.0` comes with `libwebkitgtk-6.0-dev`),
+and gates what it emits: every `.cpp` of the namespace includes that header after `php_gtk4.h`,
+its `#include` in `gen_arginfo.h` and its registration block in `gen_minit.inc` (with the
+namespace's header, through `gen_prototypes.h`) sit under `#ifdef <macro>`, and its smoke tests
+call `Features::requires()` so they skip in a build without the feature. What the generator cannot
+do is leave the files out of the build: `config.m4` and `config.w32` exclude the directories from
+their source glob without the flag, and `ci.sh` skips them in clang-tidy when the headers are
+absent - `FeatureGateTest` keeps the five places in step.
+
 ## The GIR flow in one picture
 
 ```text

@@ -12,7 +12,7 @@ that flow.
 | GTK | **4.14 or newer** — `libgtk-4-dev` (pulls GLib ≥ 2.76, cairo-gobject). Ubuntu 24.04 is the CI floor. |
 | Compiler | GCC 11+ or Clang 14+ (`-std=c++20`). |
 | `ci.sh` | `gir1.2-gtk-4.0` (the GIR files the default `gen` stage and the pre-commit hook regenerate from), Node.js/`npx` (`md-lint`, markdownlint-cli2), `jq` (`update-deps.sh`). |
-| Optional | `libwebkitgtk-6.0-dev` (`--enable-gtk4-webkit`), `xvfb`, `valgrind`, `gcovr`, clang-tidy/format 20 for the QA stages. |
+| Optional | `libwebkitgtk-6.0-dev` (`--enable-gtk4-webkit`; the `gen` stage needs it in any case, for `WebKit-6.0.gir`), `xvfb`, `valgrind`, `gcovr`, clang-tidy/format 20 for the QA stages. |
 
 Debian/Ubuntu in one line:
 
@@ -47,7 +47,7 @@ Build metadata (git hash, date, enabled features) is baked in at configure time 
 
 | Option | Effect |
 | --- | --- |
-| `--enable-gtk4-webkit` | Adds `webkitgtk-6.0` to the pkg-config set and builds the WebKit classes. |
+| `--enable-gtk4-webkit` | Adds `webkitgtk-6.0` to the pkg-config set and compiles the `WebKit*` and `JSC*` classes (`src/WebKit/`, `src/JavaScriptCore/`); `Gtk4\FEATURES` then says `webkit=yes`. Without it those two directories are left out of the build and the classes do not exist. |
 | `--enable-gtk4-sanitize` | ASan + UBSan (+ LSan) instrumented build; `ci.sh --only=asan` builds it as `gtk4-asan.so`. |
 | `--enable-gtk4-coverage` | gcov instrumentation; `ci.sh --only=coverage` builds `gtk4-cov.so` and renders HTML with gcovr. |
 
@@ -214,8 +214,8 @@ nmake                               # -> x64\Release\php_gtk4.dll (Release_TS fo
 `VERSION`, bakes git hash/date into `Gtk4\BUILD_INFO`, compiles every `src/**/*.cpp` with
 `/std:c++20 /EHsc`, and takes the include/library flags from `<root>\bin\pkgconf.exe`
 (`--define-prefix`, so the tree may live anywhere) — falling back to the known gvsbuild layout when
-`pkgconf` is missing. `--enable-gtk4-webkit` is refused (WebKitGTK is Linux-only; WebView2 is
-the plan).
+`pkgconf` is missing. `--enable-gtk4-webkit` is refused and `src\WebKit`, `src\JavaScriptCore` are
+left out of the sources (WebKitGTK is Linux-only; WebView2 is the plan).
 
 ### Running what you built
 
@@ -269,7 +269,7 @@ fallback path).
 - `ci.sh` and all of its stages (clang-tidy, sanitizers, coverage, valgrind, `run-tests.php` over
   `tests/phpt`). Lint on Linux/WSL, build on Windows. `tests/phpt` asserts stderr text from GLib
   and needs Xvfb; it is not run on Windows.
-- `--enable-gtk4-webkit`.
+- `--enable-gtk4-webkit`, and with it every `WebKit*`/`JSC*` class.
 - `bin/php-gtk4`'s php-gtk3 filtering — not needed, there is no php-gtk3 for Windows PHP 8.
 
 ### Platform-specific code

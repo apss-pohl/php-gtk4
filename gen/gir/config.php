@@ -13,8 +13,23 @@ namespace PhpGtk4\Gen;
 
 const GIR_DIRS = ['/usr/share/gir-1.0', '/usr/lib/x86_64-linux-gnu/gir-1.0', '/usr/lib64/gir-1.0'];
 const GIR_FILES = ['GLib-2.0', 'GObject-2.0', 'Gio-2.0', 'cairo-1.0', 'Pango-1.0', 'Graphene-1.0',
-    'GdkPixbuf-2.0', 'Gdk-4.0', 'Gsk-4.0', 'Gtk-4.0'];
+    'GdkPixbuf-2.0', 'Gdk-4.0', 'Gsk-4.0', 'Gtk-4.0', 'JavaScriptCore-6.0', 'WebKit-6.0'];
 const GTK_FLOOR = '4.14';           // API newer than this is skipped in this wave
+
+/**
+ * Namespaces that compile only when a configure feature is on: namespace -> the feature's name in
+ * Gtk4\FEATURES, its config.h macro and the header its C API lives in. Everything the generator
+ * emits for such a namespace is gated on that macro: its arginfo include and its MINIT block sit
+ * under `#ifdef`, its .cpp files are what config.m4 / config.w32 leave out of the source glob
+ * without the flag (and ci.sh's clang-tidy skips when the headers are absent), and its smoke
+ * tests skip themselves when the feature is not built (tests/Features.php names the same
+ * namespaces by class prefix). The .gir still has to be installed wherever the generator runs:
+ * gir1.2-webkit-6.0 comes with libwebkitgtk-6.0-dev.
+ */
+const CONDITIONAL_NAMESPACES = [
+    'JavaScriptCore' => ['feature' => 'webkit', 'macro' => 'PHPGTK_WITH_WEBKIT', 'include' => '<jsc/jsc.h>'],
+    'WebKit' => ['feature' => 'webkit', 'macro' => 'PHPGTK_WITH_WEBKIT', 'include' => '<webkit/webkit.h>'],
+];
 const PHP_NAMESPACE = 'Gtk4';
 const INT_TYPES = '/^g(u?int(8|16|32|64)?|size|ssize|u?long|u?short|unichar|u?char)$/';
 
@@ -32,6 +47,8 @@ const TYPE_MACROS = [
     'cairo.Context' => ['CAIRO_GOBJECT_TYPE_CONTEXT', 'CAIRO_CONTEXT'],
     'Gsk.RoundedRect' => ['PHPGTK_TYPE_GSK_ROUNDED_RECT', 'GSK_ROUNDED_RECT'],
     'GdkPixbuf.PixbufFormat' => ['gdk_pixbuf_format_get_type()', 'GDK_PIXBUF_FORMAT'],  // no macro in gdk-pixbuf-io.h
+    // WebKitNetworkProxySettings.h spells its GType macro with the prefix doubled.
+    'WebKit.NetworkProxySettings' => ['WEBKIT_TYPE_NETWORK_NETWORK_PROXY_SETTINGS', 'WEBKIT_NETWORK_PROXY_SETTINGS'],
 ];
 
 /**
@@ -106,6 +123,17 @@ const NULLABLE_RETURNS = [
     // both answer NULL, without a CRITICAL, for a widget that is not a child of the container
     'gtk_stack_get_page' => 'NULL for a widget that is not a child of the stack',
     'gtk_notebook_get_page' => 'NULL for a widget that is not a page of the notebook',
+    // WebKit: what only a load fills in.
+    'webkit_web_view_get_main_resource' => 'NULL until a load has started',
+    'webkit_web_view_get_favicon' => 'NULL until the page has one',
+    'webkit_context_menu_first' => 'NULL for an empty menu',
+    'webkit_context_menu_last' => 'NULL for an empty menu',
+    'webkit_context_menu_get_event' => 'NULL for a menu PHP built (only ::context-menu hands one out with an event)',
+    'webkit_context_menu_item_get_submenu' => 'NULL for an item without a submenu',
+    'webkit_context_menu_item_get_gaction' => 'NULL for a separator and for a stock action',
+    'webkit_print_operation_get_page_setup' => 'NULL until set_page_setup()',
+    'webkit_print_operation_get_print_settings' => 'NULL until set_print_settings()',
+    'webkit_web_inspector_get_web_view' => 'NULL until the inspector is shown',
 ];
 
 /**
@@ -122,6 +150,15 @@ const NON_NULLABLE_PARAMS = [
     'gdk_clipboard_read_text_async.callback' => 'gdk_clipboard_read_text_async: assertion callback != NULL',
     'gdk_clipboard_read_texture_async.callback' => 'gdk_clipboard_read_texture_async: assertion callback != NULL',
     'gdk_clipboard_store_async.callback' => 'gdk_clipboard_store_async: assertion callback != NULL',
+    // GIR says nullable, JavaScriptCore dereferences it: a SIGSEGV inside
+    // jsc_value_object_define_property_data() (RobustnessTest under gdb, 2026-09-07).
+    'jsc_value_object_define_property_data.property_value' => 'a NULL value is a SIGSEGV inside JSC',
+    // the filter store's five async calls: assertion 'callback' failed
+    'webkit_user_content_filter_store_fetch_identifiers.callback' => "assertion 'callback' failed",
+    'webkit_user_content_filter_store_load.callback' => "assertion 'callback' failed",
+    'webkit_user_content_filter_store_remove.callback' => "assertion 'callback' failed",
+    'webkit_user_content_filter_store_save.callback' => "assertion 'callback' failed",
+    'webkit_user_content_filter_store_save_from_file.callback' => "assertion 'callback' failed",
     // gdk_drop_read_async() has the same signature and very likely the same precondition, but a
     // GdkDrop needs a real drag from another client and no test can reach one (DragDropTest,
     // testTheseAreGdksToCreateNotPhps), so there is no evidence for a line here. Every entry in
@@ -189,6 +226,11 @@ const CHILD_PARAMS = [
  * after check_utf8(). Every line retired an entry from tests/robustness-criticals.txt.
  */
 const PARAM_VALIDATORS = [
+    // WebKit: "Path ... must be created before adding it to the sandbox" / an invalid proxy URI
+    'webkit_web_context_add_path_to_sandbox.path' => ['g_file_test(%s, G_FILE_TEST_EXISTS)',
+        'must be an existing path'],
+    'webkit_network_proxy_settings_add_proxy_for_scheme.proxy_uri' => ['g_uri_is_valid(%s, G_URI_FLAGS_NONE, nullptr)',
+        'must be a valid URI'],
     'g_menu_item_get_link.link' => ['phpgtk::valid_menu_attribute_name(%s)',
         'must be a letter followed by letters, digits and dashes'],
     'g_menu_item_set_link.link' => ['phpgtk::valid_menu_attribute_name(%s)',
@@ -227,6 +269,44 @@ const SELF_PRECONDITIONS = [
  * pin report (GTK4_PIN_REPORT) prints, is what each predicate mirrors.
  */
 const ARG_PRECONDITIONS = [
+    // WebKit's own g_return_if_fail()s, each copied from the assertion RobustnessTest printed.
+    'webkit_feature_list_get' => [
+        [1, 'static_cast<gsize>(index) < webkit_feature_list_get_length(self)',
+            'must be below the number of features (get_length())'],
+    ],
+    'webkit_context_menu_item_new_from_stock_action' => [
+        [1, 'action_v > WEBKIT_CONTEXT_MENU_ACTION_NO_ACTION && action_v < WEBKIT_CONTEXT_MENU_ACTION_CUSTOM',
+            'must be a stock action (neither NoAction nor Custom)'],
+    ],
+    'webkit_context_menu_item_new_from_stock_action_with_label' => [
+        [1, 'action_v > WEBKIT_CONTEXT_MENU_ACTION_NO_ACTION && action_v < WEBKIT_CONTEXT_MENU_ACTION_CUSTOM',
+            'must be a stock action (neither NoAction nor Custom)'],
+    ],
+    'webkit_memory_pressure_settings_set_conservative_threshold' => [
+        [1, 'value > 0 && value < 1', 'must be between 0 and 1, both exclusive'],
+    ],
+    'webkit_memory_pressure_settings_set_strict_threshold' => [
+        [1, 'value > 0 && value < 1', 'must be between 0 and 1, both exclusive'],
+    ],
+    // A script with an explicit byte length: JavaScriptCore reads `length` bytes of `code` and
+    // aborts (WTF::StringImpl::create) on a length past the string's end; -1 means the whole
+    // NUL-terminated string. The WebKit pair hands the same pair to the web process.
+    'jsc_context_evaluate' => [
+        [2, 'length == -1 || (length >= 0 && static_cast<gsize>(length) <= ZSTR_LEN(code))',
+            'must be -1 or at most the length of the code'],
+    ],
+    'jsc_context_evaluate_with_source_uri' => [
+        [2, 'length == -1 || (length >= 0 && static_cast<gsize>(length) <= ZSTR_LEN(code))',
+            'must be -1 or at most the length of the code'],
+    ],
+    'webkit_web_view_evaluate_javascript' => [
+        [2, 'length == -1 || (length >= 0 && static_cast<gsize>(length) <= ZSTR_LEN(script))',
+            'must be -1 or at most the length of the script'],
+    ],
+    'webkit_web_view_call_async_javascript_function' => [
+        [2, 'length == -1 || (length >= 0 && static_cast<gsize>(length) <= ZSTR_LEN(body))',
+            'must be -1 or at most the length of the body'],
+    ],
     // gdk_memory_texture_new() asserts that the bytes cover the image (a short buffer would be
     // read past its end); bytes_per_pixel() is the prelude's table (gen/overrides/Gdk.MemoryTexture.cpp)
     'gdk_memory_texture_new' => [
@@ -316,6 +396,8 @@ const SELF_UNPARENTED_OR = [
  * documentation alone - the pin file is what proves GTK enforces it.
  */
 const PARAM_DOMAINS = [
+    'webkit_memory_pressure_settings_set_kill_threshold.value' => [0.0, null],
+    'webkit_memory_pressure_settings_set_poll_interval.value' => [0.0, null, 'open'],
     'gtk_calendar_set_day.day' => [1, 31],
     'gtk_calendar_set_month.month' => [0, 11],
     'gtk_calendar_set_year.year' => [1, 9999],

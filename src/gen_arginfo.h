@@ -7,4 +7,10 @@
 #include "Graphene/Graphene_arginfo.h"
 #include "Gsk/Gsk_arginfo.h"
 #include "Gtk/Gtk_arginfo.h"
+#ifdef PHPGTK_WITH_WEBKIT
+#include "JavaScriptCore/JavaScriptCore_arginfo.h"
+#endif  // PHPGTK_WITH_WEBKIT
 #include "Pango/Pango_arginfo.h"
+#ifdef PHPGTK_WITH_WEBKIT
+#include "WebKit/WebKit_arginfo.h"
+#endif  // PHPGTK_WITH_WEBKIT

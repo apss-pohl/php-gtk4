@@ -163,6 +163,15 @@ trait EmitsTests
         $uses = array_unique($uses);
         sort($uses);
         $useLines = implode("\n", array_map(fn($u) => "use Gtk4\\$u;", $uses));
+        // A class of a conditional namespace exists only in a build with its feature
+        // (CONDITIONAL_NAMESPACES): the test skips itself in any other.
+        $feature = CONDITIONAL_NAMESPACES[$n->ns]['feature'] ?? null;
+        $gate = '';
+        if ($feature !== null) {
+            $useLines .= "\nuse PhpGtk4\\Tests\\Features;";
+            $gate = "    protected function setUp(): void\n    {\n        parent::setUp();\n"
+                . "        Features::requires('$feature');\n    }\n\n";
+        }
         $body = "    public function testConstructs(): void\n    {\n"
             . "        self::assertInstanceOf($php::class, \$this->subject());\n    }\n";
         if ($lines !== []) {
@@ -179,6 +188,7 @@ trait EmitsTests
             . "declare(strict_types=1);\n\nnamespace PhpGtk4\\Tests\\Generated;\n\n"
             . "$useLines\nuse PhpGtk4\\Tests\\GtkTestCase;\n\n"
             . "final class {$php}SmokeTest extends GtkTestCase\n{\n"
+            . $gate
             . "    private function subject(): $php\n    {\n        return $subject;\n    }\n\n"
             . $body . "}\n";
     }
@@ -257,7 +267,8 @@ trait EmitsTests
     {
         $php = phpClass($n);
         $summary = docSummary($n->doc) ?: "the $php " . ($n->kind === 'class' ? 'class' : $n->kind);
-        $summary = str_replace(["'", '`', '\\'], ['\\\'', '', ''], $summary);
+        // backslashes first, so that the quote's escape survives
+        $summary = str_replace(['\\', "'", '`'], ['', "\\'", ''], $summary);
         if (strlen($summary) > 80) {  // one line in Demo::page(): cut at a word, mark the cut
             $summary = rtrim(substr($summary, 0, strrpos(substr($summary, 0, 78), ' ') ?: 78), ' ,;:') . '…';
         }
@@ -275,9 +286,10 @@ trait EmitsTests
             $uses = ["use Gtk4\\$php;", 'use Gtk4\\GtkLabel;', 'use Gtk4\\GtkWidget;', 'use Gtk4\\GtkWindow;'];
             sort($uses);   // the style tools want imports ordered
             return $head . implode("\n", $uses) . "\n\n"
-                . "/*\n * Gtk4\\$php - $summary\n *\n"
-                . " * GENERATED skeleton (gen/gir.php): lists every one of the {$n->kind}'s $what. Replace it with a\n"
-                . " * page that shows the {$n->kind} in action and move the class out of the 'Generated' section.\n *\n"
+                . "/*\n * Gtk4\\$php\n * $summary\n *\n"
+                . " * GENERATED skeleton (gen/gir.php): lists every one of the {$n->kind}'s $what. Replace it\n"
+                . " * with a page that shows the {$n->kind} in action and move the class out of the\n"
+                . " * 'Generated' section.\n *\n"
                 . " *   bin/php-gtk4 examples/demo.php $php\n */\n\n"
                 . "require_once __DIR__ . '/bootstrap.php';\n\n"
                 . "return Demo::page(\n    '$php',\n    '$summary',\n    function (GtkWindow \$win): GtkWidget {\n"
@@ -303,15 +315,16 @@ trait EmitsTests
             array_slice($methods, 0, 12),
         )) . ($count > 12 ? "            '…',\n" : '') . '        ])';
         return $head . "use Gtk4\\GtkLabel;\nuse Gtk4\\GtkWidget;\nuse Gtk4\\GtkWindow;\n\n"
-            . "/*\n * Gtk4\\$php - $summary\n *\n"
+            . "/*\n * Gtk4\\$php\n * $summary\n *\n"
             . " * GENERATED skeleton (gen/gir.php): names the API surface only. Replace it with a page\n"
-            . " * that shows $php doing something and move the class out of the 'Generated' section.\n *\n"
+            . " * that shows the class doing something and move it out of the 'Generated' section.\n *\n"
             . " *   bin/php-gtk4 examples/demo.php $php\n */\n\n"
             . "require_once __DIR__ . '/bootstrap.php';\n\n"
             . "return Demo::page(\n    '$php',\n    '$summary',\n    function (GtkWindow \$win): GtkWidget {\n"
             . "        \$label = new GtkLabel();\n"
             . "        \$names = $shown;\n"
-            . "        \$label->set_markup(\"<b>$php</b>\\n$count generated methods\\n<small>\$names</small>\");\n"
+            . "        \$label->set_markup(\n"
+            . "            \"<b>$php</b>\\n$count generated methods\\n<small>\$names</small>\",\n        );\n"
             . "        return \$label;\n    },\n);\n";
     }
 }

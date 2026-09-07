@@ -359,3 +359,17 @@ The other GSK and printing classes have generated pages so far.
 | [GtkApplicationWindow.php](GtkApplicationWindow.php) | a GtkWindow that is also an action map |
 | [GtkArrowType.php](GtkArrowType.php) | which way a GtkMenuButton arrow points |
 | [GtkPopoverMenuFlags.php](GtkPopoverMenuFlags.php) | how a GtkPopoverMenu opens submenus: sliding or nested |
+
+## Web
+
+Only in a build with `--enable-gtk4-webkit` (`Gtk4\FEATURES` says `webkit=yes`); `demo.php` leaves
+these pages out otherwise. Every page here is offline: the documents come from PHP strings.
+
+| File | Shows |
+| ---- | ----- |
+| [WebKitWebView.php](WebKitWebView.php) | a page from `load_html()`, JavaScript run from PHP, messages posted back |
+| [WebKitSettings.php](WebKitSettings.php) | JavaScript, images and the user agent as properties; the view's zoom |
+| [WebKitUserContentManager.php](WebKitUserContentManager.php) | a style sheet and a script injected into every page |
+| [WebKitFindController.php](WebKitFindController.php) | find in page: highlights, a count, next and previous |
+| [JSCContext.php](JSCContext.php) | JavaScript without a page: expressions, globals, exceptions |
+| [JSCValue.php](JSCValue.php) | values both ways, functions and methods called with a PHP list |

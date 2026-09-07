@@ -11,6 +11,7 @@ namespace PhpGtk4\Gen;
 
 trait EmitsRecords
 {
+    /** @param list<string> $minit */
     private function emitEnum(Node $n, array &$minit): string
     {
         [$typeMacro] = macroParts($this->gir, $n);
@@ -52,6 +53,8 @@ trait EmitsRecords
      * data as `self`; copy/free/ref/unref are the handle's business and skipped.
      *
      * @return array{string, string} stub section, cpp text
+     * @param list<string> $minit
+     * @param list<string> $protos
      */
     private function emitRecord(Node $n, array &$minit, array &$protos): array
     {
@@ -261,6 +264,7 @@ trait EmitsRecords
         // ---- cpp
         $joined = implode('', $cppMethods);
         $includes = $this->coreIncludes(
+            $n,
             ['"php_gtk4.h"', '"core/boxed.h"', '"core/object.h"', '<cstring>'],
             $joined,
             $this->preludes[$n->qname()] ?? '',

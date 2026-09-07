@@ -172,6 +172,11 @@ final class Demo
             'GtkAboutDialog', 'GtkLicense', 'PangoFontDescription',
             'GCancellable', 'GAsyncResult', 'GTask',
         ],
+        // Only in a build with --enable-gtk4-webkit: pages() leaves these out otherwise.
+        'Web' => [
+            'WebKitWebView', 'WebKitSettings', 'WebKitUserContentManager', 'WebKitFindController',
+            'JSCContext', 'JSCValue',
+        ],
     ];
 
     /**
@@ -284,7 +289,10 @@ final class Demo
     }
 
     /**
-     * Every examples/<Class>.php, required and asked for its page.
+     * Every examples/<Class>.php whose class this build has, required and asked for its page.
+     *
+     * A page of an optional feature (`WebKitWebView` needs `--enable-gtk4-webkit`) is left out
+     * when the extension does not register its class, so the sidebar only offers what can run.
      *
      * @return list<DemoPage>
      */
@@ -294,6 +302,10 @@ final class Demo
         foreach (glob(__DIR__ . '/*.php') ?: [] as $file) {
             if (in_array(basename($file), ['bootstrap.php', 'demo.php'], true)) {
                 continue;
+            }
+            $class = 'Gtk4\\' . basename($file, '.php');
+            if (!class_exists($class) && !interface_exists($class)) {
+                continue;   // a feature this build lacks (Gtk4\FEATURES)
             }
             $loaded = require $file;
             if (!is_array($loaded) || !isset($loaded['class'], $loaded['summary'], $loaded['build'])) {
@@ -433,11 +445,18 @@ final class Demo
                 }
             });
 
-            foreach (array_keys(self::sections()) as $name) {
+            foreach (self::sections() as $name => $members) {
+                // The first member that has a page in this build (pages() leaves out the
+                // classes of a feature the extension was built without).
+                $first = array_values(array_filter($members, static fn(string $m): bool => isset($byClass[$m])))[0]
+                    ?? null;
+                if ($first === null) {
+                    continue;
+                }
                 $button = GtkButton::new_with_label($name);
                 $button->add_css_class('flat');
-                $button->connect('clicked', static function () use ($jump, $name): void {
-                    $jump(self::sections()[$name][0]);
+                $button->connect('clicked', static function () use ($jump, $first): void {
+                    $jump($first);
                 });
                 $sections->append($button);
             }

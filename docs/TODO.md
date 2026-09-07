@@ -13,10 +13,14 @@ history; an item leaves this file when it is done or decided against, it is not 
   items) once the handle is unavailable, leaving GTK's item manager with items it believes gone.
   Needs a run against that GTK; a workflow run with the test class excluded would also show the
   failures the abort hides.
-- **WebKitGTK 6**: the `--enable-gtk4-webkit` build leg compiles and loads, nothing is bound. The
-  generator needs `WebKit-6.0.gir`, which only `libwebkitgtk-6.0-dev` installs; the emitted
-  namespace has to compile only when the flag is on (a conditional source glob in `config.m4` and
-  `config.w32`).
+- **WebKitGTK, what the first wave left out** (`gen/report.md`, sections `WebKit*`/`JSC*`): the
+  URI scheme handler (`WebKitWebContext::register_uri_scheme()` and the request/response pair need
+  `GInputStream`), the Soup types (`WebKitCookieManager::add_cookie()`, the HTTP headers of a
+  request or response), `WebKitWebsiteDataManager::clear()` (`GTimeSpan` is a GIR alias the type
+  map does not resolve), TLS certificates, `WebKitWebExtension` (2.52 API) and the web-process
+  extension side (`WebKitWebProcessExtension-6.0.gir`, a separate library loaded into the web
+  process - a PHP extension cannot live there). Windows stays without a web view (WebView2 is the
+  plan, docs/BUILD.md).
 - **A PHP-driven print preview.** `GtkPrintOperation` does not implement
   `GtkPrintOperationPreview` in PHP: its slots (`render_page`, `end_preview`, `is_selected`) are only
   valid inside the `preview` signal, where GTK keeps the state private, and dereference NULL

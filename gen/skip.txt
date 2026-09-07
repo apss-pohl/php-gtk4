@@ -49,3 +49,45 @@ GdkPixbuf.Pixbuf.read_pixels   a bare pointer into the pixel buffer (GIR types i
 GdkPixbuf.PixbufAnimation.__construct   abstract with a private class struct (GDK_PIXBUF_ENABLE_BACKEND): a PHP subtype has NULL slots and every getter dereferences them (SIGSEGV); animations come from new_from_file()
 GdkPixbuf.PixbufAnimationIter.__construct   as GdkPixbufAnimation; iterators come from an animation
 GdkPixbuf.Pixbuf.composite_color   17 parameters (the checkerboard-background variant of composite()); composite() and composite_color_simple() cover the same drawing, and a ZEND_METHOD that size trips clang-tidy's function-size gate
+# WebKitGTK: handles WebKit creates and hands out (in a signal, from a getter); g_object_new() on them builds an object with no web view, session or process behind it that asserts on first use
+WebKit.WebViewBase.__construct   the widget base WebKit builds only as part of a WebKitWebView; a bare one has no page behind it
+WebKit.AuthenticationRequest.__construct   only WebKitWebView::authenticate hands one out
+WebKit.AutomationSession.__construct   only WebKitWebContext::automation-started hands one out
+WebKit.BackForwardList.__construct   WebKitWebView::get_back_forward_list()
+WebKit.BackForwardListItem.__construct   WebKitBackForwardList::get_current_item() and friends
+WebKit.ClipboardPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.ColorChooserRequest.__construct   only WebKitWebView::run-color-chooser hands one out
+WebKit.CookieManager.__construct   WebKitNetworkSession::get_cookie_manager()
+WebKit.DeviceInfoPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.Download.__construct   WebKitWebView::download_uri() / the ::download-started signal
+WebKit.EditorState.__construct   WebKitWebView::get_editor_state()
+WebKit.FaviconDatabase.__construct   WebKitWebView::get_favicon_database() (a network session owns it)
+WebKit.FileChooserRequest.__construct   only WebKitWebView::run-file-chooser hands one out
+WebKit.FindController.__construct   WebKitWebView::get_find_controller()
+WebKit.FormSubmissionRequest.__construct   only WebKitWebView::submit-form hands one out
+WebKit.GeolocationManager.__construct   WebKitWebContext::get_geolocation_manager()
+WebKit.GeolocationPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.HitTestResult.__construct   only WebKitWebView::mouse-target-changed and ::context-menu hand one out
+WebKit.MediaKeySystemPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.NavigationPolicyDecision.__construct   only WebKitWebView::decide-policy hands one out
+WebKit.Notification.__construct   only WebKitWebView::show-notification hands one out
+WebKit.NotificationPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.OptionMenu.__construct   only WebKitWebView::show-option-menu hands one out
+WebKit.PointerLockPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.PolicyDecision.__construct   abstract with no slots to override; only WebKitWebView::decide-policy hands out its subclasses
+WebKit.ResponsePolicyDecision.__construct   only WebKitWebView::decide-policy hands one out
+WebKit.SecurityManager.__construct   WebKitWebContext::get_security_manager()
+WebKit.URIResponse.__construct   WebKitWebResource::get_response() and the policy decisions carry one
+WebKit.UserMediaPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.WebInspector.__construct   WebKitWebView::get_inspector()
+WebKit.WebResource.__construct   WebKitWebView::get_main_resource() / ::resource-load-started
+WebKit.WebsiteDataAccessPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.WebsiteDataManager.__construct   WebKitNetworkSession::get_website_data_manager() (the session sets its directories)
+WebKit.WindowProperties.__construct   WebKitWebView::get_window_properties()
+WebKit.XRPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.ContextMenuItem.__construct   built by its factories (new_from_gaction(), new_separator(), ...); g_object_new() gives an item without an action
+JavaScriptCore.Value.__construct   built by its factories (new_number(), new_string(), ...) or by a JSCContext; g_object_new() without a context asserts
+JavaScriptCore.Value.new_typed_array   a length JavaScriptCore cannot allocate is a RELEASE_ASSERT (aborts the process), and the array's bytes are unreachable from PHP anyway (typed_array_get_data() is a gpointer)
+JavaScriptCore.Value.new_typed_array_with_buffer   as new_typed_array: an offset/length outside the buffer asserts inside JavaScriptCore
+WebKit.FindController.property:options   WebKit's get_property writes a flags GValue with g_value_set_uint() (a CRITICAL and no value); get_options() reads it fine
+WebKit.PrintOperation.property:web-view   WebKit's get_property hands the GValue the view without a reference of its own (g_value_take_object on a pointer it does not own), so every read of the property dropped one reference of the web view and the second one disposed it; get_web_view() borrows correctly

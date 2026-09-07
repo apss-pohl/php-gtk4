@@ -40,3 +40,5 @@ Gtk.PrintOperation.current_page   a current page needs n_pages set first (GTK re
 Gtk.PrintOperation.set_current_page   same, as the setter
 GdkPixbuf.Pixbuf.*   the factories need real image data (PixbufTest covers it)
 GdkPixbuf.PixbufAnimation.*   same: new_from_file() needs an image file
+WebKit.Settings.set_webrtc_udp_ports_range   'smoke' is not a port range (min:max); WebKit keeps the old value
+WebKit.Settings.webrtc_udp_ports_range       same, as a property

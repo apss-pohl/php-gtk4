@@ -163,8 +163,11 @@ if (PHP_GTK4 != "no") {
 
 	// ---- Sources: every .cpp under src/, recursively (relative paths; the object tree mirrors
 	// the source tree), so nothing has to be maintained here when a class file *or a namespace
-	// directory* is added - the same rule as config.m4's find.
+	// directory* is added - the same rule as config.m4's find. The one exception, as there: the
+	// namespaces that need WebKitGTK (src\WebKit, src\JavaScriptCore - CONDITIONAL_NAMESPACES in
+	// gen/gir/config.php) are left out, since --enable-gtk4-webkit is refused on Windows.
 	var sources = [];
+	var webkit_dirs = { "WebKit": true, "JavaScriptCore": true };
 	function gtk4_collect(rel) {
 		var files = glob(gtk4_src + "\\" + rel + "\\*.cpp");
 		for (var j = 0; j < files.length; j++) {
@@ -173,7 +176,9 @@ if (PHP_GTK4 != "no") {
 		var sub = FSO.GetFolder(gtk4_src + "\\" + rel).SubFolders;
 		for (var e = new Enumerator(sub); !e.atEnd(); e.moveNext()) {
 			var name = e.item().Name;
-			if (name != ".libs") gtk4_collect(rel + "\\" + name);
+			if (name == ".libs") continue;
+			if (rel == "src" && webkit_dirs[name]) continue;
+			gtk4_collect(rel + "\\" + name);
 		}
 	}
 	gtk4_collect("src");

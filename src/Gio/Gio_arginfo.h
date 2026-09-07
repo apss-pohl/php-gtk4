@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 0a4a97852958b3029f5361b57276bed08e9a1294 */
+ * Stub hash: ed804811489321d939f4eb88063134675e7259fe */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_change_state, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
@@ -1302,6 +1302,122 @@ static zend_class_entry *register_class_Gtk4_GTask(zend_class_entry *class_entry
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GTask", class_Gtk4_GTask_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
 	zend_class_implements(class_entry, 1, class_entry_Gtk4_GAsyncResult);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GTlsCertificateFlags(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GTlsCertificateFlags", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NO_FLAGS_value;
+	ZVAL_LONG(&const_NO_FLAGS_value, 0);
+	zend_string *const_NO_FLAGS_name = zend_string_init_interned("NO_FLAGS", sizeof("NO_FLAGS") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NO_FLAGS_name, &const_NO_FLAGS_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NO_FLAGS_name);
+
+	zval const_UNKNOWN_CA_value;
+	ZVAL_LONG(&const_UNKNOWN_CA_value, 1);
+	zend_string *const_UNKNOWN_CA_name = zend_string_init_interned("UNKNOWN_CA", sizeof("UNKNOWN_CA") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_UNKNOWN_CA_name, &const_UNKNOWN_CA_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_UNKNOWN_CA_name);
+
+	zval const_BAD_IDENTITY_value;
+	ZVAL_LONG(&const_BAD_IDENTITY_value, 2);
+	zend_string *const_BAD_IDENTITY_name = zend_string_init_interned("BAD_IDENTITY", sizeof("BAD_IDENTITY") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_BAD_IDENTITY_name, &const_BAD_IDENTITY_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_BAD_IDENTITY_name);
+
+	zval const_NOT_ACTIVATED_value;
+	ZVAL_LONG(&const_NOT_ACTIVATED_value, 4);
+	zend_string *const_NOT_ACTIVATED_name = zend_string_init_interned("NOT_ACTIVATED", sizeof("NOT_ACTIVATED") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NOT_ACTIVATED_name, &const_NOT_ACTIVATED_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NOT_ACTIVATED_name);
+
+	zval const_EXPIRED_value;
+	ZVAL_LONG(&const_EXPIRED_value, 8);
+	zend_string *const_EXPIRED_name = zend_string_init_interned("EXPIRED", sizeof("EXPIRED") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_EXPIRED_name, &const_EXPIRED_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_EXPIRED_name);
+
+	zval const_REVOKED_value;
+	ZVAL_LONG(&const_REVOKED_value, 16);
+	zend_string *const_REVOKED_name = zend_string_init_interned("REVOKED", sizeof("REVOKED") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_REVOKED_name, &const_REVOKED_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_REVOKED_name);
+
+	zval const_INSECURE_value;
+	ZVAL_LONG(&const_INSECURE_value, 32);
+	zend_string *const_INSECURE_name = zend_string_init_interned("INSECURE", sizeof("INSECURE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_INSECURE_name, &const_INSECURE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_INSECURE_name);
+
+	zval const_GENERIC_ERROR_value;
+	ZVAL_LONG(&const_GENERIC_ERROR_value, 64);
+	zend_string *const_GENERIC_ERROR_name = zend_string_init_interned("GENERIC_ERROR", sizeof("GENERIC_ERROR") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_GENERIC_ERROR_name, &const_GENERIC_ERROR_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_GENERIC_ERROR_name);
+
+	zval const_VALIDATE_ALL_value;
+	ZVAL_LONG(&const_VALIDATE_ALL_value, 127);
+	zend_string *const_VALIDATE_ALL_name = zend_string_init_interned("VALIDATE_ALL", sizeof("VALIDATE_ALL") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_VALIDATE_ALL_name, &const_VALIDATE_ALL_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_VALIDATE_ALL_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GTlsPasswordFlags(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GTlsPasswordFlags", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NONE_value;
+	ZVAL_LONG(&const_NONE_value, 0);
+	zend_string *const_NONE_name = zend_string_init_interned("NONE", sizeof("NONE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NONE_name, &const_NONE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NONE_name);
+
+	zval const_RETRY_value;
+	ZVAL_LONG(&const_RETRY_value, 2);
+	zend_string *const_RETRY_name = zend_string_init_interned("RETRY", sizeof("RETRY") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_RETRY_name, &const_RETRY_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_RETRY_name);
+
+	zval const_MANY_TRIES_value;
+	ZVAL_LONG(&const_MANY_TRIES_value, 4);
+	zend_string *const_MANY_TRIES_name = zend_string_init_interned("MANY_TRIES", sizeof("MANY_TRIES") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_MANY_TRIES_name, &const_MANY_TRIES_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_MANY_TRIES_name);
+
+	zval const_FINAL_TRY_value;
+	ZVAL_LONG(&const_FINAL_TRY_value, 8);
+	zend_string *const_FINAL_TRY_name = zend_string_init_interned("FINAL_TRY", sizeof("FINAL_TRY") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_FINAL_TRY_name, &const_FINAL_TRY_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_FINAL_TRY_name);
+
+	zval const_PKCS11_USER_value;
+	ZVAL_LONG(&const_PKCS11_USER_value, 16);
+	zend_string *const_PKCS11_USER_name = zend_string_init_interned("PKCS11_USER", sizeof("PKCS11_USER") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_PKCS11_USER_name, &const_PKCS11_USER_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_PKCS11_USER_name);
+
+	zval const_PKCS11_SECURITY_OFFICER_value;
+	ZVAL_LONG(&const_PKCS11_SECURITY_OFFICER_value, 32);
+	zend_string *const_PKCS11_SECURITY_OFFICER_name = zend_string_init_interned("PKCS11_SECURITY_OFFICER", sizeof("PKCS11_SECURITY_OFFICER") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_PKCS11_SECURITY_OFFICER_name, &const_PKCS11_SECURITY_OFFICER_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_PKCS11_SECURITY_OFFICER_name);
+
+	zval const_PKCS11_CONTEXT_SPECIFIC_value;
+	ZVAL_LONG(&const_PKCS11_CONTEXT_SPECIFIC_value, 64);
+	zend_string *const_PKCS11_CONTEXT_SPECIFIC_name = zend_string_init_interned("PKCS11_CONTEXT_SPECIFIC", sizeof("PKCS11_CONTEXT_SPECIFIC") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_PKCS11_CONTEXT_SPECIFIC_name, &const_PKCS11_CONTEXT_SPECIFIC_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_PKCS11_CONTEXT_SPECIFIC_name);
 
 	return class_entry;
 }

@@ -544,12 +544,17 @@ final class TypeMap
                 return "{$p->direction} parameter {$p->name}";
             }
             // trailing nullable parameters may be omitted
-            $trailingNullable = $p->nullable;
+            $requiredFollows = false;
+            $lastIn = true;
             for ($j = $i + 1; $j < $count; $j++) {
-                if (!$f->params[$j]->nullable && $f->params[$j]->direction === 'in') {
-                    $trailingNullable = false;
+                if ($f->params[$j]->direction === 'in') {
+                    $lastIn = false;
+                    if (!$f->params[$j]->nullable) {
+                        $requiredFollows = true;
+                    }
                 }
             }
+            $trailingNullable = $p->nullable && !$requiredFollows;
             if (($this->gir->types[$p->type->name] ?? null)?->kind === 'callback' && $p->closure !== null) {
                 $visibleSoFar = count(array_filter($ins, fn($x) => !($x['hidden'] ?? false)));
                 $cb = $this->callbackParam($n, $f, $p, $visibleSoFar + 1, $trailingNullable && $f->kind !== 'method');
@@ -564,6 +569,12 @@ final class TypeMap
             $m = $this->inParam($p, $trailingNullable && $f->kind !== 'method', count($ins) + 1, $f->cid);
             if ($m === null) {
                 return "parameter `{$p->name}` of type {$p->type->name}" . ($p->type->isArray ? ' (C array)' : '');
+            }
+            // A GVariant (`mixed`, null for "none") defaults to null where PHP allows it: as the
+            // last parameter, or followed only by parameters that get a default themselves - a
+            // parameter without one after it would make `= null` implicitly required (deprecated).
+            if ($p->type->name === 'GLib.Variant' && ($lastIn || ($trailingNullable && $f->kind !== 'method'))) {
+                $m['default'] = 'null';
             }
             $m['pos'] = $i;
             $ins[] = $m;
@@ -728,17 +739,6 @@ final class TypeMap
             if ($t->name === 'utf8') {
                 $guard = $nullable ? "$name != nullptr && " : '';
                 $utf8Check = ["if ({$guard}!phpgtk::check_utf8($name, $argNum)) RETURN_THROWS();"];
-                // GLib's own predicate for the value (PARAM_VALIDATORS): a ValueError naming the
-                // argument, where GLib would g_return_if_fail() and do nothing
-                $validator = PARAM_VALIDATORS[$cid . '.' . $name] ?? null;
-                if ($validator !== null) {
-                    [$predicate, $wording] = $validator;
-                    $test = sprintf($predicate, "ZSTR_VAL($name)");
-                    $utf8Check[] = "if ({$guard}!($test)) {";
-                    $utf8Check[] = "  zend_argument_value_error($argNum, \"$wording\");";
-                    $utf8Check[] = '  RETURN_THROWS();';
-                    $utf8Check[] = '}';
-                }
             }
             // A relative filename has to be resolved against PHP's own cwd before GTK sees it:
             // under ZTS chdir() moves a per-thread virtual cwd that a C library knows nothing
@@ -756,6 +756,19 @@ final class TypeMap
                         '}']
                     : ["zend_string *{$name}_abs = phpgtk::absolute_filename($name, $argNum);",
                         "if ({$name}_abs == nullptr) RETURN_THROWS();"]);
+            }
+            // GLib's own predicate for the value (PARAM_VALIDATORS): a ValueError naming the
+            // argument, where GLib would g_return_if_fail() and do nothing. A filename is
+            // checked as the absolute path GTK will see.
+            $validator = PARAM_VALIDATORS[$cid . '.' . $name] ?? null;
+            if ($validator !== null) {
+                [$predicate, $wording] = $validator;
+                $test = sprintf($predicate, "ZSTR_VAL($value)");
+                $guard = $nullable ? "$value != nullptr && " : '';
+                $utf8Check[] = "if ({$guard}!($test)) {";
+                $utf8Check[] = "  zend_argument_value_error($argNum, \"$wording\");";
+                $utf8Check[] = '  RETURN_THROWS();';
+                $utf8Check[] = '}';
             }
             return array_merge($r, [
                 'phpType' => ($nullable ? '?' : '') . 'string',
@@ -799,7 +812,7 @@ final class TypeMap
         }
         if ($t->name === 'GLib.Variant') {
             return array_merge($r, [
-                'phpType' => 'mixed', 'default' => 'null',
+                'phpType' => 'mixed', 'default' => null,   // the caller sets 'null' unless a required parameter follows
                 'decl' => "zval *$name = nullptr;", 'zpp' => "Z_PARAM_ZVAL($name)",
                 'pre' => ["GVariant *{$name}_v = nullptr;",
                     "if ($name != nullptr && Z_TYPE_P($name) != IS_NULL) {",
@@ -830,10 +843,17 @@ final class TypeMap
             ]);
         }
         if ($t->name === 'GLib.Bytes') {
+            // Binary, so no check_utf8(); a nullable one (jsc_value_new_string_from_bytes) is ?string.
+            $bytes = $nullable
+                ? "$name != nullptr ? g_bytes_new(ZSTR_VAL($name), ZSTR_LEN($name)) : nullptr"
+                : "g_bytes_new(ZSTR_VAL($name), ZSTR_LEN($name))";
             return array_merge($r, [
-                'phpType' => 'string', 'decl' => "zend_string *$name;", 'zpp' => "Z_PARAM_STR($name)",
-                'pre' => ["GBytes *{$name}_b = g_bytes_new(ZSTR_VAL($name), ZSTR_LEN($name));"],
-                'carg' => "{$name}_b", 'post' => ["g_bytes_unref({$name}_b);"],
+                'phpType' => ($nullable ? '?' : '') . 'string',
+                'decl' => "zend_string *$name" . ($nullable ? ' = nullptr' : '') . ';',
+                'zpp' => 'Z_PARAM_STR' . ($nullable ? '_OR_NULL' : '') . "($name)",
+                'pre' => ["GBytes *{$name}_b = $bytes;"],
+                'carg' => "{$name}_b",
+                'post' => [($nullable ? "if ({$name}_b != nullptr) " : '') . "g_bytes_unref({$name}_b);"],
             ]);
         }
         // A GFile is a path or a URI and nothing else a PHP program can use: it is mapped to a

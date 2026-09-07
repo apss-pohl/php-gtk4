@@ -40,6 +40,9 @@ final class RobustnessTest extends GtkTestCase
         \Gtk4\GdkContentProvider::class . '::new_for_bytes' => [1],
         \Gtk4\GdkPixbuf::class . '::new_from_bytes' => [0],
         \Gtk4\GdkPixbufLoader::class . '::write_bytes' => [0],
+        \Gtk4\WebKitWebView::class . '::load_bytes' => [0],
+        \Gtk4\WebKitUserContentFilterStore::class . '::save' => [1],
+        \Gtk4\JSCValue::class . '::new_string_from_bytes' => [1],
     ];
 
     private string $cwd = '';
@@ -192,6 +195,11 @@ final class RobustnessTest extends GtkTestCase
                     \Gtk4\GtkPrintDialog::class . '::setup',
                     \Gtk4\GtkPrintDialog::class . '::print',
                     \Gtk4\GtkPrintDialog::class . '::print_file',
+                    // WebKit's print operation: run_dialog(null) blocks in a modal dialog under
+                    // Xvfb (the suite hung there), print() goes to the default printer with no
+                    // dialog at all.
+                    \Gtk4\WebKitPrintOperation::class . '::run_dialog',
+                    \Gtk4\WebKitPrintOperation::class . '::print',
                 ];
                 if (in_array($class->getName() . '::' . $m->getName(), $dialogOpeners, true)) {
                     continue;
@@ -212,6 +220,9 @@ final class RobustnessTest extends GtkTestCase
         $stub = (string) file_get_contents(__DIR__ . '/../stubs/gtk4.php');
         preg_match_all('#/\*\*(.*?)\*/\s*(?:final\s+)?class\s+(\w+)#s', $stub, $classes, PREG_SET_ORDER);
         foreach ($classes as [, $doc, $short]) {
+            if (!Features::available($short)) {
+                continue;   // declared for every build, registered only with its feature (tests/Features.php)
+            }
             /** @var class-string $class */
             $class = 'Gtk4\\' . $short;
             preg_match_all('/@property(-read|-write)?\\s+(\\S+)\\s+\\$(\\w+)/', $doc, $tags, PREG_SET_ORDER);

@@ -338,3 +338,104 @@ GdkPixbuf.PixbufAnimation
 GdkPixbuf.PixbufAnimationIter
 Gdk.MemoryTexture
 Gdk.TextureDownloader
+
+# WebKitGTK 6 (2026-09-07, --enable-gtk4-webkit only - CONDITIONAL_NAMESPACES in gen/gir/config.php):
+# the web view and what an application reaches through it - its settings, context, network
+# session (cookies, website data, proxy), user content (scripts, style sheets, filters, script
+# messages), find controller, back/forward list, inspector, policy decisions, downloads,
+# resources, dialogs and permission requests - plus JavaScriptCore's value/context, which is
+# what evaluate_javascript() answers with and what a script message carries. Out: the URI scheme
+# handler pair (GInputStream is not bound), WebExtension (2.52 API), WebProcess extensions.
+WebKit.WebViewBase
+WebKit.WebView
+WebKit.Settings
+WebKit.WebContext
+WebKit.NetworkSession
+WebKit.UserContentManager
+WebKit.UserScript
+WebKit.UserStyleSheet
+WebKit.UserContentFilter
+WebKit.UserContentFilterStore
+WebKit.CookieManager
+WebKit.WebsiteDataManager
+WebKit.WebsiteData
+WebKit.BackForwardList
+WebKit.BackForwardListItem
+WebKit.FindController
+WebKit.HitTestResult
+WebKit.NavigationAction
+WebKit.PolicyDecision
+WebKit.NavigationPolicyDecision
+WebKit.ResponsePolicyDecision
+WebKit.URIRequest
+WebKit.URIResponse
+WebKit.WebResource
+WebKit.Download
+WebKit.WebInspector
+WebKit.ScriptDialog
+WebKit.ScriptMessageReply
+WebKit.PrintOperation
+WebKit.ContextMenu
+WebKit.ContextMenuItem
+WebKit.WindowProperties
+WebKit.SecurityManager
+WebKit.SecurityOrigin
+WebKit.WebsitePolicies
+WebKit.FaviconDatabase
+WebKit.PermissionRequest
+WebKit.ClipboardPermissionRequest
+WebKit.DeviceInfoPermissionRequest
+WebKit.GeolocationPermissionRequest
+WebKit.MediaKeySystemPermissionRequest
+WebKit.NotificationPermissionRequest
+WebKit.PointerLockPermissionRequest
+WebKit.UserMediaPermissionRequest
+WebKit.WebsiteDataAccessPermissionRequest
+WebKit.XRPermissionRequest
+WebKit.PermissionStateQuery
+WebKit.Notification
+WebKit.OptionMenu
+WebKit.OptionMenuItem
+WebKit.EditorState
+WebKit.InputMethodContext
+WebKit.InputMethodUnderline
+WebKit.ColorChooserRequest
+WebKit.FileChooserRequest
+WebKit.FormSubmissionRequest
+WebKit.AuthenticationRequest
+WebKit.Credential
+WebKit.GeolocationManager
+WebKit.GeolocationPosition
+WebKit.Feature
+WebKit.FeatureList
+WebKit.MemoryPressureSettings
+WebKit.NetworkProxySettings
+WebKit.ITPFirstParty
+WebKit.ITPThirdParty
+WebKit.UserMessage
+WebKit.ApplicationInfo
+WebKit.WebViewSessionState
+WebKit.AutomationSession
+JavaScriptCore.Value
+JavaScriptCore.Context
+JavaScriptCore.Exception
+JavaScriptCore.VirtualMachine
+# The enums and flags WebKit's signals carry (a signal argument converts through the GType
+# registry, so an unregistered enum arrives as an int) and the flags its methods take.
+WebKit.LoadEvent
+WebKit.PolicyDecisionType
+WebKit.InsecureContentEvent
+WebKit.WebProcessTerminationReason
+WebKit.FindOptions
+WebKit.HitTestResultContext
+WebKit.EditorTypingAttributes
+WebKit.DownloadError
+WebKit.NetworkError
+WebKit.PolicyError
+WebKit.JavascriptError
+WebKit.SnapshotError
+WebKit.PrintError
+WebKit.MediaError
+WebKit.UserContentFilterError
+WebKit.FaviconDatabaseError
+WebKit.UserMessageError

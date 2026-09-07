@@ -21,6 +21,9 @@ final class GtkInstancesTest extends GtkTestCase
     public static function unreachableClasses(): iterable
     {
         foreach (GtkInstances::UNREACHABLE as $class => $reason) {
+            if (!Features::available($class)) {
+                continue;   // a class of a feature this build lacks (tests/Features.php)
+            }
             yield $class => [$class, $reason];
         }
     }

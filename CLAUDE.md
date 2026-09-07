@@ -37,8 +37,16 @@ Hard constraints:
   `tests/phpt` and the sanitizer/coverage stages are Linux-only; `bin/php-gtk4.cmd` and
   `tests/run.cmd` are the Windows launchers. **No header under `src/` may equal a GLib/GTK header
   path case-insensitively** (a former src/Gio/GListModel.h shadowed `gio/glistmodel.h` on Windows — hence
-  the generated prototypes live in `src/gen_prototypes.h`; `HeaderNamesTest` enforces it). WebKit
-  follows later (README.md "Design" §7).
+  the generated prototypes live in `src/gen_prototypes.h`; `HeaderNamesTest` enforces it).
+- **WebKitGTK is optional and Linux-only.** `--enable-gtk4-webkit` compiles `src/WebKit/` and
+  `src/JavaScriptCore/` (the `WebKit*`/`JSC*` classes, generated from `WebKit-6.0.gir` and
+  `JavaScriptCore-6.0.gir` like everything else); without it those two directories are left out
+  of the source glob (`config.m4`, `config.w32`, and ci.sh's clang-tidy when the headers are
+  absent) and their MINIT/arginfo blocks sit under `#ifdef PHPGTK_WITH_WEBKIT`.
+  `CONDITIONAL_NAMESPACES` in `gen/gir/config.php` is the table; `tests/Features.php` mirrors it
+  by class prefix so a test of a feature the build lacks skips itself; `FeatureGateTest` pins the
+  five places to each other. `Gtk4\FEATURES` (`webkit=yes|no`) says what a module has. Nothing
+  outside those two directories may include a WebKit header.
 
 ## Build
 
@@ -56,7 +64,9 @@ phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(n
   needed) — the include paths clangd in `.vscode/settings.json` reads; without it every
   header reports `'php_gtk4.h' file not found`. Rebuild after `config.m4` changes.
 - Requires `php8.4-dev` (phpize/php-config) and `libgtk-4-dev`; the default `gen` stage (and so
-  the pre-commit hook) also needs `gir1.2-gtk-4.0`. `config.m4` refuses PHP < 8.4 and GTK < 4.14.
+  the pre-commit hook) also needs `gir1.2-gtk-4.0` **and `libwebkitgtk-6.0-dev`** (which brings
+  `gir1.2-webkit-6.0`: the WebKit namespaces are generated whether or not the build has the
+  flag). `config.m4` refuses PHP < 8.4 and GTK < 4.14.
   Build metadata (git hash, date, features) is baked in at configure time (`PHPGTK_BUILD_INFO` in
   config.h).
 - **Editing `config.m4` requires re-running `phpize`** (configure is generated from it); `ci.sh`
@@ -278,6 +288,14 @@ display, and calls `Gtk::init()` once.
   `tearDown()`, `captureHandlerException()` installs a temporary `Gtk::set_exception_handler`,
   `latch()`/`latched()` for flags set from GTK callbacks, `opaque()` to pass deliberately wrong
   arguments past static analysis.
+- **A test of an optional feature skips itself where the build lacks it.** `tests/Features.php`
+  reads `Gtk4\FEATURES` and knows which class prefixes belong to which feature (`WebKit*` and
+  `JSC*` → `webkit`); a hand-written test calls `Features::requires('webkit')` in `setUp()`, the
+  generated smoke tests of a conditional namespace do the same, and the meta tests that compare
+  the stub or the example pages with the registered classes filter through
+  `Features::available()`. The default local and CI builds have no WebKit; the `webkit` CI job
+  is where those tests run. Run both when touching them
+  (`GTK4_CONFIGURE_ARGS=--enable-gtk4-webkit ./ci.sh --only=build,test`).
 - **`tests/GtkInstances.php` is the shared sweep target factory**: one named branch per class
   that `new` cannot build (an abstract base, a handle only GTK hands out, a constructor argument
   the generic path cannot invent), used by both generic sweeps — `RobustnessTest` and
@@ -402,7 +420,8 @@ branch's commits (a rebase merge keeps them); (3) build the extension and run th
 PHPUnit suite *and* `./ci.sh --only=phpt` for PHP 8.4 and 8.5, NTS and ZTS, on Ubuntu 24.04 (`fail-fast: false`;
 failing `.out`/`.diff` files upload as the `phpt-failures-php*-<ts>` artifact), plus `sanitizers`
 (`ci.sh --only=valgrind` + `--only=asan`), `coverage` (`--only=coverage`, gcovr HTML artifact) and a
-`webkit-build` (`--enable-gtk4-webkit` compiles and loads) job on 8.4. The apt package lists must
+`webkit` job on 8.4 (`--enable-gtk4-webkit` build, load and the whole PHPUnit suite — the only run
+in which the `WebKit*`/`JSC*` classes and their tests exist). The apt package lists must
 mirror `config.m4`'s pkg-config modules (plus `gir1.2-gtk-4.0` where the `gen` stage runs).
 (4) `windows.yml`: the 8.4/8.5 × NTS/ZTS matrix calling `windows-build.yml` — `windows-2022`,
 setup-php + the matching devel pack from windows.php.net + php-sdk-binary-tools + the cached
@@ -504,7 +523,8 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   tracked closure/source and clears every notified-scope callable so nothing finalizes
   after Zend is gone — `tests/scripts/shutdown.php` guards it), `mainloop` (running-loop registry
   for `ExceptionMode::Rethrow`).
-- `src/GLib/`, `src/GObject/`, `src/Gio/`, `src/Gdk/`, `src/Gtk/`, `src/Cairo/` — `ZEND_METHOD`
+- `src/GLib/`, `src/GObject/`, `src/Gio/`, `src/Gdk/`, `src/Gtk/`, `src/Cairo/` (and
+  `src/WebKit/`, `src/JavaScriptCore/`, compiled only with `--enable-gtk4-webkit`) — `ZEND_METHOD`
   implementations, one directory per GIR namespace, one file per class. Most of them are
   **generated** by `gen/gir.php --install` from GIR (header `GENERATED by gen/gir.php`, never
   edited; `./ci.sh --only=gen` fails on a diff) with the per-namespace stub `src/<Ns>/<Ns>.stub.php`

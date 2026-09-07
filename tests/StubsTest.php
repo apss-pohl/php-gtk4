@@ -92,7 +92,10 @@ final class StubsTest extends TestCase
 
     public function testClassesMatch(): void
     {
-        self::assertSame(array_keys(self::fromExtension()['classes']), array_keys(self::fromStub()['classes']));
+        // The stub declares every build's classes; the ones of a feature this build lacks
+        // (tests/Features.php) are not registered and are not expected to be.
+        $declared = array_values(array_filter(array_keys(self::fromStub()['classes']), Features::available(...)));
+        self::assertSame(array_keys(self::fromExtension()['classes']), $declared);
     }
 
     public function testMethodsMatchPerClass(): void

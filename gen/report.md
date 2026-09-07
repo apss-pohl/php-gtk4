@@ -933,10 +933,411 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_group` — return type Gtk.WindowGroup (not in the closure)
 - `present_with_time` — deprecated (4.14)
 
+## JSCContext
+
+- `check_syntax` — return JavaScriptCore.CheckSyntaxResult plus out parameters
+- `evaluate_in_object` — gpointer parameter
+- `push_exception_handler` — callback parameter (needs an override)
+- `register_class` — callback parameter (needs an override)
+- `throw_printf` — varargs
+- `throw_with_name_printf` — varargs
+
+## JSCException
+
+- `PHP subclasses` — constructor argument context is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain JSCException
+- `new_printf` — varargs
+- `new_vprintf` — parameter `args` of type JavaScriptCore.va_list
+- `new_with_name_printf` — varargs
+- `new_with_name_vprintf` — parameter `args` of type JavaScriptCore.va_list
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## JSCValue
+
+- `new_array` — varargs
+- `new_array_buffer` — gpointer parameter
+- `new_array_from_garray` — parameter `array` of type GLib.PtrArray (C array)
+- `new_function` — shadowed by new_functionv
+- `new_function_variadic` — callback parameter (needs an override)
+- `new_functionv` — callback parameter (needs an override)
+- `new_object` — gpointer parameter
+- `new_typed_array` — skip.txt: a length JavaScriptCore cannot allocate is a RELEASE_ASSERT (aborts the process), and the array's bytes are unreachable from PHP anyway (typed_array_get_data() is a gpointer)
+- `array_buffer_get_data` — return array plus out parameters
+- `new_typed_array_with_buffer` — skip.txt: as new_typed_array: an offset/length outside the buffer asserts inside JavaScriptCore
+- `object_define_property_accessor` — callback parameter (needs an override)
+- `typed_array_get_data` — return gpointer plus out parameters
+- `__construct` — skip.txt: built by its factories (new_number(), new_string(), ...) or by a JSCContext; g_object_new() without a context asserts
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## PangoFontDescription
 
 - `copy` — memory management belongs to the handle (clone / destructor)
 - `free` — memory management belongs to the handle (clone / destructor)
+
+## WebKitApplicationInfo
+
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## WebKitAuthenticationRequest
+
+- `__construct` — skip.txt: only WebKitWebView::authenticate hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitAutomationSession
+
+- `__construct` — skip.txt: only WebKitWebContext::automation-started hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitBackForwardList
+
+- `__construct` — skip.txt: WebKitWebView::get_back_forward_list()
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitBackForwardListItem
+
+- `__construct` — skip.txt: WebKitBackForwardList::get_current_item() and friends
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitClipboardPermissionRequest
+
+- `__construct` — skip.txt: only WebKitWebView::permission-request hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitColorChooserRequest
+
+- `__construct` — skip.txt: only WebKitWebView::run-color-chooser hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitContextMenu
+
+- `new_with_items` — parameter `items` of type GLib.List
+
+## WebKitContextMenuItem
+
+- `__construct` — skip.txt: built by its factories (new_from_gaction(), new_separator(), ...); g_object_new() gives an item without an action
+
+## WebKitCookieManager
+
+- `add_cookie` — parameter `cookie` of type Soup.Cookie
+- `delete_cookie` — parameter `cookie` of type Soup.Cookie
+- `get_all_cookies_finish` — list of Soup.Cookie
+- `get_cookies_finish` — list of Soup.Cookie
+- `replace_cookies` — parameter `cookies` of type GLib.List
+- `__construct` — skip.txt: WebKitNetworkSession::get_cookie_manager()
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitCredential
+
+- `PHP subclasses` — constructor argument username is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain WebKitCredential
+- `new_for_certificate` — parameter `certificate` of type Gio.TlsCertificate
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+- `get_certificate` — return type Gio.TlsCertificate (not in the closure)
+
+## WebKitDeviceInfoPermissionRequest
+
+- `__construct` — skip.txt: only WebKitWebView::permission-request hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitDownload
+
+- `__construct` — skip.txt: WebKitWebView::download_uri() / the ::download-started signal
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitEditorState
+
+- `__construct` — skip.txt: WebKitWebView::get_editor_state()
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitFaviconDatabase
+
+- `__construct` — skip.txt: WebKitWebView::get_favicon_database() (a network session owns it)
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitFeature
+
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## WebKitFeatureList
+
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## WebKitFileChooserRequest
+
+- `__construct` — skip.txt: only WebKitWebView::run-file-chooser hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitFindController
+
+- `__construct` — skip.txt: WebKitWebView::get_find_controller()
+- `property options` — skip.txt: WebKit's get_property writes a flags GValue with g_value_set_uint() (a CRITICAL and no value); get_options() reads it fine
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitFormSubmissionRequest
+
+- `list_text_fields` — out parameter `field_names` of type GLib.PtrArray
+- `__construct` — skip.txt: only WebKitWebView::submit-form hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitGeolocationManager
+
+- `__construct` — skip.txt: WebKitWebContext::get_geolocation_manager()
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitGeolocationPermissionRequest
+
+- `__construct` — skip.txt: only WebKitWebView::permission-request hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitGeolocationPosition
+
+- `PHP subclasses` — constructor argument latitude is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain WebKitGeolocationPosition
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+
+## WebKitHitTestResult
+
+- `__construct` — skip.txt: only WebKitWebView::mouse-target-changed and ::context-menu hand one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitITPFirstParty
+
+- `get_last_update_time` — return type GLib.DateTime
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## WebKitITPThirdParty
+
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## WebKitInputMethodContext
+
+- `get_preedit` — out parameter `underlines` of type GLib.List
+- `vfunc get_preedit` — out parameter `underlines` of type GLib.List
+
+## WebKitInputMethodUnderline
+
+- `PHP subclasses` — constructor argument start_offset is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain WebKitInputMethodUnderline
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+
+## WebKitMediaKeySystemPermissionRequest
+
+- `__construct` — skip.txt: only WebKitWebView::permission-request hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitMemoryPressureSettings
+
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+
+## WebKitNavigationAction
+
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+
+## WebKitNavigationPolicyDecision
+
+- `__construct` — skip.txt: only WebKitWebView::decide-policy hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitNetworkProxySettings
+
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+
+## WebKitNetworkSession
+
+- `allow_tls_certificate_for_host` — parameter `certificate` of type Gio.TlsCertificate
+
+## WebKitNotification
+
+- `__construct` — skip.txt: only WebKitWebView::show-notification hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitNotificationPermissionRequest
+
+- `__construct` — skip.txt: only WebKitWebView::permission-request hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitOptionMenu
+
+- `__construct` — skip.txt: only WebKitWebView::show-option-menu hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitOptionMenuItem
+
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+
+## WebKitPermissionStateQuery
+
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## WebKitPointerLockPermissionRequest
+
+- `__construct` — skip.txt: only WebKitWebView::permission-request hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitPolicyDecision
+
+- `__construct` — skip.txt: abstract with no slots to override; only WebKitWebView::decide-policy hands out its subclasses
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitPrintOperation
+
+- `property web-view` — skip.txt: WebKit's get_property hands the GValue the view without a reference of its own (g_value_take_object on a pointer it does not own), so every read of the property dropped one reference of the web view and the second one disposed it; get_web_view() borrows correctly
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitResponsePolicyDecision
+
+- `__construct` — skip.txt: only WebKitWebView::decide-policy hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitScriptDialog
+
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## WebKitScriptMessageReply
+
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## WebKitSecurityManager
+
+- `__construct` — skip.txt: WebKitWebContext::get_security_manager()
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitSecurityOrigin
+
+- `PHP subclasses` — constructor argument protocol is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain WebKitSecurityOrigin
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## WebKitSettings
+
+- `new_with_settings` — varargs
+- `apply_from_key_file` — parameter `key_file` of type GLib.KeyFile
+- `get_enable_dns_prefetching` — deprecated (2.48.)
+- `get_enable_hyperlink_auditing` — deprecated (2.50.)
+- `get_enable_offline_web_application_cache` — deprecated (2.44)
+- `get_load_icons_ignoring_image_load_setting` — deprecated (2.42)
+- `set_enable_dns_prefetching` — deprecated (2.48.)
+- `set_enable_hyperlink_auditing` — deprecated (2.50.)
+- `set_enable_offline_web_application_cache` — deprecated (2.44)
+- `set_load_icons_ignoring_image_load_setting` — deprecated (2.42)
+- `property enable-dns-prefetching` — deprecated (2.48)
+- `property enable-hyperlink-auditing` — deprecated (2.50)
+- `property enable-offline-web-application-cache` — deprecated (2.44)
+- `property load-icons-ignoring-image-load-setting` — deprecated (2.42)
+
+## WebKitURIRequest
+
+- `get_http_headers` — return type Soup.MessageHeaders
+
+## WebKitURIResponse
+
+- `get_http_headers` — return type Soup.MessageHeaders
+- `__construct` — skip.txt: WebKitWebResource::get_response() and the policy decisions carry one
+- `property http-headers` — property type Soup.MessageHeaders not mappable
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitUserContentFilter
+
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## WebKitUserContentFilterStore
+
+- `PHP subclasses` — constructor argument storage_path is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain WebKitUserContentFilterStore
+
+## WebKitUserMediaPermissionRequest
+
+- `__construct` — skip.txt: only WebKitWebView::permission-request hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitUserMessage
+
+- `new_with_fd_list` — parameter `fd_list` of type Gio.UnixFDList
+- `get_fd_list` — return type Gio.UnixFDList (not in the closure)
+- `property fd-list` — property type Gio.UnixFDList not mappable
+
+## WebKitUserScript
+
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## WebKitUserStyleSheet
+
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## WebKitWebContext
+
+- `initialize_notification_permissions` — parameter `allowed_origins` of type GLib.List
+- `register_uri_scheme` — callback parameter (needs an override)
+
+## WebKitWebInspector
+
+- `__construct` — skip.txt: WebKitWebView::get_inspector()
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitWebResource
+
+- `__construct` — skip.txt: WebKitWebView::get_main_resource() / ::resource-load-started
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitWebView
+
+- `get_tls_info` — out parameter `certificate` of type Gio.TlsCertificate
+- `save_finish` — return type Gio.InputStream (not in the closure)
+- `vfunc load_failed_with_tls_errors` — parameter `certificate` of type Gio.TlsCertificate
+
+## WebKitWebViewBase
+
+- `__construct` — skip.txt: the widget base WebKit builds only as part of a WebKitWebView; a bare one has no page behind it
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitWebViewSessionState
+
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## WebKitWebsiteData
+
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## WebKitWebsiteDataAccessPermissionRequest
+
+- `__construct` — skip.txt: only WebKitWebView::permission-request hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitWebsiteDataManager
+
+- `clear` — parameter `timespan` of type GLib.TimeSpan
+- `remove` — parameter `website_data` of type GLib.List
+- `__construct` — skip.txt: WebKitNetworkSession::get_website_data_manager() (the session sets its directories)
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitWebsitePolicies
+
+- `new_with_policies` — varargs
+
+## WebKitWindowProperties
+
+- `__construct` — skip.txt: WebKitWebView::get_window_properties()
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitXRPermissionRequest
+
+- `__construct` — skip.txt: only WebKitWebView::permission-request hands one out
+- `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## Overrides in effect
 
@@ -993,6 +1394,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.TextView`: get_extra_menu
 - `Gtk.TreeListModel`: __construct
 - `Gtk.Widget`: activate_action, allocate, insert_action_group
+- `JavaScriptCore.Value`: constructor_call, function_call, object_invoke_method
+- `WebKit.WebResource`: get_data_finish
 
 ## Emitted files
 
@@ -1209,6 +1612,82 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `GdkPixbuf/GdkPixbufFormat.cpp`
 - `GdkPixbuf/GdkPixbufLoader.cpp`
 - `GdkPixbuf/GdkPixbuf.stub.php`
+- `WebKit/WebKitApplicationInfo.cpp`
+- `WebKit/WebKitAuthenticationRequest.cpp`
+- `WebKit/WebKitAutomationSession.cpp`
+- `WebKit/WebKitBackForwardList.cpp`
+- `WebKit/WebKitBackForwardListItem.cpp`
+- `WebKit/WebKitClipboardPermissionRequest.cpp`
+- `WebKit/WebKitColorChooserRequest.cpp`
+- `WebKit/WebKitContextMenu.cpp`
+- `WebKit/WebKitContextMenuItem.cpp`
+- `WebKit/WebKitCookieManager.cpp`
+- `WebKit/WebKitCredential.cpp`
+- `WebKit/WebKitDeviceInfoPermissionRequest.cpp`
+- `WebKit/WebKitDownload.cpp`
+- `WebKit/WebKitEditorState.cpp`
+- `WebKit/WebKitFaviconDatabase.cpp`
+- `WebKit/WebKitFeature.cpp`
+- `WebKit/WebKitFeatureList.cpp`
+- `WebKit/WebKitFileChooserRequest.cpp`
+- `WebKit/WebKitFindController.cpp`
+- `WebKit/WebKitFormSubmissionRequest.cpp`
+- `WebKit/WebKitGeolocationManager.cpp`
+- `WebKit/WebKitGeolocationPermissionRequest.cpp`
+- `WebKit/WebKitGeolocationPosition.cpp`
+- `WebKit/WebKitHitTestResult.cpp`
+- `WebKit/WebKitITPFirstParty.cpp`
+- `WebKit/WebKitITPThirdParty.cpp`
+- `WebKit/WebKitInputMethodContext.cpp`
+- `WebKit/WebKitInputMethodUnderline.cpp`
+- `WebKit/WebKitMediaKeySystemPermissionRequest.cpp`
+- `WebKit/WebKitMemoryPressureSettings.cpp`
+- `WebKit/WebKitNavigationAction.cpp`
+- `WebKit/WebKitNavigationPolicyDecision.cpp`
+- `WebKit/WebKitNetworkProxySettings.cpp`
+- `WebKit/WebKitNetworkSession.cpp`
+- `WebKit/WebKitNotification.cpp`
+- `WebKit/WebKitNotificationPermissionRequest.cpp`
+- `WebKit/WebKitOptionMenu.cpp`
+- `WebKit/WebKitOptionMenuItem.cpp`
+- `WebKit/WebKitPermissionRequest.cpp`
+- `WebKit/WebKitPermissionStateQuery.cpp`
+- `WebKit/WebKitPointerLockPermissionRequest.cpp`
+- `WebKit/WebKitPolicyDecision.cpp`
+- `WebKit/WebKitPrintOperation.cpp`
+- `WebKit/WebKitResponsePolicyDecision.cpp`
+- `WebKit/WebKitScriptDialog.cpp`
+- `WebKit/WebKitScriptMessageReply.cpp`
+- `WebKit/WebKitSecurityManager.cpp`
+- `WebKit/WebKitSecurityOrigin.cpp`
+- `WebKit/WebKitSettings.cpp`
+- `WebKit/WebKitURIRequest.cpp`
+- `WebKit/WebKitURIResponse.cpp`
+- `WebKit/WebKitUserContentFilter.cpp`
+- `WebKit/WebKitUserContentFilterStore.cpp`
+- `WebKit/WebKitUserContentManager.cpp`
+- `WebKit/WebKitUserMediaPermissionRequest.cpp`
+- `WebKit/WebKitUserMessage.cpp`
+- `WebKit/WebKitUserScript.cpp`
+- `WebKit/WebKitUserStyleSheet.cpp`
+- `WebKit/WebKitWebContext.cpp`
+- `WebKit/WebKitWebInspector.cpp`
+- `WebKit/WebKitWebResource.cpp`
+- `WebKit/WebKitWebView.cpp`
+- `WebKit/WebKitWebViewBase.cpp`
+- `WebKit/WebKitWebViewSessionState.cpp`
+- `WebKit/WebKitWebsiteData.cpp`
+- `WebKit/WebKitWebsiteDataAccessPermissionRequest.cpp`
+- `WebKit/WebKitWebsiteDataManager.cpp`
+- `WebKit/WebKitWebsitePolicies.cpp`
+- `WebKit/WebKitWindowProperties.cpp`
+- `WebKit/WebKitXRPermissionRequest.cpp`
+- `WebKit/WebKit.stub.php`
+- `JavaScriptCore/JSCContext.cpp`
+- `JavaScriptCore/JSCException.cpp`
+- `JavaScriptCore/JSCValue.cpp`
+- `JavaScriptCore/JSCVirtualMachine.cpp`
+- `JavaScriptCore/JavaScriptCore.stub.php`
 - `gen_minit.inc`
 - `gen_prototypes.h`
 - `gen_arginfo.h`
@@ -1323,3 +1802,17 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GskGLRendererSmokeTest.php`
 - `tests/Generated/GskRendererSmokeTest.php`
 - `tests/Generated/GdkPixbufLoaderSmokeTest.php`
+- `tests/Generated/WebKitContextMenuSmokeTest.php`
+- `tests/Generated/WebKitContextMenuItemSmokeTest.php`
+- `tests/Generated/WebKitInputMethodContextSmokeTest.php`
+- `tests/Generated/WebKitNetworkSessionSmokeTest.php`
+- `tests/Generated/WebKitSettingsSmokeTest.php`
+- `tests/Generated/WebKitURIRequestSmokeTest.php`
+- `tests/Generated/WebKitUserContentFilterStoreSmokeTest.php`
+- `tests/Generated/WebKitUserContentManagerSmokeTest.php`
+- `tests/Generated/WebKitUserMessageSmokeTest.php`
+- `tests/Generated/WebKitWebContextSmokeTest.php`
+- `tests/Generated/WebKitWebViewSmokeTest.php`
+- `tests/Generated/WebKitWebsitePoliciesSmokeTest.php`
+- `tests/Generated/JSCContextSmokeTest.php`
+- `tests/Generated/JSCVirtualMachineSmokeTest.php`

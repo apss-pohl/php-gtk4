@@ -72,6 +72,44 @@ final class GtkInstances
         \Gtk4\GActionObject::class => 'every GAction PHP can reach is a bound GSimpleAction',
         \Gtk4\GActionGroupObject::class => 'the action groups PHP can reach are bound',
         \Gtk4\GActionMapObject::class => 'the action maps PHP can reach are bound',
+        // WebKit hands these out inside a signal while a page does something - asks for a
+        // permission, submits a form, opens a chooser - and nowhere else; a headless test page
+        // that never loads from the network cannot make it do any of that.
+        \Gtk4\WebKitAuthenticationRequest::class => 'only WebKitWebView::authenticate hands one out',
+        \Gtk4\WebKitAutomationSession::class => 'only WebKitWebContext::automation-started hands one out',
+        \Gtk4\WebKitColorChooserRequest::class => 'only WebKitWebView::run-color-chooser hands one out',
+        \Gtk4\WebKitFileChooserRequest::class => 'only WebKitWebView::run-file-chooser hands one out',
+        \Gtk4\WebKitFormSubmissionRequest::class => 'only WebKitWebView::submit-form hands one out',
+        \Gtk4\WebKitHitTestResult::class => 'only WebKitWebView::mouse-target-changed hands one out (real input)',
+        \Gtk4\WebKitNotification::class => 'only WebKitWebView::show-notification hands one out',
+        \Gtk4\WebKitOptionMenu::class => 'only WebKitWebView::show-option-menu hands one out',
+        \Gtk4\WebKitOptionMenuItem::class => 'only a WebKitOptionMenu holds them',
+        \Gtk4\WebKitScriptDialog::class => 'only WebKitWebView::script-dialog hands one out',
+        \Gtk4\WebKitScriptMessageReply::class => 'only ::script-message-with-reply-received hands one out',
+        \Gtk4\WebKitNavigationAction::class => 'only a WebKitNavigationPolicyDecision carries one',
+        \Gtk4\WebKitPolicyDecision::class => 'only WebKitWebView::decide-policy hands one out',
+        \Gtk4\WebKitNavigationPolicyDecision::class => 'only WebKitWebView::decide-policy hands one out',
+        \Gtk4\WebKitResponsePolicyDecision::class => 'only WebKitWebView::decide-policy hands one out',
+        \Gtk4\WebKitPermissionStateQuery::class => 'only WebKitWebView::query-permission-state hands one out',
+        \Gtk4\WebKitClipboardPermissionRequest::class => 'only WebKitWebView::permission-request hands one out',
+        \Gtk4\WebKitDeviceInfoPermissionRequest::class => 'only WebKitWebView::permission-request hands one out',
+        \Gtk4\WebKitGeolocationPermissionRequest::class => 'only WebKitWebView::permission-request hands one out',
+        \Gtk4\WebKitMediaKeySystemPermissionRequest::class => 'only WebKitWebView::permission-request hands one out',
+        \Gtk4\WebKitNotificationPermissionRequest::class => 'only WebKitWebView::permission-request hands one out',
+        \Gtk4\WebKitPointerLockPermissionRequest::class => 'only WebKitWebView::permission-request hands one out',
+        \Gtk4\WebKitUserMediaPermissionRequest::class => 'only WebKitWebView::permission-request hands one out',
+        \Gtk4\WebKitWebsiteDataAccessPermissionRequest::class => 'only WebKitWebView::permission-request hands one out',
+        \Gtk4\WebKitXRPermissionRequest::class => 'only WebKitWebView::permission-request hands one out',
+        \Gtk4\WebKitPermissionRequestObject::class => 'every permission request WebKit makes is a bound class',
+        // The result of a finished load or of an asynchronous fetch, which the factory cannot wait for.
+        \Gtk4\WebKitBackForwardListItem::class => 'needs a finished load (WebKitWebView::load-changed)',
+        \Gtk4\WebKitWebResource::class => 'needs a finished load (WebKitWebView::get_main_resource())',
+        \Gtk4\WebKitURIResponse::class => 'needs a finished load (WebKitWebResource::get_response())',
+        \Gtk4\WebKitWebsiteData::class => 'only WebKitWebsiteDataManager::fetch_finish() hands them out',
+        \Gtk4\WebKitUserContentFilter::class => 'only WebKitUserContentFilterStore::save_finish() hands one out',
+        \Gtk4\WebKitITPFirstParty::class => 'only WebKitWebsiteDataManager::get_itp_summary_finish() hands them out',
+        \Gtk4\WebKitITPThirdParty::class => 'only WebKitWebsiteDataManager::get_itp_summary_finish() hands them out',
+        \Gtk4\WebKitDownload::class => 'WebKitWebView::download_uri() starts a network transfer the suite must not',
     ];
 
     /**
@@ -303,8 +341,73 @@ final class GtkInstances
             \Gtk4\GtkBuilderScopeObject::class => self::pin(new \Gtk4\GtkBuilder())->get_scope(),
             \Gtk4\GtkCssSection::class => self::cssSection(),
             \Gtk4\GtkListItem::class => self::listItem(),
+            // WebKit (--enable-gtk4-webkit): one web view for the whole run - each one starts a
+            // web process - and what an application reaches through it; the records with
+            // constructor arguments the generic path cannot invent (an enum case, a script).
+            \Gtk4\WebKitWebView::class, \Gtk4\WebKitWebViewBase::class => self::webView(),
+            \Gtk4\WebKitBackForwardList::class => self::webView()->get_back_forward_list(),
+            \Gtk4\WebKitFindController::class => self::webView()->get_find_controller(),
+            \Gtk4\WebKitWebInspector::class => self::webView()->get_inspector(),
+            \Gtk4\WebKitEditorState::class => self::webView()->get_editor_state(),
+            \Gtk4\WebKitWindowProperties::class => self::webView()->get_window_properties(),
+            \Gtk4\WebKitWebViewSessionState::class => self::webView()->get_session_state(),
+            \Gtk4\WebKitCookieManager::class => self::webView()->get_network_session()->get_cookie_manager(),
+            \Gtk4\WebKitWebsiteDataManager::class => self::webView()->get_network_session()->get_website_data_manager(),
+            \Gtk4\WebKitFaviconDatabase::class => self::webView()->get_network_session()->get_website_data_manager()
+                ->get_favicon_database(),
+            \Gtk4\WebKitSecurityManager::class => self::webView()->get_context()->get_security_manager(),
+            \Gtk4\WebKitGeolocationManager::class => self::webView()->get_context()->get_geolocation_manager(),
+            \Gtk4\WebKitPrintOperation::class => new \Gtk4\WebKitPrintOperation(self::webView()),
+            \Gtk4\WebKitContextMenuItem::class => \Gtk4\WebKitContextMenuItem::new_separator(),
+            \Gtk4\WebKitCredential::class => new \Gtk4\WebKitCredential(
+                'user',
+                'secret',
+                \Gtk4\WebKitCredentialPersistence::None,
+            ),
+            \Gtk4\WebKitFeatureList::class => \Gtk4\WebKitSettings::get_all_features(),
+            \Gtk4\WebKitFeature::class => \Gtk4\WebKitSettings::get_all_features()->get(0),
+            \Gtk4\WebKitGeolocationPosition::class => new \Gtk4\WebKitGeolocationPosition(52.5, 13.4, 10.0),
+            \Gtk4\WebKitInputMethodUnderline::class => new \Gtk4\WebKitInputMethodUnderline(0, 1),
+            \Gtk4\WebKitSecurityOrigin::class => new \Gtk4\WebKitSecurityOrigin('https', 'example.org', 443),
+            \Gtk4\WebKitURIRequest::class => new \Gtk4\WebKitURIRequest('about:blank'),
+            \Gtk4\WebKitUserContentFilterStore::class => new \Gtk4\WebKitUserContentFilterStore(
+                sys_get_temp_dir() . '/php-gtk4-filters-' . getmypid(),
+            ),
+            \Gtk4\WebKitUserMessage::class => new \Gtk4\WebKitUserMessage('ping'),
+            \Gtk4\WebKitUserScript::class => new \Gtk4\WebKitUserScript(
+                'window.phpgtk = 1;',
+                \Gtk4\WebKitUserContentInjectedFrames::AllFrames,
+                \Gtk4\WebKitUserScriptInjectionTime::Start,
+            ),
+            \Gtk4\WebKitUserStyleSheet::class => new \Gtk4\WebKitUserStyleSheet(
+                'body { color: red; }',
+                \Gtk4\WebKitUserContentInjectedFrames::AllFrames,
+                \Gtk4\WebKitUserStyleLevel::User,
+            ),
+            \Gtk4\JSCValue::class => \Gtk4\JSCValue::new_number(self::jsContext(), 1.0),
+            \Gtk4\JSCException::class => new \Gtk4\JSCException(self::jsContext(), 'x'),
             default => self::plain($class),
         };
+    }
+
+    private static ?\Gtk4\WebKitWebView $webView = null;
+
+    /**
+     * The one web view of the run, for the WebKit branches above. A web view starts a web
+     * process and a network process; one is plenty for sweeping getters and argument checks,
+     * and it is never destroyed, like {@see display()}'s handles.
+     */
+    private static function webView(): \Gtk4\WebKitWebView
+    {
+        return self::$webView ??= new \Gtk4\WebKitWebView();
+    }
+
+    private static ?\Gtk4\JSCContext $jsContext = null;
+
+    /** The one JavaScript context of the run, for values and exceptions. */
+    private static function jsContext(): \Gtk4\JSCContext
+    {
+        return self::$jsContext ??= new \Gtk4\JSCContext();
     }
 
     /**

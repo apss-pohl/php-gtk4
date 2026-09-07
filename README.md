@@ -138,6 +138,14 @@ The decisions the extension is built on. `CLAUDE.md` has the working rules that 
   signals take exactly `(string $signal, callable $handler)` and closures capture their context.
 - **Single GUI thread.** ZTS builds keep per-request state in module globals, but GTK stays
   single-threaded and the loop-driving methods assert the thread that ran `Gtk::init()`.
+- **WebKitGTK is an optional feature, generated like the rest.** `--enable-gtk4-webkit` compiles
+  the `WebKit*` classes (the web view, its settings, session, user content, policy decisions,
+  permission requests) and JavaScriptCore's `JSCContext`/`JSCValue` - `evaluate_javascript()`
+  answers with a value, a script message arrives as one - from `WebKit-6.0.gir` into
+  `src/WebKit/` and `src/JavaScriptCore/`, the two namespaces `CONDITIONAL_NAMESPACES` gates:
+  left out of the source glob without the flag, registered under `#ifdef` with it, their tests
+  skipped where the build lacks them (`tests/Features.php`), `Gtk4\FEATURES` saying which.
+  Linux only; Windows gets WebView2 later.
 - **Not carried over from php-gtk3**: varargs trampolines, a fresh wrapper per return, `GdkEvent`
   field copies, `Gtk::main()`, `connect()` user data, raw pointers stored in user data, a
   hand-maintained module table.

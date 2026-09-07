@@ -84,6 +84,30 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **WebKitGTK 6, behind `--enable-gtk4-webkit`.** `WebKitWebView` and what an application reaches
+  through it - `WebKitSettings`, `WebKitWebContext`, `WebKitNetworkSession` with its cookie and
+  website-data managers, `WebKitUserContentManager` with user scripts, style sheets and script
+  message handlers, the find controller, back/forward list, inspector, policy decisions, permission
+  requests, downloads, resources, dialogs and the boxed records they carry - 74 classes, plus
+  JavaScriptCore's `JSCContext`, `JSCValue`, `JSCException` and `JSCVirtualMachine`:
+  `evaluate_javascript()` answers with a `JSCValue`, a script message arrives as one, and a
+  `JSCContext` runs JavaScript with no page at all. `function_call()`, `constructor_call()` and
+  `object_invoke_method()` take a PHP list of values (hand-written, gen/overrides). Generated
+  from `WebKit-6.0.gir`/`JavaScriptCore-6.0.gir` into `src/WebKit/` and `src/JavaScriptCore/`, the
+  first *conditional namespaces* (`CONDITIONAL_NAMESPACES`, gen/gir/config.php): left out of the
+  source glob without the flag, registered under `#ifdef PHPGTK_WITH_WEBKIT` with it. The suite
+  runs against both builds - a test of a feature the build lacks skips itself
+  (`tests/Features.php`), and the `webkit` CI job runs everything against the WebKit build.
+  Linux only (WebView2 on Windows is the plan); the URI scheme handler, the Soup types and TLS
+  certificates are what the wave leaves out (docs/TODO.md). The sweeps found three ways a
+  well-typed value ended the process before it shipped - a typed-array length JavaScriptCore
+  cannot allocate (the two constructors are skipped), a NULL property value it dereferences
+  (non-nullable now) and a script `length` past the string's end (a `ValueError`, on the four
+  string-plus-length methods) - plus a WebKit bug the property sweep caught: reading
+  `WebKitPrintOperation`'s `web-view` property hands the GValue a pointer WebKit does not own,
+  so every read dropped one reference of the web view and the second read disposed it (the
+  `@property` tag is skipped, `get_web_view()` borrows correctly). `WebKitPrintOperation::run_dialog()`,
+  a modal dialog, is excluded from the argument sweep like GTK's print dialogs.
 - **The GSK scene graph.** The 35 render node classes (`GskColorNode`, `GskContainerNode`, the
   gradients, shadows, borders, clips, transforms, textures, fills and strokes), `GskRenderer` with
   the cairo and GL renderers, `GskTransform`, `GskPath` with its builder, measure, point and stroke,

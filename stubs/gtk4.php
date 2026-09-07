@@ -4585,6 +4585,35 @@ class GTask extends GObject implements GAsyncResult
     }
 }
 /**
+ * A set of flags describing TLS certification validation. This can be used to describe why a
+ * particular certificate was rejected (for example, in #GTlsConnection::accept-certificate).
+ */
+final class GTlsCertificateFlags
+{
+    public const int NO_FLAGS = 0;
+    public const int UNKNOWN_CA = 1;
+    public const int BAD_IDENTITY = 2;
+    public const int NOT_ACTIVATED = 4;
+    public const int EXPIRED = 8;
+    public const int REVOKED = 16;
+    public const int INSECURE = 32;
+    public const int GENERIC_ERROR = 64;
+    public const int VALIDATE_ALL = 127;
+}
+/**
+ * Various flags for the password.
+ */
+final class GTlsPasswordFlags
+{
+    public const int NONE = 0;
+    public const int RETRY = 2;
+    public const int MANY_TRIES = 4;
+    public const int FINAL_TRY = 8;
+    public const int PKCS11_USER = 16;
+    public const int PKCS11_SECURITY_OFFICER = 32;
+    public const int PKCS11_CONTEXT_SPECIFIC = 64;
+}
+/**
  * A point with two coordinates.
  *
  * @property float $x
@@ -21977,6 +22006,504 @@ enum GtkWrapMode : int
     case WordChar = 3;
 }
 /**
+ * JSCContext represents a JavaScript execution context, where all operations take place and where
+ * the values will be associated.
+ *
+ * @property ?JSCVirtualMachine $virtual_machine
+ */
+final class JSCContext extends GObject
+{
+    /**
+     * Create a new #JSCContext. The context is created in a new #JSCVirtualMachine. Use
+     * jsc_context_new_with_virtual_machine() to create a new #JSCContext in an existing
+     * #JSCVirtualMachine.
+     */
+    public function __construct()
+    {
+    }
+    /** Create a new #JSCContext in $virtual_machine. */
+    public static function new_with_virtual_machine(JSCVirtualMachine $vm): JSCContext
+    {
+        unset($vm);
+        return null;
+    }
+    /**
+     * Get the #JSCContext that is currently executing a function. This should only be called
+     * within a function or method callback, otherwise `null` will be returned.
+     */
+    public static function get_current(): ?JSCContext
+    {
+        return null;
+    }
+    /** Clear the uncaught exception in $context if any. */
+    public function clear_exception(): void
+    {
+    }
+    /** Evaluate $code in $context. */
+    public function evaluate(string $code, int $length): JSCValue
+    {
+        unset($code);
+        unset($length);
+        return null;
+    }
+    /**
+     * Evaluate $code in $context using $uri as the source URI. The $line_number is the starting
+     * line number in $uri; the value is one-based so the first line is 1. $uri and $line_number
+     * will be shown in exceptions and they don't affect the behavior of the script.
+     */
+    public function evaluate_with_source_uri(string $code, int $length, string $uri, int $line_number): JSCValue
+    {
+        unset($code);
+        unset($length);
+        unset($uri);
+        unset($line_number);
+        return null;
+    }
+    /** Get the last unhandled exception thrown in $context by API functions calls. */
+    public function get_exception(): ?JSCException
+    {
+        return null;
+    }
+    /** Get a #JSCValue referencing the $context global object */
+    public function get_global_object(): JSCValue
+    {
+        return null;
+    }
+    /** Get a property of $context global object with $name. */
+    public function get_value(string $name): JSCValue
+    {
+        unset($name);
+        return null;
+    }
+    /** Get the #JSCVirtualMachine where $context was created. */
+    public function get_virtual_machine(): JSCVirtualMachine
+    {
+        return null;
+    }
+    /**
+     * Remove the last #JSCExceptionHandler previously pushed to $context with
+     * jsc_context_push_exception_handler().
+     */
+    public function pop_exception_handler(): void
+    {
+    }
+    /** Set a property of $context global object with $name and $value. */
+    public function set_value(string $name, JSCValue $value): void
+    {
+        unset($name);
+        unset($value);
+    }
+    /**
+     * Throw an exception to $context using the given error message. The created #JSCException can
+     * be retrieved with jsc_context_get_exception().
+     */
+    public function throw(string $error_message): void
+    {
+        unset($error_message);
+    }
+    /** Throw $exception to $context. */
+    public function throw_exception(JSCException $exception): void
+    {
+        unset($exception);
+    }
+    /**
+     * Throw an exception to $context using the given error name and message. The created
+     * #JSCException can be retrieved with jsc_context_get_exception().
+     */
+    public function throw_with_name(string $error_name, string $error_message): void
+    {
+        unset($error_name);
+        unset($error_message);
+    }
+}
+/**
+ * JSCException represents a JavaScript exception.
+ */
+final class JSCException extends GObject
+{
+    /** Create a new #JSCException in $context with $message. */
+    public function __construct(JSCContext $context, string $message)
+    {
+        unset($context);
+        unset($message);
+    }
+    /** Create a new #JSCException in $context with $name and $message. */
+    public static function new_with_name(JSCContext $context, string $name, string $message): JSCException
+    {
+        unset($context);
+        unset($name);
+        unset($message);
+        return null;
+    }
+    /** Get a string with the exception backtrace. */
+    public function get_backtrace_string(): ?string
+    {
+        return null;
+    }
+    /** Get the column number at which $exception happened. */
+    public function get_column_number(): int
+    {
+        return 0;
+    }
+    /** Get the line number at which $exception happened. */
+    public function get_line_number(): int
+    {
+        return 0;
+    }
+    /** Get the error message of $exception. */
+    public function get_message(): string
+    {
+        return '';
+    }
+    /** Get the error name of $exception */
+    public function get_name(): string
+    {
+        return '';
+    }
+    /** Get the source URI of $exception. */
+    public function get_source_uri(): ?string
+    {
+        return null;
+    }
+    /**
+     * Return a report message of $exception, containing all the possible details such us source
+     * URI, line, column and backtrace, and formatted to be printed.
+     */
+    public function report(): string
+    {
+        return '';
+    }
+    /** Get the string representation of $exception error. */
+    public function to_string(): string
+    {
+        return '';
+    }
+}
+/**
+ * JSCValue represents a reference to a value in a #JSCContext. The JSCValue protects the
+ * referenced value from being garbage collected.
+ *
+ * @property ?JSCContext $context
+ */
+final class JSCValue extends GObject
+{
+    /** JSCValue has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /**
+     * Create a new #JSCValue referencing an array of strings with the items from $strv. If $array
+     * is `null` or empty a new empty array will be created.
+     */
+    public static function new_array_from_strv(JSCContext $context, array $strv): JSCValue
+    {
+        unset($context);
+        unset($strv);
+        return null;
+    }
+    /** Create a new #JSCValue from $value */
+    public static function new_boolean(JSCContext $context, bool $value): JSCValue
+    {
+        unset($context);
+        unset($value);
+        return null;
+    }
+    /** Create a new #JSCValue referencing a new value created by parsing $json. */
+    public static function new_from_json(JSCContext $context, string $json): JSCValue
+    {
+        unset($context);
+        unset($json);
+        return null;
+    }
+    /** Create a new #JSCValue referencing <function>null</function> in $context. */
+    public static function new_null(JSCContext $context): JSCValue
+    {
+        unset($context);
+        return null;
+    }
+    /** Create a new #JSCValue from $number. */
+    public static function new_number(JSCContext $context, float $number): JSCValue
+    {
+        unset($context);
+        unset($number);
+        return null;
+    }
+    /**
+     * Creates a new Promise. $executor will be invoked during promise initialization and it
+     * receives the $resolve and $reject objects than can be called to resolve or reject the
+     * promise. It is called like a JavaScript function, so exceptions raised during the executor
+     * invocation will not be propagated to the context, but handled by the promise causing a
+     * rejection.
+     */
+    public static function new_promise(JSCContext $context, callable $executor): JSCValue
+    {
+        unset($context);
+        unset($executor);
+        return null;
+    }
+    /**
+     * Create a new #JSCValue from $string. If you need to create a #JSCValue from a string
+     * containing null characters, use jsc_value_new_string_from_bytes() instead.
+     */
+    public static function new_string(JSCContext $context, ?string $string = null): JSCValue
+    {
+        unset($context);
+        unset($string);
+        return null;
+    }
+    /** Create a new #JSCValue from $bytes. */
+    public static function new_string_from_bytes(JSCContext $context, ?string $bytes = null): JSCValue
+    {
+        unset($context);
+        unset($bytes);
+        return null;
+    }
+    /** Create a new #JSCValue referencing <function>undefined</function> in $context. */
+    public static function new_undefined(JSCContext $context): JSCValue
+    {
+        unset($context);
+        return null;
+    }
+    /** Gets the size in bytes of the array buffer. */
+    public function array_buffer_get_size(): int
+    {
+        return 0;
+    }
+    /** Get the #JSCContext in which $value was created. */
+    public function get_context(): JSCContext
+    {
+        return null;
+    }
+    /** Get whether the value referenced by $value is an array. */
+    public function is_array(): bool
+    {
+        return false;
+    }
+    /** Check whether the $value is an %ArrayBuffer. */
+    public function is_array_buffer(): bool
+    {
+        return false;
+    }
+    /** Get whether the value referenced by $value is a boolean. */
+    public function is_boolean(): bool
+    {
+        return false;
+    }
+    /** Get whether the value referenced by $value is a constructor. */
+    public function is_constructor(): bool
+    {
+        return false;
+    }
+    /** Get whether the value referenced by $value is a function */
+    public function is_function(): bool
+    {
+        return false;
+    }
+    /** Get whether the value referenced by $value is <function>null</function>. */
+    public function is_null(): bool
+    {
+        return false;
+    }
+    /** Get whether the value referenced by $value is a number. */
+    public function is_number(): bool
+    {
+        return false;
+    }
+    /** Get whether the value referenced by $value is an object. */
+    public function is_object(): bool
+    {
+        return false;
+    }
+    /** Get whether the value referenced by $value is a string */
+    public function is_string(): bool
+    {
+        return false;
+    }
+    /** Determines whether a value is a typed array. */
+    public function is_typed_array(): bool
+    {
+        return false;
+    }
+    /** Get whether the value referenced by $value is <function>undefined</function>. */
+    public function is_undefined(): bool
+    {
+        return false;
+    }
+    /**
+     * Define or modify a property with $property_name in object referenced by $value. This is
+     * equivalent to JavaScript <function>Object.defineProperty()</function> when used with a data
+     * descriptor.
+     */
+    public function object_define_property_data(string $property_name, int $flags, JSCValue $property_value): void
+    {
+        unset($property_name);
+        unset($flags);
+        unset($property_value);
+    }
+    /**
+     * Try to delete property with $name from $value. This function will return `false` if the
+     * property was defined without %JSC_VALUE_PROPERTY_CONFIGURABLE flag.
+     */
+    public function object_delete_property(string $name): bool
+    {
+        unset($name);
+        return false;
+    }
+    /**
+     * Get the list of property names of $value. Only properties defined with
+     * %JSC_VALUE_PROPERTY_ENUMERABLE flag will be collected.
+     *
+     * @return list<string>
+     */
+    public function object_enumerate_properties(): array
+    {
+        return [];
+    }
+    /** Get property with $name from $value. */
+    public function object_get_property(string $name): JSCValue
+    {
+        unset($name);
+        return null;
+    }
+    /** Get property at $index from $value. */
+    public function object_get_property_at_index(int $index): JSCValue
+    {
+        unset($index);
+        return null;
+    }
+    /** Get whether $value has property with $name. */
+    public function object_has_property(string $name): bool
+    {
+        unset($name);
+        return false;
+    }
+    /** Get whether the value referenced by $value is an instance of class $name. */
+    public function object_is_instance_of(string $name): bool
+    {
+        unset($name);
+        return false;
+    }
+    /** Set $property with $name on $value. */
+    public function object_set_property(string $name, JSCValue $property): void
+    {
+        unset($name);
+        unset($property);
+    }
+    /** Set $property at $index on $value. */
+    public function object_set_property_at_index(int $index, JSCValue $property): void
+    {
+        unset($index);
+        unset($property);
+    }
+    /** Convert $value to a boolean. */
+    public function to_boolean(): bool
+    {
+        return false;
+    }
+    /** Convert $value to a double. */
+    public function to_double(): float
+    {
+        return 0.0;
+    }
+    /** Convert $value to a #gint32. */
+    public function to_int32(): int
+    {
+        return 0;
+    }
+    /**
+     * Create a JSON string of $value serialization. If $indent is 0, the resulting JSON will not
+     * contain newlines. The size of the indent is clamped to 10 spaces.
+     */
+    public function to_json(int $indent): string
+    {
+        unset($indent);
+        return '';
+    }
+    /**
+     * Convert $value to a string. Use jsc_value_to_string_as_bytes() instead, if you need to
+     * handle strings containing null characters.
+     */
+    public function to_string(): string
+    {
+        return '';
+    }
+    /**
+     * Convert $value to a string and return the results as #GBytes. This is needed to handle
+     * strings with null characters.
+     */
+    public function to_string_as_bytes(): string
+    {
+        return '';
+    }
+    /** Obtain the %ArrayBuffer for the memory region of the typed array elements. */
+    public function typed_array_get_buffer(): JSCValue
+    {
+        return null;
+    }
+    /** Gets the number of elements in a typed array. */
+    public function typed_array_get_length(): int
+    {
+        return 0;
+    }
+    /** Gets the offset over the underlying array buffer data. */
+    public function typed_array_get_offset(): int
+    {
+        return 0;
+    }
+    /** Gets the size of a typed array. */
+    public function typed_array_get_size(): int
+    {
+        return 0;
+    }
+    /** Gets the type of elements contained in a typed array. */
+    public function typed_array_get_type(): int
+    {
+        return 0;
+    }
+    /**
+     * Invoke `new` with this constructor and $parameters, a list of JSCValue; the object built. A
+     * JavaScript exception does not throw here: it lands in the context
+     * (`get_context()->get_exception()`).
+     */
+    public function constructor_call(array $parameters = []): JSCValue
+    {
+        unset($parameters);
+        return null;
+    }
+    /**
+     * Call this function with $parameters, a list of JSCValue; the result, or `undefined` when the
+     * function returns nothing. A JavaScript exception does not throw here: it lands in the context
+     * (`get_context()->get_exception()`).
+     */
+    public function function_call(array $parameters = []): JSCValue
+    {
+        unset($parameters);
+        return null;
+    }
+    /**
+     * Invoke the method $name of this object with $parameters, a list of JSCValue; the result, or
+     * `undefined` when the method returns nothing. A JavaScript exception does not throw here: it
+     * lands in the context (`get_context()->get_exception()`).
+     */
+    public function object_invoke_method(string $name, array $parameters = []): JSCValue
+    {
+        unset($name);
+        unset($parameters);
+        return null;
+    }
+}
+/**
+ * JSCVirtualMachine represents a group of JSCContext<!-- -->s. It allows concurrent JavaScript
+ * execution by creating a different instance of JSCVirtualMachine in each thread.
+ */
+final class JSCVirtualMachine extends GObject
+{
+    /** Create a new #JSCVirtualMachine. */
+    public function __construct()
+    {
+    }
+}
+/**
  * `PangoEllipsizeMode` describes what sort of ellipsization should be applied to text.
  */
 enum PangoEllipsizeMode : int
@@ -22387,4 +22914,4906 @@ enum PangoWrapMode : int
     case Word = 0;
     case Char = 1;
     case WordChar = 2;
+}
+/**
+ * Information about an application running in automation mode.
+ */
+final class WebKitApplicationInfo
+{
+    /** Creates a new #WebKitApplicationInfo */
+    public function __construct()
+    {
+    }
+    /** Get the name of the application. */
+    public function get_name(): string
+    {
+        return '';
+    }
+    /**
+     * Get the application version previously set with webkit_application_info_set_version().
+     *
+     * @return array{int, int, int}
+     */
+    public function get_version(): array
+    {
+        return [];
+    }
+    /** Set the name of the application. */
+    public function set_name(string $name): void
+    {
+        unset($name);
+    }
+    /** Set the application version. */
+    public function set_version(int $major, int $minor, int $micro): void
+    {
+        unset($major);
+        unset($minor);
+        unset($micro);
+    }
+}
+/**
+ * Represents an authentication request.
+ */
+final class WebKitAuthenticationRequest extends GObject
+{
+    /** WebKitAuthenticationRequest has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Authenticate the #WebKitAuthenticationRequest. */
+    public function authenticate(?WebKitCredential $credential): void
+    {
+        unset($credential);
+    }
+    /**
+     * Determine whether this #WebKitAuthenticationRequest should allow the storage of credentials.
+     */
+    public function can_save_credentials(): bool
+    {
+        return false;
+    }
+    /** Cancel the authentication challenge. */
+    public function cancel(): void
+    {
+    }
+    /**
+     * Get the #GTlsPasswordFlags of the
+     * %WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_PIN_REQUESTED authentication challenge.
+     */
+    public function get_certificate_pin_flags(): int
+    {
+        return 0;
+    }
+    /** Get the host that this authentication challenge is applicable to. */
+    public function get_host(): string
+    {
+        return '';
+    }
+    /** Get the port that this authentication challenge is applicable to. */
+    public function get_port(): int
+    {
+        return 0;
+    }
+    /** Get the #WebKitCredential of the proposed authentication challenge. */
+    public function get_proposed_credential(): WebKitCredential
+    {
+        return null;
+    }
+    /** Get the realm that this authentication challenge is applicable to. */
+    public function get_realm(): string
+    {
+        return '';
+    }
+    /** Get the authentication scheme of the authentication challenge. */
+    public function get_scheme(): WebKitAuthenticationScheme
+    {
+        return null;
+    }
+    /** Get the #WebKitSecurityOrigin that this authentication challenge is applicable to. */
+    public function get_security_origin(): WebKitSecurityOrigin
+    {
+        return null;
+    }
+    /** Determine whether the authentication challenge is associated with a proxy server. */
+    public function is_for_proxy(): bool
+    {
+        return false;
+    }
+    /**
+     * Determine whether this this is a first attempt or a retry for this authentication challenge.
+     */
+    public function is_retry(): bool
+    {
+        return false;
+    }
+    /**
+     * Set whether the authentication method associated with $request should allow the storage of
+     * credentials.
+     */
+    public function set_can_save_credentials(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitCredential of the proposed authentication challenge. */
+    public function set_proposed_credential(WebKitCredential $credential): void
+    {
+        unset($credential);
+    }
+}
+/**
+ * Enum values representing the authentication scheme.
+ */
+enum WebKitAuthenticationScheme : int
+{
+    case Default = 1;
+    case HttpBasic = 2;
+    case HttpDigest = 3;
+    case HtmlForm = 4;
+    case Ntlm = 5;
+    case Negotiate = 6;
+    case ClientCertificateRequested = 7;
+    case ServerTrustEvaluationRequested = 8;
+    case ClientCertificatePinRequested = 9;
+    case Unknown = 100;
+}
+/**
+ * Enum values used for determining the automation browsing context presentation.
+ */
+enum WebKitAutomationBrowsingContextPresentation : int
+{
+    case Window = 0;
+    case Tab = 1;
+}
+/**
+ * Automation Session.
+ *
+ * @property ?string $id
+ */
+final class WebKitAutomationSession extends GObject
+{
+    /** WebKitAutomationSession has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Get the the previously set #WebKitAutomationSession. */
+    public function get_application_info(): WebKitApplicationInfo
+    {
+        return null;
+    }
+    /** Get the unique identifier of a #WebKitAutomationSession */
+    public function get_id(): string
+    {
+        return '';
+    }
+    /** Set the application information to $session. */
+    public function set_application_info(WebKitApplicationInfo $info): void
+    {
+        unset($info);
+    }
+}
+/**
+ * Enum values used to specify autoplay policies.
+ */
+enum WebKitAutoplayPolicy : int
+{
+    case Allow = 0;
+    case AllowWithoutSound = 1;
+    case Deny = 2;
+}
+/**
+ * List of visited pages.
+ */
+final class WebKitBackForwardList extends GObject
+{
+    /** WebKitBackForwardList has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Returns the item that precedes the current item. */
+    public function get_back_item(): ?WebKitBackForwardListItem
+    {
+        return null;
+    }
+    /**
+     * Obtain the list of items preceding the current one.
+     *
+     * @return list<WebKitBackForwardListItem>
+     */
+    public function get_back_list(): array
+    {
+        return [];
+    }
+    /**
+     * Obtain a list up to some number of items preceding the current one.
+     *
+     * @return list<WebKitBackForwardListItem>
+     */
+    public function get_back_list_with_limit(int $limit): array
+    {
+        unset($limit);
+        return [];
+    }
+    /** Returns the current item in $back_forward_list. */
+    public function get_current_item(): ?WebKitBackForwardListItem
+    {
+        return null;
+    }
+    /** Returns the item that follows the current item. */
+    public function get_forward_item(): ?WebKitBackForwardListItem
+    {
+        return null;
+    }
+    /**
+     * Obtain the list of items following the current one.
+     *
+     * @return list<WebKitBackForwardListItem>
+     */
+    public function get_forward_list(): array
+    {
+        return [];
+    }
+    /**
+     * Obtain a list up to some number of items following the current one.
+     *
+     * @return list<WebKitBackForwardListItem>
+     */
+    public function get_forward_list_with_limit(int $limit): array
+    {
+        unset($limit);
+        return [];
+    }
+    /** Obtain the amount of items in the list. */
+    public function get_length(): int
+    {
+        return 0;
+    }
+    /** Returns the item at a given index relative to the current item. */
+    public function get_nth_item(int $index): ?WebKitBackForwardListItem
+    {
+        unset($index);
+        return null;
+    }
+}
+/**
+ * One item of the #WebKitBackForwardList.
+ */
+final class WebKitBackForwardListItem extends GObject
+{
+    /** WebKitBackForwardListItem has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Obtain the original URI of the item. */
+    public function get_original_uri(): string
+    {
+        return '';
+    }
+    /** Obtain the title of the item. */
+    public function get_title(): string
+    {
+        return '';
+    }
+    /** Obtain the URI of the item. */
+    public function get_uri(): string
+    {
+        return '';
+    }
+}
+/**
+ * Enum values used for determining the #WebKitWebContext cache model.
+ */
+enum WebKitCacheModel : int
+{
+    case DocumentViewer = 0;
+    case WebBrowser = 1;
+    case DocumentBrowser = 2;
+}
+/**
+ * A permission request for reading clipboard contents.
+ */
+final class WebKitClipboardPermissionRequest extends GObject implements WebKitPermissionRequest
+{
+    /** WebKitClipboardPermissionRequest has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    public function allow(): void
+    {
+    }
+    public function deny(): void
+    {
+    }
+}
+/**
+ * A request to open a color chooser.
+ *
+ * @property ?GdkRGBA $rgba
+ */
+final class WebKitColorChooserRequest extends GObject
+{
+    /** WebKitColorChooserRequest has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Cancels $request and the input element changes to use the initial color. */
+    public function cancel(): void
+    {
+    }
+    /**
+     * Finishes $request and the input element keeps the current value of
+     * #WebKitColorChooserRequest:rgba.
+     */
+    public function finish(): void
+    {
+    }
+    /** Gets the bounding box of the color input element. */
+    public function get_element_rectangle(): GdkRectangle
+    {
+        return null;
+    }
+    /** Gets the current #GdkRGBA color of $request */
+    public function get_rgba(): GdkRGBA
+    {
+        return null;
+    }
+    /** Sets the current #GdkRGBA color of $request */
+    public function set_rgba(GdkRGBA $rgba): void
+    {
+        unset($rgba);
+    }
+}
+/**
+ * Represents the context menu in a #WebKitWebView.
+ */
+final class WebKitContextMenu extends GObject
+{
+    /** Creates a new #WebKitContextMenu object. */
+    public function __construct()
+    {
+    }
+    /** Adds $item at the end of the $menu. */
+    public function append(WebKitContextMenuItem $item): void
+    {
+        unset($item);
+    }
+    /** Gets the first item in the $menu. */
+    public function first(): ?WebKitContextMenuItem
+    {
+        return null;
+    }
+    /**
+     * Gets the #GdkEvent that triggered the context menu. This function only returns a valid
+     * #GdkEvent when called for a #WebKitContextMenu passed to #WebKitWebView::context-menu
+     * signal; in all other cases, `null` is returned.
+     */
+    public function get_event(): ?GdkEvent
+    {
+        return null;
+    }
+    /** Gets the item at the given position in the $menu. */
+    public function get_item_at_position(int $position): WebKitContextMenuItem
+    {
+        unset($position);
+        return null;
+    }
+    /**
+     * Returns the item list of $menu.
+     *
+     * @return list<WebKitContextMenuItem>
+     */
+    public function get_items(): array
+    {
+        return [];
+    }
+    /** Gets the length of the $menu. */
+    public function get_n_items(): int
+    {
+        return 0;
+    }
+    /**
+     * Gets the position in view coordinates where the context menu was triggered.
+     *
+     * @return array{int, int}|null
+     */
+    public function get_position(): ?array
+    {
+        return null;
+    }
+    /** Gets the user data of $menu. */
+    public function get_user_data(): mixed
+    {
+        return null;
+    }
+    /** Inserts $item into the $menu at the given position. */
+    public function insert(WebKitContextMenuItem $item, int $position): void
+    {
+        unset($item);
+        unset($position);
+    }
+    /** Gets the last item in the $menu. */
+    public function last(): ?WebKitContextMenuItem
+    {
+        return null;
+    }
+    /** Moves $item to the given position in the $menu. */
+    public function move_item(WebKitContextMenuItem $item, int $position): void
+    {
+        unset($item);
+        unset($position);
+    }
+    /** Adds $item at the beginning of the $menu. */
+    public function prepend(WebKitContextMenuItem $item): void
+    {
+        unset($item);
+    }
+    /** Removes $item from the $menu. */
+    public function remove(WebKitContextMenuItem $item): void
+    {
+        unset($item);
+    }
+    /** Removes all items of the $menu. */
+    public function remove_all(): void
+    {
+    }
+    /** Sets user data to $menu. */
+    public function set_user_data(mixed $user_data = null): void
+    {
+        unset($user_data);
+    }
+}
+/**
+ * Enum values used to denote the stock actions for #WebKitContextMenuItem<!-- -->s
+ */
+enum WebKitContextMenuAction : int
+{
+    case NoAction = 0;
+    case OpenLink = 1;
+    case OpenLinkInNewWindow = 2;
+    case DownloadLinkToDisk = 3;
+    case CopyLinkToClipboard = 4;
+    case OpenImageInNewWindow = 5;
+    case DownloadImageToDisk = 6;
+    case CopyImageToClipboard = 7;
+    case CopyImageUrlToClipboard = 8;
+    case OpenFrameInNewWindow = 9;
+    case GoBack = 10;
+    case GoForward = 11;
+    case Stop = 12;
+    case Reload = 13;
+    case Copy = 14;
+    case Cut = 15;
+    case Paste = 16;
+    case Delete = 17;
+    case SelectAll = 18;
+    case InputMethods = 19;
+    case Unicode = 20;
+    case SpellingGuess = 21;
+    case NoGuessesFound = 22;
+    case IgnoreSpelling = 23;
+    case LearnSpelling = 24;
+    case IgnoreGrammar = 25;
+    case FontMenu = 26;
+    case Bold = 27;
+    case Italic = 28;
+    case Underline = 29;
+    case Outline = 30;
+    case InspectElement = 31;
+    case OpenVideoInNewWindow = 32;
+    case OpenAudioInNewWindow = 33;
+    case CopyVideoLinkToClipboard = 34;
+    case CopyAudioLinkToClipboard = 35;
+    case ToggleMediaControls = 36;
+    case ToggleMediaLoop = 37;
+    case EnterVideoFullscreen = 38;
+    case MediaPlay = 39;
+    case MediaPause = 40;
+    case MediaMute = 41;
+    case DownloadVideoToDisk = 42;
+    case DownloadAudioToDisk = 43;
+    case InsertEmoji = 44;
+    case PasteAsPlainText = 45;
+    case Custom = 10000;
+}
+/**
+ * One item of a #WebKitContextMenu.
+ */
+final class WebKitContextMenuItem extends GObject
+{
+    /** WebKitContextMenuItem has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Creates a new #WebKitContextMenuItem for the given $action and $label. */
+    public static function new_from_gaction(GAction $action, string $label, mixed $target = null): WebKitContextMenuItem
+    {
+        unset($action);
+        unset($label);
+        unset($target);
+        return null;
+    }
+    /** Creates a new #WebKitContextMenuItem for the given stock action. */
+    public static function new_from_stock_action(WebKitContextMenuAction $action): WebKitContextMenuItem
+    {
+        unset($action);
+        return null;
+    }
+    /** Creates a new #WebKitContextMenuItem for the given stock action using the given $label. */
+    public static function new_from_stock_action_with_label(WebKitContextMenuAction $action, string $label): WebKitContextMenuItem
+    {
+        unset($action);
+        unset($label);
+        return null;
+    }
+    /** Creates a new #WebKitContextMenuItem representing a separator. */
+    public static function new_separator(): WebKitContextMenuItem
+    {
+        return null;
+    }
+    /** Creates a new #WebKitContextMenuItem using the given $label with a submenu. */
+    public static function new_with_submenu(string $label, WebKitContextMenu $submenu): WebKitContextMenuItem
+    {
+        unset($label);
+        unset($submenu);
+        return null;
+    }
+    /** Gets the action associated to $item as a #GAction. */
+    public function get_gaction(): ?GAction
+    {
+        return null;
+    }
+    /** Gets the target #GVariant associated with $item. */
+    public function get_gaction_target(): mixed
+    {
+        return null;
+    }
+    /** Gets the #WebKitContextMenuAction of $item. */
+    public function get_stock_action(): WebKitContextMenuAction
+    {
+        return null;
+    }
+    /** Gets the submenu of $item. */
+    public function get_submenu(): ?WebKitContextMenu
+    {
+        return null;
+    }
+    /** Gets the title of $item. */
+    public function get_title(): string
+    {
+        return '';
+    }
+    /** Checks whether $item is a separator. */
+    public function is_separator(): bool
+    {
+        return false;
+    }
+    /** Sets or replaces the $item submenu. */
+    public function set_submenu(?WebKitContextMenu $submenu): void
+    {
+        unset($submenu);
+    }
+}
+/**
+ * Enum values used to denote the cookie acceptance policies.
+ */
+enum WebKitCookieAcceptPolicy : int
+{
+    case Always = 0;
+    case Never = 1;
+    case NoThirdParty = 2;
+}
+/**
+ * Defines how to handle cookies in a #WebKitWebContext.
+ */
+final class WebKitCookieManager extends GObject
+{
+    /** WebKitCookieManager has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Finish an asynchronous operation started with webkit_cookie_manager_add_cookie(). */
+    public function add_cookie_finish(GAsyncResult $result): bool
+    {
+        unset($result);
+        return false;
+    }
+    /** Finish an asynchronous operation started with webkit_cookie_manager_delete_cookie(). */
+    public function delete_cookie_finish(GAsyncResult $result): bool
+    {
+        unset($result);
+        return false;
+    }
+    /** Asynchronously get the cookie acceptance policy of $cookie_manager. */
+    public function get_accept_policy(?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finish an asynchronous operation started with webkit_cookie_manager_get_accept_policy(). */
+    public function get_accept_policy_finish(GAsyncResult $result): WebKitCookieAcceptPolicy
+    {
+        unset($result);
+        return null;
+    }
+    /** Asynchronously get a list of #SoupCookie from $cookie_manager. */
+    public function get_all_cookies(?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Asynchronously get a list of #SoupCookie from $cookie_manager. */
+    public function get_cookies(string $uri, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($uri);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finish an asynchronous operation started with webkit_cookie_manager_replace_cookies(). */
+    public function replace_cookies_finish(GAsyncResult $result): bool
+    {
+        unset($result);
+        return false;
+    }
+    /** Set the cookie acceptance policy of $cookie_manager as $policy. */
+    public function set_accept_policy(WebKitCookieAcceptPolicy $policy): void
+    {
+        unset($policy);
+    }
+    /** Set non-session cookies. */
+    public function set_persistent_storage(string $filename, WebKitCookiePersistentStorage $storage): void
+    {
+        unset($filename);
+        unset($storage);
+    }
+}
+/**
+ * Enum values used to denote the cookie persistent storage types.
+ */
+enum WebKitCookiePersistentStorage : int
+{
+    case Text = 0;
+    case Sqlite = 1;
+}
+/**
+ * Groups information used for user authentication.
+ */
+final class WebKitCredential
+{
+    /** Create a new credential from the provided username, password and persistence mode. */
+    public function __construct(string $username, string $password, WebKitCredentialPersistence $persistence)
+    {
+        unset($username);
+        unset($password);
+        unset($persistence);
+    }
+    /** Create a new credential from the provided PIN and persistence mode. */
+    public static function new_for_certificate_pin(string $pin, WebKitCredentialPersistence $persistence): WebKitCredential
+    {
+        unset($pin);
+        unset($persistence);
+        return null;
+    }
+    /** Get the password currently held by this #WebKitCredential. */
+    public function get_password(): string
+    {
+        return '';
+    }
+    /** Get the persistence mode currently held by this #WebKitCredential. */
+    public function get_persistence(): WebKitCredentialPersistence
+    {
+        return null;
+    }
+    /** Get the username currently held by this #WebKitCredential. */
+    public function get_username(): string
+    {
+        return '';
+    }
+    /** Determine whether this credential has a password stored. */
+    public function has_password(): bool
+    {
+        return false;
+    }
+}
+/**
+ * Enum values representing the duration for which a credential persists.
+ */
+enum WebKitCredentialPersistence : int
+{
+    case None = 0;
+    case ForSession = 1;
+    case Permanent = 2;
+}
+/**
+ * A permission request for enumerating the user's media devices
+ */
+final class WebKitDeviceInfoPermissionRequest extends GObject implements WebKitPermissionRequest
+{
+    /** WebKitDeviceInfoPermissionRequest has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    public function allow(): void
+    {
+    }
+    public function deny(): void
+    {
+    }
+}
+/**
+ * Object used to communicate with the application when downloading.
+ *
+ * @property bool $allow_overwrite
+ * @property-read ?string $destination
+ * @property-read float $estimated_progress
+ * @property-read ?WebKitURIResponse $response
+ */
+final class WebKitDownload extends GObject
+{
+    /** WebKitDownload has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Cancels the download. */
+    public function cancel(): void
+    {
+    }
+    /** Returns the current value of the #WebKitDownload:allow-overwrite property. */
+    public function get_allow_overwrite(): bool
+    {
+        return false;
+    }
+    /** Obtains the destination to which the downloaded file will be written. */
+    public function get_destination(): ?string
+    {
+        return null;
+    }
+    /** Gets the elapsed time in seconds, including any fractional part. */
+    public function get_elapsed_time(): float
+    {
+        return 0.0;
+    }
+    /**
+     * Gets the value of the #WebKitDownload:estimated-progress property. Gets the value of the
+     * #WebKitDownload:estimated-progress property. You can monitor the estimated progress of the
+     * download operation by connecting to the notify::estimated-progress signal of $download.
+     */
+    public function get_estimated_progress(): float
+    {
+        return 0.0;
+    }
+    /** Gets the length of the data already downloaded for $download. */
+    public function get_received_data_length(): int
+    {
+        return 0;
+    }
+    /** Retrieves the #WebKitURIRequest object that backs the download process. */
+    public function get_request(): WebKitURIRequest
+    {
+        return null;
+    }
+    /** Retrieves the #WebKitURIResponse object that backs the download process. */
+    public function get_response(): WebKitURIResponse
+    {
+        return null;
+    }
+    /** Get the #WebKitWebView that initiated the download. */
+    public function get_web_view(): WebKitWebView
+    {
+        return null;
+    }
+    /** Sets the #WebKitDownload:allow-overwrite property. */
+    public function set_allow_overwrite(bool $allowed): void
+    {
+        unset($allowed);
+    }
+    /** Sets the destination to which the downloaded file will be written. */
+    public function set_destination(string $destination): void
+    {
+        unset($destination);
+    }
+}
+/**
+ * Enum values used to denote the various download errors.
+ */
+enum WebKitDownloadError : int
+{
+    case Network = 499;
+    case CancelledByUser = 400;
+    case Destination = 401;
+}
+/**
+ * Web editor state.
+ *
+ * @property-read int $typing_attributes
+ */
+final class WebKitEditorState extends GObject
+{
+    /** WebKitEditorState has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Gets the typing attributes at the current cursor position. */
+    public function get_typing_attributes(): int
+    {
+        return 0;
+    }
+    /** Gets whether a copy command can be issued. */
+    public function is_copy_available(): bool
+    {
+        return false;
+    }
+    /** Gets whether a cut command can be issued. */
+    public function is_cut_available(): bool
+    {
+        return false;
+    }
+    /** Gets whether a paste command can be issued. */
+    public function is_paste_available(): bool
+    {
+        return false;
+    }
+    /** Gets whether a redo command can be issued. */
+    public function is_redo_available(): bool
+    {
+        return false;
+    }
+    /** Gets whether an undo command can be issued. */
+    public function is_undo_available(): bool
+    {
+        return false;
+    }
+}
+/**
+ * Enum values with flags representing typing attributes.
+ */
+final class WebKitEditorTypingAttributes
+{
+    public const int NONE = 2;
+    public const int BOLD = 4;
+    public const int ITALIC = 8;
+    public const int UNDERLINE = 16;
+    public const int STRIKETHROUGH = 32;
+}
+/**
+ * Provides access to the icons associated with web sites.
+ */
+final class WebKitFaviconDatabase extends GObject
+{
+    /** WebKitFaviconDatabase has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Clears all icons from the database. */
+    public function clear(): void
+    {
+    }
+    /** Asynchronously obtains a favicon image. */
+    public function get_favicon(string $page_uri, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($page_uri);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes an operation started with webkit_favicon_database_get_favicon(). */
+    public function get_favicon_finish(GAsyncResult $result): GdkTexture
+    {
+        unset($result);
+        return null;
+    }
+    /** Obtains the URI of the favicon for the given $page_uri. */
+    public function get_favicon_uri(string $page_uri): string
+    {
+        unset($page_uri);
+        return '';
+    }
+}
+/**
+ * Enum values used to denote the various errors related to the #WebKitFaviconDatabase.
+ */
+enum WebKitFaviconDatabaseError : int
+{
+    case NotInitialized = 0;
+    case FaviconNotFound = 1;
+    case FaviconUnknown = 2;
+}
+/**
+ * Describes a web engine feature that may be toggled at runtime.
+ */
+final class WebKitFeature
+{
+    /** WebKitFeature values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Gets the category of the feature. */
+    public function get_category(): string
+    {
+        return '';
+    }
+    /** Gets whether the feature is enabled by default. */
+    public function get_default_value(): bool
+    {
+        return false;
+    }
+    /** Gets a description for the $feature. */
+    public function get_details(): ?string
+    {
+        return null;
+    }
+    /** Gets a string that uniquely identifies the $feature. */
+    public function get_identifier(): string
+    {
+        return '';
+    }
+    /** Gets a short name for the $feature. */
+    public function get_name(): ?string
+    {
+        return null;
+    }
+    /** Gets the status of the feature. */
+    public function get_status(): WebKitFeatureStatus
+    {
+        return null;
+    }
+}
+/**
+ * Contains a set of toggle-able web engine features.
+ */
+final class WebKitFeatureList
+{
+    /** WebKitFeatureList values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Gets a feature given its index. */
+    public function get(int $index): WebKitFeature
+    {
+        unset($index);
+        return null;
+    }
+    /** Gets the number of elements in the feature list. */
+    public function get_length(): int
+    {
+        return 0;
+    }
+}
+/**
+ * Describes the status of a `WebKitFeature`.
+ */
+enum WebKitFeatureStatus : int
+{
+    case Embedder = 0;
+    case Unstable = 1;
+    case Internal = 2;
+    case Developer = 3;
+    case Testable = 4;
+    case Preview = 5;
+    case Stable = 6;
+    case Mature = 7;
+}
+/**
+ * A request to open a file chooser.
+ *
+ * @property-read ?GtkFileFilter $filter
+ * @property-read ?array $mime_types
+ * @property-read bool $select_multiple
+ * @property-read ?array $selected_files
+ */
+final class WebKitFileChooserRequest extends GObject
+{
+    /** WebKitFileChooserRequest has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Ask WebKit to cancel the request. */
+    public function cancel(): void
+    {
+    }
+    /**
+     * Get the list of MIME types the file chooser dialog should handle.
+     *
+     * @return list<string>
+     */
+    public function get_mime_types(): array
+    {
+        return [];
+    }
+    /** Get the filter currently associated with the request. */
+    public function get_mime_types_filter(): GtkFileFilter
+    {
+        return null;
+    }
+    /** Whether the file chooser should allow selecting multiple files. */
+    public function get_select_multiple(): bool
+    {
+        return false;
+    }
+    /**
+     * Get the list of selected files associated to the request.
+     *
+     * @return list<string>
+     */
+    public function get_selected_files(): array
+    {
+        return [];
+    }
+    /** Ask WebKit to select local files for upload and complete the request. */
+    public function select_files(array $files): void
+    {
+        unset($files);
+    }
+}
+/**
+ * Controls text search in a #WebKitWebView.
+ *
+ * @property-read int $max_match_count
+ * @property-read ?string $text
+ * @property ?WebKitWebView $web_view
+ */
+final class WebKitFindController extends GObject
+{
+    /** WebKitFindController has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Counts the number of matches for $search_text. */
+    public function count_matches(string $search_text, int $find_options, int $max_match_count): void
+    {
+        unset($search_text);
+        unset($find_options);
+        unset($max_match_count);
+    }
+    /** Gets the maximum number of matches to report. */
+    public function get_max_match_count(): int
+    {
+        return 0;
+    }
+    /** Gets the #WebKitFindOptions for the current search. */
+    public function get_options(): int
+    {
+        return 0;
+    }
+    /** Gets the text that $find_controller is searching for. */
+    public function get_search_text(): string
+    {
+        return '';
+    }
+    /** Gets the #WebKitWebView this find controller is associated to. */
+    public function get_web_view(): WebKitWebView
+    {
+        return null;
+    }
+    /** Looks for $search_text associated with $find_controller. */
+    public function search(string $search_text, int $find_options, int $max_match_count): void
+    {
+        unset($search_text);
+        unset($find_options);
+        unset($max_match_count);
+    }
+    /** Finishes a find operation. */
+    public function search_finish(): void
+    {
+    }
+    /** Looks for the next occurrence of the search text. */
+    public function search_next(): void
+    {
+    }
+    /** Looks for the previous occurrence of the search text. */
+    public function search_previous(): void
+    {
+    }
+}
+/**
+ * Enum values used to specify search options.
+ */
+final class WebKitFindOptions
+{
+    public const int NONE = 0;
+    public const int CASE_INSENSITIVE = 1;
+    public const int AT_WORD_STARTS = 2;
+    public const int TREAT_MEDIAL_CAPITAL_AS_WORD_START = 4;
+    public const int BACKWARDS = 8;
+    public const int WRAP_AROUND = 16;
+}
+/**
+ * Represents a form submission request.
+ */
+final class WebKitFormSubmissionRequest extends GObject
+{
+    /** WebKitFormSubmissionRequest has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Continue the form submission. */
+    public function submit(): void
+    {
+    }
+}
+/**
+ * Geolocation manager.
+ *
+ * @property-read bool $enable_high_accuracy
+ */
+final class WebKitGeolocationManager extends GObject
+{
+    /** WebKitGeolocationManager has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Notify $manager that determining the position failed. */
+    public function failed(string $error_message): void
+    {
+        unset($error_message);
+    }
+    /** Get whether high accuracy is enabled. */
+    public function get_enable_high_accuracy(): bool
+    {
+        return false;
+    }
+    /** Notify $manager that position has been updated to $position. */
+    public function update_position(WebKitGeolocationPosition $position): void
+    {
+        unset($position);
+    }
+}
+/**
+ * A permission request for sharing the user's location.
+ */
+final class WebKitGeolocationPermissionRequest extends GObject implements WebKitPermissionRequest
+{
+    /** WebKitGeolocationPermissionRequest has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    public function allow(): void
+    {
+    }
+    public function deny(): void
+    {
+    }
+}
+/**
+ * An opaque struct to provide position updates to a #WebKitGeolocationManager.
+ */
+final class WebKitGeolocationPosition
+{
+    /** Create a new #WebKitGeolocationPosition. */
+    public function __construct(float $latitude, float $longitude, float $accuracy)
+    {
+        unset($latitude);
+        unset($longitude);
+        unset($accuracy);
+    }
+    /** Set the $position altitude. */
+    public function set_altitude(float $altitude): void
+    {
+        unset($altitude);
+    }
+    /** Set the accuracy of $position altitude. */
+    public function set_altitude_accuracy(float $altitude_accuracy): void
+    {
+        unset($altitude_accuracy);
+    }
+    /** Set the $position heading. */
+    public function set_heading(float $heading): void
+    {
+        unset($heading);
+    }
+    /** Set the $position speed. */
+    public function set_speed(float $speed): void
+    {
+        unset($speed);
+    }
+    /** Set the $position timestamp. */
+    public function set_timestamp(int $timestamp): void
+    {
+        unset($timestamp);
+    }
+}
+/**
+ * Enum values used for determining the hardware acceleration policy.
+ */
+enum WebKitHardwareAccelerationPolicy : int
+{
+    case Always = 0;
+    case Never = 1;
+}
+/**
+ * Result of a Hit Test.
+ *
+ * @property int $context
+ * @property ?string $image_uri
+ * @property ?string $link_label
+ * @property ?string $link_title
+ * @property ?string $link_uri
+ * @property ?string $media_uri
+ */
+final class WebKitHitTestResult extends GObject
+{
+    /** WebKitHitTestResult has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /**
+     * Gets whether %WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE flag is present in
+     * #WebKitHitTestResult:context.
+     */
+    public function context_is_editable(): bool
+    {
+        return false;
+    }
+    /**
+     * Gets whether %WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE flag is present in
+     * #WebKitHitTestResult:context.
+     */
+    public function context_is_image(): bool
+    {
+        return false;
+    }
+    /**
+     * Gets whether %WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK flag is present in
+     * #WebKitHitTestResult:context.
+     */
+    public function context_is_link(): bool
+    {
+        return false;
+    }
+    /**
+     * Gets whether %WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA flag is present in
+     * #WebKitHitTestResult:context.
+     */
+    public function context_is_media(): bool
+    {
+        return false;
+    }
+    /**
+     * Gets whether %WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR flag is present in
+     * #WebKitHitTestResult:context.
+     */
+    public function context_is_scrollbar(): bool
+    {
+        return false;
+    }
+    /**
+     * Gets whether %WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION flag is present in
+     * #WebKitHitTestResult:context.
+     */
+    public function context_is_selection(): bool
+    {
+        return false;
+    }
+    /** Gets the value of the #WebKitHitTestResult:context property. */
+    public function get_context(): int
+    {
+        return 0;
+    }
+    /** Gets the value of the #WebKitHitTestResult:image-uri property. */
+    public function get_image_uri(): string
+    {
+        return '';
+    }
+    /** Gets the value of the #WebKitHitTestResult:link-label property. */
+    public function get_link_label(): string
+    {
+        return '';
+    }
+    /** Gets the value of the #WebKitHitTestResult:link-title property. */
+    public function get_link_title(): string
+    {
+        return '';
+    }
+    /** Gets the value of the #WebKitHitTestResult:link-uri property. */
+    public function get_link_uri(): string
+    {
+        return '';
+    }
+    /** Gets the value of the #WebKitHitTestResult:media-uri property. */
+    public function get_media_uri(): string
+    {
+        return '';
+    }
+}
+/**
+ * Enum values with flags representing the context of a #WebKitHitTestResult.
+ */
+final class WebKitHitTestResultContext
+{
+    public const int DOCUMENT = 2;
+    public const int LINK = 4;
+    public const int IMAGE = 8;
+    public const int MEDIA = 16;
+    public const int EDITABLE = 32;
+    public const int SCROLLBAR = 64;
+    public const int SELECTION = 128;
+}
+/**
+ * Describes a first party origin.
+ */
+final class WebKitITPFirstParty
+{
+    /** WebKitITPFirstParty values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Get the domain name of $itp_first_party. */
+    public function get_domain(): string
+    {
+        return '';
+    }
+    /** Get whether $itp_first_party has granted website data access to its #WebKitITPThirdParty. */
+    public function get_website_data_access_allowed(): bool
+    {
+        return false;
+    }
+}
+/**
+ * Describes a third party origin.
+ */
+final class WebKitITPThirdParty
+{
+    /** WebKitITPThirdParty values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Get the domain name of $itp_third_party. */
+    public function get_domain(): string
+    {
+        return '';
+    }
+    /**
+     * Get the list of #WebKitITPFirstParty under which $itp_third_party has been seen.
+     *
+     * @return list<WebKitITPFirstParty>
+     */
+    public function get_first_parties(): array
+    {
+        return [];
+    }
+}
+/**
+ * Enum values used to describe hints that might be taken into account by input methods.
+ */
+final class WebKitInputHints
+{
+    public const int NONE = 0;
+    public const int SPELLCHECK = 1;
+    public const int LOWERCASE = 2;
+    public const int UPPERCASE_CHARS = 4;
+    public const int UPPERCASE_WORDS = 8;
+    public const int UPPERCASE_SENTENCES = 16;
+    public const int INHIBIT_OSK = 32;
+}
+/**
+ * Base class for input method contexts.
+ *
+ * @property int $input_hints
+ * @property WebKitInputPurpose $input_purpose
+ */
+class WebKitInputMethodContext extends GObject
+{
+    /** WebKitInputMethodContext is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    public function __construct()
+    {
+    }
+    /** Allow $key_event to be handled by the input method. */
+    public function filter_key_event(GdkEvent $key_event): bool
+    {
+        unset($key_event);
+        return false;
+    }
+    /** Get the value of the #WebKitInputMethodContext:input-hints property. */
+    public function get_input_hints(): int
+    {
+        return 0;
+    }
+    /** Get the value of the #WebKitInputMethodContext:input-purpose property. */
+    public function get_input_purpose(): WebKitInputPurpose
+    {
+        return null;
+    }
+    /** Notify $context that cursor area changed in input associated. */
+    public function notify_cursor_area(int $x, int $y, int $width, int $height): void
+    {
+        unset($x);
+        unset($y);
+        unset($width);
+        unset($height);
+    }
+    /** Notify $context that input associated has gained focus. */
+    public function notify_focus_in(): void
+    {
+    }
+    /** Notify $context that input associated has lost focus. */
+    public function notify_focus_out(): void
+    {
+    }
+    /** Notify $context that the context surrounding the cursor has changed. */
+    public function notify_surrounding(string $text, int $length, int $cursor_index, int $selection_index): void
+    {
+        unset($text);
+        unset($length);
+        unset($cursor_index);
+        unset($selection_index);
+    }
+    /** Reset the $context. */
+    public function reset(): void
+    {
+    }
+    /** Set whether $context should enable preedit to display feedback. */
+    public function set_enable_preedit(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the value of the #WebKitInputMethodContext:input-hints property. */
+    public function set_input_hints(int $hints): void
+    {
+        unset($hints);
+    }
+    /** Set the value of the #WebKitInputMethodContext:input-purpose property. */
+    public function set_input_purpose(WebKitInputPurpose $purpose): void
+    {
+        unset($purpose);
+    }
+    /**
+     * Native `committed` (InputMethodContextClass.committed): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_committed()` from an override.
+     */
+    public function vfunc_committed(string $text): void
+    {
+        unset($text);
+    }
+    /**
+     * Native `delete_surrounding` (InputMethodContextClass.delete_surrounding): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_delete_surrounding()` from an
+     * override.
+     */
+    public function vfunc_delete_surrounding(int $offset, int $n_chars): void
+    {
+        unset($offset);
+        unset($n_chars);
+    }
+    /**
+     * Native `filter_key_event` (InputMethodContextClass.filter_key_event): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_filter_key_event()` from an override. Allow
+     * $key_event to be handled by the input method.
+     */
+    public function vfunc_filter_key_event(GdkEvent $key_event): bool
+    {
+        unset($key_event);
+        return false;
+    }
+    /**
+     * Native `notify_cursor_area` (InputMethodContextClass.notify_cursor_area): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_notify_cursor_area()` from an
+     * override. Notify $context that cursor area changed in input associated.
+     */
+    public function vfunc_notify_cursor_area(int $x, int $y, int $width, int $height): void
+    {
+        unset($x);
+        unset($y);
+        unset($width);
+        unset($height);
+    }
+    /**
+     * Native `notify_focus_in` (InputMethodContextClass.notify_focus_in): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_notify_focus_in()` from an override. Notify
+     * $context that input associated has gained focus.
+     */
+    public function vfunc_notify_focus_in(): void
+    {
+    }
+    /**
+     * Native `notify_focus_out` (InputMethodContextClass.notify_focus_out): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_notify_focus_out()` from an override. Notify
+     * $context that input associated has lost focus.
+     */
+    public function vfunc_notify_focus_out(): void
+    {
+    }
+    /**
+     * Native `notify_surrounding` (InputMethodContextClass.notify_surrounding): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_notify_surrounding()` from an
+     * override. Notify $context that the context surrounding the cursor has changed.
+     */
+    public function vfunc_notify_surrounding(string $text, int $length, int $cursor_index, int $selection_index): void
+    {
+        unset($text);
+        unset($length);
+        unset($cursor_index);
+        unset($selection_index);
+    }
+    /**
+     * Native `preedit_changed` (InputMethodContextClass.preedit_changed): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_preedit_changed()` from an override.
+     */
+    public function vfunc_preedit_changed(): void
+    {
+    }
+    /**
+     * Native `preedit_finished` (InputMethodContextClass.preedit_finished): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_preedit_finished()` from an override.
+     */
+    public function vfunc_preedit_finished(): void
+    {
+    }
+    /**
+     * Native `preedit_started` (InputMethodContextClass.preedit_started): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_preedit_started()` from an override.
+     */
+    public function vfunc_preedit_started(): void
+    {
+    }
+    /**
+     * Native `reset` (InputMethodContextClass.reset): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_reset()` from an override. Reset the $context.
+     */
+    public function vfunc_reset(): void
+    {
+    }
+    /**
+     * Native `set_enable_preedit` (InputMethodContextClass.set_enable_preedit): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_set_enable_preedit()` from an
+     * override. Set whether $context should enable preedit to display feedback.
+     */
+    public function vfunc_set_enable_preedit(bool $enabled): void
+    {
+        unset($enabled);
+    }
+}
+/**
+ * Range of text in an preedit string to be shown underlined.
+ */
+final class WebKitInputMethodUnderline
+{
+    /** Create a new #WebKitInputMethodUnderline for the given range in preedit string */
+    public function __construct(int $start_offset, int $end_offset)
+    {
+        unset($start_offset);
+        unset($end_offset);
+    }
+    /** Set the color of the underline. */
+    public function set_color(?GdkRGBA $rgba): void
+    {
+        unset($rgba);
+    }
+}
+/**
+ * Enum values used to describe the primary purpose of the active editable element.
+ */
+enum WebKitInputPurpose : int
+{
+    case FreeForm = 0;
+    case Digits = 1;
+    case Number = 2;
+    case Phone = 3;
+    case Url = 4;
+    case Email = 5;
+    case Password = 6;
+}
+/**
+ * Enum values previously used to denote the different events which can trigger the detection of
+ * insecure content. Since 2.46, WebKit generally no longer loads insecure content in secure
+ * contexts.
+ */
+enum WebKitInsecureContentEvent : int
+{
+    case Run = 0;
+    case Displayed = 1;
+}
+/**
+ * Enum values used to denote errors happening when executing JavaScript
+ */
+enum WebKitJavascriptError : int
+{
+    case ScriptFailed = 699;
+    case InvalidParameter = 600;
+    case InvalidResult = 601;
+}
+/**
+ * Enum values used to denote the different events that happen during a #WebKitWebView load
+ * operation.
+ */
+enum WebKitLoadEvent : int
+{
+    case Started = 0;
+    case Redirected = 1;
+    case Committed = 2;
+    case Finished = 3;
+}
+/**
+ * Enum values used to specify the capture state of a media device.
+ */
+enum WebKitMediaCaptureState : int
+{
+    case None = 0;
+    case Active = 1;
+    case Muted = 2;
+}
+/**
+ * Enum values used to denote the various media errors.
+ */
+enum WebKitMediaError : int
+{
+    case Load = 204;
+}
+/**
+ * A permission request for using an EME Content Decryption Module.
+ */
+final class WebKitMediaKeySystemPermissionRequest extends GObject implements WebKitPermissionRequest
+{
+    /** WebKitMediaKeySystemPermissionRequest has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    public function allow(): void
+    {
+    }
+    public function deny(): void
+    {
+    }
+}
+/**
+ * A boxed type representing the settings for the memory pressure handler
+ */
+final class WebKitMemoryPressureSettings
+{
+    /** Create a new #WebKitMemoryPressureSettings with the default values. */
+    public function __construct()
+    {
+    }
+    /** Gets the conservative memory usage threshold. */
+    public function get_conservative_threshold(): float
+    {
+        return 0.0;
+    }
+    /** Gets the kill memory usage threshold. */
+    public function get_kill_threshold(): float
+    {
+        return 0.0;
+    }
+    /** Gets the memory usage limit. */
+    public function get_memory_limit(): int
+    {
+        return 0;
+    }
+    /** Gets the interval at which memory usage is checked. */
+    public function get_poll_interval(): float
+    {
+        return 0.0;
+    }
+    /** Gets the strict memory usage threshold. */
+    public function get_strict_threshold(): float
+    {
+        return 0.0;
+    }
+    /** Sets the memory limit for the conservative policy to start working. */
+    public function set_conservative_threshold(float $value): void
+    {
+        unset($value);
+    }
+    /** Sets $value as the fraction of the defined memory limit where the process will be killed. */
+    public function set_kill_threshold(float $value): void
+    {
+        unset($value);
+    }
+    /** Sets $memory_limit the memory limit value to $settings. */
+    public function set_memory_limit(int $memory_limit): void
+    {
+        unset($memory_limit);
+    }
+    /** Sets $value as the poll interval used by $settings. */
+    public function set_poll_interval(float $value): void
+    {
+        unset($value);
+    }
+    /** Sets the memory limit for the strict policy to start working. */
+    public function set_strict_threshold(float $value): void
+    {
+        unset($value);
+    }
+}
+/**
+ * Provides details about interaction resulting in a resource load.
+ */
+final class WebKitNavigationAction
+{
+    /** WebKitNavigationAction values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /**
+     * Gets the $navigation target frame name. For example if navigation was triggered by clicking
+     * a link with a target attribute equal to "_blank", this will return the value of that
+     * attribute. In all other cases this function will return `null`.
+     */
+    public function get_frame_name(): ?string
+    {
+        return null;
+    }
+    /** Return the modifier keys. */
+    public function get_modifiers(): int
+    {
+        return 0;
+    }
+    /** Return the number of the mouse button that triggered the navigation. */
+    public function get_mouse_button(): int
+    {
+        return 0;
+    }
+    /** Return the type of action that triggered the navigation. */
+    public function get_navigation_type(): WebKitNavigationType
+    {
+        return null;
+    }
+    /** Return the #WebKitURIRequest associated with the navigation action. */
+    public function get_request(): WebKitURIRequest
+    {
+        return null;
+    }
+    /** Returns whether the $navigation was redirected. */
+    public function is_redirect(): bool
+    {
+        return false;
+    }
+    /** Return whether the navigation was triggered by a user gesture like a mouse click. */
+    public function is_user_gesture(): bool
+    {
+        return false;
+    }
+}
+/**
+ * A policy decision for navigation actions.
+ *
+ * @property-read ?WebKitNavigationAction $navigation_action
+ */
+final class WebKitNavigationPolicyDecision extends WebKitPolicyDecision
+{
+    /** WebKitNavigationPolicyDecision has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Gets the value of the #WebKitNavigationPolicyDecision:navigation-action property. */
+    public function get_navigation_action(): WebKitNavigationAction
+    {
+        return null;
+    }
+}
+/**
+ * Enum values used to denote the various navigation types.
+ */
+enum WebKitNavigationType : int
+{
+    case LinkClicked = 0;
+    case FormSubmitted = 1;
+    case BackForward = 2;
+    case Reload = 3;
+    case FormResubmitted = 4;
+    case Other = 5;
+}
+/**
+ * Enum values used to denote the various network errors.
+ */
+enum WebKitNetworkError : int
+{
+    case Failed = 399;
+    case Transport = 300;
+    case UnknownProtocol = 301;
+    case Cancelled = 302;
+    case FileDoesNotExist = 303;
+}
+/**
+ * Enum values used to set the network proxy mode.
+ */
+enum WebKitNetworkProxyMode : int
+{
+    case Default = 0;
+    case NoProxy = 1;
+    case Custom = 2;
+}
+/**
+ * Configures network proxies.
+ */
+final class WebKitNetworkProxySettings
+{
+    /**
+     * Create a new #WebKitNetworkProxySettings with the given $default_proxy_uri and
+     * $ignore_hosts.
+     */
+    public function __construct(?string $default_proxy_uri = null, ?array $ignore_hosts = null)
+    {
+        unset($default_proxy_uri);
+        unset($ignore_hosts);
+    }
+    /** Adds a URI-scheme-specific proxy. */
+    public function add_proxy_for_scheme(string $scheme, string $proxy_uri): void
+    {
+        unset($scheme);
+        unset($proxy_uri);
+    }
+}
+/**
+ * Manages network configuration.
+ *
+ * @property-write ?string $cache_directory
+ * @property-write ?string $data_directory
+ * @property bool $is_ephemeral
+ */
+final class WebKitNetworkSession extends GObject
+{
+    /**
+     * Creates a new #WebKitNetworkSession with a persistent #WebKitWebsiteDataManager. The
+     * parameters $data_directory and $cache_directory will be used as construct properties of the
+     * #WebKitWebsiteDataManager of the network session. Note that if `null` is passed, the default
+     * directory will be passed to #WebKitWebsiteDataManager so that
+     * webkit_website_data_manager_get_base_data_directory() and
+     * webkit_website_data_manager_get_base_cache_directory() always return a value for non
+     * ephemeral sessions.
+     */
+    public function __construct(?string $data_directory = null, ?string $cache_directory = null)
+    {
+        unset($data_directory);
+        unset($cache_directory);
+    }
+    /** Creates a new #WebKitNetworkSession with an ephemeral #WebKitWebsiteDataManager. */
+    public static function new_ephemeral(): WebKitNetworkSession
+    {
+        return null;
+    }
+    /**
+     * Get the default network session. The default network session is created using
+     * webkit_network_session_new() and passing `null` as data and cache directories.
+     */
+    public static function get_default(): WebKitNetworkSession
+    {
+        return null;
+    }
+    /** Sets $settings as the #WebKitMemoryPressureSettings. */
+    public static function set_memory_pressure_settings(WebKitMemoryPressureSettings $settings): void
+    {
+        unset($settings);
+    }
+    /** Requests downloading of the specified URI string. */
+    public function download_uri(string $uri): WebKitDownload
+    {
+        unset($uri);
+        return null;
+    }
+    /** Get the #WebKitCookieManager of $session. */
+    public function get_cookie_manager(): WebKitCookieManager
+    {
+        return null;
+    }
+    /** Get whether Intelligent Tracking Prevention (ITP) is enabled or not. */
+    public function get_itp_enabled(): bool
+    {
+        return false;
+    }
+    /** Asynchronously get the list of #WebKitITPThirdParty seen for $session. */
+    public function get_itp_summary(?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($cancellable);
+        unset($callback);
+    }
+    /**
+     * Finish an asynchronous operation started with webkit_network_session_get_itp_summary().
+     *
+     * @return list<WebKitITPThirdParty>
+     */
+    public function get_itp_summary_finish(GAsyncResult $result): array
+    {
+        unset($result);
+        return [];
+    }
+    /** Get whether persistent credential storage is enabled or not. */
+    public function get_persistent_credential_storage_enabled(): bool
+    {
+        return false;
+    }
+    /** Get the TLS errors policy of $session. */
+    public function get_tls_errors_policy(): WebKitTLSErrorsPolicy
+    {
+        return null;
+    }
+    /** Get the #WebKitWebsiteDataManager of $session. */
+    public function get_website_data_manager(): WebKitWebsiteDataManager
+    {
+        return null;
+    }
+    /**
+     * Get whether $session is ephemeral. A #WebKitNetworkSession is ephemeral when its
+     * #WebKitWebsiteDataManager is ephemeral. See #WebKitWebsiteDataManager:is-ephemeral for more
+     * details.
+     */
+    public function is_ephemeral(): bool
+    {
+        return false;
+    }
+    /**
+     * Resolve the domain name of the given $hostname in advance, so that if a URI of $hostname is
+     * requested the load will be performed more quickly.
+     */
+    public function prefetch_dns(string $hostname): void
+    {
+        unset($hostname);
+    }
+    /** Enable or disable Intelligent Tracking Prevention (ITP). */
+    public function set_itp_enabled(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Enable or disable persistent credential storage. */
+    public function set_persistent_credential_storage_enabled(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the network proxy settings to be used by connections started in $session session. */
+    public function set_proxy_settings(WebKitNetworkProxyMode $proxy_mode, ?WebKitNetworkProxySettings $proxy_settings): void
+    {
+        unset($proxy_mode);
+        unset($proxy_settings);
+    }
+    /** Set the TLS errors policy of $session as $policy. */
+    public function set_tls_errors_policy(WebKitTLSErrorsPolicy $policy): void
+    {
+        unset($policy);
+    }
+}
+/**
+ * Holds information about a notification that should be shown to the user.
+ *
+ * @property-read ?string $body
+ * @property-read int $id
+ * @property-read ?string $tag
+ * @property-read ?string $title
+ */
+final class WebKitNotification extends GObject
+{
+    /** WebKitNotification has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Tells WebKit the notification has been clicked. */
+    public function clicked(): void
+    {
+    }
+    /** Closes the notification. */
+    public function close(): void
+    {
+    }
+    /** Obtains the body for the notification. */
+    public function get_body(): string
+    {
+        return '';
+    }
+    /** Obtains the unique id for the notification. */
+    public function get_id(): int
+    {
+        return 0;
+    }
+    /** Obtains the tag identifier for the notification. */
+    public function get_tag(): ?string
+    {
+        return null;
+    }
+    /** Obtains the title for the notification. */
+    public function get_title(): string
+    {
+        return '';
+    }
+}
+/**
+ * A permission request for displaying web notifications.
+ */
+final class WebKitNotificationPermissionRequest extends GObject implements WebKitPermissionRequest
+{
+    /** WebKitNotificationPermissionRequest has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    public function allow(): void
+    {
+    }
+    public function deny(): void
+    {
+    }
+}
+/**
+ * Represents the dropdown menu of a `select` element in a #WebKitWebView.
+ */
+final class WebKitOptionMenu extends GObject
+{
+    /** WebKitOptionMenu has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Activates the #WebKitOptionMenuItem at $index in $menu. */
+    public function activate_item(int $index): void
+    {
+        unset($index);
+    }
+    /** Request to close a #WebKitOptionMenu. */
+    public function close(): void
+    {
+    }
+    /**
+     * Gets the #GdkEvent that triggered the dropdown menu. If $menu was not triggered by a user
+     * interaction, like a mouse click, `null` is returned.
+     */
+    public function get_event(): GdkEvent
+    {
+        return null;
+    }
+    /** Returns the #WebKitOptionMenuItem at $index in $menu. */
+    public function get_item(int $index): WebKitOptionMenuItem
+    {
+        unset($index);
+        return null;
+    }
+    /** Gets the length of the $menu. */
+    public function get_n_items(): int
+    {
+        return 0;
+    }
+    /** Selects the #WebKitOptionMenuItem at $index in $menu. */
+    public function select_item(int $index): void
+    {
+        unset($index);
+    }
+}
+/**
+ * One item of a #WebKitOptionMenu.
+ */
+final class WebKitOptionMenuItem
+{
+    /** WebKitOptionMenuItem values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Get the label of a #WebKitOptionMenuItem. */
+    public function get_label(): string
+    {
+        return '';
+    }
+    /** Get the tooltip of a #WebKitOptionMenuItem. */
+    public function get_tooltip(): string
+    {
+        return '';
+    }
+    /** Whether a #WebKitOptionMenuItem is enabled. */
+    public function is_enabled(): bool
+    {
+        return false;
+    }
+    /** Whether a #WebKitOptionMenuItem is a group child. */
+    public function is_group_child(): bool
+    {
+        return false;
+    }
+    /** Whether a #WebKitOptionMenuItem is a group label. */
+    public function is_group_label(): bool
+    {
+        return false;
+    }
+    /** Whether a #WebKitOptionMenuItem is the currently selected one. */
+    public function is_selected(): bool
+    {
+        return false;
+    }
+}
+/**
+ * A permission request.
+ */
+interface WebKitPermissionRequest
+{
+    /** Allow the action which triggered this request. */
+    public function allow(): void;
+    /** Deny the action which triggered this request. */
+    public function deny(): void;
+}
+/**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see WebKitPermissionRequest} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see WebKitPermissionRequest} with a body.
+ *
+ */
+final class WebKitPermissionRequestObject extends GObject implements WebKitPermissionRequest
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct()
+    {
+    }
+    public function allow(): void
+    {
+    }
+    public function deny(): void
+    {
+    }
+}
+/**
+ * Enum values representing query permission results.
+ */
+enum WebKitPermissionState : int
+{
+    case Granted = 0;
+    case Denied = 1;
+    case Prompt = 2;
+}
+/**
+ * This query represents a user's choice to allow or deny access to "powerful features" of the
+ * platform, as specified in the [Permissions W3C
+ * Specification](https://w3c.github.io/permissions/).
+ */
+final class WebKitPermissionStateQuery
+{
+    /** WebKitPermissionStateQuery values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /**
+     * Notify the web-engine of the selected permission state for the given query. This function
+     * should only be called as a response to the `WebKitWebView::query-permission-state` signal.
+     */
+    public function finish(WebKitPermissionState $state): void
+    {
+        unset($state);
+    }
+    /** Get the permission name for which access is being queried. */
+    public function get_name(): string
+    {
+        return '';
+    }
+    /** Get the permission origin for which access is being queried. */
+    public function get_security_origin(): WebKitSecurityOrigin
+    {
+        return null;
+    }
+}
+/**
+ * A permission request for locking the pointer.
+ */
+final class WebKitPointerLockPermissionRequest extends GObject implements WebKitPermissionRequest
+{
+    /** WebKitPointerLockPermissionRequest has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    public function allow(): void
+    {
+    }
+    public function deny(): void
+    {
+    }
+}
+/**
+ * A pending policy decision.
+ */
+class WebKitPolicyDecision extends GObject
+{
+    /** WebKitPolicyDecision is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Spawn a download from this decision. */
+    public function download(): void
+    {
+    }
+    /** #WebKitResponsePolicyDecision, this would cancel the request. */
+    public function ignore(): void
+    {
+    }
+    /** Accept the action which triggered this decision. */
+    public function use(): void
+    {
+    }
+    /** Accept the navigation action and continue with provided $policies. */
+    public function use_with_policies(WebKitWebsitePolicies $policies): void
+    {
+        unset($policies);
+    }
+}
+/**
+ * Enum values used for determining the type of a policy decision during
+ * #WebKitWebView::decide-policy.
+ */
+enum WebKitPolicyDecisionType : int
+{
+    case NavigationAction = 0;
+    case NewWindowAction = 1;
+    case Response = 2;
+}
+/**
+ * Enum values used to denote the various policy errors.
+ */
+enum WebKitPolicyError : int
+{
+    case Failed = 199;
+    case CannotShowMimeType = 100;
+    case CannotShowUri = 101;
+    case FrameLoadInterruptedByPolicyChange = 102;
+    case CannotUseRestrictedPort = 103;
+}
+/**
+ * Enum values used to denote the various print errors.
+ */
+enum WebKitPrintError : int
+{
+    case General = 599;
+    case PrinterNotFound = 500;
+    case InvalidPageRange = 501;
+}
+/**
+ * Controls a print operation.
+ *
+ * @property ?GtkPageSetup $page_setup
+ * @property ?GtkPrintSettings $print_settings
+ */
+final class WebKitPrintOperation extends GObject
+{
+    /** Create a new #WebKitPrintOperation to print $web_view contents. */
+    public function __construct(WebKitWebView $web_view)
+    {
+        unset($web_view);
+    }
+    /** Return the current page setup of $print_operation. */
+    public function get_page_setup(): ?GtkPageSetup
+    {
+        return null;
+    }
+    /** Return the current print settings of $print_operation. */
+    public function get_print_settings(): ?GtkPrintSettings
+    {
+        return null;
+    }
+    /** Start a print operation using current print settings and page setup. */
+    public function print(): void
+    {
+    }
+    /** Run the print dialog and start printing. */
+    public function run_dialog(?GtkWindow $parent): WebKitPrintOperationResponse
+    {
+        unset($parent);
+        return null;
+    }
+    /** Set the current page setup of $print_operation. */
+    public function set_page_setup(GtkPageSetup $page_setup): void
+    {
+        unset($page_setup);
+    }
+    /** Set the current print settings of $print_operation. */
+    public function set_print_settings(GtkPrintSettings $print_settings): void
+    {
+        unset($print_settings);
+    }
+}
+/**
+ * Enum values representing the response of the print dialog shown with
+ * webkit_print_operation_run_dialog().
+ */
+enum WebKitPrintOperationResponse : int
+{
+    case Print = 0;
+    case Cancel = 1;
+}
+/**
+ * A policy decision for resource responses.
+ *
+ * @property-read ?WebKitURIRequest $request
+ * @property-read ?WebKitURIResponse $response
+ */
+final class WebKitResponsePolicyDecision extends WebKitPolicyDecision
+{
+    /** WebKitResponsePolicyDecision has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Return the #WebKitURIRequest associated with the response decision. */
+    public function get_request(): WebKitURIRequest
+    {
+        return null;
+    }
+    /** Gets the value of the #WebKitResponsePolicyDecision:response property. */
+    public function get_response(): WebKitURIResponse
+    {
+        return null;
+    }
+    /** Gets whether the request is the main frame main resource */
+    public function is_main_frame_main_resource(): bool
+    {
+        return false;
+    }
+    /** Gets whether the MIME type of the response can be displayed in the #WebKitWebView. */
+    public function is_mime_type_supported(): bool
+    {
+        return false;
+    }
+}
+/**
+ * Enum values to specify the different ways in which a #WebKitWebView can save its current web
+ * page into a self-contained file.
+ */
+enum WebKitSaveMode : int
+{
+    case Mhtml = 0;
+}
+/**
+ * Carries details to be shown in user-facing dialogs.
+ */
+final class WebKitScriptDialog
+{
+    /** WebKitScriptDialog values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Close $dialog. */
+    public function close(): void
+    {
+    }
+    /** Set whether the user confirmed the dialog. */
+    public function confirm_set_confirmed(bool $confirmed): void
+    {
+        unset($confirmed);
+    }
+    /** Get the dialog type of a #WebKitScriptDialog. */
+    public function get_dialog_type(): WebKitScriptDialogType
+    {
+        return null;
+    }
+    /** Get the message of a #WebKitScriptDialog. */
+    public function get_message(): string
+    {
+        return '';
+    }
+    /** Get the default text of a #WebKitScriptDialog of type %WEBKIT_SCRIPT_DIALOG_PROMPT. */
+    public function prompt_get_default_text(): string
+    {
+        return '';
+    }
+    /** Set the text entered by the user in the dialog. */
+    public function prompt_set_text(string $text): void
+    {
+        unset($text);
+    }
+}
+/**
+ * Enum values used for determining the type of #WebKitScriptDialog
+ */
+enum WebKitScriptDialogType : int
+{
+    case Alert = 0;
+    case Confirm = 1;
+    case Prompt = 2;
+    case BeforeUnloadConfirm = 3;
+}
+/**
+ * A reply for a script message received. If no reply has been sent by the user, an automatically
+ * generated reply with undefined value with be sent.
+ */
+final class WebKitScriptMessageReply
+{
+    /** WebKitScriptMessageReply values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Reply to a script message with an error message. */
+    public function return_error_message(string $error_message): void
+    {
+        unset($error_message);
+    }
+    /** Reply to a script message with a value. */
+    public function return_value(JSCValue $reply_value): void
+    {
+        unset($reply_value);
+    }
+}
+/**
+ * Controls security settings in a #WebKitWebContext.
+ */
+final class WebKitSecurityManager extends GObject
+{
+    /** WebKitSecurityManager has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Register $scheme as a CORS (Cross-origin resource sharing) enabled scheme. */
+    public function register_uri_scheme_as_cors_enabled(string $scheme): void
+    {
+        unset($scheme);
+    }
+    /** Register $scheme as a display isolated scheme. */
+    public function register_uri_scheme_as_display_isolated(string $scheme): void
+    {
+        unset($scheme);
+    }
+    /** Register $scheme as an empty document scheme. */
+    public function register_uri_scheme_as_empty_document(string $scheme): void
+    {
+        unset($scheme);
+    }
+    /** Register $scheme as a local scheme. */
+    public function register_uri_scheme_as_local(string $scheme): void
+    {
+        unset($scheme);
+    }
+    /** Register $scheme as a no-access scheme. */
+    public function register_uri_scheme_as_no_access(string $scheme): void
+    {
+        unset($scheme);
+    }
+    /** Register $scheme as a secure scheme. */
+    public function register_uri_scheme_as_secure(string $scheme): void
+    {
+        unset($scheme);
+    }
+    /** Whether $scheme is considered as a CORS enabled scheme. */
+    public function uri_scheme_is_cors_enabled(string $scheme): bool
+    {
+        unset($scheme);
+        return false;
+    }
+    /** Whether $scheme is considered as a display isolated scheme. */
+    public function uri_scheme_is_display_isolated(string $scheme): bool
+    {
+        unset($scheme);
+        return false;
+    }
+    /** Whether $scheme is considered as an empty document scheme. */
+    public function uri_scheme_is_empty_document(string $scheme): bool
+    {
+        unset($scheme);
+        return false;
+    }
+    /** Whether $scheme is considered as a local scheme. */
+    public function uri_scheme_is_local(string $scheme): bool
+    {
+        unset($scheme);
+        return false;
+    }
+    /** Whether $scheme is considered as a no-access scheme. */
+    public function uri_scheme_is_no_access(string $scheme): bool
+    {
+        unset($scheme);
+        return false;
+    }
+    /** Whether $scheme is considered as a secure scheme. */
+    public function uri_scheme_is_secure(string $scheme): bool
+    {
+        unset($scheme);
+        return false;
+    }
+}
+/**
+ * A security boundary for websites.
+ */
+final class WebKitSecurityOrigin
+{
+    /** Create a new security origin from the provided protocol, host and port. */
+    public function __construct(string $protocol, string $host, int $port)
+    {
+        unset($protocol);
+        unset($host);
+        unset($port);
+    }
+    /** Create a new security origin from the provided. */
+    public static function new_for_uri(string $uri): WebKitSecurityOrigin
+    {
+        unset($uri);
+        return null;
+    }
+    /** Gets the hostname of $origin. */
+    public function get_host(): ?string
+    {
+        return null;
+    }
+    /** Gets the port of $origin. */
+    public function get_port(): int
+    {
+        return 0;
+    }
+    /** Gets the protocol of $origin. */
+    public function get_protocol(): ?string
+    {
+        return null;
+    }
+    /** Gets a string representation of $origin. */
+    public function to_string(): ?string
+    {
+        return null;
+    }
+}
+/**
+ * Control the behaviour of a #WebKitWebView.
+ *
+ * @property bool $allow_file_access_from_file_urls
+ * @property bool $allow_modal_dialogs
+ * @property bool $allow_top_navigation_to_data_urls
+ * @property bool $allow_universal_access_from_file_urls
+ * @property bool $auto_load_images
+ * @property ?string $cursive_font_family
+ * @property ?string $default_charset
+ * @property ?string $default_font_family
+ * @property int $default_font_size
+ * @property int $default_monospace_font_size
+ * @property bool $disable_web_security
+ * @property bool $draw_compositing_indicators
+ * @property bool $enable_2d_canvas_acceleration
+ * @property bool $enable_back_forward_navigation_gestures
+ * @property bool $enable_caret_browsing
+ * @property bool $enable_developer_extras
+ * @property bool $enable_encrypted_media
+ * @property bool $enable_fullscreen
+ * @property bool $enable_html5_database
+ * @property bool $enable_html5_local_storage
+ * @property bool $enable_javascript
+ * @property bool $enable_javascript_markup
+ * @property bool $enable_media
+ * @property bool $enable_media_capabilities
+ * @property bool $enable_media_stream
+ * @property bool $enable_mediasource
+ * @property bool $enable_mock_capture_devices
+ * @property bool $enable_page_cache
+ * @property bool $enable_resizable_text_areas
+ * @property bool $enable_site_specific_quirks
+ * @property bool $enable_smooth_scrolling
+ * @property bool $enable_spatial_navigation
+ * @property bool $enable_tabs_to_links
+ * @property bool $enable_webaudio
+ * @property bool $enable_webgl
+ * @property bool $enable_webrtc
+ * @property bool $enable_write_console_messages_to_stdout
+ * @property ?string $fantasy_font_family
+ * @property WebKitHardwareAccelerationPolicy $hardware_acceleration_policy
+ * @property bool $javascript_can_access_clipboard
+ * @property bool $javascript_can_open_windows_automatically
+ * @property ?string $math_font_family
+ * @property ?string $media_content_types_requiring_hardware_support
+ * @property bool $media_playback_allows_inline
+ * @property bool $media_playback_requires_user_gesture
+ * @property int $minimum_font_size
+ * @property ?string $monospace_font_family
+ * @property ?string $pictograph_font_family
+ * @property bool $print_backgrounds
+ * @property ?string $sans_serif_font_family
+ * @property ?string $serif_font_family
+ * @property ?string $user_agent
+ * @property ?string $webrtc_udp_ports_range
+ * @property bool $zoom_text_only
+ */
+final class WebKitSettings extends GObject
+{
+    /** Creates a new #WebKitSettings instance with default values. */
+    public function __construct()
+    {
+    }
+    /** Convert $points to the equivalent value in pixels. */
+    public static function font_size_to_pixels(int $points): int
+    {
+        unset($points);
+        return 0;
+    }
+    /** Convert $pixels to the equivalent value in points. */
+    public static function font_size_to_points(int $pixels): int
+    {
+        unset($pixels);
+        return 0;
+    }
+    /** Gets the list of all available WebKit features. */
+    public static function get_all_features(): WebKitFeatureList
+    {
+        return null;
+    }
+    /** Gets the list of available development WebKit features. */
+    public static function get_development_features(): WebKitFeatureList
+    {
+        return null;
+    }
+    /** Gets the list of available experimental WebKit features. */
+    public static function get_experimental_features(): WebKitFeatureList
+    {
+        return null;
+    }
+    /** Get the #WebKitSettings:allow-file-access-from-file-urls property. */
+    public function get_allow_file_access_from_file_urls(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:allow-modal-dialogs property. */
+    public function get_allow_modal_dialogs(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:allow-top-navigation-to-data-urls property. */
+    public function get_allow_top_navigation_to_data_urls(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:allow-universal-access-from-file-urls property. */
+    public function get_allow_universal_access_from_file_urls(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:auto-load-images property. */
+    public function get_auto_load_images(): bool
+    {
+        return false;
+    }
+    /** Gets the #WebKitSettings:cursive-font-family property. */
+    public function get_cursive_font_family(): string
+    {
+        return '';
+    }
+    /** Gets the #WebKitSettings:default-charset property. */
+    public function get_default_charset(): string
+    {
+        return '';
+    }
+    /** Gets the #WebKitSettings:default-font-family property. */
+    public function get_default_font_family(): string
+    {
+        return '';
+    }
+    /** Gets the #WebKitSettings:default-font-size property. */
+    public function get_default_font_size(): int
+    {
+        return 0;
+    }
+    /** Gets the #WebKitSettings:default-monospace-font-size property. */
+    public function get_default_monospace_font_size(): int
+    {
+        return 0;
+    }
+    /** Get the #WebKitSettings:disable-web-security property. */
+    public function get_disable_web_security(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:draw-compositing-indicators property. */
+    public function get_draw_compositing_indicators(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-2d-canvas-acceleration property. */
+    public function get_enable_2d_canvas_acceleration(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-back-forward-navigation-gestures property. */
+    public function get_enable_back_forward_navigation_gestures(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-caret-browsing property. */
+    public function get_enable_caret_browsing(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-developer-extras property. */
+    public function get_enable_developer_extras(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-encrypted-media property. */
+    public function get_enable_encrypted_media(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-fullscreen property. */
+    public function get_enable_fullscreen(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-html5-database property. */
+    public function get_enable_html5_database(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-html5-local-storage property. */
+    public function get_enable_html5_local_storage(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-javascript property. */
+    public function get_enable_javascript(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-javascript-markup property. */
+    public function get_enable_javascript_markup(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-media property. */
+    public function get_enable_media(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-media-capabilities property. */
+    public function get_enable_media_capabilities(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-media-stream property. */
+    public function get_enable_media_stream(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-mediasource property. */
+    public function get_enable_mediasource(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-mock-capture-devices property. */
+    public function get_enable_mock_capture_devices(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-page-cache property. */
+    public function get_enable_page_cache(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-resizable-text-areas property. */
+    public function get_enable_resizable_text_areas(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-site-specific-quirks property. */
+    public function get_enable_site_specific_quirks(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-smooth-scrolling property. */
+    public function get_enable_smooth_scrolling(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-spatial-navigation property. */
+    public function get_enable_spatial_navigation(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-tabs-to-links property. */
+    public function get_enable_tabs_to_links(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-webaudio property. */
+    public function get_enable_webaudio(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-webgl property. */
+    public function get_enable_webgl(): bool
+    {
+        return false;
+    }
+    /** Get the [property@Settings:enable-webrtc] property. */
+    public function get_enable_webrtc(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:enable-write-console-messages-to-stdout property. */
+    public function get_enable_write_console_messages_to_stdout(): bool
+    {
+        return false;
+    }
+    /** Gets the #WebKitSettings:fantasy-font-family property. */
+    public function get_fantasy_font_family(): string
+    {
+        return '';
+    }
+    /** Gets whether a feature is enabled. */
+    public function get_feature_enabled(WebKitFeature $feature): bool
+    {
+        unset($feature);
+        return false;
+    }
+    /** Get the #WebKitSettings:hardware-acceleration-policy property. */
+    public function get_hardware_acceleration_policy(): WebKitHardwareAccelerationPolicy
+    {
+        return null;
+    }
+    /** Get the #WebKitSettings:javascript-can-access-clipboard property. */
+    public function get_javascript_can_access_clipboard(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:javascript-can-open-windows-automatically property. */
+    public function get_javascript_can_open_windows_automatically(): bool
+    {
+        return false;
+    }
+    /** Gets the #WebKitSettings:math-font-family property. */
+    public function get_math_font_family(): ?string
+    {
+        return null;
+    }
+    /** Gets the #WebKitSettings:media-content-types-requiring-hardware-support property. */
+    public function get_media_content_types_requiring_hardware_support(): string
+    {
+        return '';
+    }
+    /** Get the #WebKitSettings:media-playback-allows-inline property. */
+    public function get_media_playback_allows_inline(): bool
+    {
+        return false;
+    }
+    /** Get the #WebKitSettings:media-playback-requires-user-gesture property. */
+    public function get_media_playback_requires_user_gesture(): bool
+    {
+        return false;
+    }
+    /** Gets the #WebKitSettings:minimum-font-size property. */
+    public function get_minimum_font_size(): int
+    {
+        return 0;
+    }
+    /** Gets the #WebKitSettings:monospace-font-family property. */
+    public function get_monospace_font_family(): string
+    {
+        return '';
+    }
+    /** Gets the #WebKitSettings:pictograph-font-family property. */
+    public function get_pictograph_font_family(): string
+    {
+        return '';
+    }
+    /** Get the #WebKitSettings:print-backgrounds property. */
+    public function get_print_backgrounds(): bool
+    {
+        return false;
+    }
+    /** Gets the #WebKitSettings:sans-serif-font-family property. */
+    public function get_sans_serif_font_family(): string
+    {
+        return '';
+    }
+    /** Gets the #WebKitSettings:serif-font-family property. */
+    public function get_serif_font_family(): string
+    {
+        return '';
+    }
+    /** Get the #WebKitSettings:user-agent property. */
+    public function get_user_agent(): string
+    {
+        return '';
+    }
+    /** Get the [property@Settings:webrtc-udp-ports-range] property. */
+    public function get_webrtc_udp_ports_range(): string
+    {
+        return '';
+    }
+    /** Get the #WebKitSettings:zoom-text-only property. */
+    public function get_zoom_text_only(): bool
+    {
+        return false;
+    }
+    /** Set the #WebKitSettings:allow-file-access-from-file-urls property. */
+    public function set_allow_file_access_from_file_urls(bool $allowed): void
+    {
+        unset($allowed);
+    }
+    /** Set the #WebKitSettings:allow-modal-dialogs property. */
+    public function set_allow_modal_dialogs(bool $allowed): void
+    {
+        unset($allowed);
+    }
+    /** Set the #WebKitSettings:allow-top-navigation-to-data-urls property. */
+    public function set_allow_top_navigation_to_data_urls(bool $allowed): void
+    {
+        unset($allowed);
+    }
+    /** Set the #WebKitSettings:allow-universal-access-from-file-urls property. */
+    public function set_allow_universal_access_from_file_urls(bool $allowed): void
+    {
+        unset($allowed);
+    }
+    /** Set the #WebKitSettings:auto-load-images property. */
+    public function set_auto_load_images(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:cursive-font-family property. */
+    public function set_cursive_font_family(string $cursive_font_family): void
+    {
+        unset($cursive_font_family);
+    }
+    /** Set the #WebKitSettings:default-charset property. */
+    public function set_default_charset(string $default_charset): void
+    {
+        unset($default_charset);
+    }
+    /** Set the #WebKitSettings:default-font-family property. */
+    public function set_default_font_family(string $default_font_family): void
+    {
+        unset($default_font_family);
+    }
+    /** Set the #WebKitSettings:default-font-size property. */
+    public function set_default_font_size(int $font_size): void
+    {
+        unset($font_size);
+    }
+    /** Set the #WebKitSettings:default-monospace-font-size property. */
+    public function set_default_monospace_font_size(int $font_size): void
+    {
+        unset($font_size);
+    }
+    /** Set the #WebKitSettings:disable-web-security property. */
+    public function set_disable_web_security(bool $disabled): void
+    {
+        unset($disabled);
+    }
+    /** Set the #WebKitSettings:draw-compositing-indicators property. */
+    public function set_draw_compositing_indicators(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-2d-canvas-acceleration property. */
+    public function set_enable_2d_canvas_acceleration(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-back-forward-navigation-gestures property. */
+    public function set_enable_back_forward_navigation_gestures(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-caret-browsing property. */
+    public function set_enable_caret_browsing(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-developer-extras property. */
+    public function set_enable_developer_extras(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-encrypted-media property. */
+    public function set_enable_encrypted_media(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-fullscreen property. */
+    public function set_enable_fullscreen(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-html5-database property. */
+    public function set_enable_html5_database(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-html5-local-storage property. */
+    public function set_enable_html5_local_storage(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-javascript property. */
+    public function set_enable_javascript(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-javascript-markup property. */
+    public function set_enable_javascript_markup(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-media property. */
+    public function set_enable_media(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-media-capabilities property. */
+    public function set_enable_media_capabilities(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-media-stream property. */
+    public function set_enable_media_stream(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-mediasource property. */
+    public function set_enable_mediasource(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-mock-capture-devices property. */
+    public function set_enable_mock_capture_devices(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-page-cache property. */
+    public function set_enable_page_cache(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-resizable-text-areas property. */
+    public function set_enable_resizable_text_areas(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-site-specific-quirks property. */
+    public function set_enable_site_specific_quirks(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-smooth-scrolling property. */
+    public function set_enable_smooth_scrolling(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-spatial-navigation property. */
+    public function set_enable_spatial_navigation(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-tabs-to-links property. */
+    public function set_enable_tabs_to_links(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-webaudio property. */
+    public function set_enable_webaudio(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-webgl property. */
+    public function set_enable_webgl(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the [property@Settings:enable-webrtc] property. */
+    public function set_enable_webrtc(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:enable-write-console-messages-to-stdout property. */
+    public function set_enable_write_console_messages_to_stdout(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:fantasy-font-family property. */
+    public function set_fantasy_font_family(string $fantasy_font_family): void
+    {
+        unset($fantasy_font_family);
+    }
+    /** Enables or disables a feature. */
+    public function set_feature_enabled(WebKitFeature $feature, bool $enabled): void
+    {
+        unset($feature);
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:hardware-acceleration-policy property. */
+    public function set_hardware_acceleration_policy(WebKitHardwareAccelerationPolicy $policy): void
+    {
+        unset($policy);
+    }
+    /** Set the #WebKitSettings:javascript-can-access-clipboard property. */
+    public function set_javascript_can_access_clipboard(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:javascript-can-open-windows-automatically property. */
+    public function set_javascript_can_open_windows_automatically(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:math-font-family property. */
+    public function set_math_font_family(?string $math_font_family): void
+    {
+        unset($math_font_family);
+    }
+    /** Set the #WebKitSettings:media-content-types-requiring-hardware-support property. */
+    public function set_media_content_types_requiring_hardware_support(?string $content_types): void
+    {
+        unset($content_types);
+    }
+    /** Set the #WebKitSettings:media-playback-allows-inline property. */
+    public function set_media_playback_allows_inline(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:media-playback-requires-user-gesture property. */
+    public function set_media_playback_requires_user_gesture(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the #WebKitSettings:minimum-font-size property. */
+    public function set_minimum_font_size(int $font_size): void
+    {
+        unset($font_size);
+    }
+    /** Set the #WebKitSettings:monospace-font-family property. */
+    public function set_monospace_font_family(string $monospace_font_family): void
+    {
+        unset($monospace_font_family);
+    }
+    /** Set the #WebKitSettings:pictograph-font-family property. */
+    public function set_pictograph_font_family(string $pictograph_font_family): void
+    {
+        unset($pictograph_font_family);
+    }
+    /** Set the #WebKitSettings:print-backgrounds property. */
+    public function set_print_backgrounds(bool $print_backgrounds): void
+    {
+        unset($print_backgrounds);
+    }
+    /** Set the #WebKitSettings:sans-serif-font-family property. */
+    public function set_sans_serif_font_family(string $sans_serif_font_family): void
+    {
+        unset($sans_serif_font_family);
+    }
+    /** Set the #WebKitSettings:serif-font-family property. */
+    public function set_serif_font_family(string $serif_font_family): void
+    {
+        unset($serif_font_family);
+    }
+    /** Set the #WebKitSettings:user-agent property. */
+    public function set_user_agent(?string $user_agent): void
+    {
+        unset($user_agent);
+    }
+    /** Set the #WebKitSettings:user-agent property by appending the application details. */
+    public function set_user_agent_with_application_details(?string $application_name, ?string $application_version): void
+    {
+        unset($application_name);
+        unset($application_version);
+    }
+    /** Set the [property@Settings:webrtc-udp-ports-range] property. */
+    public function set_webrtc_udp_ports_range(string $udp_port_range): void
+    {
+        unset($udp_port_range);
+    }
+    /** Set the #WebKitSettings:zoom-text-only property. */
+    public function set_zoom_text_only(bool $zoom_text_only): void
+    {
+        unset($zoom_text_only);
+    }
+}
+/**
+ * Enum values used to denote errors happening when creating snapshots of #WebKitWebView
+ */
+enum WebKitSnapshotError : int
+{
+    case Create = 799;
+}
+/**
+ * Enum values used to specify options when taking a snapshot from a #WebKitWebView.
+ */
+final class WebKitSnapshotOptions
+{
+    public const int NONE = 0;
+    public const int INCLUDE_SELECTION_HIGHLIGHTING = 1;
+    public const int TRANSPARENT_BACKGROUND = 2;
+}
+/**
+ * Enum values used to specify the region from which to get a #WebKitWebView snapshot
+ */
+enum WebKitSnapshotRegion : int
+{
+    case Visible = 0;
+    case FullDocument = 1;
+}
+/**
+ * Enum values used to denote the TLS errors policy.
+ */
+enum WebKitTLSErrorsPolicy : int
+{
+    case Ignore = 0;
+    case Fail = 1;
+}
+/**
+ * Represents a URI request.
+ *
+ * @property ?string $uri
+ */
+final class WebKitURIRequest extends GObject
+{
+    /** Creates a new #WebKitURIRequest for the given URI. */
+    public function __construct(string $uri)
+    {
+        unset($uri);
+    }
+    /** Get the HTTP method of the #WebKitURIRequest. */
+    public function get_http_method(): string
+    {
+        return '';
+    }
+    /** Obtains the request URI. */
+    public function get_uri(): string
+    {
+        return '';
+    }
+    /** Set the URI of $request */
+    public function set_uri(string $uri): void
+    {
+        unset($uri);
+    }
+}
+/**
+ * Represents an URI response.
+ *
+ * @property-read int $content_length
+ * @property-read ?string $mime_type
+ * @property-read int $status_code
+ * @property-read ?string $suggested_filename
+ * @property-read ?string $uri
+ */
+final class WebKitURIResponse extends GObject
+{
+    /** WebKitURIResponse has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Get the expected content length of the #WebKitURIResponse. */
+    public function get_content_length(): int
+    {
+        return 0;
+    }
+    /** Gets the MIME type of the response. */
+    public function get_mime_type(): string
+    {
+        return '';
+    }
+    /** Get the status code of the #WebKitURIResponse. */
+    public function get_status_code(): int
+    {
+        return 0;
+    }
+    /** Get the suggested filename for $response. */
+    public function get_suggested_filename(): string
+    {
+        return '';
+    }
+    /** Gets the URI which resulted in the response. */
+    public function get_uri(): string
+    {
+        return '';
+    }
+}
+/**
+ * A compiled set of rules which applied to resource loads.
+ */
+final class WebKitUserContentFilter
+{
+    /** WebKitUserContentFilter values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Obtain the identifier previously used to save the $user_content_filter. */
+    public function get_identifier(): string
+    {
+        return '';
+    }
+}
+/**
+ * Errors that can occur while compiling content filters.
+ */
+enum WebKitUserContentFilterError : int
+{
+    case InvalidSource = 0;
+    case NotFound = 1;
+}
+/**
+ * Handles storage of user content filters on disk.
+ *
+ * @property ?string $path
+ */
+final class WebKitUserContentFilterStore extends GObject
+{
+    /** Create a new #WebKitUserContentFilterStore to manipulate filters stored at $storage_path. */
+    public function __construct(string $storage_path)
+    {
+        unset($storage_path);
+    }
+    /** Asynchronously retrieve a list of the identifiers for all the stored filters. */
+    public function fetch_identifiers(?GCancellable $cancellable, callable $callback): void
+    {
+        unset($cancellable);
+        unset($callback);
+    }
+    /**
+     * Finishes an asynchronous fetch of the list of stored filters.
+     *
+     * @return list<string>
+     */
+    public function fetch_identifiers_finish(GAsyncResult $result): array
+    {
+        unset($result);
+        return [];
+    }
+    /** Gets the storage path for user content filters. */
+    public function get_path(): string
+    {
+        return '';
+    }
+    /** Asynchronously load a content filter given its $identifier. */
+    public function load(string $identifier, ?GCancellable $cancellable, callable $callback): void
+    {
+        unset($identifier);
+        unset($cancellable);
+        unset($callback);
+    }
+    /**
+     * Finishes an asynchronous filter load previously started with
+     * webkit_user_content_filter_store_load().
+     */
+    public function load_finish(GAsyncResult $result): WebKitUserContentFilter
+    {
+        unset($result);
+        return null;
+    }
+    /** Asynchronously remove a content filter given its $identifier. */
+    public function remove(string $identifier, ?GCancellable $cancellable, callable $callback): void
+    {
+        unset($identifier);
+        unset($cancellable);
+        unset($callback);
+    }
+    /**
+     * Finishes an asynchronous filter removal previously started with
+     * webkit_user_content_filter_store_remove().
+     */
+    public function remove_finish(GAsyncResult $result): bool
+    {
+        unset($result);
+        return false;
+    }
+    /** Asynchronously save a content filter from a set source rule. */
+    public function save(string $identifier, string $source, ?GCancellable $cancellable, callable $callback): void
+    {
+        unset($identifier);
+        unset($source);
+        unset($cancellable);
+        unset($callback);
+    }
+    /**
+     * Finishes an asynchronous filter save previously started with
+     * webkit_user_content_filter_store_save().
+     */
+    public function save_finish(GAsyncResult $result): WebKitUserContentFilter
+    {
+        unset($result);
+        return null;
+    }
+    /** Asynchronously save a content filter from the contents of a file. */
+    public function save_from_file(string $identifier, string $file, ?GCancellable $cancellable, callable $callback): void
+    {
+        unset($identifier);
+        unset($file);
+        unset($cancellable);
+        unset($callback);
+    }
+    /**
+     * Finishes and asynchronous filter save previously started with
+     * webkit_user_content_filter_store_save_from_file().
+     */
+    public function save_from_file_finish(GAsyncResult $result): WebKitUserContentFilter
+    {
+        unset($result);
+        return null;
+    }
+}
+/**
+ * Specifies in which frames user style sheets are to be inserted in.
+ */
+enum WebKitUserContentInjectedFrames : int
+{
+    case AllFrames = 0;
+    case TopFrame = 1;
+}
+/**
+ * Manages user-defined content which affects web pages.
+ */
+final class WebKitUserContentManager extends GObject
+{
+    /** Creates a new user content manager. */
+    public function __construct()
+    {
+    }
+    /** Adds a #WebKitUserContentFilter to the given #WebKitUserContentManager. */
+    public function add_filter(WebKitUserContentFilter $filter): void
+    {
+        unset($filter);
+    }
+    /** Adds a #WebKitUserScript to the given #WebKitUserContentManager. */
+    public function add_script(WebKitUserScript $script): void
+    {
+        unset($script);
+    }
+    /** Adds a #WebKitUserStyleSheet to the given #WebKitUserContentManager. */
+    public function add_style_sheet(WebKitUserStyleSheet $stylesheet): void
+    {
+        unset($stylesheet);
+    }
+    /** Registers a new user script message handler in script world. */
+    public function register_script_message_handler(string $name, ?string $world_name): bool
+    {
+        unset($name);
+        unset($world_name);
+        return false;
+    }
+    /** Registers a new user script message handler in script world with name $world_name. */
+    public function register_script_message_handler_with_reply(string $name, ?string $world_name): bool
+    {
+        unset($name);
+        unset($world_name);
+        return false;
+    }
+    /** Removes all content filters from the given #WebKitUserContentManager. */
+    public function remove_all_filters(): void
+    {
+    }
+    /** Removes all user scripts from the given #WebKitUserContentManager */
+    public function remove_all_scripts(): void
+    {
+    }
+    /** Removes all user style sheets from the given #WebKitUserContentManager. */
+    public function remove_all_style_sheets(): void
+    {
+    }
+    /** Removes a filter from the given #WebKitUserContentManager. */
+    public function remove_filter(WebKitUserContentFilter $filter): void
+    {
+        unset($filter);
+    }
+    /** Removes a filter by the given identifier. */
+    public function remove_filter_by_id(string $filter_id): void
+    {
+        unset($filter_id);
+    }
+    /** Removes a #WebKitUserScript from the given #WebKitUserContentManager. */
+    public function remove_script(WebKitUserScript $script): void
+    {
+        unset($script);
+    }
+    /** Removes a #WebKitUserStyleSheet from the given #WebKitUserContentManager. */
+    public function remove_style_sheet(WebKitUserStyleSheet $stylesheet): void
+    {
+        unset($stylesheet);
+    }
+    /**
+     * Unregisters a previously registered message handler in script world with name $world_name.
+     * If `null` is passed as the $world_name, the default world will be used.
+     */
+    public function unregister_script_message_handler(string $name, ?string $world_name): void
+    {
+        unset($name);
+        unset($world_name);
+    }
+}
+/**
+ * A permission request for accessing user's audio/video devices.
+ *
+ * @property-read bool $is_for_audio_device
+ * @property-read bool $is_for_video_device
+ */
+final class WebKitUserMediaPermissionRequest extends GObject implements WebKitPermissionRequest
+{
+    /** WebKitUserMediaPermissionRequest has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    public function allow(): void
+    {
+    }
+    public function deny(): void
+    {
+    }
+}
+/**
+ * Message that can be sent between the UI process and web process extensions.
+ *
+ * @property ?string $name
+ * @property mixed $parameters
+ */
+final class WebKitUserMessage extends GObject
+{
+    /** Create a new #WebKitUserMessage with $name. */
+    public function __construct(string $name, mixed $parameters = null)
+    {
+        unset($name);
+        unset($parameters);
+    }
+    /** Get the $message name. */
+    public function get_name(): string
+    {
+        return '';
+    }
+    /** Get the $message parameters. */
+    public function get_parameters(): mixed
+    {
+        return null;
+    }
+    /** Send a reply to an user message. */
+    public function send_reply(WebKitUserMessage $reply): void
+    {
+        unset($reply);
+    }
+}
+/**
+ * Enum values used to denote errors happening when sending user messages.
+ */
+enum WebKitUserMessageError : int
+{
+    case Message = 0;
+}
+/**
+ * A JavaScript snippet which can be injected in loaded pages.
+ */
+final class WebKitUserScript
+{
+    /** Creates a new user script. */
+    public function __construct(string $source, WebKitUserContentInjectedFrames $injected_frames, WebKitUserScriptInjectionTime $injection_time, ?array $allow_list = null, ?array $block_list = null)
+    {
+        unset($source);
+        unset($injected_frames);
+        unset($injection_time);
+        unset($allow_list);
+        unset($block_list);
+    }
+    /** Creates a new user script for script world with name $world_name. */
+    public static function new_for_world(string $source, WebKitUserContentInjectedFrames $injected_frames, WebKitUserScriptInjectionTime $injection_time, string $world_name, ?array $allow_list = null, ?array $block_list = null): WebKitUserScript
+    {
+        unset($source);
+        unset($injected_frames);
+        unset($injection_time);
+        unset($world_name);
+        unset($allow_list);
+        unset($block_list);
+        return null;
+    }
+}
+/**
+ * Specifies at which place of documents an user script will be inserted.
+ */
+enum WebKitUserScriptInjectionTime : int
+{
+    case Start = 0;
+    case End = 1;
+}
+/**
+ * Specifies how to treat an user style sheet.
+ */
+enum WebKitUserStyleLevel : int
+{
+    case User = 0;
+    case Author = 1;
+}
+/**
+ * A CSS style sheet which can be injected in loaded pages.
+ */
+final class WebKitUserStyleSheet
+{
+    /** Creates a new user style sheet. */
+    public function __construct(string $source, WebKitUserContentInjectedFrames $injected_frames, WebKitUserStyleLevel $level, ?array $allow_list = null, ?array $block_list = null)
+    {
+        unset($source);
+        unset($injected_frames);
+        unset($level);
+        unset($allow_list);
+        unset($block_list);
+    }
+    /** Creates a new user style sheet for script world. */
+    public static function new_for_world(string $source, WebKitUserContentInjectedFrames $injected_frames, WebKitUserStyleLevel $level, string $world_name, ?array $allow_list = null, ?array $block_list = null): WebKitUserStyleSheet
+    {
+        unset($source);
+        unset($injected_frames);
+        unset($level);
+        unset($world_name);
+        unset($allow_list);
+        unset($block_list);
+        return null;
+    }
+}
+/**
+ * Manages aspects common to all #WebKitWebView<!-- -->s
+ *
+ * @property-write ?WebKitMemoryPressureSettings $memory_pressure_settings
+ * @property ?string $time_zone_override
+ */
+final class WebKitWebContext extends GObject
+{
+    /** Create a new #WebKitWebContext. */
+    public function __construct()
+    {
+    }
+    /** Gets the default web context. */
+    public static function get_default(): WebKitWebContext
+    {
+        return null;
+    }
+    /** Adds a path to be mounted in the sandbox. */
+    public function add_path_to_sandbox(string $path, bool $read_only): void
+    {
+        unset($path);
+        unset($read_only);
+    }
+    /** Returns the current cache model. */
+    public function get_cache_model(): WebKitCacheModel
+    {
+        return null;
+    }
+    /** Get the #WebKitGeolocationManager of $context. */
+    public function get_geolocation_manager(): WebKitGeolocationManager
+    {
+        return null;
+    }
+    /** Get the #WebKitNetworkSession used for automation sessions started in $context. */
+    public function get_network_session_for_automation(): ?WebKitNetworkSession
+    {
+        return null;
+    }
+    /** Get the #WebKitSecurityManager of $context. */
+    public function get_security_manager(): WebKitSecurityManager
+    {
+        return null;
+    }
+    /** Get whether spell checking feature is currently enabled. */
+    public function get_spell_checking_enabled(): bool
+    {
+        return false;
+    }
+    /**
+     * Get the the list of spell checking languages.
+     *
+     * @return list<string>
+     */
+    public function get_spell_checking_languages(): array
+    {
+        return [];
+    }
+    /** Get the #WebKitWebContext:time-zone-override property. */
+    public function get_time_zone_override(): string
+    {
+        return '';
+    }
+    /** Get whether automation is allowed in $context. */
+    public function is_automation_allowed(): bool
+    {
+        return false;
+    }
+    /** Send $message to all web process extensions associated to $context. */
+    public function send_message_to_all_extensions(WebKitUserMessage $message): void
+    {
+        unset($message);
+    }
+    /** Set whether automation is allowed in $context. */
+    public function set_automation_allowed(bool $allowed): void
+    {
+        unset($allowed);
+    }
+    /** Specifies a usage model for WebViews. */
+    public function set_cache_model(WebKitCacheModel $cache_model): void
+    {
+        unset($cache_model);
+    }
+    /** Set the list of preferred languages. */
+    public function set_preferred_languages(?array $languages): void
+    {
+        unset($languages);
+    }
+    /** Enable or disable the spell checking feature. */
+    public function set_spell_checking_enabled(bool $enabled): void
+    {
+        unset($enabled);
+    }
+    /** Set the list of spell checking languages to be used for spell checking. */
+    public function set_spell_checking_languages(array $languages): void
+    {
+        unset($languages);
+    }
+    /** Set the directory where WebKit will look for web process extensions. */
+    public function set_web_process_extensions_directory(string $directory): void
+    {
+        unset($directory);
+    }
+    /** Set user data to be passed to Web Extensions on initialization. */
+    public function set_web_process_extensions_initialization_user_data(mixed $user_data = null): void
+    {
+        unset($user_data);
+    }
+}
+/**
+ * Enum values used for setting if a #WebKitWebView is intended for WebExtensions.
+ */
+enum WebKitWebExtensionMode : int
+{
+    case None = 0;
+    case Manifestv2 = 1;
+    case Manifestv3 = 2;
+}
+/**
+ * Access to the WebKit inspector.
+ *
+ * @property-read int $attached_height
+ * @property-read bool $can_attach
+ * @property-read ?string $inspected_uri
+ */
+final class WebKitWebInspector extends GObject
+{
+    /** WebKitWebInspector has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Request $inspector to be attached. */
+    public function attach(): void
+    {
+    }
+    /** Request $inspector to be closed. */
+    public function close(): void
+    {
+    }
+    /** Request $inspector to be detached. */
+    public function detach(): void
+    {
+    }
+    /** Get the height that the inspector view when attached. */
+    public function get_attached_height(): int
+    {
+        return 0;
+    }
+    /**
+     * Whether the $inspector can be attached to the same window that contains the inspected view.
+     */
+    public function get_can_attach(): bool
+    {
+        return false;
+    }
+    /** Get the URI that is currently being inspected. */
+    public function get_inspected_uri(): string
+    {
+        return '';
+    }
+    /** Get the #WebKitWebViewBase used to display the inspector. */
+    public function get_web_view(): ?WebKitWebViewBase
+    {
+        return null;
+    }
+    /**
+     * Whether the $inspector view is currently attached to the same window that contains the
+     * inspected view.
+     */
+    public function is_attached(): bool
+    {
+        return false;
+    }
+    /** Request $inspector to be shown. */
+    public function show(): void
+    {
+    }
+}
+/**
+ * Enum values used to specify the reason why the web process terminated abnormally.
+ */
+enum WebKitWebProcessTerminationReason : int
+{
+    case Crashed = 0;
+    case ExceededMemoryLimit = 1;
+    case TerminatedByApi = 2;
+}
+/**
+ * Represents a resource at the end of a URI.
+ *
+ * @property-read ?WebKitURIResponse $response
+ * @property-read ?string $uri
+ */
+final class WebKitWebResource extends GObject
+{
+    /** WebKitWebResource has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Asynchronously get the raw data for $resource. */
+    public function get_data(?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Retrieves the #WebKitURIResponse of the resource load operation. */
+    public function get_response(): WebKitURIResponse
+    {
+        return null;
+    }
+    /** Returns the current active URI of $resource. */
+    public function get_uri(): string
+    {
+        return '';
+    }
+    /**
+     * Finish an asynchronous operation started with get_data(): the resource's data as bytes
+     * (a page's HTML, an image's file). Throws the GError the load failed with.
+     */
+    public function get_data_finish(GAsyncResult $result): string
+    {
+        unset($result);
+        return '';
+    }
+}
+/**
+ * The central class of the WPE WebKit and WebKitGTK APIs.
+ *
+ * @property WebKitAutomationBrowsingContextPresentation $automation_presentation_type
+ * @property WebKitMediaCaptureState $camera_capture_state
+ * @property ?string $default_content_security_policy
+ * @property WebKitMediaCaptureState $display_capture_state
+ * @property bool $editable
+ * @property-read float $estimated_load_progress
+ * @property-read ?GdkTexture $favicon
+ * @property bool $is_controlled_by_automation
+ * @property-read bool $is_immersive_mode_enabled
+ * @property-read bool $is_loading
+ * @property bool $is_muted
+ * @property-read bool $is_playing_audio
+ * @property-read bool $is_web_process_responsive
+ * @property WebKitMediaCaptureState $microphone_capture_state
+ * @property ?WebKitNetworkSession $network_session
+ * @property-read int $page_id
+ * @property-write ?WebKitWebView $related_view
+ * @property-write ?WebKitSettings $settings
+ * @property-read ?GdkRGBA $theme_color
+ * @property-read ?string $title
+ * @property-read ?string $uri
+ * @property ?WebKitUserContentManager $user_content_manager
+ * @property ?WebKitWebContext $web_context
+ * @property WebKitWebExtensionMode $web_extension_mode
+ * @property ?WebKitWebsitePolicies $website_policies
+ * @property float $zoom_level
+ */
+class WebKitWebView extends WebKitWebViewBase
+{
+    /** Creates a new #WebKitWebView with the default #WebKitWebContext. */
+    public function __construct()
+    {
+    }
+    /**
+     * Asynchronously call $body with $arguments in the script world with name $world_name of the
+     * main frame current context in $web_view. The $arguments values must be one of the following
+     * types, or contain only the following GVariant types: number, string and dictionary. The
+     * result of the operation can be a Promise that will be properly passed to the callback. If
+     * $world_name is `null`, the default world is used. Any value that is not `null` is a distin
+     * ct world. The $source_uri will be shown in exceptions and doesn't affect the behavior of the
+     * script. When not provided, the document URL is used.
+     */
+    public function call_async_javascript_function(string $body, int $length, mixed $arguments, ?string $world_name, ?string $source_uri, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($body);
+        unset($length);
+        unset($arguments);
+        unset($world_name);
+        unset($source_uri);
+        unset($cancellable);
+        unset($callback);
+    }
+    /**
+     * Finish an asynchronous operation started with
+     * webkit_web_view_call_async_javascript_function().
+     */
+    public function call_async_javascript_function_finish(GAsyncResult $result): JSCValue
+    {
+        unset($result);
+        return null;
+    }
+    /** Asynchronously check if it is possible to execute the given editing command. */
+    public function can_execute_editing_command(string $command, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($command);
+        unset($cancellable);
+        unset($callback);
+    }
+    /**
+     * Finish an asynchronous operation started with webkit_web_view_can_execute_editing_command().
+     */
+    public function can_execute_editing_command_finish(GAsyncResult $result): bool
+    {
+        unset($result);
+        return false;
+    }
+    /** Determines whether $web_view has a previous history item. */
+    public function can_go_back(): bool
+    {
+        return false;
+    }
+    /** Determines whether $web_view has a next history item. */
+    public function can_go_forward(): bool
+    {
+        return false;
+    }
+    /** Whether or not a MIME type can be displayed in $web_view. */
+    public function can_show_mime_type(string $mime_type): bool
+    {
+        unset($mime_type);
+        return false;
+    }
+    /** Requests downloading of the specified URI string for $web_view. */
+    public function download_uri(string $uri): WebKitDownload
+    {
+        unset($uri);
+        return null;
+    }
+    /**
+     * Asynchronously evaluate $script in the script world with name $world_name of the main frame
+     * current context in $web_view. If $world_name is `null`, the default world is used. Any value
+     * that is not `null` is a distinct world. The $source_uri will be shown in exceptions and
+     * doesn't affect the behavior of the script. When not provided, the document URL is used.
+     */
+    public function evaluate_javascript(string $script, int $length, ?string $world_name, ?string $source_uri, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($script);
+        unset($length);
+        unset($world_name);
+        unset($source_uri);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finish an asynchronous operation started with webkit_web_view_evaluate_javascript(). */
+    public function evaluate_javascript_finish(GAsyncResult $result): JSCValue
+    {
+        unset($result);
+        return null;
+    }
+    /** Request to execute the given $command for $web_view. */
+    public function execute_editing_command(string $command): void
+    {
+        unset($command);
+    }
+    /** Request to execute the given $command with $argument for $web_view. */
+    public function execute_editing_command_with_argument(string $command, string $argument): void
+    {
+        unset($command);
+        unset($argument);
+    }
+    /** Get the presentation type of #WebKitWebView when created for automation. */
+    public function get_automation_presentation_type(): WebKitAutomationBrowsingContextPresentation
+    {
+        return null;
+    }
+    /** Obtains the #WebKitBackForwardList associated with the given #WebKitWebView. */
+    public function get_back_forward_list(): WebKitBackForwardList
+    {
+        return null;
+    }
+    /** Gets the color that is used to draw the $web_view background. */
+    public function get_background_color(): GdkRGBA
+    {
+        return null;
+    }
+    /** Get the camera capture state of a #WebKitWebView. */
+    public function get_camera_capture_state(): WebKitMediaCaptureState
+    {
+        return null;
+    }
+    /** Gets the web context of $web_view. */
+    public function get_context(): WebKitWebContext
+    {
+        return null;
+    }
+    /** Returns the current custom character encoding name of $web_view. */
+    public function get_custom_charset(): string
+    {
+        return '';
+    }
+    /** Gets the configured default Content-Security-Policy. */
+    public function get_default_content_security_policy(): ?string
+    {
+        return null;
+    }
+    /** Get the display capture state of a #WebKitWebView. */
+    public function get_display_capture_state(): WebKitMediaCaptureState
+    {
+        return null;
+    }
+    /** Gets the web editor state of $web_view. */
+    public function get_editor_state(): WebKitEditorState
+    {
+        return null;
+    }
+    /** Gets the value of the #WebKitWebView:estimated-load-progress property. */
+    public function get_estimated_load_progress(): float
+    {
+        return 0.0;
+    }
+    /** Returns favicon currently associated to $web_view. */
+    public function get_favicon(): ?GdkTexture
+    {
+        return null;
+    }
+    /** Gets the #WebKitFindController. */
+    public function get_find_controller(): WebKitFindController
+    {
+        return null;
+    }
+    /** Get the #WebKitInputMethodContext currently in use by $web_view. */
+    public function get_input_method_context(): ?WebKitInputMethodContext
+    {
+        return null;
+    }
+    /** Get the #WebKitWebInspector associated to $web_view */
+    public function get_inspector(): WebKitWebInspector
+    {
+        return null;
+    }
+    /** Gets the mute state of $web_view. */
+    public function get_is_muted(): bool
+    {
+        return false;
+    }
+    /** Get whether the current web process of a #WebKitWebView is responsive. */
+    public function get_is_web_process_responsive(): bool
+    {
+        return false;
+    }
+    /** Return the main resource of $web_view. */
+    public function get_main_resource(): ?WebKitWebResource
+    {
+        return null;
+    }
+    /** Get the microphone capture state of a #WebKitWebView. */
+    public function get_microphone_capture_state(): WebKitMediaCaptureState
+    {
+        return null;
+    }
+    /** Get the #WebKitNetworkSession associated to $web_view. */
+    public function get_network_session(): WebKitNetworkSession
+    {
+        return null;
+    }
+    /** Get the identifier of the #WebKitWebPage corresponding to the #WebKitWebView */
+    public function get_page_id(): int
+    {
+        return 0;
+    }
+    /** Gets the current session state of $web_view */
+    public function get_session_state(): WebKitWebViewSessionState
+    {
+        return null;
+    }
+    /** Gets the #WebKitSettings currently applied to $web_view. */
+    public function get_settings(): WebKitSettings
+    {
+        return null;
+    }
+    /** Asynchronously retrieves a snapshot of $web_view for $region. */
+    public function get_snapshot(WebKitSnapshotRegion $region, int $options, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($region);
+        unset($options);
+        unset($cancellable);
+        unset($callback);
+    }
+    /**
+     * Finishes an asynchronous operation started with webkit_web_view_get_snapshot(), producing an
+     * image of the snapshot using the BGRA8888 pixel format.
+     */
+    public function get_snapshot_finish(GAsyncResult $result): GdkTexture
+    {
+        unset($result);
+        return null;
+    }
+    /**
+     * Gets the theme color that is specified by the content in the $web_view. If the $web_view
+     * doesn't have a theme color it will fill the $rgba with transparent black content.
+     */
+    public function get_theme_color(): ?GdkRGBA
+    {
+        return null;
+    }
+    /** Gets the value of the #WebKitWebView:title property. */
+    public function get_title(): string
+    {
+        return '';
+    }
+    /** Returns the current active URI of $web_view. */
+    public function get_uri(): string
+    {
+        return '';
+    }
+    /** Gets the user content manager associated to $web_view. */
+    public function get_user_content_manager(): WebKitUserContentManager
+    {
+        return null;
+    }
+    /** Get the view's #WebKitWebExtensionMode. */
+    public function get_web_extension_mode(): WebKitWebExtensionMode
+    {
+        return null;
+    }
+    /** Gets the default website policies. */
+    public function get_website_policies(): WebKitWebsitePolicies
+    {
+        return null;
+    }
+    /** Get the #WebKitWindowProperties object. */
+    public function get_window_properties(): WebKitWindowProperties
+    {
+        return null;
+    }
+    /** Set the zoom level of $web_view. */
+    public function get_zoom_level(): float
+    {
+        return 0.0;
+    }
+    /** Loads the previous history item. */
+    public function go_back(): void
+    {
+    }
+    /** Loads the next history item. */
+    public function go_forward(): void
+    {
+    }
+    /** Loads the specific history item $list_item. */
+    public function go_to_back_forward_list_item(WebKitBackForwardListItem $list_item): void
+    {
+        unset($list_item);
+    }
+    /**
+     * Get whether a #WebKitWebView was created with #WebKitWebView:is-controlled-by-automation
+     * property enabled.
+     */
+    public function is_controlled_by_automation(): bool
+    {
+        return false;
+    }
+    /** Gets whether the user is allowed to edit the HTML document. */
+    public function is_editable(): bool
+    {
+        return false;
+    }
+    /** Gets whether $web_view is in immersive mode. */
+    public function is_immersive_mode_enabled(): bool
+    {
+        return false;
+    }
+    /** Gets the value of the #WebKitWebView:is-loading property. */
+    public function is_loading(): bool
+    {
+        return false;
+    }
+    /** Gets the value of the #WebKitWebView:is-playing-audio property. */
+    public function is_playing_audio(): bool
+    {
+        return false;
+    }
+    /** Requests to leave the immersive mode this #WebKitWebView is in. */
+    public function leave_immersive_mode(): void
+    {
+    }
+    /** Load the given $content string for the URI $content_uri. */
+    public function load_alternate_html(string $content, string $content_uri, ?string $base_uri): void
+    {
+        unset($content);
+        unset($content_uri);
+        unset($base_uri);
+    }
+    /** Load the specified $bytes into $web_view using the given $mime_type and $encoding. */
+    public function load_bytes(string $bytes, ?string $mime_type, ?string $encoding, ?string $base_uri): void
+    {
+        unset($bytes);
+        unset($mime_type);
+        unset($encoding);
+        unset($base_uri);
+    }
+    /** Load the given $content string with the specified $base_uri. */
+    public function load_html(string $content, ?string $base_uri): void
+    {
+        unset($content);
+        unset($base_uri);
+    }
+    /** Load the specified $plain_text string into $web_view. */
+    public function load_plain_text(string $plain_text): void
+    {
+        unset($plain_text);
+    }
+    /** Requests loading of the specified #WebKitURIRequest. */
+    public function load_request(WebKitURIRequest $request): void
+    {
+        unset($request);
+    }
+    /** Requests loading of the specified URI string. */
+    public function load_uri(string $uri): void
+    {
+        unset($uri);
+    }
+    /** Reloads the current contents of $web_view. */
+    public function reload(): void
+    {
+    }
+    /** Reloads the current contents of $web_view without using any cached data. */
+    public function reload_bypass_cache(): void
+    {
+    }
+    /** Restore the $web_view session state from $state */
+    public function restore_session_state(WebKitWebViewSessionState $state): void
+    {
+        unset($state);
+    }
+    /** Asynchronously save the current web page. */
+    public function save(WebKitSaveMode $save_mode, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($save_mode);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Asynchronously save the current web page. */
+    public function save_to_file(string $file, WebKitSaveMode $save_mode, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($file);
+        unset($save_mode);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finish an asynchronous operation started with webkit_web_view_save_to_file(). */
+    public function save_to_file_finish(GAsyncResult $result): bool
+    {
+        unset($result);
+        return false;
+    }
+    /** Send $message to the #WebKitWebPage corresponding to $web_view. */
+    public function send_message_to_page(WebKitUserMessage $message, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($message);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finish an asynchronous operation started with webkit_web_view_send_message_to_page(). */
+    public function send_message_to_page_finish(GAsyncResult $result): WebKitUserMessage
+    {
+        unset($result);
+        return null;
+    }
+    /** Sets the color that will be used to draw the $web_view background. */
+    public function set_background_color(GdkRGBA $rgba): void
+    {
+        unset($rgba);
+    }
+    /** Set the camera capture state of a #WebKitWebView. */
+    public function set_camera_capture_state(WebKitMediaCaptureState $state): void
+    {
+        unset($state);
+    }
+    /** Sets the $allowlist for CORS. */
+    public function set_cors_allowlist(?array $allowlist): void
+    {
+        unset($allowlist);
+    }
+    /** Sets the current custom character encoding override of $web_view. */
+    public function set_custom_charset(?string $charset): void
+    {
+        unset($charset);
+    }
+    /** Set the display capture state of a #WebKitWebView. */
+    public function set_display_capture_state(WebKitMediaCaptureState $state): void
+    {
+        unset($state);
+    }
+    /** Sets whether the user is allowed to edit the HTML document. */
+    public function set_editable(bool $editable): void
+    {
+        unset($editable);
+    }
+    /** Set the #WebKitInputMethodContext to be used by $web_view. */
+    public function set_input_method_context(?WebKitInputMethodContext $context): void
+    {
+        unset($context);
+    }
+    /** Sets the mute state of $web_view. */
+    public function set_is_muted(bool $muted): void
+    {
+        unset($muted);
+    }
+    /** Set the microphone capture state of a #WebKitWebView. */
+    public function set_microphone_capture_state(WebKitMediaCaptureState $state): void
+    {
+        unset($state);
+    }
+    /** Sets the #WebKitSettings to be applied to $web_view. */
+    public function set_settings(WebKitSettings $settings): void
+    {
+        unset($settings);
+    }
+    /** Set the zoom level of $web_view. */
+    public function set_zoom_level(float $zoom_level): void
+    {
+        unset($zoom_level);
+    }
+    /** Stops any ongoing loading operation in $web_view. */
+    public function stop_loading(): void
+    {
+    }
+    /** Terminates the web process associated to $web_view. */
+    public function terminate_web_process(): void
+    {
+    }
+    /** Tries to close the $web_view. */
+    public function try_close(): void
+    {
+    }
+    /**
+     * Native `authenticate` (WebViewClass.authenticate): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_authenticate()` from an override.
+     */
+    public function vfunc_authenticate(WebKitAuthenticationRequest $request): bool
+    {
+        unset($request);
+        return false;
+    }
+    /**
+     * Native `close` (WebViewClass.close): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_close()` from an override.
+     */
+    public function vfunc_close(): void
+    {
+    }
+    /**
+     * Native `context_menu` (WebViewClass.context_menu): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_context_menu()` from an override.
+     */
+    public function vfunc_context_menu(WebKitContextMenu $context_menu, WebKitHitTestResult $hit_test_result): bool
+    {
+        unset($context_menu);
+        unset($hit_test_result);
+        return false;
+    }
+    /**
+     * Native `context_menu_dismissed` (WebViewClass.context_menu_dismissed): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_context_menu_dismissed()` from an
+     * override.
+     */
+    public function vfunc_context_menu_dismissed(): void
+    {
+    }
+    /**
+     * Native `create` (WebViewClass.create): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_create()` from an override.
+     */
+    public function vfunc_create(WebKitNavigationAction $navigation_action): GtkWidget
+    {
+        unset($navigation_action);
+        return null;
+    }
+    /**
+     * Native `decide_policy` (WebViewClass.decide_policy): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_decide_policy()` from an override.
+     */
+    public function vfunc_decide_policy(WebKitPolicyDecision $decision, WebKitPolicyDecisionType $type): bool
+    {
+        unset($decision);
+        unset($type);
+        return false;
+    }
+    /**
+     * Native `enter_fullscreen` (WebViewClass.enter_fullscreen): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_enter_fullscreen()` from an override.
+     */
+    public function vfunc_enter_fullscreen(): bool
+    {
+        return false;
+    }
+    /**
+     * Native `insecure_content_detected` (WebViewClass.insecure_content_detected): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_insecure_content_detected()` from
+     * an override.
+     */
+    public function vfunc_insecure_content_detected(WebKitInsecureContentEvent $event): void
+    {
+        unset($event);
+    }
+    /**
+     * Native `leave_fullscreen` (WebViewClass.leave_fullscreen): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_leave_fullscreen()` from an override.
+     */
+    public function vfunc_leave_fullscreen(): bool
+    {
+        return false;
+    }
+    /**
+     * Native `load_changed` (WebViewClass.load_changed): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_load_changed()` from an override.
+     */
+    public function vfunc_load_changed(WebKitLoadEvent $load_event): void
+    {
+        unset($load_event);
+    }
+    /**
+     * Native `load_failed` (WebViewClass.load_failed): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_load_failed()` from an override.
+     */
+    public function vfunc_load_failed(WebKitLoadEvent $load_event, string $failing_uri, GError $error): bool
+    {
+        unset($load_event);
+        unset($failing_uri);
+        unset($error);
+        return false;
+    }
+    /**
+     * Native `mouse_target_changed` (WebViewClass.mouse_target_changed): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_mouse_target_changed()` from an override.
+     */
+    public function vfunc_mouse_target_changed(WebKitHitTestResult $hit_test_result, int $modifiers): void
+    {
+        unset($hit_test_result);
+        unset($modifiers);
+    }
+    /**
+     * Native `permission_request` (WebViewClass.permission_request): the GTK implementation below
+     * any PHP subclass, for `parent::vfunc_permission_request()` from an override.
+     */
+    public function vfunc_permission_request(WebKitPermissionRequest $permission_request): bool
+    {
+        unset($permission_request);
+        return false;
+    }
+    /**
+     * Native `print` (WebViewClass.print): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_print()` from an override.
+     */
+    public function vfunc_print(WebKitPrintOperation $print_operation): bool
+    {
+        unset($print_operation);
+        return false;
+    }
+    /**
+     * Native `query_permission_state` (WebViewClass.query_permission_state): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_query_permission_state()` from an
+     * override.
+     */
+    public function vfunc_query_permission_state(WebKitPermissionStateQuery $query): bool
+    {
+        unset($query);
+        return false;
+    }
+    /**
+     * Native `ready_to_show` (WebViewClass.ready_to_show): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_ready_to_show()` from an override.
+     */
+    public function vfunc_ready_to_show(): void
+    {
+    }
+    /**
+     * Native `resource_load_started` (WebViewClass.resource_load_started): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_resource_load_started()` from an override.
+     */
+    public function vfunc_resource_load_started(WebKitWebResource $resource, WebKitURIRequest $request): void
+    {
+        unset($resource);
+        unset($request);
+    }
+    /**
+     * Native `run_as_modal` (WebViewClass.run_as_modal): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_run_as_modal()` from an override.
+     */
+    public function vfunc_run_as_modal(): void
+    {
+    }
+    /**
+     * Native `run_color_chooser` (WebViewClass.run_color_chooser): the GTK implementation below
+     * any PHP subclass, for `parent::vfunc_run_color_chooser()` from an override.
+     */
+    public function vfunc_run_color_chooser(WebKitColorChooserRequest $request): bool
+    {
+        unset($request);
+        return false;
+    }
+    /**
+     * Native `run_file_chooser` (WebViewClass.run_file_chooser): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_run_file_chooser()` from an override.
+     */
+    public function vfunc_run_file_chooser(WebKitFileChooserRequest $request): bool
+    {
+        unset($request);
+        return false;
+    }
+    /**
+     * Native `script_dialog` (WebViewClass.script_dialog): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_script_dialog()` from an override.
+     */
+    public function vfunc_script_dialog(WebKitScriptDialog $dialog): bool
+    {
+        unset($dialog);
+        return false;
+    }
+    /**
+     * Native `show_notification` (WebViewClass.show_notification): the GTK implementation below
+     * any PHP subclass, for `parent::vfunc_show_notification()` from an override.
+     */
+    public function vfunc_show_notification(WebKitNotification $notification): bool
+    {
+        unset($notification);
+        return false;
+    }
+    /**
+     * Native `show_option_menu` (WebViewClass.show_option_menu): the GTK implementation below any
+     * PHP subclass, for `parent::vfunc_show_option_menu()` from an override.
+     */
+    public function vfunc_show_option_menu(WebKitOptionMenu $menu, GdkRectangle $rectangle): bool
+    {
+        unset($menu);
+        unset($rectangle);
+        return false;
+    }
+    /**
+     * Native `submit_form` (WebViewClass.submit_form): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_submit_form()` from an override.
+     */
+    public function vfunc_submit_form(WebKitFormSubmissionRequest $request): void
+    {
+        unset($request);
+    }
+    /**
+     * Native `user_message_received` (WebViewClass.user_message_received): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_user_message_received()` from an override.
+     */
+    public function vfunc_user_message_received(WebKitUserMessage $message): bool
+    {
+        unset($message);
+        return false;
+    }
+    /**
+     * Native `web_process_crashed` (WebViewClass.web_process_crashed): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_web_process_crashed()` from an override.
+     */
+    public function vfunc_web_process_crashed(): bool
+    {
+        return false;
+    }
+    /**
+     * Native `web_process_terminated` (WebViewClass.web_process_terminated): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_web_process_terminated()` from an
+     * override.
+     */
+    public function vfunc_web_process_terminated(WebKitWebProcessTerminationReason $reason): void
+    {
+        unset($reason);
+    }
+}
+class WebKitWebViewBase extends GtkWidget
+{
+    /** WebKitWebViewBase has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+}
+/**
+ * Handles serialization of a web view's browsing state.
+ */
+final class WebKitWebViewSessionState
+{
+    /** Creates a new #WebKitWebViewSessionState from serialized data. */
+    public function __construct(string $data)
+    {
+        unset($data);
+    }
+    /** Serializes a #WebKitWebViewSessionState. */
+    public function serialize(): string
+    {
+        return '';
+    }
+}
+/**
+ * Data stored locally by a web site.
+ */
+final class WebKitWebsiteData
+{
+    /** WebKitWebsiteData values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Gets the name of #WebKitWebsiteData. */
+    public function get_name(): string
+    {
+        return '';
+    }
+    /** Gets the size of the data of types $types in a #WebKitWebsiteData. */
+    public function get_size(int $types): int
+    {
+        unset($types);
+        return 0;
+    }
+    /** Gets the types of data stored in the client for a #WebKitWebsiteData. */
+    public function get_types(): int
+    {
+        return 0;
+    }
+}
+/**
+ * A permission request for accessing website data from third-party domains.
+ */
+final class WebKitWebsiteDataAccessPermissionRequest extends GObject implements WebKitPermissionRequest
+{
+    /** WebKitWebsiteDataAccessPermissionRequest has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Get the current domain being browsed. */
+    public function get_current_domain(): string
+    {
+        return '';
+    }
+    /**
+     * Get the domain requesting permission to access its cookies while browsing the current
+     * domain.
+     */
+    public function get_requesting_domain(): string
+    {
+        return '';
+    }
+    public function allow(): void
+    {
+    }
+    public function deny(): void
+    {
+    }
+}
+/**
+ * Manages data stored locally by web sites.
+ *
+ * @property ?string $base_cache_directory
+ * @property ?string $base_data_directory
+ * @property bool $is_ephemeral
+ * @property-write float $origin_storage_ratio
+ * @property-write float $total_storage_ratio
+ */
+final class WebKitWebsiteDataManager extends GObject
+{
+    /** WebKitWebsiteDataManager has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Finish an asynchronous operation started with webkit_website_data_manager_clear() */
+    public function clear_finish(GAsyncResult $result): bool
+    {
+        unset($result);
+        return false;
+    }
+    /** Asynchronously get the list of #WebKitWebsiteData for the given $types. */
+    public function fetch(int $types, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($types);
+        unset($cancellable);
+        unset($callback);
+    }
+    /**
+     * Finish an asynchronous operation started with webkit_website_data_manager_fetch().
+     *
+     * @return list<WebKitWebsiteData>
+     */
+    public function fetch_finish(GAsyncResult $result): array
+    {
+        unset($result);
+        return [];
+    }
+    /** Get the #WebKitWebsiteDataManager:base-cache-directory property. */
+    public function get_base_cache_directory(): ?string
+    {
+        return null;
+    }
+    /** Get the #WebKitWebsiteDataManager:base-data-directory property. */
+    public function get_base_data_directory(): ?string
+    {
+        return null;
+    }
+    /** Get the #WebKitFaviconDatabase of $manager. */
+    public function get_favicon_database(): ?WebKitFaviconDatabase
+    {
+        return null;
+    }
+    /** Get whether website icons are enabled. */
+    public function get_favicons_enabled(): bool
+    {
+        return false;
+    }
+    /** Asynchronously get the list of #WebKitITPThirdParty seen for $manager. */
+    public function get_itp_summary(?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($cancellable);
+        unset($callback);
+    }
+    /**
+     * Finish an asynchronous operation started with webkit_website_data_manager_get_itp_summary().
+     *
+     * @return list<WebKitITPThirdParty>
+     */
+    public function get_itp_summary_finish(GAsyncResult $result): array
+    {
+        unset($result);
+        return [];
+    }
+    /** Get whether a #WebKitWebsiteDataManager is ephemeral. */
+    public function is_ephemeral(): bool
+    {
+        return false;
+    }
+    /** Finish an asynchronous operation started with webkit_website_data_manager_remove(). */
+    public function remove_finish(GAsyncResult $result): bool
+    {
+        unset($result);
+        return false;
+    }
+    /**
+     * Set whether website icons are enabled. Website icons are disabled by default. When website
+     * icons are disabled, the #WebKitFaviconDatabase of $manager is closed and its reference
+     * removed, so webkit_website_data_manager_get_favicon_database() will return `null`. If
+     * website icons are enabled again, a new #WebKitFaviconDatabase will be created.
+     */
+    public function set_favicons_enabled(bool $enabled): void
+    {
+        unset($enabled);
+    }
+}
+/**
+ * Enum values with flags representing types of Website data.
+ */
+final class WebKitWebsiteDataTypes
+{
+    public const int MEMORY_CACHE = 1;
+    public const int DISK_CACHE = 2;
+    public const int OFFLINE_APPLICATION_CACHE = 4;
+    public const int SESSION_STORAGE = 8;
+    public const int LOCAL_STORAGE = 16;
+    public const int INDEXEDDB_DATABASES = 32;
+    public const int COOKIES = 64;
+    public const int DEVICE_ID_HASH_SALT = 128;
+    public const int HSTS_CACHE = 256;
+    public const int ITP = 512;
+    public const int SERVICE_WORKER_REGISTRATIONS = 1024;
+    public const int DOM_CACHE = 2048;
+    public const int ALL = 4095;
+}
+/**
+ * View specific website policies.
+ *
+ * @property WebKitAutoplayPolicy $autoplay
+ */
+final class WebKitWebsitePolicies extends GObject
+{
+    /** Create a new #WebKitWebsitePolicies. */
+    public function __construct()
+    {
+    }
+    /** Get the #WebKitWebsitePolicies:autoplay property. */
+    public function get_autoplay_policy(): WebKitAutoplayPolicy
+    {
+        return null;
+    }
+}
+/**
+ * Window properties of a #WebKitWebView.
+ *
+ * @property bool $fullscreen
+ * @property ?GdkRectangle $geometry
+ * @property bool $locationbar_visible
+ * @property bool $menubar_visible
+ * @property bool $resizable
+ * @property bool $scrollbars_visible
+ * @property bool $statusbar_visible
+ * @property bool $toolbar_visible
+ */
+final class WebKitWindowProperties extends GObject
+{
+    /** WebKitWindowProperties has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Get whether the window should be shown in fullscreen state or not. */
+    public function get_fullscreen(): bool
+    {
+        return false;
+    }
+    /** Get the geometry the window should have on the screen when shown. */
+    public function get_geometry(): GdkRectangle
+    {
+        return null;
+    }
+    /** Get whether the window should have the locationbar visible or not. */
+    public function get_locationbar_visible(): bool
+    {
+        return false;
+    }
+    /** Get whether the window should have the menubar visible or not. */
+    public function get_menubar_visible(): bool
+    {
+        return false;
+    }
+    /** Get whether the window should be resizable by the user or not. */
+    public function get_resizable(): bool
+    {
+        return false;
+    }
+    /** Get whether the window should have the scrollbars visible or not. */
+    public function get_scrollbars_visible(): bool
+    {
+        return false;
+    }
+    /** Get whether the window should have the statusbar visible or not. */
+    public function get_statusbar_visible(): bool
+    {
+        return false;
+    }
+    /** Get whether the window should have the toolbar visible or not. */
+    public function get_toolbar_visible(): bool
+    {
+        return false;
+    }
+}
+/**
+ * A permission request for accessing virtual reality (VR) and augmented reality (AR) devices,
+ * including sensors and head-mounted displays.
+ */
+final class WebKitXRPermissionRequest extends GObject implements WebKitPermissionRequest
+{
+    /** WebKitXRPermissionRequest has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Gets the optional features that need user consent. */
+    public function get_consent_optional_features(): int
+    {
+        return 0;
+    }
+    /** Gets the required features that need user consent. */
+    public function get_consent_required_features(): int
+    {
+        return 0;
+    }
+    /**
+     * Gets the features requested by the origin for the XR device, which are either granted by
+     * default or have been explicitly granted by the user.
+     */
+    public function get_granted_features(): int
+    {
+        return 0;
+    }
+    /** Gets the full set of optional features requested by the web application. */
+    public function get_optional_features_requested(): int
+    {
+        return 0;
+    }
+    /** Gets the full set of required features requested by the web application. */
+    public function get_required_features_requested(): int
+    {
+        return 0;
+    }
+    /** Gets the security origin that initiated the permission request. */
+    public function get_security_origin(): WebKitSecurityOrigin
+    {
+        return null;
+    }
+    /** Gets the session mode for which permission is being requested. */
+    public function get_session_mode(): WebKitXRSessionMode
+    {
+        return null;
+    }
+    /** Sets which optional features should be granted if the permission request is allowed. */
+    public function set_granted_optional_features(int $granted): void
+    {
+        unset($granted);
+    }
+    public function allow(): void
+    {
+    }
+    public function deny(): void
+    {
+    }
+}
+/**
+ * Enum values representing the XR session features.
+ */
+final class WebKitXRSessionFeatures
+{
+    public const int VIEWER = 1;
+    public const int LOCAL = 2;
+    public const int LOCAL_FLOOR = 4;
+    public const int BOUNDED_FLOOR = 8;
+    public const int UNBOUNDED = 16;
+    public const int HAND_TRACKING = 32;
+    public const int HIT_TEST = 64;
+    public const int LAYERS = 128;
+}
+/**
+ * Enum values representing the XR session mode.
+ */
+enum WebKitXRSessionMode : int
+{
+    case Inline = 0;
+    case ImmersiveVr = 1;
+    case ImmersiveAr = 2;
 }
