@@ -120,6 +120,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `new_from_data` — callback parameter (needs an override)
 - `add_data` — callback parameter (needs an override)
 
+## GMemoryOutputStream
+
+- `new` — gpointer parameter
+- `get_data` — return type gpointer
+- `steal_data` — return type gpointer
+- `property data` — property type gpointer not mappable
+- `property destroy-function` — property type gpointer not mappable
+- `property realloc-function` — property type gpointer not mappable
+
 ## GMenuItem
 
 - `PHP subclasses` — constructor argument label is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GMenuItem
@@ -145,6 +154,34 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `add_button_with_target` — shadowed by add_button_with_target_value
 - `set_default_action_and_target` — shadowed by set_default_action_and_target_value
 - `set_urgent` — deprecated (2.42)
+
+## GOutputStream
+
+- `printf` — varargs
+- `vprintf` — parameter `args` of type Gio.va_list
+- `write` — parameter `buffer` of type array (C array)
+- `write_all` — parameter `buffer` of type array (C array)
+- `write_all_async` — parameter `buffer` of type array (C array)
+- `write_async` — parameter `buffer` of type array (C array)
+- `writev` — parameter `vectors` of type array (C array)
+- `writev_all` — parameter `vectors` of type array (C array)
+- `writev_all_async` — parameter `vectors` of type array (C array)
+- `writev_async` — parameter `vectors` of type array (C array)
+- `vfunc close_async` — return or argument type not convertible in a thunk
+- `vfunc close_finish` — GError out parameter
+- `vfunc close_fn` — GError out parameter
+- `vfunc flush` — GError out parameter
+- `vfunc flush_async` — return or argument type not convertible in a thunk
+- `vfunc flush_finish` — GError out parameter
+- `vfunc splice` — GError out parameter
+- `vfunc splice_async` — return or argument type not convertible in a thunk
+- `vfunc splice_finish` — GError out parameter
+- `vfunc write_async` — parameter `buffer` of type array (C array)
+- `vfunc write_finish` — GError out parameter
+- `vfunc write_fn` — GError out parameter
+- `vfunc writev_async` — parameter `vectors` of type array (C array)
+- `vfunc writev_finish` — GError out parameter
+- `vfunc writev_fn` — GError out parameter
 
 ## GTask
 
@@ -216,11 +253,10 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `new_typed` — varargs
 - `new_union` — parameter `providers` of type array (C array)
-- `write_mime_type_async` — parameter `stream` of type Gio.OutputStream
 - `vfunc get_value` — GError out parameter
 - `vfunc ref_formats` — return or argument type not convertible in a thunk
 - `vfunc ref_storable_formats` — return or argument type not convertible in a thunk
-- `vfunc write_mime_type_async` — parameter `stream` of type Gio.OutputStream
+- `vfunc write_mime_type_async` — return or argument type not convertible in a thunk
 - `vfunc write_mime_type_finish` — GError out parameter
 
 ## GdkDevice
@@ -288,8 +324,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `save_to_callbackv` — callback parameter (needs an override)
 - `save_to_stream` — varargs
 - `save_to_stream_async` — varargs
-- `save_to_streamv` — parameter `stream` of type Gio.OutputStream
-- `save_to_streamv_async` — parameter `stream` of type Gio.OutputStream
 - `unref` — deprecated (2.0)
 - `property pixels` — property type gpointer not mappable
 - `smoke test` — smoke-skip.txt: the factories need real image data (PixbufTest covers it)
@@ -352,12 +386,29 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `download_into` — parameter `data` of type array (C array)
 - `free` — memory management belongs to the handle (clone / destructor)
 
+## GrapheneMatrix
+
+- `decompose` — caller-allocates out parameter `rotate` of type Graphene.Quaternion
+- `free` — memory management belongs to the handle (clone / destructor)
+- `init_from_float` — parameter `v` of type array (C array)
+- `project_rect` — caller-allocates out parameter `res` of type Graphene.Quad
+- `rotate_euler` — parameter `e` of type Graphene.Euler
+- `rotate_quaternion` — parameter `q` of type Graphene.Quaternion
+- `to_float` — caller-allocates out parameter `v` of type array
+- `transform_box` — parameter `b` of type Graphene.Box
+- `transform_ray` — parameter `r` of type Graphene.Ray
+- `transform_rect` — caller-allocates out parameter `res` of type Graphene.Quad
+- `transform_sphere` — parameter `s` of type Graphene.Sphere
+
 ## GraphenePoint
 
 - `distance` — return gfloat plus out parameters
 - `free` — memory management belongs to the handle (clone / destructor)
-- `init_from_vec2` — parameter `src` of type Graphene.Vec2
-- `to_vec2` — caller-allocates out parameter `v` of type Graphene.Vec2
+
+## GraphenePoint3D
+
+- `distance` — return gfloat plus out parameters
+- `free` — memory management belongs to the handle (clone / destructor)
 
 ## GrapheneRect
 
@@ -374,6 +425,24 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GrapheneSize
 
 - `free` — memory management belongs to the handle (clone / destructor)
+
+## GrapheneVec2
+
+- `free` — memory management belongs to the handle (clone / destructor)
+- `init_from_float` — parameter `src` of type array (C array)
+- `to_float` — caller-allocates out parameter `dest` of type array
+
+## GrapheneVec3
+
+- `free` — memory management belongs to the handle (clone / destructor)
+- `init_from_float` — parameter `src` of type array (C array)
+- `to_float` — caller-allocates out parameter `dest` of type array
+
+## GrapheneVec4
+
+- `free` — memory management belongs to the handle (clone / destructor)
+- `init_from_float` — parameter `src` of type array (C array)
+- `to_float` — caller-allocates out parameter `dest` of type array
 
 ## GskBlendNode
 
@@ -397,9 +466,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GskColorMatrixNode
 
-- `new` — parameter `color_matrix` of type Graphene.Matrix
-- `get_color_matrix` — return type Graphene.Matrix
-- `get_color_offset` — return type Graphene.Vec4
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GskColorNode
@@ -471,7 +537,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `copy` — memory management belongs to the handle (clone / destructor)
 - `free` — memory management belongs to the handle (clone / destructor)
 - `get_curvature` — return gfloat plus out parameters
-- `get_tangent` — caller-allocates out parameter `tangent` of type Graphene.Vec2
 
 ## GskRadialGradientNode
 
@@ -541,12 +606,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GskTransform
 
-- `matrix` — parameter `matrix` of type Graphene.Matrix
 - `print` — parameter `string` of type GLib.String
 - `ref` — memory management belongs to the handle (clone / destructor)
-- `rotate_3d` — parameter `axis` of type Graphene.Vec3
-- `to_matrix` — caller-allocates out parameter `out_matrix` of type Graphene.Matrix
-- `translate_3d` — parameter `point` of type Graphene.Point3D
 - `unref` — memory management belongs to the handle (clone / destructor)
 
 ## GskTransformNode
@@ -776,10 +837,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `__construct` — skip.txt: GTK creates the context inside a print operation (draw-page hands it over); one from g_object_new() has no page setup or cairo context and its getters dereference NULL (SIGSEGV)
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
-## GtkPrintDialog
-
-- `print_finish` — return type Gio.OutputStream (not in the closure)
-
 ## GtkPrintOperation
 
 - `vfunc preview` — parameter `preview` of type Gtk.PrintOperationPreview
@@ -837,7 +894,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `append_repeating_radial_gradient` — parameter `stops` of type array (C array)
 - `free_to_node` — skip.txt: frees the GtkSnapshot itself like free_to_paintable; to_node() answers with the same node and leaves the object alive
 - `free_to_paintable` — skip.txt: frees the GtkSnapshot itself, so the handle is left on freed memory and its next qdata/toggle-ref touch is a SEGV (ASan caught it); to_paintable() answers with the same paintable and leaves the object alive
-- `push_color_matrix` — parameter `color_matrix` of type Graphene.Matrix
 - `push_debug` — varargs
 - `push_gl_shader` — parameter `shader` of type Gsk.GLShader
 - `push_shadow` — parameter `shadow` of type array (C array)
@@ -846,9 +902,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `render_frame` — deprecated (4.10)
 - `render_insertion_cursor` — deprecated (4.10)
 - `render_layout` — deprecated (4.10)
-- `rotate_3d` — parameter `axis` of type Graphene.Vec3
-- `transform_matrix` — parameter `matrix` of type Graphene.Matrix
-- `translate_3d` — parameter `point` of type Graphene.Point3D
 
 ## GtkSortListModel
 
@@ -905,7 +958,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkWidget
 
 - `add_tick_callback` — callback parameter (needs an override)
-- `compute_transform` — caller-allocates out parameter `out_transform` of type Graphene.Matrix
 - `dispose_template` — parameter `widget_type` of type Gtk.GType
 - `get_allocated_baseline` — deprecated (4.12)
 - `get_allocated_height` — deprecated (4.12)
@@ -1631,10 +1683,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GListModel.cpp`
 - `Gio/GListStore.cpp`
 - `Gio/GMemoryInputStream.cpp`
+- `Gio/GMemoryOutputStream.cpp`
 - `Gio/GMenu.cpp`
 - `Gio/GMenuItem.cpp`
 - `Gio/GMenuModel.cpp`
 - `Gio/GNotification.cpp`
+- `Gio/GOutputStream.cpp`
 - `Gio/GSimpleAction.cpp`
 - `Gio/GTask.cpp`
 - `Gio/GThemedIcon.cpp`
@@ -1697,9 +1751,14 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gsk/GskTransform.cpp`
 - `Gsk/GskTransformNode.cpp`
 - `Gsk/Gsk.stub.php`
+- `Graphene/GrapheneMatrix.cpp`
 - `Graphene/GraphenePoint.cpp`
+- `Graphene/GraphenePoint3D.cpp`
 - `Graphene/GrapheneRect.cpp`
 - `Graphene/GrapheneSize.cpp`
+- `Graphene/GrapheneVec2.cpp`
+- `Graphene/GrapheneVec3.cpp`
+- `Graphene/GrapheneVec4.cpp`
 - `Graphene/Graphene.stub.php`
 - `GdkPixbuf/GdkPixbuf.cpp`
 - `GdkPixbuf/GdkPixbufAnimation.cpp`
@@ -1909,9 +1968,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GInputStreamSmokeTest.php`
 - `tests/Generated/GListStoreSmokeTest.php`
 - `tests/Generated/GMemoryInputStreamSmokeTest.php`
+- `tests/Generated/GMemoryOutputStreamSmokeTest.php`
 - `tests/Generated/GMenuSmokeTest.php`
 - `tests/Generated/GMenuItemSmokeTest.php`
 - `tests/Generated/GNotificationSmokeTest.php`
+- `tests/Generated/GOutputStreamSmokeTest.php`
 - `tests/Generated/GSimpleActionSmokeTest.php`
 - `tests/Generated/GTaskSmokeTest.php`
 - `tests/Generated/GThemedIconSmokeTest.php`

@@ -881,6 +881,40 @@ class GMemoryInputStream extends GInputStream
 }
 
 /**
+ * `GMemoryOutputStream` is a class for using arbitrary memory chunks as output for GIO streaming
+ * output operations.
+ *
+ * @property-read int $data_size
+ * @property int $size
+ */
+class GMemoryOutputStream extends GOutputStream
+{
+    /** A GMemoryOutputStream with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct() {}
+
+    /** Creates a new #GMemoryOutputStream, using g_realloc() and g_free() for memory allocation. */
+    public static function new_resizable(): GMemoryOutputStream {}
+
+    /**
+     * Returns the number of bytes from the start up to including the last byte written in the
+     * stream that has not been truncated away.
+     */
+    public function get_data_size(): int {}
+
+    /**
+     * Gets the size of the currently allocated data area (available from
+     * g_memory_output_stream_get_data()).
+     */
+    public function get_size(): int {}
+
+    /**
+     * Returns data from the $ostream as a #GBytes. $ostream must be closed before calling this
+     * function.
+     */
+    public function steal_as_bytes(): string {}
+}
+
+/**
  * `GMenu` is a simple implementation of `MenuModel`. You populate a `GMenu` by adding `MenuItem`
  * instances to it.
  */
@@ -1148,6 +1182,122 @@ enum GNotificationPriority: int
     case Low = 1;
     case High = 2;
     case Urgent = 3;
+}
+
+/**
+ * `GOutputStream` is a base class for implementing streaming output.
+ */
+class GOutputStream extends GObject
+{
+    /** GOutputStream is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    public function __construct() {}
+
+    /** Clears the pending flag on $stream. */
+    public function clear_pending(): void {}
+
+    /** Closes the stream, releasing resources related to it. */
+    public function close(?GCancellable $cancellable): bool {}
+
+    /**
+     * Requests an asynchronous close of the stream, releasing resources related to it. When the
+     * operation is finished $callback will be called. You can then call
+     * g_output_stream_close_finish() to get the result of the operation.
+     */
+    public function close_async(int $io_priority, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Closes an output stream. */
+    public function close_finish(GAsyncResult $result): bool {}
+
+    /**
+     * Forces a write of all user-space buffered data for the given $stream. Will block during the
+     * operation. Closing the stream will implicitly cause a flush.
+     */
+    public function flush(?GCancellable $cancellable): bool {}
+
+    /**
+     * Forces an asynchronous write of all user-space buffered data for the given $stream. For
+     * behaviour details see g_output_stream_flush().
+     */
+    public function flush_async(int $io_priority, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes flushing an output stream. */
+    public function flush_finish(GAsyncResult $result): bool {}
+
+    /** Checks if an output stream has pending actions. */
+    public function has_pending(): bool {}
+
+    /** Checks if an output stream has already been closed. */
+    public function is_closed(): bool {}
+
+    /**
+     * Checks if an output stream is being closed. This can be used inside e.g. a flush
+     * implementation to see if the flush (or other i/o operation) is called from within the
+     * closing operation.
+     */
+    public function is_closing(): bool {}
+
+    /**
+     * Sets $stream to have actions pending. If the pending flag is already set or $stream is
+     * closed, it will return `false` and set $error.
+     */
+    public function set_pending(): bool {}
+
+    /** Splices an input stream into an output stream. */
+    public function splice(GInputStream $source, int $flags, ?GCancellable $cancellable): int {}
+
+    /**
+     * Splices a stream asynchronously. When the operation is finished $callback will be called.
+     * You can then call g_output_stream_splice_finish() to get the result of the operation.
+     */
+    public function splice_async(GInputStream $source, int $flags, int $io_priority, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes an asynchronous stream splice operation. */
+    public function splice_finish(GAsyncResult $result): int {}
+
+    /**
+     * Finishes an asynchronous stream write operation started with
+     * g_output_stream_write_all_async().
+     */
+    public function write_all_finish(GAsyncResult $result): ?int {}
+
+    /**
+     * A wrapper function for g_output_stream_write() which takes a #GBytes as input. This can be
+     * more convenient for use by language bindings or in other cases where the refcounted nature
+     * of #GBytes is helpful over a bare pointer interface.
+     */
+    public function write_bytes(string $bytes, ?GCancellable $cancellable): int {}
+
+    /**
+     * This function is similar to g_output_stream_write_async(), but takes a #GBytes as input. Due
+     * to the refcounted nature of #GBytes, this allows the stream to avoid taking a copy of the
+     * data.
+     */
+    public function write_bytes_async(string $bytes, int $io_priority, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes a stream write-from-#GBytes operation. */
+    public function write_bytes_finish(GAsyncResult $result): int {}
+
+    /** Finishes a stream write operation. */
+    public function write_finish(GAsyncResult $result): int {}
+
+    /**
+     * Finishes an asynchronous stream write operation started with
+     * g_output_stream_writev_all_async().
+     */
+    public function writev_all_finish(GAsyncResult $result): ?int {}
+
+    /** Finishes a stream writev operation. */
+    public function writev_finish(GAsyncResult $result): ?int {}
+}
+
+/**
+ * GOutputStreamSpliceFlags determine how streams should be spliced.
+ */
+final class GOutputStreamSpliceFlags
+{
+    public const int NONE = 0;
+    public const int CLOSE_SOURCE = 1;
+    public const int CLOSE_TARGET = 2;
 }
 
 /**

@@ -6,6 +6,7 @@
 #include "core/boxed.h"
 #include "core/subtype.h"
 #include "core/error.h"
+#include "core/callback.h"
 #include <array>
 
 using namespace phpgtk;
@@ -89,6 +90,64 @@ ZEND_METHOD(Gtk4_GdkContentProvider, ref_storable_formats) {
   GdkContentFormats *phpgtk_ret = gdk_content_provider_ref_storable_formats(self);
   wrap_boxed(GDK_TYPE_CONTENT_FORMATS, phpgtk_ret, return_value);
   if (phpgtk_ret != nullptr) g_boxed_free(GDK_TYPE_CONTENT_FORMATS, phpgtk_ret);
+}
+
+namespace {
+// AsyncReadyCallback trampoline for GdkContentProvider::write_mime_type_async(): wraps the C
+// arguments, invokes the PHP callable once and releases it (async scope).
+void cb_write_mime_type_async_callback(GObject *source_object, GAsyncResult *res, gpointer data) {
+  auto *cb = static_cast<Callback *>(data);
+  std::array<zval, 2> args{};
+  zval *argv = args.data();
+  wrap(source_object != nullptr ? G_OBJECT(source_object) : nullptr, &argv[0]);
+  wrap(res != nullptr ? G_OBJECT(res) : nullptr, &argv[1]);
+  zval ret;
+  callback_invoke(cb, 2, argv, &ret);
+  if (!Z_ISUNDEF(ret)) zval_ptr_dtor(&ret);
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  callback_free(cb);
+  callback_drain();
+}
+}  // namespace
+
+/**
+ * Gtk4\GdkContentProvider::write_mime_type_async(string $mime_type, GOutputStream $stream, int
+ * $io_priority, ?GCancellable $cancellable, ?callable $callback): void
+ *
+ * Asynchronously writes the contents of $provider to $stream in the given $mime_type.
+ */
+ZEND_METHOD(Gtk4_GdkContentProvider, write_mime_type_async) {
+  zend_string *mime_type;
+  zval *stream;
+  zend_long io_priority;
+  zval *cancellable = nullptr;
+  zend_fcall_info fci_callback = empty_fcall_info;
+  zend_fcall_info_cache fcc_callback = empty_fcall_info_cache;
+  ZEND_PARSE_PARAMETERS_START(5, 5)
+  Z_PARAM_STR(mime_type)
+  Z_PARAM_OBJECT_OF_CLASS(stream, class_for_gtype(G_TYPE_OUTPUT_STREAM))
+  Z_PARAM_LONG(io_priority)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
+  Z_PARAM_FUNC_OR_NULL(fci_callback, fcc_callback)
+  ZEND_PARSE_PARAMETERS_END();
+  GdkContentProvider *self = PHPGTK_SELF(GdkContentProvider, GDK_TYPE_CONTENT_PROVIDER);
+  if (!phpgtk::check_utf8(mime_type, 1)) RETURN_THROWS();
+  GObject *stream_o = unwrap(stream, G_TYPE_OUTPUT_STREAM);
+  if (stream_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(io_priority, 3)) RETURN_THROWS();
+  GObject *cancellable_o = nullptr;
+  if (cancellable != nullptr) {
+    cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
+    if (cancellable_o == nullptr) RETURN_THROWS();
+  }
+  Callback *cb_callback =
+      ZEND_FCI_INITIALIZED(fci_callback)
+          ? callback_new(&fci_callback.function_name, "GdkContentProvider::write_mime_type_async")
+          : nullptr;
+  gdk_content_provider_write_mime_type_async(
+      self, ZSTR_VAL(mime_type), G_OUTPUT_STREAM(stream_o), static_cast<int>(io_priority),
+      cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
+      cb_callback != nullptr ? cb_write_mime_type_async_callback : nullptr, cb_callback);
 }
 
 /**

@@ -196,6 +196,12 @@ class GdkPixbuf extends GObject implements GIcon
     /** Modifies saturation and optionally pixelates `src`, placing the result in `dest`. */
     public function saturate_and_pixelate(GdkPixbuf $dest, float $saturation, bool $pixelate): void {}
 
+    /** Saves `pixbuf` to an output stream. */
+    public function save_to_streamv(GOutputStream $stream, string $type, ?array $option_keys, ?array $option_values, ?GCancellable $cancellable): bool {}
+
+    /** Saves `pixbuf` to an output stream asynchronously. */
+    public function save_to_streamv_async(GOutputStream $stream, string $type, ?array $option_keys, ?array $option_values, ?GCancellable $cancellable, ?callable $callback): void {}
+
     /**
      * Creates a transformation of the source image $src by scaling by $scale_x and $scale_y then
      * translating by $offset_x and $offset_y, then renders the rectangle ($dest_x, $dest_y,

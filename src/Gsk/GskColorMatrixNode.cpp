@@ -3,17 +3,40 @@
 #include "php_gtk4.h"
 #include "core/fundamental.h"
 #include "core/object.h"
+#include "core/boxed.h"
 
 using namespace phpgtk;
 
 /**
- * Gtk4\GskColorMatrixNode::__construct()
+ * Gtk4\GskColorMatrixNode::__construct(GskRenderNode $child, GrapheneMatrix $color_matrix,
+ * GrapheneVec4 $color_offset)
  *
- * GskColorMatrixNode has no constructor in GTK: instances come from GTK, never from `new`.
+ * Creates a `GskRenderNode` that will drawn the $child with $color_matrix.
  */
 ZEND_METHOD(Gtk4_GskColorMatrixNode, __construct) {
-  // Private: never called (object_init_ex() in wrap_fundamental() skips constructors).
-  ZEND_PARSE_PARAMETERS_NONE();
+  zval *child;
+  zval *color_matrix;
+  zval *color_offset;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_OBJECT_OF_CLASS(child, fundamental_class_for_type(GSK_TYPE_RENDER_NODE)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(color_matrix, boxed_class_for_type(GRAPHENE_TYPE_MATRIX)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(color_offset, boxed_class_for_type(GRAPHENE_TYPE_VEC4)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  gpointer child_f = unwrap_fundamental(child, GSK_TYPE_RENDER_NODE);
+  if (child_f == nullptr) RETURN_THROWS();
+  gpointer color_matrix_b = unwrap_boxed(color_matrix, GRAPHENE_TYPE_MATRIX);
+  if (color_matrix_b == nullptr) RETURN_THROWS();
+  gpointer color_offset_b = unwrap_boxed(color_offset, GRAPHENE_TYPE_VEC4);
+  if (color_offset_b == nullptr) RETURN_THROWS();
+  gpointer obj = gsk_color_matrix_node_new(static_cast<GskRenderNode *>(child_f),
+                                           static_cast<graphene_matrix_t *>(color_matrix_b),
+                                           static_cast<graphene_vec4_t *>(color_offset_b));
+  if (obj == nullptr) {
+    zend_throw_error(nullptr, "%s(): GTK refused to create the instance (see the CRITICAL above)",
+                     ZSTR_VAL(EX(func)->common.function_name));
+    RETURN_THROWS();
+  }
+  fundamental_adopt(fundamental_from_zval(ZEND_THIS), GSK_TYPE_COLOR_MATRIX_NODE, obj);
 }
 
 /**
@@ -27,6 +50,32 @@ ZEND_METHOD(Gtk4_GskColorMatrixNode, get_child) {
   if (self == nullptr) RETURN_THROWS();
   gpointer phpgtk_ret = gsk_color_matrix_node_get_child(self);
   wrap_fundamental(GSK_TYPE_RENDER_NODE, phpgtk_ret, return_value);
+}
+
+/**
+ * Gtk4\GskColorMatrixNode::get_color_matrix(): GrapheneMatrix
+ *
+ * Retrieves the color matrix used by the $node.
+ */
+ZEND_METHOD(Gtk4_GskColorMatrixNode, get_color_matrix) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  auto *self = static_cast<GskRenderNode *>(fundamental_self(execute_data));
+  if (self == nullptr) RETURN_THROWS();
+  const graphene_matrix_t *phpgtk_ret = gsk_color_matrix_node_get_color_matrix(self);
+  wrap_boxed(GRAPHENE_TYPE_MATRIX, phpgtk_ret, return_value);
+}
+
+/**
+ * Gtk4\GskColorMatrixNode::get_color_offset(): GrapheneVec4
+ *
+ * Retrieves the color offset used by the $node.
+ */
+ZEND_METHOD(Gtk4_GskColorMatrixNode, get_color_offset) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  auto *self = static_cast<GskRenderNode *>(fundamental_self(execute_data));
+  if (self == nullptr) RETURN_THROWS();
+  const graphene_vec4_t *phpgtk_ret = gsk_color_matrix_node_get_color_offset(self);
+  wrap_boxed(GRAPHENE_TYPE_VEC4, phpgtk_ret, return_value);
 }
 
 namespace {

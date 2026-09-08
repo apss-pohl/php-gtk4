@@ -362,6 +362,28 @@ ZEND_METHOD(Gtk4_GtkSnapshot, push_clip) {
 }
 
 /**
+ * Gtk4\GtkSnapshot::push_color_matrix(GrapheneMatrix $color_matrix, GrapheneVec4 $color_offset):
+ * void
+ *
+ * Modifies the colors of an image by applying an affine transformation in RGB space.
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, push_color_matrix) {
+  zval *color_matrix;
+  zval *color_offset;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(color_matrix, boxed_class_for_type(GRAPHENE_TYPE_MATRIX)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(color_offset, boxed_class_for_type(GRAPHENE_TYPE_VEC4)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  gpointer color_matrix_b = unwrap_boxed(color_matrix, GRAPHENE_TYPE_MATRIX);
+  if (color_matrix_b == nullptr) RETURN_THROWS();
+  gpointer color_offset_b = unwrap_boxed(color_offset, GRAPHENE_TYPE_VEC4);
+  if (color_offset_b == nullptr) RETURN_THROWS();
+  gtk_snapshot_push_color_matrix(self, static_cast<graphene_matrix_t *>(color_matrix_b),
+                                 static_cast<graphene_vec4_t *>(color_offset_b));
+}
+
+/**
  * Gtk4\GtkSnapshot::push_cross_fade(float $progress): void
  *
  * Snapshots a cross-fade operation between two images with the given $progress.
@@ -517,6 +539,24 @@ ZEND_METHOD(Gtk4_GtkSnapshot, rotate) {
 }
 
 /**
+ * Gtk4\GtkSnapshot::rotate_3d(float $angle, GrapheneVec3 $axis): void
+ *
+ * Rotates $snapshot's coordinate system by $angle degrees around $axis.
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, rotate_3d) {
+  double angle;
+  zval *axis;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_DOUBLE(angle)
+  Z_PARAM_OBJECT_OF_CLASS(axis, boxed_class_for_type(GRAPHENE_TYPE_VEC3)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  gpointer axis_b = unwrap_boxed(axis, GRAPHENE_TYPE_VEC3);
+  if (axis_b == nullptr) RETURN_THROWS();
+  gtk_snapshot_rotate_3d(self, static_cast<float>(angle), static_cast<graphene_vec3_t *>(axis_b));
+}
+
+/**
  * Gtk4\GtkSnapshot::save(): void
  *
  * Makes a copy of the current state of $snapshot and saves it on an internal stack.
@@ -617,6 +657,22 @@ ZEND_METHOD(Gtk4_GtkSnapshot, transform) {
 }
 
 /**
+ * Gtk4\GtkSnapshot::transform_matrix(GrapheneMatrix $matrix): void
+ *
+ * Transforms $snapshot's coordinate system with the given $matrix.
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, transform_matrix) {
+  zval *matrix;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(matrix, boxed_class_for_type(GRAPHENE_TYPE_MATRIX)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  gpointer matrix_b = unwrap_boxed(matrix, GRAPHENE_TYPE_MATRIX);
+  if (matrix_b == nullptr) RETURN_THROWS();
+  gtk_snapshot_transform_matrix(self, static_cast<graphene_matrix_t *>(matrix_b));
+}
+
+/**
  * Gtk4\GtkSnapshot::translate(GraphenePoint $point): void
  *
  * Translates $snapshot's coordinate system by $point in 2-dimensional space.
@@ -630,6 +686,22 @@ ZEND_METHOD(Gtk4_GtkSnapshot, translate) {
   gpointer point_b = unwrap_boxed(point, GRAPHENE_TYPE_POINT);
   if (point_b == nullptr) RETURN_THROWS();
   gtk_snapshot_translate(self, static_cast<graphene_point_t *>(point_b));
+}
+
+/**
+ * Gtk4\GtkSnapshot::translate_3d(GraphenePoint3D $point): void
+ *
+ * Translates $snapshot's coordinate system by $point.
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, translate_3d) {
+  zval *point;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(point, boxed_class_for_type(GRAPHENE_TYPE_POINT3D)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  gpointer point_b = unwrap_boxed(point, GRAPHENE_TYPE_POINT3D);
+  if (point_b == nullptr) RETURN_THROWS();
+  gtk_snapshot_translate_3d(self, static_cast<graphene_point3d_t *>(point_b));
 }
 
 /**

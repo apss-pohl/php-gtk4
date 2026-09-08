@@ -51,6 +51,8 @@ const TYPE_MACROS = [
     'cairo.Surface' => ['CAIRO_GOBJECT_TYPE_SURFACE', 'CAIRO_SURFACE'],
     'cairo.Context' => ['CAIRO_GOBJECT_TYPE_CONTEXT', 'CAIRO_CONTEXT'],
     'Gsk.RoundedRect' => ['PHPGTK_TYPE_GSK_ROUNDED_RECT', 'GSK_ROUNDED_RECT'],
+    // "Point3D" splits into POINT3_D; graphene spells it in one piece
+    'Graphene.Point3D' => ['GRAPHENE_TYPE_POINT3D', 'GRAPHENE_POINT3D'],
     'GdkPixbuf.PixbufFormat' => ['gdk_pixbuf_format_get_type()', 'GDK_PIXBUF_FORMAT'],  // no macro in gdk-pixbuf-io.h
     // WebKitNetworkProxySettings.h spells its GType macro with the prefix doubled.
     'WebKit.NetworkProxySettings' => ['WEBKIT_TYPE_NETWORK_NETWORK_PROXY_SETTINGS', 'WEBKIT_NETWORK_PROXY_SETTINGS'],
@@ -286,6 +288,9 @@ const PARAM_VALIDATORS = [
  * in the wrong state for the call (CLAUDE.md's vocabulary).
  */
 const SELF_PRECONDITIONS = [
+    // the stream has to be closed before its buffer can be taken away from it
+    'g_memory_output_stream_steal_as_bytes' => ['g_output_stream_is_closed(G_OUTPUT_STREAM(self)) == TRUE',
+        'the stream is still open - close() it before taking its bytes'],
     'gtk_paper_size_set_size' => ['gtk_paper_size_is_custom(self)',
         'only a custom paper size (GtkPaperSize::new_custom()) can be resized'],
     'g_application_send_notification' => ['g_application_get_is_registered(self) == TRUE',

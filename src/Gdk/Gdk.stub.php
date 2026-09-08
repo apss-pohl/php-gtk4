@@ -169,6 +169,9 @@ class GdkContentProvider extends GObject
     /** Gets the formats that the provider suggests other applications to store the data in. */
     public function ref_storable_formats(): GdkContentFormats {}
 
+    /** Asynchronously writes the contents of $provider to $stream in the given $mime_type. */
+    public function write_mime_type_async(string $mime_type, GOutputStream $stream, int $io_priority, ?GCancellable $cancellable, ?callable $callback): void {}
+
     /** Finishes an asynchronous write operation. */
     public function write_mime_type_finish(GAsyncResult $result): bool {}
 

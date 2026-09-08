@@ -7,8 +7,7 @@ declare(strict_types=1);
 
 return [
     'Generated' => [
-        'GInputStream',
-        'GMemoryInputStream',
+        'GOutputStreamSpliceFlags',
         'GTlsCertificate',
         'GTlsCertificateFlags',
         'GTlsPasswordFlags',

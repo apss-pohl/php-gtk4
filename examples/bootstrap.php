@@ -101,6 +101,7 @@ final class Demo
             'GObject', 'GParamSpec', 'PhpValue', 'GdkRGBA', 'GdkRectangle',
             'GdkTexture', 'GdkMemoryFormat', 'GError', 'ExceptionMode',
             'GIcon', 'GThemedIcon', 'GDateTime', 'GTimeZone', 'GKeyFile',
+            'GInputStream', 'GMemoryInputStream', 'GOutputStream', 'GMemoryOutputStream',
         ],
         'Lists' => [
             'GListModel', 'GListStore', 'GtkFilter', 'GtkCustomFilter',
@@ -176,7 +177,10 @@ final class Demo
             'GtkHeaderBar', 'GtkApplicationWindow', 'GtkArrowType', 'GtkPopoverMenuFlags',
         ],
         'Loop' => ['GLib', 'GMainLoop', 'GIOCondition'],
-        'Geometry' => ['GtkRequisition'],
+        'Geometry' => [
+            'GtkRequisition', 'GrapheneMatrix', 'GraphenePoint3D',
+            'GrapheneVec2', 'GrapheneVec3', 'GrapheneVec4',
+        ],
         'Pixbuf' => [
             'GdkPixbuf', 'GdkPixbufLoader', 'GdkPixbufFormat', 'GdkPixbufAnimation', 'GdkPixbufAnimationIter',
             'GdkColorspace', 'GdkInterpType', 'GdkPixbufRotation', 'GdkMemoryTexture',

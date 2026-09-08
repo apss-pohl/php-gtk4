@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: d1ba174f4eb259bd08a4f113122e3ff71474d1c0 */
+ * Stub hash: 0b95de3abb86dee753bd848820da87ae5a1e20e4 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkPixbuf___construct, 0, 0, 5)
 	ZEND_ARG_OBJ_INFO(0, colorspace, Gtk4\\GdkColorspace, 0)
@@ -213,6 +213,23 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_saturate_an
 	ZEND_ARG_TYPE_INFO(0, pixelate, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_save_to_streamv, 0, 5, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, stream, Gtk4\\GOutputStream, 0)
+	ZEND_ARG_TYPE_INFO(0, type, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, option_keys, IS_ARRAY, 1)
+	ZEND_ARG_TYPE_INFO(0, option_values, IS_ARRAY, 1)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_save_to_streamv_async, 0, 6, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, stream, Gtk4\\GOutputStream, 0)
+	ZEND_ARG_TYPE_INFO(0, type, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, option_keys, IS_ARRAY, 1)
+	ZEND_ARG_TYPE_INFO(0, option_values, IS_ARRAY, 1)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_scale, 0, 10, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, dest, Gtk4\\GdkPixbuf, 0)
 	ZEND_ARG_TYPE_INFO(0, dest_x, IS_LONG, 0)
@@ -415,6 +432,8 @@ ZEND_METHOD(Gtk4_GdkPixbuf, read_pixel_bytes);
 ZEND_METHOD(Gtk4_GdkPixbuf, remove_option);
 ZEND_METHOD(Gtk4_GdkPixbuf, rotate_simple);
 ZEND_METHOD(Gtk4_GdkPixbuf, saturate_and_pixelate);
+ZEND_METHOD(Gtk4_GdkPixbuf, save_to_streamv);
+ZEND_METHOD(Gtk4_GdkPixbuf, save_to_streamv_async);
 ZEND_METHOD(Gtk4_GdkPixbuf, scale);
 ZEND_METHOD(Gtk4_GdkPixbuf, scale_simple);
 ZEND_METHOD(Gtk4_GdkPixbuf, set_option);
@@ -507,6 +526,8 @@ static const zend_function_entry class_Gtk4_GdkPixbuf_methods[] = {
 	ZEND_ME(Gtk4_GdkPixbuf, remove_option, arginfo_class_Gtk4_GdkPixbuf_remove_option, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkPixbuf, rotate_simple, arginfo_class_Gtk4_GdkPixbuf_rotate_simple, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkPixbuf, saturate_and_pixelate, arginfo_class_Gtk4_GdkPixbuf_saturate_and_pixelate, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkPixbuf, save_to_streamv, arginfo_class_Gtk4_GdkPixbuf_save_to_streamv, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkPixbuf, save_to_streamv_async, arginfo_class_Gtk4_GdkPixbuf_save_to_streamv_async, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkPixbuf, scale, arginfo_class_Gtk4_GdkPixbuf_scale, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkPixbuf, scale_simple, arginfo_class_Gtk4_GdkPixbuf_scale_simple, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkPixbuf, set_option, arginfo_class_Gtk4_GdkPixbuf_set_option, ZEND_ACC_PUBLIC)

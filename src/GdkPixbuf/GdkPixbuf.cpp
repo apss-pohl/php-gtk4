@@ -1090,6 +1090,128 @@ ZEND_METHOD(Gtk4_GdkPixbuf, saturate_and_pixelate) {
 }
 
 /**
+ * Gtk4\GdkPixbuf::save_to_streamv(GOutputStream $stream, string $type, ?array $option_keys, ?array
+ * $option_values, ?GCancellable $cancellable): bool
+ *
+ * Saves `pixbuf` to an output stream.
+ */
+ZEND_METHOD(Gtk4_GdkPixbuf, save_to_streamv) {
+  zval *stream;
+  zend_string *type;
+  zval *option_keys = nullptr;
+  zval *option_values = nullptr;
+  zval *cancellable = nullptr;
+  ZEND_PARSE_PARAMETERS_START(5, 5)
+  Z_PARAM_OBJECT_OF_CLASS(stream, class_for_gtype(G_TYPE_OUTPUT_STREAM))
+  Z_PARAM_STR(type)
+  Z_PARAM_ARRAY_OR_NULL(option_keys)
+  Z_PARAM_ARRAY_OR_NULL(option_values)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
+  ZEND_PARSE_PARAMETERS_END();
+  GdkPixbuf *self = PHPGTK_SELF(GdkPixbuf, GDK_TYPE_PIXBUF);
+  GObject *stream_o = unwrap(stream, G_TYPE_OUTPUT_STREAM);
+  if (stream_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_utf8(type, 2)) RETURN_THROWS();
+  char **option_keys_v = nullptr;
+  if (option_keys != nullptr) {
+    option_keys_v = strv_from_php(option_keys);
+    if (option_keys_v == nullptr) RETURN_THROWS();
+  }
+  char **option_values_v = nullptr;
+  if (option_values != nullptr) {
+    option_values_v = strv_from_php(option_values);
+    if (option_values_v == nullptr) RETURN_THROWS();
+  }
+  GObject *cancellable_o = nullptr;
+  if (cancellable != nullptr) {
+    cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
+    if (cancellable_o == nullptr) RETURN_THROWS();
+  }
+  GError *error = nullptr;
+  const gboolean ok = gdk_pixbuf_save_to_streamv(
+      self, G_OUTPUT_STREAM(stream_o), ZSTR_VAL(type), option_keys_v, option_values_v,
+      cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr, &error);
+  if (option_keys_v != nullptr) g_strfreev(option_keys_v);
+  if (option_values_v != nullptr) g_strfreev(option_values_v);
+  if (error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  RETURN_BOOL(ok);
+}
+
+namespace {
+// AsyncReadyCallback trampoline for GdkPixbuf::save_to_streamv_async(): wraps the C arguments,
+// invokes the PHP callable once and releases it (async scope).
+void cb_save_to_streamv_async_callback(GObject *source_object, GAsyncResult *res, gpointer data) {
+  auto *cb = static_cast<Callback *>(data);
+  std::array<zval, 2> args{};
+  zval *argv = args.data();
+  wrap(source_object != nullptr ? G_OBJECT(source_object) : nullptr, &argv[0]);
+  wrap(res != nullptr ? G_OBJECT(res) : nullptr, &argv[1]);
+  zval ret;
+  callback_invoke(cb, 2, argv, &ret);
+  if (!Z_ISUNDEF(ret)) zval_ptr_dtor(&ret);
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  callback_free(cb);
+  callback_drain();
+}
+}  // namespace
+
+/**
+ * Gtk4\GdkPixbuf::save_to_streamv_async(GOutputStream $stream, string $type, ?array $option_keys,
+ * ?array $option_values, ?GCancellable $cancellable, ?callable $callback): void
+ *
+ * Saves `pixbuf` to an output stream asynchronously.
+ */
+ZEND_METHOD(Gtk4_GdkPixbuf, save_to_streamv_async) {
+  zval *stream;
+  zend_string *type;
+  zval *option_keys = nullptr;
+  zval *option_values = nullptr;
+  zval *cancellable = nullptr;
+  zend_fcall_info fci_callback = empty_fcall_info;
+  zend_fcall_info_cache fcc_callback = empty_fcall_info_cache;
+  ZEND_PARSE_PARAMETERS_START(6, 6)
+  Z_PARAM_OBJECT_OF_CLASS(stream, class_for_gtype(G_TYPE_OUTPUT_STREAM))
+  Z_PARAM_STR(type)
+  Z_PARAM_ARRAY_OR_NULL(option_keys)
+  Z_PARAM_ARRAY_OR_NULL(option_values)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
+  Z_PARAM_FUNC_OR_NULL(fci_callback, fcc_callback)
+  ZEND_PARSE_PARAMETERS_END();
+  GdkPixbuf *self = PHPGTK_SELF(GdkPixbuf, GDK_TYPE_PIXBUF);
+  GObject *stream_o = unwrap(stream, G_TYPE_OUTPUT_STREAM);
+  if (stream_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_utf8(type, 2)) RETURN_THROWS();
+  char **option_keys_v = nullptr;
+  if (option_keys != nullptr) {
+    option_keys_v = strv_from_php(option_keys);
+    if (option_keys_v == nullptr) RETURN_THROWS();
+  }
+  char **option_values_v = nullptr;
+  if (option_values != nullptr) {
+    option_values_v = strv_from_php(option_values);
+    if (option_values_v == nullptr) RETURN_THROWS();
+  }
+  GObject *cancellable_o = nullptr;
+  if (cancellable != nullptr) {
+    cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
+    if (cancellable_o == nullptr) RETURN_THROWS();
+  }
+  Callback *cb_callback =
+      ZEND_FCI_INITIALIZED(fci_callback)
+          ? callback_new(&fci_callback.function_name, "GdkPixbuf::save_to_streamv_async")
+          : nullptr;
+  gdk_pixbuf_save_to_streamv_async(
+      self, G_OUTPUT_STREAM(stream_o), ZSTR_VAL(type), option_keys_v, option_values_v,
+      cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
+      cb_callback != nullptr ? cb_save_to_streamv_async_callback : nullptr, cb_callback);
+  if (option_keys_v != nullptr) g_strfreev(option_keys_v);
+  if (option_values_v != nullptr) g_strfreev(option_values_v);
+}
+
+/**
  * Gtk4\GdkPixbuf::scale(GdkPixbuf $dest, int $dest_x, int $dest_y, int $dest_width, int
  * $dest_height, float $offset_x, float $offset_y, float $scale_x, float $scale_y, GdkInterpType
  * $interp_type): void

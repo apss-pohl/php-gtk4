@@ -128,6 +128,24 @@ ZEND_METHOD(Gtk4_GraphenePoint, init_from_point) {
 }
 
 /**
+ * Gtk4\GraphenePoint::init_from_vec2(GrapheneVec2 $src): GraphenePoint
+ *
+ * Initializes $p with the coordinates inside the given #graphene_vec2_t.
+ */
+ZEND_METHOD(Gtk4_GraphenePoint, init_from_vec2) {
+  zval *src;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(src, boxed_class_for_type(GRAPHENE_TYPE_VEC2)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  graphene_point_t *self = PHPGTK_BOXED_SELF(graphene_point_t);
+  gpointer src_b = unwrap_boxed(src, GRAPHENE_TYPE_VEC2);
+  if (src_b == nullptr) RETURN_THROWS();
+  graphene_point_t *phpgtk_ret =
+      graphene_point_init_from_vec2(self, static_cast<graphene_vec2_t *>(src_b));
+  wrap_boxed(GRAPHENE_TYPE_POINT, phpgtk_ret, return_value);
+}
+
+/**
  * Gtk4\GraphenePoint::interpolate(GraphenePoint $b, float $factor): GraphenePoint
  *
  * Linearly interpolates the coordinates of $a and $b using the given $factor.
@@ -164,6 +182,19 @@ ZEND_METHOD(Gtk4_GraphenePoint, near) {
   if (b_b == nullptr) RETURN_THROWS();
   RETURN_BOOL(
       graphene_point_near(self, static_cast<graphene_point_t *>(b_b), static_cast<float>(epsilon)));
+}
+
+/**
+ * Gtk4\GraphenePoint::to_vec2(): GrapheneVec2
+ *
+ * Stores the coordinates of the given #graphene_point_t into a #graphene_vec2_t.
+ */
+ZEND_METHOD(Gtk4_GraphenePoint, to_vec2) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  graphene_point_t *self = PHPGTK_BOXED_SELF(graphene_point_t);
+  graphene_vec2_t v{};
+  graphene_point_to_vec2(self, &v);
+  wrap_boxed(GRAPHENE_TYPE_VEC2, &v, return_value);
 }
 
 /**

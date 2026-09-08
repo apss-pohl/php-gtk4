@@ -6208,6 +6208,9 @@ class GtkPrintDialog extends GObject
     /** Finishes the `print_file` call and returns the results. */
     public function print_file_finish(GAsyncResult $result): bool {}
 
+    /** Finishes the `print` call and returns the results. */
+    public function print_finish(GAsyncResult $result): ?GOutputStream {}
+
     /**
      * Sets the label that will be shown on the accept button of the print dialog shown for
      * `setup`.
@@ -7773,6 +7776,9 @@ class GtkSnapshot extends GdkSnapshot
     /** Clips an image to a rectangle. */
     public function push_clip(GrapheneRect $bounds): void {}
 
+    /** Modifies the colors of an image by applying an affine transformation in RGB space. */
+    public function push_color_matrix(GrapheneMatrix $color_matrix, GrapheneVec4 $color_offset): void {}
+
     /** Snapshots a cross-fade operation between two images with the given $progress. */
     public function push_cross_fade(float $progress): void {}
 
@@ -7810,6 +7816,9 @@ class GtkSnapshot extends GdkSnapshot
      */
     public function rotate(float $angle): void {}
 
+    /** Rotates $snapshot's coordinate system by $angle degrees around $axis. */
+    public function rotate_3d(float $angle, GrapheneVec3 $axis): void {}
+
     /** Makes a copy of the current state of $snapshot and saves it on an internal stack. */
     public function save(): void {}
 
@@ -7828,8 +7837,14 @@ class GtkSnapshot extends GdkSnapshot
     /** Transforms $snapshot's coordinate system with the given $transform. */
     public function transform(?GskTransform $transform): void {}
 
+    /** Transforms $snapshot's coordinate system with the given $matrix. */
+    public function transform_matrix(GrapheneMatrix $matrix): void {}
+
     /** Translates $snapshot's coordinate system by $point in 2-dimensional space. */
     public function translate(GraphenePoint $point): void {}
+
+    /** Translates $snapshot's coordinate system by $point. */
+    public function translate_3d(GraphenePoint3D $point): void {}
 
     /**
      * Appends a border inside $outline: $widths are the four widths (top, right, bottom, left) as
@@ -10431,6 +10446,12 @@ class GtkWidget extends GObject
      * coordinate system.
      */
     public function compute_point(GtkWidget $target, GraphenePoint $point): ?GraphenePoint {}
+
+    /**
+     * Computes a matrix suitable to describe a transformation from $widget's coordinate system
+     * into $target's coordinate system.
+     */
+    public function compute_transform(GtkWidget $target): ?GrapheneMatrix {}
 
     /** Tests if the point at ($x, $y) is contained in $widget. */
     public function contains(float $x, float $y): bool {}

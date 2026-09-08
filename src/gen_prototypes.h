@@ -275,13 +275,28 @@ namespace phpgtk {
 void register_GskTransformNode(zend_class_entry *ce);
 }  // namespace phpgtk
 namespace phpgtk {
+void register_GrapheneMatrix(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
 void register_GraphenePoint(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GraphenePoint3D(zend_class_entry *ce);
 }  // namespace phpgtk
 namespace phpgtk {
 void register_GrapheneRect(zend_class_entry *ce);
 }  // namespace phpgtk
 namespace phpgtk {
 void register_GrapheneSize(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GrapheneVec2(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GrapheneVec3(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GrapheneVec4(zend_class_entry *ce);
 }  // namespace phpgtk
 namespace phpgtk {
 void register_GdkPixbufFormat(zend_class_entry *ce);

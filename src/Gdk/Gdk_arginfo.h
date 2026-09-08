@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: d19438ee92c90c0bbb46b2bd5306f196adbf806b */
+ * Stub hash: 97345cec8123f0bb5d01e4c90d42c0753628ff67 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkClipboard___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -122,6 +122,14 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GdkContentProvider_ref_formats arginfo_class_Gtk4_GdkClipboard_get_formats
 
 #define arginfo_class_Gtk4_GdkContentProvider_ref_storable_formats arginfo_class_Gtk4_GdkClipboard_get_formats
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkContentProvider_write_mime_type_async, 0, 5, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, mime_type, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, stream, Gtk4\\GOutputStream, 0)
+	ZEND_ARG_TYPE_INFO(0, io_priority, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkContentProvider_write_mime_type_finish arginfo_class_Gtk4_GdkClipboard_store_finish
 
@@ -631,6 +639,7 @@ ZEND_METHOD(Gtk4_GdkContentProvider, new_for_bytes);
 ZEND_METHOD(Gtk4_GdkContentProvider, content_changed);
 ZEND_METHOD(Gtk4_GdkContentProvider, ref_formats);
 ZEND_METHOD(Gtk4_GdkContentProvider, ref_storable_formats);
+ZEND_METHOD(Gtk4_GdkContentProvider, write_mime_type_async);
 ZEND_METHOD(Gtk4_GdkContentProvider, write_mime_type_finish);
 ZEND_METHOD(Gtk4_GdkContentProvider, get_value);
 ZEND_METHOD(Gtk4_GdkContentProvider, new_for_value);
@@ -825,6 +834,7 @@ static const zend_function_entry class_Gtk4_GdkContentProvider_methods[] = {
 	ZEND_ME(Gtk4_GdkContentProvider, content_changed, arginfo_class_Gtk4_GdkContentProvider_content_changed, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkContentProvider, ref_formats, arginfo_class_Gtk4_GdkContentProvider_ref_formats, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkContentProvider, ref_storable_formats, arginfo_class_Gtk4_GdkContentProvider_ref_storable_formats, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkContentProvider, write_mime_type_async, arginfo_class_Gtk4_GdkContentProvider_write_mime_type_async, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkContentProvider, write_mime_type_finish, arginfo_class_Gtk4_GdkContentProvider_write_mime_type_finish, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkContentProvider, get_value, arginfo_class_Gtk4_GdkContentProvider_get_value, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkContentProvider, new_for_value, arginfo_class_Gtk4_GdkContentProvider_new_for_value, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)

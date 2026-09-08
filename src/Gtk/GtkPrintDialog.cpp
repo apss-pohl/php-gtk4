@@ -245,6 +245,29 @@ ZEND_METHOD(Gtk4_GtkPrintDialog, print_file_finish) {
 }
 
 /**
+ * Gtk4\GtkPrintDialog::print_finish(GAsyncResult $result): ?GOutputStream
+ *
+ * Finishes the `print` call and returns the results.
+ */
+ZEND_METHOD(Gtk4_GtkPrintDialog, print_finish) {
+  zval *result;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(result, class_for_gtype(G_TYPE_ASYNC_RESULT))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkPrintDialog *self = PHPGTK_SELF(GtkPrintDialog, GTK_TYPE_PRINT_DIALOG);
+  GObject *result_o = unwrap(result, G_TYPE_ASYNC_RESULT);
+  if (result_o == nullptr) RETURN_THROWS();
+  GError *error = nullptr;
+  GOutputStream *phpgtk_ret = gtk_print_dialog_print_finish(self, G_ASYNC_RESULT(result_o), &error);
+  if (phpgtk_ret == nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
+/**
  * Gtk4\GtkPrintDialog::set_accept_label(string $accept_label): void
  *
  * Sets the label that will be shown on the accept button of the print dialog shown for `setup`.

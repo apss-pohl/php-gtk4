@@ -94,6 +94,12 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **The write side of GIO and the 3D types**, which closes the survey of one-class-away gaps:
+  `GOutputStream` with `GMemoryOutputStream` (a pixbuf now encodes straight into a PHP string
+  and back, no file anywhere), and `GrapheneMatrix`, `GrapheneVec2/3/4` and `GraphenePoint3D` —
+  the matrix a `GskTransform` or a `GtkSnapshot` takes, the vector a 3D rotation turns about and
+  the point a 3D translation moves by.
+
 - **Pango, and GLib's key file.** The text engine under every label is bound - `PangoLayout`
   (what a widget measures a paragraph with), `PangoContext` and `PangoFontMap` behind it,
   `PangoTabArray` for tab stops and `PangoAttrList` for styling a run of text without markup in
@@ -657,6 +663,13 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 - **`GtkTextView::set_tabs(null)`** was refused: GIR does not mark the parameter nullable
   although GTK restores the default tab stops on NULL, exactly as its `GtkLabel` and `GtkEntry`
   siblings do. A new `NULLABLE_PARAMS` table is the mirror of the existing `NON_NULLABLE_PARAMS`.
+
+- **A string-vector parameter declared mutable** (`gdk_pixbuf_save_to_streamv_async()`) did not
+  compile: the emitter cast every one to `const char **`. It follows the declared type now, the
+  way the boxed `copy()` fix above does.
+
+- **`GMemoryOutputStream::steal_as_bytes()`** on a stream that is still open was a GLib
+  assertion and a null dereference; it is a `LogicException` naming the missing `close()`.
 
 - **`GtkBuilder::add_objects_from_file()`** and its two siblings now refuse an empty id list,
   which GTK asserts on, and **`GKeyFile::load_from_data_dirs()`** refuses an absolute path — the

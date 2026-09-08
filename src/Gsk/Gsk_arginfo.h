@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 366c88b5fd16e014bf7392c5824d4882877af31e */
+ * Stub hash: 877969daccab1d99d31fdbdab2c6a42715b18286 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GskBlendNode___construct, 0, 0, 3)
 	ZEND_ARG_OBJ_INFO(0, bottom, Gtk4\\GskRenderNode, 0)
@@ -63,9 +63,19 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskClipNode_get_clip, 0, 0, Gtk4\\GrapheneRect, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_Gtk4_GskColorMatrixNode___construct arginfo_class_Gtk4_GskCairoRenderer___construct
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GskColorMatrixNode___construct, 0, 0, 3)
+	ZEND_ARG_OBJ_INFO(0, child, Gtk4\\GskRenderNode, 0)
+	ZEND_ARG_OBJ_INFO(0, color_matrix, Gtk4\\GrapheneMatrix, 0)
+	ZEND_ARG_OBJ_INFO(0, color_offset, Gtk4\\GrapheneVec4, 0)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GskColorMatrixNode_get_child arginfo_class_Gtk4_GskBlendNode_get_bottom_child
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskColorMatrixNode_get_color_matrix, 0, 0, Gtk4\\GrapheneMatrix, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskColorMatrixNode_get_color_offset, 0, 0, Gtk4\\GrapheneVec4, 0)
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GskColorNode___construct, 0, 0, 2)
 	ZEND_ARG_OBJ_INFO(0, rgba, Gtk4\\GdkRGBA, 0)
@@ -399,6 +409,11 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GskPathPoint_get_rota
 	ZEND_ARG_OBJ_INFO(0, direction, Gtk4\\GskPathDirection, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskPathPoint_get_tangent, 0, 2, Gtk4\\GrapheneVec2, 0)
+	ZEND_ARG_OBJ_INFO(0, path, Gtk4\\GskPath, 0)
+	ZEND_ARG_OBJ_INFO(0, direction, Gtk4\\GskPathDirection, 0)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_GskRadialGradientNode_get_center arginfo_class_Gtk4_GskConicGradientNode_get_center
 
 #define arginfo_class_Gtk4_GskRadialGradientNode_get_end arginfo_class_Gtk4_GskBlurNode_get_radius
@@ -606,12 +621,21 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskTransform_invert, 0, 0, Gtk4\\GskTransform, 1)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskTransform_matrix, 0, 1, Gtk4\\GskTransform, 0)
+	ZEND_ARG_OBJ_INFO(0, matrix, Gtk4\\GrapheneMatrix, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskTransform_perspective, 0, 1, Gtk4\\GskTransform, 0)
 	ZEND_ARG_TYPE_INFO(0, depth, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskTransform_rotate, 0, 1, Gtk4\\GskTransform, 1)
 	ZEND_ARG_TYPE_INFO(0, angle, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskTransform_rotate_3d, 0, 2, Gtk4\\GskTransform, 1)
+	ZEND_ARG_TYPE_INFO(0, angle, IS_DOUBLE, 0)
+	ZEND_ARG_OBJ_INFO(0, axis, Gtk4\\GrapheneVec3, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskTransform_scale, 0, 2, Gtk4\\GskTransform, 1)
@@ -636,6 +660,8 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GskTransform_to_affine arginfo_class_Gtk4_GskBorderNode_get_widths
 
+#define arginfo_class_Gtk4_GskTransform_to_matrix arginfo_class_Gtk4_GskColorMatrixNode_get_color_matrix
+
 #define arginfo_class_Gtk4_GskTransform_to_string arginfo_class_Gtk4_GskDebugNode_get_message
 
 #define arginfo_class_Gtk4_GskTransform_to_translate arginfo_class_Gtk4_GskBorderNode_get_widths
@@ -654,6 +680,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskTransform_translate, 0, 1, Gtk4\\GskTransform, 1)
 	ZEND_ARG_OBJ_INFO(0, point, Gtk4\\GraphenePoint, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskTransform_translate_3d, 0, 1, Gtk4\\GskTransform, 1)
+	ZEND_ARG_OBJ_INFO(0, point, Gtk4\\GraphenePoint3D, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskTransform_parse, 0, 1, Gtk4\\GskTransform, 1)
@@ -690,6 +720,8 @@ ZEND_METHOD(Gtk4_GskClipNode, get_child);
 ZEND_METHOD(Gtk4_GskClipNode, get_clip);
 ZEND_METHOD(Gtk4_GskColorMatrixNode, __construct);
 ZEND_METHOD(Gtk4_GskColorMatrixNode, get_child);
+ZEND_METHOD(Gtk4_GskColorMatrixNode, get_color_matrix);
+ZEND_METHOD(Gtk4_GskColorMatrixNode, get_color_offset);
 ZEND_METHOD(Gtk4_GskColorNode, __construct);
 ZEND_METHOD(Gtk4_GskColorNode, get_color);
 ZEND_METHOD(Gtk4_GskConicGradientNode, get_angle);
@@ -790,6 +822,7 @@ ZEND_METHOD(Gtk4_GskPathPoint, equal);
 ZEND_METHOD(Gtk4_GskPathPoint, get_distance);
 ZEND_METHOD(Gtk4_GskPathPoint, get_position);
 ZEND_METHOD(Gtk4_GskPathPoint, get_rotation);
+ZEND_METHOD(Gtk4_GskPathPoint, get_tangent);
 ZEND_METHOD(Gtk4_GskRadialGradientNode, get_center);
 ZEND_METHOD(Gtk4_GskRadialGradientNode, get_end);
 ZEND_METHOD(Gtk4_GskRadialGradientNode, get_hradius);
@@ -859,20 +892,24 @@ ZEND_METHOD(Gtk4_GskTransform, __construct);
 ZEND_METHOD(Gtk4_GskTransform, equal);
 ZEND_METHOD(Gtk4_GskTransform, get_category);
 ZEND_METHOD(Gtk4_GskTransform, invert);
+ZEND_METHOD(Gtk4_GskTransform, matrix);
 ZEND_METHOD(Gtk4_GskTransform, perspective);
 ZEND_METHOD(Gtk4_GskTransform, rotate);
+ZEND_METHOD(Gtk4_GskTransform, rotate_3d);
 ZEND_METHOD(Gtk4_GskTransform, scale);
 ZEND_METHOD(Gtk4_GskTransform, scale_3d);
 ZEND_METHOD(Gtk4_GskTransform, skew);
 ZEND_METHOD(Gtk4_GskTransform, to_2d);
 ZEND_METHOD(Gtk4_GskTransform, to_2d_components);
 ZEND_METHOD(Gtk4_GskTransform, to_affine);
+ZEND_METHOD(Gtk4_GskTransform, to_matrix);
 ZEND_METHOD(Gtk4_GskTransform, to_string);
 ZEND_METHOD(Gtk4_GskTransform, to_translate);
 ZEND_METHOD(Gtk4_GskTransform, transform);
 ZEND_METHOD(Gtk4_GskTransform, transform_bounds);
 ZEND_METHOD(Gtk4_GskTransform, transform_point);
 ZEND_METHOD(Gtk4_GskTransform, translate);
+ZEND_METHOD(Gtk4_GskTransform, translate_3d);
 ZEND_METHOD(Gtk4_GskTransform, parse);
 ZEND_METHOD(Gtk4_GskTransformNode, __construct);
 ZEND_METHOD(Gtk4_GskTransformNode, get_child);
@@ -921,8 +958,10 @@ static const zend_function_entry class_Gtk4_GskClipNode_methods[] = {
 };
 
 static const zend_function_entry class_Gtk4_GskColorMatrixNode_methods[] = {
-	ZEND_ME(Gtk4_GskColorMatrixNode, __construct, arginfo_class_Gtk4_GskColorMatrixNode___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GskColorMatrixNode, __construct, arginfo_class_Gtk4_GskColorMatrixNode___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskColorMatrixNode, get_child, arginfo_class_Gtk4_GskColorMatrixNode_get_child, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskColorMatrixNode, get_color_matrix, arginfo_class_Gtk4_GskColorMatrixNode_get_color_matrix, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskColorMatrixNode, get_color_offset, arginfo_class_Gtk4_GskColorMatrixNode_get_color_offset, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -1087,6 +1126,7 @@ static const zend_function_entry class_Gtk4_GskPathPoint_methods[] = {
 	ZEND_ME(Gtk4_GskPathPoint, get_distance, arginfo_class_Gtk4_GskPathPoint_get_distance, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskPathPoint, get_position, arginfo_class_Gtk4_GskPathPoint_get_position, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskPathPoint, get_rotation, arginfo_class_Gtk4_GskPathPoint_get_rotation, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskPathPoint, get_tangent, arginfo_class_Gtk4_GskPathPoint_get_tangent, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -1216,20 +1256,24 @@ static const zend_function_entry class_Gtk4_GskTransform_methods[] = {
 	ZEND_ME(Gtk4_GskTransform, equal, arginfo_class_Gtk4_GskTransform_equal, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, get_category, arginfo_class_Gtk4_GskTransform_get_category, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, invert, arginfo_class_Gtk4_GskTransform_invert, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskTransform, matrix, arginfo_class_Gtk4_GskTransform_matrix, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, perspective, arginfo_class_Gtk4_GskTransform_perspective, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, rotate, arginfo_class_Gtk4_GskTransform_rotate, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskTransform, rotate_3d, arginfo_class_Gtk4_GskTransform_rotate_3d, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, scale, arginfo_class_Gtk4_GskTransform_scale, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, scale_3d, arginfo_class_Gtk4_GskTransform_scale_3d, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, skew, arginfo_class_Gtk4_GskTransform_skew, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, to_2d, arginfo_class_Gtk4_GskTransform_to_2d, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, to_2d_components, arginfo_class_Gtk4_GskTransform_to_2d_components, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, to_affine, arginfo_class_Gtk4_GskTransform_to_affine, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskTransform, to_matrix, arginfo_class_Gtk4_GskTransform_to_matrix, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, to_string, arginfo_class_Gtk4_GskTransform_to_string, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, to_translate, arginfo_class_Gtk4_GskTransform_to_translate, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, transform, arginfo_class_Gtk4_GskTransform_transform, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, transform_bounds, arginfo_class_Gtk4_GskTransform_transform_bounds, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, transform_point, arginfo_class_Gtk4_GskTransform_transform_point, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, translate, arginfo_class_Gtk4_GskTransform_translate, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskTransform, translate_3d, arginfo_class_Gtk4_GskTransform_translate_3d, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTransform, parse, arginfo_class_Gtk4_GskTransform_parse, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_FE_END
 };

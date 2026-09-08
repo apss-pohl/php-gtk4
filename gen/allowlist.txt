@@ -262,6 +262,13 @@ Gdk.Snapshot
 Graphene.Rect
 Graphene.Point
 Graphene.Size
+# The 3D types a transform and a snapshot speak: a 4x4 matrix, the vectors and the 3D point that
+# rotate_3d()/translate_3d() take, and the vec4 a colour-matrix node offsets with.
+Graphene.Matrix
+Graphene.Vec2
+Graphene.Vec3
+Graphene.Vec4
+Graphene.Point3D
 
 # Wave 3b (drag and drop, gen/README.md): a drag is a
 # GtkDragSource gesture producing a GdkContentProvider, and a GtkDropTarget event controller
@@ -456,6 +463,11 @@ WebKit.MediaError
 WebKit.UserContentFilterError
 WebKit.FaviconDatabaseError
 WebKit.UserMessageError
+
+# The write side of GIO, the counterpart of GInputStream: what a content provider writes into
+# and what a pixbuf can be saved to. GMemoryOutputStream is the one PHP can read back afterwards.
+Gio.OutputStream
+Gio.MemoryOutputStream
 
 # The read side of GIO. GInputStream is what a stream parameter is declared as - GdkPixbuf's four
 # stream constructors, GdkPixbufAnimation's two, WebKitWebView::save_finish() - and

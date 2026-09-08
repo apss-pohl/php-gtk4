@@ -127,6 +127,29 @@ ZEND_METHOD(Gtk4_GskPathPoint, get_rotation) {
                                             static_cast<GskPathDirection>(direction_v)));
 }
 
+/**
+ * Gtk4\GskPathPoint::get_tangent(GskPath $path, GskPathDirection $direction): GrapheneVec2
+ *
+ * Gets the tangent of the path at the point.
+ */
+ZEND_METHOD(Gtk4_GskPathPoint, get_tangent) {
+  zval *path;
+  zval *direction;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(path, boxed_class_for_type(GSK_TYPE_PATH)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(direction, enum_class_for_type(GSK_TYPE_PATH_DIRECTION))
+  ZEND_PARSE_PARAMETERS_END();
+  GskPathPoint *self = PHPGTK_BOXED_SELF(GskPathPoint);
+  gpointer path_b = unwrap_boxed(path, GSK_TYPE_PATH);
+  if (path_b == nullptr) RETURN_THROWS();
+  gint direction_v = 0;
+  if (!enum_from_php(direction, GSK_TYPE_PATH_DIRECTION, &direction_v)) RETURN_THROWS();
+  graphene_vec2_t tangent{};
+  gsk_path_point_get_tangent(self, static_cast<GskPath *>(path_b),
+                             static_cast<GskPathDirection>(direction_v), &tangent);
+  wrap_boxed(GRAPHENE_TYPE_VEC2, &tangent, return_value);
+}
+
 namespace phpgtk {
 // MINIT: bind the PHP class to GSK_TYPE_PATH_POINT with its field table.
 void register_GskPathPoint(zend_class_entry *ce) {

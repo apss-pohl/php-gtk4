@@ -2203,6 +2203,15 @@ class GdkContentProvider extends GObject
     {
         return null;
     }
+    /** Asynchronously writes the contents of $provider to $stream in the given $mime_type. */
+    public function write_mime_type_async(string $mime_type, GOutputStream $stream, int $io_priority, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($mime_type);
+        unset($stream);
+        unset($io_priority);
+        unset($cancellable);
+        unset($callback);
+    }
     /** Finishes an asynchronous write operation. */
     public function write_mime_type_finish(GAsyncResult $result): bool
     {
@@ -3888,6 +3897,26 @@ class GdkPixbuf extends GObject implements GIcon
         unset($saturation);
         unset($pixelate);
     }
+    /** Saves `pixbuf` to an output stream. */
+    public function save_to_streamv(GOutputStream $stream, string $type, ?array $option_keys, ?array $option_values, ?GCancellable $cancellable): bool
+    {
+        unset($stream);
+        unset($type);
+        unset($option_keys);
+        unset($option_values);
+        unset($cancellable);
+        return false;
+    }
+    /** Saves `pixbuf` to an output stream asynchronously. */
+    public function save_to_streamv_async(GOutputStream $stream, string $type, ?array $option_keys, ?array $option_values, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($stream);
+        unset($type);
+        unset($option_keys);
+        unset($option_values);
+        unset($cancellable);
+        unset($callback);
+    }
     /**
      * Creates a transformation of the source image $src by scaling by $scale_x and $scale_y then
      * translating by $offset_x and $offset_y, then renders the rectangle ($dest_x, $dest_y,
@@ -5353,6 +5382,49 @@ class GMemoryInputStream extends GInputStream
     }
 }
 /**
+ * `GMemoryOutputStream` is a class for using arbitrary memory chunks as output for GIO streaming
+ * output operations.
+ *
+ * @property-read int $data_size
+ * @property int $size
+ */
+class GMemoryOutputStream extends GOutputStream
+{
+    /** A GMemoryOutputStream with default properties (GTK's own constructor is varargs-only; set the properties afterwards). */
+    public function __construct()
+    {
+    }
+    /** Creates a new #GMemoryOutputStream, using g_realloc() and g_free() for memory allocation. */
+    public static function new_resizable(): GMemoryOutputStream
+    {
+        return null;
+    }
+    /**
+     * Returns the number of bytes from the start up to including the last byte written in the
+     * stream that has not been truncated away.
+     */
+    public function get_data_size(): int
+    {
+        return 0;
+    }
+    /**
+     * Gets the size of the currently allocated data area (available from
+     * g_memory_output_stream_get_data()).
+     */
+    public function get_size(): int
+    {
+        return 0;
+    }
+    /**
+     * Returns data from the $ostream as a #GBytes. $ostream must be closed before calling this
+     * function.
+     */
+    public function steal_as_bytes(): string
+    {
+        return '';
+    }
+}
+/**
  * `GMenu` is a simple implementation of `MenuModel`. You populate a `GMenu` by adding `MenuItem`
  * instances to it.
  */
@@ -5758,6 +5830,189 @@ enum GNotificationPriority : int
     case Low = 1;
     case High = 2;
     case Urgent = 3;
+}
+/**
+ * `GOutputStream` is a base class for implementing streaming output.
+ */
+class GOutputStream extends GObject
+{
+    /** GOutputStream is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    public function __construct()
+    {
+    }
+    /** Clears the pending flag on $stream. */
+    public function clear_pending(): void
+    {
+    }
+    /** Closes the stream, releasing resources related to it. */
+    public function close(?GCancellable $cancellable): bool
+    {
+        unset($cancellable);
+        return false;
+    }
+    /**
+     * Requests an asynchronous close of the stream, releasing resources related to it. When the
+     * operation is finished $callback will be called. You can then call
+     * g_output_stream_close_finish() to get the result of the operation.
+     */
+    public function close_async(int $io_priority, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($io_priority);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Closes an output stream. */
+    public function close_finish(GAsyncResult $result): bool
+    {
+        unset($result);
+        return false;
+    }
+    /**
+     * Forces a write of all user-space buffered data for the given $stream. Will block during the
+     * operation. Closing the stream will implicitly cause a flush.
+     */
+    public function flush(?GCancellable $cancellable): bool
+    {
+        unset($cancellable);
+        return false;
+    }
+    /**
+     * Forces an asynchronous write of all user-space buffered data for the given $stream. For
+     * behaviour details see g_output_stream_flush().
+     */
+    public function flush_async(int $io_priority, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($io_priority);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes flushing an output stream. */
+    public function flush_finish(GAsyncResult $result): bool
+    {
+        unset($result);
+        return false;
+    }
+    /** Checks if an output stream has pending actions. */
+    public function has_pending(): bool
+    {
+        return false;
+    }
+    /** Checks if an output stream has already been closed. */
+    public function is_closed(): bool
+    {
+        return false;
+    }
+    /**
+     * Checks if an output stream is being closed. This can be used inside e.g. a flush
+     * implementation to see if the flush (or other i/o operation) is called from within the
+     * closing operation.
+     */
+    public function is_closing(): bool
+    {
+        return false;
+    }
+    /**
+     * Sets $stream to have actions pending. If the pending flag is already set or $stream is
+     * closed, it will return `false` and set $error.
+     */
+    public function set_pending(): bool
+    {
+        return false;
+    }
+    /** Splices an input stream into an output stream. */
+    public function splice(GInputStream $source, int $flags, ?GCancellable $cancellable): int
+    {
+        unset($source);
+        unset($flags);
+        unset($cancellable);
+        return 0;
+    }
+    /**
+     * Splices a stream asynchronously. When the operation is finished $callback will be called.
+     * You can then call g_output_stream_splice_finish() to get the result of the operation.
+     */
+    public function splice_async(GInputStream $source, int $flags, int $io_priority, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($source);
+        unset($flags);
+        unset($io_priority);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes an asynchronous stream splice operation. */
+    public function splice_finish(GAsyncResult $result): int
+    {
+        unset($result);
+        return 0;
+    }
+    /**
+     * Finishes an asynchronous stream write operation started with
+     * g_output_stream_write_all_async().
+     */
+    public function write_all_finish(GAsyncResult $result): ?int
+    {
+        unset($result);
+        return null;
+    }
+    /**
+     * A wrapper function for g_output_stream_write() which takes a #GBytes as input. This can be
+     * more convenient for use by language bindings or in other cases where the refcounted nature
+     * of #GBytes is helpful over a bare pointer interface.
+     */
+    public function write_bytes(string $bytes, ?GCancellable $cancellable): int
+    {
+        unset($bytes);
+        unset($cancellable);
+        return 0;
+    }
+    /**
+     * This function is similar to g_output_stream_write_async(), but takes a #GBytes as input. Due
+     * to the refcounted nature of #GBytes, this allows the stream to avoid taking a copy of the
+     * data.
+     */
+    public function write_bytes_async(string $bytes, int $io_priority, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($bytes);
+        unset($io_priority);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes a stream write-from-#GBytes operation. */
+    public function write_bytes_finish(GAsyncResult $result): int
+    {
+        unset($result);
+        return 0;
+    }
+    /** Finishes a stream write operation. */
+    public function write_finish(GAsyncResult $result): int
+    {
+        unset($result);
+        return 0;
+    }
+    /**
+     * Finishes an asynchronous stream write operation started with
+     * g_output_stream_writev_all_async().
+     */
+    public function writev_all_finish(GAsyncResult $result): ?int
+    {
+        unset($result);
+        return null;
+    }
+    /** Finishes a stream writev operation. */
+    public function writev_finish(GAsyncResult $result): ?int
+    {
+        unset($result);
+        return null;
+    }
+}
+/**
+ * GOutputStreamSpliceFlags determine how streams should be spliced.
+ */
+final class GOutputStreamSpliceFlags
+{
+    public const int NONE = 0;
+    public const int CLOSE_SOURCE = 1;
+    public const int CLOSE_TARGET = 2;
 }
 /**
  * A `GSimpleAction` is the obvious simple implementation of the `Action` interface. This is the
@@ -6231,6 +6486,390 @@ final class GTlsPasswordFlags
     public const int PKCS11_CONTEXT_SPECIFIC = 64;
 }
 /**
+ * A structure capable of holding a 4x4 matrix.
+ */
+final class GrapheneMatrix
+{
+    /** GrapheneMatrix values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Allocates a new #graphene_matrix_t. */
+    public static function alloc(): GrapheneMatrix
+    {
+        return null;
+    }
+    /** Computes the determinant of the given matrix. */
+    public function determinant(): float
+    {
+        return 0.0;
+    }
+    /** Checks whether the two given #graphene_matrix_t matrices are equal. */
+    public function equal(GrapheneMatrix $b): bool
+    {
+        unset($b);
+        return false;
+    }
+    /** Checks whether the two given #graphene_matrix_t matrices are byte-by-byte equal. */
+    public function equal_fast(GrapheneMatrix $b): bool
+    {
+        unset($b);
+        return false;
+    }
+    /** Retrieves the given row vector at $index_ inside a matrix. */
+    public function get_row(int $index): GrapheneVec4
+    {
+        unset($index);
+        return null;
+    }
+    /** Retrieves the value at the given $row and $col index. */
+    public function get_value(int $row, int $col): float
+    {
+        unset($row);
+        unset($col);
+        return 0.0;
+    }
+    /** Retrieves the scaling factor on the X axis in $m. */
+    public function get_x_scale(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the translation component on the X axis from $m. */
+    public function get_x_translation(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the scaling factor on the Y axis in $m. */
+    public function get_y_scale(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the translation component on the Y axis from $m. */
+    public function get_y_translation(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the scaling factor on the Z axis in $m. */
+    public function get_z_scale(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the translation component on the Z axis from $m. */
+    public function get_z_translation(): float
+    {
+        return 0.0;
+    }
+    /** Initializes a #graphene_matrix_t from the values of an affine transformation matrix. */
+    public function init_from_2d(float $xx, float $yx, float $xy, float $yy, float $x_0, float $y_0): GrapheneMatrix
+    {
+        unset($xx);
+        unset($yx);
+        unset($xy);
+        unset($yy);
+        unset($x_0);
+        unset($y_0);
+        return null;
+    }
+    /** Initializes a #graphene_matrix_t using the values of the given matrix. */
+    public function init_from_matrix(GrapheneMatrix $src): GrapheneMatrix
+    {
+        unset($src);
+        return null;
+    }
+    /** Initializes a #graphene_matrix_t with the given four row vectors. */
+    public function init_from_vec4(GrapheneVec4 $v0, GrapheneVec4 $v1, GrapheneVec4 $v2, GrapheneVec4 $v3): GrapheneMatrix
+    {
+        unset($v0);
+        unset($v1);
+        unset($v2);
+        unset($v3);
+        return null;
+    }
+    /** Initializes a #graphene_matrix_t compatible with #graphene_frustum_t. */
+    public function init_frustum(float $left, float $right, float $bottom, float $top, float $z_near, float $z_far): GrapheneMatrix
+    {
+        unset($left);
+        unset($right);
+        unset($bottom);
+        unset($top);
+        unset($z_near);
+        unset($z_far);
+        return null;
+    }
+    /** Initializes a #graphene_matrix_t with the identity matrix. */
+    public function init_identity(): GrapheneMatrix
+    {
+        return null;
+    }
+    /**
+     * Initializes a #graphene_matrix_t so that it positions the "camera" at the given $eye
+     * coordinates towards an object at the $center coordinates. The top of the camera is aligned
+     * to the direction of the $up vector.
+     */
+    public function init_look_at(GrapheneVec3 $eye, GrapheneVec3 $center, GrapheneVec3 $up): GrapheneMatrix
+    {
+        unset($eye);
+        unset($center);
+        unset($up);
+        return null;
+    }
+    /** Initializes a #graphene_matrix_t with an orthographic projection. */
+    public function init_ortho(float $left, float $right, float $top, float $bottom, float $z_near, float $z_far): GrapheneMatrix
+    {
+        unset($left);
+        unset($right);
+        unset($top);
+        unset($bottom);
+        unset($z_near);
+        unset($z_far);
+        return null;
+    }
+    /** Initializes a #graphene_matrix_t with a perspective projection. */
+    public function init_perspective(float $fovy, float $aspect, float $z_near, float $z_far): GrapheneMatrix
+    {
+        unset($fovy);
+        unset($aspect);
+        unset($z_near);
+        unset($z_far);
+        return null;
+    }
+    /**
+     * Initializes $m to represent a rotation of $angle degrees on the axis represented by the
+     * $axis vector.
+     */
+    public function init_rotate(float $angle, GrapheneVec3 $axis): GrapheneMatrix
+    {
+        unset($angle);
+        unset($axis);
+        return null;
+    }
+    /** Initializes a #graphene_matrix_t with the given scaling factors. */
+    public function init_scale(float $x, float $y, float $z): GrapheneMatrix
+    {
+        unset($x);
+        unset($y);
+        unset($z);
+        return null;
+    }
+    /** Initializes a #graphene_matrix_t with a skew transformation with the given factors. */
+    public function init_skew(float $x_skew, float $y_skew): GrapheneMatrix
+    {
+        unset($x_skew);
+        unset($y_skew);
+        return null;
+    }
+    /** Initializes a #graphene_matrix_t with a translation to the given coordinates. */
+    public function init_translate(GraphenePoint3D $p): GrapheneMatrix
+    {
+        unset($p);
+        return null;
+    }
+    /**
+     * Linearly interpolates the two given #graphene_matrix_t by interpolating the decomposed
+     * transformations separately.
+     */
+    public function interpolate(GrapheneMatrix $b, float $factor): GrapheneMatrix
+    {
+        unset($b);
+        unset($factor);
+        return null;
+    }
+    /** Inverts the given matrix. */
+    public function inverse(): ?GrapheneMatrix
+    {
+        return null;
+    }
+    /**
+     * Checks whether the given #graphene_matrix_t is compatible with an a 2D affine transformation
+     * matrix.
+     */
+    public function is_2d(): bool
+    {
+        return false;
+    }
+    /** Checks whether a #graphene_matrix_t has a visible back face. */
+    public function is_backface_visible(): bool
+    {
+        return false;
+    }
+    /** Checks whether the given #graphene_matrix_t is the identity matrix. */
+    public function is_identity(): bool
+    {
+        return false;
+    }
+    /** Checks whether a matrix is singular. */
+    public function is_singular(): bool
+    {
+        return false;
+    }
+    /** Multiplies two #graphene_matrix_t. */
+    public function multiply(GrapheneMatrix $b): GrapheneMatrix
+    {
+        unset($b);
+        return null;
+    }
+    /**
+     * Compares the two given #graphene_matrix_t matrices and checks whether their values are
+     * within the given $epsilon of each other.
+     */
+    public function near(GrapheneMatrix $b, float $epsilon): bool
+    {
+        unset($b);
+        unset($epsilon);
+        return false;
+    }
+    /** Normalizes the given #graphene_matrix_t. */
+    public function normalize(): GrapheneMatrix
+    {
+        return null;
+    }
+    /** Applies a perspective of $depth to the matrix. */
+    public function perspective(float $depth): GrapheneMatrix
+    {
+        unset($depth);
+        return null;
+    }
+    /** Prints the contents of a matrix to the standard error stream. */
+    public function print(): void
+    {
+    }
+    /** Projects a #graphene_point_t using the matrix $m. */
+    public function project_point(GraphenePoint $p): GraphenePoint
+    {
+        unset($p);
+        return null;
+    }
+    /** Projects a #graphene_rect_t using the given matrix. */
+    public function project_rect_bounds(GrapheneRect $r): GrapheneRect
+    {
+        unset($r);
+        return null;
+    }
+    /** Adds a rotation transformation to $m, using the given $angle and $axis vector. */
+    public function rotate(float $angle, GrapheneVec3 $axis): void
+    {
+        unset($angle);
+        unset($axis);
+    }
+    /** Adds a rotation transformation around the X axis to $m, using the given $angle. */
+    public function rotate_x(float $angle): void
+    {
+        unset($angle);
+    }
+    /** Adds a rotation transformation around the Y axis to $m, using the given $angle. */
+    public function rotate_y(float $angle): void
+    {
+        unset($angle);
+    }
+    /** Adds a rotation transformation around the Z axis to $m, using the given $angle. */
+    public function rotate_z(float $angle): void
+    {
+        unset($angle);
+    }
+    /** Adds a scaling transformation to $m, using the three given factors. */
+    public function scale(float $factor_x, float $factor_y, float $factor_z): void
+    {
+        unset($factor_x);
+        unset($factor_y);
+        unset($factor_z);
+    }
+    /** Adds a skew of $factor on the X and Y axis to the given matrix. */
+    public function skew_xy(float $factor): void
+    {
+        unset($factor);
+    }
+    /** Adds a skew of $factor on the X and Z axis to the given matrix. */
+    public function skew_xz(float $factor): void
+    {
+        unset($factor);
+    }
+    /** Adds a skew of $factor on the Y and Z axis to the given matrix. */
+    public function skew_yz(float $factor): void
+    {
+        unset($factor);
+    }
+    /**
+     * Converts a #graphene_matrix_t to an affine transformation matrix, if the given matrix is
+     * compatible.
+     *
+     * @return array{float, float, float, float, float, float}|null
+     */
+    public function to_2d(): ?array
+    {
+        return null;
+    }
+    /** Transforms each corner of a #graphene_rect_t using the given matrix $m. */
+    public function transform_bounds(GrapheneRect $r): GrapheneRect
+    {
+        unset($r);
+        return null;
+    }
+    /** Transforms the given #graphene_point_t using the matrix $m. */
+    public function transform_point(GraphenePoint $p): GraphenePoint
+    {
+        unset($p);
+        return null;
+    }
+    /** Transforms the given #graphene_point3d_t using the matrix $m. */
+    public function transform_point3d(GraphenePoint3D $p): GraphenePoint3D
+    {
+        unset($p);
+        return null;
+    }
+    /** Transforms the given #graphene_vec3_t using the matrix $m. */
+    public function transform_vec3(GrapheneVec3 $v): GrapheneVec3
+    {
+        unset($v);
+        return null;
+    }
+    /** Transforms the given #graphene_vec4_t using the matrix $m. */
+    public function transform_vec4(GrapheneVec4 $v): GrapheneVec4
+    {
+        unset($v);
+        return null;
+    }
+    /**
+     * Adds a translation transformation to $m using the coordinates of the given
+     * #graphene_point3d_t.
+     */
+    public function translate(GraphenePoint3D $pos): void
+    {
+        unset($pos);
+    }
+    /** Transposes the given matrix. */
+    public function transpose(): GrapheneMatrix
+    {
+        return null;
+    }
+    /** Unprojects the given $point using the $projection matrix and a $modelview matrix. */
+    public function unproject_point3d(GrapheneMatrix $modelview, GraphenePoint3D $point): GraphenePoint3D
+    {
+        unset($modelview);
+        unset($point);
+        return null;
+    }
+    /**
+     * Undoes the transformation on the corners of a #graphene_rect_t using the given matrix,
+     * within the given axis aligned rectangular $bounds.
+     */
+    public function untransform_bounds(GrapheneRect $r, GrapheneRect $bounds): GrapheneRect
+    {
+        unset($r);
+        unset($bounds);
+        return null;
+    }
+    /**
+     * Undoes the transformation of a #graphene_point_t using the given matrix, within the given
+     * axis aligned rectangular $bounds.
+     */
+    public function untransform_point(GraphenePoint $p, GrapheneRect $bounds): ?GraphenePoint
+    {
+        unset($p);
+        unset($bounds);
+        return null;
+    }
+}
+/**
  * A point with two coordinates.
  *
  * @property float $x
@@ -6268,6 +6907,12 @@ final class GraphenePoint
         unset($src);
         return null;
     }
+    /** Initializes $p with the coordinates inside the given #graphene_vec2_t. */
+    public function init_from_vec2(GrapheneVec2 $src): GraphenePoint
+    {
+        unset($src);
+        return null;
+    }
     /** Linearly interpolates the coordinates of $a and $b using the given $factor. */
     public function interpolate(GraphenePoint $b, float $factor): GraphenePoint
     {
@@ -6282,8 +6927,151 @@ final class GraphenePoint
         unset($epsilon);
         return false;
     }
+    /** Stores the coordinates of the given #graphene_point_t into a #graphene_vec2_t. */
+    public function to_vec2(): GrapheneVec2
+    {
+        return null;
+    }
     /** Returns a point fixed at (0, 0). */
     public static function zero(): GraphenePoint
+    {
+        return null;
+    }
+    /** GObject property read (engine handler; see gen/ide-stub.php). */
+    public function __get(string $name): mixed
+    {
+        unset($name);
+        return null;
+    }
+    /** GObject property write (engine handler; see gen/ide-stub.php). */
+    public function __set(string $name, mixed $value): void
+    {
+        unset($name);
+        unset($value);
+    }
+    /** GObject property isset (engine handler; see gen/ide-stub.php). */
+    public function __isset(string $name): bool
+    {
+        unset($name);
+        return false;
+    }
+}
+/**
+ * A point with three components: X, Y, and Z.
+ *
+ * @property float $x
+ * @property float $y
+ * @property float $z
+ */
+final class GraphenePoint3D
+{
+    /** A value from its fields (all optional, zero by default). */
+    public function __construct(float $x = 0.0, float $y = 0.0, float $z = 0.0)
+    {
+        unset($x);
+        unset($y);
+        unset($z);
+    }
+    /** Allocates a #graphene_point3d_t structure. */
+    public static function alloc(): GraphenePoint3D
+    {
+        return null;
+    }
+    /** Computes the cross product of the two given #graphene_point3d_t. */
+    public function cross(GraphenePoint3D $b): GraphenePoint3D
+    {
+        unset($b);
+        return null;
+    }
+    /** Computes the dot product of the two given #graphene_point3d_t. */
+    public function dot(GraphenePoint3D $b): float
+    {
+        unset($b);
+        return 0.0;
+    }
+    /** Checks whether two given points are equal. */
+    public function equal(GraphenePoint3D $b): bool
+    {
+        unset($b);
+        return false;
+    }
+    /** Initializes a #graphene_point3d_t with the given coordinates. */
+    public function init(float $x, float $y, float $z): GraphenePoint3D
+    {
+        unset($x);
+        unset($y);
+        unset($z);
+        return null;
+    }
+    /** Initializes a #graphene_point3d_t using the coordinates of another #graphene_point3d_t. */
+    public function init_from_point(GraphenePoint3D $src): GraphenePoint3D
+    {
+        unset($src);
+        return null;
+    }
+    /** Initializes a #graphene_point3d_t using the components of a #graphene_vec3_t. */
+    public function init_from_vec3(GrapheneVec3 $v): GraphenePoint3D
+    {
+        unset($v);
+        return null;
+    }
+    /**
+     * Linearly interpolates each component of $a and $b using the provided $factor, and places the
+     * result in $res.
+     */
+    public function interpolate(GraphenePoint3D $b, float $factor): GraphenePoint3D
+    {
+        unset($b);
+        unset($factor);
+        return null;
+    }
+    /**
+     * Computes the length of the vector represented by the coordinates of the given
+     * #graphene_point3d_t.
+     */
+    public function length(): float
+    {
+        return 0.0;
+    }
+    /** Checks whether the two points are near each other, within an $epsilon factor. */
+    public function near(GraphenePoint3D $b, float $epsilon): bool
+    {
+        unset($b);
+        unset($epsilon);
+        return false;
+    }
+    /**
+     * Computes the normalization of the vector represented by the coordinates of the given
+     * #graphene_point3d_t.
+     */
+    public function normalize(): GraphenePoint3D
+    {
+        return null;
+    }
+    /**
+     * Normalizes the coordinates of a #graphene_point3d_t using the given viewport and clipping
+     * planes.
+     */
+    public function normalize_viewport(GrapheneRect $viewport, float $z_near, float $z_far): GraphenePoint3D
+    {
+        unset($viewport);
+        unset($z_near);
+        unset($z_far);
+        return null;
+    }
+    /** Scales the coordinates of the given #graphene_point3d_t by the given $factor. */
+    public function scale(float $factor): GraphenePoint3D
+    {
+        unset($factor);
+        return null;
+    }
+    /** Stores the coordinates of a #graphene_point3d_t into a #graphene_vec3_t. */
+    public function to_vec3(): GrapheneVec3
+    {
+        return null;
+    }
+    /** Retrieves a constant point with all three coordinates set to 0. */
+    public static function zero(): GraphenePoint3D
     {
         return null;
     }
@@ -6574,6 +7362,597 @@ final class GrapheneSize
     }
 }
 /**
+ * A structure capable of holding a vector with two dimensions, x and y.
+ */
+final class GrapheneVec2
+{
+    /** GrapheneVec2 values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Allocates a new #graphene_vec2_t structure. */
+    public static function alloc(): GrapheneVec2
+    {
+        return null;
+    }
+    /**
+     * Adds each component of the two passed vectors and places each result into the components of
+     * $res.
+     */
+    public function add(GrapheneVec2 $b): GrapheneVec2
+    {
+        unset($b);
+        return null;
+    }
+    /**
+     * Divides each component of the first operand $a by the corresponding component of the second
+     * operand $b, and places the results into the vector $res.
+     */
+    public function divide(GrapheneVec2 $b): GrapheneVec2
+    {
+        unset($b);
+        return null;
+    }
+    /** Computes the dot product of the two given vectors. */
+    public function dot(GrapheneVec2 $b): float
+    {
+        unset($b);
+        return 0.0;
+    }
+    /** Checks whether the two given #graphene_vec2_t are equal. */
+    public function equal(GrapheneVec2 $v2): bool
+    {
+        unset($v2);
+        return false;
+    }
+    /** Retrieves the X component of the #graphene_vec2_t. */
+    public function get_x(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the Y component of the #graphene_vec2_t. */
+    public function get_y(): float
+    {
+        return 0.0;
+    }
+    /** Initializes a #graphene_vec2_t using the given values. */
+    public function init(float $x, float $y): GrapheneVec2
+    {
+        unset($x);
+        unset($y);
+        return null;
+    }
+    /** Copies the contents of $src into $v. */
+    public function init_from_vec2(GrapheneVec2 $src): GrapheneVec2
+    {
+        unset($src);
+        return null;
+    }
+    /** Linearly interpolates $v1 and $v2 using the given $factor. */
+    public function interpolate(GrapheneVec2 $v2, float $factor): GrapheneVec2
+    {
+        unset($v2);
+        unset($factor);
+        return null;
+    }
+    /** Computes the length of the given vector. */
+    public function length(): float
+    {
+        return 0.0;
+    }
+    /** Compares the two given vectors and places the maximum values of each component into $res. */
+    public function max(GrapheneVec2 $b): GrapheneVec2
+    {
+        unset($b);
+        return null;
+    }
+    /** Compares the two given vectors and places the minimum values of each component into $res. */
+    public function min(GrapheneVec2 $b): GrapheneVec2
+    {
+        unset($b);
+        return null;
+    }
+    /**
+     * Multiplies each component of the two passed vectors and places each result into the
+     * components of $res.
+     */
+    public function multiply(GrapheneVec2 $b): GrapheneVec2
+    {
+        unset($b);
+        return null;
+    }
+    /**
+     * Compares the two given #graphene_vec2_t vectors and checks whether their values are within
+     * the given $epsilon.
+     */
+    public function near(GrapheneVec2 $v2, float $epsilon): bool
+    {
+        unset($v2);
+        unset($epsilon);
+        return false;
+    }
+    /** Negates the given #graphene_vec2_t. */
+    public function negate(): GrapheneVec2
+    {
+        return null;
+    }
+    /** Computes the normalized vector for the given vector $v. */
+    public function normalize(): GrapheneVec2
+    {
+        return null;
+    }
+    /** Multiplies all components of the given vector with the given scalar $factor. */
+    public function scale(float $factor): GrapheneVec2
+    {
+        unset($factor);
+        return null;
+    }
+    /**
+     * Subtracts from each component of the first operand $a the corresponding component of the
+     * second operand $b and places each result into the components of $res.
+     */
+    public function subtract(GrapheneVec2 $b): GrapheneVec2
+    {
+        unset($b);
+        return null;
+    }
+    /** Retrieves a constant vector with (1, 1) components. */
+    public static function one(): GrapheneVec2
+    {
+        return null;
+    }
+    /** Retrieves a constant vector with (1, 0) components. */
+    public static function x_axis(): GrapheneVec2
+    {
+        return null;
+    }
+    /** Retrieves a constant vector with (0, 1) components. */
+    public static function y_axis(): GrapheneVec2
+    {
+        return null;
+    }
+    /** Retrieves a constant vector with (0, 0) components. */
+    public static function zero(): GrapheneVec2
+    {
+        return null;
+    }
+}
+/**
+ * A structure capable of holding a vector with three dimensions: x, y, and z.
+ */
+final class GrapheneVec3
+{
+    /** GrapheneVec3 values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Allocates a new #graphene_vec3_t structure. */
+    public static function alloc(): GrapheneVec3
+    {
+        return null;
+    }
+    /** Adds each component of the two given vectors. */
+    public function add(GrapheneVec3 $b): GrapheneVec3
+    {
+        unset($b);
+        return null;
+    }
+    /** Computes the cross product of the two given vectors. */
+    public function cross(GrapheneVec3 $b): GrapheneVec3
+    {
+        unset($b);
+        return null;
+    }
+    /**
+     * Divides each component of the first operand $a by the corresponding component of the second
+     * operand $b, and places the results into the vector $res.
+     */
+    public function divide(GrapheneVec3 $b): GrapheneVec3
+    {
+        unset($b);
+        return null;
+    }
+    /** Computes the dot product of the two given vectors. */
+    public function dot(GrapheneVec3 $b): float
+    {
+        unset($b);
+        return 0.0;
+    }
+    /** Checks whether the two given #graphene_vec3_t are equal. */
+    public function equal(GrapheneVec3 $v2): bool
+    {
+        unset($v2);
+        return false;
+    }
+    /** Retrieves the first component of the given vector $v. */
+    public function get_x(): float
+    {
+        return 0.0;
+    }
+    /**
+     * Creates a #graphene_vec2_t that contains the first and second components of the given
+     * #graphene_vec3_t.
+     */
+    public function get_xy(): GrapheneVec2
+    {
+        return null;
+    }
+    /**
+     * Creates a #graphene_vec3_t that contains the first two components of the given
+     * #graphene_vec3_t, and the third component set to 0.
+     */
+    public function get_xy0(): GrapheneVec3
+    {
+        return null;
+    }
+    /**
+     * Converts a #graphene_vec3_t in a #graphene_vec4_t using 0.0 as the value for the fourth
+     * component of the resulting vector.
+     */
+    public function get_xyz0(): GrapheneVec4
+    {
+        return null;
+    }
+    /**
+     * Converts a #graphene_vec3_t in a #graphene_vec4_t using 1.0 as the value for the fourth
+     * component of the resulting vector.
+     */
+    public function get_xyz1(): GrapheneVec4
+    {
+        return null;
+    }
+    /**
+     * Converts a #graphene_vec3_t in a #graphene_vec4_t using $w as the value of the fourth
+     * component of the resulting vector.
+     */
+    public function get_xyzw(float $w): GrapheneVec4
+    {
+        unset($w);
+        return null;
+    }
+    /** Retrieves the second component of the given vector $v. */
+    public function get_y(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the third component of the given vector $v. */
+    public function get_z(): float
+    {
+        return 0.0;
+    }
+    /** Initializes a #graphene_vec3_t using the given values. */
+    public function init(float $x, float $y, float $z): GrapheneVec3
+    {
+        unset($x);
+        unset($y);
+        unset($z);
+        return null;
+    }
+    /** Initializes a #graphene_vec3_t with the values of another #graphene_vec3_t. */
+    public function init_from_vec3(GrapheneVec3 $src): GrapheneVec3
+    {
+        unset($src);
+        return null;
+    }
+    /** Linearly interpolates $v1 and $v2 using the given $factor. */
+    public function interpolate(GrapheneVec3 $v2, float $factor): GrapheneVec3
+    {
+        unset($v2);
+        unset($factor);
+        return null;
+    }
+    /** Retrieves the length of the given vector $v. */
+    public function length(): float
+    {
+        return 0.0;
+    }
+    /**
+     * Compares each component of the two given vectors and creates a vector that contains the
+     * maximum values.
+     */
+    public function max(GrapheneVec3 $b): GrapheneVec3
+    {
+        unset($b);
+        return null;
+    }
+    /**
+     * Compares each component of the two given vectors and creates a vector that contains the
+     * minimum values.
+     */
+    public function min(GrapheneVec3 $b): GrapheneVec3
+    {
+        unset($b);
+        return null;
+    }
+    /** Multiplies each component of the two given vectors. */
+    public function multiply(GrapheneVec3 $b): GrapheneVec3
+    {
+        unset($b);
+        return null;
+    }
+    /**
+     * Compares the two given #graphene_vec3_t vectors and checks whether their values are within
+     * the given $epsilon.
+     */
+    public function near(GrapheneVec3 $v2, float $epsilon): bool
+    {
+        unset($v2);
+        unset($epsilon);
+        return false;
+    }
+    /** Negates the given #graphene_vec3_t. */
+    public function negate(): GrapheneVec3
+    {
+        return null;
+    }
+    /** Normalizes the given #graphene_vec3_t. */
+    public function normalize(): GrapheneVec3
+    {
+        return null;
+    }
+    /** Multiplies all components of the given vector with the given scalar $factor. */
+    public function scale(float $factor): GrapheneVec3
+    {
+        unset($factor);
+        return null;
+    }
+    /**
+     * Subtracts from each component of the first operand $a the corresponding component of the
+     * second operand $b and places each result into the components of $res.
+     */
+    public function subtract(GrapheneVec3 $b): GrapheneVec3
+    {
+        unset($b);
+        return null;
+    }
+    /** Provides a constant pointer to a vector with three components, all sets to 1. */
+    public static function one(): GrapheneVec3
+    {
+        return null;
+    }
+    /**
+     * Provides a constant pointer to a vector with three components with values set to (1, 0, 0).
+     */
+    public static function x_axis(): GrapheneVec3
+    {
+        return null;
+    }
+    /**
+     * Provides a constant pointer to a vector with three components with values set to (0, 1, 0).
+     */
+    public static function y_axis(): GrapheneVec3
+    {
+        return null;
+    }
+    /**
+     * Provides a constant pointer to a vector with three components with values set to (0, 0, 1).
+     */
+    public static function z_axis(): GrapheneVec3
+    {
+        return null;
+    }
+    /** Provides a constant pointer to a vector with three components, all sets to 0. */
+    public static function zero(): GrapheneVec3
+    {
+        return null;
+    }
+}
+/**
+ * A structure capable of holding a vector with four dimensions: x, y, z, and w.
+ */
+final class GrapheneVec4
+{
+    /** GrapheneVec4 values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Allocates a new #graphene_vec4_t structure. */
+    public static function alloc(): GrapheneVec4
+    {
+        return null;
+    }
+    /** Adds each component of the two given vectors. */
+    public function add(GrapheneVec4 $b): GrapheneVec4
+    {
+        unset($b);
+        return null;
+    }
+    /**
+     * Divides each component of the first operand $a by the corresponding component of the second
+     * operand $b, and places the results into the vector $res.
+     */
+    public function divide(GrapheneVec4 $b): GrapheneVec4
+    {
+        unset($b);
+        return null;
+    }
+    /** Computes the dot product of the two given vectors. */
+    public function dot(GrapheneVec4 $b): float
+    {
+        unset($b);
+        return 0.0;
+    }
+    /** Checks whether the two given #graphene_vec4_t are equal. */
+    public function equal(GrapheneVec4 $v2): bool
+    {
+        unset($v2);
+        return false;
+    }
+    /** Retrieves the value of the fourth component of the given #graphene_vec4_t. */
+    public function get_w(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the value of the first component of the given #graphene_vec4_t. */
+    public function get_x(): float
+    {
+        return 0.0;
+    }
+    /**
+     * Creates a #graphene_vec2_t that contains the first two components of the given
+     * #graphene_vec4_t.
+     */
+    public function get_xy(): GrapheneVec2
+    {
+        return null;
+    }
+    /**
+     * Creates a #graphene_vec3_t that contains the first three components of the given
+     * #graphene_vec4_t.
+     */
+    public function get_xyz(): GrapheneVec3
+    {
+        return null;
+    }
+    /** Retrieves the value of the second component of the given #graphene_vec4_t. */
+    public function get_y(): float
+    {
+        return 0.0;
+    }
+    /** Retrieves the value of the third component of the given #graphene_vec4_t. */
+    public function get_z(): float
+    {
+        return 0.0;
+    }
+    /** Initializes a #graphene_vec4_t using the given values. */
+    public function init(float $x, float $y, float $z, float $w): GrapheneVec4
+    {
+        unset($x);
+        unset($y);
+        unset($z);
+        unset($w);
+        return null;
+    }
+    /**
+     * Initializes a #graphene_vec4_t using the components of a #graphene_vec2_t and the values of
+     * $z and $w.
+     */
+    public function init_from_vec2(GrapheneVec2 $src, float $z, float $w): GrapheneVec4
+    {
+        unset($src);
+        unset($z);
+        unset($w);
+        return null;
+    }
+    /**
+     * Initializes a #graphene_vec4_t using the components of a #graphene_vec3_t and the value of
+     * $w.
+     */
+    public function init_from_vec3(GrapheneVec3 $src, float $w): GrapheneVec4
+    {
+        unset($src);
+        unset($w);
+        return null;
+    }
+    /** Initializes a #graphene_vec4_t using the components of another #graphene_vec4_t. */
+    public function init_from_vec4(GrapheneVec4 $src): GrapheneVec4
+    {
+        unset($src);
+        return null;
+    }
+    /** Linearly interpolates $v1 and $v2 using the given $factor. */
+    public function interpolate(GrapheneVec4 $v2, float $factor): GrapheneVec4
+    {
+        unset($v2);
+        unset($factor);
+        return null;
+    }
+    /** Computes the length of the given #graphene_vec4_t. */
+    public function length(): float
+    {
+        return 0.0;
+    }
+    /**
+     * Compares each component of the two given vectors and creates a vector that contains the
+     * maximum values.
+     */
+    public function max(GrapheneVec4 $b): GrapheneVec4
+    {
+        unset($b);
+        return null;
+    }
+    /**
+     * Compares each component of the two given vectors and creates a vector that contains the
+     * minimum values.
+     */
+    public function min(GrapheneVec4 $b): GrapheneVec4
+    {
+        unset($b);
+        return null;
+    }
+    /** Multiplies each component of the two given vectors. */
+    public function multiply(GrapheneVec4 $b): GrapheneVec4
+    {
+        unset($b);
+        return null;
+    }
+    /**
+     * Compares the two given #graphene_vec4_t vectors and checks whether their values are within
+     * the given $epsilon.
+     */
+    public function near(GrapheneVec4 $v2, float $epsilon): bool
+    {
+        unset($v2);
+        unset($epsilon);
+        return false;
+    }
+    /** Negates the given #graphene_vec4_t. */
+    public function negate(): GrapheneVec4
+    {
+        return null;
+    }
+    /** Normalizes the given #graphene_vec4_t. */
+    public function normalize(): GrapheneVec4
+    {
+        return null;
+    }
+    /** Multiplies all components of the given vector with the given scalar $factor. */
+    public function scale(float $factor): GrapheneVec4
+    {
+        unset($factor);
+        return null;
+    }
+    /**
+     * Subtracts from each component of the first operand $a the corresponding component of the
+     * second operand $b and places each result into the components of $res.
+     */
+    public function subtract(GrapheneVec4 $b): GrapheneVec4
+    {
+        unset($b);
+        return null;
+    }
+    /** Retrieves a pointer to a #graphene_vec4_t with all its components set to 1. */
+    public static function one(): GrapheneVec4
+    {
+        return null;
+    }
+    /** Retrieves a pointer to a #graphene_vec4_t with its components set to (0, 0, 0, 1). */
+    public static function w_axis(): GrapheneVec4
+    {
+        return null;
+    }
+    /** Retrieves a pointer to a #graphene_vec4_t with its components set to (1, 0, 0, 0). */
+    public static function x_axis(): GrapheneVec4
+    {
+        return null;
+    }
+    /** Retrieves a pointer to a #graphene_vec4_t with its components set to (0, 1, 0, 0). */
+    public static function y_axis(): GrapheneVec4
+    {
+        return null;
+    }
+    /** Retrieves a pointer to a #graphene_vec4_t with its components set to (0, 0, 1, 0). */
+    public static function z_axis(): GrapheneVec4
+    {
+        return null;
+    }
+    /** Retrieves a pointer to a #graphene_vec4_t with all its components set to 0. */
+    public static function zero(): GrapheneVec4
+    {
+        return null;
+    }
+}
+/**
  * The blend modes available for render nodes.
  */
 enum GskBlendMode : int
@@ -6767,12 +8146,25 @@ final class GskClipNode extends GskRenderNode
  */
 final class GskColorMatrixNode extends GskRenderNode
 {
-    /** GskColorMatrixNode has no constructor in GTK: instances come from GTK, never from `new`. */
-    private function __construct()
+    /** Creates a `GskRenderNode` that will drawn the $child with $color_matrix. */
+    public function __construct(GskRenderNode $child, GrapheneMatrix $color_matrix, GrapheneVec4 $color_offset)
     {
+        unset($child);
+        unset($color_matrix);
+        unset($color_offset);
     }
     /** Gets the child node that is getting its colors modified by the given $node. */
     public function get_child(): GskRenderNode
+    {
+        return null;
+    }
+    /** Retrieves the color matrix used by the $node. */
+    public function get_color_matrix(): GrapheneMatrix
+    {
+        return null;
+    }
+    /** Retrieves the color offset used by the $node. */
+    public function get_color_offset(): GrapheneVec4
     {
         return null;
     }
@@ -7638,6 +9030,13 @@ final class GskPathPoint
         unset($direction);
         return 0.0;
     }
+    /** Gets the tangent of the path at the point. */
+    public function get_tangent(GskPath $path, GskPathDirection $direction): GrapheneVec2
+    {
+        unset($path);
+        unset($direction);
+        return null;
+    }
 }
 /**
  * A render node for a radial gradient.
@@ -8252,6 +9651,12 @@ final class GskTransform
     {
         return null;
     }
+    /** Multiplies $next with the given $matrix. */
+    public function matrix(GrapheneMatrix $matrix): GskTransform
+    {
+        unset($matrix);
+        return null;
+    }
     /** Applies a perspective projection transform. */
     public function perspective(float $depth): GskTransform
     {
@@ -8265,6 +9670,13 @@ final class GskTransform
     public function rotate(float $angle): ?GskTransform
     {
         unset($angle);
+        return null;
+    }
+    /** Rotates $next $angle degrees around $axis. */
+    public function rotate_3d(float $angle, GrapheneVec3 $axis): ?GskTransform
+    {
+        unset($angle);
+        unset($axis);
         return null;
     }
     /** Scales $next in 2-dimensional space by the given factors. */
@@ -8316,6 +9728,11 @@ final class GskTransform
     {
         return [];
     }
+    /** Computes the actual value of $self and stores it in $out_matrix. */
+    public function to_matrix(): GrapheneMatrix
+    {
+        return null;
+    }
     /** Converts a matrix into a string that is suitable for printing. */
     public function to_string(): string
     {
@@ -8350,6 +9767,12 @@ final class GskTransform
     }
     /** Translates $next in 2-dimensional space by $point. */
     public function translate(GraphenePoint $point): ?GskTransform
+    {
+        unset($point);
+        return null;
+    }
+    /** Translates $next by $point. */
+    public function translate_3d(GraphenePoint3D $point): ?GskTransform
     {
         unset($point);
         return null;
@@ -17362,6 +18785,12 @@ class GtkPrintDialog extends GObject
         unset($result);
         return false;
     }
+    /** Finishes the `print` call and returns the results. */
+    public function print_finish(GAsyncResult $result): ?GOutputStream
+    {
+        unset($result);
+        return null;
+    }
     /**
      * Sets the label that will be shown on the accept button of the print dialog shown for
      * `setup`.
@@ -19586,6 +21015,12 @@ class GtkSnapshot extends GdkSnapshot
     {
         unset($bounds);
     }
+    /** Modifies the colors of an image by applying an affine transformation in RGB space. */
+    public function push_color_matrix(GrapheneMatrix $color_matrix, GrapheneVec4 $color_offset): void
+    {
+        unset($color_matrix);
+        unset($color_offset);
+    }
     /** Snapshots a cross-fade operation between two images with the given $progress. */
     public function push_cross_fade(float $progress): void
     {
@@ -19643,6 +21078,12 @@ class GtkSnapshot extends GdkSnapshot
     {
         unset($angle);
     }
+    /** Rotates $snapshot's coordinate system by $angle degrees around $axis. */
+    public function rotate_3d(float $angle, GrapheneVec3 $axis): void
+    {
+        unset($angle);
+        unset($axis);
+    }
     /** Makes a copy of the current state of $snapshot and saves it on an internal stack. */
     public function save(): void
     {
@@ -19676,8 +21117,18 @@ class GtkSnapshot extends GdkSnapshot
     {
         unset($transform);
     }
+    /** Transforms $snapshot's coordinate system with the given $matrix. */
+    public function transform_matrix(GrapheneMatrix $matrix): void
+    {
+        unset($matrix);
+    }
     /** Translates $snapshot's coordinate system by $point in 2-dimensional space. */
     public function translate(GraphenePoint $point): void
+    {
+        unset($point);
+    }
+    /** Translates $snapshot's coordinate system by $point. */
+    public function translate_3d(GraphenePoint3D $point): void
     {
         unset($point);
     }
@@ -23473,6 +24924,15 @@ class GtkWidget extends GObject
     {
         unset($target);
         unset($point);
+        return null;
+    }
+    /**
+     * Computes a matrix suitable to describe a transformation from $widget's coordinate system
+     * into $target's coordinate system.
+     */
+    public function compute_transform(GtkWidget $target): ?GrapheneMatrix
+    {
+        unset($target);
         return null;
     }
     /** Tests if the point at ($x, $y) is contained in $widget. */

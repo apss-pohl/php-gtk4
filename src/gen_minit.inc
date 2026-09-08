@@ -79,6 +79,7 @@
   phpgtk::register_enum(PANGO_TYPE_WRAP_MODE, register_class_Gtk4_PangoWrapMode());
   phpgtk::register_flags(G_TYPE_APPLICATION_FLAGS, register_class_Gtk4_GApplicationFlags());
   phpgtk::register_enum(G_TYPE_NOTIFICATION_PRIORITY, register_class_Gtk4_GNotificationPriority());
+  phpgtk::register_flags(G_TYPE_OUTPUT_STREAM_SPLICE_FLAGS, register_class_Gtk4_GOutputStreamSpliceFlags());
   phpgtk::register_flags(G_TYPE_TLS_CERTIFICATE_FLAGS, register_class_Gtk4_GTlsCertificateFlags());
   phpgtk::register_flags(G_TYPE_TLS_PASSWORD_FLAGS, register_class_Gtk4_GTlsPasswordFlags());
   phpgtk::register_enum(GDK_TYPE_CROSSING_MODE, register_class_Gtk4_GdkCrossingMode());
@@ -295,6 +296,8 @@
   phpgtk::register_class("GMenuModel", ce_GMenuModel, G_TYPE_MENU_MODEL);
   zend_class_entry *ce_GNotification = register_class_Gtk4_GNotification(ce_GObject);
   phpgtk::register_class("GNotification", ce_GNotification, G_TYPE_NOTIFICATION);
+  zend_class_entry *ce_GOutputStream = register_class_Gtk4_GOutputStream(ce_GObject);
+  phpgtk::register_class("GOutputStream", ce_GOutputStream, G_TYPE_OUTPUT_STREAM);
   zend_class_entry *ce_GSimpleAction = register_class_Gtk4_GSimpleAction(ce_GObject, ce_GAction);
   phpgtk::register_class("GSimpleAction", ce_GSimpleAction, G_TYPE_SIMPLE_ACTION);
   zend_class_entry *ce_GTask = register_class_Gtk4_GTask(ce_GObject, ce_GAsyncResult);
@@ -373,12 +376,22 @@
   phpgtk::register_GskTransform(ce_GskTransform);
   zend_class_entry *ce_GskTransformNode = register_class_Gtk4_GskTransformNode(ce_GskRenderNode);
   phpgtk::register_GskTransformNode(ce_GskTransformNode);
+  zend_class_entry *ce_GrapheneMatrix = register_class_Gtk4_GrapheneMatrix();
+  phpgtk::register_GrapheneMatrix(ce_GrapheneMatrix);
   zend_class_entry *ce_GraphenePoint = register_class_Gtk4_GraphenePoint();
   phpgtk::register_GraphenePoint(ce_GraphenePoint);
+  zend_class_entry *ce_GraphenePoint3D = register_class_Gtk4_GraphenePoint3D();
+  phpgtk::register_GraphenePoint3D(ce_GraphenePoint3D);
   zend_class_entry *ce_GrapheneRect = register_class_Gtk4_GrapheneRect();
   phpgtk::register_GrapheneRect(ce_GrapheneRect);
   zend_class_entry *ce_GrapheneSize = register_class_Gtk4_GrapheneSize();
   phpgtk::register_GrapheneSize(ce_GrapheneSize);
+  zend_class_entry *ce_GrapheneVec2 = register_class_Gtk4_GrapheneVec2();
+  phpgtk::register_GrapheneVec2(ce_GrapheneVec2);
+  zend_class_entry *ce_GrapheneVec3 = register_class_Gtk4_GrapheneVec3();
+  phpgtk::register_GrapheneVec3(ce_GrapheneVec3);
+  zend_class_entry *ce_GrapheneVec4 = register_class_Gtk4_GrapheneVec4();
+  phpgtk::register_GrapheneVec4(ce_GrapheneVec4);
   zend_class_entry *ce_GdkPixbuf = register_class_Gtk4_GdkPixbuf(ce_GObject, ce_GIcon);
   phpgtk::register_class("GdkPixbuf", ce_GdkPixbuf, GDK_TYPE_PIXBUF);
   zend_class_entry *ce_GdkPixbufAnimation = register_class_Gtk4_GdkPixbufAnimation(ce_GObject);
@@ -557,6 +570,8 @@
   phpgtk::register_class("GtkViewport", ce_GtkViewport, GTK_TYPE_VIEWPORT);
   zend_class_entry *ce_PangoFontMap = register_class_Gtk4_PangoFontMap(ce_GObject, ce_GListModel);
   phpgtk::register_class("PangoFontMap", ce_PangoFontMap, PANGO_TYPE_FONT_MAP);
+  zend_class_entry *ce_GMemoryOutputStream = register_class_Gtk4_GMemoryOutputStream(ce_GOutputStream);
+  phpgtk::register_class("GMemoryOutputStream", ce_GMemoryOutputStream, G_TYPE_MEMORY_OUTPUT_STREAM);
   zend_class_entry *ce_GMenu = register_class_Gtk4_GMenu(ce_GMenuModel);
   phpgtk::register_class("GMenu", ce_GMenu, G_TYPE_MENU);
   zend_class_entry *ce_GdkMemoryTexture = register_class_Gtk4_GdkMemoryTexture(ce_GdkTexture, ce_GdkPaintable, ce_GIcon);

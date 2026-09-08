@@ -170,11 +170,17 @@ final class GskClipNode extends GskRenderNode
  */
 final class GskColorMatrixNode extends GskRenderNode
 {
-    /** GskColorMatrixNode has no constructor in GTK: instances come from GTK, never from `new`. */
-    private function __construct() {}
+    /** Creates a `GskRenderNode` that will drawn the $child with $color_matrix. */
+    public function __construct(GskRenderNode $child, GrapheneMatrix $color_matrix, GrapheneVec4 $color_offset) {}
 
     /** Gets the child node that is getting its colors modified by the given $node. */
     public function get_child(): GskRenderNode {}
+
+    /** Retrieves the color matrix used by the $node. */
+    public function get_color_matrix(): GrapheneMatrix {}
+
+    /** Retrieves the color offset used by the $node. */
+    public function get_color_offset(): GrapheneVec4 {}
 }
 
 /**
@@ -766,6 +772,9 @@ final class GskPathPoint
 
     /** Gets the direction of the tangent at a given point. */
     public function get_rotation(GskPath $path, GskPathDirection $direction): float {}
+
+    /** Gets the tangent of the path at the point. */
+    public function get_tangent(GskPath $path, GskPathDirection $direction): GrapheneVec2 {}
 }
 
 /**
@@ -1232,6 +1241,9 @@ final class GskTransform
     /** Inverts the given transform. */
     public function invert(): ?GskTransform {}
 
+    /** Multiplies $next with the given $matrix. */
+    public function matrix(GrapheneMatrix $matrix): GskTransform {}
+
     /** Applies a perspective projection transform. */
     public function perspective(float $depth): GskTransform {}
 
@@ -1240,6 +1252,9 @@ final class GskTransform
      * around the origin point of (0, 0).
      */
     public function rotate(float $angle): ?GskTransform {}
+
+    /** Rotates $next $angle degrees around $axis. */
+    public function rotate_3d(float $angle, GrapheneVec3 $axis): ?GskTransform {}
 
     /** Scales $next in 2-dimensional space by the given factors. */
     public function scale(float $factor_x, float $factor_y): ?GskTransform {}
@@ -1271,6 +1286,9 @@ final class GskTransform
      */
     public function to_affine(): array {}
 
+    /** Computes the actual value of $self and stores it in $out_matrix. */
+    public function to_matrix(): GrapheneMatrix {}
+
     /** Converts a matrix into a string that is suitable for printing. */
     public function to_string(): string {}
 
@@ -1292,6 +1310,9 @@ final class GskTransform
 
     /** Translates $next in 2-dimensional space by $point. */
     public function translate(GraphenePoint $point): ?GskTransform {}
+
+    /** Translates $next by $point. */
+    public function translate_3d(GraphenePoint3D $point): ?GskTransform {}
 
     /**
      * The transform to_string() wrote (or CSS transform syntax: "translate(5, 5) scale(2)"), or

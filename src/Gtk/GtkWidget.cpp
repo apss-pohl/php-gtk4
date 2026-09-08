@@ -304,6 +304,25 @@ ZEND_METHOD(Gtk4_GtkWidget, compute_point) {
 }
 
 /**
+ * Gtk4\GtkWidget::compute_transform(GtkWidget $target): ?GrapheneMatrix
+ *
+ * Computes a matrix suitable to describe a transformation from $widget's coordinate system into
+ * $target's coordinate system.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, compute_transform) {
+  zval *target;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(target, class_for_gtype(GTK_TYPE_WIDGET))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GObject *target_o = unwrap(target, GTK_TYPE_WIDGET);
+  if (target_o == nullptr) RETURN_THROWS();
+  graphene_matrix_t out_transform{};
+  if (!gtk_widget_compute_transform(self, GTK_WIDGET(target_o), &out_transform)) RETURN_NULL();
+  wrap_boxed(GRAPHENE_TYPE_MATRIX, &out_transform, return_value);
+}
+
+/**
  * Gtk4\GtkWidget::contains(float $x, float $y): bool
  *
  * Tests if the point at ($x, $y) is contained in $widget.

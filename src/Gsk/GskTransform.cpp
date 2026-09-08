@@ -90,6 +90,26 @@ ZEND_METHOD(Gtk4_GskTransform, invert) {
 }
 
 /**
+ * Gtk4\GskTransform::matrix(GrapheneMatrix $matrix): GskTransform
+ *
+ * Multiplies $next with the given $matrix.
+ */
+ZEND_METHOD(Gtk4_GskTransform, matrix) {
+  zval *matrix;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(matrix, boxed_class_for_type(GRAPHENE_TYPE_MATRIX)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GskTransform *owned = PHPGTK_BOXED_SELF(GskTransform);
+  auto *self = static_cast<GskTransform *>(
+      g_boxed_copy(GSK_TYPE_TRANSFORM, owned));  // the call takes ownership of it
+  gpointer matrix_b = unwrap_boxed(matrix, GRAPHENE_TYPE_MATRIX);
+  if (matrix_b == nullptr) RETURN_THROWS();
+  GskTransform *phpgtk_ret = gsk_transform_matrix(self, static_cast<graphene_matrix_t *>(matrix_b));
+  wrap_boxed(GSK_TYPE_TRANSFORM, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) g_boxed_free(GSK_TYPE_TRANSFORM, phpgtk_ret);
+}
+
+/**
  * Gtk4\GskTransform::perspective(float $depth): GskTransform
  *
  * Applies a perspective projection transform.
@@ -122,6 +142,29 @@ ZEND_METHOD(Gtk4_GskTransform, rotate) {
   auto *self = static_cast<GskTransform *>(
       g_boxed_copy(GSK_TYPE_TRANSFORM, owned));  // the call takes ownership of it
   GskTransform *phpgtk_ret = gsk_transform_rotate(self, static_cast<float>(angle));
+  wrap_boxed(GSK_TYPE_TRANSFORM, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) g_boxed_free(GSK_TYPE_TRANSFORM, phpgtk_ret);
+}
+
+/**
+ * Gtk4\GskTransform::rotate_3d(float $angle, GrapheneVec3 $axis): ?GskTransform
+ *
+ * Rotates $next $angle degrees around $axis.
+ */
+ZEND_METHOD(Gtk4_GskTransform, rotate_3d) {
+  double angle;
+  zval *axis;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_DOUBLE(angle)
+  Z_PARAM_OBJECT_OF_CLASS(axis, boxed_class_for_type(GRAPHENE_TYPE_VEC3)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GskTransform *owned = PHPGTK_BOXED_SELF(GskTransform);
+  auto *self = static_cast<GskTransform *>(
+      g_boxed_copy(GSK_TYPE_TRANSFORM, owned));  // the call takes ownership of it
+  gpointer axis_b = unwrap_boxed(axis, GRAPHENE_TYPE_VEC3);
+  if (axis_b == nullptr) RETURN_THROWS();
+  GskTransform *phpgtk_ret = gsk_transform_rotate_3d(self, static_cast<float>(angle),
+                                                     static_cast<graphene_vec3_t *>(axis_b));
   wrap_boxed(GSK_TYPE_TRANSFORM, phpgtk_ret, return_value);
   if (phpgtk_ret != nullptr) g_boxed_free(GSK_TYPE_TRANSFORM, phpgtk_ret);
 }
@@ -332,6 +375,19 @@ ZEND_METHOD(Gtk4_GskTransform, to_affine) {
 }
 
 /**
+ * Gtk4\GskTransform::to_matrix(): GrapheneMatrix
+ *
+ * Computes the actual value of $self and stores it in $out_matrix.
+ */
+ZEND_METHOD(Gtk4_GskTransform, to_matrix) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GskTransform *self = PHPGTK_BOXED_SELF(GskTransform);
+  graphene_matrix_t out_matrix{};
+  gsk_transform_to_matrix(self, &out_matrix);
+  wrap_boxed(GRAPHENE_TYPE_MATRIX, &out_matrix, return_value);
+}
+
+/**
  * Gtk4\GskTransform::to_string(): string
  *
  * Converts a matrix into a string that is suitable for printing.
@@ -445,6 +501,27 @@ ZEND_METHOD(Gtk4_GskTransform, translate) {
   if (point_b == nullptr) RETURN_THROWS();
   GskTransform *phpgtk_ret =
       gsk_transform_translate(self, static_cast<graphene_point_t *>(point_b));
+  wrap_boxed(GSK_TYPE_TRANSFORM, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) g_boxed_free(GSK_TYPE_TRANSFORM, phpgtk_ret);
+}
+
+/**
+ * Gtk4\GskTransform::translate_3d(GraphenePoint3D $point): ?GskTransform
+ *
+ * Translates $next by $point.
+ */
+ZEND_METHOD(Gtk4_GskTransform, translate_3d) {
+  zval *point;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(point, boxed_class_for_type(GRAPHENE_TYPE_POINT3D)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GskTransform *owned = PHPGTK_BOXED_SELF(GskTransform);
+  auto *self = static_cast<GskTransform *>(
+      g_boxed_copy(GSK_TYPE_TRANSFORM, owned));  // the call takes ownership of it
+  gpointer point_b = unwrap_boxed(point, GRAPHENE_TYPE_POINT3D);
+  if (point_b == nullptr) RETURN_THROWS();
+  GskTransform *phpgtk_ret =
+      gsk_transform_translate_3d(self, static_cast<graphene_point3d_t *>(point_b));
   wrap_boxed(GSK_TYPE_TRANSFORM, phpgtk_ret, return_value);
   if (phpgtk_ret != nullptr) g_boxed_free(GSK_TYPE_TRANSFORM, phpgtk_ret);
 }

@@ -890,7 +890,12 @@ final class TypeMap
                     ? ["char **{$name}_v = nullptr;", "if ($name != nullptr) {",
                         "  {$name}_v = strv_from_php($name);", "  if ({$name}_v == nullptr) RETURN_THROWS();", '}']
                     : ["char **{$name}_v = strv_from_php($name);", "if ({$name}_v == nullptr) RETURN_THROWS();"],
-                'carg' => "const_cast<const char **>({$name}_v)",
+                // Most functions take a string vector `const`, a few take it mutable
+                // (gdk_pixbuf_save_to_streamv_async): strv_from_php() hands over a char **, so
+                // only the const ones need the cast and the others must not have it.
+                'carg' => str_contains((string) $t->ctype, 'const')
+                    ? "const_cast<const char **>({$name}_v)"
+                    : "{$name}_v",
                 'post' => [($nullable ? "if ({$name}_v != nullptr) " : '') . "g_strfreev({$name}_v);"],
             ]);
         }
