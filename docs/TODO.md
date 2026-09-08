@@ -64,6 +64,25 @@ history; an item leaves this file when it is done or decided against, it is not 
   `gh api -X POST repos/apss-pohl/php-gtk4/rulesets --input .github/ruleset-main.json`
   (drop `required_approving_review_count` to 0 while there is a single maintainer).
 
+- **What the generator still cannot shape**, in the order of how many members each blocks
+  (`gen/report.md`; the count moves as classes are bound). None of these is a missing *type* -
+  the one-class-away list is empty - they are shapes the emitters do not map yet:
+  - *a C array with its length in an out parameter* (~8 members): `GKeyFile::get_groups()`,
+    `get_keys()`, the four `get_*_list()` and `to_data()`. GIR marks the array `length="N"`
+    pointing at that out parameter, so the PHP return is just the list and the length is
+    `count()`. Needs `strv_to_php()` to take a length, and `retMapping()` to recognise the out
+    as the array's length rather than a value of its own.
+  - *a C array as an input parameter* (~8): `set_*_list()`, `GtkBuilder`'s and
+    `GApplication::open()`'s, `GActionMap::add_action_entries()`. A PHP list has to become an
+    array plus its length, per element type.
+  - *a caller-allocated buffer out* (5): `GInputStream::read()` and friends. `read_bytes()`
+    already answers with a string, so these may be better skipped than bound.
+  - *`GType` as a value* (12), *`GObject.Value`* (7), *`GLib.HashTable`* (6), *`GLib.List`* and
+    *`GLib.PtrArray`* where the element type is unbound, *`gpointer`* (4, unsupported by design).
+  - Pango's own leaves, now that the cluster is bound: `Pango.Font` and `Pango.FontFamily`
+    (abstract, backend-owned - the same shape as `PangoFontMap`), `Pango.Language` and
+    `Pango.Rectangle` (~19 members between them).
+
 ## Smaller notes
 
 - `gdk_drop_read_async()` very likely asserts `callback != NULL` like its four `GdkClipboard`
