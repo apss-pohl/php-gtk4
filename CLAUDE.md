@@ -138,8 +138,10 @@ from php's `dlopen()`, which the sanitizer runtime otherwise refuses — setup-p
 
 Env: `PHP`, `PHP_CONFIG`, `PHPIZE`, `JOBS` (default nproc, used by every tool), `CLANG_TIDY`,
 `CLANG_FORMAT` (default: newest installed `clang-*-N`; CI and `.vscode` use 20), `COMPOSER`,
-`PHPT_TESTS` (default `tests/phpt`), `GTK4_CONFIGURE_ARGS` (extra configure switches for the
-default `build`, e.g. `--enable-gtk4-webkit`). A build is incremental (plain `make`) when the
+`PHPT_TESTS` (default `tests/phpt`), `GTK4_CONFIGURE_ARGS` (the configure switches for the
+default `build`; **unset** it and the build enables `--enable-gtk4-webkit` wherever the
+WebKitGTK headers are installed, which is the widest coverage one build can have - set it to the
+empty string to force a build without them). A build is incremental (plain `make`) when the
 configure arguments are unchanged and `Makefile` is newer than `config.m4`; otherwise it
 reconfigures from clean (`.ci/configure.args` remembers the arguments).
 
@@ -295,9 +297,10 @@ display, and calls `Gtk::init()` once.
   `JSC*` → `webkit`); a hand-written test calls `Features::requires('webkit')` in `setUp()`, the
   generated smoke tests of a conditional namespace do the same, and the meta tests that compare
   the stub or the example pages with the registered classes filter through
-  `Features::available()`. The default local and CI builds have no WebKit; the `webkit` CI job
-  is where those tests run. Run both when touching them
-  (`GTK4_CONFIGURE_ARGS=--enable-gtk4-webkit ./ci.sh --only=build,test`).
+  `Features::available()`. A local build takes WebKit whenever the headers are there, so the
+  suite covers those classes by default; CI is the other way round - only the `webkit` job has
+  them, and every other job proves the build without them still works. Run both when touching
+  them (`GTK4_CONFIGURE_ARGS= ./ci.sh --only=build,test` is the one without).
 - **`tests/GtkInstances.php` is the shared sweep target factory**: one named branch per class
   that `new` cannot build (an abstract base, a handle only GTK hands out, a constructor argument
   the generic path cannot invent), used by both generic sweeps — `RobustnessTest` and

@@ -210,5 +210,6 @@ so a bug that reproduces in a `tests/` case is the most useful shape of all.
   `WebKit-6.0.gir` and `JavaScriptCore-6.0.gir` (installed with `libwebkitgtk-6.0-dev`, which the
   `gen` stage therefore needs), into `src/WebKit/` and `src/JavaScriptCore/` - the two namespaces
   `CONDITIONAL_NAMESPACES` in `gen/gir/config.php` gates. Their tests skip themselves in a build
-  without the flag (`tests/Features.php`), so run the suite against both builds
-  (`GTK4_CONFIGURE_ARGS=--enable-gtk4-webkit ./ci.sh --only=build,test`) when touching them.
+  without the flag (`tests/Features.php`). `./ci.sh` enables WebKit for you wherever the headers
+  are installed, so the local suite covers them by default; run the other build as well when
+  touching them (`GTK4_CONFIGURE_ARGS= ./ci.sh --only=build,test`, an empty value forcing it off).

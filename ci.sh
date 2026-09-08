@@ -515,10 +515,21 @@ write_compile_commands() {
     echo "  compile_commands.json: $n translation units"
 }
 
-# GTK4_CONFIGURE_ARGS: extra configure switches for the default build.
+# GTK4_CONFIGURE_ARGS: extra configure switches for the default build. When it is unset and the
+# WebKitGTK headers are installed, the build enables them: locally that is the widest coverage a
+# single build can have (the WebKit*, JSC* and Soup* classes and their tests exist only there),
+# and it is what the cpp-lint stage already does with ensure_config_h(). CI is unaffected - its
+# jobs pass GTK4_CONFIGURE_ARGS or install no WebKit at all, and the no-WebKit path stays covered
+# by the matrix that does not have the headers. GTK4_CONFIGURE_ARGS= (empty) forces it off.
 stage_build() {
-    # shellcheck disable=SC2086
-    build_variant gtk4.so ${GTK4_CONFIGURE_ARGS:-}
+    local -a args=()
+    if [[ -n ${GTK4_CONFIGURE_ARGS+x} ]]; then
+        # shellcheck disable=SC2206
+        args=(${GTK4_CONFIGURE_ARGS})
+    elif pkg-config --exists webkitgtk-6.0 2>/dev/null; then
+        args=(--enable-gtk4-webkit)
+    fi
+    build_variant gtk4.so "${args[@]}"
     write_compile_commands
 }
 
