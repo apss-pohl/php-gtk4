@@ -1494,6 +1494,9 @@ class GThemedIcon extends GObject implements GIcon
     /** Creates a new themed icon for $iconname. */
     public function __construct(string $iconname) {}
 
+    /** Creates a new themed icon for $iconnames. */
+    public static function new_from_names(array $iconnames): GThemedIcon {}
+
     /**
      * Creates a new themed icon for $iconname, and all the names that can be created by shortening
      * $iconname at '-' characters.

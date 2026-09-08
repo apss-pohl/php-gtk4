@@ -94,6 +94,13 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **...and in the other direction too**: a PHP list becomes a C array plus its length, so the
+  length parameter disappears from the signature and is filled from `count()`. That finishes
+  `GKeyFile`'s setters — `set_string_list()`, `set_integer_list()`, `set_double_list()`,
+  `set_boolean_list()` and `set_locale_string_list()` — and brings `GThemedIcon::new_from_names()`
+  with them. An element of the wrong type is a `TypeError` naming the argument, and the two
+  members GLib asserts a non-empty list for say so as a `ValueError` first.
+
 - **A C array and its length are one PHP list now.** GLib hands an array back beside a
   `gsize *length` out parameter, and the generator had no shape for that, so it reported the
   member and moved on. It maps it now — the length is the list's `count()` — which finishes

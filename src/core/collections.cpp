@@ -109,6 +109,72 @@ void strv_to_php(const char *const *strv, zval *rv) {
 }
 
 // list<string> -> char** (NULL-terminated, owned by the caller).
+// PHP list -> C array of gint. Every element converts like an int parameter would.
+gint *int_array_from_php(zval *value, gsize *n, uint32_t arg) {
+  HashTable *ht = Z_ARRVAL_P(value);
+  *n = zend_hash_num_elements(ht);
+  auto *out = g_new0(gint, (*n) + 1);
+  gsize i = 0;
+  zval *item = nullptr;
+  // NOLINTNEXTLINE(readability-math-missing-parentheses) inside ZEND_HASH_FOREACH_VAL
+  ZEND_HASH_FOREACH_VAL(ht, item) {
+    if (Z_TYPE_P(item) != IS_LONG && Z_TYPE_P(item) != IS_DOUBLE && Z_TYPE_P(item) != IS_STRING) {
+      g_free(out);
+      zend_argument_type_error(arg, "must be a list of int, %s given", zend_zval_type_name(item));
+      return nullptr;
+    }
+    const zend_long v = zval_get_long(item);
+    if (!check_range<gint>(v, arg)) {
+      g_free(out);
+      return nullptr;
+    }
+    out[i++] = static_cast<gint>(v);
+  }
+  ZEND_HASH_FOREACH_END();
+  return out;
+}
+
+// PHP list -> C array of gdouble.
+gdouble *double_array_from_php(zval *value, gsize *n, uint32_t arg) {
+  HashTable *ht = Z_ARRVAL_P(value);
+  *n = zend_hash_num_elements(ht);
+  auto *out = g_new0(gdouble, (*n) + 1);
+  gsize i = 0;
+  zval *item = nullptr;
+  // NOLINTNEXTLINE(readability-math-missing-parentheses) inside ZEND_HASH_FOREACH_VAL
+  ZEND_HASH_FOREACH_VAL(ht, item) {
+    if (Z_TYPE_P(item) != IS_LONG && Z_TYPE_P(item) != IS_DOUBLE && Z_TYPE_P(item) != IS_STRING) {
+      g_free(out);
+      zend_argument_type_error(arg, "must be a list of float, %s given", zend_zval_type_name(item));
+      return nullptr;
+    }
+    out[i++] = zval_get_double(item);
+  }
+  ZEND_HASH_FOREACH_END();
+  return out;
+}
+
+// PHP list -> C array of gboolean.
+gboolean *bool_array_from_php(zval *value, gsize *n, uint32_t arg) {
+  HashTable *ht = Z_ARRVAL_P(value);
+  *n = zend_hash_num_elements(ht);
+  auto *out = g_new0(gboolean, (*n) + 1);
+  gsize i = 0;
+  zval *item = nullptr;
+  // NOLINTNEXTLINE(readability-math-missing-parentheses) inside ZEND_HASH_FOREACH_VAL
+  ZEND_HASH_FOREACH_VAL(ht, item) {
+    if (Z_TYPE_P(item) == IS_ARRAY || Z_TYPE_P(item) == IS_OBJECT) {
+      g_free(out);
+      zend_argument_type_error(arg, "must be a list of bool, %s given", zend_zval_type_name(item));
+      return nullptr;
+    }
+    out[i++] = zend_is_true(item) ? TRUE : FALSE;
+  }
+  ZEND_HASH_FOREACH_END();
+  return out;
+}
+
+// PHP list of strings -> a NULL-terminated char** the caller g_strfreev()s.
 char **strv_from_php(zval *value) {
   ZVAL_DEREF(value);
   if (Z_TYPE_P(value) != IS_ARRAY) {

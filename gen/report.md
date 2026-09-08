@@ -88,11 +88,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `free` — memory management belongs to the handle (clone / destructor)
 - `load_from_dirs` — parameter `search_dirs` of type array (C array)
 - `ref` — memory management belongs to the handle (clone / destructor)
-- `set_boolean_list` — parameter `list` of type array (C array)
-- `set_double_list` — parameter `list` of type array (C array)
-- `set_integer_list` — parameter `list` of type array (C array)
-- `set_locale_string_list` — parameter `list` of type array (C array)
-- `set_string_list` — parameter `list` of type array (C array)
 - `unref` — memory management belongs to the handle (clone / destructor)
 
 ## GListModel
@@ -199,7 +194,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GThemedIcon
 
 - `PHP subclasses` — constructor argument iconname is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GThemedIcon
-- `new_from_names` — parameter `iconnames` of type array (C array)
 
 ## GTimeZone
 

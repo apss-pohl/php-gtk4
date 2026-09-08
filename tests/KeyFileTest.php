@@ -86,6 +86,46 @@ final class KeyFileTest extends GtkTestCase
         self::assertSame([1.5, 2.5], $file->get_double_list('L', 'sizes'));
     }
 
+    /** The setters take a PHP list and its length at once; the getters give it straight back. */
+    public function testListsGoInAsPhpLists(): void
+    {
+        $file = new GKeyFile();
+        $file->set_string_list('L', 'strings', ['a', 'b', 'c']);
+        $file->set_integer_list('L', 'numbers', [1, 2, 3]);
+        $file->set_boolean_list('L', 'flags', [true, false]);
+        $file->set_double_list('L', 'sizes', [1.5, 2.5]);
+        $file->set_locale_string_list('L', 'greeting', 'de', ['hallo', 'moin']);
+
+        self::assertSame(['a', 'b', 'c'], $file->get_string_list('L', 'strings'));
+        self::assertSame([1, 2, 3], $file->get_integer_list('L', 'numbers'));
+        self::assertSame([true, false], $file->get_boolean_list('L', 'flags'));
+        self::assertSame([1.5, 2.5], $file->get_double_list('L', 'sizes'));
+        self::assertSame(['hallo', 'moin'], $file->get_locale_string_list('L', 'greeting', 'de'));
+    }
+
+    /** An element of the wrong type is a TypeError naming the argument, not a broken file. */
+    public function testAListOfTheWrongTypeIsATypeError(): void
+    {
+        $file = new GKeyFile();
+
+        /** @var list<int> $wrong an object where an int belongs, past the static analysis */
+        $wrong = [1, new \stdClass(), 3];
+
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('Argument #3 ($list) must be a list of int');
+        $file->set_integer_list('L', 'numbers', $wrong);
+    }
+
+    /** GLib asserts on an empty localised list, so the binding refuses it first. */
+    public function testAnEmptyLocaleStringListIsAValueError(): void
+    {
+        $file = new GKeyFile();
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('Argument #4 ($list) must not be empty');
+        $file->set_locale_string_list('L', 'greeting', 'de', []);
+    }
+
     /** An empty group has no keys, and the list is empty rather than null. */
     public function testAGroupWithoutKeysHasAnEmptyKeyList(): void
     {

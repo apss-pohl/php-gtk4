@@ -784,6 +784,31 @@ ZEND_METHOD(Gtk4_GKeyFile, set_boolean) {
 }
 
 /**
+ * Gtk4\GKeyFile::set_boolean_list(string $group_name, string $key, array $list): void
+ *
+ * Associates a list of boolean values with $key under $group_name. If $key cannot be found then it
+ * is created. If $group_name is `null`, the start_group is used.
+ */
+ZEND_METHOD(Gtk4_GKeyFile, set_boolean_list) {
+  zend_string *group_name;
+  zend_string *key;
+  zval *list;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_STR(group_name)
+  Z_PARAM_STR(key)
+  Z_PARAM_ARRAY(list)
+  ZEND_PARSE_PARAMETERS_END();
+  GKeyFile *self = PHPGTK_BOXED_SELF(GKeyFile);
+  if (!phpgtk::check_utf8(group_name, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(key, 2)) RETURN_THROWS();
+  gsize list_n = 0;
+  gboolean *list_v = bool_array_from_php(list, &list_n, 3);
+  if (list_v == nullptr) RETURN_THROWS();
+  g_key_file_set_boolean_list(self, ZSTR_VAL(group_name), ZSTR_VAL(key), list_v, list_n);
+  g_free(list_v);
+}
+
+/**
  * Gtk4\GKeyFile::set_comment(?string $group_name, ?string $key, string $comment): bool
  *
  * Places a comment above $key from $group_name.
@@ -834,6 +859,31 @@ ZEND_METHOD(Gtk4_GKeyFile, set_double) {
 }
 
 /**
+ * Gtk4\GKeyFile::set_double_list(string $group_name, string $key, array $list): void
+ *
+ * Associates a list of double values with $key under $group_name. If $key cannot be found then it
+ * is created.
+ */
+ZEND_METHOD(Gtk4_GKeyFile, set_double_list) {
+  zend_string *group_name;
+  zend_string *key;
+  zval *list;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_STR(group_name)
+  Z_PARAM_STR(key)
+  Z_PARAM_ARRAY(list)
+  ZEND_PARSE_PARAMETERS_END();
+  GKeyFile *self = PHPGTK_BOXED_SELF(GKeyFile);
+  if (!phpgtk::check_utf8(group_name, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(key, 2)) RETURN_THROWS();
+  gsize list_n = 0;
+  gdouble *list_v = double_array_from_php(list, &list_n, 3);
+  if (list_v == nullptr) RETURN_THROWS();
+  g_key_file_set_double_list(self, ZSTR_VAL(group_name), ZSTR_VAL(key), list_v, list_n);
+  g_free(list_v);
+}
+
+/**
  * Gtk4\GKeyFile::set_int64(string $group_name, string $key, int $value): void
  *
  * Associates a new integer value with $key under $group_name. If $key cannot be found then it is
@@ -874,6 +924,31 @@ ZEND_METHOD(Gtk4_GKeyFile, set_integer) {
   if (!phpgtk::check_utf8(key, 2)) RETURN_THROWS();
   if (!phpgtk::check_range<gint>(value, 3)) RETURN_THROWS();
   g_key_file_set_integer(self, ZSTR_VAL(group_name), ZSTR_VAL(key), static_cast<gint>(value));
+}
+
+/**
+ * Gtk4\GKeyFile::set_integer_list(string $group_name, string $key, array $list): void
+ *
+ * Associates a list of integer values with $key under $group_name. If $key cannot be found then it
+ * is created.
+ */
+ZEND_METHOD(Gtk4_GKeyFile, set_integer_list) {
+  zend_string *group_name;
+  zend_string *key;
+  zval *list;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_STR(group_name)
+  Z_PARAM_STR(key)
+  Z_PARAM_ARRAY(list)
+  ZEND_PARSE_PARAMETERS_END();
+  GKeyFile *self = PHPGTK_BOXED_SELF(GKeyFile);
+  if (!phpgtk::check_utf8(group_name, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(key, 2)) RETURN_THROWS();
+  gsize list_n = 0;
+  gint *list_v = int_array_from_php(list, &list_n, 3);
+  if (list_v == nullptr) RETURN_THROWS();
+  g_key_file_set_integer_list(self, ZSTR_VAL(group_name), ZSTR_VAL(key), list_v, list_n);
+  g_free(list_v);
 }
 
 /**
@@ -920,6 +995,41 @@ ZEND_METHOD(Gtk4_GKeyFile, set_locale_string) {
 }
 
 /**
+ * Gtk4\GKeyFile::set_locale_string_list(string $group_name, string $key, string $locale, array
+ * $list): void
+ *
+ * Associates a list of string values for $key and $locale under $group_name. If the translation
+ * for $key cannot be found then it is created.
+ */
+ZEND_METHOD(Gtk4_GKeyFile, set_locale_string_list) {
+  zend_string *group_name;
+  zend_string *key;
+  zend_string *locale;
+  zval *list;
+  ZEND_PARSE_PARAMETERS_START(4, 4)
+  Z_PARAM_STR(group_name)
+  Z_PARAM_STR(key)
+  Z_PARAM_STR(locale)
+  Z_PARAM_ARRAY(list)
+  ZEND_PARSE_PARAMETERS_END();
+  GKeyFile *self = PHPGTK_BOXED_SELF(GKeyFile);
+  if (!phpgtk::check_utf8(group_name, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(key, 2)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(locale, 3)) RETURN_THROWS();
+  gsize list_n = list != nullptr ? zend_hash_num_elements(Z_ARRVAL_P(list)) : 0;
+  char **list_v = strv_from_php(list);
+  if (list_v == nullptr) RETURN_THROWS();
+  const bool precondition_0 = zend_hash_num_elements(Z_ARRVAL_P(list)) > 0;
+  if (!precondition_0) {
+    zend_argument_value_error(4, "must not be empty");
+    RETURN_THROWS();
+  }
+  g_key_file_set_locale_string_list(self, ZSTR_VAL(group_name), ZSTR_VAL(key), ZSTR_VAL(locale),
+                                    const_cast<const char **>(list_v), list_n);
+  g_strfreev(list_v);
+}
+
+/**
  * Gtk4\GKeyFile::set_string(string $group_name, string $key, string $string): void
  *
  * Associates a new string value with $key under $group_name. If $key cannot be found then it is
@@ -940,6 +1050,32 @@ ZEND_METHOD(Gtk4_GKeyFile, set_string) {
   if (!phpgtk::check_utf8(key, 2)) RETURN_THROWS();
   if (!phpgtk::check_utf8(string, 3)) RETURN_THROWS();
   g_key_file_set_string(self, ZSTR_VAL(group_name), ZSTR_VAL(key), ZSTR_VAL(string));
+}
+
+/**
+ * Gtk4\GKeyFile::set_string_list(string $group_name, string $key, array $list): void
+ *
+ * Associates a list of string values for $key under $group_name. If $key cannot be found then it
+ * is created. If $group_name cannot be found then it is created.
+ */
+ZEND_METHOD(Gtk4_GKeyFile, set_string_list) {
+  zend_string *group_name;
+  zend_string *key;
+  zval *list;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_STR(group_name)
+  Z_PARAM_STR(key)
+  Z_PARAM_ARRAY(list)
+  ZEND_PARSE_PARAMETERS_END();
+  GKeyFile *self = PHPGTK_BOXED_SELF(GKeyFile);
+  if (!phpgtk::check_utf8(group_name, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(key, 2)) RETURN_THROWS();
+  gsize list_n = list != nullptr ? zend_hash_num_elements(Z_ARRVAL_P(list)) : 0;
+  char **list_v = strv_from_php(list);
+  if (list_v == nullptr) RETURN_THROWS();
+  g_key_file_set_string_list(self, ZSTR_VAL(group_name), ZSTR_VAL(key),
+                             const_cast<const char **>(list_v), list_n);
+  g_strfreev(list_v);
 }
 
 /**

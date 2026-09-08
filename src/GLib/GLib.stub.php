@@ -411,6 +411,12 @@ final class GKeyFile
      */
     public function set_boolean(string $group_name, string $key, bool $value): void {}
 
+    /**
+     * Associates a list of boolean values with $key under $group_name. If $key cannot be found
+     * then it is created. If $group_name is `null`, the start_group is used.
+     */
+    public function set_boolean_list(string $group_name, string $key, array $list): void {}
+
     /** Places a comment above $key from $group_name. */
     public function set_comment(?string $group_name, ?string $key, string $comment): bool {}
 
@@ -419,6 +425,12 @@ final class GKeyFile
      * is created.
      */
     public function set_double(string $group_name, string $key, float $value): void {}
+
+    /**
+     * Associates a list of double values with $key under $group_name. If $key cannot be found then
+     * it is created.
+     */
+    public function set_double_list(string $group_name, string $key, array $list): void {}
 
     /**
      * Associates a new integer value with $key under $group_name. If $key cannot be found then it
@@ -433,6 +445,12 @@ final class GKeyFile
     public function set_integer(string $group_name, string $key, int $value): void {}
 
     /**
+     * Associates a list of integer values with $key under $group_name. If $key cannot be found
+     * then it is created.
+     */
+    public function set_integer_list(string $group_name, string $key, array $list): void {}
+
+    /**
      * Sets the character which is used to separate values in lists. Typically ';' or ',' are used
      * as separators. The default list separator is ';'.
      */
@@ -445,12 +463,24 @@ final class GKeyFile
     public function set_locale_string(string $group_name, string $key, string $locale, string $string): void {}
 
     /**
+     * Associates a list of string values for $key and $locale under $group_name. If the
+     * translation for $key cannot be found then it is created.
+     */
+    public function set_locale_string_list(string $group_name, string $key, string $locale, array $list): void {}
+
+    /**
      * Associates a new string value with $key under $group_name. If $key cannot be found then it
      * is created. If $group_name cannot be found then it is created. Unlike
      * g_key_file_set_value(), this function handles characters that need escaping, such as
      * newlines.
      */
     public function set_string(string $group_name, string $key, string $string): void {}
+
+    /**
+     * Associates a list of string values for $key under $group_name. If $key cannot be found then
+     * it is created. If $group_name cannot be found then it is created.
+     */
+    public function set_string_list(string $group_name, string $key, array $list): void {}
 
     /**
      * Associates a new integer value with $key under $group_name. If $key cannot be found then it

@@ -519,7 +519,28 @@ final class TypeMap
         $outs = [];
         $count = count($f->params);
         $closures = [];  // user_data index -> Callback variable
+        // "An array and its length" is one PHP list: the length parameter is hidden and filled
+        // from the count (g_key_file_set_integer_list(list, length)). Collected before the loop
+        // because GIR does not promise the array comes first.
+        $lengths = [];  // length parameter index -> the C expression that fills it
         foreach ($f->params as $i => $p) {
+            if (
+                $p->direction === 'in' && $p->type->isArray && $p->type->lengthParam !== null
+                && ($f->params[$p->type->lengthParam] ?? null)?->direction === 'in'
+            ) {
+                $lengths[$p->type->lengthParam] = "{$p->name}_n";
+            }
+        }
+        foreach ($f->params as $i => $p) {
+            if (isset($lengths[$i])) {  // the length slot of an array parameter: hidden
+                $ins[] = ['phpName' => $p->name, 'hidden' => true, 'default' => null, 'decl' => '',
+                    'zpp' => '', 'pre' => [], 'post' => [],
+                    'carg' => $p->type->ctype === 'gsize'
+                        ? $lengths[$i]
+                        : "static_cast<{$p->type->ctype}>({$lengths[$i]})",
+                    'phpType' => '', 'pos' => $i];
+                continue;
+            }
             if (isset($closures[$i])) {  // the user_data slot of a generated callback: hidden
                 $ins[] = ['phpName' => $p->name, 'hidden' => true, 'default' => null, 'decl' => '', 'zpp' => '',
                     'pre' => [], 'post' => [], 'carg' => $closures[$i], 'phpType' => '', 'pos' => $i];
@@ -880,16 +901,22 @@ final class TypeMap
                 'post' => ["if ({$name}_f != nullptr) g_object_unref({$name}_f);"],
             ]);
         }
-        if (self::isStrv($t)) {
+        // A string vector, whether GIR gives it a length parameter of its own or leaves it
+        // NULL-terminated: the PHP list is the same, and the length slot is hidden and filled
+        // from the count (see mapParams()).
+        if (self::isStrv($t) || ($t->isArray && $t->element?->name === 'utf8')) {
+            $counted = $t->lengthParam !== null
+                ? ["gsize {$name}_n = $name != nullptr ? zend_hash_num_elements(Z_ARRVAL_P($name)) : 0;"]
+                : [];
             // A nullable string vector (GtkStringList::new(NULL) = an empty list) is ?array.
             return array_merge($r, [
                 'phpType' => ($nullable ? '?' : '') . 'array',
                 'decl' => "zval *$name" . ($nullable ? ' = nullptr' : '') . ';',
                 'zpp' => 'Z_PARAM_ARRAY' . ($nullable ? '_OR_NULL' : '') . "($name)",
-                'pre' => $nullable
+                'pre' => array_merge($counted, $nullable
                     ? ["char **{$name}_v = nullptr;", "if ($name != nullptr) {",
                         "  {$name}_v = strv_from_php($name);", "  if ({$name}_v == nullptr) RETURN_THROWS();", '}']
-                    : ["char **{$name}_v = strv_from_php($name);", "if ({$name}_v == nullptr) RETURN_THROWS();"],
+                    : ["char **{$name}_v = strv_from_php($name);", "if ({$name}_v == nullptr) RETURN_THROWS();"]),
                 // Most functions take a string vector `const`, a few take it mutable
                 // (gdk_pixbuf_save_to_streamv_async): strv_from_php() hands over a char **, so
                 // only the const ones need the cast and the others must not have it.
@@ -897,6 +924,30 @@ final class TypeMap
                     ? "const_cast<const char **>({$name}_v)"
                     : "{$name}_v",
                 'post' => [($nullable ? "if ({$name}_v != nullptr) " : '') . "g_strfreev({$name}_v);"],
+            ]);
+        }
+        // An array of scalars beside its length (g_key_file_set_integer_list()): one PHP list,
+        // converted element by element into a C array the callee reads and we free.
+        $arrayFrom = $t->isArray && $t->lengthParam !== null ? match ($t->element?->name) {
+            'gboolean' => ['gboolean', 'bool_array_from_php'],
+            'gdouble', 'gfloat' => ['gdouble', 'double_array_from_php'],
+            'gint', 'gint32', 'guint', 'guint32' => ['gint', 'int_array_from_php'],
+            default => null,
+        } : null;
+        if ($arrayFrom !== null) {
+            [$ctype, $from] = $arrayFrom;
+            return array_merge($r, [
+                'phpType' => 'array',
+                'docType' => 'list<' . match ($ctype) {
+                    'gboolean' => 'bool', 'gdouble' => 'float', default => 'int'
+                } . '>',
+                'decl' => "zval *$name;",
+                'zpp' => "Z_PARAM_ARRAY($name)",
+                'pre' => ["gsize {$name}_n = 0;",
+                    "$ctype *{$name}_v = $from($name, &{$name}_n, $argNum);",
+                    "if ({$name}_v == nullptr) RETURN_THROWS();"],
+                'carg' => "{$name}_v",
+                'post' => ["g_free({$name}_v);"],
             ]);
         }
         $node = $this->gir->types[$t->name] ?? null;

@@ -67,9 +67,9 @@ history; an item leaves this file when it is done or decided against, it is not 
 - **What the generator still cannot shape**, in the order of how many members each blocks
   (`gen/report.md`; the count moves as classes are bound). None of these is a missing *type* -
   the one-class-away list is empty - they are shapes the emitters do not map yet:
-  - *a C array as an input parameter* (~8): `set_*_list()`, `GtkBuilder`'s and
-    `GApplication::open()`'s, `GActionMap::add_action_entries()`. A PHP list has to become an
-    array plus its length, per element type.
+  - *a C array as an input parameter*, for the element types that are not scalars or strings:
+    `GApplication::open()` wants an array of `GFile` (unbound), `GActionMap::add_action_entries()`
+    an array of C structs. The scalar and string cases are mapped.
   - *a caller-allocated buffer out* (5): `GInputStream::read()` and friends. `read_bytes()`
     already answers with a string, so these may be better skipped than bound.
   - *`GType` as a value* (12), *`GObject.Value`* (7), *`GLib.HashTable`* (6), *`GLib.List`* and

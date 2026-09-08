@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 5fec0be0f4fe8a2658086ddb5ea03c69cbb45239 */
+ * Stub hash: 24004b97f88855f20a1a63b4c1543353ebef2076 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_change_state, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
@@ -838,6 +838,10 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GThemedIcon___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, iconname, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GThemedIcon_new_from_names, 0, 1, Gtk4\\GThemedIcon, 0)
+	ZEND_ARG_TYPE_INFO(0, iconnames, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GThemedIcon_new_with_default_fallbacks, 0, 1, Gtk4\\GThemedIcon, 0)
 	ZEND_ARG_TYPE_INFO(0, iconname, IS_STRING, 0)
 ZEND_END_ARG_INFO()
@@ -1097,6 +1101,7 @@ ZEND_METHOD(Gtk4_GTask, return_boolean);
 ZEND_METHOD(Gtk4_GTask, return_error);
 ZEND_METHOD(Gtk4_GTask, return_int);
 ZEND_METHOD(Gtk4_GThemedIcon, __construct);
+ZEND_METHOD(Gtk4_GThemedIcon, new_from_names);
 ZEND_METHOD(Gtk4_GThemedIcon, new_with_default_fallbacks);
 ZEND_METHOD(Gtk4_GThemedIcon, append_name);
 ZEND_METHOD(Gtk4_GThemedIcon, get_names);
@@ -1499,6 +1504,7 @@ static const zend_function_entry class_Gtk4_GTask_methods[] = {
 
 static const zend_function_entry class_Gtk4_GThemedIcon_methods[] = {
 	ZEND_ME(Gtk4_GThemedIcon, __construct, arginfo_class_Gtk4_GThemedIcon___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GThemedIcon, new_from_names, arginfo_class_Gtk4_GThemedIcon_new_from_names, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GThemedIcon, new_with_default_fallbacks, arginfo_class_Gtk4_GThemedIcon_new_with_default_fallbacks, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GThemedIcon, append_name, arginfo_class_Gtk4_GThemedIcon_append_name, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GThemedIcon, get_names, arginfo_class_Gtk4_GThemedIcon_get_names, ZEND_ACC_PUBLIC)

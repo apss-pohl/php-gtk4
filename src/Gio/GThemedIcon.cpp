@@ -29,6 +29,31 @@ ZEND_METHOD(Gtk4_GThemedIcon, __construct) {
 }
 
 /**
+ * static Gtk4\GThemedIcon::new_from_names(array $iconnames): GThemedIcon
+ *
+ * Creates a new themed icon for $iconnames.
+ */
+ZEND_METHOD(Gtk4_GThemedIcon, new_from_names) {
+  zval *iconnames;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_ARRAY(iconnames)
+  ZEND_PARSE_PARAMETERS_END();
+  gsize iconnames_n = iconnames != nullptr ? zend_hash_num_elements(Z_ARRVAL_P(iconnames)) : 0;
+  char **iconnames_v = strv_from_php(iconnames);
+  if (iconnames_v == nullptr) RETURN_THROWS();
+  const bool precondition_0 = zend_hash_num_elements(Z_ARRVAL_P(iconnames)) > 0;
+  if (!precondition_0) {
+    zend_argument_value_error(1, "must name at least one icon");
+    RETURN_THROWS();
+  }
+  GIcon *call_result = g_themed_icon_new_from_names(iconnames_v, static_cast<int>(iconnames_n));
+  g_strfreev(iconnames_v);
+  GObject *obj = G_OBJECT(call_result);
+  wrap(obj, return_value);
+  if (obj != nullptr) g_object_unref(obj);  // the handle took its own reference
+}
+
+/**
  * static Gtk4\GThemedIcon::new_with_default_fallbacks(string $iconname): GThemedIcon
  *
  * Creates a new themed icon for $iconname, and all the names that can be created by shortening

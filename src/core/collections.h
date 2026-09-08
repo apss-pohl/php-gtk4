@@ -31,4 +31,13 @@ void strv_to_php(const char *const *strv, zval *rv);
 // TypeError and returns nullptr if the value is not an array of scalars.
 char **strv_from_php(zval *value);
 
+// PHP list -> a freshly allocated C array of gint (g_free() it), for the GLib members that take
+// "an array and its length" (g_key_file_set_integer_list()); `n` receives the count. An element
+// of the wrong type is a TypeError naming argument `arg`, and the result is nullptr.
+gint *int_array_from_php(zval *value, gsize *n, uint32_t arg);
+// The same for a list of floats.
+gdouble *double_array_from_php(zval *value, gsize *n, uint32_t arg);
+// The same for a list of booleans; anything but an array or object converts, as PHP does.
+gboolean *bool_array_from_php(zval *value, gsize *n, uint32_t arg);
+
 }  // namespace phpgtk

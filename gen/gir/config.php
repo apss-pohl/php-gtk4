@@ -311,6 +311,11 @@ const SELF_PRECONDITIONS = [
  * pin report (GTK4_PIN_REPORT) prints, is what each predicate mirrors.
  */
 const ARG_PRECONDITIONS = [
+    // an icon with no names, and a localised list with no items, are both assertions
+    'g_themed_icon_new_from_names' => [[1,
+        'zend_hash_num_elements(Z_ARRVAL_P(iconnames)) > 0', 'must name at least one icon']],
+    'g_key_file_set_locale_string_list' => [[4,
+        'zend_hash_num_elements(Z_ARRVAL_P(list)) > 0', 'must not be empty']],
     // gtk_builder_add_objects_from_*() asserts `object_ids[0] != NULL`: building "only
     // these objects" needs at least one of them named
     'gtk_builder_add_objects_from_file' => [[2,
