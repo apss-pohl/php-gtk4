@@ -63,10 +63,6 @@ history; an item leaves this file when it is done or decided against, it is not 
   `.github/ruleset-main.json`; once public or Pro:
   `gh api -X POST repos/apss-pohl/php-gtk4/rulesets --input .github/ruleset-main.json`
   (drop `required_approving_review_count` to 0 while there is a single maintainer).
-- **A porting guide** for php-gtk3 programs (`docs/GTK3-MAP.md` is the class map; the prose about
-  the model differences - no `Gtk::main()`, no containers, signals without user data, async
-  dialogs, list views instead of tree views, `GdkTexture` instead of pixbufs in widgets - is not
-  written).
 
 ## Smaller notes
 
@@ -86,18 +82,6 @@ history; an item leaves this file when it is done or decided against, it is not 
 - `GskTextNode` (needs a Pango font and glyph string) and `GskColorMatrixNode` (a graphene matrix
   and vec4) have no constructor until those types are bound; `GdkPixbufAnimationIter` needs a
   `GTimeVal`, which is not.
-
-## What the class map still marks unported
-
-`docs/GTK3-MAP.md`'s "Recommended port order" has landed in full; what it still marks ❌ needs a
-decision rather than a wave:
-
-- *deprecated in 4.10* - `GtkDialog`, `GtkInfoBar`, `GtkStatusbar`, `GtkEntryCompletion`,
-  `GtkColorButton`/`GtkFontButton`, `GtkAppChooser*`. The binding exposes the modern API only and
-  every replacement is bound; port none of them unless a real port asks.
-- *out of scope by design* - `GtkPrinter`/`GtkPrintJob`/`GtkPrintUnixDialog` (a separate library,
-  gtk4-unix-print, on the deprecated `GtkDialog`), `GskGLShader` (deprecated in 4.16), the
-  Broadway/NGL/Vulkan renderer classes, GIO streams.
 
 ## Keep (verified good, do not "clean up")
 

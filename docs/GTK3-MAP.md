@@ -10,6 +10,10 @@ Source of truth: php-gtk3 class headers (158 headers, ~2400 exported methods) vs
 Status column regenerated 2026-09-08 by `gen/map-status.php` (run by `gen/gir.php --install`);
 the notes are hand-written and may lag.
 
+The model differences a port runs into - no `Gtk::main()`, no containers, signals without user
+data, dialogs that answer in a callback, list models instead of tree views, paintables instead
+of pixbufs - are in [PORTING.md](PORTING.md). This file is the class-by-class reference.
+
 ## Legend
 
 | Mark | Meaning |

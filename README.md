@@ -166,6 +166,18 @@ The decisions the extension is built on. `CLAUDE.md` has the working rules that 
 - **Not carried over from php-gtk3**: varargs trampolines, a fresh wrapper per return, `GdkEvent`
   field copies, `Gtk::main()`, `connect()` user data, raw pointers stored in user data, a
   hand-maintained module table.
+- **What is deliberately not bound**, and why - the classes `docs/GTK3-MAP.md` still marks ❌
+  are not a backlog:
+  - *deprecated in GTK 4.10* - `GtkDialog`, `GtkInfoBar`, `GtkStatusbar`, `GtkEntryCompletion`,
+    `GtkColorButton`/`GtkFontButton`, `GtkAppChooser*`. The binding exposes the modern API only
+    and every replacement is bound (`GtkAlertDialog` and the other async dialogs, `GtkRevealer`
+    with a label, `GtkDropDown`, the colour and font dialogs). Port one only if a real program
+    turns out to need it.
+  - *out of scope by design* - `GtkPrinter`/`GtkPrintJob`/`GtkPrintUnixDialog` (a separate
+    library, gtk4-unix-print, built on the deprecated `GtkDialog`), `GskGLShader` (deprecated in
+    4.16), the Broadway/NGL/Vulkan renderer classes, and GIO's stream hierarchy beyond the
+    reading end (`GInputStream`, `GMemoryInputStream`) that decoding an image needs.
+  - WebKitGTK's WebExtensions API, for the reason in the WebKitGTK entry above.
 
 ## Threads
 
@@ -208,7 +220,8 @@ PHP version is added.
 Thanks to [**php-gtk3**](https://github.com/scorninpc/php-gtk3) by
 [Bruno Pitteli Gonçalves](https://github.com/scorninpc) and its contributors, which kept PHP
 desktop development alive and set the API shape this project starts from —
-including where php-gtk4 departs from it ([Design](#design), `docs/GTK3-MAP.md`).
+including where php-gtk4 departs from it ([Design](#design), `docs/GTK3-MAP.md`, and
+[docs/PORTING.md](docs/PORTING.md) for what a port actually involves).
 
 Thanks also to the [GTK](https://www.gtk.org/) and [GObject](https://docs.gtk.org/gobject/) teams,
 and to the [PHP](https://www.php.net/) project, whose `build/gen_stub.php` this repository vendors.
