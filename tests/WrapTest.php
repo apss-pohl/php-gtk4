@@ -248,6 +248,11 @@ final class WrapTest extends GtkTestCase
         }
         // The C object is still allocated (PHP holds it): dropping the handle finalizes it
         // cleanly - dispose ran once already and runs again on the last unref.
+        // $e first: the exception set_child() threw holds $b in its trace arguments unless
+        // zend.exception_ignore_args is on. Distro and setup-php builds set it in php.ini,
+        // a hand-built PHP takes the compiled default (off) - and then the handle stays
+        // alive and the weak reference below still resolves.
+        unset($e);
         $weak = \WeakReference::create($b);
         unset($b);
         self::assertNull($weak->get());
