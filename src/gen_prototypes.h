@@ -277,6 +277,7 @@ void register_vfuncs_GdkPixbufLoader();
 #ifdef PHPGTK_WITH_WEBKIT
 #include <webkit/webkit.h>
 #include <jsc/jsc.h>
+#include <libsoup/soup.h>
 namespace phpgtk {
 void register_WebKitApplicationInfo(zend_class_entry *ce);
 }  // namespace phpgtk
@@ -344,5 +345,11 @@ void register_WebKitWebViewSessionState(zend_class_entry *ce);
 }  // namespace phpgtk
 namespace phpgtk {
 void register_WebKitWebsiteData(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_SoupCookie(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_SoupMessageHeaders(zend_class_entry *ce);
 }  // namespace phpgtk
 #endif  // PHPGTK_WITH_WEBKIT

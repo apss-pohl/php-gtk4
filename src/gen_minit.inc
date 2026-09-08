@@ -578,6 +578,6 @@
   register_vfuncs_GdkContentProvider();
   register_vfuncs_GdkPaintable();
   register_vfuncs_GdkPixbufLoader();
-#ifdef PHPGTK_WITH_WEBKIT  // WebKit, JavaScriptCore
+#ifdef PHPGTK_WITH_WEBKIT  // WebKit, JavaScriptCore, Soup
   register_webkit_classes(ce_GObject, ce_GtkWidget);
 #endif  // PHPGTK_WITH_WEBKIT

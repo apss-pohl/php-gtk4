@@ -448,3 +448,10 @@ WebKit.UserMessageError
 # GMemoryInputStream is the one PHP can build: a string in, a stream out.
 Gio.InputStream
 Gio.MemoryInputStream
+
+# libsoup 3, through WebKitGTK only (CONDITIONAL_NAMESPACES): the cookie a WebKitCookieManager
+# stores or deletes, and the HTTP headers of a request or a response.
+Soup.Cookie
+Soup.MessageHeaders
+Soup.MessageHeadersType
+Soup.SameSitePolicy

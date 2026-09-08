@@ -3,6 +3,7 @@
 #include "php_gtk4.h"
 #include <webkit/webkit.h>
 #include "core/object.h"
+#include "core/boxed.h"
 
 using namespace phpgtk;
 
@@ -46,6 +47,24 @@ ZEND_METHOD(Gtk4_WebKitURISchemeResponse, set_content_type) {
       PHPGTK_SELF(WebKitURISchemeResponse, WEBKIT_TYPE_URI_SCHEME_RESPONSE);
   if (!phpgtk::check_utf8(content_type, 1)) RETURN_THROWS();
   webkit_uri_scheme_response_set_content_type(self, ZSTR_VAL(content_type));
+}
+
+/**
+ * Gtk4\WebKitURISchemeResponse::set_http_headers(SoupMessageHeaders $headers): void
+ *
+ * Assign the provided #SoupMessageHeaders to the response.
+ */
+ZEND_METHOD(Gtk4_WebKitURISchemeResponse, set_http_headers) {
+  zval *headers;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(headers, boxed_class_for_type(SOUP_TYPE_MESSAGE_HEADERS)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  WebKitURISchemeResponse *self =
+      PHPGTK_SELF(WebKitURISchemeResponse, WEBKIT_TYPE_URI_SCHEME_RESPONSE);
+  gpointer headers_b = unwrap_boxed(headers, SOUP_TYPE_MESSAGE_HEADERS);
+  if (headers_b == nullptr) RETURN_THROWS();
+  if (headers_b != nullptr) headers_b = g_boxed_copy(SOUP_TYPE_MESSAGE_HEADERS, headers_b);
+  webkit_uri_scheme_response_set_http_headers(self, static_cast<SoupMessageHeaders *>(headers_b));
 }
 
 /**

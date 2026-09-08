@@ -12,5 +12,8 @@
 #endif  // PHPGTK_WITH_WEBKIT
 #include "Pango/Pango_arginfo.h"
 #ifdef PHPGTK_WITH_WEBKIT
+#include "Soup/Soup_arginfo.h"
+#endif  // PHPGTK_WITH_WEBKIT
+#ifdef PHPGTK_WITH_WEBKIT
 #include "WebKit/WebKit_arginfo.h"
 #endif  // PHPGTK_WITH_WEBKIT

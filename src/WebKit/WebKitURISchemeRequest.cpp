@@ -4,6 +4,7 @@
 #include <webkit/webkit.h>
 #include "core/object.h"
 #include "core/gerror.h"
+#include "core/boxed.h"
 
 using namespace phpgtk;
 
@@ -88,6 +89,19 @@ ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_http_body) {
   GInputStream *phpgtk_ret = webkit_uri_scheme_request_get_http_body(self);
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
   if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
+/**
+ * Gtk4\WebKitURISchemeRequest::get_http_headers(): SoupMessageHeaders
+ *
+ * Get the #SoupMessageHeaders of the request.
+ */
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_http_headers) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  WebKitURISchemeRequest *self =
+      PHPGTK_SELF(WebKitURISchemeRequest, WEBKIT_TYPE_URI_SCHEME_REQUEST);
+  SoupMessageHeaders *phpgtk_ret = webkit_uri_scheme_request_get_http_headers(self);
+  wrap_boxed(SOUP_TYPE_MESSAGE_HEADERS, phpgtk_ret, return_value);
 }
 
 /**

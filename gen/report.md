@@ -988,6 +988,29 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `copy` — memory management belongs to the handle (clone / destructor)
 - `free` — memory management belongs to the handle (clone / destructor)
 
+## SoupCookie
+
+- `PHP subclasses` — constructor argument name is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain SoupCookie
+- `applies_to_uri` — parameter `uri` of type GLib.Uri
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+- `get_expires` — return type GLib.DateTime
+- `set_expires` — parameter `expires` of type GLib.DateTime
+- `parse` — parameter `origin` of type GLib.Uri
+
+## SoupMessageHeaders
+
+- `PHP subclasses` — constructor argument type is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain SoupMessageHeaders
+- `free_ranges` — parameter `ranges` of type Soup.Range
+- `get_content_disposition` — out parameter `params` of type GLib.HashTable
+- `get_content_type` — out parameter `params` of type GLib.HashTable
+- `get_ranges` — out parameter `ranges` of type array
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `set_content_disposition` — parameter `params` of type GLib.HashTable
+- `set_content_type` — parameter `params` of type GLib.HashTable
+- `set_ranges` — parameter `ranges` of type Soup.Range
+- `unref` — memory management belongs to the handle (clone / destructor)
+
 ## WebKitApplicationInfo
 
 - `ref` — memory management belongs to the handle (clone / destructor)
@@ -1033,10 +1056,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## WebKitCookieManager
 
-- `add_cookie` — parameter `cookie` of type Soup.Cookie
-- `delete_cookie` — parameter `cookie` of type Soup.Cookie
-- `get_all_cookies_finish` — list of Soup.Cookie
-- `get_cookies_finish` — list of Soup.Cookie
 - `replace_cookies` — parameter `cookies` of type GLib.List
 - `__construct` — skip.txt: WebKitNetworkSession::get_cookie_manager()
 - `smoke test` — no constructor or factory whose parameters can be sampled
@@ -1251,27 +1270,19 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `property enable-offline-web-application-cache` — deprecated (2.44)
 - `property load-icons-ignoring-image-load-setting` — deprecated (2.42)
 
-## WebKitURIRequest
-
-- `get_http_headers` — return type Soup.MessageHeaders
-
 ## WebKitURIResponse
 
-- `get_http_headers` — return type Soup.MessageHeaders
 - `__construct` — skip.txt: WebKitWebResource::get_response() and the policy decisions carry one
-- `property http-headers` — property type Soup.MessageHeaders not mappable
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## WebKitURISchemeRequest
 
-- `get_http_headers` — return type Soup.MessageHeaders
 - `__construct` — skip.txt: only the handler of WebKitWebContext::register_uri_scheme() is handed one; a g_object_new() request has no WebKit request behind it and its getters dereference null (EveryClassTest segfaulted on it)
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## WebKitURISchemeResponse
 
 - `PHP subclasses` — constructor argument input_stream is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain WebKitURISchemeResponse
-- `set_http_headers` — parameter `headers` of type Soup.MessageHeaders
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## WebKitUserContentFilter
@@ -1717,6 +1728,9 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `JavaScriptCore/JSCValue.cpp`
 - `JavaScriptCore/JSCVirtualMachine.cpp`
 - `JavaScriptCore/JavaScriptCore.stub.php`
+- `Soup/SoupCookie.cpp`
+- `Soup/SoupMessageHeaders.cpp`
+- `Soup/Soup.stub.php`
 - `gen_minit_defs.inc`
 - `gen_minit.inc`
 - `gen_prototypes.h`

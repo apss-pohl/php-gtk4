@@ -94,6 +94,24 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **A `throws` function returning a list dropped its `GError`.** The generator emitted the
+  `GError **` and never looked at it, so a failed `WebKitCookieManager::get_cookies_finish()`,
+  `get_all_cookies_finish()`, `WebKitWebsiteDataManager::fetch_finish()` or either
+  `get_itp_summary_finish()` answered with an empty array — indistinguishable from a genuinely
+  empty result — and leaked the error. The list is taken first and the error checked before it
+  is converted, exactly as the scalar returns already did.
+
+- **Cookies and HTTP headers**, through a third conditional namespace: `SoupCookie` and
+  `SoupMessageHeaders` from libsoup, WebKitGTK's HTTP library, gated on `--enable-gtk4-webkit`
+  like the WebKit classes themselves (it needs nothing of its own in `config.m4` — webkitgtk's
+  pkg-config already carries `-lsoup-3.0`). Eight members that had no type to speak came back
+  with them: `WebKitCookieManager::add_cookie()`, `delete_cookie()`, `get_all_cookies_finish()`
+  and `get_cookies_finish()`, and the `get_http_headers()` of a URI request, a URI response and
+  a scheme request plus `WebKitURISchemeResponse::set_http_headers()`. A cookie is a boxed
+  value, so `clone` copies it; `SoupMessageHeaders::foreach()` walks the headers with a PHP
+  callable. `WebKitURIRequest::get_http_headers()` is declared nullable against GIR, which says
+  otherwise: a request PHP built is attached to no message and has no headers at all.
+
 - **A URI scheme answered from PHP**: `WebKitWebContext::register_uri_scheme()` puts a callable
   behind a scheme of your own, and `WebKitURISchemeRequest` / `WebKitURISchemeResponse` are what
   it is handed and what it answers with — a stream, a length and a content type, or a response

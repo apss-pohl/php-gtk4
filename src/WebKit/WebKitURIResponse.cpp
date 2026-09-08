@@ -3,6 +3,7 @@
 #include "php_gtk4.h"
 #include <webkit/webkit.h>
 #include "core/object.h"
+#include "core/boxed.h"
 
 using namespace phpgtk;
 
@@ -25,6 +26,18 @@ ZEND_METHOD(Gtk4_WebKitURIResponse, get_content_length) {
   ZEND_PARSE_PARAMETERS_NONE();
   WebKitURIResponse *self = PHPGTK_SELF(WebKitURIResponse, WEBKIT_TYPE_URI_RESPONSE);
   RETURN_LONG(static_cast<zend_long>(webkit_uri_response_get_content_length(self)));
+}
+
+/**
+ * Gtk4\WebKitURIResponse::get_http_headers(): SoupMessageHeaders
+ *
+ * Get the HTTP headers of a #WebKitURIResponse as a #SoupMessageHeaders.
+ */
+ZEND_METHOD(Gtk4_WebKitURIResponse, get_http_headers) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  WebKitURIResponse *self = PHPGTK_SELF(WebKitURIResponse, WEBKIT_TYPE_URI_RESPONSE);
+  SoupMessageHeaders *phpgtk_ret = webkit_uri_response_get_http_headers(self);
+  wrap_boxed(SOUP_TYPE_MESSAGE_HEADERS, phpgtk_ret, return_value);
 }
 
 /**

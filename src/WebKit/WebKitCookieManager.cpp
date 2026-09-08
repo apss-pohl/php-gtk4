@@ -4,7 +4,9 @@
 #include <webkit/webkit.h>
 #include "core/object.h"
 #include "core/enums.h"
+#include "core/collections.h"
 #include "core/gerror.h"
+#include "core/boxed.h"
 #include "core/callback.h"
 #include <array>
 
@@ -18,6 +20,58 @@ using namespace phpgtk;
 ZEND_METHOD(Gtk4_WebKitCookieManager, __construct) {
   // Private: never called (object_init_ex() in wrap() skips constructors).
   ZEND_PARSE_PARAMETERS_NONE();
+}
+
+namespace {
+// AsyncReadyCallback trampoline for WebKitCookieManager::add_cookie(): wraps the C arguments,
+// invokes the PHP callable once and releases it (async scope).
+void cb_add_cookie_callback(GObject *source_object, GAsyncResult *res, gpointer data) {
+  auto *cb = static_cast<Callback *>(data);
+  std::array<zval, 2> args{};
+  zval *argv = args.data();
+  wrap(source_object != nullptr ? G_OBJECT(source_object) : nullptr, &argv[0]);
+  wrap(res != nullptr ? G_OBJECT(res) : nullptr, &argv[1]);
+  zval ret;
+  callback_invoke(cb, 2, argv, &ret);
+  if (!Z_ISUNDEF(ret)) zval_ptr_dtor(&ret);
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  callback_free(cb);
+  callback_drain();
+}
+}  // namespace
+
+/**
+ * Gtk4\WebKitCookieManager::add_cookie(SoupCookie $cookie, ?GCancellable $cancellable, ?callable
+ * $callback): void
+ *
+ * Asynchronously add a #SoupCookie to the underlying storage.
+ */
+ZEND_METHOD(Gtk4_WebKitCookieManager, add_cookie) {
+  zval *cookie;
+  zval *cancellable = nullptr;
+  zend_fcall_info fci_callback = empty_fcall_info;
+  zend_fcall_info_cache fcc_callback = empty_fcall_info_cache;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_OBJECT_OF_CLASS(cookie, boxed_class_for_type(SOUP_TYPE_COOKIE)->ce)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
+  Z_PARAM_FUNC_OR_NULL(fci_callback, fcc_callback)
+  ZEND_PARSE_PARAMETERS_END();
+  WebKitCookieManager *self = PHPGTK_SELF(WebKitCookieManager, WEBKIT_TYPE_COOKIE_MANAGER);
+  gpointer cookie_b = unwrap_boxed(cookie, SOUP_TYPE_COOKIE);
+  if (cookie_b == nullptr) RETURN_THROWS();
+  GObject *cancellable_o = nullptr;
+  if (cancellable != nullptr) {
+    cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
+    if (cancellable_o == nullptr) RETURN_THROWS();
+  }
+  Callback *cb_callback =
+      ZEND_FCI_INITIALIZED(fci_callback)
+          ? callback_new(&fci_callback.function_name, "WebKitCookieManager::add_cookie")
+          : nullptr;
+  webkit_cookie_manager_add_cookie(
+      self, static_cast<SoupCookie *>(cookie_b),
+      cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
+      cb_callback != nullptr ? cb_add_cookie_callback : nullptr, cb_callback);
 }
 
 /**
@@ -41,6 +95,58 @@ ZEND_METHOD(Gtk4_WebKitCookieManager, add_cookie_finish) {
     RETURN_THROWS();
   }
   RETURN_BOOL(ok);
+}
+
+namespace {
+// AsyncReadyCallback trampoline for WebKitCookieManager::delete_cookie(): wraps the C arguments,
+// invokes the PHP callable once and releases it (async scope).
+void cb_delete_cookie_callback(GObject *source_object, GAsyncResult *res, gpointer data) {
+  auto *cb = static_cast<Callback *>(data);
+  std::array<zval, 2> args{};
+  zval *argv = args.data();
+  wrap(source_object != nullptr ? G_OBJECT(source_object) : nullptr, &argv[0]);
+  wrap(res != nullptr ? G_OBJECT(res) : nullptr, &argv[1]);
+  zval ret;
+  callback_invoke(cb, 2, argv, &ret);
+  if (!Z_ISUNDEF(ret)) zval_ptr_dtor(&ret);
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  callback_free(cb);
+  callback_drain();
+}
+}  // namespace
+
+/**
+ * Gtk4\WebKitCookieManager::delete_cookie(SoupCookie $cookie, ?GCancellable $cancellable, ?callable
+ * $callback): void
+ *
+ * Asynchronously delete a #SoupCookie from the current session.
+ */
+ZEND_METHOD(Gtk4_WebKitCookieManager, delete_cookie) {
+  zval *cookie;
+  zval *cancellable = nullptr;
+  zend_fcall_info fci_callback = empty_fcall_info;
+  zend_fcall_info_cache fcc_callback = empty_fcall_info_cache;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_OBJECT_OF_CLASS(cookie, boxed_class_for_type(SOUP_TYPE_COOKIE)->ce)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
+  Z_PARAM_FUNC_OR_NULL(fci_callback, fcc_callback)
+  ZEND_PARSE_PARAMETERS_END();
+  WebKitCookieManager *self = PHPGTK_SELF(WebKitCookieManager, WEBKIT_TYPE_COOKIE_MANAGER);
+  gpointer cookie_b = unwrap_boxed(cookie, SOUP_TYPE_COOKIE);
+  if (cookie_b == nullptr) RETURN_THROWS();
+  GObject *cancellable_o = nullptr;
+  if (cancellable != nullptr) {
+    cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
+    if (cancellable_o == nullptr) RETURN_THROWS();
+  }
+  Callback *cb_callback =
+      ZEND_FCI_INITIALIZED(fci_callback)
+          ? callback_new(&fci_callback.function_name, "WebKitCookieManager::delete_cookie")
+          : nullptr;
+  webkit_cookie_manager_delete_cookie(
+      self, static_cast<SoupCookie *>(cookie_b),
+      cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
+      cb_callback != nullptr ? cb_delete_cookie_callback : nullptr, cb_callback);
 }
 
 /**
@@ -180,6 +286,29 @@ ZEND_METHOD(Gtk4_WebKitCookieManager, get_all_cookies) {
       cb_callback != nullptr ? cb_get_all_cookies_callback : nullptr, cb_callback);
 }
 
+/**
+ * Gtk4\WebKitCookieManager::get_all_cookies_finish(GAsyncResult $result): array
+ *
+ * Finish an asynchronous operation started with webkit_cookie_manager_get_all_cookies().
+ */
+ZEND_METHOD(Gtk4_WebKitCookieManager, get_all_cookies_finish) {
+  zval *result;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(result, class_for_gtype(G_TYPE_ASYNC_RESULT))
+  ZEND_PARSE_PARAMETERS_END();
+  WebKitCookieManager *self = PHPGTK_SELF(WebKitCookieManager, WEBKIT_TYPE_COOKIE_MANAGER);
+  GObject *result_o = unwrap(result, G_TYPE_ASYNC_RESULT);
+  if (result_o == nullptr) RETURN_THROWS();
+  GError *error = nullptr;
+  GList *phpgtk_list =
+      webkit_cookie_manager_get_all_cookies_finish(self, G_ASYNC_RESULT(result_o), &error);
+  if (error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  glist_to_php(phpgtk_list, SOUP_TYPE_COOKIE, Transfer::Full, return_value);
+}
+
 namespace {
 // AsyncReadyCallback trampoline for WebKitCookieManager::get_cookies(): wraps the C arguments,
 // invokes the PHP callable once and releases it (async scope).
@@ -228,6 +357,29 @@ ZEND_METHOD(Gtk4_WebKitCookieManager, get_cookies) {
   webkit_cookie_manager_get_cookies(
       self, ZSTR_VAL(uri), cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
       cb_callback != nullptr ? cb_get_cookies_callback : nullptr, cb_callback);
+}
+
+/**
+ * Gtk4\WebKitCookieManager::get_cookies_finish(GAsyncResult $result): array
+ *
+ * Finish an asynchronous operation started with webkit_cookie_manager_get_cookies().
+ */
+ZEND_METHOD(Gtk4_WebKitCookieManager, get_cookies_finish) {
+  zval *result;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(result, class_for_gtype(G_TYPE_ASYNC_RESULT))
+  ZEND_PARSE_PARAMETERS_END();
+  WebKitCookieManager *self = PHPGTK_SELF(WebKitCookieManager, WEBKIT_TYPE_COOKIE_MANAGER);
+  GObject *result_o = unwrap(result, G_TYPE_ASYNC_RESULT);
+  if (result_o == nullptr) RETURN_THROWS();
+  GError *error = nullptr;
+  GList *phpgtk_list =
+      webkit_cookie_manager_get_cookies_finish(self, G_ASYNC_RESULT(result_o), &error);
+  if (error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  glist_to_php(phpgtk_list, SOUP_TYPE_COOKIE, Transfer::Full, return_value);
 }
 
 /**

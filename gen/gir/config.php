@@ -13,7 +13,7 @@ namespace PhpGtk4\Gen;
 
 const GIR_DIRS = ['/usr/share/gir-1.0', '/usr/lib/x86_64-linux-gnu/gir-1.0', '/usr/lib64/gir-1.0'];
 const GIR_FILES = ['GLib-2.0', 'GObject-2.0', 'Gio-2.0', 'cairo-1.0', 'Pango-1.0', 'Graphene-1.0',
-    'GdkPixbuf-2.0', 'Gdk-4.0', 'Gsk-4.0', 'Gtk-4.0', 'JavaScriptCore-6.0', 'WebKit-6.0'];
+    'GdkPixbuf-2.0', 'Gdk-4.0', 'Gsk-4.0', 'Gtk-4.0', 'Soup-3.0', 'JavaScriptCore-6.0', 'WebKit-6.0'];
 const GTK_FLOOR = '4.14';           // API newer than this is skipped in this wave
 
 /**
@@ -29,6 +29,11 @@ const GTK_FLOOR = '4.14';           // API newer than this is skipped in this wa
 const CONDITIONAL_NAMESPACES = [
     'JavaScriptCore' => ['feature' => 'webkit', 'macro' => 'PHPGTK_WITH_WEBKIT', 'include' => '<jsc/jsc.h>'],
     'WebKit' => ['feature' => 'webkit', 'macro' => 'PHPGTK_WITH_WEBKIT', 'include' => '<webkit/webkit.h>'],
+    // libsoup is WebKitGTK's HTTP library and reaches PHP only through it (cookies and the
+    // headers of a request or response), so it is gated on the same feature - and needs nothing
+    // of its own in config.m4: webkitgtk-6.0's pkg-config already carries -lsoup-3.0 and the
+    // include path, and libwebkitgtk-6.0-dev depends on libsoup-3.0-dev for the GIR.
+    'Soup' => ['feature' => 'webkit', 'macro' => 'PHPGTK_WITH_WEBKIT', 'include' => '<libsoup/soup.h>'],
 ];
 const PHP_NAMESPACE = 'Gtk4';
 const INT_TYPES = '/^g(u?int(8|16|32|64)?|size|ssize|u?long|u?short|unichar|u?char)$/';
@@ -134,6 +139,9 @@ const NULLABLE_RETURNS = [
     'webkit_print_operation_get_page_setup' => 'NULL until set_page_setup()',
     'webkit_print_operation_get_print_settings' => 'NULL until set_print_settings()',
     'webkit_web_inspector_get_web_view' => 'NULL until the inspector is shown',
+    // A request PHP built with new WebKitURIRequest($uri) is not attached to a message yet
+    // and has no headers at all; WebKit documents neither the NULL nor a (nullable).
+    'webkit_uri_request_get_http_headers' => 'NULL for a request that is not being sent',
 ];
 
 /**

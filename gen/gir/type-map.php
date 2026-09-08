@@ -1268,11 +1268,19 @@ final class TypeMap
             $fn = match ($t->name) {
                 'GLib.List' => 'glist_to_php', 'GLib.SList' => 'gslist_to_php', default => 'gptrarray_to_php'
             };
+            $ctype = match ($t->name) {
+                'GLib.List' => 'GList', 'GLib.SList' => 'GSList', default => 'GPtrArray'
+            };
             $transfer = match ($f->retTransfer) {
                 'full' => 'Full', 'container' => 'Container', default => 'None'
             };
-            return ['phpType' => 'array', 'docType' => "list<$elPhp>", 'lines' => fn(string $call) => [
-                "$fn($call, $elType, Transfer::$transfer, return_value);"]];
+            // A failed `throws` function answers with an empty list *and* a GError, and an empty
+            // list is a legitimate answer too - so the GError decides, exactly as for a scalar
+            // return above. Converting first would turn a failure into `[]` and leak the error.
+            return ['phpType' => 'array', 'docType' => "list<$elPhp>", 'lines' => fn(string $call) => $f->throws
+                ? ["$ctype *phpgtk_list = $call;", ...$throwCheck('error != nullptr'),
+                    "$fn(phpgtk_list, $elType, Transfer::$transfer, return_value);"]
+                : ["$fn($call, $elType, Transfer::$transfer, return_value);"]];
         }
         if ($t->name === 'cairo.Context') {
             return ['phpType' => ($f->retNullable ? '?' : '') . 'CairoContext', 'lines' => fn(string $call) => [

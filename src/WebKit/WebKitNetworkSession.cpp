@@ -5,6 +5,7 @@
 #include "core/object.h"
 #include "core/enums.h"
 #include "core/collections.h"
+#include "core/gerror.h"
 #include "core/boxed.h"
 #include "core/subtype.h"
 #include "core/callback.h"
@@ -194,9 +195,13 @@ ZEND_METHOD(Gtk4_WebKitNetworkSession, get_itp_summary_finish) {
   GObject *result_o = unwrap(result, G_TYPE_ASYNC_RESULT);
   if (result_o == nullptr) RETURN_THROWS();
   GError *error = nullptr;
-  glist_to_php(
-      webkit_network_session_get_itp_summary_finish(self, G_ASYNC_RESULT(result_o), &error),
-      WEBKIT_TYPE_ITP_THIRD_PARTY, Transfer::Full, return_value);
+  GList *phpgtk_list =
+      webkit_network_session_get_itp_summary_finish(self, G_ASYNC_RESULT(result_o), &error);
+  if (error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  glist_to_php(phpgtk_list, WEBKIT_TYPE_ITP_THIRD_PARTY, Transfer::Full, return_value);
 }
 
 /**

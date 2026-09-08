@@ -3,8 +3,8 @@
 // included by src/gtk4.cpp at file scope. They are functions rather than more
 // lines inside MINIT because MINIT is one statement per registered class and
 // clang-tidy's function-size threshold is not a budget worth spending there.
-#ifdef PHPGTK_WITH_WEBKIT  // WebKit, JavaScriptCore
-// MINIT: the classes of WebKit, JavaScriptCore, registered from here so that
+#ifdef PHPGTK_WITH_WEBKIT  // WebKit, JavaScriptCore, Soup
+// MINIT: the classes of WebKit, JavaScriptCore, Soup, registered from here so that
 // a build without the feature carries none of it.
 static void register_webkit_classes(zend_class_entry *ce_GObject, zend_class_entry *ce_GtkWidget) {
 // --- enums and flags
@@ -54,6 +54,10 @@ static void register_webkit_classes(zend_class_entry *ce_GObject, zend_class_ent
   phpgtk::register_flags(WEBKIT_TYPE_WEBSITE_DATA_TYPES, register_class_Gtk4_WebKitWebsiteDataTypes());
   phpgtk::register_flags(WEBKIT_TYPE_XR_SESSION_FEATURES, register_class_Gtk4_WebKitXRSessionFeatures());
   phpgtk::register_enum(WEBKIT_TYPE_XR_SESSION_MODE, register_class_Gtk4_WebKitXRSessionMode());
+  phpgtk::register_enum(SOUP_TYPE_ENCODING, register_class_Gtk4_SoupEncoding());
+  phpgtk::register_flags(SOUP_TYPE_EXPECTATION, register_class_Gtk4_SoupExpectation());
+  phpgtk::register_enum(SOUP_TYPE_MESSAGE_HEADERS_TYPE, register_class_Gtk4_SoupMessageHeadersType());
+  phpgtk::register_enum(SOUP_TYPE_SAME_SITE_POLICY, register_class_Gtk4_SoupSameSitePolicy());
 // --- interfaces and classes, parents first
   zend_class_entry *ce_WebKitApplicationInfo = register_class_Gtk4_WebKitApplicationInfo();
   phpgtk::register_WebKitApplicationInfo(ce_WebKitApplicationInfo);
@@ -195,6 +199,10 @@ static void register_webkit_classes(zend_class_entry *ce_GObject, zend_class_ent
   phpgtk::register_class("JSCValue", ce_JSCValue, JSC_TYPE_VALUE);
   zend_class_entry *ce_JSCVirtualMachine = register_class_Gtk4_JSCVirtualMachine(ce_GObject);
   phpgtk::register_class("JSCVirtualMachine", ce_JSCVirtualMachine, JSC_TYPE_VIRTUAL_MACHINE);
+  zend_class_entry *ce_SoupCookie = register_class_Gtk4_SoupCookie();
+  phpgtk::register_SoupCookie(ce_SoupCookie);
+  zend_class_entry *ce_SoupMessageHeaders = register_class_Gtk4_SoupMessageHeaders();
+  phpgtk::register_SoupMessageHeaders(ce_SoupMessageHeaders);
   zend_class_entry *ce_WebKitClipboardPermissionRequest = register_class_Gtk4_WebKitClipboardPermissionRequest(ce_GObject, ce_WebKitPermissionRequest);
   phpgtk::register_class("WebKitClipboardPermissionRequest", ce_WebKitClipboardPermissionRequest, WEBKIT_TYPE_CLIPBOARD_PERMISSION_REQUEST);
   zend_class_entry *ce_WebKitDeviceInfoPermissionRequest = register_class_Gtk4_WebKitDeviceInfoPermissionRequest(ce_GObject, ce_WebKitPermissionRequest);

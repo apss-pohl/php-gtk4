@@ -27,6 +27,7 @@ final class Features
     public const array GATED = [
         'WebKit' => 'webkit',
         'JSC' => 'webkit',
+        'Soup' => 'webkit',
     ];
 
     /** Whether this module was built with $feature (`webkit`). */

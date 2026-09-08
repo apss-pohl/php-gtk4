@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 71037ebededb336d4fc62c7cb2a9509390e80ba7 */
+ * Stub hash: 7f844dc1d066a7daaa2c6c3016df9a407c53ac68 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitApplicationInfo___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -219,9 +219,17 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_WebKitCookieManager___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitCookieManager_add_cookie, 0, 3, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, cookie, Gtk4\\SoupCookie, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitCookieManager_add_cookie_finish, 0, 1, _IS_BOOL, 0)
 	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
 ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitCookieManager_delete_cookie arginfo_class_Gtk4_WebKitCookieManager_add_cookie
 
 #define arginfo_class_Gtk4_WebKitCookieManager_delete_cookie_finish arginfo_class_Gtk4_WebKitCookieManager_add_cookie_finish
 
@@ -236,11 +244,17 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies arginfo_class_Gtk4_WebKitCookieManager_get_accept_policy
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies_finish, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitCookieManager_get_cookies, 0, 3, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, uri, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
 	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
 ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitCookieManager_get_cookies_finish arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies_finish
 
 #define arginfo_class_Gtk4_WebKitCookieManager_replace_cookies_finish arginfo_class_Gtk4_WebKitCookieManager_add_cookie_finish
 
@@ -662,9 +676,7 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_WebKitNetworkSession_get_itp_summary arginfo_class_Gtk4_WebKitCookieManager_get_accept_policy
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitNetworkSession_get_itp_summary_finish, 0, 1, IS_ARRAY, 0)
-	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_WebKitNetworkSession_get_itp_summary_finish arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies_finish
 
 #define arginfo_class_Gtk4_WebKitNetworkSession_get_persistent_credential_storage_enabled arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
 
@@ -1177,6 +1189,9 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitURIRequest___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, uri, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitURIRequest_get_http_headers, 0, 0, Gtk4\\SoupMessageHeaders, 1)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_WebKitURIRequest_get_http_method arginfo_class_Gtk4_WebKitApplicationInfo_get_name
 
 #define arginfo_class_Gtk4_WebKitURIRequest_get_uri arginfo_class_Gtk4_WebKitApplicationInfo_get_name
@@ -1188,6 +1203,9 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_WebKitURIResponse___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
 
 #define arginfo_class_Gtk4_WebKitURIResponse_get_content_length arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitURIResponse_get_http_headers, 0, 0, Gtk4\\SoupMessageHeaders, 0)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_WebKitURIResponse_get_mime_type arginfo_class_Gtk4_WebKitApplicationInfo_get_name
 
@@ -1216,6 +1234,8 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_body, 0, 0, Gtk4\\GInputStream, 0)
 ZEND_END_ARG_INFO()
 
+#define arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_headers arginfo_class_Gtk4_WebKitURIResponse_get_http_headers
+
 #define arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_method arginfo_class_Gtk4_WebKitApplicationInfo_get_name
 
 #define arginfo_class_Gtk4_WebKitURISchemeRequest_get_path arginfo_class_Gtk4_WebKitApplicationInfo_get_name
@@ -1233,6 +1253,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeResponse_set_content_type, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, content_type, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeResponse_set_http_headers, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, headers, Gtk4\\SoupMessageHeaders, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeResponse_set_status, 0, 2, IS_VOID, 0)
@@ -1253,7 +1277,7 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitUserContentFilt
 	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_Gtk4_WebKitUserContentFilterStore_fetch_identifiers_finish arginfo_class_Gtk4_WebKitNetworkSession_get_itp_summary_finish
+#define arginfo_class_Gtk4_WebKitUserContentFilterStore_fetch_identifiers_finish arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies_finish
 
 #define arginfo_class_Gtk4_WebKitUserContentFilterStore_get_path arginfo_class_Gtk4_WebKitApplicationInfo_get_name
 
@@ -1892,7 +1916,7 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebsiteDataMana
 	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_Gtk4_WebKitWebsiteDataManager_fetch_finish arginfo_class_Gtk4_WebKitNetworkSession_get_itp_summary_finish
+#define arginfo_class_Gtk4_WebKitWebsiteDataManager_fetch_finish arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies_finish
 
 #define arginfo_class_Gtk4_WebKitWebsiteDataManager_get_base_cache_directory arginfo_class_Gtk4_WebKitDownload_get_destination
 
@@ -1905,7 +1929,7 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_WebKitWebsiteDataManager_get_itp_summary arginfo_class_Gtk4_WebKitCookieManager_get_accept_policy
 
-#define arginfo_class_Gtk4_WebKitWebsiteDataManager_get_itp_summary_finish arginfo_class_Gtk4_WebKitNetworkSession_get_itp_summary_finish
+#define arginfo_class_Gtk4_WebKitWebsiteDataManager_get_itp_summary_finish arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies_finish
 
 #define arginfo_class_Gtk4_WebKitWebsiteDataManager_is_ephemeral arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
 
@@ -2038,12 +2062,16 @@ ZEND_METHOD(Gtk4_WebKitContextMenuItem, get_title);
 ZEND_METHOD(Gtk4_WebKitContextMenuItem, is_separator);
 ZEND_METHOD(Gtk4_WebKitContextMenuItem, set_submenu);
 ZEND_METHOD(Gtk4_WebKitCookieManager, __construct);
+ZEND_METHOD(Gtk4_WebKitCookieManager, add_cookie);
 ZEND_METHOD(Gtk4_WebKitCookieManager, add_cookie_finish);
+ZEND_METHOD(Gtk4_WebKitCookieManager, delete_cookie);
 ZEND_METHOD(Gtk4_WebKitCookieManager, delete_cookie_finish);
 ZEND_METHOD(Gtk4_WebKitCookieManager, get_accept_policy);
 ZEND_METHOD(Gtk4_WebKitCookieManager, get_accept_policy_finish);
 ZEND_METHOD(Gtk4_WebKitCookieManager, get_all_cookies);
+ZEND_METHOD(Gtk4_WebKitCookieManager, get_all_cookies_finish);
 ZEND_METHOD(Gtk4_WebKitCookieManager, get_cookies);
+ZEND_METHOD(Gtk4_WebKitCookieManager, get_cookies_finish);
 ZEND_METHOD(Gtk4_WebKitCookieManager, replace_cookies_finish);
 ZEND_METHOD(Gtk4_WebKitCookieManager, set_accept_policy);
 ZEND_METHOD(Gtk4_WebKitCookieManager, set_persistent_storage);
@@ -2397,11 +2425,13 @@ ZEND_METHOD(Gtk4_WebKitSettings, set_user_agent_with_application_details);
 ZEND_METHOD(Gtk4_WebKitSettings, set_webrtc_udp_ports_range);
 ZEND_METHOD(Gtk4_WebKitSettings, set_zoom_text_only);
 ZEND_METHOD(Gtk4_WebKitURIRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitURIRequest, get_http_headers);
 ZEND_METHOD(Gtk4_WebKitURIRequest, get_http_method);
 ZEND_METHOD(Gtk4_WebKitURIRequest, get_uri);
 ZEND_METHOD(Gtk4_WebKitURIRequest, set_uri);
 ZEND_METHOD(Gtk4_WebKitURIResponse, __construct);
 ZEND_METHOD(Gtk4_WebKitURIResponse, get_content_length);
+ZEND_METHOD(Gtk4_WebKitURIResponse, get_http_headers);
 ZEND_METHOD(Gtk4_WebKitURIResponse, get_mime_type);
 ZEND_METHOD(Gtk4_WebKitURIResponse, get_status_code);
 ZEND_METHOD(Gtk4_WebKitURIResponse, get_suggested_filename);
@@ -2411,6 +2441,7 @@ ZEND_METHOD(Gtk4_WebKitURISchemeRequest, finish);
 ZEND_METHOD(Gtk4_WebKitURISchemeRequest, finish_error);
 ZEND_METHOD(Gtk4_WebKitURISchemeRequest, finish_with_response);
 ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_http_body);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_http_headers);
 ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_http_method);
 ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_path);
 ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_scheme);
@@ -2418,6 +2449,7 @@ ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_uri);
 ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_web_view);
 ZEND_METHOD(Gtk4_WebKitURISchemeResponse, __construct);
 ZEND_METHOD(Gtk4_WebKitURISchemeResponse, set_content_type);
+ZEND_METHOD(Gtk4_WebKitURISchemeResponse, set_http_headers);
 ZEND_METHOD(Gtk4_WebKitURISchemeResponse, set_status);
 ZEND_METHOD(Gtk4_WebKitUserContentFilter, __construct);
 ZEND_METHOD(Gtk4_WebKitUserContentFilter, get_identifier);
@@ -2760,12 +2792,16 @@ static const zend_function_entry class_Gtk4_WebKitContextMenuItem_methods[] = {
 
 static const zend_function_entry class_Gtk4_WebKitCookieManager_methods[] = {
 	ZEND_ME(Gtk4_WebKitCookieManager, __construct, arginfo_class_Gtk4_WebKitCookieManager___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitCookieManager, add_cookie, arginfo_class_Gtk4_WebKitCookieManager_add_cookie, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitCookieManager, add_cookie_finish, arginfo_class_Gtk4_WebKitCookieManager_add_cookie_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCookieManager, delete_cookie, arginfo_class_Gtk4_WebKitCookieManager_delete_cookie, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitCookieManager, delete_cookie_finish, arginfo_class_Gtk4_WebKitCookieManager_delete_cookie_finish, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitCookieManager, get_accept_policy, arginfo_class_Gtk4_WebKitCookieManager_get_accept_policy, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitCookieManager, get_accept_policy_finish, arginfo_class_Gtk4_WebKitCookieManager_get_accept_policy_finish, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitCookieManager, get_all_cookies, arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCookieManager, get_all_cookies_finish, arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies_finish, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitCookieManager, get_cookies, arginfo_class_Gtk4_WebKitCookieManager_get_cookies, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCookieManager, get_cookies_finish, arginfo_class_Gtk4_WebKitCookieManager_get_cookies_finish, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitCookieManager, replace_cookies_finish, arginfo_class_Gtk4_WebKitCookieManager_replace_cookies_finish, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitCookieManager, set_accept_policy, arginfo_class_Gtk4_WebKitCookieManager_set_accept_policy, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitCookieManager, set_persistent_storage, arginfo_class_Gtk4_WebKitCookieManager_set_persistent_storage, ZEND_ACC_PUBLIC)
@@ -3297,6 +3333,7 @@ static const zend_function_entry class_Gtk4_WebKitSettings_methods[] = {
 
 static const zend_function_entry class_Gtk4_WebKitURIRequest_methods[] = {
 	ZEND_ME(Gtk4_WebKitURIRequest, __construct, arginfo_class_Gtk4_WebKitURIRequest___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURIRequest, get_http_headers, arginfo_class_Gtk4_WebKitURIRequest_get_http_headers, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitURIRequest, get_http_method, arginfo_class_Gtk4_WebKitURIRequest_get_http_method, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitURIRequest, get_uri, arginfo_class_Gtk4_WebKitURIRequest_get_uri, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitURIRequest, set_uri, arginfo_class_Gtk4_WebKitURIRequest_set_uri, ZEND_ACC_PUBLIC)
@@ -3306,6 +3343,7 @@ static const zend_function_entry class_Gtk4_WebKitURIRequest_methods[] = {
 static const zend_function_entry class_Gtk4_WebKitURIResponse_methods[] = {
 	ZEND_ME(Gtk4_WebKitURIResponse, __construct, arginfo_class_Gtk4_WebKitURIResponse___construct, ZEND_ACC_PRIVATE)
 	ZEND_ME(Gtk4_WebKitURIResponse, get_content_length, arginfo_class_Gtk4_WebKitURIResponse_get_content_length, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURIResponse, get_http_headers, arginfo_class_Gtk4_WebKitURIResponse_get_http_headers, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitURIResponse, get_mime_type, arginfo_class_Gtk4_WebKitURIResponse_get_mime_type, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitURIResponse, get_status_code, arginfo_class_Gtk4_WebKitURIResponse_get_status_code, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitURIResponse, get_suggested_filename, arginfo_class_Gtk4_WebKitURIResponse_get_suggested_filename, ZEND_ACC_PUBLIC)
@@ -3319,6 +3357,7 @@ static const zend_function_entry class_Gtk4_WebKitURISchemeRequest_methods[] = {
 	ZEND_ME(Gtk4_WebKitURISchemeRequest, finish_error, arginfo_class_Gtk4_WebKitURISchemeRequest_finish_error, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitURISchemeRequest, finish_with_response, arginfo_class_Gtk4_WebKitURISchemeRequest_finish_with_response, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_http_body, arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_body, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_http_headers, arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_headers, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_http_method, arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_method, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_path, arginfo_class_Gtk4_WebKitURISchemeRequest_get_path, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_scheme, arginfo_class_Gtk4_WebKitURISchemeRequest_get_scheme, ZEND_ACC_PUBLIC)
@@ -3330,6 +3369,7 @@ static const zend_function_entry class_Gtk4_WebKitURISchemeRequest_methods[] = {
 static const zend_function_entry class_Gtk4_WebKitURISchemeResponse_methods[] = {
 	ZEND_ME(Gtk4_WebKitURISchemeResponse, __construct, arginfo_class_Gtk4_WebKitURISchemeResponse___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitURISchemeResponse, set_content_type, arginfo_class_Gtk4_WebKitURISchemeResponse_set_content_type, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeResponse, set_http_headers, arginfo_class_Gtk4_WebKitURISchemeResponse_set_http_headers, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitURISchemeResponse, set_status, arginfo_class_Gtk4_WebKitURISchemeResponse_set_status, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };

@@ -86,11 +86,12 @@ if test "$PHP_GTK4" != "no"; then
   dnl (sorted for a reproducible link order). Every directory under src/ becomes a build dir
   dnl (an out-of-tree build cannot place the objects otherwise) - derived, like the sources,
   dnl so a new GIR namespace directory (src/Pango, src/Gsk) needs no edit here or in config.w32.
-  dnl The one exception: the namespaces that need WebKitGTK (src/WebKit, src/JavaScriptCore -
+  dnl The one exception: the namespaces that need WebKitGTK (src/WebKit, src/JavaScriptCore,
+  dnl src/Soup - libsoup is WebKitGTK's HTTP library and reaches PHP only through it -
   dnl CONDITIONAL_NAMESPACES in gen/gir/config.php) are left out without --enable-gtk4-webkit;
   dnl their registration and arginfo are under #ifdef PHPGTK_WITH_WEBKIT in the generated files.
   if test "$PHP_GTK4_WEBKIT" = "no"; then
-    GTK4_SOURCES=`cd "$srcdir" && find src -name '*.cpp' | grep -v '^src/\(WebKit\|JavaScriptCore\)/' | LC_ALL=C sort | tr '\n' ' '`
+    GTK4_SOURCES=`cd "$srcdir" && find src -name '*.cpp' | grep -v '^src/\(WebKit\|JavaScriptCore\|Soup\)/' | LC_ALL=C sort | tr '\n' ' '`
   else
     GTK4_SOURCES=`cd "$srcdir" && find src -name '*.cpp' | LC_ALL=C sort | tr '\n' ' '`
   fi

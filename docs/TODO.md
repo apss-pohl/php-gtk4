@@ -51,8 +51,6 @@ history; an item leaves this file when it is done or decided against, it is not 
   `gtk_text_set_extra_menu()` and are quiet, and `main` still has it. The end state is right, so
   it is only a spurious complaint - pinned for `gtk>=4.20`, nothing to fix here.
 - **WebKitGTK, what the first wave left out** (`gen/report.md`, sections `WebKit*`/`JSC*`):
-  - the Soup types - `WebKitCookieManager::add_cookie()` and the HTTP headers of a request or
-    response, which means binding a namespace (`Soup-3.0.gir`) that is not bound at all;
   - TLS certificates (`Gio.TlsCertificate`: `allow_tls_certificate_for_host()`,
     `WebKitWebView::get_tls_info()` and two more);
   - `WebKitWebExtension` (the 2.52 API).

@@ -23139,6 +23139,297 @@ enum PangoWrapMode : int
     case WordChar = 2;
 }
 /**
+ * Implements HTTP cookies, as described by [RFC 6265](http://tools.ietf.org/html/rfc6265.txt).
+ */
+final class SoupCookie
+{
+    /** Creates a new #SoupCookie with the given attributes. */
+    public function __construct(string $name, string $value, string $domain, string $path, int $max_age)
+    {
+        unset($name);
+        unset($value);
+        unset($domain);
+        unset($path);
+        unset($max_age);
+    }
+    /** Checks if the $cookie's domain and $host match. */
+    public function domain_matches(string $host): bool
+    {
+        unset($host);
+        return false;
+    }
+    /** Tests if $cookie1 and $cookie2 are equal. */
+    public function equal(SoupCookie $cookie2): bool
+    {
+        unset($cookie2);
+        return false;
+    }
+    /** Gets $cookie's domain. */
+    public function get_domain(): string
+    {
+        return '';
+    }
+    /** Gets $cookie's HttpOnly attribute. */
+    public function get_http_only(): bool
+    {
+        return false;
+    }
+    /** Gets $cookie's name. */
+    public function get_name(): string
+    {
+        return '';
+    }
+    /** Gets $cookie's path. */
+    public function get_path(): string
+    {
+        return '';
+    }
+    /** Returns the same-site policy for this cookie. */
+    public function get_same_site_policy(): SoupSameSitePolicy
+    {
+        return null;
+    }
+    /** Gets $cookie's secure attribute. */
+    public function get_secure(): bool
+    {
+        return false;
+    }
+    /** Gets $cookie's value. */
+    public function get_value(): string
+    {
+        return '';
+    }
+    /** Sets $cookie's domain to $domain. */
+    public function set_domain(string $domain): void
+    {
+        unset($domain);
+    }
+    /** Sets $cookie's HttpOnly attribute to $http_only. */
+    public function set_http_only(bool $http_only): void
+    {
+        unset($http_only);
+    }
+    /** Sets $cookie's max age to $max_age. */
+    public function set_max_age(int $max_age): void
+    {
+        unset($max_age);
+    }
+    /** Sets $cookie's name to $name. */
+    public function set_name(string $name): void
+    {
+        unset($name);
+    }
+    /** Sets $cookie's path to $path. */
+    public function set_path(string $path): void
+    {
+        unset($path);
+    }
+    /**
+     * When used in conjunction with `get_cookie_list_with_same_site_info` this sets the policy of
+     * when this cookie should be exposed.
+     */
+    public function set_same_site_policy(SoupSameSitePolicy $policy): void
+    {
+        unset($policy);
+    }
+    /** Sets $cookie's secure attribute to $secure. */
+    public function set_secure(bool $secure): void
+    {
+        unset($secure);
+    }
+    /** Sets $cookie's value to $value. */
+    public function set_value(string $value): void
+    {
+        unset($value);
+    }
+    /**
+     * Serializes $cookie in the format used by the Cookie header (ie, for returning a cookie from
+     * a `Session` to a server).
+     */
+    public function to_cookie_header(): string
+    {
+        return '';
+    }
+    /** Serializes $cookie in the format used by the Set-Cookie header. */
+    public function to_set_cookie_header(): string
+    {
+        return '';
+    }
+}
+/**
+ * How a message body is encoded for transport
+ */
+enum SoupEncoding : int
+{
+    case Unrecognized = 0;
+    case None = 1;
+    case ContentLength = 2;
+    case Eof = 3;
+    case Chunked = 4;
+    case Byteranges = 5;
+}
+/**
+ * Represents the parsed value of the "Expect" header.
+ */
+final class SoupExpectation
+{
+    public const int UNRECOGNIZED = 1;
+    public const int CONTINUE = 2;
+}
+/**
+ * The HTTP message headers associated with a request or response.
+ */
+final class SoupMessageHeaders
+{
+    /** Creates a #SoupMessageHeaders. */
+    public function __construct(SoupMessageHeadersType $type)
+    {
+        unset($type);
+    }
+    /** Appends a new header with name $name and value $value to $hdrs. */
+    public function append(string $name, string $value): void
+    {
+        unset($name);
+        unset($value);
+    }
+    /** Removes all the headers listed in the Connection header. */
+    public function clean_connection_headers(): void
+    {
+    }
+    /** Clears $hdrs. */
+    public function clear(): void
+    {
+    }
+    /** Calls $func once for each header value in $hdrs. */
+    public function foreach(callable $func): void
+    {
+        unset($func);
+    }
+    /** Gets the message body length that $hdrs declare. */
+    public function get_content_length(): int
+    {
+        return 0;
+    }
+    /**
+     * Parses $hdrs's Content-Range header and returns it in $start, $end, and $total_length. If
+     * the total length field in the header was specified as "*", then $total_length will be set to
+     * -1.
+     *
+     * @return array{int, int, int}|null
+     */
+    public function get_content_range(): ?array
+    {
+        return null;
+    }
+    /** Gets the message body encoding that $hdrs declare. */
+    public function get_encoding(): SoupEncoding
+    {
+        return null;
+    }
+    /** Gets the expectations declared by $hdrs's "Expect" header. */
+    public function get_expectations(): int
+    {
+        return 0;
+    }
+    /** Gets the type of headers. */
+    public function get_headers_type(): SoupMessageHeadersType
+    {
+        return null;
+    }
+    /** Gets the value of header $name in $hdrs. */
+    public function get_list(string $name): ?string
+    {
+        unset($name);
+        return null;
+    }
+    /** Gets the value of header $name in $hdrs. */
+    public function get_one(string $name): ?string
+    {
+        unset($name);
+        return null;
+    }
+    /**
+     * Checks whether the list-valued header $name is present in $hdrs, and contains a
+     * case-insensitive match for $token.
+     */
+    public function header_contains(string $name, string $token): bool
+    {
+        unset($name);
+        unset($token);
+        return false;
+    }
+    /**
+     * Checks whether the header $name is present in $hdrs and is (case-insensitively) equal to
+     * $value.
+     */
+    public function header_equals(string $name, string $value): bool
+    {
+        unset($name);
+        unset($value);
+        return false;
+    }
+    /** Removes $name from $hdrs. */
+    public function remove(string $name): void
+    {
+        unset($name);
+    }
+    /** Replaces the value of the header $name in $hdrs with $value. */
+    public function replace(string $name, string $value): void
+    {
+        unset($name);
+        unset($value);
+    }
+    /**
+     * Sets the message body length that $hdrs will declare, and sets $hdrs's encoding to
+     * %SOUP_ENCODING_CONTENT_LENGTH.
+     */
+    public function set_content_length(int $content_length): void
+    {
+        unset($content_length);
+    }
+    /** Sets $hdrs's Content-Range header according to the given values. */
+    public function set_content_range(int $start, int $end, int $total_length): void
+    {
+        unset($start);
+        unset($end);
+        unset($total_length);
+    }
+    /** Sets the message body encoding that $hdrs will declare. */
+    public function set_encoding(SoupEncoding $encoding): void
+    {
+        unset($encoding);
+    }
+    /** Sets $hdrs's "Expect" header according to $expectations. */
+    public function set_expectations(int $expectations): void
+    {
+        unset($expectations);
+    }
+    /** Sets $hdrs's Range header to request the indicated range. */
+    public function set_range(int $start, int $end): void
+    {
+        unset($start);
+        unset($end);
+    }
+}
+/**
+ * Value passed to `new` to set certain default behaviors.
+ */
+enum SoupMessageHeadersType : int
+{
+    case Request = 0;
+    case Response = 1;
+    case Multipart = 2;
+}
+/**
+ * Represents the same-site policies of a cookie.
+ */
+enum SoupSameSitePolicy : int
+{
+    case None = 0;
+    case Lax = 1;
+    case Strict = 2;
+}
+/**
  * Information about an application running in automation mode.
  */
 final class WebKitApplicationInfo
@@ -23733,11 +24024,25 @@ final class WebKitCookieManager extends GObject
     private function __construct()
     {
     }
+    /** Asynchronously add a #SoupCookie to the underlying storage. */
+    public function add_cookie(SoupCookie $cookie, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($cookie);
+        unset($cancellable);
+        unset($callback);
+    }
     /** Finish an asynchronous operation started with webkit_cookie_manager_add_cookie(). */
     public function add_cookie_finish(GAsyncResult $result): bool
     {
         unset($result);
         return false;
+    }
+    /** Asynchronously delete a #SoupCookie from the current session. */
+    public function delete_cookie(SoupCookie $cookie, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($cookie);
+        unset($cancellable);
+        unset($callback);
     }
     /** Finish an asynchronous operation started with webkit_cookie_manager_delete_cookie(). */
     public function delete_cookie_finish(GAsyncResult $result): bool
@@ -23763,12 +24068,32 @@ final class WebKitCookieManager extends GObject
         unset($cancellable);
         unset($callback);
     }
+    /**
+     * Finish an asynchronous operation started with webkit_cookie_manager_get_all_cookies().
+     *
+     * @return list<SoupCookie>
+     */
+    public function get_all_cookies_finish(GAsyncResult $result): array
+    {
+        unset($result);
+        return [];
+    }
     /** Asynchronously get a list of #SoupCookie from $cookie_manager. */
     public function get_cookies(string $uri, ?GCancellable $cancellable, ?callable $callback): void
     {
         unset($uri);
         unset($cancellable);
         unset($callback);
+    }
+    /**
+     * Finish an asynchronous operation started with webkit_cookie_manager_get_cookies().
+     *
+     * @return list<SoupCookie>
+     */
+    public function get_cookies_finish(GAsyncResult $result): array
+    {
+        unset($result);
+        return [];
     }
     /** Finish an asynchronous operation started with webkit_cookie_manager_replace_cookies(). */
     public function replace_cookies_finish(GAsyncResult $result): bool
@@ -26336,6 +26661,11 @@ final class WebKitURIRequest extends GObject
     {
         unset($uri);
     }
+    /** Get the HTTP headers of a #WebKitURIRequest as a #SoupMessageHeaders. */
+    public function get_http_headers(): ?SoupMessageHeaders
+    {
+        return null;
+    }
     /** Get the HTTP method of the #WebKitURIRequest. */
     public function get_http_method(): string
     {
@@ -26356,6 +26686,7 @@ final class WebKitURIRequest extends GObject
  * Represents an URI response.
  *
  * @property-read int $content_length
+ * @property-read ?SoupMessageHeaders $http_headers
  * @property-read ?string $mime_type
  * @property-read int $status_code
  * @property-read ?string $suggested_filename
@@ -26371,6 +26702,11 @@ final class WebKitURIResponse extends GObject
     public function get_content_length(): int
     {
         return 0;
+    }
+    /** Get the HTTP headers of a #WebKitURIResponse as a #SoupMessageHeaders. */
+    public function get_http_headers(): SoupMessageHeaders
+    {
+        return null;
     }
     /** Gets the MIME type of the response. */
     public function get_mime_type(): string
@@ -26424,6 +26760,11 @@ final class WebKitURISchemeRequest extends GObject
     {
         return null;
     }
+    /** Get the #SoupMessageHeaders of the request. */
+    public function get_http_headers(): SoupMessageHeaders
+    {
+        return null;
+    }
     /** Get the HTTP method of the $request. */
     public function get_http_method(): string
     {
@@ -26468,6 +26809,11 @@ final class WebKitURISchemeResponse extends GObject
     public function set_content_type(string $content_type): void
     {
         unset($content_type);
+    }
+    /** Assign the provided #SoupMessageHeaders to the response. */
+    public function set_http_headers(SoupMessageHeaders $headers): void
+    {
+        unset($headers);
     }
     /** Sets the status code and reason phrase for the $response. */
     public function set_status(int $status_code, ?string $reason_phrase): void

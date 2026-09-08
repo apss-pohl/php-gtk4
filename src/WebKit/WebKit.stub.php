@@ -460,8 +460,14 @@ final class WebKitCookieManager extends GObject
     /** WebKitCookieManager has no constructor in GTK: instances come from GTK, never from `new`. */
     private function __construct() {}
 
+    /** Asynchronously add a #SoupCookie to the underlying storage. */
+    public function add_cookie(SoupCookie $cookie, ?GCancellable $cancellable, ?callable $callback): void {}
+
     /** Finish an asynchronous operation started with webkit_cookie_manager_add_cookie(). */
     public function add_cookie_finish(GAsyncResult $result): bool {}
+
+    /** Asynchronously delete a #SoupCookie from the current session. */
+    public function delete_cookie(SoupCookie $cookie, ?GCancellable $cancellable, ?callable $callback): void {}
 
     /** Finish an asynchronous operation started with webkit_cookie_manager_delete_cookie(). */
     public function delete_cookie_finish(GAsyncResult $result): bool {}
@@ -475,8 +481,22 @@ final class WebKitCookieManager extends GObject
     /** Asynchronously get a list of #SoupCookie from $cookie_manager. */
     public function get_all_cookies(?GCancellable $cancellable, ?callable $callback): void {}
 
+    /**
+     * Finish an asynchronous operation started with webkit_cookie_manager_get_all_cookies().
+     *
+     * @return list<SoupCookie>
+     */
+    public function get_all_cookies_finish(GAsyncResult $result): array {}
+
     /** Asynchronously get a list of #SoupCookie from $cookie_manager. */
     public function get_cookies(string $uri, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /**
+     * Finish an asynchronous operation started with webkit_cookie_manager_get_cookies().
+     *
+     * @return list<SoupCookie>
+     */
+    public function get_cookies_finish(GAsyncResult $result): array {}
 
     /** Finish an asynchronous operation started with webkit_cookie_manager_replace_cookies(). */
     public function replace_cookies_finish(GAsyncResult $result): bool {}
@@ -2386,6 +2406,9 @@ final class WebKitURIRequest extends GObject
     /** Creates a new #WebKitURIRequest for the given URI. */
     public function __construct(string $uri) {}
 
+    /** Get the HTTP headers of a #WebKitURIRequest as a #SoupMessageHeaders. */
+    public function get_http_headers(): ?SoupMessageHeaders {}
+
     /** Get the HTTP method of the #WebKitURIRequest. */
     public function get_http_method(): string {}
 
@@ -2400,6 +2423,7 @@ final class WebKitURIRequest extends GObject
  * Represents an URI response.
  *
  * @property-read int $content_length
+ * @property-read ?SoupMessageHeaders $http_headers
  * @property-read ?string $mime_type
  * @property-read int $status_code
  * @property-read ?string $suggested_filename
@@ -2412,6 +2436,9 @@ final class WebKitURIResponse extends GObject
 
     /** Get the expected content length of the #WebKitURIResponse. */
     public function get_content_length(): int {}
+
+    /** Get the HTTP headers of a #WebKitURIResponse as a #SoupMessageHeaders. */
+    public function get_http_headers(): SoupMessageHeaders {}
 
     /** Gets the MIME type of the response. */
     public function get_mime_type(): string {}
@@ -2446,6 +2473,9 @@ final class WebKitURISchemeRequest extends GObject
     /** Get the request body. */
     public function get_http_body(): GInputStream {}
 
+    /** Get the #SoupMessageHeaders of the request. */
+    public function get_http_headers(): SoupMessageHeaders {}
+
     /** Get the HTTP method of the $request. */
     public function get_http_method(): string {}
 
@@ -2475,6 +2505,9 @@ final class WebKitURISchemeResponse extends GObject
 
     /** Sets the content type for the $response */
     public function set_content_type(string $content_type): void {}
+
+    /** Assign the provided #SoupMessageHeaders to the response. */
+    public function set_http_headers(SoupMessageHeaders $headers): void {}
 
     /** Sets the status code and reason phrase for the $response. */
     public function set_status(int $status_code, ?string $reason_phrase): void {}
