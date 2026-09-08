@@ -302,6 +302,35 @@ ZEND_METHOD(Gtk4_GApplication, release) {
 }
 
 /**
+ * Gtk4\GApplication::send_notification(?string $id, GNotification $notification): void
+ *
+ * Sends a notification on behalf of $application to the desktop shell. There is no guarantee that
+ * the notification is displayed immediately, or even at all.
+ */
+ZEND_METHOD(Gtk4_GApplication, send_notification) {
+  zend_string *id = nullptr;
+  zval *notification;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_STR_OR_NULL(id)
+  Z_PARAM_OBJECT_OF_CLASS(notification, class_for_gtype(G_TYPE_NOTIFICATION))
+  ZEND_PARSE_PARAMETERS_END();
+  GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (id != nullptr && !phpgtk::check_utf8(id, 1)) RETURN_THROWS();
+  GObject *notification_o = unwrap(notification, G_TYPE_NOTIFICATION);
+  if (notification_o == nullptr) RETURN_THROWS();
+  const bool state_holds = g_application_get_is_registered(self) == TRUE;
+  if (!state_holds) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "%s(): the application is not registered yet - notifications exist from `startup` on",
+        ZSTR_VAL(EX(func)->common.function_name));
+    RETURN_THROWS();
+  }
+  g_application_send_notification(self, id != nullptr ? ZSTR_VAL(id) : nullptr,
+                                  G_NOTIFICATION(notification_o));
+}
+
+/**
  * Gtk4\GApplication::set_application_id(?string $application_id): void
  *
  * Sets the unique identifier for $application.

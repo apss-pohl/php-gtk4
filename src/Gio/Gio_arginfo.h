@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 2a8fe458c1af6dcfbb9e48ced2ce965f058def7a */
+ * Stub hash: fbb6354d6df69bb4cfaed353cf88c2755a7bc90b */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_change_state, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
@@ -192,6 +192,11 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GApplication_register
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GApplication_release arginfo_class_Gtk4_GApplication_activate
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GApplication_send_notification, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, id, IS_STRING, 1)
+	ZEND_ARG_OBJ_INFO(0, notification, Gtk4\\GNotification, 0)
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GApplication_set_application_id, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, application_id, IS_STRING, 1)
@@ -612,6 +617,46 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GMenuModel_vfunc_is_mutable arginfo_class_Gtk4_GAction_get_enabled
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GNotification___construct, 0, 0, 1)
+	ZEND_ARG_TYPE_INFO(0, title, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GNotification_add_button, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, label, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, detailed_action, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GNotification_add_button_with_target, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, label, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, action, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, target, IS_MIXED, 0, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GNotification_set_body, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, body, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GNotification_set_category, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, category, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GNotification_set_default_action arginfo_class_Gtk4_GMenuItem_set_detailed_action
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GNotification_set_default_action_and_target, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, action, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, target, IS_MIXED, 0, "null")
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GNotification_set_icon arginfo_class_Gtk4_GMenuItem_set_icon
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GNotification_set_priority, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, priority, Gtk4\\GNotificationPriority, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GNotification_set_title, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, title, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GSimpleAction___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameter_type, IS_STRING, 1, "null")
@@ -804,6 +849,7 @@ ZEND_METHOD(Gtk4_GApplication, mark_busy);
 ZEND_METHOD(Gtk4_GApplication, quit);
 ZEND_METHOD(Gtk4_GApplication, register);
 ZEND_METHOD(Gtk4_GApplication, release);
+ZEND_METHOD(Gtk4_GApplication, send_notification);
 ZEND_METHOD(Gtk4_GApplication, set_application_id);
 ZEND_METHOD(Gtk4_GApplication, set_default);
 ZEND_METHOD(Gtk4_GApplication, set_flags);
@@ -909,6 +955,16 @@ ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_item_attribute_value);
 ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_item_link);
 ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_n_items);
 ZEND_METHOD(Gtk4_GMenuModel, vfunc_is_mutable);
+ZEND_METHOD(Gtk4_GNotification, __construct);
+ZEND_METHOD(Gtk4_GNotification, add_button);
+ZEND_METHOD(Gtk4_GNotification, add_button_with_target);
+ZEND_METHOD(Gtk4_GNotification, set_body);
+ZEND_METHOD(Gtk4_GNotification, set_category);
+ZEND_METHOD(Gtk4_GNotification, set_default_action);
+ZEND_METHOD(Gtk4_GNotification, set_default_action_and_target);
+ZEND_METHOD(Gtk4_GNotification, set_icon);
+ZEND_METHOD(Gtk4_GNotification, set_priority);
+ZEND_METHOD(Gtk4_GNotification, set_title);
 ZEND_METHOD(Gtk4_GSimpleAction, __construct);
 ZEND_METHOD(Gtk4_GSimpleAction, new_stateful);
 ZEND_METHOD(Gtk4_GSimpleAction, set_enabled);
@@ -1047,6 +1103,7 @@ static const zend_function_entry class_Gtk4_GApplication_methods[] = {
 	ZEND_ME(Gtk4_GApplication, quit, arginfo_class_Gtk4_GApplication_quit, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, register, arginfo_class_Gtk4_GApplication_register, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, release, arginfo_class_Gtk4_GApplication_release, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GApplication, send_notification, arginfo_class_Gtk4_GApplication_send_notification, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, set_application_id, arginfo_class_Gtk4_GApplication_set_application_id, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, set_default, arginfo_class_Gtk4_GApplication_set_default, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, set_flags, arginfo_class_Gtk4_GApplication_set_flags, ZEND_ACC_PUBLIC)
@@ -1238,6 +1295,20 @@ static const zend_function_entry class_Gtk4_GMenuModel_methods[] = {
 	ZEND_ME(Gtk4_GMenuModel, vfunc_get_item_link, arginfo_class_Gtk4_GMenuModel_vfunc_get_item_link, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMenuModel, vfunc_get_n_items, arginfo_class_Gtk4_GMenuModel_vfunc_get_n_items, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMenuModel, vfunc_is_mutable, arginfo_class_Gtk4_GMenuModel_vfunc_is_mutable, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GNotification_methods[] = {
+	ZEND_ME(Gtk4_GNotification, __construct, arginfo_class_Gtk4_GNotification___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GNotification, add_button, arginfo_class_Gtk4_GNotification_add_button, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GNotification, add_button_with_target, arginfo_class_Gtk4_GNotification_add_button_with_target, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GNotification, set_body, arginfo_class_Gtk4_GNotification_set_body, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GNotification, set_category, arginfo_class_Gtk4_GNotification_set_category, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GNotification, set_default_action, arginfo_class_Gtk4_GNotification_set_default_action, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GNotification, set_default_action_and_target, arginfo_class_Gtk4_GNotification_set_default_action_and_target, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GNotification, set_icon, arginfo_class_Gtk4_GNotification_set_icon, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GNotification, set_priority, arginfo_class_Gtk4_GNotification_set_priority, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GNotification, set_title, arginfo_class_Gtk4_GNotification_set_title, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -1587,6 +1658,39 @@ static zend_class_entry *register_class_Gtk4_GMenuModel(zend_class_entry *class_
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GMenuModel", class_Gtk4_GMenuModel_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GNotification(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GNotification", class_Gtk4_GNotification_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GNotificationPriority(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GNotificationPriority", IS_LONG, NULL);
+
+	zval enum_case_Normal_value;
+	ZVAL_LONG(&enum_case_Normal_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Normal", &enum_case_Normal_value);
+
+	zval enum_case_Low_value;
+	ZVAL_LONG(&enum_case_Low_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Low", &enum_case_Low_value);
+
+	zval enum_case_High_value;
+	ZVAL_LONG(&enum_case_High_value, 2);
+	zend_enum_add_case_cstr(class_entry, "High", &enum_case_High_value);
+
+	zval enum_case_Urgent_value;
+	ZVAL_LONG(&enum_case_Urgent_value, 3);
+	zend_enum_add_case_cstr(class_entry, "Urgent", &enum_case_Urgent_value);
 
 	return class_entry;
 }

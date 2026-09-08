@@ -25,7 +25,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `add_option_group` — parameter `group` of type GLib.OptionGroup
 - `get_dbus_connection` — return type Gio.DBusConnection (not in the closure)
 - `open` — parameter `files` of type array (C array)
-- `send_notification` — parameter `notification` of type Gio.Notification
 - `set_action_group` — deprecated (2.32)
 - `vfunc add_platform_data` — parameter `builder` of type GLib.VariantBuilder
 - `vfunc command_line` — parameter `command_line` of type Gio.ApplicationCommandLine
@@ -110,6 +109,13 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `vfunc_iterate_item_attributes` — return type Gio.MenuAttributeIter (not in the closure)
 - `vfunc_iterate_item_links` — return type Gio.MenuLinkIter (not in the closure)
 - `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GNotification
+
+- `PHP subclasses` — constructor argument title is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GNotification
+- `add_button_with_target` — shadowed by add_button_with_target_value
+- `set_default_action_and_target` — shadowed by set_default_action_and_target_value
+- `set_urgent` — deprecated (2.42)
 
 ## GTask
 
@@ -1600,6 +1606,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GMenu.cpp`
 - `Gio/GMenuItem.cpp`
 - `Gio/GMenuModel.cpp`
+- `Gio/GNotification.cpp`
 - `Gio/GSimpleAction.cpp`
 - `Gio/GTask.cpp`
 - `Gio/GThemedIcon.cpp`
@@ -1868,6 +1875,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GMemoryInputStreamSmokeTest.php`
 - `tests/Generated/GMenuSmokeTest.php`
 - `tests/Generated/GMenuItemSmokeTest.php`
+- `tests/Generated/GNotificationSmokeTest.php`
 - `tests/Generated/GSimpleActionSmokeTest.php`
 - `tests/Generated/GTaskSmokeTest.php`
 - `tests/Generated/GThemedIconSmokeTest.php`

@@ -359,6 +359,12 @@ class GApplication extends GObject implements GActionGroup, GActionMap
     /** Decrease the use count of $application. */
     public function release(): void {}
 
+    /**
+     * Sends a notification on behalf of $application to the desktop shell. There is no guarantee
+     * that the notification is displayed immediately, or even at all.
+     */
+    public function send_notification(?string $id, GNotification $notification): void {}
+
     /** Sets the unique identifier for $application. */
     public function set_application_id(?string $application_id): void {}
 
@@ -1074,6 +1080,74 @@ class GMenuModel extends GObject
      * PHP subclass of `GMenu`, which fills the slot natively.
      */
     public function vfunc_is_mutable(): bool {}
+}
+
+/**
+ * `GNotification` is a mechanism for creating a notification to be shown to the user — typically
+ * as a pop-up notification presented by the desktop environment shell.
+ */
+class GNotification extends GObject
+{
+    /** Creates a new #GNotification with $title as its title. */
+    public function __construct(string $title) {}
+
+    /**
+     * Adds a button to $notification that activates the action in $detailed_action when clicked.
+     * That action must be an application-wide action (starting with "app."). If $detailed_action
+     * contains a target, the action will be activated with that target as its parameter.
+     */
+    public function add_button(string $label, string $detailed_action): void {}
+
+    /**
+     * Adds a button to $notification that activates $action when clicked. $action must be an
+     * application-wide action (it must start with "app.").
+     */
+    public function add_button_with_target(string $label, string $action, mixed $target = null): void {}
+
+    /** Sets the body of $notification to $body. */
+    public function set_body(?string $body): void {}
+
+    /**
+     * Sets the type of $notification to $category. Categories have a main type like `email`, `im`
+     * or `device` and can have a detail separated by a `.`, e.g. `im.received` or `email.arrived`.
+     * Setting the category helps the notification server to select proper feedback to the user.
+     */
+    public function set_category(?string $category): void {}
+
+    /**
+     * Sets the default action of $notification to $detailed_action. This action is activated when
+     * the notification is clicked on.
+     */
+    public function set_default_action(string $detailed_action): void {}
+
+    /**
+     * Sets the default action of $notification to $action. This action is activated when the
+     * notification is clicked on. It must be an application-wide action (start with "app.").
+     */
+    public function set_default_action_and_target(string $action, mixed $target = null): void {}
+
+    /** Sets the icon of $notification to $icon. */
+    public function set_icon(GIcon $icon): void {}
+
+    /**
+     * Sets the priority of $notification to $priority. See #GNotificationPriority for possible
+     * values.
+     */
+    public function set_priority(GNotificationPriority $priority): void {}
+
+    /** Sets the title of $notification to $title. */
+    public function set_title(string $title): void {}
+}
+
+/**
+ * Priority levels for #GNotifications.
+ */
+enum GNotificationPriority: int
+{
+    case Normal = 0;
+    case Low = 1;
+    case High = 2;
+    case Urgent = 3;
 }
 
 /**

@@ -85,7 +85,7 @@ final class Demo
         ],
         'Application' => [
             'Gtk', 'GApplication', 'GtkApplication', 'GSimpleAction', 'GAction', 'GActionMap',
-            'GActionGroup', 'GApplicationFlags', 'GtkUriLauncher',
+            'GActionGroup', 'GApplicationFlags', 'GtkUriLauncher', 'GNotification', 'GNotificationPriority',
         ],
         'Drag and drop' => [
             'GtkDragSource', 'GtkDropTarget', 'GdkContentProvider', 'GdkContentFormats',

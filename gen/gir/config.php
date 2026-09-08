@@ -263,6 +263,8 @@ const PARAM_VALIDATORS = [
 const SELF_PRECONDITIONS = [
     'gtk_paper_size_set_size' => ['gtk_paper_size_is_custom(self)',
         'only a custom paper size (GtkPaperSize::new_custom()) can be resized'],
+    'g_application_send_notification' => ['g_application_get_is_registered(self) == TRUE',
+        'the application is not registered yet - notifications exist from `startup` on'],
     'g_application_withdraw_notification' => ['g_application_get_is_registered(self) == TRUE',
         'the application is not registered yet - notifications exist from `startup` on'],
     'gtk_application_set_menubar' => ['g_application_get_is_registered(G_APPLICATION(self)) == TRUE',

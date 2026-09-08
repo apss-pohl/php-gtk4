@@ -94,6 +94,13 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **Desktop notifications**: `GNotification` and `GApplication::send_notification()`. GTK 4 has
+  no tray icon — `GtkStatusIcon` was removed — and this is what took over that job: a title, a
+  body, an icon by name, and buttons wired to the application's own actions, handed to the
+  desktop under an id that can replace or withdraw it later. Sending from an application that
+  is not registered yet is a `LogicException` rather than the GLib assertion it used to be
+  (`withdraw_notification()` was already guarded that way; its sibling had never been bound).
+
 - **Icons by name, and opening a URI**: `GIcon` with `GThemedIcon` behind it, and
   `GtkUriLauncher`. Eleven members that had no icon type to speak came back —
   `GtkImage::set_from_gicon()`, `new_from_gicon()` and `get_gicon()`, both of a `GtkEntry`'s icon

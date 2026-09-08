@@ -73,6 +73,7 @@
   phpgtk::register_enum(PANGO_TYPE_WEIGHT, register_class_Gtk4_PangoWeight());
   phpgtk::register_enum(PANGO_TYPE_WRAP_MODE, register_class_Gtk4_PangoWrapMode());
   phpgtk::register_flags(G_TYPE_APPLICATION_FLAGS, register_class_Gtk4_GApplicationFlags());
+  phpgtk::register_enum(G_TYPE_NOTIFICATION_PRIORITY, register_class_Gtk4_GNotificationPriority());
   phpgtk::register_flags(G_TYPE_TLS_CERTIFICATE_FLAGS, register_class_Gtk4_GTlsCertificateFlags());
   phpgtk::register_flags(G_TYPE_TLS_PASSWORD_FLAGS, register_class_Gtk4_GTlsPasswordFlags());
   phpgtk::register_enum(GDK_TYPE_CROSSING_MODE, register_class_Gtk4_GdkCrossingMode());
@@ -275,6 +276,8 @@
   phpgtk::register_class("GMenuItem", ce_GMenuItem, G_TYPE_MENU_ITEM);
   zend_class_entry *ce_GMenuModel = register_class_Gtk4_GMenuModel(ce_GObject);
   phpgtk::register_class("GMenuModel", ce_GMenuModel, G_TYPE_MENU_MODEL);
+  zend_class_entry *ce_GNotification = register_class_Gtk4_GNotification(ce_GObject);
+  phpgtk::register_class("GNotification", ce_GNotification, G_TYPE_NOTIFICATION);
   zend_class_entry *ce_GSimpleAction = register_class_Gtk4_GSimpleAction(ce_GObject, ce_GAction);
   phpgtk::register_class("GSimpleAction", ce_GSimpleAction, G_TYPE_SIMPLE_ACTION);
   zend_class_entry *ce_GTask = register_class_Gtk4_GTask(ce_GObject, ce_GAsyncResult);

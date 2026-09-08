@@ -463,6 +463,12 @@ WebKit.UserMessageError
 Gio.InputStream
 Gio.MemoryInputStream
 
+# The desktop notification a background application sends: GNotification is the message (title,
+# body, icon, buttons wired to the application's own actions) and GApplication::send_notification()
+# hands it to the desktop. GTK 4 has no tray icon - this is what replaced that use of one.
+Gio.Notification
+Gio.NotificationPriority
+
 # Icons by name rather than by pixels: the GIcon a GtkImage, a GtkEntry, a GMenuItem or the icon
 # theme takes, and the themed icon PHP can build one from (a name, or a list of names to try in
 # turn). Plain GIO, and an interface - g_icon_new_for_string() and the icon a widget hands back
