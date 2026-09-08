@@ -229,6 +229,8 @@
   phpgtk::register_class("GtkTextTagTable", ce_GtkTextTagTable, GTK_TYPE_TEXT_TAG_TABLE);
   zend_class_entry *ce_GtkTreeListRow = register_class_Gtk4_GtkTreeListRow(ce_GObject);
   phpgtk::register_class("GtkTreeListRow", ce_GtkTreeListRow, GTK_TYPE_TREE_LIST_ROW);
+  zend_class_entry *ce_GtkUriLauncher = register_class_Gtk4_GtkUriLauncher(ce_GObject);
+  phpgtk::register_class("GtkUriLauncher", ce_GtkUriLauncher, GTK_TYPE_URI_LAUNCHER);
   zend_class_entry *ce_GtkWidget = register_class_Gtk4_GtkWidget(ce_GObject);
   phpgtk::register_class("GtkWidget", ce_GtkWidget, GTK_TYPE_WIDGET);
   zend_class_entry *ce_GtkWindow = register_class_Gtk4_GtkWindow(ce_GtkWidget, ce_GtkNative, ce_GtkRoot);
@@ -255,6 +257,10 @@
   phpgtk::register_interface_fallback(G_TYPE_ASYNC_RESULT, ce_GAsyncResultObject);
   zend_class_entry *ce_GCancellable = register_class_Gtk4_GCancellable(ce_GObject);
   phpgtk::register_class("GCancellable", ce_GCancellable, G_TYPE_CANCELLABLE);
+  zend_class_entry *ce_GIcon = register_class_Gtk4_GIcon();
+  phpgtk::register_interface("GIcon", ce_GIcon, G_TYPE_ICON);
+  zend_class_entry *ce_GIconObject = register_class_Gtk4_GIconObject(ce_GObject, ce_GIcon);
+  phpgtk::register_interface_fallback(G_TYPE_ICON, ce_GIconObject);
   zend_class_entry *ce_GInputStream = register_class_Gtk4_GInputStream(ce_GObject);
   phpgtk::register_class("GInputStream", ce_GInputStream, G_TYPE_INPUT_STREAM);
   zend_class_entry *ce_GListModel = register_class_Gtk4_GListModel();
@@ -273,6 +279,8 @@
   phpgtk::register_class("GSimpleAction", ce_GSimpleAction, G_TYPE_SIMPLE_ACTION);
   zend_class_entry *ce_GTask = register_class_Gtk4_GTask(ce_GObject, ce_GAsyncResult);
   phpgtk::register_class("GTask", ce_GTask, G_TYPE_TASK);
+  zend_class_entry *ce_GThemedIcon = register_class_Gtk4_GThemedIcon(ce_GObject, ce_GIcon);
+  phpgtk::register_class("GThemedIcon", ce_GThemedIcon, G_TYPE_THEMED_ICON);
   zend_class_entry *ce_GTlsCertificate = register_class_Gtk4_GTlsCertificate(ce_GObject);
   phpgtk::register_class("GTlsCertificate", ce_GTlsCertificate, G_TYPE_TLS_CERTIFICATE);
   zend_class_entry *ce_GdkClipboard = register_class_Gtk4_GdkClipboard(ce_GObject);
@@ -299,7 +307,7 @@
   phpgtk::register_class("GdkSnapshot", ce_GdkSnapshot, GDK_TYPE_SNAPSHOT);
   zend_class_entry *ce_GdkSurface = register_class_Gtk4_GdkSurface(ce_GObject);
   phpgtk::register_class("GdkSurface", ce_GdkSurface, GDK_TYPE_SURFACE);
-  zend_class_entry *ce_GdkTexture = register_class_Gtk4_GdkTexture(ce_GObject, ce_GdkPaintable);
+  zend_class_entry *ce_GdkTexture = register_class_Gtk4_GdkTexture(ce_GObject, ce_GdkPaintable, ce_GIcon);
   phpgtk::register_class("GdkTexture", ce_GdkTexture, GDK_TYPE_TEXTURE);
   zend_class_entry *ce_GdkTextureDownloader = register_class_Gtk4_GdkTextureDownloader();
   phpgtk::register_GdkTextureDownloader(ce_GdkTextureDownloader);
@@ -347,7 +355,7 @@
   phpgtk::register_GrapheneRect(ce_GrapheneRect);
   zend_class_entry *ce_GrapheneSize = register_class_Gtk4_GrapheneSize();
   phpgtk::register_GrapheneSize(ce_GrapheneSize);
-  zend_class_entry *ce_GdkPixbuf = register_class_Gtk4_GdkPixbuf(ce_GObject);
+  zend_class_entry *ce_GdkPixbuf = register_class_Gtk4_GdkPixbuf(ce_GObject, ce_GIcon);
   phpgtk::register_class("GdkPixbuf", ce_GdkPixbuf, GDK_TYPE_PIXBUF);
   zend_class_entry *ce_GdkPixbufAnimation = register_class_Gtk4_GdkPixbufAnimation(ce_GObject);
   phpgtk::register_class("GdkPixbufAnimation", ce_GdkPixbufAnimation, GDK_TYPE_PIXBUF_ANIMATION);
@@ -519,7 +527,7 @@
   phpgtk::register_class("GtkViewport", ce_GtkViewport, GTK_TYPE_VIEWPORT);
   zend_class_entry *ce_GMenu = register_class_Gtk4_GMenu(ce_GMenuModel);
   phpgtk::register_class("GMenu", ce_GMenu, G_TYPE_MENU);
-  zend_class_entry *ce_GdkMemoryTexture = register_class_Gtk4_GdkMemoryTexture(ce_GdkTexture, ce_GdkPaintable);
+  zend_class_entry *ce_GdkMemoryTexture = register_class_Gtk4_GdkMemoryTexture(ce_GdkTexture, ce_GdkPaintable, ce_GIcon);
   phpgtk::register_class("GdkMemoryTexture", ce_GdkMemoryTexture, GDK_TYPE_MEMORY_TEXTURE);
   zend_class_entry *ce_GskBlendNode = register_class_Gtk4_GskBlendNode(ce_GskRenderNode);
   phpgtk::register_GskBlendNode(ce_GskBlendNode);
@@ -594,6 +602,7 @@
   register_vfuncs_GApplication();
   register_vfuncs_GAsyncResult();
   register_vfuncs_GCancellable();
+  register_vfuncs_GIcon();
   register_vfuncs_GListModel();
   register_vfuncs_GMenuModel();
   register_vfuncs_GdkContentProvider();

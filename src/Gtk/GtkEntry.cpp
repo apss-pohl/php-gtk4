@@ -169,6 +169,23 @@ ZEND_METHOD(Gtk4_GtkEntry, get_icon_at_pos) {
 }
 
 /**
+ * Gtk4\GtkEntry::get_icon_gicon(GtkEntryIconPosition $icon_pos): ?GIcon
+ *
+ * Retrieves the `GIcon` used for the icon.
+ */
+ZEND_METHOD(Gtk4_GtkEntry, get_icon_gicon) {
+  zval *icon_pos;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(icon_pos, enum_class_for_type(GTK_TYPE_ENTRY_ICON_POSITION))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
+  gint icon_pos_v = 0;
+  if (!enum_from_php(icon_pos, GTK_TYPE_ENTRY_ICON_POSITION, &icon_pos_v)) RETURN_THROWS();
+  GIcon *phpgtk_ret = gtk_entry_get_icon_gicon(self, static_cast<GtkEntryIconPosition>(icon_pos_v));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkEntry::get_icon_name(GtkEntryIconPosition $icon_pos): ?string
  *
  * Retrieves the icon name used for the icon.
@@ -530,6 +547,30 @@ ZEND_METHOD(Gtk4_GtkEntry, set_icon_drag_source) {
   gtk_entry_set_icon_drag_source(self, static_cast<GtkEntryIconPosition>(icon_pos_v),
                                  GDK_CONTENT_PROVIDER(provider_o),
                                  static_cast<GdkDragAction>(actions));
+}
+
+/**
+ * Gtk4\GtkEntry::set_icon_from_gicon(GtkEntryIconPosition $icon_pos, ?GIcon $icon): void
+ *
+ * Sets the icon shown in the entry at the specified position from the current icon theme.
+ */
+ZEND_METHOD(Gtk4_GtkEntry, set_icon_from_gicon) {
+  zval *icon_pos;
+  zval *icon = nullptr;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(icon_pos, enum_class_for_type(GTK_TYPE_ENTRY_ICON_POSITION))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(icon, class_for_gtype(G_TYPE_ICON))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
+  gint icon_pos_v = 0;
+  if (!enum_from_php(icon_pos, GTK_TYPE_ENTRY_ICON_POSITION, &icon_pos_v)) RETURN_THROWS();
+  GObject *icon_o = nullptr;
+  if (icon != nullptr) {
+    icon_o = unwrap(icon, G_TYPE_ICON);
+    if (icon_o == nullptr) RETURN_THROWS();
+  }
+  gtk_entry_set_icon_from_gicon(self, static_cast<GtkEntryIconPosition>(icon_pos_v),
+                                icon_o != nullptr ? G_ICON(icon_o) : nullptr);
 }
 
 /**

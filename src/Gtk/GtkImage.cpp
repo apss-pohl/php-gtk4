@@ -48,6 +48,22 @@ ZEND_METHOD(Gtk4_GtkImage, new_from_file) {
 }
 
 /**
+ * static Gtk4\GtkImage::new_from_gicon(GIcon $icon): GtkImage
+ *
+ * Creates a `GtkImage` displaying an icon from the current icon theme.
+ */
+ZEND_METHOD(Gtk4_GtkImage, new_from_gicon) {
+  zval *icon;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(icon, class_for_gtype(G_TYPE_ICON))
+  ZEND_PARSE_PARAMETERS_END();
+  GObject *icon_o = unwrap(icon, G_TYPE_ICON);
+  if (icon_o == nullptr) RETURN_THROWS();
+  GObject *obj = G_OBJECT(gtk_image_new_from_gicon(G_ICON(icon_o)));
+  wrap(obj, return_value);
+}
+
+/**
  * static Gtk4\GtkImage::new_from_icon_name(?string $icon_name = null): GtkImage
  *
  * Creates a `GtkImage` displaying an icon from the current icon theme.
@@ -109,6 +125,18 @@ ZEND_METHOD(Gtk4_GtkImage, clear) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkImage *self = PHPGTK_SELF(GtkImage, GTK_TYPE_IMAGE);
   gtk_image_clear(self);
+}
+
+/**
+ * Gtk4\GtkImage::get_gicon(): ?GIcon
+ *
+ * Gets the `GIcon` being displayed by the `GtkImage`.
+ */
+ZEND_METHOD(Gtk4_GtkImage, get_gicon) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkImage *self = PHPGTK_SELF(GtkImage, GTK_TYPE_IMAGE);
+  GIcon *phpgtk_ret = gtk_image_get_gicon(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -185,6 +213,22 @@ ZEND_METHOD(Gtk4_GtkImage, set_from_file) {
   }
   gtk_image_set_from_file(self, filename_abs != nullptr ? ZSTR_VAL(filename_abs) : nullptr);
   if (filename_abs != nullptr) zend_string_release(filename_abs);
+}
+
+/**
+ * Gtk4\GtkImage::set_from_gicon(GIcon $icon): void
+ *
+ * Sets a `GtkImage` to show a `GIcon`.
+ */
+ZEND_METHOD(Gtk4_GtkImage, set_from_gicon) {
+  zval *icon;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(icon, class_for_gtype(G_TYPE_ICON))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkImage *self = PHPGTK_SELF(GtkImage, GTK_TYPE_IMAGE);
+  GObject *icon_o = unwrap(icon, G_TYPE_ICON);
+  if (icon_o == nullptr) RETURN_THROWS();
+  gtk_image_set_from_gicon(self, G_ICON(icon_o));
 }
 
 /**

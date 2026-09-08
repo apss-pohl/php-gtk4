@@ -1939,7 +1939,7 @@ enum GdkMemoryFormat : int
 /**
  * A `GdkTexture` representing image data in memory.
  */
-class GdkMemoryTexture extends GdkTexture implements GdkPaintable
+class GdkMemoryTexture extends GdkTexture implements GdkPaintable, GIcon
 {
     /** Creates a new texture for a blob of image data. */
     public function __construct(int $width, int $height, GdkMemoryFormat $format, string $bytes, int $stride)
@@ -1989,6 +1989,23 @@ class GdkMemoryTexture extends GdkTexture implements GdkPaintable
         unset($snapshot);
         unset($width);
         unset($height);
+    }
+    public function equal(?GIcon $icon2): bool
+    {
+        unset($icon2);
+        return false;
+    }
+    public function hash(): int
+    {
+        return 0;
+    }
+    public function serialize(): mixed
+    {
+        return null;
+    }
+    public function to_string(): ?string
+    {
+        return null;
     }
 }
 /**
@@ -2340,7 +2357,7 @@ class GdkSurface extends GObject
  * @property int $height
  * @property int $width
  */
-class GdkTexture extends GObject implements GdkPaintable
+class GdkTexture extends GObject implements GdkPaintable, GIcon
 {
     /** GdkTexture is abstract in GTK: instances come from GTK, never from `new`. */
     private function __construct()
@@ -2460,6 +2477,23 @@ class GdkTexture extends GObject implements GdkPaintable
         unset($width);
         unset($height);
     }
+    public function equal(?GIcon $icon2): bool
+    {
+        unset($icon2);
+        return false;
+    }
+    public function hash(): int
+    {
+        return 0;
+    }
+    public function serialize(): mixed
+    {
+        return null;
+    }
+    public function to_string(): ?string
+    {
+        return null;
+    }
 }
 /**
  * The `GdkTextureDownloader` is used to download the contents of a `Texture`.
@@ -2542,7 +2576,7 @@ enum GdkInterpType : int
  * @property int $rowstride
  * @property int $width
  */
-class GdkPixbuf extends GObject
+class GdkPixbuf extends GObject implements GIcon
 {
     /** Creates a new `GdkPixbuf` structure and allocates a buffer for it. */
     public function __construct(GdkColorspace $colorspace, bool $has_alpha, int $bits_per_sample, int $width, int $height)
@@ -2948,6 +2982,23 @@ class GdkPixbuf extends GObject
         unset($type);
         unset($options);
         return false;
+    }
+    public function equal(?GIcon $icon2): bool
+    {
+        unset($icon2);
+        return false;
+    }
+    public function hash(): int
+    {
+        return 0;
+    }
+    public function serialize(): mixed
+    {
+        return null;
+    }
+    public function to_string(): ?string
+    {
+        return null;
     }
 }
 /**
@@ -3993,6 +4044,54 @@ class GCancellable extends GObject
     }
 }
 /**
+ * `GIcon` is a very minimal interface for icons. It provides functions for checking the equality
+ * of two icons, hashing of icons and serializing an icon to and from strings.
+ */
+interface GIcon
+{
+    /** Checks if two icons are equal. */
+    public function equal(?GIcon $icon2): bool;
+    /** Gets a hash for an icon. */
+    public function hash(): int;
+    /**
+     * Serializes a #GIcon into a #GVariant. An equivalent #GIcon can be retrieved back by calling
+     * g_icon_deserialize() on the returned value. As serialization will avoid using raw icon data
+     * when possible, it only makes sense to transfer the #GVariant between processes on the same
+     * machine, (as opposed to over the network), and within the same file system namespace.
+     */
+    public function serialize(): mixed;
+}
+/**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GIcon} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GIcon} with a body.
+ *
+ */
+final class GIconObject extends GObject implements GIcon
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct()
+    {
+    }
+    public function equal(?GIcon $icon2): bool
+    {
+        unset($icon2);
+        return false;
+    }
+    public function hash(): int
+    {
+        return 0;
+    }
+    public function serialize(): mixed
+    {
+        return null;
+    }
+    public function to_string(): ?string
+    {
+        return null;
+    }
+}
+/**
  * `GInputStream` is a base class for implementing streaming input.
  */
 class GInputStream extends GObject
@@ -4442,6 +4541,11 @@ class GMenuItem extends GObject
     {
         unset($detailed_action);
     }
+    /** Sets (or unsets) the icon on $menu_item. */
+    public function set_icon(GIcon $icon): void
+    {
+        unset($icon);
+    }
     /** Sets or unsets the "label" attribute of $menu_item. */
     public function set_label(?string $label): void
     {
@@ -4817,6 +4921,66 @@ class GTask extends GObject implements GAsyncResult
     public function legacy_propagate_error(): bool
     {
         return false;
+    }
+}
+/**
+ * `GThemedIcon` is an implementation of `Icon` that supports icon themes.
+ *
+ * @property-write ?string $name
+ * @property ?array $names
+ * @property bool $use_default_fallbacks
+ */
+class GThemedIcon extends GObject implements GIcon
+{
+    /** Creates a new themed icon for $iconname. */
+    public function __construct(string $iconname)
+    {
+        unset($iconname);
+    }
+    /**
+     * Creates a new themed icon for $iconname, and all the names that can be created by shortening
+     * $iconname at '-' characters.
+     */
+    public static function new_with_default_fallbacks(string $iconname): GThemedIcon
+    {
+        unset($iconname);
+        return null;
+    }
+    /** Append a name to the list of icons from within $icon. */
+    public function append_name(string $iconname): void
+    {
+        unset($iconname);
+    }
+    /**
+     * Gets the names of icons from within $icon.
+     *
+     * @return list<string>
+     */
+    public function get_names(): array
+    {
+        return [];
+    }
+    /** Prepend a name to the list of icons from within $icon. */
+    public function prepend_name(string $iconname): void
+    {
+        unset($iconname);
+    }
+    public function equal(?GIcon $icon2): bool
+    {
+        unset($icon2);
+        return false;
+    }
+    public function hash(): int
+    {
+        return 0;
+    }
+    public function serialize(): mixed
+    {
+        return null;
+    }
+    public function to_string(): ?string
+    {
+        return null;
     }
 }
 /**
@@ -10072,6 +10236,7 @@ final class GtkEditableObject extends GObject implements GtkEditable
  * @property bool $overwrite_mode
  * @property ?string $placeholder_text
  * @property bool $primary_icon_activatable
+ * @property ?GIcon $primary_icon_gicon
  * @property ?string $primary_icon_name
  * @property ?GdkPaintable $primary_icon_paintable
  * @property bool $primary_icon_sensitive
@@ -10082,6 +10247,7 @@ final class GtkEditableObject extends GObject implements GtkEditable
  * @property float $progress_pulse_step
  * @property-read int $scroll_offset
  * @property bool $secondary_icon_activatable
+ * @property ?GIcon $secondary_icon_gicon
  * @property ?string $secondary_icon_name
  * @property ?GdkPaintable $secondary_icon_paintable
  * @property bool $secondary_icon_sensitive
@@ -10153,6 +10319,12 @@ class GtkEntry extends GtkWidget implements GtkEditable
         unset($x);
         unset($y);
         return 0;
+    }
+    /** Retrieves the `GIcon` used for the icon. */
+    public function get_icon_gicon(GtkEntryIconPosition $icon_pos): ?GIcon
+    {
+        unset($icon_pos);
+        return null;
     }
     /** Retrieves the icon name used for the icon. */
     public function get_icon_name(GtkEntryIconPosition $icon_pos): ?string
@@ -10288,6 +10460,12 @@ class GtkEntry extends GtkWidget implements GtkEditable
         unset($icon_pos);
         unset($provider);
         unset($actions);
+    }
+    /** Sets the icon shown in the entry at the specified position from the current icon theme. */
+    public function set_icon_from_gicon(GtkEntryIconPosition $icon_pos, ?GIcon $icon): void
+    {
+        unset($icon_pos);
+        unset($icon);
     }
     /** Sets the icon shown in the entry at the specified position from the current icon theme. */
     public function set_icon_from_icon_name(GtkEntryIconPosition $icon_pos, ?string $icon_name): void
@@ -12743,11 +12921,27 @@ class GtkIconTheme extends GObject
     {
         return '';
     }
+    /** Checks whether an icon theme includes an icon for a particular `GIcon`. */
+    public function has_gicon(GIcon $gicon): bool
+    {
+        unset($gicon);
+        return false;
+    }
     /** Checks whether an icon theme includes an icon for a particular name. */
     public function has_icon(string $icon_name): bool
     {
         unset($icon_name);
         return false;
+    }
+    /** Looks up a icon for a desired size and window scale. */
+    public function lookup_by_gicon(GIcon $icon, int $size, int $scale, GtkTextDirection $direction, int $flags): GtkIconPaintable
+    {
+        unset($icon);
+        unset($size);
+        unset($scale);
+        unset($direction);
+        unset($flags);
+        return null;
     }
     /** Looks up a named icon for a desired size and window scale, returning a `GtkIconPaintable`. */
     public function lookup_icon(string $icon_name, ?array $fallbacks, int $size, int $scale, GtkTextDirection $direction, int $flags): GtkIconPaintable
@@ -12785,6 +12979,7 @@ class GtkIconTheme extends GObject
  * The `GtkImage` widget displays an image.
  *
  * @property ?string $file
+ * @property ?GIcon $gicon
  * @property ?string $icon_name
  * @property GtkIconSize $icon_size
  * @property ?GdkPaintable $paintable
@@ -12803,6 +12998,12 @@ class GtkImage extends GtkWidget
     public static function new_from_file(string $filename): GtkImage
     {
         unset($filename);
+        return null;
+    }
+    /** Creates a `GtkImage` displaying an icon from the current icon theme. */
+    public static function new_from_gicon(GIcon $icon): GtkImage
+    {
+        unset($icon);
         return null;
     }
     /** Creates a `GtkImage` displaying an icon from the current icon theme. */
@@ -12826,6 +13027,11 @@ class GtkImage extends GtkWidget
     /** Resets the image to be empty. */
     public function clear(): void
     {
+    }
+    /** Gets the `GIcon` being displayed by the `GtkImage`. */
+    public function get_gicon(): ?GIcon
+    {
+        return null;
     }
     /** Gets the icon name and size being displayed by the `GtkImage`. */
     public function get_icon_name(): ?string
@@ -12856,6 +13062,11 @@ class GtkImage extends GtkWidget
     public function set_from_file(?string $filename): void
     {
         unset($filename);
+    }
+    /** Sets a `GtkImage` to show a `GIcon`. */
+    public function set_from_gicon(GIcon $icon): void
+    {
+        unset($icon);
     }
     /** Sets a `GtkImage` to show a named icon. */
     public function set_from_icon_name(?string $icon_name): void
@@ -21676,6 +21887,43 @@ enum GtkUnit : int
     case Points = 1;
     case Inch = 2;
     case Mm = 3;
+}
+/**
+ * A `GtkUriLauncher` object collects the arguments that are needed to open a uri with an
+ * application.
+ *
+ * @property ?string $uri
+ */
+class GtkUriLauncher extends GObject
+{
+    /** Creates a new `GtkUriLauncher` object. */
+    public function __construct(?string $uri = null)
+    {
+        unset($uri);
+    }
+    /** Gets the uri that will be opened. */
+    public function get_uri(): ?string
+    {
+        return null;
+    }
+    /** Launch an application to open the uri. */
+    public function launch(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($parent);
+        unset($cancellable);
+        unset($callback);
+    }
+    /** Finishes the `launch` call and returns the result. */
+    public function launch_finish(GAsyncResult $result): bool
+    {
+        unset($result);
+        return false;
+    }
+    /** Sets the uri that will be opened. */
+    public function set_uri(?string $uri): void
+    {
+        unset($uri);
+    }
 }
 /**
  * `GtkViewport` implements scrollability for widgets that lack their own scrolling capabilities.

@@ -41,7 +41,7 @@ enum GdkInterpType: int
  * @property int $rowstride
  * @property int $width
  */
-class GdkPixbuf extends GObject
+class GdkPixbuf extends GObject implements GIcon
 {
     /** Creates a new `GdkPixbuf` structure and allocates a buffer for it. */
     public function __construct(GdkColorspace $colorspace, bool $has_alpha, int $bits_per_sample, int $width, int $height) {}
@@ -244,6 +244,18 @@ class GdkPixbuf extends GObject
      * GIR takes the options as two parallel arrays; PHP passes a map.
      */
     public function savev(string $filename, string $type, array $options = []): bool {}
+
+    /** @implementation-alias Gtk4\GIcon::equal */
+    public function equal(?GIcon $icon2): bool {}
+
+    /** @implementation-alias Gtk4\GIcon::hash */
+    public function hash(): int {}
+
+    /** @implementation-alias Gtk4\GIcon::serialize */
+    public function serialize(): mixed {}
+
+    /** @implementation-alias Gtk4\GIcon::to_string */
+    public function to_string(): ?string {}
 }
 
 /**

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 70f721c86c92b103ca6f1a0a4d11a48a13f9bcbd */
+ * Stub hash: f0c4d051de6c7616402ede1c15e3f430ec159352 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -1411,6 +1411,10 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkEntry_get_icon_at_
 	ZEND_ARG_TYPE_INFO(0, y, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkEntry_get_icon_gicon, 0, 1, Gtk4\\GIcon, 1)
+	ZEND_ARG_OBJ_INFO(0, icon_pos, Gtk4\\GtkEntryIconPosition, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkEntry_get_icon_name, 0, 1, IS_STRING, 1)
 	ZEND_ARG_OBJ_INFO(0, icon_pos, Gtk4\\GtkEntryIconPosition, 0)
 ZEND_END_ARG_INFO()
@@ -1477,6 +1481,11 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkEntry_set_icon_dra
 	ZEND_ARG_OBJ_INFO(0, icon_pos, Gtk4\\GtkEntryIconPosition, 0)
 	ZEND_ARG_OBJ_INFO(0, provider, Gtk4\\GdkContentProvider, 0)
 	ZEND_ARG_TYPE_INFO(0, actions, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkEntry_set_icon_from_gicon, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, icon_pos, Gtk4\\GtkEntryIconPosition, 0)
+	ZEND_ARG_OBJ_INFO(0, icon, Gtk4\\GIcon, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkEntry_set_icon_from_icon_name, 0, 2, IS_VOID, 0)
@@ -2473,8 +2482,20 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkIconTheme_get_theme_name arginfo_class_Gtk4_GtkAlertDialog_get_detail
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkIconTheme_has_gicon, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, gicon, Gtk4\\GIcon, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkIconTheme_has_icon, 0, 1, _IS_BOOL, 0)
 	ZEND_ARG_TYPE_INFO(0, icon_name, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkIconTheme_lookup_by_gicon, 0, 5, Gtk4\\GtkIconPaintable, 0)
+	ZEND_ARG_OBJ_INFO(0, icon, Gtk4\\GIcon, 0)
+	ZEND_ARG_TYPE_INFO(0, size, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, scale, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, direction, Gtk4\\GtkTextDirection, 0)
+	ZEND_ARG_TYPE_INFO(0, flags, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkIconTheme_lookup_icon, 0, 6, Gtk4\\GtkIconPaintable, 0)
@@ -2500,6 +2521,10 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkImage_new_from_file
 	ZEND_ARG_TYPE_INFO(0, filename, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkImage_new_from_gicon, 0, 1, Gtk4\\GtkImage, 0)
+	ZEND_ARG_OBJ_INFO(0, icon, Gtk4\\GIcon, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkImage_new_from_icon_name, 0, 0, Gtk4\\GtkImage, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, icon_name, IS_STRING, 1, "null")
 ZEND_END_ARG_INFO()
@@ -2513,6 +2538,9 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkImage_new_from_reso
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkImage_clear arginfo_class_Gtk4_GtkAboutDialog_realize
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkImage_get_gicon, 0, 0, Gtk4\\GIcon, 1)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkImage_get_icon_name arginfo_class_Gtk4_GtkAboutDialog_get_comments
 
@@ -2528,6 +2556,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkImage_set_from_file, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, filename, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkImage_set_from_gicon, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, icon, Gtk4\\GIcon, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkImage_set_from_icon_name arginfo_class_Gtk4_GtkAboutDialog_set_logo_icon_name
@@ -6158,6 +6190,20 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkTreeListRow_set_expanded arginfo_class_Gtk4_GtkExpander_set_expanded
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkUriLauncher___construct, 0, 0, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, uri, IS_STRING, 1, "null")
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkUriLauncher_get_uri arginfo_class_Gtk4_GtkAboutDialog_get_comments
+
+#define arginfo_class_Gtk4_GtkUriLauncher_launch arginfo_class_Gtk4_GtkAlertDialog_choose
+
+#define arginfo_class_Gtk4_GtkUriLauncher_launch_finish arginfo_class_Gtk4_GtkPrintDialog_print_file_finish
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkUriLauncher_set_uri, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, uri, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkViewport___construct, 0, 0, 0)
 	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, hadjustment, Gtk4\\GtkAdjustment, 1, "null")
 	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, vadjustment, Gtk4\\GtkAdjustment, 1, "null")
@@ -7237,6 +7283,7 @@ ZEND_METHOD(Gtk4_GtkEntry, get_has_frame);
 ZEND_METHOD(Gtk4_GtkEntry, get_icon_activatable);
 ZEND_METHOD(Gtk4_GtkEntry, get_icon_area);
 ZEND_METHOD(Gtk4_GtkEntry, get_icon_at_pos);
+ZEND_METHOD(Gtk4_GtkEntry, get_icon_gicon);
 ZEND_METHOD(Gtk4_GtkEntry, get_icon_name);
 ZEND_METHOD(Gtk4_GtkEntry, get_icon_paintable);
 ZEND_METHOD(Gtk4_GtkEntry, get_icon_sensitive);
@@ -7262,6 +7309,7 @@ ZEND_METHOD(Gtk4_GtkEntry, set_extra_menu);
 ZEND_METHOD(Gtk4_GtkEntry, set_has_frame);
 ZEND_METHOD(Gtk4_GtkEntry, set_icon_activatable);
 ZEND_METHOD(Gtk4_GtkEntry, set_icon_drag_source);
+ZEND_METHOD(Gtk4_GtkEntry, set_icon_from_gicon);
 ZEND_METHOD(Gtk4_GtkEntry, set_icon_from_icon_name);
 ZEND_METHOD(Gtk4_GtkEntry, set_icon_from_paintable);
 ZEND_METHOD(Gtk4_GtkEntry, set_icon_sensitive);
@@ -7599,22 +7647,27 @@ ZEND_METHOD(Gtk4_GtkIconTheme, get_display);
 ZEND_METHOD(Gtk4_GtkIconTheme, get_icon_names);
 ZEND_METHOD(Gtk4_GtkIconTheme, get_resource_path);
 ZEND_METHOD(Gtk4_GtkIconTheme, get_theme_name);
+ZEND_METHOD(Gtk4_GtkIconTheme, has_gicon);
 ZEND_METHOD(Gtk4_GtkIconTheme, has_icon);
+ZEND_METHOD(Gtk4_GtkIconTheme, lookup_by_gicon);
 ZEND_METHOD(Gtk4_GtkIconTheme, lookup_icon);
 ZEND_METHOD(Gtk4_GtkIconTheme, set_resource_path);
 ZEND_METHOD(Gtk4_GtkIconTheme, set_theme_name);
 ZEND_METHOD(Gtk4_GtkImage, __construct);
 ZEND_METHOD(Gtk4_GtkImage, new_from_file);
+ZEND_METHOD(Gtk4_GtkImage, new_from_gicon);
 ZEND_METHOD(Gtk4_GtkImage, new_from_icon_name);
 ZEND_METHOD(Gtk4_GtkImage, new_from_paintable);
 ZEND_METHOD(Gtk4_GtkImage, new_from_resource);
 ZEND_METHOD(Gtk4_GtkImage, clear);
+ZEND_METHOD(Gtk4_GtkImage, get_gicon);
 ZEND_METHOD(Gtk4_GtkImage, get_icon_name);
 ZEND_METHOD(Gtk4_GtkImage, get_icon_size);
 ZEND_METHOD(Gtk4_GtkImage, get_paintable);
 ZEND_METHOD(Gtk4_GtkImage, get_pixel_size);
 ZEND_METHOD(Gtk4_GtkImage, get_storage_type);
 ZEND_METHOD(Gtk4_GtkImage, set_from_file);
+ZEND_METHOD(Gtk4_GtkImage, set_from_gicon);
 ZEND_METHOD(Gtk4_GtkImage, set_from_icon_name);
 ZEND_METHOD(Gtk4_GtkImage, set_from_paintable);
 ZEND_METHOD(Gtk4_GtkImage, set_from_resource);
@@ -8720,6 +8773,11 @@ ZEND_METHOD(Gtk4_GtkTreeListRow, get_parent);
 ZEND_METHOD(Gtk4_GtkTreeListRow, get_position);
 ZEND_METHOD(Gtk4_GtkTreeListRow, is_expandable);
 ZEND_METHOD(Gtk4_GtkTreeListRow, set_expanded);
+ZEND_METHOD(Gtk4_GtkUriLauncher, __construct);
+ZEND_METHOD(Gtk4_GtkUriLauncher, get_uri);
+ZEND_METHOD(Gtk4_GtkUriLauncher, launch);
+ZEND_METHOD(Gtk4_GtkUriLauncher, launch_finish);
+ZEND_METHOD(Gtk4_GtkUriLauncher, set_uri);
 ZEND_METHOD(Gtk4_GtkViewport, __construct);
 ZEND_METHOD(Gtk4_GtkViewport, get_child);
 ZEND_METHOD(Gtk4_GtkViewport, get_scroll_to_focus);
@@ -9552,6 +9610,7 @@ static const zend_function_entry class_Gtk4_GtkEntry_methods[] = {
 	ZEND_ME(Gtk4_GtkEntry, get_icon_activatable, arginfo_class_Gtk4_GtkEntry_get_icon_activatable, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, get_icon_area, arginfo_class_Gtk4_GtkEntry_get_icon_area, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, get_icon_at_pos, arginfo_class_Gtk4_GtkEntry_get_icon_at_pos, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkEntry, get_icon_gicon, arginfo_class_Gtk4_GtkEntry_get_icon_gicon, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, get_icon_name, arginfo_class_Gtk4_GtkEntry_get_icon_name, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, get_icon_paintable, arginfo_class_Gtk4_GtkEntry_get_icon_paintable, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, get_icon_sensitive, arginfo_class_Gtk4_GtkEntry_get_icon_sensitive, ZEND_ACC_PUBLIC)
@@ -9577,6 +9636,7 @@ static const zend_function_entry class_Gtk4_GtkEntry_methods[] = {
 	ZEND_ME(Gtk4_GtkEntry, set_has_frame, arginfo_class_Gtk4_GtkEntry_set_has_frame, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, set_icon_activatable, arginfo_class_Gtk4_GtkEntry_set_icon_activatable, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, set_icon_drag_source, arginfo_class_Gtk4_GtkEntry_set_icon_drag_source, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkEntry, set_icon_from_gicon, arginfo_class_Gtk4_GtkEntry_set_icon_from_gicon, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, set_icon_from_icon_name, arginfo_class_Gtk4_GtkEntry_set_icon_from_icon_name, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, set_icon_from_paintable, arginfo_class_Gtk4_GtkEntry_set_icon_from_paintable, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEntry, set_icon_sensitive, arginfo_class_Gtk4_GtkEntry_set_icon_sensitive, ZEND_ACC_PUBLIC)
@@ -10089,7 +10149,9 @@ static const zend_function_entry class_Gtk4_GtkIconTheme_methods[] = {
 	ZEND_ME(Gtk4_GtkIconTheme, get_icon_names, arginfo_class_Gtk4_GtkIconTheme_get_icon_names, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkIconTheme, get_resource_path, arginfo_class_Gtk4_GtkIconTheme_get_resource_path, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkIconTheme, get_theme_name, arginfo_class_Gtk4_GtkIconTheme_get_theme_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkIconTheme, has_gicon, arginfo_class_Gtk4_GtkIconTheme_has_gicon, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkIconTheme, has_icon, arginfo_class_Gtk4_GtkIconTheme_has_icon, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkIconTheme, lookup_by_gicon, arginfo_class_Gtk4_GtkIconTheme_lookup_by_gicon, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkIconTheme, lookup_icon, arginfo_class_Gtk4_GtkIconTheme_lookup_icon, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkIconTheme, set_resource_path, arginfo_class_Gtk4_GtkIconTheme_set_resource_path, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkIconTheme, set_theme_name, arginfo_class_Gtk4_GtkIconTheme_set_theme_name, ZEND_ACC_PUBLIC)
@@ -10099,16 +10161,19 @@ static const zend_function_entry class_Gtk4_GtkIconTheme_methods[] = {
 static const zend_function_entry class_Gtk4_GtkImage_methods[] = {
 	ZEND_ME(Gtk4_GtkImage, __construct, arginfo_class_Gtk4_GtkImage___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkImage, new_from_file, arginfo_class_Gtk4_GtkImage_new_from_file, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GtkImage, new_from_gicon, arginfo_class_Gtk4_GtkImage_new_from_gicon, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GtkImage, new_from_icon_name, arginfo_class_Gtk4_GtkImage_new_from_icon_name, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GtkImage, new_from_paintable, arginfo_class_Gtk4_GtkImage_new_from_paintable, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GtkImage, new_from_resource, arginfo_class_Gtk4_GtkImage_new_from_resource, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GtkImage, clear, arginfo_class_Gtk4_GtkImage_clear, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkImage, get_gicon, arginfo_class_Gtk4_GtkImage_get_gicon, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkImage, get_icon_name, arginfo_class_Gtk4_GtkImage_get_icon_name, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkImage, get_icon_size, arginfo_class_Gtk4_GtkImage_get_icon_size, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkImage, get_paintable, arginfo_class_Gtk4_GtkImage_get_paintable, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkImage, get_pixel_size, arginfo_class_Gtk4_GtkImage_get_pixel_size, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkImage, get_storage_type, arginfo_class_Gtk4_GtkImage_get_storage_type, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkImage, set_from_file, arginfo_class_Gtk4_GtkImage_set_from_file, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkImage, set_from_gicon, arginfo_class_Gtk4_GtkImage_set_from_gicon, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkImage, set_from_icon_name, arginfo_class_Gtk4_GtkImage_set_from_icon_name, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkImage, set_from_paintable, arginfo_class_Gtk4_GtkImage_set_from_paintable, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkImage, set_from_resource, arginfo_class_Gtk4_GtkImage_set_from_resource, ZEND_ACC_PUBLIC)
@@ -11714,6 +11779,15 @@ static const zend_function_entry class_Gtk4_GtkTreeListRow_methods[] = {
 	ZEND_ME(Gtk4_GtkTreeListRow, get_position, arginfo_class_Gtk4_GtkTreeListRow_get_position, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTreeListRow, is_expandable, arginfo_class_Gtk4_GtkTreeListRow_is_expandable, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTreeListRow, set_expanded, arginfo_class_Gtk4_GtkTreeListRow_set_expanded, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkUriLauncher_methods[] = {
+	ZEND_ME(Gtk4_GtkUriLauncher, __construct, arginfo_class_Gtk4_GtkUriLauncher___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkUriLauncher, get_uri, arginfo_class_Gtk4_GtkUriLauncher_get_uri, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkUriLauncher, launch, arginfo_class_Gtk4_GtkUriLauncher_launch, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkUriLauncher, launch_finish, arginfo_class_Gtk4_GtkUriLauncher_launch_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkUriLauncher, set_uri, arginfo_class_Gtk4_GtkUriLauncher_set_uri, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -15158,6 +15232,16 @@ static zend_class_entry *register_class_Gtk4_GtkUnit(void)
 	zval enum_case_Mm_value;
 	ZVAL_LONG(&enum_case_Mm_value, 3);
 	zend_enum_add_case_cstr(class_entry, "Mm", &enum_case_Mm_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkUriLauncher(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkUriLauncher", class_Gtk4_GtkUriLauncher_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
 
 	return class_entry;
 }

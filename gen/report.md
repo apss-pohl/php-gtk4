@@ -53,6 +53,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `release_fd` — skip.txt: aborts the process (GLib-GIO:ERROR "priv->fd_refcount > 0") unless get_fd() was called first, and the refcount is not observable from here
 - `source_new` — return type GLib.Source
 
+## GIcon
+
+- `deserialize` — static function on an interface (PHP interfaces have no bodies)
+- `new_for_string` — static function on an interface (PHP interfaces have no bodies)
+- `vfunc to_tokens` — caller-allocates out parameter `tokens` of type GLib.PtrArray
+
 ## GInputStream
 
 - `read` — caller-allocates out parameter `buffer` of type array
@@ -92,7 +98,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_attribute` — varargs
 - `set_action_and_target` — varargs
 - `set_attribute` — varargs
-- `set_icon` — parameter `icon` of type Gio.Icon
 
 ## GMenuModel
 
@@ -126,6 +131,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `run_in_thread_sync` — callback parameter (needs an override)
 - `set_source_tag` — gpointer parameter
 - `set_task_data` — gpointer parameter
+
+## GThemedIcon
+
+- `PHP subclasses` — constructor argument iconname is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GThemedIcon
+- `new_from_names` — parameter `iconnames` of type array (C array)
 
 ## GTlsCertificate
 
@@ -600,16 +610,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `get_attributes` — return type Pango.AttrList
 - `get_completion` — deprecated (4.10)
-- `get_icon_gicon` — return type Gio.Icon (not in the closure)
 - `get_tabs` — return type Pango.TabArray
 - `set_attributes` — parameter `attrs` of type Pango.AttrList
 - `set_completion` — deprecated (4.10)
-- `set_icon_from_gicon` — parameter `icon` of type Gio.Icon
 - `set_tabs` — parameter `tabs` of type Pango.TabArray
 - `property attributes` — property type Pango.AttrList not mappable
 - `property completion` — deprecated (4.10)
-- `property primary-icon-gicon` — property type Gio.Icon not mappable
-- `property secondary-icon-gicon` — property type Gio.Icon not mappable
 - `property tabs` — property type Pango.TabArray not mappable
 
 ## GtkEntryBuffer
@@ -681,18 +687,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `get_icon_sizes` — return type array
 - `get_search_path` — return type array
-- `has_gicon` — parameter `gicon` of type Gio.Icon
-- `lookup_by_gicon` — parameter `icon` of type Gio.Icon
 - `set_search_path` — parameter `path` of type array (C array)
 
 ## GtkImage
 
-- `new_from_gicon` — parameter `icon` of type Gio.Icon
 - `new_from_pixbuf` — deprecated (4.12)
-- `get_gicon` — return type Gio.Icon (not in the closure)
-- `set_from_gicon` — parameter `icon` of type Gio.Icon
 - `set_from_pixbuf` — deprecated (4.12)
-- `property gicon` — property type Gio.Icon not mappable
 
 ## GtkLabel
 
@@ -1579,6 +1579,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkTreeExpander.cpp`
 - `Gtk/GtkTreeListModel.cpp`
 - `Gtk/GtkTreeListRow.cpp`
+- `Gtk/GtkUriLauncher.cpp`
 - `Gtk/GtkViewport.cpp`
 - `Gtk/GtkWidget.cpp`
 - `Gtk/GtkWindow.cpp`
@@ -1591,6 +1592,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GApplication.cpp`
 - `Gio/GAsyncResult.cpp`
 - `Gio/GCancellable.cpp`
+- `Gio/GIcon.cpp`
 - `Gio/GInputStream.cpp`
 - `Gio/GListModel.cpp`
 - `Gio/GListStore.cpp`
@@ -1600,6 +1602,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GMenuModel.cpp`
 - `Gio/GSimpleAction.cpp`
 - `Gio/GTask.cpp`
+- `Gio/GThemedIcon.cpp`
 - `Gio/GTlsCertificate.cpp`
 - `Gio/Gio.stub.php`
 - `Gdk/GdkClipboard.cpp`
@@ -1854,6 +1857,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkTextViewSmokeTest.php`
 - `tests/Generated/GtkToggleButtonSmokeTest.php`
 - `tests/Generated/GtkTreeExpanderSmokeTest.php`
+- `tests/Generated/GtkUriLauncherSmokeTest.php`
 - `tests/Generated/GtkViewportSmokeTest.php`
 - `tests/Generated/GtkWidgetSmokeTest.php`
 - `tests/Generated/GtkWindowSmokeTest.php`
@@ -1866,6 +1870,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GMenuItemSmokeTest.php`
 - `tests/Generated/GSimpleActionSmokeTest.php`
 - `tests/Generated/GTaskSmokeTest.php`
+- `tests/Generated/GThemedIconSmokeTest.php`
 - `tests/Generated/GdkContentProviderSmokeTest.php`
 - `tests/Generated/GdkCursorSmokeTest.php`
 - `tests/Generated/GdkSnapshotSmokeTest.php`

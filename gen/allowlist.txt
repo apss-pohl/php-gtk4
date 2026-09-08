@@ -463,6 +463,16 @@ WebKit.UserMessageError
 Gio.InputStream
 Gio.MemoryInputStream
 
+# Icons by name rather than by pixels: the GIcon a GtkImage, a GtkEntry, a GMenuItem or the icon
+# theme takes, and the themed icon PHP can build one from (a name, or a list of names to try in
+# turn). Plain GIO, and an interface - g_icon_new_for_string() and the icon a widget hands back
+# are whatever the theme made, which wrap() resolves through the interface.
+Gio.Icon
+Gio.ThemedIcon
+
+# Opening a URI in whatever the desktop uses for it (GTK 4.10's replacement for gtk_show_uri).
+Gtk.UriLauncher
+
 # TLS certificates: what a web view's get_tls_info() answers with, what a credential can carry
 # and what a network session can be told to accept for a host. Plain GIO (abstract - the TLS
 # backend provides the concrete class - so PHP builds one through new_from_pem()), so it is not

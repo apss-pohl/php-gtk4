@@ -85,7 +85,7 @@ final class Demo
         ],
         'Application' => [
             'Gtk', 'GApplication', 'GtkApplication', 'GSimpleAction', 'GAction', 'GActionMap',
-            'GActionGroup', 'GApplicationFlags',
+            'GActionGroup', 'GApplicationFlags', 'GtkUriLauncher',
         ],
         'Drag and drop' => [
             'GtkDragSource', 'GtkDropTarget', 'GdkContentProvider', 'GdkContentFormats',
@@ -93,6 +93,7 @@ final class Demo
         'Objects & values' => [
             'GObject', 'GParamSpec', 'PhpValue', 'GdkRGBA', 'GdkRectangle',
             'GdkTexture', 'GdkMemoryFormat', 'GError', 'ExceptionMode',
+            'GIcon', 'GThemedIcon',
         ],
         'Lists' => [
             'GListModel', 'GListStore', 'GtkFilter', 'GtkCustomFilter',

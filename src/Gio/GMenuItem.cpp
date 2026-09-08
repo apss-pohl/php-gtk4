@@ -221,6 +221,22 @@ ZEND_METHOD(Gtk4_GMenuItem, set_detailed_action) {
 }
 
 /**
+ * Gtk4\GMenuItem::set_icon(GIcon $icon): void
+ *
+ * Sets (or unsets) the icon on $menu_item.
+ */
+ZEND_METHOD(Gtk4_GMenuItem, set_icon) {
+  zval *icon;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(icon, class_for_gtype(G_TYPE_ICON))
+  ZEND_PARSE_PARAMETERS_END();
+  GMenuItem *self = PHPGTK_SELF(GMenuItem, G_TYPE_MENU_ITEM);
+  GObject *icon_o = unwrap(icon, G_TYPE_ICON);
+  if (icon_o == nullptr) RETURN_THROWS();
+  g_menu_item_set_icon(self, G_ICON(icon_o));
+}
+
+/**
  * Gtk4\GMenuItem::set_label(?string $label): void
  *
  * Sets or unsets the "label" attribute of $menu_item.

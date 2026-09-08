@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 003a947d2011246704254fd3f6d2287478318894 */
+ * Stub hash: 49b9e3074b6412a86a311ba4d8f75cb93758ae6d */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkClipboard___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -313,6 +313,17 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkMemoryTexture_snap
 	ZEND_ARG_TYPE_INFO(0, height, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkMemoryTexture_equal, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, icon2, Gtk4\\GIcon, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkMemoryTexture_hash arginfo_class_Gtk4_GdkCursor_get_hotspot_x
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkMemoryTexture_serialize, 0, 0, IS_MIXED, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkMemoryTexture_to_string arginfo_class_Gtk4_GdkCursor_get_name
+
 #define arginfo_class_Gtk4_GdkMonitor___construct arginfo_class_Gtk4_GdkClipboard___construct
 
 #define arginfo_class_Gtk4_GdkMonitor_get_connector arginfo_class_Gtk4_GdkCursor_get_name
@@ -474,6 +485,14 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkTexture_snapshot arginfo_class_Gtk4_GdkMemoryTexture_snapshot
 
+#define arginfo_class_Gtk4_GdkTexture_equal arginfo_class_Gtk4_GdkMemoryTexture_equal
+
+#define arginfo_class_Gtk4_GdkTexture_hash arginfo_class_Gtk4_GdkCursor_get_hotspot_x
+
+#define arginfo_class_Gtk4_GdkTexture_serialize arginfo_class_Gtk4_GdkMemoryTexture_serialize
+
+#define arginfo_class_Gtk4_GdkTexture_to_string arginfo_class_Gtk4_GdkCursor_get_name
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkTextureDownloader___construct, 0, 0, 1)
 	ZEND_ARG_OBJ_INFO(0, texture, Gtk4\\GdkTexture, 0)
 ZEND_END_ARG_INFO()
@@ -588,6 +607,10 @@ ZEND_METHOD(Gtk4_GdkPaintable, get_intrinsic_width);
 ZEND_METHOD(Gtk4_GdkPaintable, invalidate_contents);
 ZEND_METHOD(Gtk4_GdkPaintable, invalidate_size);
 ZEND_METHOD(Gtk4_GdkPaintable, snapshot);
+ZEND_METHOD(Gtk4_GIcon, equal);
+ZEND_METHOD(Gtk4_GIcon, hash);
+ZEND_METHOD(Gtk4_GIcon, serialize);
+ZEND_METHOD(Gtk4_GIcon, to_string);
 ZEND_METHOD(Gtk4_GdkMonitor, __construct);
 ZEND_METHOD(Gtk4_GdkMonitor, get_connector);
 ZEND_METHOD(Gtk4_GdkMonitor, get_description);
@@ -767,6 +790,10 @@ static const zend_function_entry class_Gtk4_GdkMemoryTexture_methods[] = {
 	ZEND_RAW_FENTRY("invalidate_contents", zim_Gtk4_GdkPaintable_invalidate_contents, arginfo_class_Gtk4_GdkMemoryTexture_invalidate_contents, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("invalidate_size", zim_Gtk4_GdkPaintable_invalidate_size, arginfo_class_Gtk4_GdkMemoryTexture_invalidate_size, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("snapshot", zim_Gtk4_GdkPaintable_snapshot, arginfo_class_Gtk4_GdkMemoryTexture_snapshot, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("equal", zim_Gtk4_GIcon_equal, arginfo_class_Gtk4_GdkMemoryTexture_equal, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("hash", zim_Gtk4_GIcon_hash, arginfo_class_Gtk4_GdkMemoryTexture_hash, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("serialize", zim_Gtk4_GIcon_serialize, arginfo_class_Gtk4_GdkMemoryTexture_serialize, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("to_string", zim_Gtk4_GIcon_to_string, arginfo_class_Gtk4_GdkMemoryTexture_to_string, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_FE_END
 };
 
@@ -861,6 +888,10 @@ static const zend_function_entry class_Gtk4_GdkTexture_methods[] = {
 	ZEND_RAW_FENTRY("invalidate_contents", zim_Gtk4_GdkPaintable_invalidate_contents, arginfo_class_Gtk4_GdkTexture_invalidate_contents, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("invalidate_size", zim_Gtk4_GdkPaintable_invalidate_size, arginfo_class_Gtk4_GdkTexture_invalidate_size, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("snapshot", zim_Gtk4_GdkPaintable_snapshot, arginfo_class_Gtk4_GdkTexture_snapshot, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("equal", zim_Gtk4_GIcon_equal, arginfo_class_Gtk4_GdkTexture_equal, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("hash", zim_Gtk4_GIcon_hash, arginfo_class_Gtk4_GdkTexture_hash, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("serialize", zim_Gtk4_GIcon_serialize, arginfo_class_Gtk4_GdkTexture_serialize, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("to_string", zim_Gtk4_GIcon_to_string, arginfo_class_Gtk4_GdkTexture_to_string, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_FE_END
 };
 
@@ -1329,13 +1360,13 @@ static zend_class_entry *register_class_Gtk4_GdkMemoryFormat(void)
 	return class_entry;
 }
 
-static zend_class_entry *register_class_Gtk4_GdkMemoryTexture(zend_class_entry *class_entry_Gtk4_GdkTexture, zend_class_entry *class_entry_Gtk4_GdkPaintable)
+static zend_class_entry *register_class_Gtk4_GdkMemoryTexture(zend_class_entry *class_entry_Gtk4_GdkTexture, zend_class_entry *class_entry_Gtk4_GdkPaintable, zend_class_entry *class_entry_Gtk4_GIcon)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkMemoryTexture", class_Gtk4_GdkMemoryTexture_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GdkTexture, 0);
-	zend_class_implements(class_entry, 1, class_entry_Gtk4_GdkPaintable);
+	zend_class_implements(class_entry, 2, class_entry_Gtk4_GdkPaintable, class_entry_Gtk4_GIcon);
 
 	return class_entry;
 }
@@ -1605,13 +1636,13 @@ static zend_class_entry *register_class_Gtk4_GdkSurface(zend_class_entry *class_
 	return class_entry;
 }
 
-static zend_class_entry *register_class_Gtk4_GdkTexture(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_GdkPaintable)
+static zend_class_entry *register_class_Gtk4_GdkTexture(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_GdkPaintable, zend_class_entry *class_entry_Gtk4_GIcon)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkTexture", class_Gtk4_GdkTexture_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
-	zend_class_implements(class_entry, 1, class_entry_Gtk4_GdkPaintable);
+	zend_class_implements(class_entry, 2, class_entry_Gtk4_GdkPaintable, class_entry_Gtk4_GIcon);
 
 	return class_entry;
 }

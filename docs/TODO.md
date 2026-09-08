@@ -95,8 +95,6 @@ decision rather than a wave:
 - *deprecated in 4.10* - `GtkDialog`, `GtkInfoBar`, `GtkStatusbar`, `GtkEntryCompletion`,
   `GtkColorButton`/`GtkFontButton`, `GtkAppChooser*`. The binding exposes the modern API only and
   every replacement is bound; port none of them unless a real port asks.
-- *small gaps in bound classes* - `GIcon`/`GThemedIcon` (what `GtkImage::set_from_gicon()` wants)
-  and `GtkUriLauncher` as the replacement for the deprecated `gtk_show_uri`.
 - *out of scope by design* - `GtkPrinter`/`GtkPrintJob`/`GtkPrintUnixDialog` (a separate library,
   gtk4-unix-print, on the deprecated `GtkDialog`), `GskGLShader` (deprecated in 4.16), the
   Broadway/NGL/Vulkan renderer classes, GIO streams.

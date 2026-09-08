@@ -2067,6 +2067,7 @@ final class GtkEditableObject extends GObject implements GtkEditable
  * @property bool $overwrite_mode
  * @property ?string $placeholder_text
  * @property bool $primary_icon_activatable
+ * @property ?GIcon $primary_icon_gicon
  * @property ?string $primary_icon_name
  * @property ?GdkPaintable $primary_icon_paintable
  * @property bool $primary_icon_sensitive
@@ -2077,6 +2078,7 @@ final class GtkEditableObject extends GObject implements GtkEditable
  * @property float $progress_pulse_step
  * @property-read int $scroll_offset
  * @property bool $secondary_icon_activatable
+ * @property ?GIcon $secondary_icon_gicon
  * @property ?string $secondary_icon_name
  * @property ?GdkPaintable $secondary_icon_paintable
  * @property bool $secondary_icon_sensitive
@@ -2122,6 +2124,9 @@ class GtkEntry extends GtkWidget implements GtkEditable
 
     /** Finds the icon at the given position and return its index. */
     public function get_icon_at_pos(int $x, int $y): int {}
+
+    /** Retrieves the `GIcon` used for the icon. */
+    public function get_icon_gicon(GtkEntryIconPosition $icon_pos): ?GIcon {}
 
     /** Retrieves the icon name used for the icon. */
     public function get_icon_name(GtkEntryIconPosition $icon_pos): ?string {}
@@ -2200,6 +2205,9 @@ class GtkEntry extends GtkWidget implements GtkEditable
 
     /** Sets up the icon at the given position as drag source. */
     public function set_icon_drag_source(GtkEntryIconPosition $icon_pos, GdkContentProvider $provider, int $actions): void {}
+
+    /** Sets the icon shown in the entry at the specified position from the current icon theme. */
+    public function set_icon_from_gicon(GtkEntryIconPosition $icon_pos, ?GIcon $icon): void {}
 
     /** Sets the icon shown in the entry at the specified position from the current icon theme. */
     public function set_icon_from_icon_name(GtkEntryIconPosition $icon_pos, ?string $icon_name): void {}
@@ -3905,8 +3913,14 @@ class GtkIconTheme extends GObject
     /** Gets the current icon theme name. */
     public function get_theme_name(): string {}
 
+    /** Checks whether an icon theme includes an icon for a particular `GIcon`. */
+    public function has_gicon(GIcon $gicon): bool {}
+
     /** Checks whether an icon theme includes an icon for a particular name. */
     public function has_icon(string $icon_name): bool {}
+
+    /** Looks up a icon for a desired size and window scale. */
+    public function lookup_by_gicon(GIcon $icon, int $size, int $scale, GtkTextDirection $direction, int $flags): GtkIconPaintable {}
 
     /** Looks up a named icon for a desired size and window scale, returning a `GtkIconPaintable`. */
     public function lookup_icon(string $icon_name, ?array $fallbacks, int $size, int $scale, GtkTextDirection $direction, int $flags): GtkIconPaintable {}
@@ -3932,6 +3946,7 @@ class GtkIconTheme extends GObject
  * The `GtkImage` widget displays an image.
  *
  * @property ?string $file
+ * @property ?GIcon $gicon
  * @property ?string $icon_name
  * @property GtkIconSize $icon_size
  * @property ?GdkPaintable $paintable
@@ -3949,6 +3964,9 @@ class GtkImage extends GtkWidget
     public static function new_from_file(string $filename): GtkImage {}
 
     /** Creates a `GtkImage` displaying an icon from the current icon theme. */
+    public static function new_from_gicon(GIcon $icon): GtkImage {}
+
+    /** Creates a `GtkImage` displaying an icon from the current icon theme. */
     public static function new_from_icon_name(?string $icon_name = null): GtkImage {}
 
     /** Creates a new `GtkImage` displaying $paintable. */
@@ -3959,6 +3977,9 @@ class GtkImage extends GtkWidget
 
     /** Resets the image to be empty. */
     public function clear(): void {}
+
+    /** Gets the `GIcon` being displayed by the `GtkImage`. */
+    public function get_gicon(): ?GIcon {}
 
     /** Gets the icon name and size being displayed by the `GtkImage`. */
     public function get_icon_name(): ?string {}
@@ -3977,6 +3998,9 @@ class GtkImage extends GtkWidget
 
     /** Sets a `GtkImage` to show a file. */
     public function set_from_file(?string $filename): void {}
+
+    /** Sets a `GtkImage` to show a `GIcon`. */
+    public function set_from_gicon(GIcon $icon): void {}
 
     /** Sets a `GtkImage` to show a named icon. */
     public function set_from_icon_name(?string $icon_name): void {}
@@ -10096,6 +10120,30 @@ enum GtkUnit: int
     case Points = 1;
     case Inch = 2;
     case Mm = 3;
+}
+
+/**
+ * A `GtkUriLauncher` object collects the arguments that are needed to open a uri with an
+ * application.
+ *
+ * @property ?string $uri
+ */
+class GtkUriLauncher extends GObject
+{
+    /** Creates a new `GtkUriLauncher` object. */
+    public function __construct(?string $uri = null) {}
+
+    /** Gets the uri that will be opened. */
+    public function get_uri(): ?string {}
+
+    /** Launch an application to open the uri. */
+    public function launch(?GtkWindow $parent, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes the `launch` call and returns the result. */
+    public function launch_finish(GAsyncResult $result): bool {}
+
+    /** Sets the uri that will be opened. */
+    public function set_uri(?string $uri): void {}
 }
 
 /**

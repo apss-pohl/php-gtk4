@@ -643,6 +643,52 @@ class GCancellable extends GObject
 }
 
 /**
+ * `GIcon` is a very minimal interface for icons. It provides functions for checking the equality
+ * of two icons, hashing of icons and serializing an icon to and from strings.
+ */
+interface GIcon
+{
+    /** Checks if two icons are equal. */
+    public function equal(?GIcon $icon2): bool;
+
+    /** Gets a hash for an icon. */
+    public function hash(): int;
+
+    /**
+     * Serializes a #GIcon into a #GVariant. An equivalent #GIcon can be retrieved back by calling
+     * g_icon_deserialize() on the returned value. As serialization will avoid using raw icon data
+     * when possible, it only makes sense to transfer the #GVariant between processes on the same
+     * machine, (as opposed to over the network), and within the same file system namespace.
+     */
+    public function serialize(): mixed;
+}
+
+/**
+ * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only
+ * registered interface is {@see GIcon} - a private list model behind a `get_pages()`, for
+ * instance. Not a GType of its own and never constructed; it is {@see GIcon} with a body.
+ *
+ * @not-serializable
+ */
+final class GIconObject extends GObject implements GIcon
+{
+    /** Never called: these handles only come from wrap(). */
+    private function __construct() {}
+
+    /** @implementation-alias Gtk4\GIcon::equal */
+    public function equal(?GIcon $icon2): bool {}
+
+    /** @implementation-alias Gtk4\GIcon::hash */
+    public function hash(): int {}
+
+    /** @implementation-alias Gtk4\GIcon::serialize */
+    public function serialize(): mixed {}
+
+    /** @implementation-alias Gtk4\GIcon::to_string */
+    public function to_string(): ?string {}
+}
+
+/**
  * `GInputStream` is a base class for implementing streaming input.
  */
 class GInputStream extends GObject
@@ -942,6 +988,9 @@ class GMenuItem extends GObject
     /** Sets the "action" and possibly the "target" attribute of $menu_item. */
     public function set_detailed_action(string $detailed_action): void {}
 
+    /** Sets (or unsets) the icon on $menu_item. */
+    public function set_icon(GIcon $icon): void {}
+
     /** Sets or unsets the "label" attribute of $menu_item. */
     public function set_label(?string $label): void {}
 
@@ -1207,6 +1256,50 @@ class GTask extends GObject implements GAsyncResult
 
     /** @implementation-alias Gtk4\GAsyncResult::legacy_propagate_error */
     public function legacy_propagate_error(): bool {}
+}
+
+/**
+ * `GThemedIcon` is an implementation of `Icon` that supports icon themes.
+ *
+ * @property-write ?string $name
+ * @property ?array $names
+ * @property bool $use_default_fallbacks
+ */
+class GThemedIcon extends GObject implements GIcon
+{
+    /** Creates a new themed icon for $iconname. */
+    public function __construct(string $iconname) {}
+
+    /**
+     * Creates a new themed icon for $iconname, and all the names that can be created by shortening
+     * $iconname at '-' characters.
+     */
+    public static function new_with_default_fallbacks(string $iconname): GThemedIcon {}
+
+    /** Append a name to the list of icons from within $icon. */
+    public function append_name(string $iconname): void {}
+
+    /**
+     * Gets the names of icons from within $icon.
+     *
+     * @return list<string>
+     */
+    public function get_names(): array {}
+
+    /** Prepend a name to the list of icons from within $icon. */
+    public function prepend_name(string $iconname): void {}
+
+    /** @implementation-alias Gtk4\GIcon::equal */
+    public function equal(?GIcon $icon2): bool {}
+
+    /** @implementation-alias Gtk4\GIcon::hash */
+    public function hash(): int {}
+
+    /** @implementation-alias Gtk4\GIcon::serialize */
+    public function serialize(): mixed {}
+
+    /** @implementation-alias Gtk4\GIcon::to_string */
+    public function to_string(): ?string {}
 }
 
 /**

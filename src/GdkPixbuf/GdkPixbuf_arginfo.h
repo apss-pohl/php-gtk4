@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 1b8310393c805ec3b18fbf1d049b8d16bdc7a7d8 */
+ * Stub hash: d1ba174f4eb259bd08a4f113122e3ff71474d1c0 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkPixbuf___construct, 0, 0, 5)
 	ZEND_ARG_OBJ_INFO(0, colorspace, Gtk4\\GdkColorspace, 0)
@@ -254,6 +254,18 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_savev, 0, 2
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 0, "[]")
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_equal, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, icon2, Gtk4\\GIcon, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkPixbuf_hash arginfo_class_Gtk4_GdkPixbuf_get_bits_per_sample
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_serialize, 0, 0, IS_MIXED, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_to_string, 0, 0, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkPixbufAnimation___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
@@ -410,6 +422,10 @@ ZEND_METHOD(Gtk4_GdkPixbuf, get_file_info);
 ZEND_METHOD(Gtk4_GdkPixbuf, get_options);
 ZEND_METHOD(Gtk4_GdkPixbuf, save_to_bufferv);
 ZEND_METHOD(Gtk4_GdkPixbuf, savev);
+ZEND_METHOD(Gtk4_GIcon, equal);
+ZEND_METHOD(Gtk4_GIcon, hash);
+ZEND_METHOD(Gtk4_GIcon, serialize);
+ZEND_METHOD(Gtk4_GIcon, to_string);
 ZEND_METHOD(Gtk4_GdkPixbufAnimation, __construct);
 ZEND_METHOD(Gtk4_GdkPixbufAnimation, new_from_file);
 ZEND_METHOD(Gtk4_GdkPixbufAnimation, new_from_resource);
@@ -498,6 +514,10 @@ static const zend_function_entry class_Gtk4_GdkPixbuf_methods[] = {
 	ZEND_ME(Gtk4_GdkPixbuf, get_options, arginfo_class_Gtk4_GdkPixbuf_get_options, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkPixbuf, save_to_bufferv, arginfo_class_Gtk4_GdkPixbuf_save_to_bufferv, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkPixbuf, savev, arginfo_class_Gtk4_GdkPixbuf_savev, ZEND_ACC_PUBLIC)
+	ZEND_RAW_FENTRY("equal", zim_Gtk4_GIcon_equal, arginfo_class_Gtk4_GdkPixbuf_equal, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("hash", zim_Gtk4_GIcon_hash, arginfo_class_Gtk4_GdkPixbuf_hash, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("serialize", zim_Gtk4_GIcon_serialize, arginfo_class_Gtk4_GdkPixbuf_serialize, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("to_string", zim_Gtk4_GIcon_to_string, arginfo_class_Gtk4_GdkPixbuf_to_string, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_FE_END
 };
 
@@ -589,12 +609,13 @@ static zend_class_entry *register_class_Gtk4_GdkInterpType(void)
 	return class_entry;
 }
 
-static zend_class_entry *register_class_Gtk4_GdkPixbuf(zend_class_entry *class_entry_Gtk4_GObject)
+static zend_class_entry *register_class_Gtk4_GdkPixbuf(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_GIcon)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkPixbuf", class_Gtk4_GdkPixbuf_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_GIcon);
 
 	return class_entry;
 }

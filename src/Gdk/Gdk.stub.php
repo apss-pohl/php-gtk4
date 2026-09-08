@@ -544,7 +544,7 @@ enum GdkMemoryFormat: int
 /**
  * A `GdkTexture` representing image data in memory.
  */
-class GdkMemoryTexture extends GdkTexture implements GdkPaintable
+class GdkMemoryTexture extends GdkTexture implements GdkPaintable, GIcon
 {
     /** Creates a new texture for a blob of image data. */
     public function __construct(int $width, int $height, GdkMemoryFormat $format, string $bytes, int $stride) {}
@@ -575,6 +575,18 @@ class GdkMemoryTexture extends GdkTexture implements GdkPaintable
 
     /** @implementation-alias Gtk4\GdkPaintable::snapshot */
     public function snapshot(GdkSnapshot $snapshot, float $width, float $height): void {}
+
+    /** @implementation-alias Gtk4\GIcon::equal */
+    public function equal(?GIcon $icon2): bool {}
+
+    /** @implementation-alias Gtk4\GIcon::hash */
+    public function hash(): int {}
+
+    /** @implementation-alias Gtk4\GIcon::serialize */
+    public function serialize(): mixed {}
+
+    /** @implementation-alias Gtk4\GIcon::to_string */
+    public function to_string(): ?string {}
 }
 
 /**
@@ -866,7 +878,7 @@ class GdkSurface extends GObject
  * @property int $height
  * @property int $width
  */
-class GdkTexture extends GObject implements GdkPaintable
+class GdkTexture extends GObject implements GdkPaintable, GIcon
 {
     /** GdkTexture is abstract in GTK: instances come from GTK, never from `new`. */
     private function __construct() {}
@@ -941,6 +953,18 @@ class GdkTexture extends GObject implements GdkPaintable
 
     /** @implementation-alias Gtk4\GdkPaintable::snapshot */
     public function snapshot(GdkSnapshot $snapshot, float $width, float $height): void {}
+
+    /** @implementation-alias Gtk4\GIcon::equal */
+    public function equal(?GIcon $icon2): bool {}
+
+    /** @implementation-alias Gtk4\GIcon::hash */
+    public function hash(): int {}
+
+    /** @implementation-alias Gtk4\GIcon::serialize */
+    public function serialize(): mixed {}
+
+    /** @implementation-alias Gtk4\GIcon::to_string */
+    public function to_string(): ?string {}
 }
 
 /**

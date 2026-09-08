@@ -25,8 +25,8 @@ the notes are hand-written and may lag.
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
 | ✅ implemented | 84 | — |
-| 🟡 partial | 1 | — |
-| ❌ to port (GTK 4 equivalent exists) | 10 | ~1750 |
+| 🟡 partial | 2 | — |
+| ❌ to port (GTK 4 equivalent exists) | 9 | ~1750 |
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 4 | ~130 |
 
@@ -51,7 +51,7 @@ is open work.
 | --- | ---: | --- | :---: | --- |
 | `GObject` | 13 | `GObject` (unchanged) | ✅ | `connect`, `connect_after`, `emit`, `handler_disconnect`, `get_property`, `set_property` + `$obj->prop` access (hand-written, `src/core/object`). |
 | `GApplication` | 37 | `GApplication` | ✅ | Generated (wave 0): the whole GTK 4 method set (hold/release, `run` with argv, registration, actions via `GActionMap`/`GActionGroup`). `open`, `send_notification`, option groups wait for `GFile`/`GNotification`/`GOptionGroup` (gen/report.md). |
-| `GIcon` | 4 | `GIcon` / `GThemedIcon` / `GFileIcon` | ❌ | Needed once `GtkImage`/`GtkButton::set_icon_name` land. |
+| `GIcon` | 4 | `GIcon` / `GThemedIcon` / `GFileIcon` | 🟡 | Needed once `GtkImage`/`GtkButton::set_icon_name` land. |
 | — | — | `GParamSpec` | ✅ | New in php-gtk4, no php-gtk3 counterpart. |
 | — | — | `GVariant` (as plain PHP values) | ✅ | New: `src/core/variant.cpp`, used by `GSimpleAction`. |
 | — | — | `GAction` / `GActionMap` / `GActionGroup` / `GSimpleAction` | ✅ | New: GTK 4 replaces `GtkAction`/`GtkUIManager` with the `GAction` stack. |

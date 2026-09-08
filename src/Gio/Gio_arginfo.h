@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 95d6b620a28993f310d39893f5aced98c93577a9 */
+ * Stub hash: 2a8fe458c1af6dcfbb9e48ced2ce965f058def7a */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_change_state, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
@@ -327,6 +327,24 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GCancellable_vfunc_cancelled arginfo_class_Gtk4_GApplication_activate
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GIcon_equal, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, icon2, Gtk4\\GIcon, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GIcon_hash arginfo_class_Gtk4_GApplication_get_flags
+
+#define arginfo_class_Gtk4_GIcon_serialize arginfo_class_Gtk4_GAction_get_state
+
+#define arginfo_class_Gtk4_GIconObject___construct arginfo_class_Gtk4_GActionObject___construct
+
+#define arginfo_class_Gtk4_GIconObject_equal arginfo_class_Gtk4_GIcon_equal
+
+#define arginfo_class_Gtk4_GIconObject_hash arginfo_class_Gtk4_GApplication_get_flags
+
+#define arginfo_class_Gtk4_GIconObject_serialize arginfo_class_Gtk4_GAction_get_state
+
+#define arginfo_class_Gtk4_GIconObject_to_string arginfo_class_Gtk4_GAction_get_parameter_type
+
 #define arginfo_class_Gtk4_GInputStream___construct arginfo_class_Gtk4_GActionObject___construct
 
 #define arginfo_class_Gtk4_GInputStream_clear_pending arginfo_class_Gtk4_GApplication_activate
@@ -546,6 +564,10 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenuItem_set_detaile
 	ZEND_ARG_TYPE_INFO(0, detailed_action, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenuItem_set_icon, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, icon, Gtk4\\GIcon, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMenuItem_set_label, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, label, IS_STRING, 1)
 ZEND_END_ARG_INFO()
@@ -694,6 +716,30 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GTask_legacy_propagate_error arginfo_class_Gtk4_GAction_get_enabled
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GThemedIcon___construct, 0, 0, 1)
+	ZEND_ARG_TYPE_INFO(0, iconname, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GThemedIcon_new_with_default_fallbacks, 0, 1, Gtk4\\GThemedIcon, 0)
+	ZEND_ARG_TYPE_INFO(0, iconname, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GThemedIcon_append_name, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, iconname, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GThemedIcon_get_names arginfo_class_Gtk4_GActionGroup_list_actions
+
+#define arginfo_class_Gtk4_GThemedIcon_prepend_name arginfo_class_Gtk4_GThemedIcon_append_name
+
+#define arginfo_class_Gtk4_GThemedIcon_equal arginfo_class_Gtk4_GIcon_equal
+
+#define arginfo_class_Gtk4_GThemedIcon_hash arginfo_class_Gtk4_GApplication_get_flags
+
+#define arginfo_class_Gtk4_GThemedIcon_serialize arginfo_class_Gtk4_GAction_get_state
+
+#define arginfo_class_Gtk4_GThemedIcon_to_string arginfo_class_Gtk4_GAction_get_parameter_type
+
 #define arginfo_class_Gtk4_GTlsCertificate___construct arginfo_class_Gtk4_GActionObject___construct
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GTlsCertificate_new_from_file, 0, 1, Gtk4\\GTlsCertificate, 0)
@@ -794,6 +840,8 @@ ZEND_METHOD(Gtk4_GCancellable, push_current);
 ZEND_METHOD(Gtk4_GCancellable, reset);
 ZEND_METHOD(Gtk4_GCancellable, set_error_if_cancelled);
 ZEND_METHOD(Gtk4_GCancellable, vfunc_cancelled);
+ZEND_METHOD(Gtk4_GIconObject, __construct);
+ZEND_METHOD(Gtk4_GIcon, to_string);
 ZEND_METHOD(Gtk4_GInputStream, __construct);
 ZEND_METHOD(Gtk4_GInputStream, clear_pending);
 ZEND_METHOD(Gtk4_GInputStream, close);
@@ -846,6 +894,7 @@ ZEND_METHOD(Gtk4_GMenuItem, get_link);
 ZEND_METHOD(Gtk4_GMenuItem, set_action_and_target_value);
 ZEND_METHOD(Gtk4_GMenuItem, set_attribute_value);
 ZEND_METHOD(Gtk4_GMenuItem, set_detailed_action);
+ZEND_METHOD(Gtk4_GMenuItem, set_icon);
 ZEND_METHOD(Gtk4_GMenuItem, set_label);
 ZEND_METHOD(Gtk4_GMenuItem, set_link);
 ZEND_METHOD(Gtk4_GMenuItem, set_section);
@@ -886,6 +935,11 @@ ZEND_METHOD(Gtk4_GTask, propagate_int);
 ZEND_METHOD(Gtk4_GTask, return_boolean);
 ZEND_METHOD(Gtk4_GTask, return_error);
 ZEND_METHOD(Gtk4_GTask, return_int);
+ZEND_METHOD(Gtk4_GThemedIcon, __construct);
+ZEND_METHOD(Gtk4_GThemedIcon, new_with_default_fallbacks);
+ZEND_METHOD(Gtk4_GThemedIcon, append_name);
+ZEND_METHOD(Gtk4_GThemedIcon, get_names);
+ZEND_METHOD(Gtk4_GThemedIcon, prepend_name);
 ZEND_METHOD(Gtk4_GTlsCertificate, __construct);
 ZEND_METHOD(Gtk4_GTlsCertificate, new_from_file);
 ZEND_METHOD(Gtk4_GTlsCertificate, new_from_file_with_password);
@@ -1062,6 +1116,22 @@ static const zend_function_entry class_Gtk4_GCancellable_methods[] = {
 	ZEND_FE_END
 };
 
+static const zend_function_entry class_Gtk4_GIcon_methods[] = {
+	ZEND_RAW_FENTRY("equal", NULL, arginfo_class_Gtk4_GIcon_equal, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+	ZEND_RAW_FENTRY("hash", NULL, arginfo_class_Gtk4_GIcon_hash, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+	ZEND_RAW_FENTRY("serialize", NULL, arginfo_class_Gtk4_GIcon_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GIconObject_methods[] = {
+	ZEND_ME(Gtk4_GIconObject, __construct, arginfo_class_Gtk4_GIconObject___construct, ZEND_ACC_PRIVATE)
+	ZEND_RAW_FENTRY("equal", zim_Gtk4_GIcon_equal, arginfo_class_Gtk4_GIconObject_equal, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("hash", zim_Gtk4_GIcon_hash, arginfo_class_Gtk4_GIconObject_hash, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("serialize", zim_Gtk4_GIcon_serialize, arginfo_class_Gtk4_GIconObject_serialize, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("to_string", zim_Gtk4_GIcon_to_string, arginfo_class_Gtk4_GIconObject_to_string, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
 static const zend_function_entry class_Gtk4_GInputStream_methods[] = {
 	ZEND_ME(Gtk4_GInputStream, __construct, arginfo_class_Gtk4_GInputStream___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GInputStream, clear_pending, arginfo_class_Gtk4_GInputStream_clear_pending, ZEND_ACC_PUBLIC)
@@ -1149,6 +1219,7 @@ static const zend_function_entry class_Gtk4_GMenuItem_methods[] = {
 	ZEND_ME(Gtk4_GMenuItem, set_action_and_target_value, arginfo_class_Gtk4_GMenuItem_set_action_and_target_value, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMenuItem, set_attribute_value, arginfo_class_Gtk4_GMenuItem_set_attribute_value, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMenuItem, set_detailed_action, arginfo_class_Gtk4_GMenuItem_set_detailed_action, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMenuItem, set_icon, arginfo_class_Gtk4_GMenuItem_set_icon, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMenuItem, set_label, arginfo_class_Gtk4_GMenuItem_set_label, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMenuItem, set_link, arginfo_class_Gtk4_GMenuItem_set_link, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMenuItem, set_section, arginfo_class_Gtk4_GMenuItem_set_section, ZEND_ACC_PUBLIC)
@@ -1210,6 +1281,19 @@ static const zend_function_entry class_Gtk4_GTask_methods[] = {
 	ZEND_ME(Gtk4_GTask, return_error, arginfo_class_Gtk4_GTask_return_error, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GTask, return_int, arginfo_class_Gtk4_GTask_return_int, ZEND_ACC_PUBLIC)
 	ZEND_RAW_FENTRY("legacy_propagate_error", zim_Gtk4_GAsyncResult_legacy_propagate_error, arginfo_class_Gtk4_GTask_legacy_propagate_error, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GThemedIcon_methods[] = {
+	ZEND_ME(Gtk4_GThemedIcon, __construct, arginfo_class_Gtk4_GThemedIcon___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GThemedIcon, new_with_default_fallbacks, arginfo_class_Gtk4_GThemedIcon_new_with_default_fallbacks, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GThemedIcon, append_name, arginfo_class_Gtk4_GThemedIcon_append_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GThemedIcon, get_names, arginfo_class_Gtk4_GThemedIcon_get_names, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GThemedIcon, prepend_name, arginfo_class_Gtk4_GThemedIcon_prepend_name, ZEND_ACC_PUBLIC)
+	ZEND_RAW_FENTRY("equal", zim_Gtk4_GIcon_equal, arginfo_class_Gtk4_GThemedIcon_equal, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("hash", zim_Gtk4_GIcon_hash, arginfo_class_Gtk4_GThemedIcon_hash, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("serialize", zim_Gtk4_GIcon_serialize, arginfo_class_Gtk4_GThemedIcon_serialize, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("to_string", zim_Gtk4_GIcon_to_string, arginfo_class_Gtk4_GThemedIcon_to_string, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_FE_END
 };
 
@@ -1404,6 +1488,27 @@ static zend_class_entry *register_class_Gtk4_GCancellable(zend_class_entry *clas
 	return class_entry;
 }
 
+static zend_class_entry *register_class_Gtk4_GIcon(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GIcon", class_Gtk4_GIcon_methods);
+	class_entry = zend_register_internal_interface(&ce);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GIconObject(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_GIcon)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GIconObject", class_Gtk4_GIconObject_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_GIcon);
+
+	return class_entry;
+}
+
 static zend_class_entry *register_class_Gtk4_GInputStream(zend_class_entry *class_entry_Gtk4_GObject)
 {
 	zend_class_entry ce, *class_entry;
@@ -1504,6 +1609,17 @@ static zend_class_entry *register_class_Gtk4_GTask(zend_class_entry *class_entry
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GTask", class_Gtk4_GTask_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
 	zend_class_implements(class_entry, 1, class_entry_Gtk4_GAsyncResult);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GThemedIcon(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_GIcon)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GThemedIcon", class_Gtk4_GThemedIcon_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_GIcon);
 
 	return class_entry;
 }

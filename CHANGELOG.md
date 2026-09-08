@@ -94,6 +94,18 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **Icons by name, and opening a URI**: `GIcon` with `GThemedIcon` behind it, and
+  `GtkUriLauncher`. Eleven members that had no icon type to speak came back —
+  `GtkImage::set_from_gicon()`, `new_from_gicon()` and `get_gicon()`, both of a `GtkEntry`'s icon
+  slots, `GMenuItem::set_icon()` and the icon theme's `has_gicon()` / `lookup_by_gicon()` — so an
+  icon can be named rather than drawn and left to the theme to find. `GtkUriLauncher` is GTK
+  4.10's replacement for the deprecated `gtk_show_uri()`: asynchronous, with the answer in
+  `launch_finish()`.
+
+  `GIcon::new_for_string()` and `deserialize()` stay out: they are static functions on an
+  interface, and a PHP interface has no bodies (`gen/report.md`). `new GThemedIcon($name)` is
+  the way to build one.
+
 - **The containers a GTK 3 program still reaches for**: `GtkListBox` (+ `GtkListBoxRow`),
   `GtkFlowBox` (+ `GtkFlowBoxChild`), `GtkExpander`, `GtkActionBar`, `GtkAspectFrame` and
   `GtkCenterBox` — the last of the class map's "current widgets, no wave needed".

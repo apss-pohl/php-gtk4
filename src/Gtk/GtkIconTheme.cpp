@@ -127,6 +127,22 @@ ZEND_METHOD(Gtk4_GtkIconTheme, get_theme_name) {
 }
 
 /**
+ * Gtk4\GtkIconTheme::has_gicon(GIcon $gicon): bool
+ *
+ * Checks whether an icon theme includes an icon for a particular `GIcon`.
+ */
+ZEND_METHOD(Gtk4_GtkIconTheme, has_gicon) {
+  zval *gicon;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(gicon, class_for_gtype(G_TYPE_ICON))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkIconTheme *self = PHPGTK_SELF(GtkIconTheme, GTK_TYPE_ICON_THEME);
+  GObject *gicon_o = unwrap(gicon, G_TYPE_ICON);
+  if (gicon_o == nullptr) RETURN_THROWS();
+  RETURN_BOOL(gtk_icon_theme_has_gicon(self, G_ICON(gicon_o)));
+}
+
+/**
  * Gtk4\GtkIconTheme::has_icon(string $icon_name): bool
  *
  * Checks whether an icon theme includes an icon for a particular name.
@@ -139,6 +155,40 @@ ZEND_METHOD(Gtk4_GtkIconTheme, has_icon) {
   GtkIconTheme *self = PHPGTK_SELF(GtkIconTheme, GTK_TYPE_ICON_THEME);
   if (!phpgtk::check_utf8(icon_name, 1)) RETURN_THROWS();
   RETURN_BOOL(gtk_icon_theme_has_icon(self, ZSTR_VAL(icon_name)));
+}
+
+/**
+ * Gtk4\GtkIconTheme::lookup_by_gicon(GIcon $icon, int $size, int $scale, GtkTextDirection
+ * $direction, int $flags): GtkIconPaintable
+ *
+ * Looks up a icon for a desired size and window scale.
+ */
+ZEND_METHOD(Gtk4_GtkIconTheme, lookup_by_gicon) {
+  zval *icon;
+  zend_long size;
+  zend_long scale;
+  zval *direction;
+  zend_long flags;
+  ZEND_PARSE_PARAMETERS_START(5, 5)
+  Z_PARAM_OBJECT_OF_CLASS(icon, class_for_gtype(G_TYPE_ICON))
+  Z_PARAM_LONG(size)
+  Z_PARAM_LONG(scale)
+  Z_PARAM_OBJECT_OF_CLASS(direction, enum_class_for_type(GTK_TYPE_TEXT_DIRECTION))
+  Z_PARAM_LONG(flags)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkIconTheme *self = PHPGTK_SELF(GtkIconTheme, GTK_TYPE_ICON_THEME);
+  GObject *icon_o = unwrap(icon, G_TYPE_ICON);
+  if (icon_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(size, 2)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(scale, 3)) RETURN_THROWS();
+  gint direction_v = 0;
+  if (!enum_from_php(direction, GTK_TYPE_TEXT_DIRECTION, &direction_v)) RETURN_THROWS();
+  if (!phpgtk::check_flags(GTK_TYPE_ICON_LOOKUP_FLAGS, flags, 5)) RETURN_THROWS();
+  GtkIconPaintable *phpgtk_ret = gtk_icon_theme_lookup_by_gicon(
+      self, G_ICON(icon_o), static_cast<int>(size), static_cast<int>(scale),
+      static_cast<GtkTextDirection>(direction_v), static_cast<GtkIconLookupFlags>(flags));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
 }
 
 /**
