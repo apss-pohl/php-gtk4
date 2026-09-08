@@ -4,6 +4,7 @@
 #include "core/boxed.h"
 #include "core/object.h"
 #include <cstring>
+#include "core/collections.h"
 #include "core/gerror.h"
 
 using namespace phpgtk;
@@ -73,6 +74,35 @@ ZEND_METHOD(Gtk4_GKeyFile, get_boolean) {
 }
 
 /**
+ * Gtk4\GKeyFile::get_boolean_list(string $group_name, string $key): array
+ *
+ * Returns the values associated with $key under $group_name as booleans.
+ */
+ZEND_METHOD(Gtk4_GKeyFile, get_boolean_list) {
+  zend_string *group_name;
+  zend_string *key;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_STR(group_name)
+  Z_PARAM_STR(key)
+  ZEND_PARSE_PARAMETERS_END();
+  GKeyFile *self = PHPGTK_BOXED_SELF(GKeyFile);
+  if (!phpgtk::check_utf8(group_name, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(key, 2)) RETURN_THROWS();
+  gsize length = 0;
+  GError *error = nullptr;
+  gboolean *phpgtk_ret =
+      g_key_file_get_boolean_list(self, ZSTR_VAL(group_name), ZSTR_VAL(key), &length, &error);
+  if (error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  array_init(return_value);
+  for (gsize i = 0; phpgtk_ret != nullptr && i < length; i++) {
+    add_next_index_bool(return_value, phpgtk_ret[i] != FALSE);
+  }
+}
+
+/**
  * Gtk4\GKeyFile::get_comment(?string $group_name, ?string $key): string
  *
  * Retrieves a comment above $key from $group_name. If $key is `null` then $comment will be read
@@ -128,6 +158,49 @@ ZEND_METHOD(Gtk4_GKeyFile, get_double) {
 }
 
 /**
+ * Gtk4\GKeyFile::get_double_list(string $group_name, string $key): array
+ *
+ * Returns the values associated with $key under $group_name as doubles.
+ */
+ZEND_METHOD(Gtk4_GKeyFile, get_double_list) {
+  zend_string *group_name;
+  zend_string *key;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_STR(group_name)
+  Z_PARAM_STR(key)
+  ZEND_PARSE_PARAMETERS_END();
+  GKeyFile *self = PHPGTK_BOXED_SELF(GKeyFile);
+  if (!phpgtk::check_utf8(group_name, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(key, 2)) RETURN_THROWS();
+  gsize length = 0;
+  GError *error = nullptr;
+  gdouble *phpgtk_ret =
+      g_key_file_get_double_list(self, ZSTR_VAL(group_name), ZSTR_VAL(key), &length, &error);
+  if (error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  array_init(return_value);
+  for (gsize i = 0; phpgtk_ret != nullptr && i < length; i++) {
+    add_next_index_double(return_value, phpgtk_ret[i]);
+  }
+}
+
+/**
+ * Gtk4\GKeyFile::get_groups(): array
+ *
+ * Returns all groups in the key file loaded with $key_file. The array of returned groups will be
+ * `null`-terminated, so $length may optionally be `null`.
+ */
+ZEND_METHOD(Gtk4_GKeyFile, get_groups) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GKeyFile *self = PHPGTK_BOXED_SELF(GKeyFile);
+  gsize length = 0;
+  char **phpgtk_ret = g_key_file_get_groups(self, &length);
+  strv_to_php(phpgtk_ret, length, Transfer::Full, return_value);
+}
+
+/**
  * Gtk4\GKeyFile::get_int64(string $group_name, string $key): int
  *
  * Returns the value associated with $key under $group_name as a signed 64-bit integer. This is
@@ -176,6 +249,59 @@ ZEND_METHOD(Gtk4_GKeyFile, get_integer) {
     RETURN_THROWS();
   }
   RETURN_LONG(value);
+}
+
+/**
+ * Gtk4\GKeyFile::get_integer_list(string $group_name, string $key): array
+ *
+ * Returns the values associated with $key under $group_name as integers.
+ */
+ZEND_METHOD(Gtk4_GKeyFile, get_integer_list) {
+  zend_string *group_name;
+  zend_string *key;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_STR(group_name)
+  Z_PARAM_STR(key)
+  ZEND_PARSE_PARAMETERS_END();
+  GKeyFile *self = PHPGTK_BOXED_SELF(GKeyFile);
+  if (!phpgtk::check_utf8(group_name, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(key, 2)) RETURN_THROWS();
+  gsize length = 0;
+  GError *error = nullptr;
+  gint *phpgtk_ret =
+      g_key_file_get_integer_list(self, ZSTR_VAL(group_name), ZSTR_VAL(key), &length, &error);
+  if (error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  array_init(return_value);
+  for (gsize i = 0; phpgtk_ret != nullptr && i < length; i++) {
+    add_next_index_long(return_value, static_cast<zend_long>(phpgtk_ret[i]));
+  }
+}
+
+/**
+ * Gtk4\GKeyFile::get_keys(string $group_name): array
+ *
+ * Returns all keys for the group name $group_name. The array of returned keys will be
+ * `null`-terminated, so $length may optionally be `null`. In the event that the $group_name cannot
+ * be found, `null` is returned and $error is set to %G_KEY_FILE_ERROR_GROUP_NOT_FOUND.
+ */
+ZEND_METHOD(Gtk4_GKeyFile, get_keys) {
+  zend_string *group_name;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_STR(group_name)
+  ZEND_PARSE_PARAMETERS_END();
+  GKeyFile *self = PHPGTK_BOXED_SELF(GKeyFile);
+  if (!phpgtk::check_utf8(group_name, 1)) RETURN_THROWS();
+  gsize length = 0;
+  GError *error = nullptr;
+  char **phpgtk_ret = g_key_file_get_keys(self, ZSTR_VAL(group_name), &length, &error);
+  if (error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  strv_to_php(phpgtk_ret, length, Transfer::Full, return_value);
 }
 
 /**
@@ -237,6 +363,37 @@ ZEND_METHOD(Gtk4_GKeyFile, get_locale_string) {
 }
 
 /**
+ * Gtk4\GKeyFile::get_locale_string_list(string $group_name, string $key, ?string $locale): array
+ *
+ * Returns the values associated with $key under $group_name translated in the given $locale if
+ * available. If $locale is `null` then the current locale is assumed.
+ */
+ZEND_METHOD(Gtk4_GKeyFile, get_locale_string_list) {
+  zend_string *group_name;
+  zend_string *key;
+  zend_string *locale = nullptr;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_STR(group_name)
+  Z_PARAM_STR(key)
+  Z_PARAM_STR_OR_NULL(locale)
+  ZEND_PARSE_PARAMETERS_END();
+  GKeyFile *self = PHPGTK_BOXED_SELF(GKeyFile);
+  if (!phpgtk::check_utf8(group_name, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(key, 2)) RETURN_THROWS();
+  if (locale != nullptr && !phpgtk::check_utf8(locale, 3)) RETURN_THROWS();
+  gsize length = 0;
+  GError *error = nullptr;
+  char **phpgtk_ret = g_key_file_get_locale_string_list(
+      self, ZSTR_VAL(group_name), ZSTR_VAL(key), locale != nullptr ? ZSTR_VAL(locale) : nullptr,
+      &length, &error);
+  if (error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  strv_to_php(phpgtk_ret, length, Transfer::Full, return_value);
+}
+
+/**
  * Gtk4\GKeyFile::get_start_group(): ?string
  *
  * Returns the name of the start group of the file.
@@ -275,6 +432,32 @@ ZEND_METHOD(Gtk4_GKeyFile, get_string) {
   if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
   RETVAL_STRING(phpgtk_ret);
   g_free(phpgtk_ret);
+}
+
+/**
+ * Gtk4\GKeyFile::get_string_list(string $group_name, string $key): array
+ *
+ * Returns the values associated with $key under $group_name.
+ */
+ZEND_METHOD(Gtk4_GKeyFile, get_string_list) {
+  zend_string *group_name;
+  zend_string *key;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_STR(group_name)
+  Z_PARAM_STR(key)
+  ZEND_PARSE_PARAMETERS_END();
+  GKeyFile *self = PHPGTK_BOXED_SELF(GKeyFile);
+  if (!phpgtk::check_utf8(group_name, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(key, 2)) RETURN_THROWS();
+  gsize length = 0;
+  GError *error = nullptr;
+  char **phpgtk_ret =
+      g_key_file_get_string_list(self, ZSTR_VAL(group_name), ZSTR_VAL(key), &length, &error);
+  if (error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  strv_to_php(phpgtk_ret, length, Transfer::Full, return_value);
 }
 
 /**
@@ -800,6 +983,26 @@ ZEND_METHOD(Gtk4_GKeyFile, set_value) {
   if (!phpgtk::check_utf8(key, 2)) RETURN_THROWS();
   if (!phpgtk::check_utf8(value, 3)) RETURN_THROWS();
   g_key_file_set_value(self, ZSTR_VAL(group_name), ZSTR_VAL(key), ZSTR_VAL(value));
+}
+
+/**
+ * Gtk4\GKeyFile::to_data(): string
+ *
+ * This function outputs $key_file as a string.
+ */
+ZEND_METHOD(Gtk4_GKeyFile, to_data) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GKeyFile *self = PHPGTK_BOXED_SELF(GKeyFile);
+  gsize length = 0;
+  GError *error = nullptr;
+  char *phpgtk_ret = g_key_file_to_data(self, &length, &error);
+  if (error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  if (phpgtk_ret == nullptr) RETURN_NULL();
+  RETVAL_STRINGL(phpgtk_ret, static_cast<size_t>(length));
+  g_free(phpgtk_ret);
 }
 
 /**

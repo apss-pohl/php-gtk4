@@ -1590,6 +1590,17 @@ final class GKeyFile
         return false;
     }
     /**
+     * Returns the values associated with $key under $group_name as booleans.
+     *
+     * @return list<bool>
+     */
+    public function get_boolean_list(string $group_name, string $key): array
+    {
+        unset($group_name);
+        unset($key);
+        return [];
+    }
+    /**
      * Retrieves a comment above $key from $group_name. If $key is `null` then $comment will be
      * read from above $group_name. If both $key and $group_name are `null`, then $comment will be
      * read from above the first group in the file.
@@ -1611,6 +1622,27 @@ final class GKeyFile
         return 0.0;
     }
     /**
+     * Returns the values associated with $key under $group_name as doubles.
+     *
+     * @return list<float>
+     */
+    public function get_double_list(string $group_name, string $key): array
+    {
+        unset($group_name);
+        unset($key);
+        return [];
+    }
+    /**
+     * Returns all groups in the key file loaded with $key_file. The array of returned groups will
+     * be `null`-terminated, so $length may optionally be `null`.
+     *
+     * @return list<string>
+     */
+    public function get_groups(): array
+    {
+        return [];
+    }
+    /**
      * Returns the value associated with $key under $group_name as a signed 64-bit integer. This is
      * similar to g_key_file_get_integer() but can return 64-bit results without truncation.
      */
@@ -1626,6 +1658,29 @@ final class GKeyFile
         unset($group_name);
         unset($key);
         return 0;
+    }
+    /**
+     * Returns the values associated with $key under $group_name as integers.
+     *
+     * @return list<int>
+     */
+    public function get_integer_list(string $group_name, string $key): array
+    {
+        unset($group_name);
+        unset($key);
+        return [];
+    }
+    /**
+     * Returns all keys for the group name $group_name. The array of returned keys will be
+     * `null`-terminated, so $length may optionally be `null`. In the event that the $group_name
+     * cannot be found, `null` is returned and $error is set to %G_KEY_FILE_ERROR_GROUP_NOT_FOUND.
+     *
+     * @return list<string>
+     */
+    public function get_keys(string $group_name): array
+    {
+        unset($group_name);
+        return [];
     }
     /**
      * Returns the actual locale which the result of g_key_file_get_locale_string() or
@@ -1649,6 +1704,19 @@ final class GKeyFile
         unset($locale);
         return '';
     }
+    /**
+     * Returns the values associated with $key under $group_name translated in the given $locale if
+     * available. If $locale is `null` then the current locale is assumed.
+     *
+     * @return list<string>
+     */
+    public function get_locale_string_list(string $group_name, string $key, ?string $locale): array
+    {
+        unset($group_name);
+        unset($key);
+        unset($locale);
+        return [];
+    }
     /** Returns the name of the start group of the file. */
     public function get_start_group(): ?string
     {
@@ -1663,6 +1731,17 @@ final class GKeyFile
         unset($group_name);
         unset($key);
         return '';
+    }
+    /**
+     * Returns the values associated with $key under $group_name.
+     *
+     * @return list<string>
+     */
+    public function get_string_list(string $group_name, string $key): array
+    {
+        unset($group_name);
+        unset($key);
+        return [];
     }
     /**
      * Returns the value associated with $key under $group_name as an unsigned 64-bit integer. This
@@ -1868,6 +1947,11 @@ final class GKeyFile
         unset($group_name);
         unset($key);
         unset($value);
+    }
+    /** This function outputs $key_file as a string. */
+    public function to_data(): string
+    {
+        return '';
     }
     public static function error_quark(): int
     {
@@ -26560,6 +26644,11 @@ final class JSCValue extends GObject
     {
         unset($context);
         return null;
+    }
+    /** Gets a pointer to memory that contains the array buffer data. */
+    public function array_buffer_get_data(): string
+    {
+        return '';
     }
     /** Gets the size in bytes of the array buffer. */
     public function array_buffer_get_size(): int

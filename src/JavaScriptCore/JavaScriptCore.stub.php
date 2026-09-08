@@ -173,6 +173,9 @@ final class JSCValue extends GObject
     /** Create a new #JSCValue referencing <function>undefined</function> in $context. */
     public static function new_undefined(JSCContext $context): JSCValue {}
 
+    /** Gets a pointer to memory that contains the array buffer data. */
+    public function array_buffer_get_data(): string {}
+
     /** Gets the size in bytes of the array buffer. */
     public function array_buffer_get_size(): int {}
 

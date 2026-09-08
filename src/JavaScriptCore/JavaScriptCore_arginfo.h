@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: d38e77a8fd468879c0cea3a649788ec9f4c4ed95 */
+ * Stub hash: bd64cb96b8be52a4baf7e69cc76916601d843848 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_JSCContext___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -131,6 +131,8 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_JSCValue_new_string_fr
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_JSCValue_new_undefined arginfo_class_Gtk4_JSCValue_new_null
+
+#define arginfo_class_Gtk4_JSCValue_array_buffer_get_data arginfo_class_Gtk4_JSCException_get_message
 
 #define arginfo_class_Gtk4_JSCValue_array_buffer_get_size arginfo_class_Gtk4_JSCException_get_column_number
 
@@ -266,6 +268,7 @@ ZEND_METHOD(Gtk4_JSCValue, new_promise);
 ZEND_METHOD(Gtk4_JSCValue, new_string);
 ZEND_METHOD(Gtk4_JSCValue, new_string_from_bytes);
 ZEND_METHOD(Gtk4_JSCValue, new_undefined);
+ZEND_METHOD(Gtk4_JSCValue, array_buffer_get_data);
 ZEND_METHOD(Gtk4_JSCValue, array_buffer_get_size);
 ZEND_METHOD(Gtk4_JSCValue, get_context);
 ZEND_METHOD(Gtk4_JSCValue, is_array);
@@ -348,6 +351,7 @@ static const zend_function_entry class_Gtk4_JSCValue_methods[] = {
 	ZEND_ME(Gtk4_JSCValue, new_string, arginfo_class_Gtk4_JSCValue_new_string, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_JSCValue, new_string_from_bytes, arginfo_class_Gtk4_JSCValue_new_string_from_bytes, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_JSCValue, new_undefined, arginfo_class_Gtk4_JSCValue_new_undefined, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_JSCValue, array_buffer_get_data, arginfo_class_Gtk4_JSCValue_array_buffer_get_data, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_JSCValue, array_buffer_get_size, arginfo_class_Gtk4_JSCValue_array_buffer_get_size, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_JSCValue, get_context, arginfo_class_Gtk4_JSCValue_get_context, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_JSCValue, is_array, arginfo_class_Gtk4_JSCValue_is_array, ZEND_ACC_PUBLIC)

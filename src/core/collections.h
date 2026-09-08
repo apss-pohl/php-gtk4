@@ -19,6 +19,9 @@ void glist_to_php(GList *list, GType element_type, Transfer transfer, zval *rv);
 void gslist_to_php(GSList *list, GType element_type, Transfer transfer, zval *rv);
 // GPtrArray -> list, likewise.
 void gptrarray_to_php(GPtrArray *array, GType element_type, Transfer transfer, zval *rv);
+// A char** of exactly `length` items (GLib's "array plus its length" shape, where the array is
+// not necessarily NULL-terminated); Full frees the strings and the array.
+void strv_to_php(char **strv, gsize length, Transfer transfer, zval *rv);
 // NULL-terminated char**; Full frees it with g_strfreev().
 void strv_to_php(char **strv, Transfer transfer, zval *rv);
 // A borrowed `const char * const *` (GTK getters): never freed.

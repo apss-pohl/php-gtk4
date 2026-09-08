@@ -1001,6 +1001,91 @@ final class TypeMap
     {
         $t = $f->ret;
         $full = $f->retTransfer === 'full';
+        // GLib's "array plus its length" shape: the length is an out parameter GIR points the
+        // return at (`length="N"`), not a value of its own - g_key_file_get_groups() answers
+        // with the groups, and PHP counts them itself. Take that out off the list so the arms
+        // below see a plain return, and hand its local to the conversion. The emitter still
+        // declares it and passes `&length`, because it stays in $outs there.
+        $lengthOut = null;
+        if ($t->lengthParam !== null) {
+            foreach ($outs as $k => $o) {
+                if (($o['pos'] ?? null) === $t->lengthParam) {
+                    $lengthOut = $o;
+                    unset($outs[$k]);
+                    $outs = array_values($outs);
+                    break;
+                }
+            }
+        }
+        // ...and where GIR forgot to link them: g_key_file_get_groups() and get_keys() take a
+        // `gsize *length` and annotate the array with nothing at all, so the pair is recognised
+        // by shape instead - one trailing integer out called `length`, beside an array or string
+        // return. That is what the parameter is, and the alternative is skipping the member.
+        if (
+            $lengthOut === null && count($outs) === 1 && $outs[0]['name'] === 'length'
+            && ($outs[0]['kind'] ?? '') === 'long'
+            && ($t->isArray || $t->name === 'utf8')
+        ) {
+            $lengthOut = $outs[0];
+            $outs = [];
+        }
+        if ($lengthOut !== null && $outs === []) {
+            /** @var string $len */
+            $len = $lengthOut['name'];
+            $counted = fn(string $cond) => $f->throws
+                ? ["if ($cond) {", '  throw_gerror(error);', '  RETURN_THROWS();', '}']
+                : [];
+            $el = $t->isArray ? $t->element?->name : null;
+            if (!$t->isArray && $t->name === 'utf8') {
+                return ['phpType' => ($f->retNullable ? '?' : '') . 'string', 'lines' => fn(string $call) => [
+                    "char *phpgtk_ret = $call;", ...$counted('error != nullptr'),
+                    'if (phpgtk_ret == nullptr) RETURN_NULL();',
+                    "RETVAL_STRINGL(phpgtk_ret, static_cast<size_t>($len));",
+                    ...($full ? ['g_free(phpgtk_ret);'] : [])]];
+            }
+            if ($el === 'utf8') {
+                return ['phpType' => 'array', 'docType' => 'list<string>', 'lines' => fn(string $call) => [
+                    "char **phpgtk_ret = $call;", ...$counted('error != nullptr'),
+                    "strv_to_php(phpgtk_ret, $len, Transfer::" . ($full ? 'Full' : 'None')
+                        . ', return_value);']];
+            }
+            // Bytes are a PHP string, as everywhere else in the binding (a GBytes, a texture's
+            // pixels): a JavaScript ArrayBuffer would otherwise be a PHP array of a million ints.
+            if ($el === 'guint8') {
+                return ['phpType' => 'string', 'lines' => fn(string $call) => [
+                    "const auto *phpgtk_ret = static_cast<const char *>($call);",
+                    ...$counted('error != nullptr'),
+                    'if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();',
+                    "RETVAL_STRINGL(phpgtk_ret, static_cast<size_t>($len));",
+                    ...($full ? ['g_free(const_cast<char *>(phpgtk_ret));'] : [])]];
+            }
+            if ($el === 'gboolean') {
+                return ['phpType' => 'array', 'docType' => 'list<bool>', 'lines' => fn(string $call) => [
+                    "gboolean *phpgtk_ret = $call;", ...$counted('error != nullptr'),
+                    'array_init(return_value);',
+                    "for (gsize i = 0; phpgtk_ret != nullptr && i < $len; i++) {",
+                    '  add_next_index_bool(return_value, phpgtk_ret[i] != FALSE);', '}',
+                    ...($full ? ['g_free(phpgtk_ret);'] : [])]];
+            }
+            if ($el === 'gdouble' || $el === 'gfloat') {
+                return ['phpType' => 'array', 'docType' => 'list<float>', 'lines' => fn(string $call) => [
+                    "$el *phpgtk_ret = $call;", ...$counted('error != nullptr'),
+                    'array_init(return_value);',
+                    "for (gsize i = 0; phpgtk_ret != nullptr && i < $len; i++) {",
+                    '  add_next_index_double(return_value, phpgtk_ret[i]);', '}',
+                    ...($full ? ['g_free(phpgtk_ret);'] : [])]];
+            }
+            if (is_string($el) && preg_match(INT_TYPES, $el) === 1) {
+                return ['phpType' => 'array', 'docType' => 'list<int>', 'lines' => fn(string $call) => [
+                    "$el *phpgtk_ret = $call;", ...$counted('error != nullptr'),
+                    'array_init(return_value);',
+                    "for (gsize i = 0; phpgtk_ret != nullptr && i < $len; i++) {",
+                    '  add_next_index_long(return_value, static_cast<zend_long>(phpgtk_ret[i]));', '}',
+                    ...($full ? ['g_free(phpgtk_ret);'] : [])]];
+            }
+            // not a shape we can count: fall through and let the arms below report it
+            $outs = [$lengthOut];
+        }
         $throwCheck = fn(string $cond) => $f->throws
             ? ["if ($cond) {", '  throw_gerror(error);', '  RETURN_THROWS();', '}']
             : [];

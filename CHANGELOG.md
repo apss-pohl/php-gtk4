@@ -94,6 +94,16 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **A C array and its length are one PHP list now.** GLib hands an array back beside a
+  `gsize *length` out parameter, and the generator had no shape for that, so it reported the
+  member and moved on. It maps it now — the length is the list's `count()` — which finishes
+  `GKeyFile`: `get_groups()`, `get_keys()`, `to_data()` and the four `get_*_list()` getters, each
+  element type converted (strings, ints, floats, bools). A `guint8` array is a PHP string, as
+  bytes are everywhere else in the binding, so `JSCValue::array_buffer_get_data()` answers with
+  one rather than with a million-element array. Where GIR forgets to link the two — it does for
+  `get_groups()` and `get_keys()` — the pair is recognised by shape: one trailing integer out
+  called `length` beside an array or string return.
+
 - **The write side of GIO and the 3D types**, which closes the survey of one-class-away gaps:
   `GOutputStream` with `GMemoryOutputStream` (a pixbuf now encodes straight into a PHP string
   and back, no file anywhere), and `GrapheneMatrix`, `GrapheneVec2/3/4` and `GraphenePoint3D` —

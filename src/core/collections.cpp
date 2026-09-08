@@ -75,6 +75,21 @@ void gptrarray_to_php(GPtrArray *array, GType element_type, Transfer transfer, z
   }
 }
 
+// char** of a known length -> list<string>. GLib hands the length back beside the array for
+// the members that answer with one (g_key_file_get_groups()); the array may still be
+// NULL-terminated, but the length is what is authoritative.
+void strv_to_php(char **strv, gsize length, Transfer transfer, zval *rv) {
+  array_init(rv);
+  if (strv == nullptr) return;
+  for (gsize i = 0; i < length; i++) {
+    if (strv[i] != nullptr) add_next_index_string(rv, strv[i]);
+  }
+  if (transfer == Transfer::Full) {
+    for (gsize i = 0; i < length; i++) g_free(strv[i]);
+  }
+  if (transfer != Transfer::None) g_free(static_cast<void *>(strv));
+}
+
 // char** -> list<string>.
 void strv_to_php(char **strv, Transfer transfer, zval *rv) {
   array_init(rv);

@@ -67,11 +67,6 @@ history; an item leaves this file when it is done or decided against, it is not 
 - **What the generator still cannot shape**, in the order of how many members each blocks
   (`gen/report.md`; the count moves as classes are bound). None of these is a missing *type* -
   the one-class-away list is empty - they are shapes the emitters do not map yet:
-  - *a C array with its length in an out parameter* (~8 members): `GKeyFile::get_groups()`,
-    `get_keys()`, the four `get_*_list()` and `to_data()`. GIR marks the array `length="N"`
-    pointing at that out parameter, so the PHP return is just the list and the length is
-    `count()`. Needs `strv_to_php()` to take a length, and `retMapping()` to recognise the out
-    as the array's length rather than a value of its own.
   - *a C array as an input parameter* (~8): `set_*_list()`, `GtkBuilder`'s and
     `GApplication::open()`'s, `GActionMap::add_action_entries()`. A PHP list has to become an
     array plus its length, per element type.

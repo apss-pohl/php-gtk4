@@ -256,6 +256,20 @@ ZEND_METHOD(Gtk4_JSCValue, new_undefined) {
 }
 
 /**
+ * Gtk4\JSCValue::array_buffer_get_data(): string
+ *
+ * Gets a pointer to memory that contains the array buffer data.
+ */
+ZEND_METHOD(Gtk4_JSCValue, array_buffer_get_data) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  JSCValue *self = PHPGTK_SELF(JSCValue, JSC_TYPE_VALUE);
+  gsize size = 0;
+  const auto *phpgtk_ret = static_cast<const char *>(jsc_value_array_buffer_get_data(self, &size));
+  if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
+  RETVAL_STRINGL(phpgtk_ret, static_cast<size_t>(size));
+}
+
+/**
  * Gtk4\JSCValue::array_buffer_get_size(): int
  *
  * Gets the size in bytes of the array buffer.

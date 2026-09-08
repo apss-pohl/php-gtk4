@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 9cbbfbb55f532f024df4a5b5056126e98bac80df */
+ * Stub hash: 310f345803d4c77e5702beb1d183d420606fa34b */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GDateTime___construct, 0, 0, 7)
 	ZEND_ARG_OBJ_INFO(0, tz, Gtk4\\GTimeZone, 0)
@@ -171,6 +171,11 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GKeyFile_get_boolean,
 	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GKeyFile_get_boolean_list, 0, 2, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, group_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GKeyFile_get_comment, 0, 2, IS_STRING, 0)
 	ZEND_ARG_TYPE_INFO(0, group_name, IS_STRING, 1)
 	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 1)
@@ -181,12 +186,22 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GKeyFile_get_double, 
 	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+#define arginfo_class_Gtk4_GKeyFile_get_double_list arginfo_class_Gtk4_GKeyFile_get_boolean_list
+
+#define arginfo_class_Gtk4_GKeyFile_get_groups arginfo_class_Gtk4_GDateTime_get_ymd
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GKeyFile_get_int64, 0, 2, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, group_name, IS_STRING, 0)
 	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GKeyFile_get_integer arginfo_class_Gtk4_GKeyFile_get_int64
+
+#define arginfo_class_Gtk4_GKeyFile_get_integer_list arginfo_class_Gtk4_GKeyFile_get_boolean_list
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GKeyFile_get_keys, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, group_name, IS_STRING, 0)
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GKeyFile_get_locale_for_key, 0, 3, IS_STRING, 1)
 	ZEND_ARG_TYPE_INFO(0, group_name, IS_STRING, 0)
@@ -200,12 +215,20 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GKeyFile_get_locale_s
 	ZEND_ARG_TYPE_INFO(0, locale, IS_STRING, 1)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GKeyFile_get_locale_string_list, 0, 3, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, group_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, locale, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_GKeyFile_get_start_group arginfo_class_Gtk4_GDateTime_format_iso8601
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GKeyFile_get_string, 0, 2, IS_STRING, 0)
 	ZEND_ARG_TYPE_INFO(0, group_name, IS_STRING, 0)
 	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
 ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GKeyFile_get_string_list arginfo_class_Gtk4_GKeyFile_get_boolean_list
 
 #define arginfo_class_Gtk4_GKeyFile_get_uint64 arginfo_class_Gtk4_GKeyFile_get_int64
 
@@ -302,6 +325,8 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GKeyFile_set_value, 0
 	ZEND_ARG_TYPE_INFO(0, value, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+#define arginfo_class_Gtk4_GKeyFile_to_data arginfo_class_Gtk4_GDateTime_get_timezone_abbreviation
+
 #define arginfo_class_Gtk4_GKeyFile_error_quark arginfo_class_Gtk4_GDateTime_get_day_of_month
 
 #define arginfo_class_Gtk4_GTimeZone___construct arginfo_class_Gtk4_GKeyFile___construct
@@ -387,14 +412,21 @@ ZEND_METHOD(Gtk4_GDateTime, to_unix_usec);
 ZEND_METHOD(Gtk4_GDateTime, to_utc);
 ZEND_METHOD(Gtk4_GKeyFile, __construct);
 ZEND_METHOD(Gtk4_GKeyFile, get_boolean);
+ZEND_METHOD(Gtk4_GKeyFile, get_boolean_list);
 ZEND_METHOD(Gtk4_GKeyFile, get_comment);
 ZEND_METHOD(Gtk4_GKeyFile, get_double);
+ZEND_METHOD(Gtk4_GKeyFile, get_double_list);
+ZEND_METHOD(Gtk4_GKeyFile, get_groups);
 ZEND_METHOD(Gtk4_GKeyFile, get_int64);
 ZEND_METHOD(Gtk4_GKeyFile, get_integer);
+ZEND_METHOD(Gtk4_GKeyFile, get_integer_list);
+ZEND_METHOD(Gtk4_GKeyFile, get_keys);
 ZEND_METHOD(Gtk4_GKeyFile, get_locale_for_key);
 ZEND_METHOD(Gtk4_GKeyFile, get_locale_string);
+ZEND_METHOD(Gtk4_GKeyFile, get_locale_string_list);
 ZEND_METHOD(Gtk4_GKeyFile, get_start_group);
 ZEND_METHOD(Gtk4_GKeyFile, get_string);
+ZEND_METHOD(Gtk4_GKeyFile, get_string_list);
 ZEND_METHOD(Gtk4_GKeyFile, get_uint64);
 ZEND_METHOD(Gtk4_GKeyFile, get_value);
 ZEND_METHOD(Gtk4_GKeyFile, has_group);
@@ -417,6 +449,7 @@ ZEND_METHOD(Gtk4_GKeyFile, set_locale_string);
 ZEND_METHOD(Gtk4_GKeyFile, set_string);
 ZEND_METHOD(Gtk4_GKeyFile, set_uint64);
 ZEND_METHOD(Gtk4_GKeyFile, set_value);
+ZEND_METHOD(Gtk4_GKeyFile, to_data);
 ZEND_METHOD(Gtk4_GKeyFile, error_quark);
 ZEND_METHOD(Gtk4_GTimeZone, __construct);
 ZEND_METHOD(Gtk4_GTimeZone, new_identifier);
@@ -484,14 +517,21 @@ static const zend_function_entry class_Gtk4_GDateTime_methods[] = {
 static const zend_function_entry class_Gtk4_GKeyFile_methods[] = {
 	ZEND_ME(Gtk4_GKeyFile, __construct, arginfo_class_Gtk4_GKeyFile___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GKeyFile, get_boolean, arginfo_class_Gtk4_GKeyFile_get_boolean, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GKeyFile, get_boolean_list, arginfo_class_Gtk4_GKeyFile_get_boolean_list, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GKeyFile, get_comment, arginfo_class_Gtk4_GKeyFile_get_comment, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GKeyFile, get_double, arginfo_class_Gtk4_GKeyFile_get_double, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GKeyFile, get_double_list, arginfo_class_Gtk4_GKeyFile_get_double_list, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GKeyFile, get_groups, arginfo_class_Gtk4_GKeyFile_get_groups, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GKeyFile, get_int64, arginfo_class_Gtk4_GKeyFile_get_int64, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GKeyFile, get_integer, arginfo_class_Gtk4_GKeyFile_get_integer, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GKeyFile, get_integer_list, arginfo_class_Gtk4_GKeyFile_get_integer_list, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GKeyFile, get_keys, arginfo_class_Gtk4_GKeyFile_get_keys, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GKeyFile, get_locale_for_key, arginfo_class_Gtk4_GKeyFile_get_locale_for_key, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GKeyFile, get_locale_string, arginfo_class_Gtk4_GKeyFile_get_locale_string, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GKeyFile, get_locale_string_list, arginfo_class_Gtk4_GKeyFile_get_locale_string_list, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GKeyFile, get_start_group, arginfo_class_Gtk4_GKeyFile_get_start_group, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GKeyFile, get_string, arginfo_class_Gtk4_GKeyFile_get_string, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GKeyFile, get_string_list, arginfo_class_Gtk4_GKeyFile_get_string_list, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GKeyFile, get_uint64, arginfo_class_Gtk4_GKeyFile_get_uint64, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GKeyFile, get_value, arginfo_class_Gtk4_GKeyFile_get_value, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GKeyFile, has_group, arginfo_class_Gtk4_GKeyFile_has_group, ZEND_ACC_PUBLIC)
@@ -514,6 +554,7 @@ static const zend_function_entry class_Gtk4_GKeyFile_methods[] = {
 	ZEND_ME(Gtk4_GKeyFile, set_string, arginfo_class_Gtk4_GKeyFile_set_string, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GKeyFile, set_uint64, arginfo_class_Gtk4_GKeyFile_set_uint64, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GKeyFile, set_value, arginfo_class_Gtk4_GKeyFile_set_value, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GKeyFile, to_data, arginfo_class_Gtk4_GKeyFile_to_data, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GKeyFile, error_quark, arginfo_class_Gtk4_GKeyFile_error_quark, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_FE_END
 };

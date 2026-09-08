@@ -86,13 +86,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GKeyFile
 
 - `free` — memory management belongs to the handle (clone / destructor)
-- `get_boolean_list` — return array plus out parameters
-- `get_double_list` — return array plus out parameters
-- `get_groups` — return array plus out parameters
-- `get_integer_list` — return array plus out parameters
-- `get_keys` — return array plus out parameters
-- `get_locale_string_list` — return array plus out parameters
-- `get_string_list` — return array plus out parameters
 - `load_from_dirs` — parameter `search_dirs` of type array (C array)
 - `ref` — memory management belongs to the handle (clone / destructor)
 - `set_boolean_list` — parameter `list` of type array (C array)
@@ -100,7 +93,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `set_integer_list` — parameter `list` of type array (C array)
 - `set_locale_string_list` — parameter `list` of type array (C array)
 - `set_string_list` — parameter `list` of type array (C array)
-- `to_data` — return utf8 plus out parameters
 - `unref` — memory management belongs to the handle (clone / destructor)
 
 ## GListModel
@@ -1013,7 +1005,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `new_functionv` — callback parameter (needs an override)
 - `new_object` — gpointer parameter
 - `new_typed_array` — skip.txt: a length JavaScriptCore cannot allocate is a RELEASE_ASSERT (aborts the process), and the array's bytes are unreachable from PHP anyway (typed_array_get_data() is a gpointer)
-- `array_buffer_get_data` — return array plus out parameters
 - `new_typed_array_with_buffer` — skip.txt: as new_typed_array: an offset/length outside the buffer asserts inside JavaScriptCore
 - `object_define_property_accessor` — callback parameter (needs an override)
 - `typed_array_get_data` — return gpointer plus out parameters

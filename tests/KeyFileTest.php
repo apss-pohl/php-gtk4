@@ -48,26 +48,52 @@ final class KeyFileTest extends GtkTestCase
         self::assertTrue($file->has_group('Printer'));
         self::assertTrue($file->has_key('Printer', 'copies'));
         self::assertFalse($file->has_key('Printer', 'nothing'));
+        self::assertSame(['Printer'], $file->get_groups());
+        self::assertSame(['name', 'copies', 'duplex', 'scale'], $file->get_keys('Printer'));
     }
 
-    /**
-     * The document round-trips through its own text. `to_data()` is not bound - it answers with
-     * the string *and* its length, a shape the generator does not map yet (gen/report.md) - so
-     * the text comes back off disk instead.
-     */
+    /** to_data() is the document as text, and load_from_data() reads it back. */
     public function testTheDocumentRoundTripsThroughItsText(): void
     {
         $file = new GKeyFile();
         $file->set_string('Section', 'key', 'value');
-        $file->save_to_file($this->path);
 
-        $text = (string) file_get_contents($this->path);
+        $text = $file->to_data();
         self::assertStringContainsString('[Section]', $text);
         self::assertStringContainsString('key=value', $text);
 
         $again = new GKeyFile();
         $again->load_from_data($text, strlen($text), 0);
         self::assertSame('value', $again->get_string('Section', 'key'));
+    }
+
+    /**
+     * The list getters answer with a PHP list, GLib's length out parameter having become its
+     * `count()`. Each element type has its own conversion.
+     */
+    public function testListsComeBackAsPhpLists(): void
+    {
+        $file = new GKeyFile();
+        $file->load_from_data(
+            $data = "[L]\nstrings=a;b;c;\nnumbers=1;2;3;\nflags=true;false;\nsizes=1.5;2.5;\n",
+            strlen($data),
+            0,
+        );
+
+        self::assertSame(['a', 'b', 'c'], $file->get_string_list('L', 'strings'));
+        self::assertSame([1, 2, 3], $file->get_integer_list('L', 'numbers'));
+        self::assertSame([true, false], $file->get_boolean_list('L', 'flags'));
+        self::assertSame([1.5, 2.5], $file->get_double_list('L', 'sizes'));
+    }
+
+    /** An empty group has no keys, and the list is empty rather than null. */
+    public function testAGroupWithoutKeysHasAnEmptyKeyList(): void
+    {
+        $file = new GKeyFile();
+        $file->load_from_data($data = "[Empty]\n", strlen($data), 0);
+
+        self::assertSame(['Empty'], $file->get_groups());
+        self::assertSame([], $file->get_keys('Empty'));
     }
 
     public function testItLoadsAndSavesAFile(): void
