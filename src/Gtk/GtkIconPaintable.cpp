@@ -31,7 +31,9 @@ ZEND_METHOD(Gtk4_GtkIconPaintable, new_for_file) {
   ZEND_PARSE_PARAMETERS_END();
   GFile *file_f = g_file_new_for_commandline_arg(ZSTR_VAL(file));
   if (!phpgtk::check_range<int>(size, 2)) RETURN_THROWS();
+  if (!phpgtk::check_domain(size, 0, ZEND_LONG_MAX, 2)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(scale, 3)) RETURN_THROWS();
+  if (!phpgtk::check_domain(scale, 0, ZEND_LONG_MAX, 3)) RETURN_THROWS();
   GtkIconPaintable *call_result =
       gtk_icon_paintable_new_for_file(file_f, static_cast<int>(size), static_cast<int>(scale));
   if (file_f != nullptr) g_object_unref(file_f);

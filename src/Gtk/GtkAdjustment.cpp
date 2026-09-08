@@ -85,6 +85,11 @@ ZEND_METHOD(Gtk4_GtkAdjustment, configure) {
   Z_PARAM_DOUBLE(page_size)
   ZEND_PARSE_PARAMETERS_END();
   GtkAdjustment *self = PHPGTK_SELF(GtkAdjustment, GTK_TYPE_ADJUSTMENT);
+  const bool precondition_0 = lower + page_size <= upper;
+  if (!precondition_0) {
+    zend_argument_value_error(3, "must not be below $lower plus $page_size");
+    RETURN_THROWS();
+  }
   gtk_adjustment_configure(self, value, lower, upper, step_increment, page_increment, page_size);
 }
 

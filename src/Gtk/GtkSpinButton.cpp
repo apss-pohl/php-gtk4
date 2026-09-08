@@ -359,6 +359,12 @@ ZEND_METHOD(Gtk4_GtkSpinButton, set_range) {
   Z_PARAM_DOUBLE(max)
   ZEND_PARSE_PARAMETERS_END();
   GtkSpinButton *self = PHPGTK_SELF(GtkSpinButton, GTK_TYPE_SPIN_BUTTON);
+  const bool precondition_0 =
+      min + gtk_adjustment_get_page_size(gtk_spin_button_get_adjustment(self)) <= max;
+  if (!precondition_0) {
+    zend_argument_value_error(2, "must not be below $min plus the page size of the adjustment");
+    RETURN_THROWS();
+  }
   gtk_spin_button_set_range(self, min, max);
 }
 

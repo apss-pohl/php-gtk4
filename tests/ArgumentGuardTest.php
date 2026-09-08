@@ -17,6 +17,7 @@ use Gtk4\GMenuModel;
 use Gtk4\GObject;
 use Gtk4\GSimpleAction;
 use Gtk4\GTask;
+use Gtk4\GtkAdjustment;
 use Gtk4\GtkApplication;
 use Gtk4\GtkBox;
 use Gtk4\GtkButton;
@@ -25,11 +26,13 @@ use Gtk4\GtkDrawingArea;
 use Gtk4\GtkEntry;
 use Gtk4\GtkGestureLongPress;
 use Gtk4\GtkGrid;
+use Gtk4\GtkIconPaintable;
 use Gtk4\GtkLabel;
 use Gtk4\GtkNotebook;
 use Gtk4\GtkOrientation;
 use Gtk4\GtkScale;
 use Gtk4\GtkSingleSelection;
+use Gtk4\GtkSpinButton;
 use Gtk4\GtkStack;
 use Gtk4\GtkStringList;
 use Gtk4\GtkTextBuffer;
@@ -684,6 +687,73 @@ final class ArgumentGuardTest extends GtkTestCase
         $this->expectException(\ValueError::class);
         $this->expectExceptionMessage('Argument #2 ($max) must not be below $min');
         $scale->set_range(10.0, 1.0);
+    }
+
+    /**
+     * `gtk_adjustment_configure()` grew `g_return_if_fail (lower + page_size <= upper)` in GTK
+     * 4.22 - a page that does not fit between the bounds. GTK 4.14 takes it silently, so this is
+     * the binding answering the same on both rather than a complaint only Windows CI would see.
+     */
+    public function testAnAdjustmentPageWiderThanItsBoundsIsAValueError(): void
+    {
+        $adjustment = new GtkAdjustment(0.0, 0.0, 100.0, 1.0, 10.0, 10.0);
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('Argument #3 ($upper) must not be below $lower plus $page_size');
+        $adjustment->configure(0.0, 0.0, 10.0, 1.0, 10.0, 20.0);
+    }
+
+    /** A span the page does fit into still goes through, page size and all. */
+    public function testAnAdjustmentPageThatFitsIsConfigured(): void
+    {
+        $adjustment = new GtkAdjustment(0.0, 0.0, 100.0, 1.0, 10.0, 10.0);
+        $adjustment->configure(5.0, 0.0, 30.0, 1.0, 10.0, 30.0);
+
+        self::assertSame(30.0, $adjustment->get_upper());
+        self::assertSame(30.0, $adjustment->get_page_size());
+    }
+
+    /**
+     * `gtk_spin_button_set_range()` reaches the same 4.22 assertion through the spin button's own
+     * adjustment, so the bound it has to clear is $min *plus that adjustment's page size* - not
+     * $min alone, which is what GtkRange::set_range() checks.
+     */
+    public function testASpinButtonRangeNarrowerThanItsPageIsAValueError(): void
+    {
+        $spin = new GtkSpinButton(new GtkAdjustment(0.0, 0.0, 100.0, 1.0, 10.0, 10.0), 1.0, 0);
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('Argument #2 ($max) must not be below $min plus the page size');
+        $spin->set_range(0.0, 5.0);
+    }
+
+    /** With the default adjustment (page size 0) the check is the plain min <= max. */
+    public function testASpinButtonMinimumAboveTheMaximumIsAValueError(): void
+    {
+        $spin = new GtkSpinButton(null, 1.0, 0);
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('Argument #2 ($max) must not be below $min');
+        $spin->set_range(10.0, 1.0);
+    }
+
+    /**
+     * GTK 4.22 builds the paintable with `g_object_new()`, whose `size`/`scale` properties are
+     * `g_param_spec_int(0, G_MAXINT)`: -1 is out of range there and passed unnoticed on 4.14.
+     */
+    public function testAnIconPaintableSizeBelowZeroIsAValueError(): void
+    {
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('Argument #2 ($size) must be greater than or equal to 0, -1 given');
+        GtkIconPaintable::new_for_file(__FILE__, -1, 1);
+    }
+
+    /** The same bound on the scale, which is the third argument. */
+    public function testAnIconPaintableScaleBelowZeroIsAValueError(): void
+    {
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('Argument #3 ($scale) must be greater than or equal to 0, -1 given');
+        GtkIconPaintable::new_for_file(__FILE__, 16, -1);
     }
 
     public function testAStackChildNameNothingAnswersToIsAValueError(): void

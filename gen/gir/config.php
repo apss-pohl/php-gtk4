@@ -359,6 +359,15 @@ const ARG_PRECONDITIONS = [
         'must be the position of a string']],
     'gtk_string_list_splice' => [[2, 'position + n_removals <= g_list_model_get_n_items(G_LIST_MODEL(self))',
         'must not remove past the end of the list']],
+    // GTK 4.22 refuses an adjustment whose page does not fit between its bounds
+    // (`g_return_if_fail (lower + page_size <= upper)` in gtk_adjustment_configure, which
+    // gtk_spin_button_set_range() reaches through with the adjustment's current page size).
+    // GTK 4.14 takes it silently; refusing here is the same answer on both.
+    'gtk_adjustment_configure' => [[3, 'lower + page_size <= upper',
+        'must not be below $lower plus $page_size']],
+    'gtk_spin_button_set_range' => [[2,
+        'min + gtk_adjustment_get_page_size(gtk_spin_button_get_adjustment(self)) <= max',
+        'must not be below $min plus the page size of the adjustment']],
     'gtk_range_set_range' => [[2, 'min <= max', 'must not be below $min']],
     'gtk_scale_new_with_range' => [[3, 'min < max', 'must be above $min']],
     'gtk_spin_button_new_with_range' => [[2, 'min <= max', 'must not be below $min']],
@@ -409,6 +418,10 @@ const PARAM_DOMAINS = [
     'gtk_grid_attach.height' => [1, null],
     'gtk_gesture_long_press_set_delay_factor.delay_factor' => [0.5, 2.0],
     'gtk_icon_theme_lookup_icon.scale' => [1, null],
+    // GTK 4.22 builds the paintable with g_object_new(); both properties are
+    // g_param_spec_int(0, G_MAXINT), so -1 is out of range there and silent on 4.14.
+    'gtk_icon_paintable_new_for_file.size' => [0, null],
+    'gtk_icon_paintable_new_for_file.scale' => [0, null],
     'pango_font_description_set_size.size' => [0, null],
     'gtk_spin_button_set_climb_rate.climb_rate' => [0.0, null],
     'pango_font_description_set_absolute_size.size' => [0.0, null],
