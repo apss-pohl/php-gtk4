@@ -146,6 +146,53 @@ final class WorkflowsTest extends TestCase
         self::assertSame(['cpp-lint.yml', 'release.yml'], $onMain);
     }
 
+    /**
+     * `PHP 8.4` / `PHP 8.5` are required status checks and they are the NTS cells, so whatever
+     * the `changes` job decides, NTS has to be in it - a matrix that leaves a required cell out
+     * is the same dead end as a workflow that never starts, just harder to see.
+     */
+    public function testTheRequiredThreadModelIsNeverConditional(): void
+    {
+        $yml = (string) file_get_contents(self::WORKFLOWS . '/tests.yml');
+        self::assertSame(
+            1,
+            preg_match_all('/thread-models=(\[[^\]]*\])/', $yml, $m, PREG_PATTERN_ORDER) > 0 ? 1 : 0,
+            'tests.yml no longer decides its thread models where this test can read them',
+        );
+        foreach ($m[1] as $value) {
+            $models = json_decode($value, true);
+            self::assertIsArray($models, "not a JSON list: $value");
+            self::assertContains('nts', $models, "the required NTS cells would not run: $value");
+        }
+    }
+
+    /**
+     * A dev build is validated like a pull request; a real release is also run against ZTS, the
+     * sanitizers and valgrind, and its Windows binaries run the suite. docs/RELEASING.md
+     * "Cutting a release" asks for the first two by hand - this is what makes forgetting harmless.
+     */
+    public function testARealReleaseIsGatedOnMoreThanADevBuild(): void
+    {
+        $yml = (string) file_get_contents(self::WORKFLOWS . '/release.yml');
+
+        self::assertMatchesRegularExpression(
+            "/ts: \\\$\{\{ needs\.plan\.outputs\.kind == 'release'/",
+            $yml,
+            'the verify matrix no longer adds ZTS for a real release',
+        );
+        self::assertMatchesRegularExpression(
+            "/release-gate:.*?if: needs\.plan\.outputs\.kind == 'release'/s",
+            $yml,
+            'nothing runs the sanitizers and valgrind before a release',
+        );
+        self::assertStringContainsString('run-tests: true', $yml, 'the shipped dll never runs the suite');
+        self::assertMatchesRegularExpression(
+            '/needs\.coverage\.result == .success./',
+            $yml,
+            'publish no longer waits for the coverage floor',
+        );
+    }
+
     /** Windows minutes bill at nearly twice Linux's, so the four-job matrix is not on every push. */
     public function testWindowsIsNotBuiltForEveryDevBuild(): void
     {

@@ -16,8 +16,44 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Which thread models this push has to be run against. ZTS exists here to catch per-request
+  # state put in a plain static instead of the module globals, so it is worth its four jobs when
+  # something under src/core (or the header that declares the globals) moved, and not otherwise.
+  # Anything that is not a pull request has no base to compare against and gets both.
+  # `PHP 8.4 ZTS` / `PHP 8.5 ZTS` are deliberately not required status checks, which is what
+  # makes leaving the cells out safe - see docs/RELEASING.md "Gating".
+  changes:
+    name: What this push touches
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      thread-models: ${{ steps.pick.outputs.thread-models }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - id: pick
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$BASE" ]]; then
+            echo 'thread-models=["nts","ts"]' >> "$GITHUB_OUTPUT"
+            echo "not a pull request: both thread models" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if git diff --name-only "$BASE" HEAD \
+             | grep -qE '^(src/core/|src/php_gtk4\.h$|src/classes\.h$|config\.m4$)'; then
+            echo 'thread-models=["nts","ts"]' >> "$GITHUB_OUTPUT"
+            echo "core changed: NTS and ZTS" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'thread-models=["nts"]' >> "$GITHUB_OUTPUT"
+            echo "no core change: NTS only (ZTS runs on merge and before a release)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
   php-tests:
     name: PHP ${{ matrix.php }}${{ matrix.ts == 'ts' && ' ZTS' || '' }}
+    needs: changes
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
@@ -25,9 +61,7 @@ jobs:
       matrix:
         # Everything we claim to support (8.4+), on the GTK floor (24.04 = GTK 4.14).
         php: ['8.4', '8.5']
-        # Both thread models: per-request state lives in module globals (src/core/globals.h);
-        # the suite is single-threaded, so ZTS checks the build and the GINIT/GSHUTDOWN path.
-        ts: [nts, ts]
+        ts: ${{ fromJSON(needs.changes.outputs.thread-models) }}
     env:
       phpts: ${{ matrix.ts }}
       # tests/run.sh, bin/php-gtk4 and ci.sh default to the php8.4 binaries; setup-php provides plain names.
@@ -146,44 +180,6 @@ jobs:
       # module in that process), then the PHPUnit suite for memory errors.
       - name: Run sanitizer stage
         run: ./ci.sh --only=asan
-
-  coverage:
-    name: C++ line coverage (gcov)
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    env:
-      PHP: php
-      PHP_CONFIG: php-config
-      PHPIZE: phpize
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Set up PHP 8.4
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
-        with:
-          php-version: '8.4'
-          extensions: dom, mbstring, tokenizer, xml, xmlwriter
-          tools: composer
-          coverage: none
-
-      - name: Install build deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends pkg-config libgtk-4-dev xvfb libxtst6 build-essential gcovr
-
-      - name: Install PHPUnit
-        run: composer install --no-interaction --no-progress --prefer-dist
-
-      - name: Run coverage stage
-        run: ./ci.sh --only=coverage
-
-      - name: Upload HTML coverage report
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: cpp-coverage
-          path: coverage/
-          if-no-files-found: ignore
 
   # --enable-gtk4-webkit is analysed by cpp-lint.yml; this leg builds it, loads it and runs the
   # suite against it - the only run in which the WebKit* / JSC* classes exist (the matrix above

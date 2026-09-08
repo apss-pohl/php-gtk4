@@ -425,9 +425,11 @@ setup-php 8.4, GTK4/WebKitGTK headers, clang 20 from apt.llvm.org, `phpize && ./
 (2) `./ci.sh --only=php-qa` + `--only=md-lint`, plus a `commits` job that runs `bin/commit-lint`
 over the PR title (a squash merge makes it the commit) and `./ci.sh --only=commits` over the
 branch's commits (a rebase merge keeps them); (3) build the extension and run the
-PHPUnit suite *and* `./ci.sh --only=phpt` for PHP 8.4 and 8.5, NTS and ZTS, on Ubuntu 24.04 (`fail-fast: false`;
+PHPUnit suite *and* `./ci.sh --only=phpt` for PHP 8.4 and 8.5 — NTS always, **ZTS when something under
+`src/core/` changed** (a `changes` job decides; ZTS is there to catch per-request state in a plain static,
+and a release runs it regardless), on Ubuntu 24.04 (`fail-fast: false`;
 failing `.out`/`.diff` files upload as the `phpt-failures-php*-<ts>` artifact), plus `sanitizers`
-(`ci.sh --only=valgrind` + `--only=asan`), `coverage` (`--only=coverage`, gcovr HTML artifact) and a
+(`ci.sh --only=valgrind` + `--only=asan`) and a
 `webkit` job on 8.4 (`--enable-gtk4-webkit` build, load and the whole PHPUnit suite — the only run
 in which the `WebKit*`/`JSC*` classes and their tests exist). The apt package lists must
 mirror `config.m4`'s pkg-config modules (plus `gir1.2-gtk-4.0` where the `gen` stage runs).
@@ -442,7 +444,11 @@ Linux rate. (5) `release.yml` on
 every push to `main`: reads `VERSION` and either publishes an
 immutable `vX.Y.Z-dev.<run>` pre-release (suffix `-dev`; the newest 5 are kept, older ones deleted with their
 tags) or the real `vX.Y.Z` release (no suffix, once),
-after running `./ci.sh` in full itself — it does not key off `tests.yml`. A real release also runs
+after running `./ci.sh --skip=cpp-lint` itself — it does not key off `tests.yml`. It also runs `coverage`
+on every merge, and a **real** release additionally gets the ZTS verify cells, a `release-gate` job
+(`--only=valgrind` + `--only=asan`) and Windows binaries that ran the suite; `publish` waits for all of it,
+so what docs/RELEASING.md "Cutting a release" asks the maintainer to run locally is enforced here
+too. A real release also runs
 `publish-stubs`, which pushes `stubs/` to the stubs package repository (`STUBS_REPO`, secret
 `STUBS_DEPLOY_KEY`; skipped with a warning when the secret is absent). The body is the
 `CHANGELOG.md` section for the version (required, verbatim) followed by `bin/release-notes`,

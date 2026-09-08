@@ -85,7 +85,7 @@ jobs:
   # that depends on a separate workflow's result races with it, and a broken
   # pre-release is worse than a slow one.
   verify:
-    name: Verify PHP ${{ matrix.php }}
+    name: Verify PHP ${{ matrix.php }}${{ matrix.ts == 'ts' && ' ZTS' || '' }}
     needs: plan
     if: needs.plan.outputs.publish == 'true'
     runs-on: ubuntu-24.04
@@ -94,6 +94,11 @@ jobs:
       fail-fast: false
       matrix:
         php: ['8.4', '8.5']
+        # A dev build is validated the way a pull request is; a real release is also validated
+        # against the thread model it claims to support, which nothing else on main does.
+        ts: ${{ needs.plan.outputs.kind == 'release' && fromJSON('["nts","ts"]') || fromJSON('["nts"]') }}
+    env:
+      phpts: ${{ matrix.ts }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -211,17 +216,91 @@ jobs:
       artifact: dll-php${{ matrix.php }}-${{ matrix.ts }}
       dll-name: php_gtk4-${{ needs.plan.outputs.relver }}-${{ matrix.php }}-${{ matrix.ts }}-vs17-x86_64.dll
       expect-version: ${{ needs.plan.outputs.version }}
+      # The binaries a release ships run the suite first: windows.yml only sees the pull
+      # requests that touch what it depends on, so this is what covers the shipped dll.
+      run-tests: true
+
+  # gcov on every merge: the floor (COVERAGE_MIN_LINES) is what matters, and once per merge is
+  # soon enough to act on while still being direct.
+  coverage:
+    name: C++ line coverage (gcov)
+    needs: [plan, verify]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      PHP: php
+      PHP_CONFIG: php-config
+      PHPIZE: phpize
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.4'
+          extensions: dom, mbstring, tokenizer, xml, xmlwriter
+          tools: composer
+          coverage: none
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            pkg-config libgtk-4-dev xvfb libxtst6 build-essential gcovr
+      - name: Install PHPUnit
+        run: composer install --no-interaction --no-progress --prefer-dist
+      - name: Run coverage stage
+        run: ./ci.sh --only=coverage
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: cpp-coverage
+          path: coverage/
+          if-no-files-found: ignore
+
+  # What "Cutting a release" tells the maintainer to run locally before opening the release PR
+  # (docs/RELEASING.md), run here instead so that forgetting it cannot ship anything. Real
+  # releases only: these are minutes, and a dev build is not what anybody installs.
+  release-gate:
+    name: Sanitizers and valgrind
+    needs: [plan, verify]
+    if: needs.plan.outputs.kind == 'release'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PHP: php
+      PHP_CONFIG: php-config
+      PHPIZE: phpize
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.4'
+          extensions: dom, mbstring, tokenizer, xml, xmlwriter
+          tools: composer
+          coverage: none
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            pkg-config libgtk-4-dev xvfb libxtst6 build-essential valgrind
+      - name: Install PHPUnit
+        run: composer install --no-interaction --no-progress --prefer-dist
+      - name: Build extension (phpize)
+        run: ./ci.sh --only=build
+      - name: Run valgrind stage
+        run: ./ci.sh --only=valgrind
+      - name: Run sanitizer stage
+        run: ./ci.sh --only=asan
 
   publish:
     name: Publish ${{ needs.plan.outputs.tag }}
-    needs: [plan, verify, build, build-windows]
-    # build-windows is skipped for a dev build, and a skipped dependency would take this job
-    # with it - so the conditions are spelled out rather than inherited.
+    needs: [plan, verify, build, build-windows, coverage, release-gate]
+    # build-windows and release-gate are skipped for a dev build, and a skipped dependency would
+    # take this job with it - so the conditions are spelled out rather than inherited.
     if: |
       always()
       && needs.verify.result == 'success'
       && needs.build.result == 'success'
+      && needs.coverage.result == 'success'
       && (needs.build-windows.result == 'success' || needs.build-windows.result == 'skipped')
+      && (needs.release-gate.result == 'success' || needs.release-gate.result == 'skipped')
     runs-on: ubuntu-24.04
     permissions:
       contents: write       # create/delete the tag and the release

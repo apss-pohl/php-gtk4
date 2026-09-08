@@ -28,7 +28,7 @@ $EDITOR VERSION                      # 0.2.0-dev -> 0.2.0
 ./ci.sh --only=version,stubs --fix   # propagate into the header + stub, regenerate
 $EDITOR CHANGELOG.md                 # move Unreleased under '## [0.2.0] - YYYY-MM-DD'
 ./update-deps.sh --only=gvsbuild     # Windows GTK pin: bump to gvsbuild's current release? (docs/BUILD.md)
-./ci.sh --with=asan,coverage,valgrind
+./ci.sh --with=asan,coverage,valgrind   # fast feedback; release.yml runs these itself before publishing
 ```
 
 Open that as a `chore(release): 0.2.0` PR — the title is the squashed commit, so it follows the commit
@@ -204,6 +204,13 @@ is what keeps every pull request's clang-tidy cache warm. Its own `verify` here 
 reason — clang-tidy does not depend on the PHP version, so this matrix used to run it twice per merge, each
 time cold, which since the WebKit namespaces arrived no longer fits in the job's 30-minute budget.
 
+A real release is gated on more than a dev build, because a dev pre-release is not what anybody
+installs: `verify` adds the ZTS cells (the only run on `main` that exercises the thread model the extension
+claims to support), a `release-gate` job runs the sanitizers and valgrind, and the Windows builds run the
+PHPUnit suite against the very dll that ships. `publish` waits for all of them and for the coverage floor.
+Those first two are what "Cutting a release" above asks the maintainer to run locally: the local run is for
+fast feedback, and this is what makes forgetting it harmless rather than a shipped regression.
+
 The Windows assets are built for real releases only. They are what `pie install` puts on a Windows machine,
 and PIE resolves a release rather than a dev pre-release, so building four of them per merge produced
 binaries nobody could install. `windows.yml` is what says whether Windows still compiles at all, on the pull
@@ -217,8 +224,14 @@ and the pull request waits for a check that cannot arrive. That is why `cpp-lint
 and leans on its cache instead, and why `windows.yml` — which is filtered — is not a required check.
 `WorkflowsTest` holds both ends of that to each other.
 
+The same reasoning moved two checks off every push. `gcov` runs once per merge here rather than on every
+push, because what matters is the floor (`COVERAGE_MIN_LINES`), not a number per commit. The ZTS cells in
+`tests.yml` run when something under `src/core/` changed - ZTS is there to catch per-request state put in a
+plain static instead of the module globals, so that is the change that can break it - and unconditionally
+before a release. Both are safe to make conditional only because neither is a required status check; the
+`changes` job always includes NTS, which is.
+
 ## Not covered yet
 
-Publishing to PECL, or registering as a `php-ext` composer package so `pie install` works, is separate work
-worth doing before 1.0. The tarball is already the phpize layout `pie` expects, so it is packaging and
-registration, not a build change.
+Publishing to PECL. `pie install php-gtk4/php-gtk4` works (see "Shipping"), and PECL is a separate
+registration with its own review; whether it is worth having both is a 1.0 question.
