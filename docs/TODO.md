@@ -51,11 +51,6 @@ history; an item leaves this file when it is done or decided against, it is not 
   `gtk_text_set_extra_menu()` and are quiet, and `main` still has it. The end state is right, so
   it is only a spurious complaint - pinned for `gtk>=4.20`, nothing to fix here.
 - **WebKitGTK, what the first wave left out** (`gen/report.md`, sections `WebKit*`/`JSC*`):
-  - the URI scheme handler - the stream half is done (`webkit_uri_scheme_request_finish()` takes
-    a `GInputStream`, and `GMemoryInputStream` builds one from a PHP string). What is left is
-    `WebKitWebContext::register_uri_scheme()`, whose callback needs a trampoline override
-    (`gen/README.md`, "Typed C callbacks"), plus `WebKitURISchemeRequest` and
-    `WebKitURISchemeResponse` in the allowlist;
   - the Soup types - `WebKitCookieManager::add_cookie()` and the HTTP headers of a request or
     response, which means binding a namespace (`Soup-3.0.gir`) that is not bound at all;
   - TLS certificates (`Gio.TlsCertificate`: `allow_tls_certificate_for_host()`,

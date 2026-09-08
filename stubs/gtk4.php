@@ -26394,6 +26394,89 @@ final class WebKitURIResponse extends GObject
     }
 }
 /**
+ * Represents a URI scheme request.
+ */
+final class WebKitURISchemeRequest extends GObject
+{
+    /** WebKitURISchemeRequest has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Finish a #WebKitURISchemeRequest by setting the contents of the request and its mime type. */
+    public function finish(GInputStream $stream, int $stream_length, ?string $content_type): void
+    {
+        unset($stream);
+        unset($stream_length);
+        unset($content_type);
+    }
+    /** Finish a #WebKitURISchemeRequest with a #GError. */
+    public function finish_error(GError $error): void
+    {
+        unset($error);
+    }
+    /** Finish a #WebKitURISchemeRequest by returning a #WebKitURISchemeResponse */
+    public function finish_with_response(WebKitURISchemeResponse $response): void
+    {
+        unset($response);
+    }
+    /** Get the request body. */
+    public function get_http_body(): GInputStream
+    {
+        return null;
+    }
+    /** Get the HTTP method of the $request. */
+    public function get_http_method(): string
+    {
+        return '';
+    }
+    /** Get the URI path of $request. */
+    public function get_path(): string
+    {
+        return '';
+    }
+    /** Get the URI scheme of $request. */
+    public function get_scheme(): string
+    {
+        return '';
+    }
+    /** Get the URI of $request. */
+    public function get_uri(): string
+    {
+        return '';
+    }
+    /** Get the #WebKitWebView that initiated the request. */
+    public function get_web_view(): WebKitWebView
+    {
+        return null;
+    }
+}
+/**
+ * Represents a URI scheme response.
+ *
+ * @property-write ?GInputStream $stream
+ * @property-write int $stream_length
+ */
+final class WebKitURISchemeResponse extends GObject
+{
+    /** Create a new #WebKitURISchemeResponse */
+    public function __construct(GInputStream $input_stream, int $stream_length)
+    {
+        unset($input_stream);
+        unset($stream_length);
+    }
+    /** Sets the content type for the $response */
+    public function set_content_type(string $content_type): void
+    {
+        unset($content_type);
+    }
+    /** Sets the status code and reason phrase for the $response. */
+    public function set_status(int $status_code, ?string $reason_phrase): void
+    {
+        unset($status_code);
+        unset($reason_phrase);
+    }
+}
+/**
  * A compiled set of rules which applied to resource loads.
  */
 final class WebKitUserContentFilter
@@ -26834,6 +26917,23 @@ final class WebKitWebContext extends GObject
     public function set_web_process_extensions_initialization_user_data(mixed $user_data = null): void
     {
         unset($user_data);
+    }
+    /**
+     * Answer `$scheme://` requests from PHP: `function (WebKitURISchemeRequest $request): void`,
+     * which finishes the request with {@see WebKitURISchemeRequest::finish()},
+     * {@see WebKitURISchemeRequest::finish_with_response()} or
+     * {@see WebKitURISchemeRequest::finish_error()} - the way an application serves its own pages
+     * to a web view without a server.
+     *
+     * A scheme belongs to the context for good: WebKit has no unregister call and refuses a second
+     * registration of the same name, which is a `ValueError` here rather than a warning from
+     * WebKit. Schemes WebKit reserves (http, https, file, ...) are refused by its network process
+     * instead, and a handler that never finishes its request leaves the load hanging.
+     */
+    public function register_uri_scheme(string $scheme, callable $handler): void
+    {
+        unset($scheme);
+        unset($handler);
     }
 }
 /**

@@ -190,6 +190,8 @@ return [
         'WebKitTLSErrorsPolicy',
         'WebKitURIRequest',
         'WebKitURIResponse',
+        'WebKitURISchemeRequest',
+        'WebKitURISchemeResponse',
         'WebKitUserContentFilter',
         'WebKitUserContentFilterError',
         'WebKitUserContentFilterStore',

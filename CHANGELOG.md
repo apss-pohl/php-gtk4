@@ -94,6 +94,14 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **A URI scheme answered from PHP**: `WebKitWebContext::register_uri_scheme()` puts a callable
+  behind a scheme of your own, and `WebKitURISchemeRequest` / `WebKitURISchemeResponse` are what
+  it is handed and what it answers with — a stream, a length and a content type, or a response
+  object that carries an HTTP status too, or an error. An application can serve its own pages to
+  a web view with no network and nothing on disk. A scheme belongs to its context for good
+  (WebKit has no unregister call and refuses a second registration, which is a `ValueError` here
+  rather than a warning from WebKit), and a malformed scheme is refused before WebKit sees it.
+
 - **The read side of GIO**: `GInputStream` and `GMemoryInputStream`, which turns a PHP string
   into a stream GTK will read. Seven members that were skipped for want of the type came back
   with it - `GdkPixbuf::new_from_stream()`, `new_from_stream_at_scale()` and their async

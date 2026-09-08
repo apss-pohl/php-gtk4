@@ -1262,6 +1262,18 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `property http-headers` — property type Soup.MessageHeaders not mappable
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## WebKitURISchemeRequest
+
+- `get_http_headers` — return type Soup.MessageHeaders
+- `__construct` — skip.txt: only the handler of WebKitWebContext::register_uri_scheme() is handed one; a g_object_new() request has no WebKit request behind it and its getters dereference null (EveryClassTest segfaulted on it)
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## WebKitURISchemeResponse
+
+- `PHP subclasses` — constructor argument input_stream is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain WebKitURISchemeResponse
+- `set_http_headers` — parameter `headers` of type Soup.MessageHeaders
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## WebKitUserContentFilter
 
 - `ref` — memory management belongs to the handle (clone / destructor)
@@ -1295,7 +1307,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## WebKitWebContext
 
 - `initialize_notification_permissions` — parameter `allowed_origins` of type GLib.List
-- `register_uri_scheme` — callback parameter (needs an override)
 
 ## WebKitWebInspector
 
@@ -1408,6 +1419,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.TreeListModel`: __construct
 - `Gtk.Widget`: activate_action, allocate, insert_action_group
 - `JavaScriptCore.Value`: constructor_call, function_call, object_invoke_method
+- `WebKit.WebContext`: register_uri_scheme
 - `WebKit.WebResource`: get_data_finish
 
 ## Emitted files
@@ -1678,6 +1690,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `WebKit/WebKitSettings.cpp`
 - `WebKit/WebKitURIRequest.cpp`
 - `WebKit/WebKitURIResponse.cpp`
+- `WebKit/WebKitURISchemeRequest.cpp`
+- `WebKit/WebKitURISchemeResponse.cpp`
 - `WebKit/WebKitUserContentFilter.cpp`
 - `WebKit/WebKitUserContentFilterStore.cpp`
 - `WebKit/WebKitUserContentManager.cpp`

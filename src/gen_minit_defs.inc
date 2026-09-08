@@ -147,6 +147,10 @@ static void register_webkit_classes(zend_class_entry *ce_GObject, zend_class_ent
   phpgtk::register_class("WebKitURIRequest", ce_WebKitURIRequest, WEBKIT_TYPE_URI_REQUEST);
   zend_class_entry *ce_WebKitURIResponse = register_class_Gtk4_WebKitURIResponse(ce_GObject);
   phpgtk::register_class("WebKitURIResponse", ce_WebKitURIResponse, WEBKIT_TYPE_URI_RESPONSE);
+  zend_class_entry *ce_WebKitURISchemeRequest = register_class_Gtk4_WebKitURISchemeRequest(ce_GObject);
+  phpgtk::register_class("WebKitURISchemeRequest", ce_WebKitURISchemeRequest, WEBKIT_TYPE_URI_SCHEME_REQUEST);
+  zend_class_entry *ce_WebKitURISchemeResponse = register_class_Gtk4_WebKitURISchemeResponse(ce_GObject);
+  phpgtk::register_class("WebKitURISchemeResponse", ce_WebKitURISchemeResponse, WEBKIT_TYPE_URI_SCHEME_RESPONSE);
   zend_class_entry *ce_WebKitUserContentFilter = register_class_Gtk4_WebKitUserContentFilter();
   phpgtk::register_WebKitUserContentFilter(ce_WebKitUserContentFilter);
   zend_class_entry *ce_WebKitUserContentFilterStore = register_class_Gtk4_WebKitUserContentFilterStore(ce_GObject);

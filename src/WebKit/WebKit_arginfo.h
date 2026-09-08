@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 837f626be213456d30cf1096b0e80f0bfdc76dc8 */
+ * Stub hash: 71037ebededb336d4fc62c7cb2a9509390e80ba7 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitApplicationInfo___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -1197,6 +1197,49 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_WebKitURIResponse_get_uri arginfo_class_Gtk4_WebKitApplicationInfo_get_name
 
+#define arginfo_class_Gtk4_WebKitURISchemeRequest___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeRequest_finish, 0, 3, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, stream, Gtk4\\GInputStream, 0)
+	ZEND_ARG_TYPE_INFO(0, stream_length, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, content_type, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeRequest_finish_error, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, error, Gtk4\\GError, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeRequest_finish_with_response, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, response, Gtk4\\WebKitURISchemeResponse, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_body, 0, 0, Gtk4\\GInputStream, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_method arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitURISchemeRequest_get_path arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitURISchemeRequest_get_scheme arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitURISchemeRequest_get_uri arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitURISchemeRequest_get_web_view arginfo_class_Gtk4_WebKitDownload_get_web_view
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeResponse___construct, 0, 0, 2)
+	ZEND_ARG_OBJ_INFO(0, input_stream, Gtk4\\GInputStream, 0)
+	ZEND_ARG_TYPE_INFO(0, stream_length, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeResponse_set_content_type, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, content_type, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeResponse_set_status, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, status_code, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, reason_phrase, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_WebKitUserContentFilter___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
 
 #define arginfo_class_Gtk4_WebKitUserContentFilter_get_identifier arginfo_class_Gtk4_WebKitApplicationInfo_get_name
@@ -1396,6 +1439,11 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebContext_set_
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_WebKitWebContext_set_web_process_extensions_initialization_user_data arginfo_class_Gtk4_WebKitContextMenu_set_user_data
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebContext_register_uri_scheme, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, scheme, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, handler, IS_CALLABLE, 0)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_WebKitWebInspector___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
 
@@ -2358,6 +2406,19 @@ ZEND_METHOD(Gtk4_WebKitURIResponse, get_mime_type);
 ZEND_METHOD(Gtk4_WebKitURIResponse, get_status_code);
 ZEND_METHOD(Gtk4_WebKitURIResponse, get_suggested_filename);
 ZEND_METHOD(Gtk4_WebKitURIResponse, get_uri);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, finish);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, finish_error);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, finish_with_response);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_http_body);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_http_method);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_path);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_scheme);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_uri);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_web_view);
+ZEND_METHOD(Gtk4_WebKitURISchemeResponse, __construct);
+ZEND_METHOD(Gtk4_WebKitURISchemeResponse, set_content_type);
+ZEND_METHOD(Gtk4_WebKitURISchemeResponse, set_status);
 ZEND_METHOD(Gtk4_WebKitUserContentFilter, __construct);
 ZEND_METHOD(Gtk4_WebKitUserContentFilter, get_identifier);
 ZEND_METHOD(Gtk4_WebKitUserContentFilterStore, __construct);
@@ -2414,6 +2475,7 @@ ZEND_METHOD(Gtk4_WebKitWebContext, set_spell_checking_enabled);
 ZEND_METHOD(Gtk4_WebKitWebContext, set_spell_checking_languages);
 ZEND_METHOD(Gtk4_WebKitWebContext, set_web_process_extensions_directory);
 ZEND_METHOD(Gtk4_WebKitWebContext, set_web_process_extensions_initialization_user_data);
+ZEND_METHOD(Gtk4_WebKitWebContext, register_uri_scheme);
 ZEND_METHOD(Gtk4_WebKitWebInspector, __construct);
 ZEND_METHOD(Gtk4_WebKitWebInspector, attach);
 ZEND_METHOD(Gtk4_WebKitWebInspector, close);
@@ -3251,6 +3313,27 @@ static const zend_function_entry class_Gtk4_WebKitURIResponse_methods[] = {
 	ZEND_FE_END
 };
 
+static const zend_function_entry class_Gtk4_WebKitURISchemeRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, __construct, arginfo_class_Gtk4_WebKitURISchemeRequest___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, finish, arginfo_class_Gtk4_WebKitURISchemeRequest_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, finish_error, arginfo_class_Gtk4_WebKitURISchemeRequest_finish_error, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, finish_with_response, arginfo_class_Gtk4_WebKitURISchemeRequest_finish_with_response, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_http_body, arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_body, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_http_method, arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_method, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_path, arginfo_class_Gtk4_WebKitURISchemeRequest_get_path, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_scheme, arginfo_class_Gtk4_WebKitURISchemeRequest_get_scheme, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_uri, arginfo_class_Gtk4_WebKitURISchemeRequest_get_uri, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_web_view, arginfo_class_Gtk4_WebKitURISchemeRequest_get_web_view, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitURISchemeResponse_methods[] = {
+	ZEND_ME(Gtk4_WebKitURISchemeResponse, __construct, arginfo_class_Gtk4_WebKitURISchemeResponse___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeResponse, set_content_type, arginfo_class_Gtk4_WebKitURISchemeResponse_set_content_type, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeResponse, set_status, arginfo_class_Gtk4_WebKitURISchemeResponse_set_status, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
 static const zend_function_entry class_Gtk4_WebKitUserContentFilter_methods[] = {
 	ZEND_ME(Gtk4_WebKitUserContentFilter, __construct, arginfo_class_Gtk4_WebKitUserContentFilter___construct, ZEND_ACC_PRIVATE)
 	ZEND_ME(Gtk4_WebKitUserContentFilter, get_identifier, arginfo_class_Gtk4_WebKitUserContentFilter_get_identifier, ZEND_ACC_PUBLIC)
@@ -3338,6 +3421,7 @@ static const zend_function_entry class_Gtk4_WebKitWebContext_methods[] = {
 	ZEND_ME(Gtk4_WebKitWebContext, set_spell_checking_languages, arginfo_class_Gtk4_WebKitWebContext_set_spell_checking_languages, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebContext, set_web_process_extensions_directory, arginfo_class_Gtk4_WebKitWebContext_set_web_process_extensions_directory, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebContext, set_web_process_extensions_initialization_user_data, arginfo_class_Gtk4_WebKitWebContext_set_web_process_extensions_initialization_user_data, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, register_uri_scheme, arginfo_class_Gtk4_WebKitWebContext_register_uri_scheme, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -5111,6 +5195,26 @@ static zend_class_entry *register_class_Gtk4_WebKitURIResponse(zend_class_entry 
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitURIResponse", class_Gtk4_WebKitURIResponse_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitURISchemeRequest(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitURISchemeRequest", class_Gtk4_WebKitURISchemeRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitURISchemeResponse(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitURISchemeResponse", class_Gtk4_WebKitURISchemeResponse_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
 
 	return class_entry;
