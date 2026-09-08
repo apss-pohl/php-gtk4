@@ -9,6 +9,16 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Security
 
+- **Three preconditions GTK 4.22 added, refused at the boundary instead** — so the binding gives
+  the same answer on every GTK it supports, rather than passing the value on and letting a newer
+  GTK print a `CRITICAL` the caller never asked for. `GtkAdjustment::configure()` and
+  `GtkSpinButton::set_range()` now require the page to fit between the bounds
+  (`lower + page_size <= upper`, which 4.22 states as a `g_return_if_fail` and 4.14 took
+  silently; the spin button reaches it through its own adjustment's page size), and
+  `GtkIconPaintable::new_for_file()` requires a non-negative `size` and `scale` — 4.22 builds the
+  paintable with `g_object_new()`, whose properties are `g_param_spec_int(0, G_MAXINT)`, so -1 is
+  out of range there. All three are `ValueError`s naming the argument (`ArgumentGuardTest`).
+
 - Four more ways a well-typed PHP value ended the process, found by widening `RobustnessTest`
   a second time (see *Added*) so that the classes it could never build get swept too:
   - **`GMenuModel::get_item_link()` / `get_item_attribute_value()` with an index outside the
@@ -83,6 +93,13 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   download persistent.
 
 ### Added
+
+- **The GTK version in use is readable from PHP**: `Gtk::get_major_version()`,
+  `get_minor_version()`, `get_micro_version()` and `Gtk::check_version($major, $minor, $micro)`,
+  which answers `null` when the running GTK is at least that new and a sentence saying how it is
+  not otherwise. It is the library actually loaded, not the one the extension was compiled
+  against, and it is what a script asks before using something a later GTK added — `Gtk4\VERSION`
+  is php-gtk4's own version and says nothing about GTK.
 
 - **The extension installs with PIE**, and the stubs stay a Composer package:
 
