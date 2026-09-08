@@ -345,8 +345,9 @@ Gdk.TextureDownloader
 # messages), find controller, back/forward list, inspector, policy decisions, downloads,
 # resources, dialogs and permission requests - plus JavaScriptCore's value/context, which is
 # what evaluate_javascript() answers with and what a script message carries, and the URI scheme
-# request/response pair a custom scheme is answered with. Out: WebExtension (2.52 API),
-# WebProcess extensions.
+# request/response pair a custom scheme is answered with. Out: the WebExtensions API (2.52) -
+# Ubuntu builds WebKitGTK with ENABLE(WK_WEB_EXTENSIONS) off, so every entry point answers NULL
+# without a warning (README.md "Design") - and the WebProcess extensions.
 WebKit.WebViewBase
 WebKit.WebView
 WebKit.Settings

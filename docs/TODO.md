@@ -50,12 +50,6 @@ history; an item leaves this file when it is done or decided against, it is not 
   (`g_object_ref: assertion 'G_IS_OBJECT (object)' failed`); 4.14/4.16/4.18 delegate to
   `gtk_text_set_extra_menu()` and are quiet, and `main` still has it. The end state is right, so
   it is only a spurious complaint - pinned for `gtk>=4.20`, nothing to fix here.
-- **WebKitGTK, what the first wave left out** (`gen/report.md`, sections `WebKit*`/`JSC*`):
-  - `WebKitWebExtension` (the 2.52 API).
-
-  The web-process side (`WebKitWebProcessExtension-6.0.gir`) is *out*, not pending: it is a
-  separate library loaded into the web process, where a PHP extension cannot live. Windows stays
-  without a web view (WebView2 is the plan, docs/BUILD.md).
 - **A PHP-driven print preview.** `GtkPrintOperation` does not implement
   `GtkPrintOperationPreview` in PHP: its slots (`render_page`, `end_preview`, `is_selected`) are only
   valid inside the `preview` signal, where GTK keeps the state private, and dereference NULL

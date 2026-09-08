@@ -155,7 +155,14 @@ The decisions the extension is built on. `CLAUDE.md` has the working rules that 
   `src/WebKit/` and `src/JavaScriptCore/`, the two namespaces `CONDITIONAL_NAMESPACES` gates:
   left out of the source glob without the flag, registered under `#ifdef` with it, their tests
   skipped where the build lacks them (`tests/Features.php`), `Gtk4\FEATURES` saying which.
-  Linux only; Windows gets WebView2 later.
+  libsoup rides on the same gate (`SoupCookie`, `SoupMessageHeaders`: WebKitGTK's HTTP library
+  is how cookies and headers reach PHP). Linux only; Windows gets WebView2 later.
+  **WebKitGTK's WebExtensions API (2.52) is deliberately not bound**: Ubuntu builds WebKitGTK
+  with `ENABLE(WK_WEB_EXTENSIONS)` off, so every entry point - `webkit_web_extension_new()`,
+  every `webkit_web_extension_match_pattern_new_*()` - is a stub that answers NULL without so
+  much as a warning. The symbols and the GIR are there; the feature is not. Binding it against
+  the WebKitGTK this project builds and tests on would ship a class whose every constructor
+  throws. Revisit when a distribution enables it.
 - **Not carried over from php-gtk3**: varargs trampolines, a fresh wrapper per return, `GdkEvent`
   field copies, `Gtk::main()`, `connect()` user data, raw pointers stored in user data, a
   hand-maintained module table.
