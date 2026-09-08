@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3417965319b6b20800241da8298d19739a8aead2 */
+ * Stub hash: 8302b5eaae4732160564400388b72ec374044fd6 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GObject___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -54,6 +54,18 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GParamSpec_get_defaul
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_Gtk_init arginfo_class_Gtk4_GParamSpec_is_readable
+
+#define arginfo_class_Gtk4_Gtk_get_major_version arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_Gtk_get_minor_version arginfo_class_Gtk4_GParamSpec_get_flags
+
+#define arginfo_class_Gtk4_Gtk_get_micro_version arginfo_class_Gtk4_GParamSpec_get_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_Gtk_check_version, 0, 3, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, required_major, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, required_minor, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, required_micro, IS_LONG, 0)
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_Gtk_set_exception_handler, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, handler, IS_CALLABLE, 1)
@@ -416,6 +428,10 @@ ZEND_METHOD(Gtk4_GParamSpec, is_readable);
 ZEND_METHOD(Gtk4_GParamSpec, is_writable);
 ZEND_METHOD(Gtk4_GParamSpec, get_default_value);
 ZEND_METHOD(Gtk4_Gtk, init);
+ZEND_METHOD(Gtk4_Gtk, get_major_version);
+ZEND_METHOD(Gtk4_Gtk, get_minor_version);
+ZEND_METHOD(Gtk4_Gtk, get_micro_version);
+ZEND_METHOD(Gtk4_Gtk, check_version);
 ZEND_METHOD(Gtk4_Gtk, set_exception_handler);
 ZEND_METHOD(Gtk4_Gtk, set_exception_mode);
 ZEND_METHOD(Gtk4_Gtk, get_exception_mode);
@@ -547,6 +563,10 @@ static const zend_function_entry class_Gtk4_GParamSpec_methods[] = {
 
 static const zend_function_entry class_Gtk4_Gtk_methods[] = {
 	ZEND_ME(Gtk4_Gtk, init, arginfo_class_Gtk4_Gtk_init, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_Gtk, get_major_version, arginfo_class_Gtk4_Gtk_get_major_version, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_Gtk, get_minor_version, arginfo_class_Gtk4_Gtk_get_minor_version, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_Gtk, get_micro_version, arginfo_class_Gtk4_Gtk_get_micro_version, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_Gtk, check_version, arginfo_class_Gtk4_Gtk_check_version, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_Gtk, set_exception_handler, arginfo_class_Gtk4_Gtk_set_exception_handler, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_Gtk, set_exception_mode, arginfo_class_Gtk4_Gtk_set_exception_mode, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_Gtk, get_exception_mode, arginfo_class_Gtk4_Gtk_get_exception_mode, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)

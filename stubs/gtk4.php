@@ -222,6 +222,36 @@ final class Gtk
     {
         return false;
     }
+    /** The major version of the GTK library in use - 4 here (gtk_get_major_version). */
+    public static function get_major_version(): int
+    {
+        return 0;
+    }
+    /** The minor version of the GTK library in use (gtk_get_minor_version). */
+    public static function get_minor_version(): int
+    {
+        return 0;
+    }
+    /** The micro version of the GTK library in use (gtk_get_micro_version). */
+    public static function get_micro_version(): int
+    {
+        return 0;
+    }
+    /**
+     * Null when the GTK in use is compatible with the given version, otherwise a string saying
+     * how it is not (gtk_check_version): older than what was asked for, or a different major
+     * version, which is not binary compatible either way.
+     *
+     * This is the runtime library's answer, not what the extension was built against, so it is
+     * what a script should ask before using something a later GTK added.
+     */
+    public static function check_version(int $required_major, int $required_minor, int $required_micro): ?string
+    {
+        unset($required_major);
+        unset($required_minor);
+        unset($required_micro);
+        return null;
+    }
     /**
      * Install (or with null, remove) the callable that receives exceptions
      * thrown inside signal handlers and other callbacks. Signature:

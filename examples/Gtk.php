@@ -27,6 +27,13 @@ return Demo::page(
     function (GtkWindow $win): GtkWidget {
         $status = Demo::label(
             "<span size=\"x-large\"><b>Gtk::init()</b> succeeded</span>\n\n"
+            // The GTK actually loaded, which is not the one this was built against.
+            . sprintf(
+                "on GTK <b>%d.%d.%d</b>\n\n",
+                Gtk::get_major_version(),
+                Gtk::get_minor_version(),
+                Gtk::get_micro_version(),
+            )
             . 'click to throw a RuntimeException from the clicked handler',
         );
         $button = new GtkButton();

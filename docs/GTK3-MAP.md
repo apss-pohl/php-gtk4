@@ -7,7 +7,7 @@ implements it.
 Source of truth: php-gtk3 class headers (158 headers, ~2400 exported methods) vs.
 `src/gtk4.stub.php` + the MINIT registration block in `src/gtk4.cpp`.
 
-Status column regenerated 2026-09-07 by `gen/map-status.php` (run by `gen/gir.php --install`);
+Status column regenerated 2026-09-08 by `gen/map-status.php` (run by `gen/gir.php --install`);
 the notes are hand-written and may lag.
 
 ## Legend
@@ -24,13 +24,13 @@ the notes are hand-written and may lag.
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 76 | — |
+| ✅ implemented | 77 | — |
 | 🟡 partial | 1 | — |
-| ❌ to port (GTK 4 equivalent exists) | 18 | ~1750 |
+| ❌ to port (GTK 4 equivalent exists) | 17 | ~1750 |
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 4 | ~130 |
 
-php-gtk4 currently declares (2026-08-28, 65 names): `CairoContext`, `ExceptionMode`, `GAction`,
+php-gtk4 currently declares (2026-09-08, 65 names): `CairoContext`, `ExceptionMode`, `GAction`,
 `GActionGroup`, `GActionMap`, `GApplication`, `GApplicationFlags`, `GAsyncResult`, `GCancellable`, `GError`,
 `GLib`, `GListModel`, `GListStore`, `GMainLoop`, `GObject`, `GParamSpec`, `GSimpleAction`, `GdkDisplay`,
 `GdkMemoryFormat`, `GdkModifierType`, `GdkRGBA`, `GdkRectangle`, `GdkTexture`, `Gtk`, `GtkAlertDialog`,
@@ -62,7 +62,7 @@ is open work.
 | --- | --- | :---: | --- |
 | `Gtk::main_iteration`, `Gtk::events_pending`, `Gtk::main_do_event` | `GMainContext` iteration | ⛔ | GTK 4 has no `gtk_main()`. php-gtk4 policy: `GtkApplication::run()` or `GMainLoop::run()`. |
 | `Gtk::timeout_add`, `Gtk::source_remove` | `g_timeout_add` / `g_source_remove` | ✅ | `GLib::timeout_add()`, `GLib::idle_add()`, `GLib::source_remove()`. |
-| `Gtk::get_major_version` / `minor` / `micro` | `gtk_get_major_version` … | ❌ | php-gtk4 exposes `Gtk4\VERSION`, `BUILD_INFO`, `FEATURES` but not the runtime GTK version triple. |
+| `Gtk::get_major_version` / `minor` / `micro` | `gtk_get_major_version` … | ✅ | `Gtk::get_major_version()` / `get_minor_version()` / `get_micro_version()`, plus `Gtk::check_version()` for "is the GTK in use at least X". The library actually loaded, not the one built against. |
 | `Gtk::show_uri_on_window` | `gtk_show_uri` / `GtkUriLauncher` | ❌ | `gtk_show_uri` is deprecated in 4.10; port as `GtkUriLauncher`. |
 | `Gtk::is_destroyed` | — | ⛔ | php-gtk3 handle bookkeeping; php-gtk4 uses a toggle-ref hold + qdata identity instead. |
 | — | `Gtk::init`, `set_exception_handler`, `set_exception_mode` | ✅ | New in php-gtk4 (`Gtk4\ExceptionMode`). |

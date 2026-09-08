@@ -24,6 +24,62 @@ ZEND_METHOD(Gtk4_Gtk, init) {
 }
 
 /**
+ * static Gtk4\Gtk::get_major_version(): int
+ *
+ * The major version of the GTK library in use - 4 here (gtk_get_major_version).
+ */
+ZEND_METHOD(Gtk4_Gtk, get_major_version) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  RETURN_LONG(gtk_get_major_version());
+}
+
+/**
+ * static Gtk4\Gtk::get_minor_version(): int
+ *
+ * The minor version of the GTK library in use (gtk_get_minor_version).
+ */
+ZEND_METHOD(Gtk4_Gtk, get_minor_version) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  RETURN_LONG(gtk_get_minor_version());
+}
+
+/**
+ * static Gtk4\Gtk::get_micro_version(): int
+ *
+ * The micro version of the GTK library in use (gtk_get_micro_version).
+ */
+ZEND_METHOD(Gtk4_Gtk, get_micro_version) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  RETURN_LONG(gtk_get_micro_version());
+}
+
+/**
+ * static Gtk4\Gtk::check_version(int $required_major, int $required_minor, int $required_micro):
+ * ?string
+ *
+ * Null when the GTK in use is compatible with the given version, otherwise a string saying how it
+ * is not (gtk_check_version): older than what was asked for, or a different major version, which
+ * is not binary compatible either way.
+ */
+ZEND_METHOD(Gtk4_Gtk, check_version) {
+  zend_long required_major;
+  zend_long required_minor;
+  zend_long required_micro;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_LONG(required_major)
+  Z_PARAM_LONG(required_minor)
+  Z_PARAM_LONG(required_micro)
+  ZEND_PARSE_PARAMETERS_END();
+  if (!check_range<guint>(required_major, 1)) RETURN_THROWS();
+  if (!check_range<guint>(required_minor, 2)) RETURN_THROWS();
+  if (!check_range<guint>(required_micro, 3)) RETURN_THROWS();
+  const char *mismatch =
+      gtk_check_version(static_cast<guint>(required_major), static_cast<guint>(required_minor),
+                        static_cast<guint>(required_micro));
+  PHPGTK_RETURN_STRING_OR_NULL(mismatch);
+}
+
+/**
  * static Gtk4\Gtk::set_exception_handler(?callable $handler): void
  *
  * Install (or with null, remove) the callable that receives exceptions thrown inside signal
