@@ -97,7 +97,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `propagate_pointer` — return type gpointer
 - `propagate_value` — caller-allocates out parameter `value` of type GObject.Value
 - `return_new_error` — varargs
-- `return_new_error_literal` — parameter `domain` of type GLib.Quark
+- `return_new_error_literal` — skip.txt: a GQuark domain is an interned string GLib hands out, and PHP has no way to make a meaningful one - core/gerror owns error domains (bound since aliases resolve to the guint32 behind GQuark)
 - `return_pointer` — gpointer parameter
 - `return_prefixed_error` — varargs
 - `return_value` — parameter `result` of type GObject.Value
@@ -1320,7 +1320,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## WebKitWebsiteDataManager
 
-- `clear` — parameter `timespan` of type GLib.TimeSpan
 - `remove` — parameter `website_data` of type GLib.List
 - `__construct` — skip.txt: WebKitNetworkSession::get_website_data_manager() (the session sets its directories)
 - `smoke test` — no constructor or factory whose parameters can be sampled

@@ -3369,6 +3369,9 @@ final class WebKitWebsiteDataManager extends GObject
     /** WebKitWebsiteDataManager has no constructor in GTK: instances come from GTK, never from `new`. */
     private function __construct() {}
 
+    /** Asynchronously clear the website data of the given $types modified in the past $timespan. */
+    public function clear(int $types, int $timespan, ?GCancellable $cancellable, ?callable $callback): void {}
+
     /** Finish an asynchronous operation started with webkit_website_data_manager_clear() */
     public function clear_finish(GAsyncResult $result): bool {}
 

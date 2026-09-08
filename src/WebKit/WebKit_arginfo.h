@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: b89eaac6ec01336a0a2a9c4c4f8021ac2ca1203b */
+ * Stub hash: aeff46a4c01716579e8ea0365a141e56f01da870 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitApplicationInfo___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -1825,6 +1825,13 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_WebKitWebsiteDataManager___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebsiteDataManager_clear, 0, 4, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, types, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, timespan, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_WebKitWebsiteDataManager_clear_finish arginfo_class_Gtk4_WebKitCookieManager_add_cookie_finish
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebsiteDataManager_fetch, 0, 3, IS_VOID, 0)
@@ -2538,6 +2545,7 @@ ZEND_METHOD(Gtk4_WebKitWebsiteDataAccessPermissionRequest, __construct);
 ZEND_METHOD(Gtk4_WebKitWebsiteDataAccessPermissionRequest, get_current_domain);
 ZEND_METHOD(Gtk4_WebKitWebsiteDataAccessPermissionRequest, get_requesting_domain);
 ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, __construct);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, clear);
 ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, clear_finish);
 ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, fetch);
 ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, fetch_finish);
@@ -3494,6 +3502,7 @@ static const zend_function_entry class_Gtk4_WebKitWebsiteDataAccessPermissionReq
 
 static const zend_function_entry class_Gtk4_WebKitWebsiteDataManager_methods[] = {
 	ZEND_ME(Gtk4_WebKitWebsiteDataManager, __construct, arginfo_class_Gtk4_WebKitWebsiteDataManager___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitWebsiteDataManager, clear, arginfo_class_Gtk4_WebKitWebsiteDataManager_clear, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebsiteDataManager, clear_finish, arginfo_class_Gtk4_WebKitWebsiteDataManager_clear_finish, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebsiteDataManager, fetch, arginfo_class_Gtk4_WebKitWebsiteDataManager_fetch, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebsiteDataManager, fetch_finish, arginfo_class_Gtk4_WebKitWebsiteDataManager_fetch_finish, ZEND_ACC_PUBLIC)

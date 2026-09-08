@@ -34,6 +34,22 @@ final class Gir
     /** @var array<string, string> namespace -> c:identifier-prefixes (Gtk, Gdk, G, ...) */
     public array $prefixes = [];
 
+    /**
+     * GIR `<alias>` targets, qualified name -> the builtin it stands for.
+     *
+     * An alias is a typedef, and GIR names the typedef wherever the C header does: a `GTimeSpan`
+     * parameter arrives as `GLib.TimeSpan`, which no arm of the type map matches, so the member
+     * was skipped for a type that is an integer with a name. Read through it instead.
+     *
+     * Static because {@see type()} is, and one process loads one set of GIRs. Only aliases of
+     * builtins are collected, and never of `gpointer`: the pointer typedefs (`GMutexLocker`,
+     * `GMainContextPusher`) are opaque handles GLib hands out, and resolving them would turn one
+     * refusal into another - `G_TYPE_POINTER` is unsupported on purpose.
+     *
+     * @var array<string, Type>
+     */
+    private static array $aliases = [];
+
     public function load(string $file): void
     {
         $doc = new \DOMDocument();
@@ -48,6 +64,21 @@ final class Gir
         assert($nsNode instanceof \DOMElement);
         $ns = $nsNode->getAttribute('name');
         $this->prefixes[$ns] = explode(',', $nsNode->getAttributeNS(NS_C, 'identifier-prefixes'))[0];
+
+        // Before the kinds below: an alias may be declared after the class whose signature uses
+        // it (GIR is alphabetical), and namespaces reference each other's.
+        $aliasNodes = $x->query('g:alias', $nsNode);
+        foreach ($aliasNodes === false ? [] : $aliasNodes as $al) {
+            assert($al instanceof \DOMElement);
+            $target = self::type($x, $ns, $al);
+            if (
+                $target !== null
+                && preg_match('/^g[a-z0-9]+$/', $target->name) === 1
+                && !in_array($target->name, ['gpointer', 'gconstpointer'], true)
+            ) {
+                self::$aliases[$ns . '.' . $al->getAttribute('name')] = $target;
+            }
+        }
 
         $kinds = 'g:class|g:interface|g:enumeration|g:bitfield|g:record|g:callback|g:alias';
         foreach ($x->query($kinds, $nsNode) as $el) {
@@ -192,6 +223,12 @@ final class Gir
             $qualified = $builtin
                 ? $name
                 : self::qualify($ns, $name);
+            // Through the typedef, keeping the c:type the element itself carries: the generated
+            // cast then reads `static_cast<GTimeSpan>`, which is what the C function takes.
+            $alias = self::$aliases[$qualified] ?? null;
+            if ($alias !== null) {
+                return new Type($alias->name, $t->getAttributeNS(NS_C, 'type') ?: $alias->ctype, false, $el);
+            }
             return new Type($qualified, $t->getAttributeNS(NS_C, 'type') ?: null, false, $el);
         }
         return null;

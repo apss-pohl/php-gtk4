@@ -27588,6 +27588,14 @@ final class WebKitWebsiteDataManager extends GObject
     private function __construct()
     {
     }
+    /** Asynchronously clear the website data of the given $types modified in the past $timespan. */
+    public function clear(int $types, int $timespan, ?GCancellable $cancellable, ?callable $callback): void
+    {
+        unset($types);
+        unset($timespan);
+        unset($cancellable);
+        unset($callback);
+    }
     /** Finish an asynchronous operation started with webkit_website_data_manager_clear() */
     public function clear_finish(GAsyncResult $result): bool
     {

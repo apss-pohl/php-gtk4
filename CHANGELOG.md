@@ -94,6 +94,15 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **`WebKitWebsiteDataManager::clear()`**, and every other member GIR describes with a type
+  alias. An alias is a typedef - `GTimeSpan` is a `gint64` with a name - and GIR uses the alias
+  wherever the C header uses the typedef, which no arm of the generator's type map matched, so
+  the member was skipped over an integer. The loader now reads through aliases of builtins (never
+  of `gpointer`: those typedefs are opaque handles, and `G_TYPE_POINTER` is unsupported on
+  purpose). `clear()` is the one member that unlocks today; `GTask::return_new_error_literal()`
+  also became reachable and is deliberately skipped, because a `GQuark` domain is an interned
+  string GLib hands out and PHP has no way to make a meaningful one.
+
 - **The GTK version in use is readable from PHP**: `Gtk::get_major_version()`,
   `get_minor_version()`, `get_micro_version()` and `Gtk::check_version($major, $minor, $micro)`,
   which answers `null` when the running GTK is at least that new and a sentence saying how it is

@@ -91,3 +91,4 @@ JavaScriptCore.Value.new_typed_array   a length JavaScriptCore cannot allocate i
 JavaScriptCore.Value.new_typed_array_with_buffer   as new_typed_array: an offset/length outside the buffer asserts inside JavaScriptCore
 WebKit.FindController.property:options   WebKit's get_property writes a flags GValue with g_value_set_uint() (a CRITICAL and no value); get_options() reads it fine
 WebKit.PrintOperation.property:web-view   WebKit's get_property hands the GValue the view without a reference of its own (g_value_take_object on a pointer it does not own), so every read of the property dropped one reference of the web view and the second one disposed it; get_web_view() borrows correctly
+Gio.Task.return_new_error_literal   a GQuark domain is an interned string GLib hands out, and PHP has no way to make a meaningful one - core/gerror owns error domains (bound since aliases resolve to the guint32 behind GQuark)
