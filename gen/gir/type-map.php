@@ -639,6 +639,13 @@ final class TypeMap
                 'phpType' => phpClass($node),
                 'toZval' => fn(string $z) => ["enum_to_php($typeMacro, static_cast<gint>($name), $z);"]];
         }
+        // Flags stay ints on the PHP side (core/enums: a GFlags type is a constants class, not a
+        // PHP enum), so a flags out parameter is a long out with the bitfield's C type.
+        if ($node->kind === 'bitfield' && $node->ctype !== null) {
+            return $base + ['ctype' => $node->ctype, 'init' => "static_cast<{$node->ctype}>(0)",
+                'kind' => 'long', 'phpType' => 'int', 'add' => 'add_next_index_long',
+                'toZval' => fn(string $z) => ["ZVAL_LONG($z, static_cast<zend_long>($name));"]];
+        }
         if (in_array($node->kind, ['class', 'interface'], true) && $this->phpTypeOfNode($t->name) !== null) {
             return $base + ['ctype' => "{$node->ctype} *", 'init' => 'nullptr', 'kind' => 'object',
                 'phpType' => '?' . $this->phpTypeOfNode($t->name),

@@ -272,6 +272,8 @@
   phpgtk::register_class("GSimpleAction", ce_GSimpleAction, G_TYPE_SIMPLE_ACTION);
   zend_class_entry *ce_GTask = register_class_Gtk4_GTask(ce_GObject, ce_GAsyncResult);
   phpgtk::register_class("GTask", ce_GTask, G_TYPE_TASK);
+  zend_class_entry *ce_GTlsCertificate = register_class_Gtk4_GTlsCertificate(ce_GObject);
+  phpgtk::register_class("GTlsCertificate", ce_GTlsCertificate, G_TYPE_TLS_CERTIFICATE);
   zend_class_entry *ce_GdkClipboard = register_class_Gtk4_GdkClipboard(ce_GObject);
   phpgtk::register_class("GdkClipboard", ce_GdkClipboard, GDK_TYPE_CLIPBOARD);
   zend_class_entry *ce_GdkContentFormats = register_class_Gtk4_GdkContentFormats();

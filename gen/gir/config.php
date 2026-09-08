@@ -142,6 +142,8 @@ const NULLABLE_RETURNS = [
     // A request PHP built with new WebKitURIRequest($uri) is not attached to a message yet
     // and has no headers at all; WebKit documents neither the NULL nor a (nullable).
     'webkit_uri_request_get_http_headers' => 'NULL for a request that is not being sent',
+    // a credential built from a user name and password carries no certificate
+    'webkit_credential_get_certificate' => 'NULL unless the credential was made for a certificate',
 ];
 
 /**

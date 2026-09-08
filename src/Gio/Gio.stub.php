@@ -1210,6 +1210,90 @@ class GTask extends GObject implements GAsyncResult
 }
 
 /**
+ * A certificate used for TLS authentication and encryption. This can represent either a
+ * certificate only (eg, the certificate received by a client from a server), or the combination of
+ * a certificate and a private key (which is needed when acting as a `TlsServerConnection`).
+ *
+ * @property ?string $certificate_pem
+ * @property ?GTlsCertificate $issuer
+ * @property-read ?string $issuer_name
+ * @property-write ?string $password
+ * @property ?string $pkcs11_uri
+ * @property ?string $private_key_pem
+ * @property ?string $private_key_pkcs11_uri
+ * @property-read ?string $subject_name
+ */
+class GTlsCertificate extends GObject
+{
+    /** GTlsCertificate is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Creates a #GTlsCertificate from the data in $file. */
+    public static function new_from_file(string $file): GTlsCertificate {}
+
+    /** Creates a #GTlsCertificate from the data in $file. */
+    public static function new_from_file_with_password(string $file, string $password): GTlsCertificate {}
+
+    /**
+     * Creates a #GTlsCertificate from the PEM-encoded data in $cert_file and $key_file. The
+     * returned certificate will be the first certificate found in $cert_file. As of GLib 2.44, if
+     * $cert_file contains more certificates it will try to load a certificate chain. All
+     * certificates will be verified in the order found (top-level certificate should be the last
+     * one in the file) and the #GTlsCertificate:issuer property of each certificate will be set
+     * accordingly if the verification succeeds. If any certificate in the chain cannot be
+     * verified, the first certificate in the file will still be returned.
+     */
+    public static function new_from_files(string $cert_file, string $key_file): GTlsCertificate {}
+
+    /**
+     * Creates a #GTlsCertificate from the PEM-encoded data in $data. If $data includes both a
+     * certificate and a private key, then the returned certificate will include the private key
+     * data as well. (See the #GTlsCertificate:private-key-pem property for information about
+     * supported formats.)
+     */
+    public static function new_from_pem(string $data, int $length): GTlsCertificate {}
+
+    /**
+     * Creates a #GTlsCertificate from a [PKCS
+     * \#11](https://docs.oasis-open.org/pkcs11/pkcs11-base/v3.0/os/pkcs11-base-v3.0-os.html) URI.
+     */
+    public static function new_from_pkcs11_uris(string $pkcs11_uri, ?string $private_key_pkcs11_uri = null): GTlsCertificate {}
+
+    /**
+     * Creates one or more #GTlsCertificates from the PEM-encoded data in $file. If $file cannot be
+     * read or parsed, the function will return `null` and set $error. If $file does not contain
+     * any PEM-encoded certificates, this will return an empty list and not set $error.
+     *
+     * @return list<GTlsCertificate>
+     */
+    public static function list_new_from_file(string $file): array {}
+
+    /**
+     * Gets the value of #GTlsCertificate:dns-names.
+     *
+     * @return list<string>
+     */
+    public function get_dns_names(): array {}
+
+    /** Gets the #GTlsCertificate representing $cert's issuer, if known */
+    public function get_issuer(): ?GTlsCertificate {}
+
+    /** Returns the issuer name from the certificate. */
+    public function get_issuer_name(): ?string {}
+
+    /** Returns the subject name from the certificate. */
+    public function get_subject_name(): ?string {}
+
+    /**
+     * Check if two #GTlsCertificate objects represent the same certificate. The raw DER byte data
+     * of the two certificates are checked for equality. This has the effect that two certificates
+     * may compare equal even if their #GTlsCertificate:issuer, #GTlsCertificate:private-key, or
+     * #GTlsCertificate:private-key-pem properties differ.
+     */
+    public function is_same(GTlsCertificate $cert_two): bool {}
+}
+
+/**
  * A set of flags describing TLS certification validation. This can be used to describe why a
  * particular certificate was rejected (for example, in #GTlsConnection::accept-certificate).
  */

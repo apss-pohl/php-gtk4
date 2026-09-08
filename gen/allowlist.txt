@@ -449,6 +449,13 @@ WebKit.UserMessageError
 Gio.InputStream
 Gio.MemoryInputStream
 
+# TLS certificates: what a web view's get_tls_info() answers with, what a credential can carry
+# and what a network session can be told to accept for a host. Plain GIO (abstract - the TLS
+# backend provides the concrete class - so PHP builds one through new_from_pem()), so it is not
+# gated on WebKit even though WebKit is what asks for it today.
+Gio.TlsCertificate
+Gio.TlsCertificateFlags
+
 # libsoup 3, through WebKitGTK only (CONDITIONAL_NAMESPACES): the cookie a WebKitCookieManager
 # stores or deletes, and the HTTP headers of a request or a response.
 Soup.Cookie

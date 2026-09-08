@@ -526,8 +526,14 @@ final class WebKitCredential
     /** Create a new credential from the provided username, password and persistence mode. */
     public function __construct(string $username, string $password, WebKitCredentialPersistence $persistence) {}
 
+    /** Create a new credential from the $certificate and persistence mode. */
+    public static function new_for_certificate(?GTlsCertificate $certificate, WebKitCredentialPersistence $persistence): WebKitCredential {}
+
     /** Create a new credential from the provided PIN and persistence mode. */
     public static function new_for_certificate_pin(string $pin, WebKitCredentialPersistence $persistence): WebKitCredential {}
+
+    /** Get the certificate currently held by this #WebKitCredential. */
+    public function get_certificate(): ?GTlsCertificate {}
 
     /** Get the password currently held by this #WebKitCredential. */
     public function get_password(): string {}
@@ -1455,6 +1461,9 @@ final class WebKitNetworkSession extends GObject
 
     /** Sets $settings as the #WebKitMemoryPressureSettings. */
     public static function set_memory_pressure_settings(WebKitMemoryPressureSettings $settings): void {}
+
+    /** Ignore further TLS errors on the $host for the certificate present in $info. */
+    public function allow_tls_certificate_for_host(GTlsCertificate $certificate, string $host): void {}
 
     /** Requests downloading of the specified URI string. */
     public function download_uri(string $uri): WebKitDownload {}
@@ -3095,6 +3104,13 @@ class WebKitWebView extends WebKitWebViewBase
     /** Gets the value of the #WebKitWebView:title property. */
     public function get_title(): string {}
 
+    /**
+     * Retrieves the #GTlsCertificate associated with the main resource of $web_view.
+     *
+     * @return array{?GTlsCertificate, int}|null
+     */
+    public function get_tls_info(): ?array {}
+
     /** Returns the current active URI of $web_view. */
     public function get_uri(): string {}
 
@@ -3297,6 +3313,13 @@ class WebKitWebView extends WebKitWebViewBase
      * subclass, for `parent::vfunc_load_failed()` from an override.
      */
     public function vfunc_load_failed(WebKitLoadEvent $load_event, string $failing_uri, GError $error): bool {}
+
+    /**
+     * Native `load_failed_with_tls_errors` (WebViewClass.load_failed_with_tls_errors): the GTK
+     * implementation below any PHP subclass, for `parent::vfunc_load_failed_with_tls_errors()`
+     * from an override.
+     */
+    public function vfunc_load_failed_with_tls_errors(string $failing_uri, GTlsCertificate $certificate, int $errors): bool {}
 
     /**
      * Native `mouse_target_changed` (WebViewClass.mouse_target_changed): the GTK implementation

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: ff2ef31a7308def108fc74d300cbc94e6b9b6293 */
+ * Stub hash: 003a947d2011246704254fd3f6d2287478318894 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkClipboard___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -212,6 +212,12 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GdkDisplay_supports_shadow_width arginfo_class_Gtk4_GdkClipboard_is_local
 
 #define arginfo_class_Gtk4_GdkDisplay_sync arginfo_class_Gtk4_GdkContentProvider_content_changed
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkDisplay_translate_key, 0, 3, IS_ARRAY, 1)
+	ZEND_ARG_TYPE_INFO(0, keycode, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, state, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, group, IS_LONG, 0)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkDrag___construct arginfo_class_Gtk4_GdkClipboard___construct
 
@@ -552,6 +558,7 @@ ZEND_METHOD(Gtk4_GdkDisplay, prepare_gl);
 ZEND_METHOD(Gtk4_GdkDisplay, supports_input_shapes);
 ZEND_METHOD(Gtk4_GdkDisplay, supports_shadow_width);
 ZEND_METHOD(Gtk4_GdkDisplay, sync);
+ZEND_METHOD(Gtk4_GdkDisplay, translate_key);
 ZEND_METHOD(Gtk4_GdkDrag, __construct);
 ZEND_METHOD(Gtk4_GdkDrag, drop_done);
 ZEND_METHOD(Gtk4_GdkDrag, get_actions);
@@ -718,6 +725,7 @@ static const zend_function_entry class_Gtk4_GdkDisplay_methods[] = {
 	ZEND_ME(Gtk4_GdkDisplay, supports_input_shapes, arginfo_class_Gtk4_GdkDisplay_supports_input_shapes, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, supports_shadow_width, arginfo_class_Gtk4_GdkDisplay_supports_shadow_width, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, sync, arginfo_class_Gtk4_GdkDisplay_sync, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDisplay, translate_key, arginfo_class_Gtk4_GdkDisplay_translate_key, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 

@@ -96,6 +96,27 @@ ZEND_METHOD(Gtk4_WebKitNetworkSession, set_memory_pressure_settings) {
 }
 
 /**
+ * Gtk4\WebKitNetworkSession::allow_tls_certificate_for_host(GTlsCertificate $certificate, string
+ * $host): void
+ *
+ * Ignore further TLS errors on the $host for the certificate present in $info.
+ */
+ZEND_METHOD(Gtk4_WebKitNetworkSession, allow_tls_certificate_for_host) {
+  zval *certificate;
+  zend_string *host;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(certificate, class_for_gtype(G_TYPE_TLS_CERTIFICATE))
+  Z_PARAM_STR(host)
+  ZEND_PARSE_PARAMETERS_END();
+  WebKitNetworkSession *self = PHPGTK_SELF(WebKitNetworkSession, WEBKIT_TYPE_NETWORK_SESSION);
+  GObject *certificate_o = unwrap(certificate, G_TYPE_TLS_CERTIFICATE);
+  if (certificate_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_utf8(host, 2)) RETURN_THROWS();
+  webkit_network_session_allow_tls_certificate_for_host(self, G_TLS_CERTIFICATE(certificate_o),
+                                                        ZSTR_VAL(host));
+}
+
+/**
  * Gtk4\WebKitNetworkSession::download_uri(string $uri): WebKitDownload
  *
  * Requests downloading of the specified URI string.

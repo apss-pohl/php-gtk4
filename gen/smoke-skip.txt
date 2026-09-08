@@ -1,6 +1,8 @@
 # <Ns.Type.member>  <reason> - members (or `*` for the class) left out of the generated smoke
 # tests (tests/Generated): round trips that GTK legitimately does not honour.
 Gdk.Texture.*   factories need real image data (TextureTest covers it)
+Gio.TlsCertificate.*   every factory needs a real certificate: 'smoke' is neither a PEM nor a
+#   file that holds one (GTlsCertificateTest builds one from a PEM literal)
 Gio.Application.set_application_id   'smoke' is not a valid application id (reverse-DNS); GTK rejects it
 Gio.Application.application_id       same, as a property
 Gio.Application.set_resource_base_path   must start with '/'; 'smoke' is rejected

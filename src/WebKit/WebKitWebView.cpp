@@ -773,6 +773,30 @@ ZEND_METHOD(Gtk4_WebKitWebView, get_title) {
 }
 
 /**
+ * Gtk4\WebKitWebView::get_tls_info(): ?array
+ *
+ * Retrieves the #GTlsCertificate associated with the main resource of $web_view.
+ */
+ZEND_METHOD(Gtk4_WebKitWebView, get_tls_info) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  WebKitWebView *self = PHPGTK_SELF(WebKitWebView, WEBKIT_TYPE_WEB_VIEW);
+  GTlsCertificate *certificate = nullptr;
+  GTlsCertificateFlags errors = static_cast<GTlsCertificateFlags>(0);
+  if (!webkit_web_view_get_tls_info(self, &certificate, &errors)) RETURN_NULL();
+  array_init_size(return_value, 2);
+  {
+    zval item;
+    wrap(certificate != nullptr ? G_OBJECT(certificate) : nullptr, &item);
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(errors));
+    add_next_index_zval(return_value, &item);
+  }
+}
+
+/**
  * Gtk4\WebKitWebView::get_uri(): string
  *
  * Returns the current active URI of $web_view.
@@ -1920,6 +1944,53 @@ void vfunc_install_load_failed(gpointer klass) {
   WEBKIT_WEB_VIEW_CLASS(klass)->load_failed = vfunc_thunk_load_failed;
 }
 
+// vfunc thunk: WEBKIT_WEB_VIEW_CLASS->load_failed_with_tls_errors ->
+// $this->vfunc_load_failed_with_tls_errors() on a PHP subclass
+gboolean vfunc_thunk_load_failed_with_tls_errors(WebKitWebView *self, const gchar *failing_uri,
+                                                 GTlsCertificate *certificate,
+                                                 GTlsCertificateFlags errors) {
+  zval zself;
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_load_failed_with_tls_errors", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
+    auto *native = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+    return native->load_failed_with_tls_errors != nullptr
+               ? native->load_failed_with_tls_errors(self, failing_uri, certificate, errors)
+               : FALSE;
+  }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
+  std::array<zval, 3> args{};
+  zval *argv = args.data();
+  if (failing_uri == nullptr) {
+    ZVAL_NULL(&argv[0]);
+  } else {
+    ZVAL_STRING(&argv[0], failing_uri);
+  }
+  wrap(certificate != nullptr ? G_OBJECT(certificate) : nullptr, &argv[1]);
+  ZVAL_LONG(&argv[2], static_cast<zend_long>(errors));
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  gboolean result = FALSE;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 3, args.data());
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    result = zend_is_true(&ret) ? TRUE : FALSE;
+  }
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("WebKitWebView::vfunc_load_failed_with_tls_errors");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
+  return result;
+}
+
+// vfunc installer: WEBKIT_WEB_VIEW_CLASS->load_failed_with_tls_errors (called from class_init /
+// iface_init of a PHP subtype)
+void vfunc_install_load_failed_with_tls_errors(gpointer klass) {
+  WEBKIT_WEB_VIEW_CLASS(klass)->load_failed_with_tls_errors =
+      vfunc_thunk_load_failed_with_tls_errors;
+}
+
 // vfunc thunk: WEBKIT_WEB_VIEW_CLASS->mouse_target_changed -> $this->vfunc_mouse_target_changed()
 // on a PHP subclass
 void vfunc_thunk_mouse_target_changed(WebKitWebView *self, WebKitHitTestResult *hit_test_result,
@@ -2792,6 +2863,44 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_load_failed) {
 }
 
 /**
+ * Gtk4\WebKitWebView::vfunc_load_failed_with_tls_errors(string $failing_uri, GTlsCertificate
+ * $certificate, int $errors): bool
+ *
+ * Native `load_failed_with_tls_errors` (WebViewClass.load_failed_with_tls_errors): the GTK
+ * implementation below any PHP subclass, for `parent::vfunc_load_failed_with_tls_errors()` from an
+ * override.
+ */
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_load_failed_with_tls_errors) {
+  zend_string *failing_uri;
+  zval *certificate;
+  zend_long errors;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_STR(failing_uri)
+  Z_PARAM_OBJECT_OF_CLASS(certificate, class_for_gtype(G_TYPE_TLS_CERTIFICATE))
+  Z_PARAM_LONG(errors)
+  ZEND_PARSE_PARAMETERS_END();
+  WebKitWebView *self = PHPGTK_SELF(WebKitWebView, WEBKIT_TYPE_WEB_VIEW);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(spl_ce_LogicException, 0,
+                            "WebKitWebView::vfunc_load_failed_with_tls_errors(): for parent:: "
+                            "chaining from a PHP subclass "
+                            "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->load_failed_with_tls_errors == nullptr) {
+    RETURN_FALSE;
+  }
+  if (!phpgtk::check_utf8(failing_uri, 1)) RETURN_THROWS();
+  GObject *certificate_o = unwrap(certificate, G_TYPE_TLS_CERTIFICATE);
+  if (certificate_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_flags(G_TYPE_TLS_CERTIFICATE_FLAGS, errors, 3)) RETURN_THROWS();
+  RETURN_BOOL(klass->load_failed_with_tls_errors(self, ZSTR_VAL(failing_uri),
+                                                 G_TLS_CERTIFICATE(certificate_o),
+                                                 static_cast<GTlsCertificateFlags>(errors)));
+}
+
+/**
  * Gtk4\WebKitWebView::vfunc_mouse_target_changed(WebKitHitTestResult $hit_test_result, int
  * $modifiers): void
  *
@@ -3257,6 +3366,8 @@ void register_vfuncs_WebKitWebView() {
   register_vfunc(WEBKIT_TYPE_WEB_VIEW, "leave_fullscreen", vfunc_install_leave_fullscreen);
   register_vfunc(WEBKIT_TYPE_WEB_VIEW, "load_changed", vfunc_install_load_changed);
   register_vfunc(WEBKIT_TYPE_WEB_VIEW, "load_failed", vfunc_install_load_failed);
+  register_vfunc(WEBKIT_TYPE_WEB_VIEW, "load_failed_with_tls_errors",
+                 vfunc_install_load_failed_with_tls_errors);
   register_vfunc(WEBKIT_TYPE_WEB_VIEW, "mouse_target_changed", vfunc_install_mouse_target_changed);
   register_vfunc(WEBKIT_TYPE_WEB_VIEW, "permission_request", vfunc_install_permission_request);
   register_vfunc(WEBKIT_TYPE_WEB_VIEW, "print", vfunc_install_print);

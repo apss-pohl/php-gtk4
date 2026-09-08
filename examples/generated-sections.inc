@@ -9,6 +9,7 @@ return [
     'Generated' => [
         'GInputStream',
         'GMemoryInputStream',
+        'GTlsCertificate',
         'GTlsCertificateFlags',
         'GTlsPasswordFlags',
         'GdkClipboard',

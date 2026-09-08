@@ -94,6 +94,18 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **TLS certificates**: `GTlsCertificate` from GIO, which is what a web view reports about the
+  page it loaded. Five members came with it — `WebKitWebView::get_tls_info()` and its
+  `load_failed_with_tls_errors` vfunc, `WebKitNetworkSession::allow_tls_certificate_for_host()`,
+  and `WebKitCredential::new_for_certificate()` / `get_certificate()`. The class is abstract in
+  GIO (the concrete one belongs to the TLS backend), so PHP builds a certificate through
+  `new_from_pem()`, `new_from_file()` or `list_new_from_file()` and never with `new`.
+
+  Two things had to be taught along the way: a **flags out parameter** is now a plain int, which
+  is what `get_tls_info()` needed and what also brought `GdkDisplay::translate_key()` back; and
+  `wrap_boxed()` answers a **`GBytes` with a PHP string** the way every other path already did,
+  so `get_dns_names()` is a `list<string>` instead of a TypeError about an unregistered type.
+
 - **A `throws` function returning a list dropped its `GError`.** The generator emitted the
   `GError **` and never looked at it, so a failed `WebKitCookieManager::get_cookies_finish()`,
   `get_all_cookies_finish()`, `WebKitWebsiteDataManager::fetch_finish()` or either

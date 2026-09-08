@@ -127,6 +127,24 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `set_source_tag` — gpointer parameter
 - `set_task_data` — gpointer parameter
 
+## GTlsCertificate
+
+- `new_from_pkcs12` — parameter `data` of type array (C array)
+- `get_ip_addresses` — list of Gio.InetAddress
+- `get_not_valid_after` — return type GLib.DateTime
+- `get_not_valid_before` — return type GLib.DateTime
+- `verify` — parameter `identity` of type Gio.SocketConnectable
+- `__construct` — skip.txt: abstract, and the properties belong to the TLS backend's subclass: g_object_new() on a PHP subtype answers every construct property with "invalid property id N ... in Php__..." (gio/gtlscertificate.c) and leaves an object with no certificate behind it - build one with new_from_pem() / new_from_file()
+- `vfunc verify` — parameter `identity` of type Gio.SocketConnectable
+- `property certificate` — property type GLib.ByteArray not mappable
+- `property dns-names` — property type GLib.PtrArray not mappable
+- `property ip-addresses` — property type GLib.PtrArray not mappable
+- `property not-valid-after` — property type GLib.DateTime not mappable
+- `property not-valid-before` — property type GLib.DateTime not mappable
+- `property pkcs12-data` — property type GLib.ByteArray not mappable
+- `property private-key` — property type GLib.ByteArray not mappable
+- `smoke test` — smoke-skip.txt: every factory needs a real certificate: 'smoke' is neither a PEM nor a
+
 ## GdkClipboard
 
 - `read_finish` — return Gio.InputStream plus out parameters
@@ -171,7 +189,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `map_keyval` — out parameter `keys` of type array
 - `notify_startup_complete` — deprecated (4.10)
 - `put_event` — deprecated (4.10)
-- `translate_key` — out parameter `consumed` of type Gdk.ModifierType
 - `__construct` — skip.txt: GDK owns displays (GdkDisplay::get_default() / open()); a PHP subtype would have no backend behind it
 - `property dmabuf-formats` — property type Gdk.DmabufFormats not mappable
 - `smoke test` — no constructor or factory whose parameters can be sampled
@@ -1063,10 +1080,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## WebKitCredential
 
 - `PHP subclasses` — constructor argument username is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain WebKitCredential
-- `new_for_certificate` — parameter `certificate` of type Gio.TlsCertificate
 - `copy` — memory management belongs to the handle (clone / destructor)
 - `free` — memory management belongs to the handle (clone / destructor)
-- `get_certificate` — return type Gio.TlsCertificate (not in the closure)
 
 ## WebKitDeviceInfoPermissionRequest
 
@@ -1182,10 +1197,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `copy` — memory management belongs to the handle (clone / destructor)
 - `free` — memory management belongs to the handle (clone / destructor)
-
-## WebKitNetworkSession
-
-- `allow_tls_certificate_for_host` — parameter `certificate` of type Gio.TlsCertificate
 
 ## WebKitNotification
 
@@ -1328,11 +1339,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `__construct` — skip.txt: WebKitWebView::get_main_resource() / ::resource-load-started
 - `smoke test` — no constructor or factory whose parameters can be sampled
-
-## WebKitWebView
-
-- `get_tls_info` — out parameter `certificate` of type Gio.TlsCertificate
-- `vfunc load_failed_with_tls_errors` — parameter `certificate` of type Gio.TlsCertificate
 
 ## WebKitWebViewBase
 
@@ -1584,6 +1590,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GMenuModel.cpp`
 - `Gio/GSimpleAction.cpp`
 - `Gio/GTask.cpp`
+- `Gio/GTlsCertificate.cpp`
 - `Gio/Gio.stub.php`
 - `Gdk/GdkClipboard.cpp`
 - `Gdk/GdkContentFormats.cpp`

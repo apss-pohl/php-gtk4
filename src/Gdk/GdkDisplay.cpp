@@ -228,3 +228,52 @@ ZEND_METHOD(Gtk4_GdkDisplay, sync) {
   GdkDisplay *self = PHPGTK_SELF(GdkDisplay, GDK_TYPE_DISPLAY);
   gdk_display_sync(self);
 }
+
+/**
+ * Gtk4\GdkDisplay::translate_key(int $keycode, int $state, int $group): ?array
+ *
+ * Translates the contents of a `GdkEventKey` into a keyval, effective group, and level.
+ */
+ZEND_METHOD(Gtk4_GdkDisplay, translate_key) {
+  zend_long keycode;
+  zend_long state;
+  zend_long group;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_LONG(keycode)
+  Z_PARAM_LONG(state)
+  Z_PARAM_LONG(group)
+  ZEND_PARSE_PARAMETERS_END();
+  GdkDisplay *self = PHPGTK_SELF(GdkDisplay, GDK_TYPE_DISPLAY);
+  if (!phpgtk::check_range<guint>(keycode, 1)) RETURN_THROWS();
+  if (!phpgtk::check_flags(GDK_TYPE_MODIFIER_TYPE, state, 2)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(group, 3)) RETURN_THROWS();
+  guint keyval = 0;
+  int effective_group = 0;
+  int level = 0;
+  GdkModifierType consumed = static_cast<GdkModifierType>(0);
+  if (!gdk_display_translate_key(self, static_cast<guint>(keycode),
+                                 static_cast<GdkModifierType>(state), static_cast<int>(group),
+                                 &keyval, &effective_group, &level, &consumed))
+    RETURN_NULL();
+  array_init_size(return_value, 4);
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(keyval));
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(effective_group));
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(level));
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(consumed));
+    add_next_index_zval(return_value, &item);
+  }
+}

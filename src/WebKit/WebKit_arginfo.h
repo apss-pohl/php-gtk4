@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 7f844dc1d066a7daaa2c6c3016df9a407c53ac68 */
+ * Stub hash: dc27172ed587b6be9c0c8f0b737940bf3f94a281 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitApplicationInfo___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -273,9 +273,17 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitCredential___construct, 0, 0, 3)
 	ZEND_ARG_OBJ_INFO(0, persistence, Gtk4\\WebKitCredentialPersistence, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitCredential_new_for_certificate, 0, 2, Gtk4\\WebKitCredential, 0)
+	ZEND_ARG_OBJ_INFO(0, certificate, Gtk4\\GTlsCertificate, 1)
+	ZEND_ARG_OBJ_INFO(0, persistence, Gtk4\\WebKitCredentialPersistence, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitCredential_new_for_certificate_pin, 0, 2, Gtk4\\WebKitCredential, 0)
 	ZEND_ARG_TYPE_INFO(0, pin, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, persistence, Gtk4\\WebKitCredentialPersistence, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitCredential_get_certificate, 0, 0, Gtk4\\GTlsCertificate, 1)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_WebKitCredential_get_password arginfo_class_Gtk4_WebKitApplicationInfo_get_name
@@ -663,6 +671,11 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitNetworkSession_set_memory_pressure_settings, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, settings, Gtk4\\WebKitMemoryPressureSettings, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitNetworkSession_allow_tls_certificate_for_host, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, certificate, Gtk4\\GTlsCertificate, 0)
+	ZEND_ARG_TYPE_INFO(0, host, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitNetworkSession_download_uri, 0, 1, Gtk4\\WebKitDownload, 0)
@@ -1625,6 +1638,8 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_WebKitWebView_get_title arginfo_class_Gtk4_WebKitApplicationInfo_get_name
 
+#define arginfo_class_Gtk4_WebKitWebView_get_tls_info arginfo_class_Gtk4_WebKitContextMenu_get_position
+
 #define arginfo_class_Gtk4_WebKitWebView_get_uri arginfo_class_Gtk4_WebKitApplicationInfo_get_name
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_user_content_manager, 0, 0, Gtk4\\WebKitUserContentManager, 0)
@@ -1808,6 +1823,12 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_l
 	ZEND_ARG_OBJ_INFO(0, load_event, Gtk4\\WebKitLoadEvent, 0)
 	ZEND_ARG_TYPE_INFO(0, failing_uri, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, error, Gtk4\\GError, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_load_failed_with_tls_errors, 0, 3, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, failing_uri, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, certificate, Gtk4\\GTlsCertificate, 0)
+	ZEND_ARG_TYPE_INFO(0, errors, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_mouse_target_changed, 0, 2, IS_VOID, 0)
@@ -2076,7 +2097,9 @@ ZEND_METHOD(Gtk4_WebKitCookieManager, replace_cookies_finish);
 ZEND_METHOD(Gtk4_WebKitCookieManager, set_accept_policy);
 ZEND_METHOD(Gtk4_WebKitCookieManager, set_persistent_storage);
 ZEND_METHOD(Gtk4_WebKitCredential, __construct);
+ZEND_METHOD(Gtk4_WebKitCredential, new_for_certificate);
 ZEND_METHOD(Gtk4_WebKitCredential, new_for_certificate_pin);
+ZEND_METHOD(Gtk4_WebKitCredential, get_certificate);
 ZEND_METHOD(Gtk4_WebKitCredential, get_password);
 ZEND_METHOD(Gtk4_WebKitCredential, get_persistence);
 ZEND_METHOD(Gtk4_WebKitCredential, get_username);
@@ -2219,6 +2242,7 @@ ZEND_METHOD(Gtk4_WebKitNetworkSession, __construct);
 ZEND_METHOD(Gtk4_WebKitNetworkSession, new_ephemeral);
 ZEND_METHOD(Gtk4_WebKitNetworkSession, get_default);
 ZEND_METHOD(Gtk4_WebKitNetworkSession, set_memory_pressure_settings);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, allow_tls_certificate_for_host);
 ZEND_METHOD(Gtk4_WebKitNetworkSession, download_uri);
 ZEND_METHOD(Gtk4_WebKitNetworkSession, get_cookie_manager);
 ZEND_METHOD(Gtk4_WebKitNetworkSession, get_itp_enabled);
@@ -2562,6 +2586,7 @@ ZEND_METHOD(Gtk4_WebKitWebView, get_snapshot);
 ZEND_METHOD(Gtk4_WebKitWebView, get_snapshot_finish);
 ZEND_METHOD(Gtk4_WebKitWebView, get_theme_color);
 ZEND_METHOD(Gtk4_WebKitWebView, get_title);
+ZEND_METHOD(Gtk4_WebKitWebView, get_tls_info);
 ZEND_METHOD(Gtk4_WebKitWebView, get_uri);
 ZEND_METHOD(Gtk4_WebKitWebView, get_user_content_manager);
 ZEND_METHOD(Gtk4_WebKitWebView, get_web_extension_mode);
@@ -2617,6 +2642,7 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_insecure_content_detected);
 ZEND_METHOD(Gtk4_WebKitWebView, vfunc_leave_fullscreen);
 ZEND_METHOD(Gtk4_WebKitWebView, vfunc_load_changed);
 ZEND_METHOD(Gtk4_WebKitWebView, vfunc_load_failed);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_load_failed_with_tls_errors);
 ZEND_METHOD(Gtk4_WebKitWebView, vfunc_mouse_target_changed);
 ZEND_METHOD(Gtk4_WebKitWebView, vfunc_permission_request);
 ZEND_METHOD(Gtk4_WebKitWebView, vfunc_print);
@@ -2810,7 +2836,9 @@ static const zend_function_entry class_Gtk4_WebKitCookieManager_methods[] = {
 
 static const zend_function_entry class_Gtk4_WebKitCredential_methods[] = {
 	ZEND_ME(Gtk4_WebKitCredential, __construct, arginfo_class_Gtk4_WebKitCredential___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCredential, new_for_certificate, arginfo_class_Gtk4_WebKitCredential_new_for_certificate, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_WebKitCredential, new_for_certificate_pin, arginfo_class_Gtk4_WebKitCredential_new_for_certificate_pin, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitCredential, get_certificate, arginfo_class_Gtk4_WebKitCredential_get_certificate, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitCredential, get_password, arginfo_class_Gtk4_WebKitCredential_get_password, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitCredential, get_persistence, arginfo_class_Gtk4_WebKitCredential_get_persistence, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitCredential, get_username, arginfo_class_Gtk4_WebKitCredential_get_username, ZEND_ACC_PUBLIC)
@@ -3051,6 +3079,7 @@ static const zend_function_entry class_Gtk4_WebKitNetworkSession_methods[] = {
 	ZEND_ME(Gtk4_WebKitNetworkSession, new_ephemeral, arginfo_class_Gtk4_WebKitNetworkSession_new_ephemeral, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_WebKitNetworkSession, get_default, arginfo_class_Gtk4_WebKitNetworkSession_get_default, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_WebKitNetworkSession, set_memory_pressure_settings, arginfo_class_Gtk4_WebKitNetworkSession_set_memory_pressure_settings, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, allow_tls_certificate_for_host, arginfo_class_Gtk4_WebKitNetworkSession_allow_tls_certificate_for_host, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitNetworkSession, download_uri, arginfo_class_Gtk4_WebKitNetworkSession_download_uri, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitNetworkSession, get_cookie_manager, arginfo_class_Gtk4_WebKitNetworkSession_get_cookie_manager, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitNetworkSession, get_itp_enabled, arginfo_class_Gtk4_WebKitNetworkSession_get_itp_enabled, ZEND_ACC_PUBLIC)
@@ -3528,6 +3557,7 @@ static const zend_function_entry class_Gtk4_WebKitWebView_methods[] = {
 	ZEND_ME(Gtk4_WebKitWebView, get_snapshot_finish, arginfo_class_Gtk4_WebKitWebView_get_snapshot_finish, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebView, get_theme_color, arginfo_class_Gtk4_WebKitWebView_get_theme_color, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebView, get_title, arginfo_class_Gtk4_WebKitWebView_get_title, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_tls_info, arginfo_class_Gtk4_WebKitWebView_get_tls_info, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebView, get_uri, arginfo_class_Gtk4_WebKitWebView_get_uri, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebView, get_user_content_manager, arginfo_class_Gtk4_WebKitWebView_get_user_content_manager, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebView, get_web_extension_mode, arginfo_class_Gtk4_WebKitWebView_get_web_extension_mode, ZEND_ACC_PUBLIC)
@@ -3583,6 +3613,7 @@ static const zend_function_entry class_Gtk4_WebKitWebView_methods[] = {
 	ZEND_ME(Gtk4_WebKitWebView, vfunc_leave_fullscreen, arginfo_class_Gtk4_WebKitWebView_vfunc_leave_fullscreen, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebView, vfunc_load_changed, arginfo_class_Gtk4_WebKitWebView_vfunc_load_changed, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebView, vfunc_load_failed, arginfo_class_Gtk4_WebKitWebView_vfunc_load_failed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_load_failed_with_tls_errors, arginfo_class_Gtk4_WebKitWebView_vfunc_load_failed_with_tls_errors, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebView, vfunc_mouse_target_changed, arginfo_class_Gtk4_WebKitWebView_vfunc_mouse_target_changed, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebView, vfunc_permission_request, arginfo_class_Gtk4_WebKitWebView_vfunc_permission_request, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebView, vfunc_print, arginfo_class_Gtk4_WebKitWebView_vfunc_print, ZEND_ACC_PUBLIC)

@@ -8,7 +8,10 @@ use Gtk4\GAsyncResult;
 use Gtk4\GdkTexture;
 use Gtk4\GError;
 use Gtk4\GLib;
+use Gtk4\GTlsCertificate;
 use Gtk4\JSCValue;
+use Gtk4\WebKitCredential;
+use Gtk4\WebKitCredentialPersistence;
 use Gtk4\WebKitFindController;
 use Gtk4\WebKitFindOptions;
 use Gtk4\WebKitLoadEvent;
@@ -317,6 +320,27 @@ final class WebKitWebViewTest extends GtkTestCase
         self::assertSame(WebKitNetworkSession::get_default(), $session);
         self::assertSame($session, new WebKitWebView()->get_network_session());
         self::assertSame($session->get_cookie_manager(), $session->get_cookie_manager());
+    }
+
+    /**
+     * A page that did not come over TLS has no certificate to report - the whole point of the
+     * out parameters being an "or null" answer rather than two values.
+     */
+    public function testTlsInfoIsNullForAPageThatIsNotOverTls(): void
+    {
+        self::assertNull($this->loaded()->get_tls_info());
+    }
+
+    /** A credential made for a certificate hands the same certificate back. */
+    public function testACredentialCarriesTheCertificateItWasMadeFor(): void
+    {
+        $cert = GTlsCertificate::new_from_pem(GTlsCertificateTest::pem(), -1);
+        $credential = WebKitCredential::new_for_certificate($cert, WebKitCredentialPersistence::None);
+
+        self::assertTrue($credential->get_certificate()?->is_same($cert));
+        // ...and one made from a password carries none, which is why the return is nullable.
+        self::assertNull(new WebKitCredential('user', 'secret', WebKitCredentialPersistence::None)
+            ->get_certificate());
     }
 
     public function testAPhpSubclassIsAWebView(): void

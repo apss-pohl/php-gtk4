@@ -286,6 +286,22 @@ void wrap_boxed(GType type, gconstpointer data, zval *rv) {
     ZVAL_NULL(rv);
     return;
   }
+  // A GBytes is binary data rather than a handle, and crosses as a PHP string everywhere else
+  // (core/marshal for a GValue, the generated returns): a list of them - the DNS names of a
+  // GTlsCertificate - is therefore a list of strings, not a TypeError about an unregistered type.
+  if (type == G_TYPE_BYTES) {
+    // g_bytes_get_data() takes a mutable GBytes * although it only reads from it.
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast) a GLib signature we cannot change
+    auto *bytes = const_cast<GBytes *>(static_cast<const GBytes *>(data));
+    gsize size = 0;
+    const auto *bits = static_cast<const char *>(g_bytes_get_data(bytes, &size));
+    if (bits == nullptr) {
+      ZVAL_EMPTY_STRING(rv);
+    } else {
+      ZVAL_STRINGL(rv, bits, size);
+    }
+    return;
+  }
   const BoxedClass *info = boxed_class_for_type(type);
   if (info == nullptr) {
     ZVAL_NULL(rv);

@@ -334,6 +334,13 @@ class GdkDisplay extends GObject
      * handled.
      */
     public function sync(): void {}
+
+    /**
+     * Translates the contents of a `GdkEventKey` into a keyval, effective group, and level.
+     *
+     * @return array{int, int, int, int}|null
+     */
+    public function translate_key(int $keycode, int $state, int $group): ?array {}
 }
 
 /**

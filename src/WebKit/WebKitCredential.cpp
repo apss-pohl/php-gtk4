@@ -62,6 +62,34 @@ ZEND_METHOD(Gtk4_WebKitCredential, __construct) {
 }
 
 /**
+ * static Gtk4\WebKitCredential::new_for_certificate(?GTlsCertificate $certificate,
+ * WebKitCredentialPersistence $persistence): WebKitCredential
+ *
+ * Create a new credential from the $certificate and persistence mode.
+ */
+ZEND_METHOD(Gtk4_WebKitCredential, new_for_certificate) {
+  zval *certificate = nullptr;
+  zval *persistence;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(certificate, class_for_gtype(G_TYPE_TLS_CERTIFICATE))
+  Z_PARAM_OBJECT_OF_CLASS(persistence, enum_class_for_type(WEBKIT_TYPE_CREDENTIAL_PERSISTENCE))
+  ZEND_PARSE_PARAMETERS_END();
+  GObject *certificate_o = nullptr;
+  if (certificate != nullptr) {
+    certificate_o = unwrap(certificate, G_TYPE_TLS_CERTIFICATE);
+    if (certificate_o == nullptr) RETURN_THROWS();
+  }
+  gint persistence_v = 0;
+  if (!enum_from_php(persistence, WEBKIT_TYPE_CREDENTIAL_PERSISTENCE, &persistence_v))
+    RETURN_THROWS();
+  gpointer phpgtk_ret = webkit_credential_new_for_certificate(
+      certificate_o != nullptr ? G_TLS_CERTIFICATE(certificate_o) : nullptr,
+      static_cast<WebKitCredentialPersistence>(persistence_v));
+  wrap_boxed(WEBKIT_TYPE_CREDENTIAL, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) g_boxed_free(WEBKIT_TYPE_CREDENTIAL, phpgtk_ret);
+}
+
+/**
  * static Gtk4\WebKitCredential::new_for_certificate_pin(string $pin, WebKitCredentialPersistence
  * $persistence): WebKitCredential
  *
@@ -82,6 +110,18 @@ ZEND_METHOD(Gtk4_WebKitCredential, new_for_certificate_pin) {
       ZSTR_VAL(pin), static_cast<WebKitCredentialPersistence>(persistence_v));
   wrap_boxed(WEBKIT_TYPE_CREDENTIAL, phpgtk_ret, return_value);
   if (phpgtk_ret != nullptr) g_boxed_free(WEBKIT_TYPE_CREDENTIAL, phpgtk_ret);
+}
+
+/**
+ * Gtk4\WebKitCredential::get_certificate(): ?GTlsCertificate
+ *
+ * Get the certificate currently held by this #WebKitCredential.
+ */
+ZEND_METHOD(Gtk4_WebKitCredential, get_certificate) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  WebKitCredential *self = PHPGTK_BOXED_SELF(WebKitCredential);
+  GTlsCertificate *phpgtk_ret = webkit_credential_get_certificate(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 497490b91a3ce4b58bebf87e4117fb9daec2fcaa */
+ * Stub hash: 95d6b620a28993f310d39893f5aced98c93577a9 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_change_state, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
@@ -694,6 +694,49 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GTask_legacy_propagate_error arginfo_class_Gtk4_GAction_get_enabled
 
+#define arginfo_class_Gtk4_GTlsCertificate___construct arginfo_class_Gtk4_GActionObject___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GTlsCertificate_new_from_file, 0, 1, Gtk4\\GTlsCertificate, 0)
+	ZEND_ARG_TYPE_INFO(0, file, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GTlsCertificate_new_from_file_with_password, 0, 2, Gtk4\\GTlsCertificate, 0)
+	ZEND_ARG_TYPE_INFO(0, file, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, password, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GTlsCertificate_new_from_files, 0, 2, Gtk4\\GTlsCertificate, 0)
+	ZEND_ARG_TYPE_INFO(0, cert_file, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, key_file, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GTlsCertificate_new_from_pem, 0, 2, Gtk4\\GTlsCertificate, 0)
+	ZEND_ARG_TYPE_INFO(0, data, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, length, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GTlsCertificate_new_from_pkcs11_uris, 0, 1, Gtk4\\GTlsCertificate, 0)
+	ZEND_ARG_TYPE_INFO(0, pkcs11_uri, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, private_key_pkcs11_uri, IS_STRING, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GTlsCertificate_list_new_from_file, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, file, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GTlsCertificate_get_dns_names arginfo_class_Gtk4_GActionGroup_list_actions
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GTlsCertificate_get_issuer, 0, 0, Gtk4\\GTlsCertificate, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GTlsCertificate_get_issuer_name arginfo_class_Gtk4_GAction_get_parameter_type
+
+#define arginfo_class_Gtk4_GTlsCertificate_get_subject_name arginfo_class_Gtk4_GAction_get_parameter_type
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GTlsCertificate_is_same, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, cert_two, Gtk4\\GTlsCertificate, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_METHOD(Gtk4_GActionObject, __construct);
 ZEND_METHOD(Gtk4_GActionGroupObject, __construct);
 ZEND_METHOD(Gtk4_GActionMapObject, __construct);
@@ -843,6 +886,18 @@ ZEND_METHOD(Gtk4_GTask, propagate_int);
 ZEND_METHOD(Gtk4_GTask, return_boolean);
 ZEND_METHOD(Gtk4_GTask, return_error);
 ZEND_METHOD(Gtk4_GTask, return_int);
+ZEND_METHOD(Gtk4_GTlsCertificate, __construct);
+ZEND_METHOD(Gtk4_GTlsCertificate, new_from_file);
+ZEND_METHOD(Gtk4_GTlsCertificate, new_from_file_with_password);
+ZEND_METHOD(Gtk4_GTlsCertificate, new_from_files);
+ZEND_METHOD(Gtk4_GTlsCertificate, new_from_pem);
+ZEND_METHOD(Gtk4_GTlsCertificate, new_from_pkcs11_uris);
+ZEND_METHOD(Gtk4_GTlsCertificate, list_new_from_file);
+ZEND_METHOD(Gtk4_GTlsCertificate, get_dns_names);
+ZEND_METHOD(Gtk4_GTlsCertificate, get_issuer);
+ZEND_METHOD(Gtk4_GTlsCertificate, get_issuer_name);
+ZEND_METHOD(Gtk4_GTlsCertificate, get_subject_name);
+ZEND_METHOD(Gtk4_GTlsCertificate, is_same);
 
 static const zend_function_entry class_Gtk4_GAction_methods[] = {
 	ZEND_RAW_FENTRY("change_state", NULL, arginfo_class_Gtk4_GAction_change_state, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
@@ -1158,6 +1213,22 @@ static const zend_function_entry class_Gtk4_GTask_methods[] = {
 	ZEND_FE_END
 };
 
+static const zend_function_entry class_Gtk4_GTlsCertificate_methods[] = {
+	ZEND_ME(Gtk4_GTlsCertificate, __construct, arginfo_class_Gtk4_GTlsCertificate___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GTlsCertificate, new_from_file, arginfo_class_Gtk4_GTlsCertificate_new_from_file, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GTlsCertificate, new_from_file_with_password, arginfo_class_Gtk4_GTlsCertificate_new_from_file_with_password, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GTlsCertificate, new_from_files, arginfo_class_Gtk4_GTlsCertificate_new_from_files, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GTlsCertificate, new_from_pem, arginfo_class_Gtk4_GTlsCertificate_new_from_pem, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GTlsCertificate, new_from_pkcs11_uris, arginfo_class_Gtk4_GTlsCertificate_new_from_pkcs11_uris, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GTlsCertificate, list_new_from_file, arginfo_class_Gtk4_GTlsCertificate_list_new_from_file, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GTlsCertificate, get_dns_names, arginfo_class_Gtk4_GTlsCertificate_get_dns_names, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTlsCertificate, get_issuer, arginfo_class_Gtk4_GTlsCertificate_get_issuer, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTlsCertificate, get_issuer_name, arginfo_class_Gtk4_GTlsCertificate_get_issuer_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTlsCertificate, get_subject_name, arginfo_class_Gtk4_GTlsCertificate_get_subject_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTlsCertificate, is_same, arginfo_class_Gtk4_GTlsCertificate_is_same, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
 static zend_class_entry *register_class_Gtk4_GAction(void)
 {
 	zend_class_entry ce, *class_entry;
@@ -1433,6 +1504,16 @@ static zend_class_entry *register_class_Gtk4_GTask(zend_class_entry *class_entry
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GTask", class_Gtk4_GTask_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
 	zend_class_implements(class_entry, 1, class_entry_Gtk4_GAsyncResult);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GTlsCertificate(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GTlsCertificate", class_Gtk4_GTlsCertificate_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
 
 	return class_entry;
 }
