@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use Gtk4\Gtk;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
 use ReflectionEnum;
@@ -56,7 +57,8 @@ final class RobustnessTest extends GtkTestCase
      */
     /**
      * The file listing the `Class::method` keys whose sweep GTK is known to complain about.
-     * One line each, sorted; `#` comments and blank lines ignored.
+     * One line each, sorted; `#` comments and blank lines ignored. A line may carry a version
+     * condition in a second column - see {@see conditionHolds()}.
      */
     private const PINNED = __DIR__ . '/robustness-criticals.txt';
 
@@ -87,14 +89,77 @@ final class RobustnessTest extends GtkTestCase
         static $keys = null;
         if ($keys === null) {
             $keys = [];
-            foreach (file(self::PINNED, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $line) {
-                $line = trim($line);
-                if ($line !== '' && !str_starts_with($line, '#')) {
-                    $keys[$line] = true;
+            foreach (self::pinnedLines() as [$key, $condition]) {
+                if ($condition === null || self::conditionHolds($condition)) {
+                    $keys[$key] = true;
                 }
             }
         }
         return $keys;
+    }
+
+    /**
+     * The file as `[key, condition]` pairs, comments and blank lines dropped. The condition is
+     * the optional second column, `null` when the line has none.
+     *
+     * @return list<array{string, ?string}>
+     */
+    private static function pinnedLines(): array
+    {
+        $lines = [];
+        foreach (file(self::PINNED, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $line) {
+            $line = trim($line);
+            if ($line === '' || str_starts_with($line, '#')) {
+                continue;
+            }
+            $columns = preg_split('/\s+/', $line) ?: [];
+            $lines[] = [$columns[0], $columns[1] ?? null];
+        }
+        return $lines;
+    }
+
+    /**
+     * Whether a line's condition holds for the GTK actually running.
+     *
+     * `gtk>=4.20` means "only a GTK at least that new complains here" - GTK grows preconditions
+     * (and the occasional regression) between releases, and the CI floor is 4.14 while the
+     * Windows job runs whatever gvsbuild ships. A line whose condition does not hold is dropped
+     * rather than tolerated: the older GTK is expected to stay *quiet*, so a complaint from it
+     * still fails the sweep as unlisted.
+     *
+     * Only that one form is understood, and anything else is a typo rather than a licence to
+     * ignore the line - so it fails loudly.
+     */
+    private static function conditionHolds(string $condition): bool
+    {
+        if (preg_match('/^gtk>=(\d+)\.(\d+)$/', $condition, $m) !== 1) {
+            self::fail(sprintf(
+                '%s: "%s" is not a condition this gate understands (only gtk>=<major>.<minor>).',
+                basename(self::PINNED),
+                $condition,
+            ));
+        }
+        return Gtk::check_version((int) $m[1], (int) $m[2], 0) === null;
+    }
+
+    /**
+     * The pin file is read by nothing else, so a typo in it would silently drop a line (or a
+     * whole condition) instead of failing. Hold every line to the shapes the gate produces.
+     */
+    public function testThePinFileIsWellFormed(): void
+    {
+        $lines = self::pinnedLines();
+        self::assertNotEmpty($lines);
+        foreach ($lines as [$key, $condition]) {
+            self::assertMatchesRegularExpression(
+                '/^Gtk4\\\\[A-Za-z0-9_]+::\\$?[A-Za-z0-9_-]+#(arguments|values|properties|emit|return)$/',
+                $key,
+                'a key is <class>::<member>#<sweep> (tests/README-robustness-pin.md)',
+            );
+            if ($condition !== null) {
+                self::assertMatchesRegularExpression('/^gtk>=\\d+\\.\\d+$/', $condition);
+            }
+        }
     }
 
     /**

@@ -41,6 +41,20 @@ kept. Keys are `<class>::<method>#arguments` or `#values` for the two method
 sweeps, `<class>::$<property>#properties` for the property-write sweep, `<class>::<signal>#emit`
 for the signal-emission sweep and `<class>::vfunc_<slot>#return` for the vfunc-return sweep.
 
+A line may carry a **version condition** in a second column, `gtk>=<major>.<minor>`: the same
+commit meets two GTKs (Linux CI is on the 4.14 floor, the Windows job runs whatever gvsbuild
+ships), and preconditions — plus the occasional regression, which is what
+`GtkEntry::set_extra_menu` is — arrive between releases. A line whose condition does not hold is
+*dropped*, not tolerated: the older GTK is expected to stay quiet, so a complaint from it still
+fails the sweep as unlisted. Nothing else is understood in that column, and a typo fails the gate
+rather than silently disabling the line (`RobustnessTest::conditionHolds()`,
+`testThePinFileIsWellFormed()`).
+
+A GTK *built* with `G_ENABLE_DEBUG` or `G_ENABLE_CONSISTENCY_CHECKS` (gvsbuild's is; a distro
+release build is not) prints a further class of warnings that no condition can express, because
+they follow the build flags rather than the version. Those belong in the environmental filter in
+`gateAgainstPinnedList()`, next to the portal message — not in this file.
+
 Recording is deliberately *not* a committed switch: regenerating
 wholesale is how a real leak gets pinned by accident, so it should cost a patch and a diff you
 have to read.
