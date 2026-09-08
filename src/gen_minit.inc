@@ -46,6 +46,7 @@
   phpgtk::register_enum(GTK_TYPE_PROPAGATION_PHASE, register_class_Gtk4_GtkPropagationPhase());
   phpgtk::register_enum(GTK_TYPE_REVEALER_TRANSITION_TYPE, register_class_Gtk4_GtkRevealerTransitionType());
   phpgtk::register_enum(GTK_TYPE_SCROLLABLE_POLICY, register_class_Gtk4_GtkScrollablePolicy());
+  phpgtk::register_enum(GTK_TYPE_SELECTION_MODE, register_class_Gtk4_GtkSelectionMode());
   phpgtk::register_enum(GTK_TYPE_SIZE_GROUP_MODE, register_class_Gtk4_GtkSizeGroupMode());
   phpgtk::register_enum(GTK_TYPE_SIZE_REQUEST_MODE, register_class_Gtk4_GtkSizeRequestMode());
   phpgtk::register_enum(GTK_TYPE_SORT_TYPE, register_class_Gtk4_GtkSortType());
@@ -358,10 +359,14 @@
   phpgtk::register_class("GdkPixbufLoader", ce_GdkPixbufLoader, GDK_TYPE_PIXBUF_LOADER);
   zend_class_entry *ce_GtkAboutDialog = register_class_Gtk4_GtkAboutDialog(ce_GtkWindow, ce_GtkNative, ce_GtkRoot);
   phpgtk::register_class("GtkAboutDialog", ce_GtkAboutDialog, GTK_TYPE_ABOUT_DIALOG);
+  zend_class_entry *ce_GtkActionBar = register_class_Gtk4_GtkActionBar(ce_GtkWidget);
+  phpgtk::register_class("GtkActionBar", ce_GtkActionBar, GTK_TYPE_ACTION_BAR);
   zend_class_entry *ce_GtkApplication = register_class_Gtk4_GtkApplication(ce_GApplication, ce_GActionGroup, ce_GActionMap);
   phpgtk::register_class("GtkApplication", ce_GtkApplication, GTK_TYPE_APPLICATION);
   zend_class_entry *ce_GtkApplicationWindow = register_class_Gtk4_GtkApplicationWindow(ce_GtkWindow, ce_GActionMap, ce_GtkNative, ce_GtkRoot);
   phpgtk::register_class("GtkApplicationWindow", ce_GtkApplicationWindow, GTK_TYPE_APPLICATION_WINDOW);
+  zend_class_entry *ce_GtkAspectFrame = register_class_Gtk4_GtkAspectFrame(ce_GtkWidget);
+  phpgtk::register_class("GtkAspectFrame", ce_GtkAspectFrame, GTK_TYPE_ASPECT_FRAME);
   zend_class_entry *ce_GtkBinLayout = register_class_Gtk4_GtkBinLayout(ce_GtkLayoutManager);
   phpgtk::register_class("GtkBinLayout", ce_GtkBinLayout, GTK_TYPE_BIN_LAYOUT);
   zend_class_entry *ce_GtkBox = register_class_Gtk4_GtkBox(ce_GtkWidget, ce_GtkOrientable);
@@ -372,6 +377,8 @@
   phpgtk::register_class("GtkButton", ce_GtkButton, GTK_TYPE_BUTTON);
   zend_class_entry *ce_GtkCalendar = register_class_Gtk4_GtkCalendar(ce_GtkWidget);
   phpgtk::register_class("GtkCalendar", ce_GtkCalendar, GTK_TYPE_CALENDAR);
+  zend_class_entry *ce_GtkCenterBox = register_class_Gtk4_GtkCenterBox(ce_GtkWidget, ce_GtkOrientable);
+  phpgtk::register_class("GtkCenterBox", ce_GtkCenterBox, GTK_TYPE_CENTER_BOX);
   zend_class_entry *ce_GtkCenterLayout = register_class_Gtk4_GtkCenterLayout(ce_GtkLayoutManager);
   phpgtk::register_class("GtkCenterLayout", ce_GtkCenterLayout, GTK_TYPE_CENTER_LAYOUT);
   zend_class_entry *ce_GtkCheckButton = register_class_Gtk4_GtkCheckButton(ce_GtkWidget);
@@ -398,6 +405,8 @@
   phpgtk::register_class("GtkDropTargetAsync", ce_GtkDropTargetAsync, GTK_TYPE_DROP_TARGET_ASYNC);
   zend_class_entry *ce_GtkEntry = register_class_Gtk4_GtkEntry(ce_GtkWidget, ce_GtkEditable);
   phpgtk::register_class("GtkEntry", ce_GtkEntry, GTK_TYPE_ENTRY);
+  zend_class_entry *ce_GtkExpander = register_class_Gtk4_GtkExpander(ce_GtkWidget);
+  phpgtk::register_class("GtkExpander", ce_GtkExpander, GTK_TYPE_EXPANDER);
   zend_class_entry *ce_GtkFileFilter = register_class_Gtk4_GtkFileFilter(ce_GtkFilter);
   phpgtk::register_class("GtkFileFilter", ce_GtkFileFilter, GTK_TYPE_FILE_FILTER);
   zend_class_entry *ce_GtkFilterListModel = register_class_Gtk4_GtkFilterListModel(ce_GObject, ce_GListModel);
@@ -408,6 +417,10 @@
   phpgtk::register_class("GtkFixedLayout", ce_GtkFixedLayout, GTK_TYPE_FIXED_LAYOUT);
   zend_class_entry *ce_GtkFixedLayoutChild = register_class_Gtk4_GtkFixedLayoutChild(ce_GtkLayoutChild);
   phpgtk::register_class("GtkFixedLayoutChild", ce_GtkFixedLayoutChild, GTK_TYPE_FIXED_LAYOUT_CHILD);
+  zend_class_entry *ce_GtkFlowBox = register_class_Gtk4_GtkFlowBox(ce_GtkWidget, ce_GtkOrientable);
+  phpgtk::register_class("GtkFlowBox", ce_GtkFlowBox, GTK_TYPE_FLOW_BOX);
+  zend_class_entry *ce_GtkFlowBoxChild = register_class_Gtk4_GtkFlowBoxChild(ce_GtkWidget);
+  phpgtk::register_class("GtkFlowBoxChild", ce_GtkFlowBoxChild, GTK_TYPE_FLOW_BOX_CHILD);
   zend_class_entry *ce_GtkFrame = register_class_Gtk4_GtkFrame(ce_GtkWidget);
   phpgtk::register_class("GtkFrame", ce_GtkFrame, GTK_TYPE_FRAME);
   zend_class_entry *ce_GtkGestureClick = register_class_Gtk4_GtkGestureClick(ce_GtkGestureSingle);
@@ -434,6 +447,10 @@
   phpgtk::register_class("GtkImage", ce_GtkImage, GTK_TYPE_IMAGE);
   zend_class_entry *ce_GtkLabel = register_class_Gtk4_GtkLabel(ce_GtkWidget);
   phpgtk::register_class("GtkLabel", ce_GtkLabel, GTK_TYPE_LABEL);
+  zend_class_entry *ce_GtkListBox = register_class_Gtk4_GtkListBox(ce_GtkWidget);
+  phpgtk::register_class("GtkListBox", ce_GtkListBox, GTK_TYPE_LIST_BOX);
+  zend_class_entry *ce_GtkListBoxRow = register_class_Gtk4_GtkListBoxRow(ce_GtkWidget);
+  phpgtk::register_class("GtkListBoxRow", ce_GtkListBoxRow, GTK_TYPE_LIST_BOX_ROW);
   zend_class_entry *ce_GtkListView = register_class_Gtk4_GtkListView(ce_GtkWidget, ce_GtkOrientable, ce_GtkScrollable);
   phpgtk::register_class("GtkListView", ce_GtkListView, GTK_TYPE_LIST_VIEW);
   zend_class_entry *ce_GtkMenuButton = register_class_Gtk4_GtkMenuButton(ce_GtkWidget);
@@ -558,7 +575,9 @@
   register_vfuncs_GtkEntry();
   register_vfuncs_GtkEntryBuffer();
   register_vfuncs_GtkFilter();
+  register_vfuncs_GtkFlowBoxChild();
   register_vfuncs_GtkLayoutManager();
+  register_vfuncs_GtkListBoxRow();
   register_vfuncs_GtkPopover();
   register_vfuncs_GtkPrintOperation();
   register_vfuncs_GtkRange();

@@ -94,6 +94,22 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **The containers a GTK 3 program still reaches for**: `GtkListBox` (+ `GtkListBoxRow`),
+  `GtkFlowBox` (+ `GtkFlowBoxChild`), `GtkExpander`, `GtkActionBar`, `GtkAspectFrame` and
+  `GtkCenterBox` — the last of the class map's "current widgets, no wave needed".
+
+  The boxes come with their callbacks, which is what makes them worth having:
+  `GtkListBox::set_filter_func()`, `set_sort_func()`, `set_header_func()` and `bind_model()`,
+  and the same minus the headers on `GtkFlowBox`. A filter takes a row and answers `bool`, a
+  sort func two rows and answers the usual negative/zero/positive, the header func is handed
+  each row with the one above it, and `bind_model()` builds one row per item of a `GListModel`
+  and follows it afterwards. A create function that throws, or answers with something that is
+  not a widget, is reported through the exception boundary and the row comes out empty rather
+  than GTK dereferencing NULL.
+
+  `bind_model()` refuses a builder without a model: GTK returns before it stores the destroy
+  notify, so the callable would be leaked, never called and never released.
+
 - **TLS certificates**: `GTlsCertificate` from GIO, which is what a web view reports about the
   page it loaded. Five members came with it — `WebKitWebView::get_tls_info()` and its
   `load_failed_with_tls_errors` vfunc, `WebKitNetworkSession::allow_tls_certificate_for_host()`,

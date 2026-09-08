@@ -74,6 +74,19 @@ Gtk.Fixed
 Gtk.Separator
 Gtk.SizeGroup
 
+# Wave 9 (the containers wave 1 left): the everyday widgets a GTK 3 program still reaches for -
+# a list of rows and a wrapping grid of children (both selectable, both with their own child
+# widget), a disclosure triangle, a bar for secondary actions, an aspect-preserving frame and a
+# start/centre/end row. The last of docs/GTK3-MAP.md's "current widgets, no wave needed".
+Gtk.ListBox
+Gtk.ListBoxRow
+Gtk.FlowBox
+Gtk.FlowBoxChild
+Gtk.Expander
+Gtk.ActionBar
+Gtk.AspectFrame
+Gtk.CenterBox
+
 # Wave 2 (controls, gen/README.md): the input widgets - text entry (+ the GtkEditable
 # interface and the buffer behind it), check/toggle buttons, spin button, scale (+ its GtkRange
 # parent), progress bar, image, spinner, calendar. Plus the neighbours a ported GTK3 application

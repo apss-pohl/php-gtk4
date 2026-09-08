@@ -95,9 +95,6 @@ decision rather than a wave:
 - *deprecated in 4.10* - `GtkDialog`, `GtkInfoBar`, `GtkStatusbar`, `GtkEntryCompletion`,
   `GtkColorButton`/`GtkFontButton`, `GtkAppChooser*`. The binding exposes the modern API only and
   every replacement is bound; port none of them unless a real port asks.
-- *current widgets, no wave needed* - `GtkListBox`(+`Row`), `GtkFlowBox`(+`Child`), `GtkExpander`,
-  `GtkActionBar`, `GtkAspectFrame`, `GtkCenterBox`. Mechanical: add to `gen/allowlist.txt` and
-  generate.
 - *small gaps in bound classes* - `GIcon`/`GThemedIcon` (what `GtkImage::set_from_gicon()` wants)
   and `GtkUriLauncher` as the replacement for the deprecated `gtk_show_uri`.
 - *out of scope by design* - `GtkPrinter`/`GtkPrintJob`/`GtkPrintUnixDialog` (a separate library,

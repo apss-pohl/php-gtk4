@@ -262,7 +262,11 @@ final class Gir
                 continue;
             }
             $params[] = new Param(
-                $p->getAttribute('name'),
+                // GIR escapes a name that collides in some binding language by appending an
+                // underscore (gtk_list_box_get_row_at_index's `index_`). The PHP API is
+                // snake_case, final (README.md "Design") and carries no such escape - and the
+                // generated C++ variable would fail clang-tidy's naming check besides.
+                rtrim($p->getAttribute('name'), '_') ?: $p->getAttribute('name'),
                 $t,
                 $p->getAttribute('direction') ?: 'in',
                 ($p->getAttribute('nullable') === '1' || $p->getAttribute('allow-none') === '1')

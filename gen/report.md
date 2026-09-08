@@ -797,7 +797,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkRange
 
-- `vfunc get_range_border` — parameter `border_` of type Gtk.Border
+- `vfunc get_range_border` — parameter `border` of type Gtk.Border
 
 ## GtkRequisition
 
@@ -1419,9 +1419,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.EntryBuffer`: __construct
 - `Gtk.EventControllerKey`: get_group
 - `Gtk.FileFilter`: new_from_gvariant
+- `Gtk.FlowBox`: bind_model, set_filter_func, set_sort_func
 - `Gtk.Gesture`: get_bounding_box_center
 - `Gtk.IconTheme`: set_theme_name
 - `Gtk.LayoutManager`: get_layout_child, get_request_mode
+- `Gtk.ListBox`: bind_model, set_filter_func, set_header_func, set_sort_func
 - `Gtk.MenuButton`: set_create_popup_func
 - `Gtk.Popover`: get_pointing_to, popup
 - `Gtk.PrintOperation`: get_error, run
@@ -1442,10 +1444,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## Emitted files
 
 - `Gtk/GtkAboutDialog.cpp`
+- `Gtk/GtkActionBar.cpp`
 - `Gtk/GtkAdjustment.cpp`
 - `Gtk/GtkAlertDialog.cpp`
 - `Gtk/GtkApplication.cpp`
 - `Gtk/GtkApplicationWindow.cpp`
+- `Gtk/GtkAspectFrame.cpp`
 - `Gtk/GtkBinLayout.cpp`
 - `Gtk/GtkBitset.cpp`
 - `Gtk/GtkBox.cpp`
@@ -1454,6 +1458,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkBuilderScope.cpp`
 - `Gtk/GtkButton.cpp`
 - `Gtk/GtkCalendar.cpp`
+- `Gtk/GtkCenterBox.cpp`
 - `Gtk/GtkCenterLayout.cpp`
 - `Gtk/GtkCheckButton.cpp`
 - `Gtk/GtkColorDialog.cpp`
@@ -1477,6 +1482,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkEventControllerLegacy.cpp`
 - `Gtk/GtkEventControllerMotion.cpp`
 - `Gtk/GtkEventControllerScroll.cpp`
+- `Gtk/GtkExpander.cpp`
 - `Gtk/GtkFileDialog.cpp`
 - `Gtk/GtkFileFilter.cpp`
 - `Gtk/GtkFilter.cpp`
@@ -1484,6 +1490,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkFixed.cpp`
 - `Gtk/GtkFixedLayout.cpp`
 - `Gtk/GtkFixedLayoutChild.cpp`
+- `Gtk/GtkFlowBox.cpp`
+- `Gtk/GtkFlowBoxChild.cpp`
 - `Gtk/GtkFontDialog.cpp`
 - `Gtk/GtkFrame.cpp`
 - `Gtk/GtkGesture.cpp`
@@ -1506,6 +1514,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkLabel.cpp`
 - `Gtk/GtkLayoutChild.cpp`
 - `Gtk/GtkLayoutManager.cpp`
+- `Gtk/GtkListBox.cpp`
+- `Gtk/GtkListBoxRow.cpp`
 - `Gtk/GtkListItem.cpp`
 - `Gtk/GtkListItemFactory.cpp`
 - `Gtk/GtkListView.cpp`
@@ -1744,12 +1754,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `gen_arginfo.h`
 - `examples/generated-sections.inc`
 - `tests/Generated/GtkAboutDialogSmokeTest.php`
+- `tests/Generated/GtkActionBarSmokeTest.php`
 - `tests/Generated/GtkAlertDialogSmokeTest.php`
 - `tests/Generated/GtkApplicationSmokeTest.php`
+- `tests/Generated/GtkAspectFrameSmokeTest.php`
 - `tests/Generated/GtkBinLayoutSmokeTest.php`
 - `tests/Generated/GtkBuilderSmokeTest.php`
 - `tests/Generated/GtkButtonSmokeTest.php`
 - `tests/Generated/GtkCalendarSmokeTest.php`
+- `tests/Generated/GtkCenterBoxSmokeTest.php`
 - `tests/Generated/GtkCenterLayoutSmokeTest.php`
 - `tests/Generated/GtkCheckButtonSmokeTest.php`
 - `tests/Generated/GtkColorDialogSmokeTest.php`
@@ -1770,12 +1783,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkEventControllerLegacySmokeTest.php`
 - `tests/Generated/GtkEventControllerMotionSmokeTest.php`
 - `tests/Generated/GtkEventControllerScrollSmokeTest.php`
+- `tests/Generated/GtkExpanderSmokeTest.php`
 - `tests/Generated/GtkFileDialogSmokeTest.php`
 - `tests/Generated/GtkFileFilterSmokeTest.php`
 - `tests/Generated/GtkFilterSmokeTest.php`
 - `tests/Generated/GtkFilterListModelSmokeTest.php`
 - `tests/Generated/GtkFixedSmokeTest.php`
 - `tests/Generated/GtkFixedLayoutSmokeTest.php`
+- `tests/Generated/GtkFlowBoxSmokeTest.php`
+- `tests/Generated/GtkFlowBoxChildSmokeTest.php`
 - `tests/Generated/GtkFontDialogSmokeTest.php`
 - `tests/Generated/GtkFrameSmokeTest.php`
 - `tests/Generated/GtkGestureSmokeTest.php`
@@ -1795,6 +1811,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkImageSmokeTest.php`
 - `tests/Generated/GtkLabelSmokeTest.php`
 - `tests/Generated/GtkLayoutManagerSmokeTest.php`
+- `tests/Generated/GtkListBoxSmokeTest.php`
+- `tests/Generated/GtkListBoxRowSmokeTest.php`
 - `tests/Generated/GtkListItemFactorySmokeTest.php`
 - `tests/Generated/GtkListViewSmokeTest.php`
 - `tests/Generated/GtkMenuButtonSmokeTest.php`

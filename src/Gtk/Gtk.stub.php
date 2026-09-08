@@ -186,6 +186,38 @@ enum GtkAccessiblePlatformState: int
 }
 
 /**
+ * `GtkActionBar` is designed to present contextual actions.
+ *
+ * @property bool $revealed
+ */
+class GtkActionBar extends GtkWidget
+{
+    /** Creates a new `GtkActionBar` widget. */
+    public function __construct() {}
+
+    /** Retrieves the center bar widget of the bar. */
+    public function get_center_widget(): ?GtkWidget {}
+
+    /** Gets whether the contents of the action bar are revealed. */
+    public function get_revealed(): bool {}
+
+    /** Adds $child to $action_bar, packed with reference to the end of the $action_bar. */
+    public function pack_end(GtkWidget $child): void {}
+
+    /** Adds $child to $action_bar, packed with reference to the start of the $action_bar. */
+    public function pack_start(GtkWidget $child): void {}
+
+    /** Removes a child from $action_bar. */
+    public function remove(GtkWidget $child): void {}
+
+    /** Sets the center widget for the `GtkActionBar`. */
+    public function set_center_widget(?GtkWidget $center_widget): void {}
+
+    /** Reveals or conceals the content of the action bar. */
+    public function set_revealed(bool $revealed): void {}
+}
+
+/**
  * `GtkAdjustment` is a model for a numeric value.
  *
  * @property float $lower
@@ -532,6 +564,59 @@ enum GtkArrowType: int
     case Left = 2;
     case Right = 3;
     case None = 4;
+}
+
+/**
+ * `GtkAspectFrame` preserves the aspect ratio of its child.
+ *
+ * @property ?GtkWidget $child
+ * @property bool $obey_child
+ * @property float $ratio
+ * @property float $xalign
+ * @property float $yalign
+ */
+class GtkAspectFrame extends GtkWidget
+{
+    /** Create a new `GtkAspectFrame`. */
+    public function __construct(float $xalign, float $yalign, float $ratio, bool $obey_child) {}
+
+    /** Gets the child widget of $self. */
+    public function get_child(): ?GtkWidget {}
+
+    /**
+     * Returns whether the child's size request should override the set aspect ratio of the
+     * `GtkAspectFrame`.
+     */
+    public function get_obey_child(): bool {}
+
+    /** Returns the desired aspect ratio of the child. */
+    public function get_ratio(): float {}
+
+    /**
+     * Returns the horizontal alignment of the child within the allocation of the `GtkAspectFrame`.
+     */
+    public function get_xalign(): float {}
+
+    /** Returns the vertical alignment of the child within the allocation of the `GtkAspectFrame`. */
+    public function get_yalign(): float {}
+
+    /** Sets the child widget of $self. */
+    public function set_child(?GtkWidget $child): void {}
+
+    /**
+     * Sets whether the aspect ratio of the child's size request should override the set aspect
+     * ratio of the `GtkAspectFrame`.
+     */
+    public function set_obey_child(bool $obey_child): void {}
+
+    /** Sets the desired aspect ratio of the child. */
+    public function set_ratio(float $ratio): void {}
+
+    /** Sets the horizontal alignment of the child within the allocation of the `GtkAspectFrame`. */
+    public function set_xalign(float $xalign): void {}
+
+    /** Sets the vertical alignment of the child within the allocation of the `GtkAspectFrame`. */
+    public function set_yalign(float $yalign): void {}
 }
 
 /**
@@ -1043,6 +1128,58 @@ class GtkCalendar extends GtkWidget
 
     /** Removes the visual marker from a particular day. */
     public function unmark_day(int $day): void {}
+}
+
+/**
+ * `GtkCenterBox` arranges three children in a row, keeping the middle child centered as well as
+ * possible.
+ *
+ * @property GtkBaselinePosition $baseline_position
+ * @property ?GtkWidget $center_widget
+ * @property ?GtkWidget $end_widget
+ * @property bool $shrink_center_last
+ * @property ?GtkWidget $start_widget
+ */
+class GtkCenterBox extends GtkWidget implements GtkOrientable
+{
+    /** Creates a new `GtkCenterBox`. */
+    public function __construct() {}
+
+    /** Gets the value set by gtk_center_box_set_baseline_position(). */
+    public function get_baseline_position(): GtkBaselinePosition {}
+
+    /** Gets the center widget, or `null` if there is none. */
+    public function get_center_widget(): ?GtkWidget {}
+
+    /** Gets the end widget, or `null` if there is none. */
+    public function get_end_widget(): ?GtkWidget {}
+
+    /** Gets whether $self shrinks the center widget after other children. */
+    public function get_shrink_center_last(): bool {}
+
+    /** Gets the start widget, or `null` if there is none. */
+    public function get_start_widget(): ?GtkWidget {}
+
+    /** Sets the baseline position of a center box. */
+    public function set_baseline_position(GtkBaselinePosition $position): void {}
+
+    /** Sets the center widget. */
+    public function set_center_widget(?GtkWidget $child): void {}
+
+    /** Sets the end widget. */
+    public function set_end_widget(?GtkWidget $child): void {}
+
+    /** Sets whether to shrink the center widget after other children. */
+    public function set_shrink_center_last(bool $shrink_center_last): void {}
+
+    /** Sets the start widget. */
+    public function set_start_widget(?GtkWidget $child): void {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::get_orientation */
+    public function get_orientation(): GtkOrientation {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
+    public function set_orientation(GtkOrientation $orientation): void {}
 }
 
 /**
@@ -2445,6 +2582,74 @@ enum GtkEventSequenceState: int
 }
 
 /**
+ * `GtkExpander` allows the user to reveal its child by clicking on an expander triangle.
+ *
+ * @property ?GtkWidget $child
+ * @property bool $expanded
+ * @property ?string $label
+ * @property ?GtkWidget $label_widget
+ * @property bool $resize_toplevel
+ * @property bool $use_markup
+ * @property bool $use_underline
+ */
+class GtkExpander extends GtkWidget
+{
+    /** Creates a new expander using $label as the text of the label. */
+    public function __construct(?string $label = null) {}
+
+    /** Creates a new expander using $label as the text of the label. */
+    public static function new_with_mnemonic(?string $label = null): GtkExpander {}
+
+    /** Gets the child widget of $expander. */
+    public function get_child(): ?GtkWidget {}
+
+    /** Queries a `GtkExpander` and returns its current state. */
+    public function get_expanded(): bool {}
+
+    /** Fetches the text from a label widget. */
+    public function get_label(): ?string {}
+
+    /** Retrieves the label widget for the frame. */
+    public function get_label_widget(): ?GtkWidget {}
+
+    /**
+     * Returns whether the expander will resize the toplevel widget containing the expander upon
+     * resizing and collapsing.
+     */
+    public function get_resize_toplevel(): bool {}
+
+    /** Returns whether the label’s text is interpreted as Pango markup. */
+    public function get_use_markup(): bool {}
+
+    /** Returns whether an underline in the text indicates a mnemonic. */
+    public function get_use_underline(): bool {}
+
+    /** Sets the child widget of $expander. */
+    public function set_child(?GtkWidget $child): void {}
+
+    /** Sets the state of the expander. */
+    public function set_expanded(bool $expanded): void {}
+
+    /** Sets the text of the label of the expander to $label. */
+    public function set_label(?string $label): void {}
+
+    /** Set the label widget for the expander. */
+    public function set_label_widget(?GtkWidget $label_widget): void {}
+
+    /**
+     * Sets whether the expander will resize the toplevel widget containing the expander upon
+     * resizing and collapsing.
+     */
+    public function set_resize_toplevel(bool $resize_toplevel): void {}
+
+    /** Sets whether the text of the label contains Pango markup. */
+    public function set_use_markup(bool $use_markup): void {}
+
+    /** If true, an underline in the text indicates a mnemonic. */
+    public function set_use_underline(bool $use_underline): void {}
+}
+
+/**
  * A `GtkFileDialog` object collects the arguments that are needed to present a file chooser dialog
  * to the user, such as a title for the dialog and whether it should be modal.
  *
@@ -2774,6 +2979,182 @@ class GtkFixedLayoutChild extends GtkLayoutChild
 
     /** Sets the transformation of the child of a `GtkFixedLayout`. */
     public function set_transform(GskTransform $transform): void {}
+}
+
+/**
+ * A `GtkFlowBox` puts child widgets in reflowing grid.
+ *
+ * @property bool $accept_unpaired_release
+ * @property bool $activate_on_single_click
+ * @property int $column_spacing
+ * @property bool $homogeneous
+ * @property int $max_children_per_line
+ * @property int $min_children_per_line
+ * @property int $row_spacing
+ * @property GtkSelectionMode $selection_mode
+ */
+class GtkFlowBox extends GtkWidget implements GtkOrientable
+{
+    /** Creates a `GtkFlowBox`. */
+    public function __construct() {}
+
+    /** Adds $child to the end of $self. */
+    public function append(GtkWidget $child): void {}
+
+    /** Returns whether children activate on single clicks. */
+    public function get_activate_on_single_click(): bool {}
+
+    /** Gets the nth child in the $box. */
+    public function get_child_at_index(int $idx): ?GtkFlowBoxChild {}
+
+    /** Gets the child in the ($x, $y) position. */
+    public function get_child_at_pos(int $x, int $y): ?GtkFlowBoxChild {}
+
+    /** Gets the horizontal spacing. */
+    public function get_column_spacing(): int {}
+
+    /** Returns whether the box is homogeneous. */
+    public function get_homogeneous(): bool {}
+
+    /** Gets the maximum number of children per line. */
+    public function get_max_children_per_line(): int {}
+
+    /** Gets the minimum number of children per line. */
+    public function get_min_children_per_line(): int {}
+
+    /** Gets the vertical spacing. */
+    public function get_row_spacing(): int {}
+
+    /**
+     * Creates a list of all selected children.
+     *
+     * @return list<GtkFlowBoxChild>
+     */
+    public function get_selected_children(): array {}
+
+    /** Gets the selection mode of $box. */
+    public function get_selection_mode(): GtkSelectionMode {}
+
+    /** Inserts the $widget into $box at $position. */
+    public function insert(GtkWidget $widget, int $position): void {}
+
+    /** Updates the filtering for all children. */
+    public function invalidate_filter(): void {}
+
+    /** Updates the sorting for all children. */
+    public function invalidate_sort(): void {}
+
+    /** Adds $child to the start of $self. */
+    public function prepend(GtkWidget $child): void {}
+
+    /** Removes a child from $box. */
+    public function remove(GtkWidget $widget): void {}
+
+    /** Removes all children from $box. */
+    public function remove_all(): void {}
+
+    /** Select all children of $box, if the selection mode allows it. */
+    public function select_all(): void {}
+
+    /** Selects a single child of $box, if the selection mode allows it. */
+    public function select_child(GtkFlowBoxChild $child): void {}
+
+    /** Calls a function for each selected child. */
+    public function selected_foreach(callable $func): void {}
+
+    /**
+     * If $single is `true`, children will be activated when you click on them, otherwise you need
+     * to double-click.
+     */
+    public function set_activate_on_single_click(bool $single): void {}
+
+    /** Sets the horizontal space to add between children. */
+    public function set_column_spacing(int $spacing): void {}
+
+    /** Hooks up an adjustment to focus handling in $box. */
+    public function set_hadjustment(GtkAdjustment $adjustment): void {}
+
+    /** Sets whether or not all children of $box are given equal space in the box. */
+    public function set_homogeneous(bool $homogeneous): void {}
+
+    /**
+     * Sets the maximum number of children to request and allocate space for in $box’s
+     * orientation.
+     */
+    public function set_max_children_per_line(int $n_children): void {}
+
+    /** Sets the minimum number of children to line up in $box’s orientation before flowing. */
+    public function set_min_children_per_line(int $n_children): void {}
+
+    /** Sets the vertical space to add between children. */
+    public function set_row_spacing(int $spacing): void {}
+
+    /** Sets how selection works in $box. */
+    public function set_selection_mode(GtkSelectionMode $mode): void {}
+
+    /** Hooks up an adjustment to focus handling in $box. */
+    public function set_vadjustment(GtkAdjustment $adjustment): void {}
+
+    /** Unselect all children of $box, if the selection mode allows it. */
+    public function unselect_all(): void {}
+
+    /** Unselects a single child of $box, if the selection mode allows it. */
+    public function unselect_child(GtkFlowBoxChild $child): void {}
+
+    /**
+     * Fill the box from $model, one child per item: `function (GObject $item): GtkWidget` builds the
+     * child. The box follows the model from then on, and a null $model unbinds it, taking the
+     * callable with it.
+     */
+    public function bind_model(?GListModel $model, ?callable $create_widget_func): void {}
+
+    /**
+     * Keep only the children `function (GtkFlowBoxChild $child): bool` answers true for; null shows every child again.
+     */
+    public function set_filter_func(?callable $filter_func): void {}
+
+    /**
+     * Order the children by `function (GtkFlowBoxChild $child1, GtkFlowBoxChild $child2): int` - negative, zero or positive as usual; null leaves them in the order they were added.
+     */
+    public function set_sort_func(?callable $sort_func): void {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::get_orientation */
+    public function get_orientation(): GtkOrientation {}
+
+    /** @implementation-alias Gtk4\GtkOrientable::set_orientation */
+    public function set_orientation(GtkOrientation $orientation): void {}
+}
+
+/**
+ * `GtkFlowBoxChild` is the kind of widget that can be added to a `GtkFlowBox`.
+ *
+ * @property ?GtkWidget $child
+ */
+class GtkFlowBoxChild extends GtkWidget
+{
+    /** Creates a new `GtkFlowBoxChild`. */
+    public function __construct() {}
+
+    /** Marks $child as changed, causing any state that depends on this to be updated. */
+    public function changed(): void {}
+
+    /** Gets the child widget of $self. */
+    public function get_child(): ?GtkWidget {}
+
+    /** Gets the current index of the $child in its `GtkFlowBox` container. */
+    public function get_index(): int {}
+
+    /** Returns whether the $child is currently selected in its `GtkFlowBox` container. */
+    public function is_selected(): bool {}
+
+    /** Sets the child widget of $self. */
+    public function set_child(?GtkWidget $child): void {}
+
+    /**
+     * Native `activate` (FlowBoxChildClass.activate): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_activate()` from an override.
+     */
+    public function vfunc_activate(): void {}
 }
 
 /**
@@ -3977,6 +4358,191 @@ enum GtkLicense: int
     case Apache20 = 16;
     case Mpl20 = 17;
     case Bsd0 = 18;
+}
+
+/**
+ * `GtkListBox` is a vertical list.
+ *
+ * @property bool $accept_unpaired_release
+ * @property bool $activate_on_single_click
+ * @property GtkSelectionMode $selection_mode
+ * @property bool $show_separators
+ */
+class GtkListBox extends GtkWidget
+{
+    /** Creates a new `GtkListBox` container. */
+    public function __construct() {}
+
+    /** Append a widget to the list. */
+    public function append(GtkWidget $child): void {}
+
+    /** Add a drag highlight to a row. */
+    public function drag_highlight_row(GtkListBoxRow $row): void {}
+
+    /**
+     * If a row has previously been highlighted via gtk_list_box_drag_highlight_row(), it will have
+     * the highlight removed.
+     */
+    public function drag_unhighlight_row(): void {}
+
+    /** Returns whether rows activate on single clicks. */
+    public function get_activate_on_single_click(): bool {}
+
+    /** Gets the adjustment (if any) that the widget uses to for vertical scrolling. */
+    public function get_adjustment(): ?GtkAdjustment {}
+
+    /** Gets the n-th child in the list (not counting headers). */
+    public function get_row_at_index(int $index): ?GtkListBoxRow {}
+
+    /** Gets the row at the $y position. */
+    public function get_row_at_y(int $y): ?GtkListBoxRow {}
+
+    /** Gets the selected row, or `null` if no rows are selected. */
+    public function get_selected_row(): ?GtkListBoxRow {}
+
+    /**
+     * Creates a list of all selected children.
+     *
+     * @return list<GtkListBoxRow>
+     */
+    public function get_selected_rows(): array {}
+
+    /** Gets the selection mode of the listbox. */
+    public function get_selection_mode(): GtkSelectionMode {}
+
+    /** Returns whether the list box should show separators between rows. */
+    public function get_show_separators(): bool {}
+
+    /** Insert the $child into the $box at $position. */
+    public function insert(GtkWidget $child, int $position): void {}
+
+    /** Update the filtering for all rows. */
+    public function invalidate_filter(): void {}
+
+    /** Update the separators for all rows. */
+    public function invalidate_headers(): void {}
+
+    /** Update the sorting for all rows. */
+    public function invalidate_sort(): void {}
+
+    /** Prepend a widget to the list. */
+    public function prepend(GtkWidget $child): void {}
+
+    /** Removes a child from $box. */
+    public function remove(GtkWidget $child): void {}
+
+    /** Removes all rows from $box. */
+    public function remove_all(): void {}
+
+    /** Select all children of $box, if the selection mode allows it. */
+    public function select_all(): void {}
+
+    /** Make $row the currently selected row. */
+    public function select_row(?GtkListBoxRow $row): void {}
+
+    /** Calls a function for each selected child. */
+    public function selected_foreach(callable $func): void {}
+
+    /**
+     * If $single is `true`, rows will be activated when you click on them, otherwise you need to
+     * double-click.
+     */
+    public function set_activate_on_single_click(bool $single): void {}
+
+    /** Sets the adjustment (if any) that the widget uses to for vertical scrolling. */
+    public function set_adjustment(?GtkAdjustment $adjustment): void {}
+
+    /**
+     * Sets the placeholder widget that is shown in the list when it doesn't display any visible
+     * children.
+     */
+    public function set_placeholder(?GtkWidget $placeholder): void {}
+
+    /** Sets how selection works in the listbox. */
+    public function set_selection_mode(GtkSelectionMode $mode): void {}
+
+    /** Sets whether the list box should show separators between rows. */
+    public function set_show_separators(bool $show_separators): void {}
+
+    /** Unselect all children of $box, if the selection mode allows it. */
+    public function unselect_all(): void {}
+
+    /** Unselects a single row of $box, if the selection mode allows it. */
+    public function unselect_row(GtkListBoxRow $row): void {}
+
+    /**
+     * Fill the box from $model, one row per item: `function (GObject $item): GtkWidget` builds the
+     * row. The box follows the model from then on - items added or removed there add and remove
+     * rows here - and a null $model unbinds it, taking the callable with it.
+     */
+    public function bind_model(?GListModel $model, ?callable $create_widget_func): void {}
+
+    /**
+     * Keep only the rows `function (GtkListBoxRow $row): bool` answers true for; null shows every row again.
+     */
+    public function set_filter_func(?callable $filter_func): void {}
+
+    /**
+     * Give rows headers: `function (GtkListBoxRow $row, ?GtkListBoxRow $before): void` calls {@see GtkListBoxRow::set_header()} on $row, and $before is the row above it (null for the first). Null removes every header.
+     */
+    public function set_header_func(?callable $update_header): void {}
+
+    /**
+     * Order the rows by `function (GtkListBoxRow $row1, GtkListBoxRow $row2): int` - negative, zero or positive as usual; null leaves them in the order they were added.
+     */
+    public function set_sort_func(?callable $sort_func): void {}
+}
+
+/**
+ * `GtkListBoxRow` is the kind of widget that can be added to a `GtkListBox`.
+ *
+ * @property bool $activatable
+ * @property ?GtkWidget $child
+ * @property bool $selectable
+ */
+class GtkListBoxRow extends GtkWidget
+{
+    /** Creates a new `GtkListBoxRow`. */
+    public function __construct() {}
+
+    /** Marks $row as changed, causing any state that depends on this to be updated. */
+    public function changed(): void {}
+
+    /** Gets whether the row is activatable. */
+    public function get_activatable(): bool {}
+
+    /** Gets the child widget of $row. */
+    public function get_child(): ?GtkWidget {}
+
+    /** Returns the current header of the $row. */
+    public function get_header(): ?GtkWidget {}
+
+    /** Gets the current index of the $row in its `GtkListBox` container. */
+    public function get_index(): int {}
+
+    /** Gets whether the row can be selected. */
+    public function get_selectable(): bool {}
+
+    /** Returns whether the child is currently selected in its `GtkListBox` container. */
+    public function is_selected(): bool {}
+
+    /** Set whether the row is activatable. */
+    public function set_activatable(bool $activatable): void {}
+
+    /** Sets the child widget of $self. */
+    public function set_child(?GtkWidget $child): void {}
+
+    /** Sets the current header of the $row. */
+    public function set_header(?GtkWidget $header): void {}
+
+    /** Set whether the row can be selected. */
+    public function set_selectable(bool $selectable): void {}
+
+    /**
+     * Native `activate` (ListBoxRowClass.activate): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_activate()` from an override.
+     */
+    public function vfunc_activate(): void {}
 }
 
 /**
@@ -6748,6 +7314,17 @@ class GtkScrolledWindow extends GtkWidget
 
     /** Unsets the placement of the contents with respect to the scrollbars. */
     public function unset_placement(): void {}
+}
+
+/**
+ * Used to control what selections users are allowed to make.
+ */
+enum GtkSelectionMode: int
+{
+    case None = 0;
+    case Single = 1;
+    case Browse = 2;
+    case Multiple = 3;
 }
 
 /**

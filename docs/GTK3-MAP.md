@@ -24,9 +24,9 @@ the notes are hand-written and may lag.
 
 | | classes | gtk3 methods behind them |
 | --- | ---: | ---: |
-| ✅ implemented | 77 | — |
+| ✅ implemented | 84 | — |
 | 🟡 partial | 1 | — |
-| ❌ to port (GTK 4 equivalent exists) | 17 | ~1750 |
+| ❌ to port (GTK 4 equivalent exists) | 10 | ~1750 |
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 4 | ~130 |
 
@@ -83,7 +83,7 @@ is open work.
 | `GtkLayout` | 10 | `GtkFixed` + `GtkScrolledWindow` | ⛔ | Removed in GTK 4. |
 | `GtkAlignment` | 4 | `halign`/`valign`/`margin-*` on `GtkWidget` | ⛔ | Removed in GTK 3.14. |
 | `GtkMisc` | 0 | `halign`/`valign` | ⛔ | Removed. |
-| `GtkAspectFrame` | 2 | `GtkAspectFrame` | ❌ | Still exists, no longer a `GtkBin`. |
+| `GtkAspectFrame` | 2 | `GtkAspectFrame` | ✅ | Still exists, no longer a `GtkBin`. |
 | `GtkFrame` | 9 | `GtkFrame` | ✅ | `set_shadow_type` removed (CSS instead). |
 | `GtkPaned` | 9 | `GtkPaned` | ✅ | `add1`/`add2` → `set_start_child`/`set_end_child`. |
 | `GtkOverlay` | 5 | `GtkOverlay` | ✅ | `add_overlay`, `set_child`. |
@@ -93,13 +93,13 @@ is open work.
 | `GtkStackSidebar` | 3 | `GtkStackSidebar` | ✅ | |
 | `GtkScrolledWindow` | 12 | `GtkScrolledWindow` | ✅ | `add_with_viewport` gone → `set_child`. |
 | `GtkViewport` | 9 | `GtkViewport` | ✅ | `set_shadow_type` gone. |
-| `GtkFlowBox` | 30 | `GtkFlowBox` | ❌ | Mostly unchanged. |
-| `GtkFlowBoxChild` | 4 | `GtkFlowBoxChild` | ❌ | |
-| `GtkListBox` | 28 | `GtkListBox` | ❌ | Still current; the newer `GtkListView` is the recommended alternative for large models. |
-| `GtkListBoxRow` | 2 | `GtkListBoxRow` | ❌ | |
+| `GtkFlowBox` | 30 | `GtkFlowBox` | ✅ | Mostly unchanged. |
+| `GtkFlowBoxChild` | 4 | `GtkFlowBoxChild` | ✅ | |
+| `GtkListBox` | 28 | `GtkListBox` | ✅ | Still current; the newer `GtkListView` is the recommended alternative for large models. |
+| `GtkListBoxRow` | 2 | `GtkListBoxRow` | ✅ | |
 | `GtkNotebook` | 40 | `GtkNotebook` | ✅ | `set_tab_label`, `append_page` etc. survive. |
-| `GtkExpander` | 18 | `GtkExpander` | ❌ | |
-| `GtkActionBar` | 5 | `GtkActionBar` | ❌ | |
+| `GtkExpander` | 18 | `GtkExpander` | ✅ | |
+| `GtkActionBar` | 5 | `GtkActionBar` | ✅ | |
 | `GtkHeaderBar` | 15 | `GtkHeaderBar` | ✅ | `pack_start`/`pack_end`/`set_title_widget`; `set_title`/`set_subtitle` removed. |
 | `GtkEventBox` | 5 | — | ⛔ | Removed; every `GtkWidget` takes event controllers now (`GtkGestureClick`, `GtkEventControllerMotion`). |
 | `GtkSizeGroup` | 6 | `GtkSizeGroup` | ✅ | |
