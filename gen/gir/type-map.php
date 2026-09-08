@@ -752,7 +752,7 @@ final class TypeMap
             // about (php_gtk4.h, absolute_filename).
             $post = [];
             $value = $name;
-            if ($t->name === 'filename') {
+            if ($t->name === 'filename' && !isset(CALLEE_RESOLVED_FILENAMES[$cid . '.' . $name])) {
                 $value = "{$name}_abs";
                 $post = ["if ({$name}_abs != nullptr) zend_string_release({$name}_abs);"];
                 $utf8Check = array_merge($utf8Check, $nullable
@@ -1174,8 +1174,12 @@ final class TypeMap
                 return ['phpType' => '?array', 'docType' => "$outDoc|null", 'lines' => fn(string $call) => [
                     "if (!$call) RETURN_NULL();", ...$outLines()]];
             }
+            // The GError decides, not the answer: a `throws` predicate like
+            // g_key_file_has_key() returns FALSE *without* an error for a key that is simply not
+            // there, and GLib sets the error on every real failure. Reading FALSE as failure
+            // turned "no such key" into an exception.
             return ['phpType' => 'bool', 'lines' => fn(string $call) => $f->throws
-                ? ["const gboolean ok = $call;", ...$throwCheck('!ok'), 'RETURN_BOOL(ok);']
+                ? ["const gboolean ok = $call;", ...$throwCheck('error != nullptr'), 'RETURN_BOOL(ok);']
                 : ["RETURN_BOOL($call);"]];
         }
         if ($outs !== []) {

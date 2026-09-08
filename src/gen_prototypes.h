@@ -97,7 +97,14 @@ void register_vfuncs_GtkTextView();
 void register_vfuncs_GtkWidget();
 void register_vfuncs_GtkWindow();
 namespace phpgtk {
+void register_PangoAttrList(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
 void register_PangoFontDescription(zend_class_entry *ce);
+}  // namespace phpgtk
+void register_vfuncs_PangoFontMap();
+namespace phpgtk {
+void register_PangoTabArray(zend_class_entry *ce);
 }  // namespace phpgtk
 void register_vfuncs_GAction();
 ZEND_METHOD(Gtk4_GAction, activate);
@@ -282,6 +289,9 @@ void register_GdkPixbufFormat(zend_class_entry *ce);
 void register_vfuncs_GdkPixbufLoader();
 namespace phpgtk {
 void register_GDateTime(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GKeyFile(zend_class_entry *ce);
 }  // namespace phpgtk
 namespace phpgtk {
 void register_GTimeZone(zend_class_entry *ce);

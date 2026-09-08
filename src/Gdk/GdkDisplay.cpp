@@ -228,7 +228,7 @@ ZEND_METHOD(Gtk4_GdkDisplay, prepare_gl) {
   GdkDisplay *self = PHPGTK_SELF(GdkDisplay, GDK_TYPE_DISPLAY);
   GError *error = nullptr;
   const gboolean ok = gdk_display_prepare_gl(self, &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

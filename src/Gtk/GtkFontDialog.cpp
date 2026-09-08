@@ -195,6 +195,18 @@ ZEND_METHOD(Gtk4_GtkFontDialog, get_filter) {
 }
 
 /**
+ * Gtk4\GtkFontDialog::get_font_map(): ?PangoFontMap
+ *
+ * Returns the fontmap from which fonts are selected, or `NULL` for the default fontmap.
+ */
+ZEND_METHOD(Gtk4_GtkFontDialog, get_font_map) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkFontDialog *self = PHPGTK_SELF(GtkFontDialog, GTK_TYPE_FONT_DIALOG);
+  PangoFontMap *phpgtk_ret = gtk_font_dialog_get_font_map(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkFontDialog::get_modal(): bool
  *
  * Returns whether the font chooser dialog blocks interaction with the parent window while it is
@@ -236,6 +248,25 @@ ZEND_METHOD(Gtk4_GtkFontDialog, set_filter) {
     if (filter_o == nullptr) RETURN_THROWS();
   }
   gtk_font_dialog_set_filter(self, filter_o != nullptr ? GTK_FILTER(filter_o) : nullptr);
+}
+
+/**
+ * Gtk4\GtkFontDialog::set_font_map(?PangoFontMap $fontmap): void
+ *
+ * Sets the fontmap from which fonts are selected.
+ */
+ZEND_METHOD(Gtk4_GtkFontDialog, set_font_map) {
+  zval *fontmap = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(fontmap, class_for_gtype(PANGO_TYPE_FONT_MAP))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkFontDialog *self = PHPGTK_SELF(GtkFontDialog, GTK_TYPE_FONT_DIALOG);
+  GObject *fontmap_o = nullptr;
+  if (fontmap != nullptr) {
+    fontmap_o = unwrap(fontmap, PANGO_TYPE_FONT_MAP);
+    if (fontmap_o == nullptr) RETURN_THROWS();
+  }
+  gtk_font_dialog_set_font_map(self, fontmap_o != nullptr ? PANGO_FONT_MAP(fontmap_o) : nullptr);
 }
 
 /**

@@ -83,6 +83,26 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `vfunc skip_async` — return or argument type not convertible in a thunk
 - `vfunc skip_finish` — GError out parameter
 
+## GKeyFile
+
+- `free` — memory management belongs to the handle (clone / destructor)
+- `get_boolean_list` — return array plus out parameters
+- `get_double_list` — return array plus out parameters
+- `get_groups` — return array plus out parameters
+- `get_integer_list` — return array plus out parameters
+- `get_keys` — return array plus out parameters
+- `get_locale_string_list` — return array plus out parameters
+- `get_string_list` — return array plus out parameters
+- `load_from_dirs` — parameter `search_dirs` of type array (C array)
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `set_boolean_list` — parameter `list` of type array (C array)
+- `set_double_list` — parameter `list` of type array (C array)
+- `set_integer_list` — parameter `list` of type array (C array)
+- `set_locale_string_list` — parameter `list` of type array (C array)
+- `set_string_list` — parameter `list` of type array (C array)
+- `to_data` — return utf8 plus out parameters
+- `unref` — memory management belongs to the handle (clone / destructor)
+
 ## GListModel
 
 - `get_item` — shadowed by get_object
@@ -436,7 +456,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GskPathBuilder
 
 - `add_cairo_path` — parameter `path` of type cairo.Path
-- `add_layout` — parameter `layout` of type Pango.Layout
 - `free_to_path` — skip.txt: unrefs the builder itself (GIR does not say so on the instance parameter), leaving the handle on freed memory - a SEGV on the next call; to_path() gives the same path and keeps the builder
 - `ref` — memory management belongs to the handle (clone / destructor)
 - `unref` — memory management belongs to the handle (clone / destructor)
@@ -624,15 +643,9 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkEntry
 
-- `get_attributes` — return type Pango.AttrList
 - `get_completion` — deprecated (4.10)
-- `get_tabs` — return type Pango.TabArray
-- `set_attributes` — parameter `attrs` of type Pango.AttrList
 - `set_completion` — deprecated (4.10)
-- `set_tabs` — parameter `tabs` of type Pango.TabArray
-- `property attributes` — property type Pango.AttrList not mappable
 - `property completion` — deprecated (4.10)
-- `property tabs` — property type Pango.TabArray not mappable
 
 ## GtkEntryBuffer
 
@@ -665,11 +678,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `choose_family` — parameter `initial_value` of type Pango.FontFamily
 - `choose_family_finish` — return type Pango.FontFamily (not in the closure)
 - `choose_font_and_features_finish` — out parameter `font_desc` of type Pango.FontDescription
-- `get_font_map` — return type Pango.FontMap (not in the closure)
 - `get_language` — return type Pango.Language
-- `set_font_map` — parameter `fontmap` of type Pango.FontMap
 - `set_language` — parameter `language` of type Pango.Language
-- `property font-map` — property type Pango.FontMap not mappable
 - `property language` — property type Pango.Language not mappable
 
 ## GtkFrame
@@ -704,16 +714,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `new_from_pixbuf` — deprecated (4.12)
 - `set_from_pixbuf` — deprecated (4.12)
-
-## GtkLabel
-
-- `get_attributes` — return type Pango.AttrList
-- `get_layout` — return type Pango.Layout (not in the closure)
-- `get_tabs` — return type Pango.TabArray
-- `set_attributes` — parameter `attrs` of type Pango.AttrList
-- `set_tabs` — parameter `tabs` of type Pango.TabArray
-- `property attributes` — property type Pango.AttrList not mappable
-- `property tabs` — property type Pango.TabArray not mappable
 
 ## GtkLayoutChild
 
@@ -752,12 +752,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `__construct` — skip.txt: GtkOverlayLayout creates its layout children, as Gtk.LayoutChild
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
-## GtkPageSetup
-
-- `new_from_key_file` — parameter `key_file` of type GLib.KeyFile
-- `load_key_file` — parameter `key_file` of type GLib.KeyFile
-- `to_key_file` — parameter `key_file` of type GLib.KeyFile
-
 ## GtkPaned
 
 - `smoke test` — no constructor or factory whose parameters can be sampled
@@ -765,10 +759,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkPaperSize
 
 - `PHP subclasses` — constructor argument name is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GtkPaperSize
-- `new_from_key_file` — parameter `key_file` of type GLib.KeyFile
 - `copy` — memory management belongs to the handle (clone / destructor)
 - `free` — memory management belongs to the handle (clone / destructor)
-- `to_key_file` — parameter `key_file` of type GLib.KeyFile
 
 ## GtkPicture
 
@@ -781,9 +773,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkPrintContext
 
-- `create_pango_context` — return type Pango.Context (not in the closure)
-- `create_pango_layout` — return type Pango.Layout (not in the closure)
-- `get_pango_fontmap` — return type Pango.FontMap (not in the closure)
 - `__construct` — skip.txt: GTK creates the context inside a print operation (draw-page hands it over); one from g_object_new() has no page setup or cairo context and its getters dereference NULL (SIGSEGV)
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
@@ -794,12 +783,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkPrintOperation
 
 - `vfunc preview` — parameter `preview` of type Gtk.PrintOperationPreview
-
-## GtkPrintSettings
-
-- `new_from_key_file` — parameter `key_file` of type GLib.KeyFile
-- `load_key_file` — parameter `key_file` of type GLib.KeyFile
-- `to_key_file` — parameter `key_file` of type GLib.KeyFile
 
 ## GtkPrintSetup
 
@@ -817,7 +800,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkScale
 
-- `get_layout` — return type Pango.Layout (not in the closure)
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GtkScrollInfo
@@ -849,7 +831,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## GtkSnapshot
 
 - `append_conic_gradient` — parameter `stops` of type array (C array)
-- `append_layout` — parameter `layout` of type Pango.Layout
 - `append_linear_gradient` — parameter `stops` of type array (C array)
 - `append_radial_gradient` — parameter `stops` of type array (C array)
 - `append_repeating_linear_gradient` — parameter `stops` of type array (C array)
@@ -884,14 +865,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkText
 
-- `get_attributes` — return type Pango.AttrList
-- `get_tabs` — return type Pango.TabArray
-- `set_attributes` — parameter `attrs` of type Pango.AttrList
-- `set_tabs` — parameter `tabs` of type Pango.TabArray
 - `finish_delegate` — skip.txt: pairs with init_delegate
 - `init_delegate` — skip.txt: GtkEditable plumbing for a widget that *delegates* to a GtkText from its own init; calling it on a GtkText is "invalid (NULL) pointer instance" from GLib
-- `property attributes` — property type Pango.AttrList not mappable
-- `property tabs` — property type Pango.TabArray not mappable
 
 ## GtkTextBuffer
 
@@ -912,18 +887,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `free` — memory management belongs to the handle (clone / destructor)
 - `get_language` — return type Pango.Language
 
-## GtkTextTag
-
-- `property tabs` — property type Pango.TabArray not mappable
-
-## GtkTextView
-
-- `get_ltr_context` — return type Pango.Context (not in the closure)
-- `get_rtl_context` — return type Pango.Context (not in the closure)
-- `get_tabs` — return type Pango.TabArray
-- `set_tabs` — parameter `tabs` of type Pango.TabArray
-- `property tabs` — property type Pango.TabArray not mappable
-
 ## GtkToggleButton
 
 - `toggled` — deprecated (4.10)
@@ -943,23 +906,18 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `add_tick_callback` — callback parameter (needs an override)
 - `compute_transform` — caller-allocates out parameter `out_transform` of type Graphene.Matrix
-- `create_pango_context` — return type Pango.Context (not in the closure)
-- `create_pango_layout` — return type Pango.Layout (not in the closure)
 - `dispose_template` — parameter `widget_type` of type Gtk.GType
 - `get_allocated_baseline` — deprecated (4.12)
 - `get_allocated_height` — deprecated (4.12)
 - `get_allocated_width` — deprecated (4.12)
 - `get_allocation` — deprecated (4.12)
 - `get_ancestor` — parameter `widget_type` of type Gtk.GType
-- `get_font_map` — return type Pango.FontMap (not in the closure)
 - `get_font_options` — return type cairo.FontOptions
 - `get_frame_clock` — return type Gdk.FrameClock (not in the closure)
-- `get_pango_context` — return type Pango.Context (not in the closure)
 - `get_settings` — return type Gtk.Settings (not in the closure)
 - `get_style_context` — deprecated (4.10)
 - `get_template_child` — parameter `widget_type` of type Gtk.GType
 - `hide` — deprecated (4.10)
-- `set_font_map` — parameter `font_map` of type Pango.FontMap
 - `set_font_options` — parameter `options` of type cairo.FontOptions
 - `show` — deprecated (4.10)
 - `size_allocate` — parameter `allocation` of type Gtk.Allocation
@@ -1010,10 +968,74 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `__construct` — skip.txt: built by its factories (new_number(), new_string(), ...) or by a JSCContext; g_object_new() without a context asserts
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
+## PangoAttrList
+
+- `change` — parameter `attr` of type Pango.Attribute
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `filter` — callback parameter (needs an override)
+- `get_attributes` — list of Pango.Attribute
+- `get_iterator` — return type Pango.AttrIterator
+- `insert` — parameter `attr` of type Pango.Attribute
+- `insert_before` — parameter `attr` of type Pango.Attribute
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## PangoContext
+
+- `get_language` — return type Pango.Language
+- `get_matrix` — return type Pango.Matrix
+- `get_metrics` — parameter `language` of type Pango.Language
+- `list_families` — out parameter `families` of type array
+- `load_font` — return type Pango.Font (not in the closure)
+- `load_fontset` — parameter `language` of type Pango.Language
+- `set_language` — parameter `language` of type Pango.Language
+- `set_matrix` — parameter `matrix` of type Pango.Matrix
+
 ## PangoFontDescription
 
 - `copy` — memory management belongs to the handle (clone / destructor)
 - `free` — memory management belongs to the handle (clone / destructor)
+
+## PangoFontMap
+
+- `get_family` — return type Pango.FontFamily (not in the closure)
+- `list_families` — out parameter `families` of type array
+- `load_font` — return type Pango.Font (not in the closure)
+- `load_fontset` — parameter `language` of type Pango.Language
+- `reload_font` — parameter `font` of type Pango.Font
+- `__construct` — skip.txt: abstract, and the concrete map belongs to the backend (PangoCairoFontMap here): a PHP subtype has no font map behind it and the getters read uninitialised state (EveryClassTest segfaulted on it). PangoContext::get_font_map() and GtkWidget::get_pango_context() are where one comes from
+- `vfunc get_face` — parameter `font` of type Pango.Font
+- `vfunc_get_family` — return type Pango.FontFamily (not in the closure)
+- `vfunc list_families` — out parameter `families` of type array
+- `vfunc_load_font` — return type Pango.Font (not in the closure)
+- `vfunc load_fontset` — parameter `language` of type Pango.Language
+- `property item-type` — property type Pango.GType not mappable
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## PangoLayout
+
+- `PHP subclasses` — constructor argument context is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain PangoLayout
+- `get_caret_pos` — caller-allocates out parameter `strong_pos` of type Pango.Rectangle
+- `get_cursor_pos` — caller-allocates out parameter `strong_pos` of type Pango.Rectangle
+- `get_extents` — caller-allocates out parameter `ink_rect` of type Pango.Rectangle
+- `get_iter` — return type Pango.LayoutIter
+- `get_line` — return type Pango.LayoutLine
+- `get_line_readonly` — return type Pango.LayoutLine
+- `get_lines` — list of Pango.LayoutLine
+- `get_lines_readonly` — list of Pango.LayoutLine
+- `get_log_attrs` — out parameter `attrs` of type array
+- `get_log_attrs_readonly` — return array plus out parameters
+- `get_pixel_extents` — caller-allocates out parameter `ink_rect` of type Pango.Rectangle
+- `index_to_pos` — caller-allocates out parameter `pos` of type Pango.Rectangle
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## PangoTabArray
+
+- `PHP subclasses` — constructor argument initial_size is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain PangoTabArray
+- `new_with_positions` — varargs
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+- `get_tabs` — out parameter `locations` of type array
 
 ## SoupCookie
 
@@ -1274,7 +1296,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## WebKitSettings
 
 - `new_with_settings` — varargs
-- `apply_from_key_file` — parameter `key_file` of type GLib.KeyFile
 - `get_enable_dns_prefetching` — deprecated (2.48.)
 - `get_enable_hyperlink_auditing` — deprecated (2.50.)
 - `get_enable_offline_web_application_cache` — deprecated (2.44)
@@ -1592,7 +1613,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkWidget.cpp`
 - `Gtk/GtkWindow.cpp`
 - `Gtk/Gtk.stub.php`
+- `Pango/PangoAttrList.cpp`
+- `Pango/PangoContext.cpp`
 - `Pango/PangoFontDescription.cpp`
+- `Pango/PangoFontMap.cpp`
+- `Pango/PangoLayout.cpp`
+- `Pango/PangoTabArray.cpp`
 - `Pango/Pango.stub.php`
 - `Gio/GAction.cpp`
 - `Gio/GActionGroup.cpp`
@@ -1760,6 +1786,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `JavaScriptCore/JSCVirtualMachine.cpp`
 - `JavaScriptCore/JavaScriptCore.stub.php`
 - `GLib/GDateTime.cpp`
+- `GLib/GKeyFile.cpp`
 - `GLib/GTimeZone.cpp`
 - `GLib/GLib.stub.php`
 - `Soup/SoupCookie.cpp`
@@ -1876,6 +1903,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkViewportSmokeTest.php`
 - `tests/Generated/GtkWidgetSmokeTest.php`
 - `tests/Generated/GtkWindowSmokeTest.php`
+- `tests/Generated/PangoContextSmokeTest.php`
 - `tests/Generated/GApplicationSmokeTest.php`
 - `tests/Generated/GCancellableSmokeTest.php`
 - `tests/Generated/GInputStreamSmokeTest.php`

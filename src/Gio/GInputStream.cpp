@@ -57,7 +57,7 @@ ZEND_METHOD(Gtk4_GInputStream, close) {
   GError *error = nullptr;
   const gboolean ok = g_input_stream_close(
       self, cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr, &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }
@@ -132,7 +132,7 @@ ZEND_METHOD(Gtk4_GInputStream, close_finish) {
   if (result_o == nullptr) RETURN_THROWS();
   GError *error = nullptr;
   const gboolean ok = g_input_stream_close_finish(self, G_ASYNC_RESULT(result_o), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }
@@ -331,7 +331,7 @@ ZEND_METHOD(Gtk4_GInputStream, set_pending) {
   GInputStream *self = PHPGTK_SELF(GInputStream, G_TYPE_INPUT_STREAM);
   GError *error = nullptr;
   const gboolean ok = g_input_stream_set_pending(self, &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

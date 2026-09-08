@@ -94,6 +94,14 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **Pango, and GLib's key file.** The text engine under every label is bound - `PangoLayout`
+  (what a widget measures a paragraph with), `PangoContext` and `PangoFontMap` behind it,
+  `PangoTabArray` for tab stops and `PangoAttrList` for styling a run of text without markup in
+  it — which is around thirty members across `GtkLabel`, `GtkEntry`, `GtkText`, `GtkTextView`,
+  `GtkTextTag`, `GtkScale`, `GtkWidget` and the print context. `GKeyFile` comes with them, since
+  a `GtkPageSetup`, `GtkPaperSize` and `GtkPrintSettings` all read and write themselves through
+  one.
+
 - **Dates, input devices and widgets inside text** — three types that were each blocking
   several members:
   - `GDateTime` with `GTimeZone`: `GtkCalendar::get_date()` and `select_day()` speak it, and so
@@ -636,6 +644,24 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   named-argument callers using the old camelCase spellings break.
 
 ### Fixed
+
+- **A `throws` function that answers `false` is not necessarily failing.** The generator read a
+  `gboolean` return as the success flag, so `GKeyFile::has_key()` threw "GTK returned no result
+  and no error" for a key that was simply not there. The `GError` decides now, as it already did
+  for every other return shape — GLib sets it on every real failure.
+
+- **A boxed record whose `copy()` takes its operand non-const** (`pango_attr_list_copy()`) did
+  not compile; the emitter now reads the instance parameter's constness the way it already did
+  for `equal()`.
+
+- **`GtkTextView::set_tabs(null)`** was refused: GIR does not mark the parameter nullable
+  although GTK restores the default tab stops on NULL, exactly as its `GtkLabel` and `GtkEntry`
+  siblings do. A new `NULLABLE_PARAMS` table is the mirror of the existing `NON_NULLABLE_PARAMS`.
+
+- **`GtkBuilder::add_objects_from_file()`** and its two siblings now refuse an empty id list,
+  which GTK asserts on, and **`GKeyFile::load_from_data_dirs()`** refuses an absolute path — the
+  file is looked up *in* the data directories, so the binding no longer resolves it against
+  PHP's working directory first.
 
 - **A vfunc slot answered GTK with its default whenever a PHP exception was in flight**, which
   is a lie about the object rather than a safe fallback: a PHP `GListModel` asked how many rows

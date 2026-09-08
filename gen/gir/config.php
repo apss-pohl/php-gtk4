@@ -154,7 +154,32 @@ const NULLABLE_RETURNS = [
  * TypeError at the boundary. Found by `RobustnessTest`, which passes null to every parameter
  * that admits it.
  */
+/**
+ * `filename` parameters the callee resolves itself, as `<C identifier>.<param>`. Every other
+ * filename is made absolute against PHP's own cwd before the C library sees it (php_gtk4.h,
+ * absolute_filename) - but g_key_file_load_from_data_dirs() looks the file up *in* the XDG data
+ * directories and asserts on an absolute path, so for these the argument goes as it was given.
+ */
+const CALLEE_RESOLVED_FILENAMES = [
+    'g_key_file_load_from_data_dirs.file' => true,
+    'g_key_file_load_from_dirs.file' => true,
+];
+
+/**
+ * The mirror of {@see NON_NULLABLE_PARAMS}: parameters GIR does *not* mark nullable that the C
+ * function does take NULL for, as `<C identifier>.<param>` -> why. Without the `?` the binding
+ * is stricter than GTK and PHP cannot say "back to the default", which is what NULL means here.
+ */
+const NULLABLE_PARAMS = [
+    // `priv->tabs = tabs ? pango_tab_array_copy (tabs) : NULL;` - NULL restores the default tab
+    // stops, exactly as on GtkLabel and GtkEntry, whose annotations GIR does carry
+    'gtk_text_view_set_tabs.tabs' => 'NULL restores the default tab stops',
+];
+
 const NON_NULLABLE_PARAMS = [
+    // GIR says nullable, Pango asserts `desc != NULL` and leaves the context unchanged
+    'pango_context_set_font_description.desc' => 'pango_context_set_font_description()'
+        . ' asserts on a null description',
     'gdk_pixbuf_get_file_info_async.callback' => 'asserts callback != NULL',
     'gdk_clipboard_read_async.callback' => 'gdk_clipboard_read_async: assertion callback != NULL',
     'gdk_clipboard_read_text_async.callback' => 'gdk_clipboard_read_text_async: assertion callback != NULL',
@@ -281,6 +306,17 @@ const SELF_PRECONDITIONS = [
  * pin report (GTK4_PIN_REPORT) prints, is what each predicate mirrors.
  */
 const ARG_PRECONDITIONS = [
+    // gtk_builder_add_objects_from_*() asserts `object_ids[0] != NULL`: building "only
+    // these objects" needs at least one of them named
+    'gtk_builder_add_objects_from_file' => [[2,
+        'zend_hash_num_elements(Z_ARRVAL_P(object_ids)) > 0', 'must name at least one object']],
+    'gtk_builder_add_objects_from_resource' => [[2,
+        'zend_hash_num_elements(Z_ARRVAL_P(object_ids)) > 0', 'must name at least one object']],
+    'gtk_builder_add_objects_from_string' => [[2,
+        'zend_hash_num_elements(Z_ARRVAL_P(object_ids)) > 0', 'must name at least one object']],
+    // the file is looked up *in* the data directories, so an absolute path is a mistake
+    'g_key_file_load_from_data_dirs' => [[1, '!g_path_is_absolute(ZSTR_VAL(file))',
+        'must be a relative path: it is looked up in the data directories']],
     // one character, not one byte: GTK counts with g_utf8_strlen()
     'gtk_text_child_anchor_new_with_replacement' => [[1,
         'g_utf8_strlen(ZSTR_VAL(character), -1) == 1', 'must be exactly one character']],
@@ -438,6 +474,12 @@ const PARAM_DOMAINS = [
     'gtk_icon_paintable_new_for_file.size' => [0, null],
     'gtk_icon_paintable_new_for_file.scale' => [0, null],
     'pango_font_description_set_size.size' => [0, null],
+    // Pango counts in bytes from the start of the text: every offset and length is >= 0
+    'pango_attr_list_splice.pos' => [0, null],
+    'pango_attr_list_splice.len' => [0, null],
+    'pango_attr_list_update.pos' => [0, null],
+    'pango_attr_list_update.remove' => [0, null],
+    'pango_attr_list_update.add' => [0, null],
     'gtk_spin_button_set_climb_rate.climb_rate' => [0.0, null],
     'pango_font_description_set_absolute_size.size' => [0.0, null],
     // GSK's path builder asserts on its geometry: a third element `open` makes the lower bound

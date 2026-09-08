@@ -115,7 +115,7 @@ ZEND_METHOD(Gtk4_GtkUriLauncher, launch_finish) {
   if (result_o == nullptr) RETURN_THROWS();
   GError *error = nullptr;
   const gboolean ok = gtk_uri_launcher_launch_finish(self, G_ASYNC_RESULT(result_o), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

@@ -83,6 +83,10 @@ final class Demo
         'Label text' => [
             'GtkJustification', 'PangoEllipsizeMode', 'PangoWrapMode', 'GtkNaturalWrapMode',
         ],
+        'Pango' => [
+            'PangoLayout', 'PangoContext', 'PangoFontMap',
+            'PangoAttrList', 'PangoTabArray', 'PangoTabAlign', 'PangoDirection',
+        ],
         'Application' => [
             'Gtk', 'GApplication', 'GtkApplication', 'GSimpleAction', 'GAction', 'GActionMap',
             'GActionGroup', 'GApplicationFlags', 'GtkUriLauncher', 'GNotification', 'GNotificationPriority',
@@ -96,7 +100,7 @@ final class Demo
         'Objects & values' => [
             'GObject', 'GParamSpec', 'PhpValue', 'GdkRGBA', 'GdkRectangle',
             'GdkTexture', 'GdkMemoryFormat', 'GError', 'ExceptionMode',
-            'GIcon', 'GThemedIcon', 'GDateTime', 'GTimeZone',
+            'GIcon', 'GThemedIcon', 'GDateTime', 'GTimeZone', 'GKeyFile',
         ],
         'Lists' => [
             'GListModel', 'GListStore', 'GtkFilter', 'GtkCustomFilter',

@@ -342,7 +342,7 @@ ZEND_METHOD(Gtk4_GdkClipboard, store_finish) {
   if (result_o == nullptr) RETURN_THROWS();
   GError *error = nullptr;
   const gboolean ok = gdk_clipboard_store_finish(self, G_ASYNC_RESULT(result_o), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

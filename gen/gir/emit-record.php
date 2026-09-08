@@ -225,9 +225,19 @@ trait EmitsRecords
         foreach ($n->funcs as $f) {
             $byName[$f->name] = $f;
         }
-        $copy = isset($byName['copy'], $byName['ref']) ? ",\n      .copy = [](gconstpointer d) {"
-            . " return static_cast<gpointer>({$byName['copy']->cid}("
-            . "static_cast<const $ctype *>(d))); }" : '';
+        // pango_attr_list_copy() takes its operand non-const where most _copy() functions take
+        // it const; the registry hands it over as gconstpointer either way.
+        $copyFn = isset($byName['copy'], $byName['ref']) ? $byName['copy'] : null;
+        $copyConst = $copyFn === null || $copyFn->selfConst;
+        $copy = $copyFn === null ? '' : ",\n"
+            . ($copyConst ? ''
+                : "      // NOLINTBEGIN(cppcoreguidelines-pro-type-const-cast) {$copyFn->cid}()"
+                    . " takes its operand non-const\n")
+            . '      .copy = [](gconstpointer d) {'
+            . " return static_cast<gpointer>({$copyFn->cid}(" . ($copyConst
+                ? "static_cast<const $ctype *>(d)"
+                : "static_cast<$ctype *>(const_cast<gpointer>(d))") . ')); }'
+            . ($copyConst ? '' : "\n      // NOLINTEND(cppcoreguidelines-pro-type-const-cast)\n     ");
         // `==` on an opaque record goes through the type's own equality (GtkTextIter::equal,
         // GtkBitset::equals); without one it can only compare the public fields.
         $equalFn = $byName['equal'] ?? $byName['equals'] ?? null;

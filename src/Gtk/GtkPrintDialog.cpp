@@ -237,7 +237,7 @@ ZEND_METHOD(Gtk4_GtkPrintDialog, print_file_finish) {
   if (result_o == nullptr) RETURN_THROWS();
   GError *error = nullptr;
   const gboolean ok = gtk_print_dialog_print_file_finish(self, G_ASYNC_RESULT(result_o), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

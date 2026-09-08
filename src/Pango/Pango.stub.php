@@ -11,6 +11,107 @@
 namespace Gtk4;
 
 /**
+ * `PangoAlignment` describes how to align the lines of a `PangoLayout` within the available space.
+ */
+enum PangoAlignment: int
+{
+    case Left = 0;
+    case Center = 1;
+    case Right = 2;
+}
+
+/**
+ * A `PangoAttrList` represents a list of attributes that apply to a section of text.
+ * @not-serializable
+ */
+final class PangoAttrList
+{
+    /** Create a new empty attribute list with a reference count of one. */
+    public function __construct() {}
+
+    /**
+     * Checks whether $list and $other_list contain the same attributes and whether those
+     * attributes apply to the same ranges.
+     */
+    public function equal(PangoAttrList $other_list): bool {}
+
+    /**
+     * This function opens up a hole in $list, fills it in with attributes from the left, and then
+     * merges $other on top of the hole.
+     */
+    public function splice(PangoAttrList $other, int $pos, int $len): void {}
+
+    /** Serializes a `PangoAttrList` to a string. */
+    public function to_string(): string {}
+
+    /** Update indices of attributes in $list for a change in the text they refer to. */
+    public function update(int $pos, int $remove, int $add): void {}
+
+    /** Deserializes a `PangoAttrList` from a string. */
+    public static function from_string(string $text): ?PangoAttrList {}
+}
+
+/**
+ * A `PangoContext` stores global information used to control the itemization process.
+ */
+class PangoContext extends GObject
+{
+    /** Creates a new `PangoContext` initialized to default values. */
+    public function __construct() {}
+
+    /**
+     * Forces a change in the context, which will cause any `PangoLayout` using this context to
+     * re-layout.
+     */
+    public function changed(): void {}
+
+    /** Retrieves the base direction for the context. */
+    public function get_base_dir(): PangoDirection {}
+
+    /** Retrieves the base gravity for the context. */
+    public function get_base_gravity(): PangoGravity {}
+
+    /** Retrieve the default font description for the context. */
+    public function get_font_description(): ?PangoFontDescription {}
+
+    /** Gets the `PangoFontMap` used to look up fonts for this context. */
+    public function get_font_map(): ?PangoFontMap {}
+
+    /** Retrieves the gravity for the context. */
+    public function get_gravity(): PangoGravity {}
+
+    /** Retrieves the gravity hint for the context. */
+    public function get_gravity_hint(): PangoGravityHint {}
+
+    /** Returns whether font rendering with this context should round glyph positions and widths. */
+    public function get_round_glyph_positions(): bool {}
+
+    /** Returns the current serial number of $context. */
+    public function get_serial(): int {}
+
+    /** Sets the base direction for the context. */
+    public function set_base_dir(PangoDirection $direction): void {}
+
+    /** Sets the base gravity for the context. */
+    public function set_base_gravity(PangoGravity $gravity): void {}
+
+    /** Set the default font description for the context */
+    public function set_font_description(PangoFontDescription $desc): void {}
+
+    /** Sets the font map to be searched when fonts are looked-up in this context. */
+    public function set_font_map(?PangoFontMap $font_map): void {}
+
+    /** Sets the gravity hint for the context. */
+    public function set_gravity_hint(PangoGravityHint $hint): void {}
+
+    /**
+     * Sets whether font rendering with this context should round glyph positions and widths to
+     * integral positions, in device units.
+     */
+    public function set_round_glyph_positions(bool $round_positions): void {}
+}
+
+/**
  * `PangoDirection` represents a direction in the Unicode bidirectional algorithm.
  */
 enum PangoDirection: int
@@ -148,6 +249,55 @@ final class PangoFontDescription
 }
 
 /**
+ * A `PangoFontMap` represents the set of fonts available for a particular rendering system.
+ *
+ * @property-read int $n_items
+ */
+class PangoFontMap extends GObject implements GListModel
+{
+    /** PangoFontMap is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /**
+     * Forces a change in the context, which will cause any `PangoContext` using this fontmap to
+     * change.
+     */
+    public function changed(): void {}
+
+    /** Creates a `PangoContext` connected to $fontmap. */
+    public function create_context(): PangoContext {}
+
+    /** Returns the current serial number of $fontmap. */
+    public function get_serial(): int {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item_type */
+    public function get_item_type(): string {}
+
+    /** @implementation-alias Gtk4\GListModel::get_n_items */
+    public function get_n_items(): int {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item */
+    public function get_item(int $position): ?GObject {}
+
+    /** @implementation-alias Gtk4\GListModel::items_changed */
+    public function items_changed(int $position, int $removed, int $added): void {}
+
+    /**
+     * Native `changed` (FontMapClass.changed): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_changed()` from an override. Forces a change in the context, which will cause
+     * any `PangoContext` using this fontmap to change.
+     */
+    public function vfunc_changed(): void {}
+
+    /**
+     * Native `get_serial` (FontMapClass.get_serial): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_get_serial()` from an override. Returns the current serial
+     * number of $fontmap.
+     */
+    public function vfunc_get_serial(): int {}
+}
+
+/**
  * The bits in a `PangoFontMask` correspond to the set fields in a `PangoFontDescription`.
  */
 final class PangoFontMask
@@ -182,6 +332,230 @@ enum PangoGravityHint: int
     case Natural = 0;
     case Strong = 1;
     case Line = 2;
+}
+
+/**
+ * A `PangoLayout` structure represents an entire paragraph of text.
+ */
+class PangoLayout extends GObject
+{
+    /**
+     * Create a new `PangoLayout` object with attributes initialized to default values for a
+     * particular `PangoContext`.
+     */
+    public function __construct(PangoContext $context) {}
+
+    /** Loads data previously created via `serialize`. */
+    public static function deserialize(PangoContext $context, string $bytes, int $flags): ?PangoLayout {}
+
+    /**
+     * Forces recomputation of any state in the `PangoLayout` that might depend on the layout's
+     * context.
+     */
+    public function context_changed(): void {}
+
+    /** Creates a deep copy-by-value of the layout. */
+    public function copy(): PangoLayout {}
+
+    /**
+     * Gets the alignment for the layout: how partial lines are positioned within the horizontal
+     * space available.
+     */
+    public function get_alignment(): PangoAlignment {}
+
+    /** Gets the attribute list for the layout, if any. */
+    public function get_attributes(): ?PangoAttrList {}
+
+    /** Gets whether to calculate the base direction for the layout according to its contents. */
+    public function get_auto_dir(): bool {}
+
+    /** Gets the Y position of baseline of the first line in $layout. */
+    public function get_baseline(): int {}
+
+    /** Returns the number of Unicode characters in the the text of $layout. */
+    public function get_character_count(): int {}
+
+    /** Retrieves the `PangoContext` used for this layout. */
+    public function get_context(): PangoContext {}
+
+    /** Gets the text direction at the given character position in $layout. */
+    public function get_direction(int $index): PangoDirection {}
+
+    /** Gets the type of ellipsization being performed for $layout. */
+    public function get_ellipsize(): PangoEllipsizeMode {}
+
+    /** Gets the font description for the layout, if any. */
+    public function get_font_description(): ?PangoFontDescription {}
+
+    /** Gets the height of layout used for ellipsization. */
+    public function get_height(): int {}
+
+    /** Gets the paragraph indent width in Pango units. */
+    public function get_indent(): int {}
+
+    /**
+     * Gets whether each complete line should be stretched to fill the entire width of the layout.
+     */
+    public function get_justify(): bool {}
+
+    /** Gets whether the last line should be stretched to fill the entire width of the layout. */
+    public function get_justify_last_line(): bool {}
+
+    /** Retrieves the count of lines for the $layout. */
+    public function get_line_count(): int {}
+
+    /** Gets the line spacing factor of $layout. */
+    public function get_line_spacing(): float {}
+
+    /**
+     * Determines the logical width and height of a `PangoLayout` in device units.
+     *
+     * @return array{int, int}
+     */
+    public function get_pixel_size(): array {}
+
+    /** Returns the current serial number of $layout. */
+    public function get_serial(): int {}
+
+    /** Obtains whether $layout is in single paragraph mode. */
+    public function get_single_paragraph_mode(): bool {}
+
+    /**
+     * Determines the logical width and height of a `PangoLayout` in Pango units.
+     *
+     * @return array{int, int}
+     */
+    public function get_size(): array {}
+
+    /** Gets the amount of spacing between the lines of the layout. */
+    public function get_spacing(): int {}
+
+    /** Gets the current `PangoTabArray` used by this layout. */
+    public function get_tabs(): ?PangoTabArray {}
+
+    /** Gets the text in the layout. */
+    public function get_text(): string {}
+
+    /** Counts the number of unknown glyphs in $layout. */
+    public function get_unknown_glyphs_count(): int {}
+
+    /** Gets the width to which the lines of the `PangoLayout` should wrap. */
+    public function get_width(): int {}
+
+    /** Gets the wrap mode for the layout. */
+    public function get_wrap(): PangoWrapMode {}
+
+    /**
+     * Converts from byte $index_ within the $layout to line and X position.
+     *
+     * @return array{int, int}
+     */
+    public function index_to_line_x(int $index, bool $trailing): array {}
+
+    /** Queries whether the layout had to ellipsize any paragraphs. */
+    public function is_ellipsized(): bool {}
+
+    /** Queries whether the layout had to wrap any paragraphs. */
+    public function is_wrapped(): bool {}
+
+    /**
+     * Computes a new cursor position from an old position and a direction.
+     *
+     * @return array{int, int}
+     */
+    public function move_cursor_visually(bool $strong, int $old_index, int $old_trailing, int $direction): array {}
+
+    /** Serializes the $layout for later deserialization via `deserialize`. */
+    public function serialize(int $flags): string {}
+
+    /**
+     * Sets the alignment for the layout: how partial lines are positioned within the horizontal
+     * space available.
+     */
+    public function set_alignment(PangoAlignment $alignment): void {}
+
+    /** Sets the text attributes for a layout object. */
+    public function set_attributes(?PangoAttrList $attrs): void {}
+
+    /** Sets whether to calculate the base direction for the layout according to its contents. */
+    public function set_auto_dir(bool $auto_dir): void {}
+
+    /** Sets the type of ellipsization being performed for $layout. */
+    public function set_ellipsize(PangoEllipsizeMode $ellipsize): void {}
+
+    /** Sets the default font description for the layout. */
+    public function set_font_description(?PangoFontDescription $desc): void {}
+
+    /** Sets the height to which the `PangoLayout` should be ellipsized at. */
+    public function set_height(int $height): void {}
+
+    /** Sets the width in Pango units to indent each paragraph. */
+    public function set_indent(int $indent): void {}
+
+    /**
+     * Sets whether each complete line should be stretched to fill the entire width of the layout.
+     */
+    public function set_justify(bool $justify): void {}
+
+    /** Sets whether the last line should be stretched to fill the entire width of the layout. */
+    public function set_justify_last_line(bool $justify): void {}
+
+    /** Sets a factor for line spacing. */
+    public function set_line_spacing(float $factor): void {}
+
+    /** Sets the layout text and attribute list from marked-up text. */
+    public function set_markup(string $markup, int $length): void {}
+
+    /** Sets the layout text and attribute list from marked-up text. */
+    public function set_markup_with_accel(string $markup, int $length, int $accel_marker): int {}
+
+    /** Sets the single paragraph mode of $layout. */
+    public function set_single_paragraph_mode(bool $setting): void {}
+
+    /** Sets the amount of spacing in Pango units between the lines of the layout. */
+    public function set_spacing(int $spacing): void {}
+
+    /** Sets the tabs to use for $layout, overriding the default tabs. */
+    public function set_tabs(?PangoTabArray $tabs): void {}
+
+    /** Sets the text of the layout. */
+    public function set_text(string $text, int $length): void {}
+
+    /** Sets the width to which the lines of the `PangoLayout` should wrap or ellipsized. */
+    public function set_width(int $width): void {}
+
+    /** Sets the wrap mode. */
+    public function set_wrap(PangoWrapMode $wrap): void {}
+
+    /** A convenience method to serialize a layout to a file. */
+    public function write_to_file(int $flags, string $filename): bool {}
+
+    /**
+     * Converts from X and Y position within a layout to the byte index to the character at that
+     * logical position.
+     *
+     * @return array{int, int}|null
+     */
+    public function xy_to_index(int $x, int $y): ?array {}
+}
+
+/**
+ * Flags that influence the behavior of `deserialize`.
+ */
+final class PangoLayoutDeserializeFlags
+{
+    public const int DEFAULT = 0;
+    public const int CONTEXT = 1;
+}
+
+/**
+ * Flags that influence the behavior of `serialize`.
+ */
+final class PangoLayoutSerializeFlags
+{
+    public const int DEFAULT = 0;
+    public const int CONTEXT = 1;
+    public const int OUTPUT = 2;
 }
 
 /**
@@ -333,6 +707,64 @@ enum PangoStyle: int
     case Normal = 0;
     case Oblique = 1;
     case Italic = 2;
+}
+
+/**
+ * `PangoTabAlign` specifies where the text appears relative to the tab stop position.
+ */
+enum PangoTabAlign: int
+{
+    case Left = 0;
+    case Right = 1;
+    case Center = 2;
+    case Decimal = 3;
+}
+
+/**
+ * A `PangoTabArray` contains an array of tab stops.
+ * @not-serializable
+ */
+final class PangoTabArray
+{
+    /** Creates an array of $initial_size tab stops. */
+    public function __construct(int $initial_size, bool $positions_in_pixels) {}
+
+    /** Gets the Unicode character to use as decimal point. */
+    public function get_decimal_point(int $tab_index): int {}
+
+    /** Returns `true` if the tab positions are in pixels, `false` if they are in Pango units. */
+    public function get_positions_in_pixels(): bool {}
+
+    /** Gets the number of tab stops in $tab_array. */
+    public function get_size(): int {}
+
+    /**
+     * Gets the alignment and position of a tab stop.
+     *
+     * @return array{PangoTabAlign, int}
+     */
+    public function get_tab(int $tab_index): array {}
+
+    /** Resizes a tab array. */
+    public function resize(int $new_size): void {}
+
+    /** Sets the Unicode character to use as decimal point. */
+    public function set_decimal_point(int $tab_index, int $decimal_point): void {}
+
+    /** Sets whether positions in this array are specified in pixels. */
+    public function set_positions_in_pixels(bool $positions_in_pixels): void {}
+
+    /** Sets the alignment and location of a tab stop. */
+    public function set_tab(int $tab_index, PangoTabAlign $alignment, int $location): void {}
+
+    /** Utility function to ensure that the tab stops are in increasing order. */
+    public function sort(): void {}
+
+    /** Serializes a `PangoTabArray` to a string. */
+    public function to_string(): string {}
+
+    /** Deserializes a `PangoTabArray` from a string. */
+    public static function from_string(string $text): ?PangoTabArray {}
 }
 
 /**

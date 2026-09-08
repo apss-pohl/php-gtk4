@@ -6,6 +6,7 @@
 #include <cstring>
 #include "core/enums.h"
 #include "core/collections.h"
+#include "core/gerror.h"
 #include "core/variant.h"
 
 using namespace phpgtk;
@@ -128,6 +129,35 @@ ZEND_METHOD(Gtk4_GtkPaperSize, new_from_ipp) {
   ZEND_PARSE_PARAMETERS_END();
   if (!phpgtk::check_utf8(ipp_name, 1)) RETURN_THROWS();
   gpointer phpgtk_ret = gtk_paper_size_new_from_ipp(ZSTR_VAL(ipp_name), width, height);
+  wrap_boxed(GTK_TYPE_PAPER_SIZE, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) g_boxed_free(GTK_TYPE_PAPER_SIZE, phpgtk_ret);
+}
+
+/**
+ * static Gtk4\GtkPaperSize::new_from_key_file(GKeyFile $key_file, ?string $group_name = null):
+ * GtkPaperSize
+ *
+ * Reads a paper size from the group $group_name in the key file $key_file.
+ */
+ZEND_METHOD(Gtk4_GtkPaperSize, new_from_key_file) {
+  zval *key_file;
+  zend_string *group_name = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 2)
+  Z_PARAM_OBJECT_OF_CLASS(key_file, boxed_class_for_type(G_TYPE_KEY_FILE)->ce)
+  Z_PARAM_OPTIONAL
+  Z_PARAM_STR_OR_NULL(group_name)
+  ZEND_PARSE_PARAMETERS_END();
+  gpointer key_file_b = unwrap_boxed(key_file, G_TYPE_KEY_FILE);
+  if (key_file_b == nullptr) RETURN_THROWS();
+  if (group_name != nullptr && !phpgtk::check_utf8(group_name, 2)) RETURN_THROWS();
+  GError *error = nullptr;
+  gpointer phpgtk_ret = gtk_paper_size_new_from_key_file(
+      static_cast<GKeyFile *>(key_file_b), group_name != nullptr ? ZSTR_VAL(group_name) : nullptr,
+      &error);
+  if (phpgtk_ret == nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
   wrap_boxed(GTK_TYPE_PAPER_SIZE, phpgtk_ret, return_value);
   if (phpgtk_ret != nullptr) g_boxed_free(GTK_TYPE_PAPER_SIZE, phpgtk_ret);
 }
@@ -369,6 +399,25 @@ ZEND_METHOD(Gtk4_GtkPaperSize, to_gvariant) {
   GVariant *phpgtk_ret = gtk_paper_size_to_gvariant(self);
   if (phpgtk_ret == nullptr) RETURN_NULL();
   variant_to_php(phpgtk_ret, return_value);
+}
+
+/**
+ * Gtk4\GtkPaperSize::to_key_file(GKeyFile $key_file, string $group_name): void
+ *
+ * This function adds the paper size from $size to $key_file.
+ */
+ZEND_METHOD(Gtk4_GtkPaperSize, to_key_file) {
+  zval *key_file;
+  zend_string *group_name;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(key_file, boxed_class_for_type(G_TYPE_KEY_FILE)->ce)
+  Z_PARAM_STR(group_name)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkPaperSize *self = PHPGTK_BOXED_SELF(GtkPaperSize);
+  gpointer key_file_b = unwrap_boxed(key_file, G_TYPE_KEY_FILE);
+  if (key_file_b == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_utf8(group_name, 2)) RETURN_THROWS();
+  gtk_paper_size_to_key_file(self, static_cast<GKeyFile *>(key_file_b), ZSTR_VAL(group_name));
 }
 
 /**

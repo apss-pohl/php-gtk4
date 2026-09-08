@@ -463,6 +463,18 @@ WebKit.UserMessageError
 Gio.InputStream
 Gio.MemoryInputStream
 
+# Pango, the text engine under every label: the tab stops a text widget lays out to, the
+# attribute list that styles a run of it, the layout a widget or a print context measures with,
+# and the context and font map behind those. PangoFontDescription is already here (wave 2).
+Pango.TabArray
+Pango.AttrList
+Pango.Layout
+Pango.Context
+Pango.FontMap
+
+# The key file GTK's print settings, page setup and paper size load from and save to.
+GLib.KeyFile
+
 # Dates and times as GLib hands them out: a calendar's selected day, a cookie's expiry, the
 # validity of a certificate. A boxed record, and its time zone.
 GLib.DateTime

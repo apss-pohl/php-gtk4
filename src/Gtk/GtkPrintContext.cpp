@@ -18,6 +18,32 @@ ZEND_METHOD(Gtk4_GtkPrintContext, __construct) {
 }
 
 /**
+ * Gtk4\GtkPrintContext::create_pango_context(): PangoContext
+ *
+ * Creates a new `PangoContext` that can be used with the `GtkPrintContext`.
+ */
+ZEND_METHOD(Gtk4_GtkPrintContext, create_pango_context) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkPrintContext *self = PHPGTK_SELF(GtkPrintContext, GTK_TYPE_PRINT_CONTEXT);
+  PangoContext *phpgtk_ret = gtk_print_context_create_pango_context(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
+/**
+ * Gtk4\GtkPrintContext::create_pango_layout(): PangoLayout
+ *
+ * Creates a new `PangoLayout` that is suitable for use with the `GtkPrintContext`.
+ */
+ZEND_METHOD(Gtk4_GtkPrintContext, create_pango_layout) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkPrintContext *self = PHPGTK_SELF(GtkPrintContext, GTK_TYPE_PRINT_CONTEXT);
+  PangoLayout *phpgtk_ret = gtk_print_context_create_pango_layout(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
+/**
  * Gtk4\GtkPrintContext::get_cairo_context(): CairoContext
  *
  * Obtains the cairo context that is associated with the `GtkPrintContext`.
@@ -107,6 +133,18 @@ ZEND_METHOD(Gtk4_GtkPrintContext, get_page_setup) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkPrintContext *self = PHPGTK_SELF(GtkPrintContext, GTK_TYPE_PRINT_CONTEXT);
   GtkPageSetup *phpgtk_ret = gtk_print_context_get_page_setup(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
+ * Gtk4\GtkPrintContext::get_pango_fontmap(): PangoFontMap
+ *
+ * Returns a `PangoFontMap` that is suitable for use with the `GtkPrintContext`.
+ */
+ZEND_METHOD(Gtk4_GtkPrintContext, get_pango_fontmap) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkPrintContext *self = PHPGTK_SELF(GtkPrintContext, GTK_TYPE_PRINT_CONTEXT);
+  PangoFontMap *phpgtk_ret = gtk_print_context_get_pango_fontmap(self);
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 

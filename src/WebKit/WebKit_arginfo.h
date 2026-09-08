@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: cb91bdcff0dc1acc28929a4ad4545aded3b39241 */
+ * Stub hash: 3b26cd59f197e515b407af6d390d7128d12ea52b */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitApplicationInfo___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -935,6 +935,11 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_WebKitSettings_get_development_features arginfo_class_Gtk4_WebKitSettings_get_all_features
 
 #define arginfo_class_Gtk4_WebKitSettings_get_experimental_features arginfo_class_Gtk4_WebKitSettings_get_all_features
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_apply_from_key_file, 0, 2, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, key_file, Gtk4\\GKeyFile, 0)
+	ZEND_ARG_TYPE_INFO(0, group_name, IS_STRING, 0)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_WebKitSettings_get_allow_file_access_from_file_urls arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
 
@@ -2341,6 +2346,7 @@ ZEND_METHOD(Gtk4_WebKitSettings, font_size_to_points);
 ZEND_METHOD(Gtk4_WebKitSettings, get_all_features);
 ZEND_METHOD(Gtk4_WebKitSettings, get_development_features);
 ZEND_METHOD(Gtk4_WebKitSettings, get_experimental_features);
+ZEND_METHOD(Gtk4_WebKitSettings, apply_from_key_file);
 ZEND_METHOD(Gtk4_WebKitSettings, get_allow_file_access_from_file_urls);
 ZEND_METHOD(Gtk4_WebKitSettings, get_allow_modal_dialogs);
 ZEND_METHOD(Gtk4_WebKitSettings, get_allow_top_navigation_to_data_urls);
@@ -3251,6 +3257,7 @@ static const zend_function_entry class_Gtk4_WebKitSettings_methods[] = {
 	ZEND_ME(Gtk4_WebKitSettings, get_all_features, arginfo_class_Gtk4_WebKitSettings_get_all_features, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_WebKitSettings, get_development_features, arginfo_class_Gtk4_WebKitSettings_get_development_features, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_WebKitSettings, get_experimental_features, arginfo_class_Gtk4_WebKitSettings_get_experimental_features, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitSettings, apply_from_key_file, arginfo_class_Gtk4_WebKitSettings_apply_from_key_file, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitSettings, get_allow_file_access_from_file_urls, arginfo_class_Gtk4_WebKitSettings_get_allow_file_access_from_file_urls, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitSettings, get_allow_modal_dialogs, arginfo_class_Gtk4_WebKitSettings_get_allow_modal_dialogs, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitSettings, get_allow_top_navigation_to_data_urls, arginfo_class_Gtk4_WebKitSettings_get_allow_top_navigation_to_data_urls, ZEND_ACC_PUBLIC)

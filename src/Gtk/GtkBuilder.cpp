@@ -184,7 +184,7 @@ ZEND_METHOD(Gtk4_GtkBuilder, add_from_file) {
   GError *error = nullptr;
   const gboolean ok = gtk_builder_add_from_file(self, ZSTR_VAL(filename_abs), &error);
   if (filename_abs != nullptr) zend_string_release(filename_abs);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }
@@ -206,7 +206,7 @@ ZEND_METHOD(Gtk4_GtkBuilder, add_from_resource) {
   if (!phpgtk::check_utf8(resource_path, 1)) RETURN_THROWS();
   GError *error = nullptr;
   const gboolean ok = gtk_builder_add_from_resource(self, ZSTR_VAL(resource_path), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }
@@ -231,12 +231,17 @@ ZEND_METHOD(Gtk4_GtkBuilder, add_objects_from_file) {
   if (filename_abs == nullptr) RETURN_THROWS();
   char **object_ids_v = strv_from_php(object_ids);
   if (object_ids_v == nullptr) RETURN_THROWS();
+  const bool precondition_0 = zend_hash_num_elements(Z_ARRVAL_P(object_ids)) > 0;
+  if (!precondition_0) {
+    zend_argument_value_error(2, "must name at least one object");
+    RETURN_THROWS();
+  }
   GError *error = nullptr;
   const gboolean ok = gtk_builder_add_objects_from_file(
       self, ZSTR_VAL(filename_abs), const_cast<const char **>(object_ids_v), &error);
   if (filename_abs != nullptr) zend_string_release(filename_abs);
   g_strfreev(object_ids_v);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }
@@ -260,11 +265,16 @@ ZEND_METHOD(Gtk4_GtkBuilder, add_objects_from_resource) {
   if (!phpgtk::check_utf8(resource_path, 1)) RETURN_THROWS();
   char **object_ids_v = strv_from_php(object_ids);
   if (object_ids_v == nullptr) RETURN_THROWS();
+  const bool precondition_0 = zend_hash_num_elements(Z_ARRVAL_P(object_ids)) > 0;
+  if (!precondition_0) {
+    zend_argument_value_error(2, "must name at least one object");
+    RETURN_THROWS();
+  }
   GError *error = nullptr;
   const gboolean ok = gtk_builder_add_objects_from_resource(
       self, ZSTR_VAL(resource_path), const_cast<const char **>(object_ids_v), &error);
   g_strfreev(object_ids_v);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

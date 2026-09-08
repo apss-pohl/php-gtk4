@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: babda0d7f13c1892703d80fcd3a7f29f5f567d5c */
+ * Stub hash: 366c88b5fd16e014bf7392c5824d4882877af31e */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GskBlendNode___construct, 0, 0, 3)
 	ZEND_ARG_OBJ_INFO(0, bottom, Gtk4\\GskRenderNode, 0)
@@ -257,6 +257,10 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GskPathBuilder_add_circle, 0, 2, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, center, Gtk4\\GraphenePoint, 0)
 	ZEND_ARG_TYPE_INFO(0, radius, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GskPathBuilder_add_layout, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, layout, Gtk4\\PangoLayout, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GskPathBuilder_add_path, 0, 1, IS_VOID, 0)
@@ -749,6 +753,7 @@ ZEND_METHOD(Gtk4_GskPath, to_string);
 ZEND_METHOD(Gtk4_GskPath, parse);
 ZEND_METHOD(Gtk4_GskPathBuilder, __construct);
 ZEND_METHOD(Gtk4_GskPathBuilder, add_circle);
+ZEND_METHOD(Gtk4_GskPathBuilder, add_layout);
 ZEND_METHOD(Gtk4_GskPathBuilder, add_path);
 ZEND_METHOD(Gtk4_GskPathBuilder, add_rect);
 ZEND_METHOD(Gtk4_GskPathBuilder, add_reverse_path);
@@ -1037,6 +1042,7 @@ static const zend_function_entry class_Gtk4_GskPath_methods[] = {
 static const zend_function_entry class_Gtk4_GskPathBuilder_methods[] = {
 	ZEND_ME(Gtk4_GskPathBuilder, __construct, arginfo_class_Gtk4_GskPathBuilder___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskPathBuilder, add_circle, arginfo_class_Gtk4_GskPathBuilder_add_circle, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskPathBuilder, add_layout, arginfo_class_Gtk4_GskPathBuilder_add_layout, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskPathBuilder, add_path, arginfo_class_Gtk4_GskPathBuilder_add_path, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskPathBuilder, add_rect, arginfo_class_Gtk4_GskPathBuilder_add_rect, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskPathBuilder, add_reverse_path, arginfo_class_Gtk4_GskPathBuilder_add_reverse_path, ZEND_ACC_PUBLIC)

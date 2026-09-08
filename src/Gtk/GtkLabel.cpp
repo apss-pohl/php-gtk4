@@ -3,6 +3,7 @@
 #include "php_gtk4.h"
 #include "core/object.h"
 #include "core/enums.h"
+#include "core/boxed.h"
 #include "core/subtype.h"
 
 using namespace phpgtk;
@@ -48,6 +49,18 @@ ZEND_METHOD(Gtk4_GtkLabel, new_with_mnemonic) {
   if (str != nullptr && !phpgtk::check_utf8(str, 1)) RETURN_THROWS();
   GObject *obj = G_OBJECT(gtk_label_new_with_mnemonic(str != nullptr ? ZSTR_VAL(str) : nullptr));
   wrap(obj, return_value);
+}
+
+/**
+ * Gtk4\GtkLabel::get_attributes(): ?PangoAttrList
+ *
+ * Gets the label's attribute list.
+ */
+ZEND_METHOD(Gtk4_GtkLabel, get_attributes) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  PangoAttrList *phpgtk_ret = gtk_label_get_attributes(self);
+  wrap_boxed(PANGO_TYPE_ATTR_LIST, phpgtk_ret, return_value);
 }
 
 /**
@@ -106,6 +119,18 @@ ZEND_METHOD(Gtk4_GtkLabel, get_label) {
   const char *phpgtk_ret = gtk_label_get_label(self);
   if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
   RETURN_STRING(phpgtk_ret);
+}
+
+/**
+ * Gtk4\GtkLabel::get_layout(): PangoLayout
+ *
+ * Gets the `PangoLayout` used to display the label.
+ */
+ZEND_METHOD(Gtk4_GtkLabel, get_layout) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  PangoLayout *phpgtk_ret = gtk_label_get_layout(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -235,6 +260,19 @@ ZEND_METHOD(Gtk4_GtkLabel, get_single_line_mode) {
 }
 
 /**
+ * Gtk4\GtkLabel::get_tabs(): ?PangoTabArray
+ *
+ * Gets the tabs for $self.
+ */
+ZEND_METHOD(Gtk4_GtkLabel, get_tabs) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  PangoTabArray *phpgtk_ret = gtk_label_get_tabs(self);
+  wrap_boxed(PANGO_TYPE_TAB_ARRAY, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) g_boxed_free(PANGO_TYPE_TAB_ARRAY, phpgtk_ret);
+}
+
+/**
  * Gtk4\GtkLabel::get_text(): string
  *
  * Fetches the text from a label.
@@ -340,6 +378,25 @@ ZEND_METHOD(Gtk4_GtkLabel, select_region) {
   if (!phpgtk::check_range<int>(start_offset, 1)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(end_offset, 2)) RETURN_THROWS();
   gtk_label_select_region(self, static_cast<int>(start_offset), static_cast<int>(end_offset));
+}
+
+/**
+ * Gtk4\GtkLabel::set_attributes(?PangoAttrList $attrs): void
+ *
+ * Apply attributes to the label text.
+ */
+ZEND_METHOD(Gtk4_GtkLabel, set_attributes) {
+  zval *attrs = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(attrs, boxed_class_for_type(PANGO_TYPE_ATTR_LIST)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  gpointer attrs_b = nullptr;
+  if (attrs != nullptr) {
+    attrs_b = unwrap_boxed(attrs, PANGO_TYPE_ATTR_LIST);
+    if (attrs_b == nullptr) RETURN_THROWS();
+  }
+  gtk_label_set_attributes(self, static_cast<PangoAttrList *>(attrs_b));
 }
 
 /**
@@ -529,6 +586,25 @@ ZEND_METHOD(Gtk4_GtkLabel, set_single_line_mode) {
   ZEND_PARSE_PARAMETERS_END();
   GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
   gtk_label_set_single_line_mode(self, single_line_mode);
+}
+
+/**
+ * Gtk4\GtkLabel::set_tabs(?PangoTabArray $tabs): void
+ *
+ * Sets the default tab stops for paragraphs in $self.
+ */
+ZEND_METHOD(Gtk4_GtkLabel, set_tabs) {
+  zval *tabs = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(tabs, boxed_class_for_type(PANGO_TYPE_TAB_ARRAY)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkLabel *self = PHPGTK_SELF(GtkLabel, GTK_TYPE_LABEL);
+  gpointer tabs_b = nullptr;
+  if (tabs != nullptr) {
+    tabs_b = unwrap_boxed(tabs, PANGO_TYPE_TAB_ARRAY);
+    if (tabs_b == nullptr) RETURN_THROWS();
+  }
+  gtk_label_set_tabs(self, static_cast<PangoTabArray *>(tabs_b));
 }
 
 /**

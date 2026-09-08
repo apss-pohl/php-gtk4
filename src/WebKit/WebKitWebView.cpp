@@ -211,7 +211,7 @@ ZEND_METHOD(Gtk4_WebKitWebView, can_execute_editing_command_finish) {
   GError *error = nullptr;
   const gboolean ok =
       webkit_web_view_can_execute_editing_command_finish(self, G_ASYNC_RESULT(result_o), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }
@@ -1271,7 +1271,7 @@ ZEND_METHOD(Gtk4_WebKitWebView, save_to_file_finish) {
   if (result_o == nullptr) RETURN_THROWS();
   GError *error = nullptr;
   const gboolean ok = webkit_web_view_save_to_file_finish(self, G_ASYNC_RESULT(result_o), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

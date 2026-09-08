@@ -590,6 +590,9 @@ final class GskPathBuilder
     /** Adds a circle with the $center and $radius. */
     public function add_circle(GraphenePoint $center, float $radius): void {}
 
+    /** Adds the outlines for the glyphs in $layout to the builder. */
+    public function add_layout(PangoLayout $layout): void {}
+
     /** Appends all of $path to the builder. */
     public function add_path(GskPath $path): void {}
 

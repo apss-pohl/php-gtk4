@@ -87,6 +87,18 @@ ZEND_METHOD(Gtk4_GtkText, get_activates_default) {
 }
 
 /**
+ * Gtk4\GtkText::get_attributes(): ?PangoAttrList
+ *
+ * Gets the attribute list that was set on the `GtkText`.
+ */
+ZEND_METHOD(Gtk4_GtkText, get_attributes) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkText *self = PHPGTK_SELF(GtkText, GTK_TYPE_TEXT);
+  PangoAttrList *phpgtk_ret = gtk_text_get_attributes(self);
+  wrap_boxed(PANGO_TYPE_ATTR_LIST, phpgtk_ret, return_value);
+}
+
+/**
  * Gtk4\GtkText::get_buffer(): GtkEntryBuffer
  *
  * Get the `GtkEntryBuffer` object which holds the text for this widget.
@@ -199,6 +211,18 @@ ZEND_METHOD(Gtk4_GtkText, get_propagate_text_width) {
 }
 
 /**
+ * Gtk4\GtkText::get_tabs(): ?PangoTabArray
+ *
+ * Gets the tabstops that were set on the `GtkText`.
+ */
+ZEND_METHOD(Gtk4_GtkText, get_tabs) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkText *self = PHPGTK_SELF(GtkText, GTK_TYPE_TEXT);
+  PangoTabArray *phpgtk_ret = gtk_text_get_tabs(self);
+  wrap_boxed(PANGO_TYPE_TAB_ARRAY, phpgtk_ret, return_value);
+}
+
+/**
  * Gtk4\GtkText::get_text_length(): int
  *
  * Retrieves the current length of the text in $self.
@@ -244,6 +268,25 @@ ZEND_METHOD(Gtk4_GtkText, set_activates_default) {
   ZEND_PARSE_PARAMETERS_END();
   GtkText *self = PHPGTK_SELF(GtkText, GTK_TYPE_TEXT);
   gtk_text_set_activates_default(self, activates);
+}
+
+/**
+ * Gtk4\GtkText::set_attributes(?PangoAttrList $attrs): void
+ *
+ * Sets attributes that are applied to the text.
+ */
+ZEND_METHOD(Gtk4_GtkText, set_attributes) {
+  zval *attrs = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(attrs, boxed_class_for_type(PANGO_TYPE_ATTR_LIST)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkText *self = PHPGTK_SELF(GtkText, GTK_TYPE_TEXT);
+  gpointer attrs_b = nullptr;
+  if (attrs != nullptr) {
+    attrs_b = unwrap_boxed(attrs, PANGO_TYPE_ATTR_LIST);
+    if (attrs_b == nullptr) RETURN_THROWS();
+  }
+  gtk_text_set_attributes(self, static_cast<PangoAttrList *>(attrs_b));
 }
 
 /**
@@ -397,6 +440,25 @@ ZEND_METHOD(Gtk4_GtkText, set_propagate_text_width) {
   ZEND_PARSE_PARAMETERS_END();
   GtkText *self = PHPGTK_SELF(GtkText, GTK_TYPE_TEXT);
   gtk_text_set_propagate_text_width(self, propagate_text_width);
+}
+
+/**
+ * Gtk4\GtkText::set_tabs(?PangoTabArray $tabs): void
+ *
+ * Sets tabstops that are applied to the text.
+ */
+ZEND_METHOD(Gtk4_GtkText, set_tabs) {
+  zval *tabs = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(tabs, boxed_class_for_type(PANGO_TYPE_TAB_ARRAY)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkText *self = PHPGTK_SELF(GtkText, GTK_TYPE_TEXT);
+  gpointer tabs_b = nullptr;
+  if (tabs != nullptr) {
+    tabs_b = unwrap_boxed(tabs, PANGO_TYPE_TAB_ARRAY);
+    if (tabs_b == nullptr) RETURN_THROWS();
+  }
+  gtk_text_set_tabs(self, static_cast<PangoTabArray *>(tabs_b));
 }
 
 /**

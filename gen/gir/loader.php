@@ -244,11 +244,14 @@ final class Gir
         $consumesSelf = $instance instanceof \DOMElement
             && $instance->getAttribute('transfer-ownership') === 'full';
         $selfCtype = null;
+        $selfConst = true;
         if ($instance instanceof \DOMElement) {
             $instanceTypes = $x->query('g:type', $instance);
             $instanceType = $instanceTypes === false ? null : $instanceTypes->item(0);
             if ($instanceType instanceof \DOMElement && $instanceType->getAttributeNS(NS_C, 'type') !== '') {
-                $selfCtype = trim(str_replace(['const', '*'], '', $instanceType->getAttributeNS(NS_C, 'type')));
+                $declared = $instanceType->getAttributeNS(NS_C, 'type');
+                $selfConst = str_contains($declared, 'const');
+                $selfCtype = trim(str_replace(['const', '*'], '', $declared));
             }
         }
         $identifier = $f->getAttributeNS(NS_C, 'identifier');
@@ -269,7 +272,8 @@ final class Gir
                 rtrim($p->getAttribute('name'), '_') ?: $p->getAttribute('name'),
                 $t,
                 $p->getAttribute('direction') ?: 'in',
-                ($p->getAttribute('nullable') === '1' || $p->getAttribute('allow-none') === '1')
+                ($p->getAttribute('nullable') === '1' || $p->getAttribute('allow-none') === '1'
+                    || isset(NULLABLE_PARAMS[$identifier . '.' . $p->getAttribute('name')]))
                     && !isset(NON_NULLABLE_PARAMS[$identifier . '.' . $p->getAttribute('name')]),
                 $p->getAttribute('optional') === '1',
                 $p->getAttribute('transfer-ownership') ?: 'none',
@@ -299,6 +303,7 @@ final class Gir
             self::doc($x, $f),
             $consumesSelf,
             $selfCtype,
+            $selfConst,
         );
     }
 }

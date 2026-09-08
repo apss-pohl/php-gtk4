@@ -320,6 +320,39 @@ ZEND_METHOD(Gtk4_GtkWidget, contains) {
 }
 
 /**
+ * Gtk4\GtkWidget::create_pango_context(): PangoContext
+ *
+ * Creates a new `PangoContext` with the appropriate font map, font options, font description, and
+ * base direction for drawing text for this widget.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, create_pango_context) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  PangoContext *phpgtk_ret = gtk_widget_create_pango_context(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
+/**
+ * Gtk4\GtkWidget::create_pango_layout(?string $text): PangoLayout
+ *
+ * Creates a new `PangoLayout` with the appropriate font map, font description, and base direction
+ * for drawing text for this widget.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, create_pango_layout) {
+  zend_string *text = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_STR_OR_NULL(text)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  if (text != nullptr && !phpgtk::check_utf8(text, 1)) RETURN_THROWS();
+  PangoLayout *phpgtk_ret =
+      gtk_widget_create_pango_layout(self, text != nullptr ? ZSTR_VAL(text) : nullptr);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
+/**
  * Gtk4\GtkWidget::drag_check_threshold(int $start_x, int $start_y, int $current_x, int $current_y):
  * bool
  *
@@ -533,6 +566,18 @@ ZEND_METHOD(Gtk4_GtkWidget, get_focusable) {
 }
 
 /**
+ * Gtk4\GtkWidget::get_font_map(): ?PangoFontMap
+ *
+ * Gets the font map of $widget.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, get_font_map) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  PangoFontMap *phpgtk_ret = gtk_widget_get_font_map(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkWidget::get_halign(): GtkAlign
  *
  * Gets the horizontal alignment of $widget.
@@ -726,6 +771,19 @@ ZEND_METHOD(Gtk4_GtkWidget, get_overflow) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
   enum_to_php(GTK_TYPE_OVERFLOW, gtk_widget_get_overflow(self), return_value);
+}
+
+/**
+ * Gtk4\GtkWidget::get_pango_context(): PangoContext
+ *
+ * Gets a `PangoContext` with the appropriate font map, font description, and base direction for
+ * this widget.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, get_pango_context) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  PangoContext *phpgtk_ret = gtk_widget_get_pango_context(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -1610,6 +1668,25 @@ ZEND_METHOD(Gtk4_GtkWidget, set_focusable) {
   ZEND_PARSE_PARAMETERS_END();
   GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
   gtk_widget_set_focusable(self, focusable);
+}
+
+/**
+ * Gtk4\GtkWidget::set_font_map(?PangoFontMap $font_map): void
+ *
+ * Sets the font map to use for Pango rendering.
+ */
+ZEND_METHOD(Gtk4_GtkWidget, set_font_map) {
+  zval *font_map = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(font_map, class_for_gtype(PANGO_TYPE_FONT_MAP))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkWidget *self = PHPGTK_SELF(GtkWidget, GTK_TYPE_WIDGET);
+  GObject *font_map_o = nullptr;
+  if (font_map != nullptr) {
+    font_map_o = unwrap(font_map, PANGO_TYPE_FONT_MAP);
+    if (font_map_o == nullptr) RETURN_THROWS();
+  }
+  gtk_widget_set_font_map(self, font_map_o != nullptr ? PANGO_FONT_MAP(font_map_o) : nullptr);
 }
 
 /**

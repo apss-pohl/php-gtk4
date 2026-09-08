@@ -92,7 +92,7 @@ ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, clear_finish) {
   GError *error = nullptr;
   const gboolean ok =
       webkit_website_data_manager_clear_finish(self, G_ASYNC_RESULT(result_o), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }
@@ -325,7 +325,7 @@ ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, remove_finish) {
   GError *error = nullptr;
   const gboolean ok =
       webkit_website_data_manager_remove_finish(self, G_ASYNC_RESULT(result_o), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

@@ -195,6 +195,18 @@ ZEND_METHOD(Gtk4_GtkScale, get_has_origin) {
 }
 
 /**
+ * Gtk4\GtkScale::get_layout(): ?PangoLayout
+ *
+ * Gets the `PangoLayout` used to display the scale.
+ */
+ZEND_METHOD(Gtk4_GtkScale, get_layout) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkScale *self = PHPGTK_SELF(GtkScale, GTK_TYPE_SCALE);
+  PangoLayout *phpgtk_ret = gtk_scale_get_layout(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkScale::get_layout_offsets(): array
  *
  * Obtains the coordinates where the scale will draw the `PangoLayout` representing the text in the

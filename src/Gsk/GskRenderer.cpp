@@ -86,7 +86,7 @@ ZEND_METHOD(Gtk4_GskRenderer, realize) {
   GError *error = nullptr;
   const gboolean ok =
       gsk_renderer_realize(self, surface_o != nullptr ? GDK_SURFACE(surface_o) : nullptr, &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }
@@ -108,7 +108,7 @@ ZEND_METHOD(Gtk4_GskRenderer, realize_for_display) {
   if (display_o == nullptr) RETURN_THROWS();
   GError *error = nullptr;
   const gboolean ok = gsk_renderer_realize_for_display(self, GDK_DISPLAY(display_o), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

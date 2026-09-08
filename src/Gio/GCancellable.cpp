@@ -147,7 +147,7 @@ ZEND_METHOD(Gtk4_GCancellable, set_error_if_cancelled) {
   GCancellable *self = PHPGTK_SELF(GCancellable, G_TYPE_CANCELLABLE);
   GError *error = nullptr;
   const gboolean ok = g_cancellable_set_error_if_cancelled(self, &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

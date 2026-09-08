@@ -107,7 +107,7 @@ ZEND_METHOD(Gtk4_GdkContentProvider, write_mime_type_finish) {
   GError *error = nullptr;
   const gboolean ok =
       gdk_content_provider_write_mime_type_finish(self, G_ASYNC_RESULT(result_o), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

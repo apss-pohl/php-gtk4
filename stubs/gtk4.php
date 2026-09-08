@@ -1570,6 +1570,311 @@ final class GDateTime
     }
 }
 /**
+ * `GKeyFile` parses .ini-like config files.
+ */
+final class GKeyFile
+{
+    /**
+     * Creates a new empty #GKeyFile object. Use g_key_file_load_from_file(),
+     * g_key_file_load_from_data(), g_key_file_load_from_dirs() or g_key_file_load_from_data_dirs()
+     * to read an existing key file.
+     */
+    public function __construct()
+    {
+    }
+    /** Returns the value associated with $key under $group_name as a boolean. */
+    public function get_boolean(string $group_name, string $key): bool
+    {
+        unset($group_name);
+        unset($key);
+        return false;
+    }
+    /**
+     * Retrieves a comment above $key from $group_name. If $key is `null` then $comment will be
+     * read from above $group_name. If both $key and $group_name are `null`, then $comment will be
+     * read from above the first group in the file.
+     */
+    public function get_comment(?string $group_name, ?string $key): string
+    {
+        unset($group_name);
+        unset($key);
+        return '';
+    }
+    /**
+     * Returns the value associated with $key under $group_name as a double. If $group_name is
+     * `null`, the start_group is used.
+     */
+    public function get_double(string $group_name, string $key): float
+    {
+        unset($group_name);
+        unset($key);
+        return 0.0;
+    }
+    /**
+     * Returns the value associated with $key under $group_name as a signed 64-bit integer. This is
+     * similar to g_key_file_get_integer() but can return 64-bit results without truncation.
+     */
+    public function get_int64(string $group_name, string $key): int
+    {
+        unset($group_name);
+        unset($key);
+        return 0;
+    }
+    /** Returns the value associated with $key under $group_name as an integer. */
+    public function get_integer(string $group_name, string $key): int
+    {
+        unset($group_name);
+        unset($key);
+        return 0;
+    }
+    /**
+     * Returns the actual locale which the result of g_key_file_get_locale_string() or
+     * g_key_file_get_locale_string_list() came from.
+     */
+    public function get_locale_for_key(string $group_name, string $key, ?string $locale): ?string
+    {
+        unset($group_name);
+        unset($key);
+        unset($locale);
+        return null;
+    }
+    /**
+     * Returns the value associated with $key under $group_name translated in the given $locale if
+     * available. If $locale is `null` then the current locale is assumed.
+     */
+    public function get_locale_string(string $group_name, string $key, ?string $locale): string
+    {
+        unset($group_name);
+        unset($key);
+        unset($locale);
+        return '';
+    }
+    /** Returns the name of the start group of the file. */
+    public function get_start_group(): ?string
+    {
+        return null;
+    }
+    /**
+     * Returns the string value associated with $key under $group_name. Unlike
+     * g_key_file_get_value(), this function handles escape sequences like \s.
+     */
+    public function get_string(string $group_name, string $key): string
+    {
+        unset($group_name);
+        unset($key);
+        return '';
+    }
+    /**
+     * Returns the value associated with $key under $group_name as an unsigned 64-bit integer. This
+     * is similar to g_key_file_get_integer() but can return large positive results without
+     * truncation.
+     */
+    public function get_uint64(string $group_name, string $key): int
+    {
+        unset($group_name);
+        unset($key);
+        return 0;
+    }
+    /**
+     * Returns the raw value associated with $key under $group_name. Use g_key_file_get_string() to
+     * retrieve an unescaped UTF-8 string.
+     */
+    public function get_value(string $group_name, string $key): string
+    {
+        unset($group_name);
+        unset($key);
+        return '';
+    }
+    /** Looks whether the key file has the group $group_name. */
+    public function has_group(string $group_name): bool
+    {
+        unset($group_name);
+        return false;
+    }
+    /** Looks whether the key file has the key $key in the group $group_name. */
+    public function has_key(string $group_name, string $key): bool
+    {
+        unset($group_name);
+        unset($key);
+        return false;
+    }
+    /**
+     * Loads a key file from the data in $bytes into an empty #GKeyFile structure. If the object
+     * cannot be created then %error is set to a #GKeyFileError.
+     */
+    public function load_from_bytes(string $bytes, int $flags): bool
+    {
+        unset($bytes);
+        unset($flags);
+        return false;
+    }
+    /**
+     * Loads a key file from memory into an empty #GKeyFile structure. If the object cannot be
+     * created then %error is set to a #GKeyFileError.
+     */
+    public function load_from_data(string $data, int $length, int $flags): bool
+    {
+        unset($data);
+        unset($length);
+        unset($flags);
+        return false;
+    }
+    /**
+     * This function looks for a key file named $file in the paths returned from
+     * g_get_user_data_dir() and g_get_system_data_dirs(), loads the file into $key_file and
+     * returns the file's full path in $full_path. If the file could not be loaded then an %error
+     * is set to either a #GFileError or #GKeyFileError.
+     */
+    public function load_from_data_dirs(string $file, int $flags): ?string
+    {
+        unset($file);
+        unset($flags);
+        return null;
+    }
+    /** Loads a key file into an empty #GKeyFile structure. */
+    public function load_from_file(string $file, int $flags): bool
+    {
+        unset($file);
+        unset($flags);
+        return false;
+    }
+    /**
+     * Removes a comment above $key from $group_name. If $key is `null` then $comment will be
+     * removed above $group_name. If both $key and $group_name are `null`, then $comment will be
+     * removed above the first group in the file.
+     */
+    public function remove_comment(?string $group_name, ?string $key): bool
+    {
+        unset($group_name);
+        unset($key);
+        return false;
+    }
+    /** Removes the specified group, $group_name, from the key file. */
+    public function remove_group(string $group_name): bool
+    {
+        unset($group_name);
+        return false;
+    }
+    /** Removes $key in $group_name from the key file. */
+    public function remove_key(string $group_name, string $key): bool
+    {
+        unset($group_name);
+        unset($key);
+        return false;
+    }
+    /**
+     * Writes the contents of $key_file to $filename using g_file_set_contents(). If you need
+     * stricter guarantees about durability of the written file than are provided by
+     * g_file_set_contents(), use g_file_set_contents_full() with the return value of
+     * g_key_file_to_data().
+     */
+    public function save_to_file(string $filename): bool
+    {
+        unset($filename);
+        return false;
+    }
+    /**
+     * Associates a new boolean value with $key under $group_name. If $key cannot be found then it
+     * is created.
+     */
+    public function set_boolean(string $group_name, string $key, bool $value): void
+    {
+        unset($group_name);
+        unset($key);
+        unset($value);
+    }
+    /** Places a comment above $key from $group_name. */
+    public function set_comment(?string $group_name, ?string $key, string $comment): bool
+    {
+        unset($group_name);
+        unset($key);
+        unset($comment);
+        return false;
+    }
+    /**
+     * Associates a new double value with $key under $group_name. If $key cannot be found then it
+     * is created.
+     */
+    public function set_double(string $group_name, string $key, float $value): void
+    {
+        unset($group_name);
+        unset($key);
+        unset($value);
+    }
+    /**
+     * Associates a new integer value with $key under $group_name. If $key cannot be found then it
+     * is created.
+     */
+    public function set_int64(string $group_name, string $key, int $value): void
+    {
+        unset($group_name);
+        unset($key);
+        unset($value);
+    }
+    /**
+     * Associates a new integer value with $key under $group_name. If $key cannot be found then it
+     * is created.
+     */
+    public function set_integer(string $group_name, string $key, int $value): void
+    {
+        unset($group_name);
+        unset($key);
+        unset($value);
+    }
+    /**
+     * Sets the character which is used to separate values in lists. Typically ';' or ',' are used
+     * as separators. The default list separator is ';'.
+     */
+    public function set_list_separator(int $separator): void
+    {
+        unset($separator);
+    }
+    /**
+     * Associates a string value for $key and $locale under $group_name. If the translation for
+     * $key cannot be found then it is created.
+     */
+    public function set_locale_string(string $group_name, string $key, string $locale, string $string): void
+    {
+        unset($group_name);
+        unset($key);
+        unset($locale);
+        unset($string);
+    }
+    /**
+     * Associates a new string value with $key under $group_name. If $key cannot be found then it
+     * is created. If $group_name cannot be found then it is created. Unlike
+     * g_key_file_set_value(), this function handles characters that need escaping, such as
+     * newlines.
+     */
+    public function set_string(string $group_name, string $key, string $string): void
+    {
+        unset($group_name);
+        unset($key);
+        unset($string);
+    }
+    /**
+     * Associates a new integer value with $key under $group_name. If $key cannot be found then it
+     * is created.
+     */
+    public function set_uint64(string $group_name, string $key, int $value): void
+    {
+        unset($group_name);
+        unset($key);
+        unset($value);
+    }
+    /** Associates a new value with $key under $group_name. */
+    public function set_value(string $group_name, string $key, string $value): void
+    {
+        unset($group_name);
+        unset($key);
+        unset($value);
+    }
+    public static function error_quark(): int
+    {
+        return 0;
+    }
+}
+/**
  * A `GTimeZone` represents a time zone, at no particular point in time.
  */
 final class GTimeZone
@@ -7023,6 +7328,11 @@ final class GskPathBuilder
         unset($center);
         unset($radius);
     }
+    /** Adds the outlines for the glyphs in $layout to the builder. */
+    public function add_layout(PangoLayout $layout): void
+    {
+        unset($layout);
+    }
     /** Appends all of $path to the builder. */
     public function add_path(GskPath $path): void
     {
@@ -11028,6 +11338,7 @@ final class GtkEditableObject extends GObject implements GtkEditable
  * `GtkEntry` is a single line text entry widget.
  *
  * @property bool $activates_default
+ * @property ?PangoAttrList $attributes
  * @property ?GtkEntryBuffer $buffer
  * @property bool $enable_emoji_completion
  * @property ?GMenuModel $extra_menu
@@ -11060,6 +11371,7 @@ final class GtkEditableObject extends GObject implements GtkEditable
  * @property ?string $secondary_icon_tooltip_markup
  * @property ?string $secondary_icon_tooltip_text
  * @property bool $show_emoji_icon
+ * @property ?PangoTabArray $tabs
  * @property-read int $text_length
  * @property bool $truncate_multiline
  * @property bool $visibility
@@ -11085,6 +11397,11 @@ class GtkEntry extends GtkWidget implements GtkEditable
     public function get_alignment(): float
     {
         return 0.0;
+    }
+    /** Gets the attribute list of the `GtkEntry`. */
+    public function get_attributes(): ?PangoAttrList
+    {
+        return null;
     }
     /** Get the `GtkEntryBuffer` object which holds the text for this widget. */
     public function get_buffer(): GtkEntryBuffer
@@ -11207,6 +11524,11 @@ class GtkEntry extends GtkWidget implements GtkEditable
     {
         return 0.0;
     }
+    /** Gets the tabstops of the `GtkEntry`. */
+    public function get_tabs(): ?PangoTabArray
+    {
+        return null;
+    }
     /** Retrieves the current length of the text in $entry. */
     public function get_text_length(): int
     {
@@ -11237,6 +11559,11 @@ class GtkEntry extends GtkWidget implements GtkEditable
     public function set_alignment(float $xalign): void
     {
         unset($xalign);
+    }
+    /** Sets a `PangoAttrList`. */
+    public function set_attributes(PangoAttrList $attrs): void
+    {
+        unset($attrs);
     }
     /** Set the `GtkEntryBuffer` object which holds the text for this widget. */
     public function set_buffer(GtkEntryBuffer $buffer): void
@@ -11341,6 +11668,11 @@ class GtkEntry extends GtkWidget implements GtkEditable
     public function set_progress_pulse_step(float $fraction): void
     {
         unset($fraction);
+    }
+    /** Sets a `PangoTabArray`. */
+    public function set_tabs(?PangoTabArray $tabs): void
+    {
+        unset($tabs);
     }
     /** Sets whether the contents of the entry are visible or not. */
     public function set_visibility(bool $visible): void
@@ -12657,6 +12989,7 @@ class GtkFlowBoxChild extends GtkWidget
  * to the user, such as a title for the dialog and whether it should be modal.
  *
  * @property ?GtkFilter $filter
+ * @property ?PangoFontMap $font_map
  * @property bool $modal
  * @property ?string $title
  */
@@ -12699,6 +13032,11 @@ class GtkFontDialog extends GObject
     {
         return null;
     }
+    /** Returns the fontmap from which fonts are selected, or `NULL` for the default fontmap. */
+    public function get_font_map(): ?PangoFontMap
+    {
+        return null;
+    }
     /**
      * Returns whether the font chooser dialog blocks interaction with the parent window while it
      * is presented.
@@ -12716,6 +13054,11 @@ class GtkFontDialog extends GObject
     public function set_filter(?GtkFilter $filter): void
     {
         unset($filter);
+    }
+    /** Sets the fontmap from which fonts are selected. */
+    public function set_font_map(?PangoFontMap $fontmap): void
+    {
+        unset($fontmap);
     }
     /**
      * Sets whether the font chooser dialog blocks interaction with the parent window while it is
@@ -13968,6 +14311,7 @@ enum GtkJustification : int
 /**
  * The `GtkLabel` widget displays a small amount of text.
  *
+ * @property ?PangoAttrList $attributes
  * @property PangoEllipsizeMode $ellipsize
  * @property ?GMenuModel $extra_menu
  * @property GtkJustification $justify
@@ -13979,6 +14323,7 @@ enum GtkJustification : int
  * @property GtkNaturalWrapMode $natural_wrap_mode
  * @property bool $selectable
  * @property bool $single_line_mode
+ * @property ?PangoTabArray $tabs
  * @property bool $use_markup
  * @property bool $use_underline
  * @property int $width_chars
@@ -13998,6 +14343,11 @@ class GtkLabel extends GtkWidget
     public static function new_with_mnemonic(?string $str = null): GtkLabel
     {
         unset($str);
+        return null;
+    }
+    /** Gets the label's attribute list. */
+    public function get_attributes(): ?PangoAttrList
+    {
         return null;
     }
     /** Returns the URI for the currently active link in the label. */
@@ -14024,6 +14374,11 @@ class GtkLabel extends GtkWidget
     public function get_label(): string
     {
         return '';
+    }
+    /** Gets the `PangoLayout` used to display the label. */
+    public function get_layout(): PangoLayout
+    {
+        return null;
     }
     /**
      * Obtains the coordinates where the label will draw its `PangoLayout`.
@@ -14078,6 +14433,11 @@ class GtkLabel extends GtkWidget
     {
         return false;
     }
+    /** Gets the tabs for $self. */
+    public function get_tabs(): ?PangoTabArray
+    {
+        return null;
+    }
     /** Fetches the text from a label. */
     public function get_text(): string
     {
@@ -14123,6 +14483,11 @@ class GtkLabel extends GtkWidget
     {
         unset($start_offset);
         unset($end_offset);
+    }
+    /** Apply attributes to the label text. */
+    public function set_attributes(?PangoAttrList $attrs): void
+    {
+        unset($attrs);
     }
     /** Sets the mode used to ellipsize the text. */
     public function set_ellipsize(PangoEllipsizeMode $mode): void
@@ -14183,6 +14548,11 @@ class GtkLabel extends GtkWidget
     public function set_single_line_mode(bool $single_line_mode): void
     {
         unset($single_line_mode);
+    }
+    /** Sets the default tab stops for paragraphs in $self. */
+    public function set_tabs(?PangoTabArray $tabs): void
+    {
+        unset($tabs);
     }
     /** Sets the text within the `GtkLabel` widget. */
     public function set_text(string $str): void
@@ -15877,6 +16247,13 @@ class GtkPageSetup extends GObject
         unset($variant);
         return null;
     }
+    /** Reads the page setup from the group $group_name in the key file $key_file. */
+    public static function new_from_key_file(GKeyFile $key_file, ?string $group_name = null): GtkPageSetup
+    {
+        unset($key_file);
+        unset($group_name);
+        return null;
+    }
     /** Copies a `GtkPageSetup`. */
     public function copy(): GtkPageSetup
     {
@@ -15946,6 +16323,13 @@ class GtkPageSetup extends GObject
         unset($file_name);
         return false;
     }
+    /** Reads the page setup from the group $group_name in the key file $key_file. */
+    public function load_key_file(GKeyFile $key_file, ?string $group_name): bool
+    {
+        unset($key_file);
+        unset($group_name);
+        return false;
+    }
     /** Sets the bottom margin of the `GtkPageSetup`. */
     public function set_bottom_margin(float $margin, GtkUnit $unit): void
     {
@@ -15998,6 +16382,12 @@ class GtkPageSetup extends GObject
     public function to_gvariant(): mixed
     {
         return null;
+    }
+    /** This function adds the page setup from $setup to $key_file. */
+    public function to_key_file(GKeyFile $key_file, ?string $group_name): void
+    {
+        unset($key_file);
+        unset($group_name);
     }
 }
 /**
@@ -16159,6 +16549,13 @@ final class GtkPaperSize
         unset($height);
         return null;
     }
+    /** Reads a paper size from the group $group_name in the key file $key_file. */
+    public static function new_from_key_file(GKeyFile $key_file, ?string $group_name = null): GtkPaperSize
+    {
+        unset($key_file);
+        unset($group_name);
+        return null;
+    }
     /** Creates a new `GtkPaperSize` object by using PPD information. */
     public static function new_from_ppd(string $ppd_name, string $ppd_display_name, float $width, float $height): GtkPaperSize
     {
@@ -16246,6 +16643,12 @@ final class GtkPaperSize
     public function to_gvariant(): mixed
     {
         return null;
+    }
+    /** This function adds the paper size from $size to $key_file. */
+    public function to_key_file(GKeyFile $key_file, string $group_name): void
+    {
+        unset($key_file);
+        unset($group_name);
     }
     /** Returns the name of the default paper size, which depends on the current locale. */
     public static function get_default(): string
@@ -16830,6 +17233,16 @@ class GtkPrintContext extends GObject
     private function __construct()
     {
     }
+    /** Creates a new `PangoContext` that can be used with the `GtkPrintContext`. */
+    public function create_pango_context(): PangoContext
+    {
+        return null;
+    }
+    /** Creates a new `PangoLayout` that is suitable for use with the `GtkPrintContext`. */
+    public function create_pango_layout(): PangoLayout
+    {
+        return null;
+    }
     /** Obtains the cairo context that is associated with the `GtkPrintContext`. */
     public function get_cairo_context(): CairoContext
     {
@@ -16861,6 +17274,11 @@ class GtkPrintContext extends GObject
     }
     /** Obtains the `GtkPageSetup` that determines the page dimensions of the `GtkPrintContext`. */
     public function get_page_setup(): GtkPageSetup
+    {
+        return null;
+    }
+    /** Returns a `PangoFontMap` that is suitable for use with the `GtkPrintContext`. */
+    public function get_pango_fontmap(): PangoFontMap
     {
         return null;
     }
@@ -17361,6 +17779,13 @@ class GtkPrintSettings extends GObject
         unset($variant);
         return null;
     }
+    /** Reads the print settings from the group $group_name in $key_file. */
+    public static function new_from_key_file(GKeyFile $key_file, ?string $group_name = null): GtkPrintSettings
+    {
+        unset($key_file);
+        unset($group_name);
+        return null;
+    }
     /** Copies a `GtkPrintSettings` object. */
     public function copy(): GtkPrintSettings
     {
@@ -17558,6 +17983,13 @@ class GtkPrintSettings extends GObject
         unset($file_name);
         return false;
     }
+    /** Reads the print settings from the group $group_name in $key_file. */
+    public function load_key_file(GKeyFile $key_file, ?string $group_name): bool
+    {
+        unset($key_file);
+        unset($group_name);
+        return false;
+    }
     /** Associates $value with $key. */
     public function set(string $key, ?string $value): void
     {
@@ -17731,6 +18163,12 @@ class GtkPrintSettings extends GObject
     public function to_gvariant(): mixed
     {
         return null;
+    }
+    /** This function adds the print settings from $settings to $key_file. */
+    public function to_key_file(GKeyFile $key_file, ?string $group_name): void
+    {
+        unset($key_file);
+        unset($group_name);
     }
     /** Removes any value associated with $key. */
     public function unset(string $key): void
@@ -18299,6 +18737,11 @@ class GtkScale extends GtkRange implements GtkOrientable
     public function get_has_origin(): bool
     {
         return false;
+    }
+    /** Gets the `PangoLayout` used to display the scale. */
+    public function get_layout(): ?PangoLayout
+    {
+        return null;
     }
     /**
      * Obtains the coordinates where the scale will draw the `PangoLayout` representing the text in
@@ -19062,6 +19505,11 @@ class GtkSnapshot extends GdkSnapshot
         unset($dy);
         unset($spread);
         unset($blur_radius);
+    }
+    public function append_layout(PangoLayout $layout, GdkRGBA $color): void
+    {
+        unset($layout);
+        unset($color);
     }
     /** Appends $node to the current render node of $snapshot, without changing the current node. */
     public function append_node(GskRenderNode $node): void
@@ -20191,6 +20639,7 @@ final class GtkStyleProviderObject extends GObject implements GtkStyleProvider
  * The `GtkText` widget is a single-line text entry widget.
  *
  * @property bool $activates_default
+ * @property ?PangoAttrList $attributes
  * @property ?GtkEntryBuffer $buffer
  * @property bool $enable_emoji_completion
  * @property ?GMenuModel $extra_menu
@@ -20204,6 +20653,7 @@ final class GtkStyleProviderObject extends GObject implements GtkStyleProvider
  * @property ?string $placeholder_text
  * @property bool $propagate_text_width
  * @property-read int $scroll_offset
+ * @property ?PangoTabArray $tabs
  * @property bool $truncate_multiline
  * @property bool $visibility
  */
@@ -20237,6 +20687,11 @@ class GtkText extends GtkWidget implements GtkEditable
     public function get_activates_default(): bool
     {
         return false;
+    }
+    /** Gets the attribute list that was set on the `GtkText`. */
+    public function get_attributes(): ?PangoAttrList
+    {
+        return null;
     }
     /** Get the `GtkEntryBuffer` object which holds the text for this widget. */
     public function get_buffer(): GtkEntryBuffer
@@ -20288,6 +20743,11 @@ class GtkText extends GtkWidget implements GtkEditable
     {
         return false;
     }
+    /** Gets the tabstops that were set on the `GtkText`. */
+    public function get_tabs(): ?PangoTabArray
+    {
+        return null;
+    }
     /** Retrieves the current length of the text in $self. */
     public function get_text_length(): int
     {
@@ -20310,6 +20770,11 @@ class GtkText extends GtkWidget implements GtkEditable
     public function set_activates_default(bool $activates): void
     {
         unset($activates);
+    }
+    /** Sets attributes that are applied to the text. */
+    public function set_attributes(?PangoAttrList $attrs): void
+    {
+        unset($attrs);
     }
     /** Set the `GtkEntryBuffer` object which holds the text for this widget. */
     public function set_buffer(GtkEntryBuffer $buffer): void
@@ -20360,6 +20825,11 @@ class GtkText extends GtkWidget implements GtkEditable
     public function set_propagate_text_width(bool $propagate_text_width): void
     {
         unset($propagate_text_width);
+    }
+    /** Sets tabstops that are applied to the text. */
+    public function set_tabs(?PangoTabArray $tabs): void
+    {
+        unset($tabs);
     }
     /** Sets whether the `GtkText` should truncate multi-line text that is pasted into the widget. */
     public function set_truncate_multiline(bool $truncate_multiline): void
@@ -21793,6 +22263,7 @@ final class GtkTextSearchFlags
  * @property bool $strikethrough_set
  * @property PangoStyle $style
  * @property bool $style_set
+ * @property ?PangoTabArray $tabs
  * @property bool $tabs_set
  * @property int $text_transform
  * @property bool $text_transform_set
@@ -21893,6 +22364,7 @@ class GtkTextTagTable extends GObject
  * @property int $pixels_below_lines
  * @property int $pixels_inside_wrap
  * @property int $right_margin
+ * @property ?PangoTabArray $tabs
  * @property int $top_margin
  * @property GtkWrapMode $wrap_mode
  */
@@ -22067,6 +22539,11 @@ class GtkTextView extends GtkWidget implements GtkScrollable
         unset($iter);
         return [];
     }
+    /** Gets the `PangoContext` that is used for rendering LTR directed text layouts. */
+    public function get_ltr_context(): PangoContext
+    {
+        return null;
+    }
     /** Gets whether the `GtkTextView` uses monospace styling. */
     public function get_monospace(): bool
     {
@@ -22096,6 +22573,16 @@ class GtkTextView extends GtkWidget implements GtkScrollable
     public function get_right_margin(): int
     {
         return 0;
+    }
+    /** Gets the `PangoContext` that is used for rendering RTL directed text layouts. */
+    public function get_rtl_context(): PangoContext
+    {
+        return null;
+    }
+    /** Gets the default tabs for $text_view. */
+    public function get_tabs(): ?PangoTabArray
+    {
+        return null;
     }
     /** Gets the top margin for text in the $text_view. */
     public function get_top_margin(): int
@@ -22289,6 +22776,11 @@ class GtkTextView extends GtkWidget implements GtkScrollable
     public function set_right_margin(int $right_margin): void
     {
         unset($right_margin);
+    }
+    /** Sets the default tab stops for paragraphs in $text_view. */
+    public function set_tabs(?PangoTabArray $tabs): void
+    {
+        unset($tabs);
     }
     /** Sets the top margin for text in $text_view. */
     public function set_top_margin(int $top_margin): void
@@ -22990,6 +23482,23 @@ class GtkWidget extends GObject
         unset($y);
         return false;
     }
+    /**
+     * Creates a new `PangoContext` with the appropriate font map, font options, font description,
+     * and base direction for drawing text for this widget.
+     */
+    public function create_pango_context(): PangoContext
+    {
+        return null;
+    }
+    /**
+     * Creates a new `PangoLayout` with the appropriate font map, font description, and base
+     * direction for drawing text for this widget.
+     */
+    public function create_pango_layout(?string $text): PangoLayout
+    {
+        unset($text);
+        return null;
+    }
     /** Checks to see if a drag movement has passed the GTK drag threshold. */
     public function drag_check_threshold(int $start_x, int $start_y, int $current_x, int $current_y): bool
     {
@@ -23082,6 +23591,11 @@ class GtkWidget extends GObject
     {
         return false;
     }
+    /** Gets the font map of $widget. */
+    public function get_font_map(): ?PangoFontMap
+    {
+        return null;
+    }
     /** Gets the horizontal alignment of $widget. */
     public function get_halign(): GtkAlign
     {
@@ -23167,6 +23681,14 @@ class GtkWidget extends GObject
     }
     /** Returns the widget’s overflow value. */
     public function get_overflow(): GtkOverflow
+    {
+        return null;
+    }
+    /**
+     * Gets a `PangoContext` with the appropriate font map, font description, and base direction
+     * for this widget.
+     */
+    public function get_pango_context(): PangoContext
     {
         return null;
     }
@@ -23508,6 +24030,11 @@ class GtkWidget extends GObject
     public function set_focusable(bool $focusable): void
     {
         unset($focusable);
+    }
+    /** Sets the font map to use for Pango rendering. */
+    public function set_font_map(?PangoFontMap $font_map): void
+    {
+        unset($font_map);
     }
     /** Sets the horizontal alignment of $widget. */
     public function set_halign(GtkAlign $align): void
@@ -24814,6 +25341,152 @@ final class JSCVirtualMachine extends GObject
     }
 }
 /**
+ * `PangoAlignment` describes how to align the lines of a `PangoLayout` within the available space.
+ */
+enum PangoAlignment : int
+{
+    case Left = 0;
+    case Center = 1;
+    case Right = 2;
+}
+/**
+ * A `PangoAttrList` represents a list of attributes that apply to a section of text.
+ */
+final class PangoAttrList
+{
+    /** Create a new empty attribute list with a reference count of one. */
+    public function __construct()
+    {
+    }
+    /**
+     * Checks whether $list and $other_list contain the same attributes and whether those
+     * attributes apply to the same ranges.
+     */
+    public function equal(PangoAttrList $other_list): bool
+    {
+        unset($other_list);
+        return false;
+    }
+    /**
+     * This function opens up a hole in $list, fills it in with attributes from the left, and then
+     * merges $other on top of the hole.
+     */
+    public function splice(PangoAttrList $other, int $pos, int $len): void
+    {
+        unset($other);
+        unset($pos);
+        unset($len);
+    }
+    /** Serializes a `PangoAttrList` to a string. */
+    public function to_string(): string
+    {
+        return '';
+    }
+    /** Update indices of attributes in $list for a change in the text they refer to. */
+    public function update(int $pos, int $remove, int $add): void
+    {
+        unset($pos);
+        unset($remove);
+        unset($add);
+    }
+    /** Deserializes a `PangoAttrList` from a string. */
+    public static function from_string(string $text): ?PangoAttrList
+    {
+        unset($text);
+        return null;
+    }
+}
+/**
+ * A `PangoContext` stores global information used to control the itemization process.
+ */
+class PangoContext extends GObject
+{
+    /** Creates a new `PangoContext` initialized to default values. */
+    public function __construct()
+    {
+    }
+    /**
+     * Forces a change in the context, which will cause any `PangoLayout` using this context to
+     * re-layout.
+     */
+    public function changed(): void
+    {
+    }
+    /** Retrieves the base direction for the context. */
+    public function get_base_dir(): PangoDirection
+    {
+        return null;
+    }
+    /** Retrieves the base gravity for the context. */
+    public function get_base_gravity(): PangoGravity
+    {
+        return null;
+    }
+    /** Retrieve the default font description for the context. */
+    public function get_font_description(): ?PangoFontDescription
+    {
+        return null;
+    }
+    /** Gets the `PangoFontMap` used to look up fonts for this context. */
+    public function get_font_map(): ?PangoFontMap
+    {
+        return null;
+    }
+    /** Retrieves the gravity for the context. */
+    public function get_gravity(): PangoGravity
+    {
+        return null;
+    }
+    /** Retrieves the gravity hint for the context. */
+    public function get_gravity_hint(): PangoGravityHint
+    {
+        return null;
+    }
+    /** Returns whether font rendering with this context should round glyph positions and widths. */
+    public function get_round_glyph_positions(): bool
+    {
+        return false;
+    }
+    /** Returns the current serial number of $context. */
+    public function get_serial(): int
+    {
+        return 0;
+    }
+    /** Sets the base direction for the context. */
+    public function set_base_dir(PangoDirection $direction): void
+    {
+        unset($direction);
+    }
+    /** Sets the base gravity for the context. */
+    public function set_base_gravity(PangoGravity $gravity): void
+    {
+        unset($gravity);
+    }
+    /** Set the default font description for the context */
+    public function set_font_description(PangoFontDescription $desc): void
+    {
+        unset($desc);
+    }
+    /** Sets the font map to be searched when fonts are looked-up in this context. */
+    public function set_font_map(?PangoFontMap $font_map): void
+    {
+        unset($font_map);
+    }
+    /** Sets the gravity hint for the context. */
+    public function set_gravity_hint(PangoGravityHint $hint): void
+    {
+        unset($hint);
+    }
+    /**
+     * Sets whether font rendering with this context should round glyph positions and widths to
+     * integral positions, in device units.
+     */
+    public function set_round_glyph_positions(bool $round_positions): void
+    {
+        unset($round_positions);
+    }
+}
+/**
  * `PangoDirection` represents a direction in the Unicode bidirectional algorithm.
  */
 enum PangoDirection : int
@@ -25017,6 +25690,71 @@ final class PangoFontDescription
     }
 }
 /**
+ * A `PangoFontMap` represents the set of fonts available for a particular rendering system.
+ *
+ * @property-read int $n_items
+ */
+class PangoFontMap extends GObject implements GListModel
+{
+    /** PangoFontMap is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /**
+     * Forces a change in the context, which will cause any `PangoContext` using this fontmap to
+     * change.
+     */
+    public function changed(): void
+    {
+    }
+    /** Creates a `PangoContext` connected to $fontmap. */
+    public function create_context(): PangoContext
+    {
+        return null;
+    }
+    /** Returns the current serial number of $fontmap. */
+    public function get_serial(): int
+    {
+        return 0;
+    }
+    public function get_item_type(): string
+    {
+        return '';
+    }
+    public function get_n_items(): int
+    {
+        return 0;
+    }
+    public function get_item(int $position): ?GObject
+    {
+        unset($position);
+        return null;
+    }
+    public function items_changed(int $position, int $removed, int $added): void
+    {
+        unset($position);
+        unset($removed);
+        unset($added);
+    }
+    /**
+     * Native `changed` (FontMapClass.changed): the GTK implementation below any PHP subclass, for
+     * `parent::vfunc_changed()` from an override. Forces a change in the context, which will cause
+     * any `PangoContext` using this fontmap to change.
+     */
+    public function vfunc_changed(): void
+    {
+    }
+    /**
+     * Native `get_serial` (FontMapClass.get_serial): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_get_serial()` from an override. Returns the current serial
+     * number of $fontmap.
+     */
+    public function vfunc_get_serial(): int
+    {
+        return 0;
+    }
+}
+/**
  * The bits in a `PangoFontMask` correspond to the set fields in a `PangoFontDescription`.
  */
 final class PangoFontMask
@@ -25049,6 +25787,355 @@ enum PangoGravityHint : int
     case Natural = 0;
     case Strong = 1;
     case Line = 2;
+}
+/**
+ * A `PangoLayout` structure represents an entire paragraph of text.
+ */
+class PangoLayout extends GObject
+{
+    /**
+     * Create a new `PangoLayout` object with attributes initialized to default values for a
+     * particular `PangoContext`.
+     */
+    public function __construct(PangoContext $context)
+    {
+        unset($context);
+    }
+    /** Loads data previously created via `serialize`. */
+    public static function deserialize(PangoContext $context, string $bytes, int $flags): ?PangoLayout
+    {
+        unset($context);
+        unset($bytes);
+        unset($flags);
+        return null;
+    }
+    /**
+     * Forces recomputation of any state in the `PangoLayout` that might depend on the layout's
+     * context.
+     */
+    public function context_changed(): void
+    {
+    }
+    /** Creates a deep copy-by-value of the layout. */
+    public function copy(): PangoLayout
+    {
+        return null;
+    }
+    /**
+     * Gets the alignment for the layout: how partial lines are positioned within the horizontal
+     * space available.
+     */
+    public function get_alignment(): PangoAlignment
+    {
+        return null;
+    }
+    /** Gets the attribute list for the layout, if any. */
+    public function get_attributes(): ?PangoAttrList
+    {
+        return null;
+    }
+    /** Gets whether to calculate the base direction for the layout according to its contents. */
+    public function get_auto_dir(): bool
+    {
+        return false;
+    }
+    /** Gets the Y position of baseline of the first line in $layout. */
+    public function get_baseline(): int
+    {
+        return 0;
+    }
+    /** Returns the number of Unicode characters in the the text of $layout. */
+    public function get_character_count(): int
+    {
+        return 0;
+    }
+    /** Retrieves the `PangoContext` used for this layout. */
+    public function get_context(): PangoContext
+    {
+        return null;
+    }
+    /** Gets the text direction at the given character position in $layout. */
+    public function get_direction(int $index): PangoDirection
+    {
+        unset($index);
+        return null;
+    }
+    /** Gets the type of ellipsization being performed for $layout. */
+    public function get_ellipsize(): PangoEllipsizeMode
+    {
+        return null;
+    }
+    /** Gets the font description for the layout, if any. */
+    public function get_font_description(): ?PangoFontDescription
+    {
+        return null;
+    }
+    /** Gets the height of layout used for ellipsization. */
+    public function get_height(): int
+    {
+        return 0;
+    }
+    /** Gets the paragraph indent width in Pango units. */
+    public function get_indent(): int
+    {
+        return 0;
+    }
+    /**
+     * Gets whether each complete line should be stretched to fill the entire width of the layout.
+     */
+    public function get_justify(): bool
+    {
+        return false;
+    }
+    /** Gets whether the last line should be stretched to fill the entire width of the layout. */
+    public function get_justify_last_line(): bool
+    {
+        return false;
+    }
+    /** Retrieves the count of lines for the $layout. */
+    public function get_line_count(): int
+    {
+        return 0;
+    }
+    /** Gets the line spacing factor of $layout. */
+    public function get_line_spacing(): float
+    {
+        return 0.0;
+    }
+    /**
+     * Determines the logical width and height of a `PangoLayout` in device units.
+     *
+     * @return array{int, int}
+     */
+    public function get_pixel_size(): array
+    {
+        return [];
+    }
+    /** Returns the current serial number of $layout. */
+    public function get_serial(): int
+    {
+        return 0;
+    }
+    /** Obtains whether $layout is in single paragraph mode. */
+    public function get_single_paragraph_mode(): bool
+    {
+        return false;
+    }
+    /**
+     * Determines the logical width and height of a `PangoLayout` in Pango units.
+     *
+     * @return array{int, int}
+     */
+    public function get_size(): array
+    {
+        return [];
+    }
+    /** Gets the amount of spacing between the lines of the layout. */
+    public function get_spacing(): int
+    {
+        return 0;
+    }
+    /** Gets the current `PangoTabArray` used by this layout. */
+    public function get_tabs(): ?PangoTabArray
+    {
+        return null;
+    }
+    /** Gets the text in the layout. */
+    public function get_text(): string
+    {
+        return '';
+    }
+    /** Counts the number of unknown glyphs in $layout. */
+    public function get_unknown_glyphs_count(): int
+    {
+        return 0;
+    }
+    /** Gets the width to which the lines of the `PangoLayout` should wrap. */
+    public function get_width(): int
+    {
+        return 0;
+    }
+    /** Gets the wrap mode for the layout. */
+    public function get_wrap(): PangoWrapMode
+    {
+        return null;
+    }
+    /**
+     * Converts from byte $index_ within the $layout to line and X position.
+     *
+     * @return array{int, int}
+     */
+    public function index_to_line_x(int $index, bool $trailing): array
+    {
+        unset($index);
+        unset($trailing);
+        return [];
+    }
+    /** Queries whether the layout had to ellipsize any paragraphs. */
+    public function is_ellipsized(): bool
+    {
+        return false;
+    }
+    /** Queries whether the layout had to wrap any paragraphs. */
+    public function is_wrapped(): bool
+    {
+        return false;
+    }
+    /**
+     * Computes a new cursor position from an old position and a direction.
+     *
+     * @return array{int, int}
+     */
+    public function move_cursor_visually(bool $strong, int $old_index, int $old_trailing, int $direction): array
+    {
+        unset($strong);
+        unset($old_index);
+        unset($old_trailing);
+        unset($direction);
+        return [];
+    }
+    /** Serializes the $layout for later deserialization via `deserialize`. */
+    public function serialize(int $flags): string
+    {
+        unset($flags);
+        return '';
+    }
+    /**
+     * Sets the alignment for the layout: how partial lines are positioned within the horizontal
+     * space available.
+     */
+    public function set_alignment(PangoAlignment $alignment): void
+    {
+        unset($alignment);
+    }
+    /** Sets the text attributes for a layout object. */
+    public function set_attributes(?PangoAttrList $attrs): void
+    {
+        unset($attrs);
+    }
+    /** Sets whether to calculate the base direction for the layout according to its contents. */
+    public function set_auto_dir(bool $auto_dir): void
+    {
+        unset($auto_dir);
+    }
+    /** Sets the type of ellipsization being performed for $layout. */
+    public function set_ellipsize(PangoEllipsizeMode $ellipsize): void
+    {
+        unset($ellipsize);
+    }
+    /** Sets the default font description for the layout. */
+    public function set_font_description(?PangoFontDescription $desc): void
+    {
+        unset($desc);
+    }
+    /** Sets the height to which the `PangoLayout` should be ellipsized at. */
+    public function set_height(int $height): void
+    {
+        unset($height);
+    }
+    /** Sets the width in Pango units to indent each paragraph. */
+    public function set_indent(int $indent): void
+    {
+        unset($indent);
+    }
+    /**
+     * Sets whether each complete line should be stretched to fill the entire width of the layout.
+     */
+    public function set_justify(bool $justify): void
+    {
+        unset($justify);
+    }
+    /** Sets whether the last line should be stretched to fill the entire width of the layout. */
+    public function set_justify_last_line(bool $justify): void
+    {
+        unset($justify);
+    }
+    /** Sets a factor for line spacing. */
+    public function set_line_spacing(float $factor): void
+    {
+        unset($factor);
+    }
+    /** Sets the layout text and attribute list from marked-up text. */
+    public function set_markup(string $markup, int $length): void
+    {
+        unset($markup);
+        unset($length);
+    }
+    /** Sets the layout text and attribute list from marked-up text. */
+    public function set_markup_with_accel(string $markup, int $length, int $accel_marker): int
+    {
+        unset($markup);
+        unset($length);
+        unset($accel_marker);
+        return 0;
+    }
+    /** Sets the single paragraph mode of $layout. */
+    public function set_single_paragraph_mode(bool $setting): void
+    {
+        unset($setting);
+    }
+    /** Sets the amount of spacing in Pango units between the lines of the layout. */
+    public function set_spacing(int $spacing): void
+    {
+        unset($spacing);
+    }
+    /** Sets the tabs to use for $layout, overriding the default tabs. */
+    public function set_tabs(?PangoTabArray $tabs): void
+    {
+        unset($tabs);
+    }
+    /** Sets the text of the layout. */
+    public function set_text(string $text, int $length): void
+    {
+        unset($text);
+        unset($length);
+    }
+    /** Sets the width to which the lines of the `PangoLayout` should wrap or ellipsized. */
+    public function set_width(int $width): void
+    {
+        unset($width);
+    }
+    /** Sets the wrap mode. */
+    public function set_wrap(PangoWrapMode $wrap): void
+    {
+        unset($wrap);
+    }
+    /** A convenience method to serialize a layout to a file. */
+    public function write_to_file(int $flags, string $filename): bool
+    {
+        unset($flags);
+        unset($filename);
+        return false;
+    }
+    /**
+     * Converts from X and Y position within a layout to the byte index to the character at that
+     * logical position.
+     *
+     * @return array{int, int}|null
+     */
+    public function xy_to_index(int $x, int $y): ?array
+    {
+        unset($x);
+        unset($y);
+        return null;
+    }
+}
+/**
+ * Flags that influence the behavior of `deserialize`.
+ */
+final class PangoLayoutDeserializeFlags
+{
+    public const int DEFAULT = 0;
+    public const int CONTEXT = 1;
+}
+/**
+ * Flags that influence the behavior of `serialize`.
+ */
+final class PangoLayoutSerializeFlags
+{
+    public const int DEFAULT = 0;
+    public const int CONTEXT = 1;
+    public const int OUTPUT = 2;
 }
 /**
  * The `PangoScript` enumeration identifies different writing systems.
@@ -25197,6 +26284,92 @@ enum PangoStyle : int
     case Normal = 0;
     case Oblique = 1;
     case Italic = 2;
+}
+/**
+ * `PangoTabAlign` specifies where the text appears relative to the tab stop position.
+ */
+enum PangoTabAlign : int
+{
+    case Left = 0;
+    case Right = 1;
+    case Center = 2;
+    case Decimal = 3;
+}
+/**
+ * A `PangoTabArray` contains an array of tab stops.
+ */
+final class PangoTabArray
+{
+    /** Creates an array of $initial_size tab stops. */
+    public function __construct(int $initial_size, bool $positions_in_pixels)
+    {
+        unset($initial_size);
+        unset($positions_in_pixels);
+    }
+    /** Gets the Unicode character to use as decimal point. */
+    public function get_decimal_point(int $tab_index): int
+    {
+        unset($tab_index);
+        return 0;
+    }
+    /** Returns `true` if the tab positions are in pixels, `false` if they are in Pango units. */
+    public function get_positions_in_pixels(): bool
+    {
+        return false;
+    }
+    /** Gets the number of tab stops in $tab_array. */
+    public function get_size(): int
+    {
+        return 0;
+    }
+    /**
+     * Gets the alignment and position of a tab stop.
+     *
+     * @return array{PangoTabAlign, int}
+     */
+    public function get_tab(int $tab_index): array
+    {
+        unset($tab_index);
+        return [];
+    }
+    /** Resizes a tab array. */
+    public function resize(int $new_size): void
+    {
+        unset($new_size);
+    }
+    /** Sets the Unicode character to use as decimal point. */
+    public function set_decimal_point(int $tab_index, int $decimal_point): void
+    {
+        unset($tab_index);
+        unset($decimal_point);
+    }
+    /** Sets whether positions in this array are specified in pixels. */
+    public function set_positions_in_pixels(bool $positions_in_pixels): void
+    {
+        unset($positions_in_pixels);
+    }
+    /** Sets the alignment and location of a tab stop. */
+    public function set_tab(int $tab_index, PangoTabAlign $alignment, int $location): void
+    {
+        unset($tab_index);
+        unset($alignment);
+        unset($location);
+    }
+    /** Utility function to ensure that the tab stops are in increasing order. */
+    public function sort(): void
+    {
+    }
+    /** Serializes a `PangoTabArray` to a string. */
+    public function to_string(): string
+    {
+        return '';
+    }
+    /** Deserializes a `PangoTabArray` from a string. */
+    public static function from_string(string $text): ?PangoTabArray
+    {
+        unset($text);
+        return null;
+    }
 }
 /**
  * An enumeration specifying capitalization variant of the font.
@@ -28190,6 +29363,16 @@ final class WebKitSettings extends GObject
     public static function get_experimental_features(): WebKitFeatureList
     {
         return null;
+    }
+    /**
+     * Reads the contents of the given $group_name from the given $key_file and apply the value of
+     * each key/value to the corresponding property on the $settings.
+     */
+    public function apply_from_key_file(GKeyFile $key_file, string $group_name): bool
+    {
+        unset($key_file);
+        unset($group_name);
+        return false;
     }
     /** Get the #WebKitSettings:allow-file-access-from-file-urls property. */
     public function get_allow_file_access_from_file_urls(): bool

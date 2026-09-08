@@ -90,7 +90,7 @@ ZEND_METHOD(Gtk4_WebKitCookieManager, add_cookie_finish) {
   GError *error = nullptr;
   const gboolean ok =
       webkit_cookie_manager_add_cookie_finish(self, G_ASYNC_RESULT(result_o), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }
@@ -165,7 +165,7 @@ ZEND_METHOD(Gtk4_WebKitCookieManager, delete_cookie_finish) {
   GError *error = nullptr;
   const gboolean ok =
       webkit_cookie_manager_delete_cookie_finish(self, G_ASYNC_RESULT(result_o), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }
@@ -398,7 +398,7 @@ ZEND_METHOD(Gtk4_WebKitCookieManager, replace_cookies_finish) {
   GError *error = nullptr;
   const gboolean ok =
       webkit_cookie_manager_replace_cookies_finish(self, G_ASYNC_RESULT(result_o), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

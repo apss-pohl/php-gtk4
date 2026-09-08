@@ -68,6 +68,10 @@ final class Func
         // node method, whatever the subclass): what `self` is declared as where it differs from
         // the class' own c:type.
         public ?string $selfCtype = null,
+        // Whether that instance parameter is `const`. Most GLib copy/equal functions take their
+        // operands const and a few do not (pango_attr_list_copy(), gsk_transform_equal()), and
+        // the boxed registry hands them over as gconstpointer either way.
+        public bool $selfConst = true,
     ) {}
 }
 

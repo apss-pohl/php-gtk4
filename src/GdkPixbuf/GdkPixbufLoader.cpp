@@ -87,7 +87,7 @@ ZEND_METHOD(Gtk4_GdkPixbufLoader, close) {
   GdkPixbufLoader *self = PHPGTK_SELF(GdkPixbufLoader, GDK_TYPE_PIXBUF_LOADER);
   GError *error = nullptr;
   const gboolean ok = gdk_pixbuf_loader_close(self, &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }
@@ -165,7 +165,7 @@ ZEND_METHOD(Gtk4_GdkPixbufLoader, write_bytes) {
   GError *error = nullptr;
   const gboolean ok = gdk_pixbuf_loader_write_bytes(self, buffer_b, &error);
   g_bytes_unref(buffer_b);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

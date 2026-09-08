@@ -86,6 +86,35 @@ ZEND_METHOD(Gtk4_GtkPrintSettings, new_from_gvariant) {
 }
 
 /**
+ * static Gtk4\GtkPrintSettings::new_from_key_file(GKeyFile $key_file, ?string $group_name = null):
+ * GtkPrintSettings
+ *
+ * Reads the print settings from the group $group_name in $key_file.
+ */
+ZEND_METHOD(Gtk4_GtkPrintSettings, new_from_key_file) {
+  zval *key_file;
+  zend_string *group_name = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 2)
+  Z_PARAM_OBJECT_OF_CLASS(key_file, boxed_class_for_type(G_TYPE_KEY_FILE)->ce)
+  Z_PARAM_OPTIONAL
+  Z_PARAM_STR_OR_NULL(group_name)
+  ZEND_PARSE_PARAMETERS_END();
+  gpointer key_file_b = unwrap_boxed(key_file, G_TYPE_KEY_FILE);
+  if (key_file_b == nullptr) RETURN_THROWS();
+  if (group_name != nullptr && !phpgtk::check_utf8(group_name, 2)) RETURN_THROWS();
+  GError *error = nullptr;
+  GObject *obj = G_OBJECT(gtk_print_settings_new_from_key_file(
+      static_cast<GKeyFile *>(key_file_b), group_name != nullptr ? ZSTR_VAL(group_name) : nullptr,
+      &error));
+  if (obj == nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  wrap(obj, return_value);
+  if (obj != nullptr) g_object_unref(obj);  // the handle took its own reference
+}
+
+/**
  * Gtk4\GtkPrintSettings::copy(): GtkPrintSettings
  *
  * Copies a `GtkPrintSettings` object.
@@ -582,7 +611,34 @@ ZEND_METHOD(Gtk4_GtkPrintSettings, load_file) {
   GError *error = nullptr;
   const gboolean ok = gtk_print_settings_load_file(self, ZSTR_VAL(file_name_abs), &error);
   if (file_name_abs != nullptr) zend_string_release(file_name_abs);
-  if (!ok) {
+  if (error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  RETURN_BOOL(ok);
+}
+
+/**
+ * Gtk4\GtkPrintSettings::load_key_file(GKeyFile $key_file, ?string $group_name): bool
+ *
+ * Reads the print settings from the group $group_name in $key_file.
+ */
+ZEND_METHOD(Gtk4_GtkPrintSettings, load_key_file) {
+  zval *key_file;
+  zend_string *group_name = nullptr;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(key_file, boxed_class_for_type(G_TYPE_KEY_FILE)->ce)
+  Z_PARAM_STR_OR_NULL(group_name)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkPrintSettings *self = PHPGTK_SELF(GtkPrintSettings, GTK_TYPE_PRINT_SETTINGS);
+  gpointer key_file_b = unwrap_boxed(key_file, G_TYPE_KEY_FILE);
+  if (key_file_b == nullptr) RETURN_THROWS();
+  if (group_name != nullptr && !phpgtk::check_utf8(group_name, 2)) RETURN_THROWS();
+  GError *error = nullptr;
+  const gboolean ok = gtk_print_settings_load_key_file(
+      self, static_cast<GKeyFile *>(key_file_b),
+      group_name != nullptr ? ZSTR_VAL(group_name) : nullptr, &error);
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }
@@ -1087,7 +1143,7 @@ ZEND_METHOD(Gtk4_GtkPrintSettings, to_file) {
   GError *error = nullptr;
   const gboolean ok = gtk_print_settings_to_file(self, ZSTR_VAL(file_name_abs), &error);
   if (file_name_abs != nullptr) zend_string_release(file_name_abs);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }
@@ -1105,6 +1161,26 @@ ZEND_METHOD(Gtk4_GtkPrintSettings, to_gvariant) {
   GVariant *phpgtk_ret = gtk_print_settings_to_gvariant(self);
   if (phpgtk_ret == nullptr) RETURN_NULL();
   variant_to_php(phpgtk_ret, return_value);
+}
+
+/**
+ * Gtk4\GtkPrintSettings::to_key_file(GKeyFile $key_file, ?string $group_name): void
+ *
+ * This function adds the print settings from $settings to $key_file.
+ */
+ZEND_METHOD(Gtk4_GtkPrintSettings, to_key_file) {
+  zval *key_file;
+  zend_string *group_name = nullptr;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(key_file, boxed_class_for_type(G_TYPE_KEY_FILE)->ce)
+  Z_PARAM_STR_OR_NULL(group_name)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkPrintSettings *self = PHPGTK_SELF(GtkPrintSettings, GTK_TYPE_PRINT_SETTINGS);
+  gpointer key_file_b = unwrap_boxed(key_file, G_TYPE_KEY_FILE);
+  if (key_file_b == nullptr) RETURN_THROWS();
+  if (group_name != nullptr && !phpgtk::check_utf8(group_name, 2)) RETURN_THROWS();
+  gtk_print_settings_to_key_file(self, static_cast<GKeyFile *>(key_file_b),
+                                 group_name != nullptr ? ZSTR_VAL(group_name) : nullptr);
 }
 
 /**

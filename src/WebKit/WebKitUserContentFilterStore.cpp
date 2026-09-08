@@ -250,7 +250,7 @@ ZEND_METHOD(Gtk4_WebKitUserContentFilterStore, remove_finish) {
   GError *error = nullptr;
   const gboolean ok =
       webkit_user_content_filter_store_remove_finish(self, G_ASYNC_RESULT(result_o), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

@@ -501,7 +501,7 @@ ZEND_METHOD(Gtk4_GdkPixbuf, init_modules) {
   if (!phpgtk::check_utf8(path, 1)) RETURN_THROWS();
   GError *error = nullptr;
   const gboolean ok = gdk_pixbuf_init_modules(ZSTR_VAL(path), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }
@@ -635,7 +635,7 @@ ZEND_METHOD(Gtk4_GdkPixbuf, save_to_stream_finish) {
   if (async_result_o == nullptr) RETURN_THROWS();
   GError *error = nullptr;
   const gboolean ok = gdk_pixbuf_save_to_stream_finish(G_ASYNC_RESULT(async_result_o), &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

@@ -98,3 +98,4 @@ Gdk.Device.__construct   abstract, and every device belongs to a GdkSeat that GD
 Gdk.Seat.__construct   abstract, as GdkDevice: a seat belongs to a GdkDisplay, and GdkDisplay::get_default_seat() is where one comes from
 Gtk.TextChildAnchor.get_deleted   GTK warns ("hasn't been in a buffer yet") and answers TRUE for an anchor that was never inserted; the state it checks (the anchor's line segment) is private, so the binding cannot refuse the call before GTK complains
 Gtk.TextChildAnchor.get_widgets   same: it needs the anchor to be in a buffer, and nothing here can ask whether it is
+Pango.FontMap.__construct   abstract, and the concrete map belongs to the backend (PangoCairoFontMap here): a PHP subtype has no font map behind it and the getters read uninitialised state (EveryClassTest segfaulted on it). PangoContext::get_font_map() and GtkWidget::get_pango_context() are where one comes from

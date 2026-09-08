@@ -2038,6 +2038,12 @@ final class WebKitSettings extends GObject
     /** Gets the list of available experimental WebKit features. */
     public static function get_experimental_features(): WebKitFeatureList {}
 
+    /**
+     * Reads the contents of the given $group_name from the given $key_file and apply the value of
+     * each key/value to the corresponding property on the $settings.
+     */
+    public function apply_from_key_file(GKeyFile $key_file, string $group_name): bool {}
+
     /** Get the #WebKitSettings:allow-file-access-from-file-urls property. */
     public function get_allow_file_access_from_file_urls(): bool {}
 

@@ -283,7 +283,7 @@ ZEND_METHOD(Gtk4_GApplication, register) {
   GError *error = nullptr;
   const gboolean ok = g_application_register(
       self, cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr, &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

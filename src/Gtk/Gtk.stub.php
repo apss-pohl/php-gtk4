@@ -2060,6 +2060,7 @@ final class GtkEditableObject extends GObject implements GtkEditable
  * `GtkEntry` is a single line text entry widget.
  *
  * @property bool $activates_default
+ * @property ?PangoAttrList $attributes
  * @property ?GtkEntryBuffer $buffer
  * @property bool $enable_emoji_completion
  * @property ?GMenuModel $extra_menu
@@ -2092,6 +2093,7 @@ final class GtkEditableObject extends GObject implements GtkEditable
  * @property ?string $secondary_icon_tooltip_markup
  * @property ?string $secondary_icon_tooltip_text
  * @property bool $show_emoji_icon
+ * @property ?PangoTabArray $tabs
  * @property-read int $text_length
  * @property bool $truncate_multiline
  * @property bool $visibility
@@ -2109,6 +2111,9 @@ class GtkEntry extends GtkWidget implements GtkEditable
 
     /** Gets the value set by gtk_entry_set_alignment(). */
     public function get_alignment(): float {}
+
+    /** Gets the attribute list of the `GtkEntry`. */
+    public function get_attributes(): ?PangoAttrList {}
 
     /** Get the `GtkEntryBuffer` object which holds the text for this widget. */
     public function get_buffer(): GtkEntryBuffer {}
@@ -2176,6 +2181,9 @@ class GtkEntry extends GtkWidget implements GtkEditable
     /** Retrieves the pulse step set with gtk_entry_set_progress_pulse_step(). */
     public function get_progress_pulse_step(): float {}
 
+    /** Gets the tabstops of the `GtkEntry`. */
+    public function get_tabs(): ?PangoTabArray {}
+
     /** Retrieves the current length of the text in $entry. */
     public function get_text_length(): int {}
 
@@ -2196,6 +2204,9 @@ class GtkEntry extends GtkWidget implements GtkEditable
 
     /** Sets the alignment for the contents of the entry. */
     public function set_alignment(float $xalign): void {}
+
+    /** Sets a `PangoAttrList`. */
+    public function set_attributes(PangoAttrList $attrs): void {}
 
     /** Set the `GtkEntryBuffer` object which holds the text for this widget. */
     public function set_buffer(GtkEntryBuffer $buffer): void {}
@@ -2253,6 +2264,9 @@ class GtkEntry extends GtkWidget implements GtkEditable
 
     /** Sets the fraction of total entry width to move the progress bouncing block for each pulse. */
     public function set_progress_pulse_step(float $fraction): void {}
+
+    /** Sets a `PangoTabArray`. */
+    public function set_tabs(?PangoTabArray $tabs): void {}
 
     /** Sets whether the contents of the entry are visible or not. */
     public function set_visibility(bool $visible): void {}
@@ -3179,6 +3193,7 @@ class GtkFlowBoxChild extends GtkWidget
  * to the user, such as a title for the dialog and whether it should be modal.
  *
  * @property ?GtkFilter $filter
+ * @property ?PangoFontMap $font_map
  * @property bool $modal
  * @property ?string $title
  */
@@ -3205,6 +3220,9 @@ class GtkFontDialog extends GObject
     /** Returns the filter that decides which fonts to display in the font chooser dialog. */
     public function get_filter(): ?GtkFilter {}
 
+    /** Returns the fontmap from which fonts are selected, or `NULL` for the default fontmap. */
+    public function get_font_map(): ?PangoFontMap {}
+
     /**
      * Returns whether the font chooser dialog blocks interaction with the parent window while it
      * is presented.
@@ -3216,6 +3234,9 @@ class GtkFontDialog extends GObject
 
     /** Adds a filter that decides which fonts to display in the font chooser dialog. */
     public function set_filter(?GtkFilter $filter): void {}
+
+    /** Sets the fontmap from which fonts are selected. */
+    public function set_font_map(?PangoFontMap $fontmap): void {}
 
     /**
      * Sets whether the font chooser dialog blocks interaction with the parent window while it is
@@ -4093,6 +4114,7 @@ enum GtkJustification: int
 /**
  * The `GtkLabel` widget displays a small amount of text.
  *
+ * @property ?PangoAttrList $attributes
  * @property PangoEllipsizeMode $ellipsize
  * @property ?GMenuModel $extra_menu
  * @property GtkJustification $justify
@@ -4104,6 +4126,7 @@ enum GtkJustification: int
  * @property GtkNaturalWrapMode $natural_wrap_mode
  * @property bool $selectable
  * @property bool $single_line_mode
+ * @property ?PangoTabArray $tabs
  * @property bool $use_markup
  * @property bool $use_underline
  * @property int $width_chars
@@ -4120,6 +4143,9 @@ class GtkLabel extends GtkWidget
     /** Creates a new `GtkLabel`, containing the text in $str. */
     public static function new_with_mnemonic(?string $str = null): GtkLabel {}
 
+    /** Gets the label's attribute list. */
+    public function get_attributes(): ?PangoAttrList {}
+
     /** Returns the URI for the currently active link in the label. */
     public function get_current_uri(): ?string {}
 
@@ -4134,6 +4160,9 @@ class GtkLabel extends GtkWidget
 
     /** Fetches the text from a label. */
     public function get_label(): string {}
+
+    /** Gets the `PangoLayout` used to display the label. */
+    public function get_layout(): PangoLayout {}
 
     /**
      * Obtains the coordinates where the label will draw its `PangoLayout`.
@@ -4170,6 +4199,9 @@ class GtkLabel extends GtkWidget
     /** Returns whether the label is in single line mode. */
     public function get_single_line_mode(): bool {}
 
+    /** Gets the tabs for $self. */
+    public function get_tabs(): ?PangoTabArray {}
+
     /** Fetches the text from a label. */
     public function get_text(): string {}
 
@@ -4196,6 +4228,9 @@ class GtkLabel extends GtkWidget
 
     /** Selects a range of characters in the label, if the label is selectable. */
     public function select_region(int $start_offset, int $end_offset): void {}
+
+    /** Apply attributes to the label text. */
+    public function set_attributes(?PangoAttrList $attrs): void {}
 
     /** Sets the mode used to ellipsize the text. */
     public function set_ellipsize(PangoEllipsizeMode $mode): void {}
@@ -4232,6 +4267,9 @@ class GtkLabel extends GtkWidget
 
     /** Sets whether the label is in single line mode. */
     public function set_single_line_mode(bool $single_line_mode): void {}
+
+    /** Sets the default tab stops for paragraphs in $self. */
+    public function set_tabs(?PangoTabArray $tabs): void {}
 
     /** Sets the text within the `GtkLabel` widget. */
     public function set_text(string $str): void {}
@@ -5430,6 +5468,9 @@ class GtkPageSetup extends GObject
     /** Desrialize a page setup from an a{sv} variant. */
     public static function new_from_gvariant(mixed $variant = null): GtkPageSetup {}
 
+    /** Reads the page setup from the group $group_name in the key file $key_file. */
+    public static function new_from_key_file(GKeyFile $key_file, ?string $group_name = null): GtkPageSetup {}
+
     /** Copies a `GtkPageSetup`. */
     public function copy(): GtkPageSetup {}
 
@@ -5466,6 +5507,9 @@ class GtkPageSetup extends GObject
     /** Reads the page setup from the file $file_name. */
     public function load_file(string $file_name): bool {}
 
+    /** Reads the page setup from the group $group_name in the key file $key_file. */
+    public function load_key_file(GKeyFile $key_file, ?string $group_name): bool {}
+
     /** Sets the bottom margin of the `GtkPageSetup`. */
     public function set_bottom_margin(float $margin, GtkUnit $unit): void {}
 
@@ -5495,6 +5539,9 @@ class GtkPageSetup extends GObject
 
     /** Serialize page setup to an a{sv} variant. */
     public function to_gvariant(): mixed {}
+
+    /** This function adds the page setup from $setup to $key_file. */
+    public function to_key_file(GKeyFile $key_file, ?string $group_name): void {}
 }
 
 /**
@@ -5605,6 +5652,9 @@ final class GtkPaperSize
     /** Creates a new `GtkPaperSize` object by using IPP information. */
     public static function new_from_ipp(string $ipp_name, float $width, float $height): GtkPaperSize {}
 
+    /** Reads a paper size from the group $group_name in the key file $key_file. */
+    public static function new_from_key_file(GKeyFile $key_file, ?string $group_name = null): GtkPaperSize {}
+
     /** Creates a new `GtkPaperSize` object by using PPD information. */
     public static function new_from_ppd(string $ppd_name, string $ppd_display_name, float $width, float $height): GtkPaperSize {}
 
@@ -5649,6 +5699,9 @@ final class GtkPaperSize
 
     /** Serialize a paper size to an `a{sv}` variant. */
     public function to_gvariant(): mixed {}
+
+    /** This function adds the paper size from $size to $key_file. */
+    public function to_key_file(GKeyFile $key_file, string $group_name): void {}
 
     /** Returns the name of the default paper size, which depends on the current locale. */
     public static function get_default(): string {}
@@ -6075,6 +6128,12 @@ class GtkPrintContext extends GObject
     /** GtkPrintContext has no constructor in GTK: instances come from GTK, never from `new`. */
     private function __construct() {}
 
+    /** Creates a new `PangoContext` that can be used with the `GtkPrintContext`. */
+    public function create_pango_context(): PangoContext {}
+
+    /** Creates a new `PangoLayout` that is suitable for use with the `GtkPrintContext`. */
+    public function create_pango_layout(): PangoLayout {}
+
     /** Obtains the cairo context that is associated with the `GtkPrintContext`. */
     public function get_cairo_context(): CairoContext {}
 
@@ -6096,6 +6155,9 @@ class GtkPrintContext extends GObject
 
     /** Obtains the `GtkPageSetup` that determines the page dimensions of the `GtkPrintContext`. */
     public function get_page_setup(): GtkPageSetup {}
+
+    /** Returns a `PangoFontMap` that is suitable for use with the `GtkPrintContext`. */
+    public function get_pango_fontmap(): PangoFontMap {}
 
     /** Obtains the width of the `GtkPrintContext`, in pixels. */
     public function get_width(): float {}
@@ -6462,6 +6524,9 @@ class GtkPrintSettings extends GObject
     /** Deserialize print settings from an a{sv} variant. */
     public static function new_from_gvariant(mixed $variant = null): GtkPrintSettings {}
 
+    /** Reads the print settings from the group $group_name in $key_file. */
+    public static function new_from_key_file(GKeyFile $key_file, ?string $group_name = null): GtkPrintSettings {}
+
     /** Copies a `GtkPrintSettings` object. */
     public function copy(): GtkPrintSettings {}
 
@@ -6573,6 +6638,9 @@ class GtkPrintSettings extends GObject
     /** Reads the print settings from $file_name. */
     public function load_file(string $file_name): bool {}
 
+    /** Reads the print settings from the group $group_name in $key_file. */
+    public function load_key_file(GKeyFile $key_file, ?string $group_name): bool {}
+
     /** Associates $value with $key. */
     public function set(string $key, ?string $value): void {}
 
@@ -6674,6 +6742,9 @@ class GtkPrintSettings extends GObject
 
     /** Serialize print settings to an a{sv} variant. */
     public function to_gvariant(): mixed {}
+
+    /** This function adds the print settings from $settings to $key_file. */
+    public function to_key_file(GKeyFile $key_file, ?string $group_name): void {}
 
     /** Removes any value associated with $key. */
     public function unset(string $key): void {}
@@ -7090,6 +7161,9 @@ class GtkScale extends GtkRange implements GtkOrientable
 
     /** Returns whether the scale has an origin. */
     public function get_has_origin(): bool {}
+
+    /** Gets the `PangoLayout` used to display the scale. */
+    public function get_layout(): ?PangoLayout {}
 
     /**
      * Obtains the coordinates where the scale will draw the `PangoLayout` representing the text in
@@ -7651,6 +7725,8 @@ class GtkSnapshot extends GdkSnapshot
 
     /** Appends an inset shadow into the box given by $outline. */
     public function append_inset_shadow(GskRoundedRect $outline, GdkRGBA $color, float $dx, float $dy, float $spread, float $blur_radius): void {}
+
+    public function append_layout(PangoLayout $layout, GdkRGBA $color): void {}
 
     /** Appends $node to the current render node of $snapshot, without changing the current node. */
     public function append_node(GskRenderNode $node): void {}
@@ -8455,6 +8531,7 @@ final class GtkStyleProviderObject extends GObject implements GtkStyleProvider
  * The `GtkText` widget is a single-line text entry widget.
  *
  * @property bool $activates_default
+ * @property ?PangoAttrList $attributes
  * @property ?GtkEntryBuffer $buffer
  * @property bool $enable_emoji_completion
  * @property ?GMenuModel $extra_menu
@@ -8468,6 +8545,7 @@ final class GtkStyleProviderObject extends GObject implements GtkStyleProvider
  * @property ?string $placeholder_text
  * @property bool $propagate_text_width
  * @property-read int $scroll_offset
+ * @property ?PangoTabArray $tabs
  * @property bool $truncate_multiline
  * @property bool $visibility
  */
@@ -8492,6 +8570,9 @@ class GtkText extends GtkWidget implements GtkEditable
      * $self.
      */
     public function get_activates_default(): bool {}
+
+    /** Gets the attribute list that was set on the `GtkText`. */
+    public function get_attributes(): ?PangoAttrList {}
 
     /** Get the `GtkEntryBuffer` object which holds the text for this widget. */
     public function get_buffer(): GtkEntryBuffer {}
@@ -8523,6 +8604,9 @@ class GtkText extends GtkWidget implements GtkEditable
     /** Returns whether the `GtkText` will grow and shrink with the content. */
     public function get_propagate_text_width(): bool {}
 
+    /** Gets the tabstops that were set on the `GtkText`. */
+    public function get_tabs(): ?PangoTabArray {}
+
     /** Retrieves the current length of the text in $self. */
     public function get_text_length(): int {}
 
@@ -8537,6 +8621,9 @@ class GtkText extends GtkWidget implements GtkEditable
      * containing $self.
      */
     public function set_activates_default(bool $activates): void {}
+
+    /** Sets attributes that are applied to the text. */
+    public function set_attributes(?PangoAttrList $attrs): void {}
 
     /** Set the `GtkEntryBuffer` object which holds the text for this widget. */
     public function set_buffer(GtkEntryBuffer $buffer): void {}
@@ -8567,6 +8654,9 @@ class GtkText extends GtkWidget implements GtkEditable
 
     /** Sets whether the `GtkText` should grow and shrink with the content. */
     public function set_propagate_text_width(bool $propagate_text_width): void {}
+
+    /** Sets tabstops that are applied to the text. */
+    public function set_tabs(?PangoTabArray $tabs): void {}
 
     /** Sets whether the `GtkText` should truncate multi-line text that is pasted into the widget. */
     public function set_truncate_multiline(bool $truncate_multiline): void {}
@@ -9514,6 +9604,7 @@ final class GtkTextSearchFlags
  * @property bool $strikethrough_set
  * @property PangoStyle $style
  * @property bool $style_set
+ * @property ?PangoTabArray $tabs
  * @property bool $tabs_set
  * @property int $text_transform
  * @property bool $text_transform_set
@@ -9593,6 +9684,7 @@ class GtkTextTagTable extends GObject
  * @property int $pixels_below_lines
  * @property int $pixels_inside_wrap
  * @property int $right_margin
+ * @property ?PangoTabArray $tabs
  * @property int $top_margin
  * @property GtkWrapMode $wrap_mode
  */
@@ -9696,6 +9788,9 @@ class GtkTextView extends GtkWidget implements GtkScrollable
      */
     public function get_line_yrange(GtkTextIter $iter): array {}
 
+    /** Gets the `PangoContext` that is used for rendering LTR directed text layouts. */
+    public function get_ltr_context(): PangoContext {}
+
     /** Gets whether the `GtkTextView` uses monospace styling. */
     public function get_monospace(): bool {}
 
@@ -9713,6 +9808,12 @@ class GtkTextView extends GtkWidget implements GtkScrollable
 
     /** Gets the default right margin for text in $text_view. */
     public function get_right_margin(): int {}
+
+    /** Gets the `PangoContext` that is used for rendering RTL directed text layouts. */
+    public function get_rtl_context(): PangoContext {}
+
+    /** Gets the default tabs for $text_view. */
+    public function get_tabs(): ?PangoTabArray {}
 
     /** Gets the top margin for text in the $text_view. */
     public function get_top_margin(): int {}
@@ -9828,6 +9929,9 @@ class GtkTextView extends GtkWidget implements GtkScrollable
 
     /** Sets the default right margin for text in the text view. */
     public function set_right_margin(int $right_margin): void {}
+
+    /** Sets the default tab stops for paragraphs in $text_view. */
+    public function set_tabs(?PangoTabArray $tabs): void {}
 
     /** Sets the top margin for text in $text_view. */
     public function set_top_margin(int $top_margin): void {}
@@ -10331,6 +10435,18 @@ class GtkWidget extends GObject
     /** Tests if the point at ($x, $y) is contained in $widget. */
     public function contains(float $x, float $y): bool {}
 
+    /**
+     * Creates a new `PangoContext` with the appropriate font map, font options, font description,
+     * and base direction for drawing text for this widget.
+     */
+    public function create_pango_context(): PangoContext {}
+
+    /**
+     * Creates a new `PangoLayout` with the appropriate font map, font description, and base
+     * direction for drawing text for this widget.
+     */
+    public function create_pango_layout(?string $text): PangoLayout {}
+
     /** Checks to see if a drag movement has passed the GTK drag threshold. */
     public function drag_check_threshold(int $start_x, int $start_y, int $current_x, int $current_y): bool {}
 
@@ -10386,6 +10502,9 @@ class GtkWidget extends GObject
     /** Determines whether $widget can own the input focus. */
     public function get_focusable(): bool {}
 
+    /** Gets the font map of $widget. */
+    public function get_font_map(): ?PangoFontMap {}
+
     /** Gets the horizontal alignment of $widget. */
     public function get_halign(): GtkAlign {}
 
@@ -10439,6 +10558,12 @@ class GtkWidget extends GObject
 
     /** Returns the widget’s overflow value. */
     public function get_overflow(): GtkOverflow {}
+
+    /**
+     * Gets a `PangoContext` with the appropriate font map, font description, and base direction
+     * for this widget.
+     */
+    public function get_pango_context(): PangoContext {}
 
     /** Returns the parent widget of $widget. */
     public function get_parent(): ?GtkWidget {}
@@ -10652,6 +10777,9 @@ class GtkWidget extends GObject
 
     /** Specifies whether $widget can own the input focus. */
     public function set_focusable(bool $focusable): void {}
+
+    /** Sets the font map to use for Pango rendering. */
+    public function set_font_map(?PangoFontMap $font_map): void {}
 
     /** Sets the horizontal alignment of $widget. */
     public function set_halign(GtkAlign $align): void {}

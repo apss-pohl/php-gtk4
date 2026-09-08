@@ -32,7 +32,7 @@ ZEND_METHOD(Gtk4_GAsyncResult, legacy_propagate_error) {
   GAsyncResult *self = PHPGTK_SELF(GAsyncResult, G_TYPE_ASYNC_RESULT);
   GError *error = nullptr;
   const gboolean ok = g_async_result_legacy_propagate_error(self, &error);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

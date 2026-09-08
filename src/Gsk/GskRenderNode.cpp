@@ -118,7 +118,7 @@ ZEND_METHOD(Gtk4_GskRenderNode, write_to_file) {
   GError *error = nullptr;
   const gboolean ok = gsk_render_node_write_to_file(self, ZSTR_VAL(filename_abs), &error);
   if (filename_abs != nullptr) zend_string_release(filename_abs);
-  if (!ok) {
+  if (error != nullptr) {
     throw_gerror(error);
     RETURN_THROWS();
   }

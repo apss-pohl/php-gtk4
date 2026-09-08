@@ -70,6 +70,18 @@ ZEND_METHOD(Gtk4_GtkEntry, get_alignment) {
 }
 
 /**
+ * Gtk4\GtkEntry::get_attributes(): ?PangoAttrList
+ *
+ * Gets the attribute list of the `GtkEntry`.
+ */
+ZEND_METHOD(Gtk4_GtkEntry, get_attributes) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
+  PangoAttrList *phpgtk_ret = gtk_entry_get_attributes(self);
+  wrap_boxed(PANGO_TYPE_ATTR_LIST, phpgtk_ret, return_value);
+}
+
+/**
  * Gtk4\GtkEntry::get_buffer(): GtkEntryBuffer
  *
  * Get the `GtkEntryBuffer` object which holds the text for this widget.
@@ -383,6 +395,18 @@ ZEND_METHOD(Gtk4_GtkEntry, get_progress_pulse_step) {
 }
 
 /**
+ * Gtk4\GtkEntry::get_tabs(): ?PangoTabArray
+ *
+ * Gets the tabstops of the `GtkEntry`.
+ */
+ZEND_METHOD(Gtk4_GtkEntry, get_tabs) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
+  PangoTabArray *phpgtk_ret = gtk_entry_get_tabs(self);
+  wrap_boxed(PANGO_TYPE_TAB_ARRAY, phpgtk_ret, return_value);
+}
+
+/**
  * Gtk4\GtkEntry::get_text_length(): int
  *
  * Retrieves the current length of the text in $entry.
@@ -454,6 +478,22 @@ ZEND_METHOD(Gtk4_GtkEntry, set_alignment) {
   GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
   if (!phpgtk::check_domain_double(xalign, 0.0, 1.0, 1)) RETURN_THROWS();
   gtk_entry_set_alignment(self, static_cast<float>(xalign));
+}
+
+/**
+ * Gtk4\GtkEntry::set_attributes(PangoAttrList $attrs): void
+ *
+ * Sets a `PangoAttrList`.
+ */
+ZEND_METHOD(Gtk4_GtkEntry, set_attributes) {
+  zval *attrs;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(attrs, boxed_class_for_type(PANGO_TYPE_ATTR_LIST)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
+  gpointer attrs_b = unwrap_boxed(attrs, PANGO_TYPE_ATTR_LIST);
+  if (attrs_b == nullptr) RETURN_THROWS();
+  gtk_entry_set_attributes(self, static_cast<PangoAttrList *>(attrs_b));
 }
 
 /**
@@ -792,6 +832,25 @@ ZEND_METHOD(Gtk4_GtkEntry, set_progress_pulse_step) {
   ZEND_PARSE_PARAMETERS_END();
   GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
   gtk_entry_set_progress_pulse_step(self, fraction);
+}
+
+/**
+ * Gtk4\GtkEntry::set_tabs(?PangoTabArray $tabs): void
+ *
+ * Sets a `PangoTabArray`.
+ */
+ZEND_METHOD(Gtk4_GtkEntry, set_tabs) {
+  zval *tabs = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(tabs, boxed_class_for_type(PANGO_TYPE_TAB_ARRAY)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkEntry *self = PHPGTK_SELF(GtkEntry, GTK_TYPE_ENTRY);
+  gpointer tabs_b = nullptr;
+  if (tabs != nullptr) {
+    tabs_b = unwrap_boxed(tabs, PANGO_TYPE_TAB_ARRAY);
+    if (tabs_b == nullptr) RETURN_THROWS();
+  }
+  gtk_entry_set_tabs(self, static_cast<PangoTabArray *>(tabs_b));
 }
 
 /**

@@ -67,6 +67,22 @@ ZEND_METHOD(Gtk4_GskPathBuilder, add_circle) {
 }
 
 /**
+ * Gtk4\GskPathBuilder::add_layout(PangoLayout $layout): void
+ *
+ * Adds the outlines for the glyphs in $layout to the builder.
+ */
+ZEND_METHOD(Gtk4_GskPathBuilder, add_layout) {
+  zval *layout;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(layout, class_for_gtype(PANGO_TYPE_LAYOUT))
+  ZEND_PARSE_PARAMETERS_END();
+  GskPathBuilder *self = PHPGTK_BOXED_SELF(GskPathBuilder);
+  GObject *layout_o = unwrap(layout, PANGO_TYPE_LAYOUT);
+  if (layout_o == nullptr) RETURN_THROWS();
+  gsk_path_builder_add_layout(self, PANGO_LAYOUT(layout_o));
+}
+
+/**
  * Gtk4\GskPathBuilder::add_path(GskPath $path): void
  *
  * Appends all of $path to the builder.

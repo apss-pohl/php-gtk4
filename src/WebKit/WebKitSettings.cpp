@@ -4,6 +4,7 @@
 #include <webkit/webkit.h>
 #include "core/object.h"
 #include "core/enums.h"
+#include "core/gerror.h"
 #include "core/boxed.h"
 #include "core/subtype.h"
 
@@ -95,6 +96,33 @@ ZEND_METHOD(Gtk4_WebKitSettings, get_experimental_features) {
   WebKitFeatureList *phpgtk_ret = webkit_settings_get_experimental_features();
   wrap_boxed(WEBKIT_TYPE_FEATURE_LIST, phpgtk_ret, return_value);
   if (phpgtk_ret != nullptr) g_boxed_free(WEBKIT_TYPE_FEATURE_LIST, phpgtk_ret);
+}
+
+/**
+ * Gtk4\WebKitSettings::apply_from_key_file(GKeyFile $key_file, string $group_name): bool
+ *
+ * Reads the contents of the given $group_name from the given $key_file and apply the value of each
+ * key/value to the corresponding property on the $settings.
+ */
+ZEND_METHOD(Gtk4_WebKitSettings, apply_from_key_file) {
+  zval *key_file;
+  zend_string *group_name;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(key_file, boxed_class_for_type(G_TYPE_KEY_FILE)->ce)
+  Z_PARAM_STR(group_name)
+  ZEND_PARSE_PARAMETERS_END();
+  WebKitSettings *self = PHPGTK_SELF(WebKitSettings, WEBKIT_TYPE_SETTINGS);
+  gpointer key_file_b = unwrap_boxed(key_file, G_TYPE_KEY_FILE);
+  if (key_file_b == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_utf8(group_name, 2)) RETURN_THROWS();
+  GError *error = nullptr;
+  const gboolean ok = webkit_settings_apply_from_key_file(self, static_cast<GKeyFile *>(key_file_b),
+                                                          ZSTR_VAL(group_name), &error);
+  if (error != nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  RETURN_BOOL(ok);
 }
 
 /**

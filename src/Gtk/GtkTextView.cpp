@@ -484,6 +484,18 @@ ZEND_METHOD(Gtk4_GtkTextView, get_line_yrange) {
 }
 
 /**
+ * Gtk4\GtkTextView::get_ltr_context(): PangoContext
+ *
+ * Gets the `PangoContext` that is used for rendering LTR directed text layouts.
+ */
+ZEND_METHOD(Gtk4_GtkTextView, get_ltr_context) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkTextView *self = PHPGTK_SELF(GtkTextView, GTK_TYPE_TEXT_VIEW);
+  PangoContext *phpgtk_ret = gtk_text_view_get_ltr_context(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkTextView::get_monospace(): bool
  *
  * Gets whether the `GtkTextView` uses monospace styling.
@@ -547,6 +559,31 @@ ZEND_METHOD(Gtk4_GtkTextView, get_right_margin) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkTextView *self = PHPGTK_SELF(GtkTextView, GTK_TYPE_TEXT_VIEW);
   RETURN_LONG(static_cast<zend_long>(gtk_text_view_get_right_margin(self)));
+}
+
+/**
+ * Gtk4\GtkTextView::get_rtl_context(): PangoContext
+ *
+ * Gets the `PangoContext` that is used for rendering RTL directed text layouts.
+ */
+ZEND_METHOD(Gtk4_GtkTextView, get_rtl_context) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkTextView *self = PHPGTK_SELF(GtkTextView, GTK_TYPE_TEXT_VIEW);
+  PangoContext *phpgtk_ret = gtk_text_view_get_rtl_context(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
+ * Gtk4\GtkTextView::get_tabs(): ?PangoTabArray
+ *
+ * Gets the default tabs for $text_view.
+ */
+ZEND_METHOD(Gtk4_GtkTextView, get_tabs) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkTextView *self = PHPGTK_SELF(GtkTextView, GTK_TYPE_TEXT_VIEW);
+  PangoTabArray *phpgtk_ret = gtk_text_view_get_tabs(self);
+  wrap_boxed(PANGO_TYPE_TAB_ARRAY, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) g_boxed_free(PANGO_TYPE_TAB_ARRAY, phpgtk_ret);
 }
 
 /**
@@ -1077,6 +1114,25 @@ ZEND_METHOD(Gtk4_GtkTextView, set_right_margin) {
   GtkTextView *self = PHPGTK_SELF(GtkTextView, GTK_TYPE_TEXT_VIEW);
   if (!phpgtk::check_range<int>(right_margin, 1)) RETURN_THROWS();
   gtk_text_view_set_right_margin(self, static_cast<int>(right_margin));
+}
+
+/**
+ * Gtk4\GtkTextView::set_tabs(?PangoTabArray $tabs): void
+ *
+ * Sets the default tab stops for paragraphs in $text_view.
+ */
+ZEND_METHOD(Gtk4_GtkTextView, set_tabs) {
+  zval *tabs = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(tabs, boxed_class_for_type(PANGO_TYPE_TAB_ARRAY)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkTextView *self = PHPGTK_SELF(GtkTextView, GTK_TYPE_TEXT_VIEW);
+  gpointer tabs_b = nullptr;
+  if (tabs != nullptr) {
+    tabs_b = unwrap_boxed(tabs, PANGO_TYPE_TAB_ARRAY);
+    if (tabs_b == nullptr) RETURN_THROWS();
+  }
+  gtk_text_view_set_tabs(self, static_cast<PangoTabArray *>(tabs_b));
 }
 
 /**

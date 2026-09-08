@@ -137,6 +137,24 @@ ZEND_METHOD(Gtk4_GtkSnapshot, append_inset_shadow) {
 }
 
 /**
+ * Gtk4\GtkSnapshot::append_layout(PangoLayout $layout, GdkRGBA $color): void
+ */
+ZEND_METHOD(Gtk4_GtkSnapshot, append_layout) {
+  zval *layout;
+  zval *color;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(layout, class_for_gtype(PANGO_TYPE_LAYOUT))
+  Z_PARAM_OBJECT_OF_CLASS(color, boxed_class_for_type(GDK_TYPE_RGBA)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
+  GObject *layout_o = unwrap(layout, PANGO_TYPE_LAYOUT);
+  if (layout_o == nullptr) RETURN_THROWS();
+  gpointer color_b = unwrap_boxed(color, GDK_TYPE_RGBA);
+  if (color_b == nullptr) RETURN_THROWS();
+  gtk_snapshot_append_layout(self, PANGO_LAYOUT(layout_o), static_cast<GdkRGBA *>(color_b));
+}
+
+/**
  * Gtk4\GtkSnapshot::append_node(GskRenderNode $node): void
  *
  * Appends $node to the current render node of $snapshot, without changing the current node.

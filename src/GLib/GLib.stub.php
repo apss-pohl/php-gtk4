@@ -231,6 +231,187 @@ final class GDateTime
 }
 
 /**
+ * `GKeyFile` parses .ini-like config files.
+ * @not-serializable
+ */
+final class GKeyFile
+{
+    /**
+     * Creates a new empty #GKeyFile object. Use g_key_file_load_from_file(),
+     * g_key_file_load_from_data(), g_key_file_load_from_dirs() or g_key_file_load_from_data_dirs()
+     * to read an existing key file.
+     */
+    public function __construct() {}
+
+    /** Returns the value associated with $key under $group_name as a boolean. */
+    public function get_boolean(string $group_name, string $key): bool {}
+
+    /**
+     * Retrieves a comment above $key from $group_name. If $key is `null` then $comment will be
+     * read from above $group_name. If both $key and $group_name are `null`, then $comment will be
+     * read from above the first group in the file.
+     */
+    public function get_comment(?string $group_name, ?string $key): string {}
+
+    /**
+     * Returns the value associated with $key under $group_name as a double. If $group_name is
+     * `null`, the start_group is used.
+     */
+    public function get_double(string $group_name, string $key): float {}
+
+    /**
+     * Returns the value associated with $key under $group_name as a signed 64-bit integer. This is
+     * similar to g_key_file_get_integer() but can return 64-bit results without truncation.
+     */
+    public function get_int64(string $group_name, string $key): int {}
+
+    /** Returns the value associated with $key under $group_name as an integer. */
+    public function get_integer(string $group_name, string $key): int {}
+
+    /**
+     * Returns the actual locale which the result of g_key_file_get_locale_string() or
+     * g_key_file_get_locale_string_list() came from.
+     */
+    public function get_locale_for_key(string $group_name, string $key, ?string $locale): ?string {}
+
+    /**
+     * Returns the value associated with $key under $group_name translated in the given $locale if
+     * available. If $locale is `null` then the current locale is assumed.
+     */
+    public function get_locale_string(string $group_name, string $key, ?string $locale): string {}
+
+    /** Returns the name of the start group of the file. */
+    public function get_start_group(): ?string {}
+
+    /**
+     * Returns the string value associated with $key under $group_name. Unlike
+     * g_key_file_get_value(), this function handles escape sequences like \s.
+     */
+    public function get_string(string $group_name, string $key): string {}
+
+    /**
+     * Returns the value associated with $key under $group_name as an unsigned 64-bit integer. This
+     * is similar to g_key_file_get_integer() but can return large positive results without
+     * truncation.
+     */
+    public function get_uint64(string $group_name, string $key): int {}
+
+    /**
+     * Returns the raw value associated with $key under $group_name. Use g_key_file_get_string() to
+     * retrieve an unescaped UTF-8 string.
+     */
+    public function get_value(string $group_name, string $key): string {}
+
+    /** Looks whether the key file has the group $group_name. */
+    public function has_group(string $group_name): bool {}
+
+    /** Looks whether the key file has the key $key in the group $group_name. */
+    public function has_key(string $group_name, string $key): bool {}
+
+    /**
+     * Loads a key file from the data in $bytes into an empty #GKeyFile structure. If the object
+     * cannot be created then %error is set to a #GKeyFileError.
+     */
+    public function load_from_bytes(string $bytes, int $flags): bool {}
+
+    /**
+     * Loads a key file from memory into an empty #GKeyFile structure. If the object cannot be
+     * created then %error is set to a #GKeyFileError.
+     */
+    public function load_from_data(string $data, int $length, int $flags): bool {}
+
+    /**
+     * This function looks for a key file named $file in the paths returned from
+     * g_get_user_data_dir() and g_get_system_data_dirs(), loads the file into $key_file and
+     * returns the file's full path in $full_path. If the file could not be loaded then an %error
+     * is set to either a #GFileError or #GKeyFileError.
+     */
+    public function load_from_data_dirs(string $file, int $flags): ?string {}
+
+    /** Loads a key file into an empty #GKeyFile structure. */
+    public function load_from_file(string $file, int $flags): bool {}
+
+    /**
+     * Removes a comment above $key from $group_name. If $key is `null` then $comment will be
+     * removed above $group_name. If both $key and $group_name are `null`, then $comment will be
+     * removed above the first group in the file.
+     */
+    public function remove_comment(?string $group_name, ?string $key): bool {}
+
+    /** Removes the specified group, $group_name, from the key file. */
+    public function remove_group(string $group_name): bool {}
+
+    /** Removes $key in $group_name from the key file. */
+    public function remove_key(string $group_name, string $key): bool {}
+
+    /**
+     * Writes the contents of $key_file to $filename using g_file_set_contents(). If you need
+     * stricter guarantees about durability of the written file than are provided by
+     * g_file_set_contents(), use g_file_set_contents_full() with the return value of
+     * g_key_file_to_data().
+     */
+    public function save_to_file(string $filename): bool {}
+
+    /**
+     * Associates a new boolean value with $key under $group_name. If $key cannot be found then it
+     * is created.
+     */
+    public function set_boolean(string $group_name, string $key, bool $value): void {}
+
+    /** Places a comment above $key from $group_name. */
+    public function set_comment(?string $group_name, ?string $key, string $comment): bool {}
+
+    /**
+     * Associates a new double value with $key under $group_name. If $key cannot be found then it
+     * is created.
+     */
+    public function set_double(string $group_name, string $key, float $value): void {}
+
+    /**
+     * Associates a new integer value with $key under $group_name. If $key cannot be found then it
+     * is created.
+     */
+    public function set_int64(string $group_name, string $key, int $value): void {}
+
+    /**
+     * Associates a new integer value with $key under $group_name. If $key cannot be found then it
+     * is created.
+     */
+    public function set_integer(string $group_name, string $key, int $value): void {}
+
+    /**
+     * Sets the character which is used to separate values in lists. Typically ';' or ',' are used
+     * as separators. The default list separator is ';'.
+     */
+    public function set_list_separator(int $separator): void {}
+
+    /**
+     * Associates a string value for $key and $locale under $group_name. If the translation for
+     * $key cannot be found then it is created.
+     */
+    public function set_locale_string(string $group_name, string $key, string $locale, string $string): void {}
+
+    /**
+     * Associates a new string value with $key under $group_name. If $key cannot be found then it
+     * is created. If $group_name cannot be found then it is created. Unlike
+     * g_key_file_set_value(), this function handles characters that need escaping, such as
+     * newlines.
+     */
+    public function set_string(string $group_name, string $key, string $string): void {}
+
+    /**
+     * Associates a new integer value with $key under $group_name. If $key cannot be found then it
+     * is created.
+     */
+    public function set_uint64(string $group_name, string $key, int $value): void {}
+
+    /** Associates a new value with $key under $group_name. */
+    public function set_value(string $group_name, string $key, string $value): void {}
+
+    public static function error_quark(): int {}
+}
+
+/**
  * A `GTimeZone` represents a time zone, at no particular point in time.
  * @not-serializable
  */
