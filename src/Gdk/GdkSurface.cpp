@@ -87,6 +87,58 @@ ZEND_METHOD(Gtk4_GdkSurface, get_cursor) {
 }
 
 /**
+ * Gtk4\GdkSurface::get_device_cursor(GdkDevice $device): ?GdkCursor
+ *
+ * Retrieves a `GdkCursor` pointer for the $device currently set on the specified `GdkSurface`.
+ */
+ZEND_METHOD(Gtk4_GdkSurface, get_device_cursor) {
+  zval *device;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(device, class_for_gtype(GDK_TYPE_DEVICE))
+  ZEND_PARSE_PARAMETERS_END();
+  GdkSurface *self = PHPGTK_SELF(GdkSurface, GDK_TYPE_SURFACE);
+  GObject *device_o = unwrap(device, GDK_TYPE_DEVICE);
+  if (device_o == nullptr) RETURN_THROWS();
+  GdkCursor *phpgtk_ret = gdk_surface_get_device_cursor(self, GDK_DEVICE(device_o));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
+ * Gtk4\GdkSurface::get_device_position(GdkDevice $device): ?array
+ *
+ * Obtains the current device position and modifier state.
+ */
+ZEND_METHOD(Gtk4_GdkSurface, get_device_position) {
+  zval *device;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(device, class_for_gtype(GDK_TYPE_DEVICE))
+  ZEND_PARSE_PARAMETERS_END();
+  GdkSurface *self = PHPGTK_SELF(GdkSurface, GDK_TYPE_SURFACE);
+  GObject *device_o = unwrap(device, GDK_TYPE_DEVICE);
+  if (device_o == nullptr) RETURN_THROWS();
+  double x = 0;
+  double y = 0;
+  GdkModifierType mask = static_cast<GdkModifierType>(0);
+  if (!gdk_surface_get_device_position(self, GDK_DEVICE(device_o), &x, &y, &mask)) RETURN_NULL();
+  array_init_size(return_value, 3);
+  {
+    zval item;
+    ZVAL_DOUBLE(&item, x);
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_DOUBLE(&item, y);
+    add_next_index_zval(return_value, &item);
+  }
+  {
+    zval item;
+    ZVAL_LONG(&item, static_cast<zend_long>(mask));
+    add_next_index_zval(return_value, &item);
+  }
+}
+
+/**
  * Gtk4\GdkSurface::get_display(): GdkDisplay
  *
  * Gets the `GdkDisplay` associated with a `GdkSurface`.
@@ -215,4 +267,24 @@ ZEND_METHOD(Gtk4_GdkSurface, set_cursor) {
     if (cursor_o == nullptr) RETURN_THROWS();
   }
   gdk_surface_set_cursor(self, cursor_o != nullptr ? GDK_CURSOR(cursor_o) : nullptr);
+}
+
+/**
+ * Gtk4\GdkSurface::set_device_cursor(GdkDevice $device, GdkCursor $cursor): void
+ *
+ * Sets a specific `GdkCursor` for a given device when it gets inside $surface.
+ */
+ZEND_METHOD(Gtk4_GdkSurface, set_device_cursor) {
+  zval *device;
+  zval *cursor;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(device, class_for_gtype(GDK_TYPE_DEVICE))
+  Z_PARAM_OBJECT_OF_CLASS(cursor, class_for_gtype(GDK_TYPE_CURSOR))
+  ZEND_PARSE_PARAMETERS_END();
+  GdkSurface *self = PHPGTK_SELF(GdkSurface, GDK_TYPE_SURFACE);
+  GObject *device_o = unwrap(device, GDK_TYPE_DEVICE);
+  if (device_o == nullptr) RETURN_THROWS();
+  GObject *cursor_o = unwrap(cursor, GDK_TYPE_CURSOR);
+  if (cursor_o == nullptr) RETURN_THROWS();
+  gdk_surface_set_device_cursor(self, GDK_DEVICE(device_o), GDK_CURSOR(cursor_o));
 }

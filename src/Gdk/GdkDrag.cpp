@@ -17,6 +17,41 @@ ZEND_METHOD(Gtk4_GdkDrag, __construct) {
 }
 
 /**
+ * static Gtk4\GdkDrag::begin(GdkSurface $surface, GdkDevice $device, GdkContentProvider $content,
+ * int $actions, float $dx, float $dy): ?GdkDrag
+ *
+ * Starts a drag and creates a new drag context for it.
+ */
+ZEND_METHOD(Gtk4_GdkDrag, begin) {
+  zval *surface;
+  zval *device;
+  zval *content;
+  zend_long actions;
+  double dx;
+  double dy;
+  ZEND_PARSE_PARAMETERS_START(6, 6)
+  Z_PARAM_OBJECT_OF_CLASS(surface, class_for_gtype(GDK_TYPE_SURFACE))
+  Z_PARAM_OBJECT_OF_CLASS(device, class_for_gtype(GDK_TYPE_DEVICE))
+  Z_PARAM_OBJECT_OF_CLASS(content, class_for_gtype(GDK_TYPE_CONTENT_PROVIDER))
+  Z_PARAM_LONG(actions)
+  Z_PARAM_DOUBLE(dx)
+  Z_PARAM_DOUBLE(dy)
+  ZEND_PARSE_PARAMETERS_END();
+  GObject *surface_o = unwrap(surface, GDK_TYPE_SURFACE);
+  if (surface_o == nullptr) RETURN_THROWS();
+  GObject *device_o = unwrap(device, GDK_TYPE_DEVICE);
+  if (device_o == nullptr) RETURN_THROWS();
+  GObject *content_o = unwrap(content, GDK_TYPE_CONTENT_PROVIDER);
+  if (content_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_flags(GDK_TYPE_DRAG_ACTION, actions, 4)) RETURN_THROWS();
+  GdkDrag *phpgtk_ret =
+      gdk_drag_begin(GDK_SURFACE(surface_o), GDK_DEVICE(device_o), GDK_CONTENT_PROVIDER(content_o),
+                     static_cast<GdkDragAction>(actions), dx, dy);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
+/**
  * Gtk4\GdkDrag::drop_done(bool $success): void
  *
  * Informs GDK that the drop ended.
@@ -50,6 +85,18 @@ ZEND_METHOD(Gtk4_GdkDrag, get_content) {
   ZEND_PARSE_PARAMETERS_NONE();
   GdkDrag *self = PHPGTK_SELF(GdkDrag, GDK_TYPE_DRAG);
   GdkContentProvider *phpgtk_ret = gdk_drag_get_content(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
+ * Gtk4\GdkDrag::get_device(): GdkDevice
+ *
+ * Returns the `GdkDevice` associated to the `GdkDrag` object.
+ */
+ZEND_METHOD(Gtk4_GdkDrag, get_device) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GdkDrag *self = PHPGTK_SELF(GdkDrag, GDK_TYPE_DRAG);
+  GdkDevice *phpgtk_ret = gdk_drag_get_device(self);
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 

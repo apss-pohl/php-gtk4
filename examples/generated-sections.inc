@@ -98,6 +98,7 @@ return [
         'GtkUnit',
         'JSCException',
         'JSCVirtualMachine',
+        'PangoDirection',
         'PangoFontMask',
         'PangoGravity',
         'PangoGravityHint',

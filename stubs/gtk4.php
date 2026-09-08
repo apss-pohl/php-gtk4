@@ -1211,6 +1211,449 @@ final class GtkCssSection
     }
 }
 /**
+ * `GDateTime` is a structure that combines a Gregorian date and time into a single structure.
+ */
+final class GDateTime
+{
+    /** Creates a new #GDateTime corresponding to the given date and time in the time zone $tz. */
+    public function __construct(GTimeZone $tz, int $year, int $month, int $day, int $hour, int $minute, float $seconds)
+    {
+        unset($tz);
+        unset($year);
+        unset($month);
+        unset($day);
+        unset($hour);
+        unset($minute);
+        unset($seconds);
+    }
+    /**
+     * Creates a #GDateTime corresponding to the given [ISO 8601 formatted
+     * string](https://en.wikipedia.org/wiki/ISO_8601) $text. ISO 8601 strings of the form
+     * <date><sep><time><tz> are supported, with some extensions from [RFC
+     * 3339](https://tools.ietf.org/html/rfc3339) as mentioned below.
+     */
+    public static function new_from_iso8601(string $text, ?GTimeZone $default_tz = null): GDateTime
+    {
+        unset($text);
+        unset($default_tz);
+        return null;
+    }
+    /** Creates a #GDateTime corresponding to the given Unix time $t in the local time zone. */
+    public static function new_from_unix_local(int $t): GDateTime
+    {
+        unset($t);
+        return null;
+    }
+    /** Creates a `DateTime` corresponding to the given Unix time $t in the local time zone. */
+    public static function new_from_unix_local_usec(int $usecs): GDateTime
+    {
+        unset($usecs);
+        return null;
+    }
+    /** Creates a #GDateTime corresponding to the given Unix time $t in UTC. */
+    public static function new_from_unix_utc(int $t): GDateTime
+    {
+        unset($t);
+        return null;
+    }
+    /** Creates a `DateTime` corresponding to the given Unix time $t in UTC. */
+    public static function new_from_unix_utc_usec(int $usecs): GDateTime
+    {
+        unset($usecs);
+        return null;
+    }
+    /** Creates a new #GDateTime corresponding to the given date and time in the local time zone. */
+    public static function new_local(int $year, int $month, int $day, int $hour, int $minute, float $seconds): GDateTime
+    {
+        unset($year);
+        unset($month);
+        unset($day);
+        unset($hour);
+        unset($minute);
+        unset($seconds);
+        return null;
+    }
+    /**
+     * Creates a #GDateTime corresponding to this exact instant in the given time zone $tz. The
+     * time is as accurate as the system allows, to a maximum accuracy of 1 microsecond.
+     */
+    public static function new_now(GTimeZone $tz): GDateTime
+    {
+        unset($tz);
+        return null;
+    }
+    /** Creates a #GDateTime corresponding to this exact instant in the local time zone. */
+    public static function new_now_local(): GDateTime
+    {
+        return null;
+    }
+    /** Creates a #GDateTime corresponding to this exact instant in UTC. */
+    public static function new_now_utc(): GDateTime
+    {
+        return null;
+    }
+    /** Creates a new #GDateTime corresponding to the given date and time in UTC. */
+    public static function new_utc(int $year, int $month, int $day, int $hour, int $minute, float $seconds): GDateTime
+    {
+        unset($year);
+        unset($month);
+        unset($day);
+        unset($hour);
+        unset($minute);
+        unset($seconds);
+        return null;
+    }
+    /** Creates a copy of $datetime and adds the specified timespan to the copy. */
+    public function add(int $timespan): ?GDateTime
+    {
+        unset($timespan);
+        return null;
+    }
+    /**
+     * Creates a copy of $datetime and adds the specified number of days to the copy. Add negative
+     * values to subtract days.
+     */
+    public function add_days(int $days): ?GDateTime
+    {
+        unset($days);
+        return null;
+    }
+    /**
+     * Creates a new #GDateTime adding the specified values to the current date and time in
+     * $datetime. Add negative values to subtract.
+     */
+    public function add_full(int $years, int $months, int $days, int $hours, int $minutes, float $seconds): ?GDateTime
+    {
+        unset($years);
+        unset($months);
+        unset($days);
+        unset($hours);
+        unset($minutes);
+        unset($seconds);
+        return null;
+    }
+    /**
+     * Creates a copy of $datetime and adds the specified number of hours. Add negative values to
+     * subtract hours.
+     */
+    public function add_hours(int $hours): ?GDateTime
+    {
+        unset($hours);
+        return null;
+    }
+    /**
+     * Creates a copy of $datetime adding the specified number of minutes. Add negative values to
+     * subtract minutes.
+     */
+    public function add_minutes(int $minutes): ?GDateTime
+    {
+        unset($minutes);
+        return null;
+    }
+    /**
+     * Creates a copy of $datetime and adds the specified number of months to the copy. Add
+     * negative values to subtract months.
+     */
+    public function add_months(int $months): ?GDateTime
+    {
+        unset($months);
+        return null;
+    }
+    /**
+     * Creates a copy of $datetime and adds the specified number of seconds. Add negative values to
+     * subtract seconds.
+     */
+    public function add_seconds(float $seconds): ?GDateTime
+    {
+        unset($seconds);
+        return null;
+    }
+    /**
+     * Creates a copy of $datetime and adds the specified number of weeks to the copy. Add negative
+     * values to subtract weeks.
+     */
+    public function add_weeks(int $weeks): ?GDateTime
+    {
+        unset($weeks);
+        return null;
+    }
+    /**
+     * Creates a copy of $datetime and adds the specified number of years to the copy. Add negative
+     * values to subtract years.
+     */
+    public function add_years(int $years): ?GDateTime
+    {
+        unset($years);
+        return null;
+    }
+    /**
+     * A comparison function for #GDateTimes that is suitable as a #GCompareFunc. Both #GDateTimes
+     * must be non-`null`.
+     */
+    public function compare(GDateTime $dt2): int
+    {
+        unset($dt2);
+        return 0;
+    }
+    /**
+     * Calculates the difference in time between $end and $begin. The #GTimeSpan that is returned
+     * is effectively $end - $begin (ie: positive if the first parameter is larger).
+     */
+    public function difference(GDateTime $begin): int
+    {
+        unset($begin);
+        return 0;
+    }
+    /** Checks to see if $dt1 and $dt2 are equal. */
+    public function equal(GDateTime $dt2): bool
+    {
+        unset($dt2);
+        return false;
+    }
+    /** Creates a newly allocated string representing the requested $format. */
+    public function format(string $format): ?string
+    {
+        unset($format);
+        return null;
+    }
+    /**
+     * Format $datetime in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601), including the
+     * date, time and time zone, and return that as a UTF-8 encoded string.
+     */
+    public function format_iso8601(): ?string
+    {
+        return null;
+    }
+    /** Retrieves the day of the month represented by $datetime in the gregorian calendar. */
+    public function get_day_of_month(): int
+    {
+        return 0;
+    }
+    /**
+     * Retrieves the ISO 8601 day of the week on which $datetime falls (1 is Monday, 2 is
+     * Tuesday... 7 is Sunday).
+     */
+    public function get_day_of_week(): int
+    {
+        return 0;
+    }
+    /** Retrieves the day of the year represented by $datetime in the Gregorian calendar. */
+    public function get_day_of_year(): int
+    {
+        return 0;
+    }
+    /** Retrieves the hour of the day represented by $datetime */
+    public function get_hour(): int
+    {
+        return 0;
+    }
+    /** Retrieves the microsecond of the date represented by $datetime */
+    public function get_microsecond(): int
+    {
+        return 0;
+    }
+    /** Retrieves the minute of the hour represented by $datetime */
+    public function get_minute(): int
+    {
+        return 0;
+    }
+    /** Retrieves the month of the year represented by $datetime in the Gregorian calendar. */
+    public function get_month(): int
+    {
+        return 0;
+    }
+    /** Retrieves the second of the minute represented by $datetime */
+    public function get_second(): int
+    {
+        return 0;
+    }
+    /**
+     * Retrieves the number of seconds since the start of the last minute, including the fractional
+     * part.
+     */
+    public function get_seconds(): float
+    {
+        return 0.0;
+    }
+    /** Get the time zone for this $datetime. */
+    public function get_timezone(): GTimeZone
+    {
+        return null;
+    }
+    /**
+     * Determines the time zone abbreviation to be used at the time and in the time zone of
+     * $datetime.
+     */
+    public function get_timezone_abbreviation(): string
+    {
+        return '';
+    }
+    /** Determines the offset to UTC in effect at the time and in the time zone of $datetime. */
+    public function get_utc_offset(): int
+    {
+        return 0;
+    }
+    /** Returns the ISO 8601 week-numbering year in which the week containing $datetime falls. */
+    public function get_week_numbering_year(): int
+    {
+        return 0;
+    }
+    /**
+     * Returns the ISO 8601 week number for the week containing $datetime. The ISO 8601 week number
+     * is the same for every day of the week (from Moday through Sunday). That can produce some
+     * unusual results (described below).
+     */
+    public function get_week_of_year(): int
+    {
+        return 0;
+    }
+    /** Retrieves the year represented by $datetime in the Gregorian calendar. */
+    public function get_year(): int
+    {
+        return 0;
+    }
+    /**
+     * Retrieves the Gregorian day, month, and year of a given #GDateTime.
+     *
+     * @return array{int, int, int}
+     */
+    public function get_ymd(): array
+    {
+        return [];
+    }
+    /** Hashes $datetime into a #guint, suitable for use within #GHashTable. */
+    public function hash(): int
+    {
+        return 0;
+    }
+    /**
+     * Determines if daylight savings time is in effect at the time and in the time zone of
+     * $datetime.
+     */
+    public function is_daylight_savings(): bool
+    {
+        return false;
+    }
+    /**
+     * Creates a new #GDateTime corresponding to the same instant in time as $datetime, but in the
+     * local time zone.
+     */
+    public function to_local(): ?GDateTime
+    {
+        return null;
+    }
+    /**
+     * Create a new #GDateTime corresponding to the same instant in time as $datetime, but in the
+     * time zone $tz.
+     */
+    public function to_timezone(GTimeZone $tz): ?GDateTime
+    {
+        unset($tz);
+        return null;
+    }
+    /** Gives the Unix time corresponding to $datetime, rounding down to the nearest second. */
+    public function to_unix(): int
+    {
+        return 0;
+    }
+    /** Gives the Unix time corresponding to $datetime, in microseconds. */
+    public function to_unix_usec(): int
+    {
+        return 0;
+    }
+    /**
+     * Creates a new #GDateTime corresponding to the same instant in time as $datetime, but in UTC.
+     */
+    public function to_utc(): ?GDateTime
+    {
+        return null;
+    }
+}
+/**
+ * A `GTimeZone` represents a time zone, at no particular point in time.
+ */
+final class GTimeZone
+{
+    /** GTimeZone values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /**
+     * Creates a #GTimeZone corresponding to $identifier. If $identifier cannot be parsed or
+     * loaded, `null` is returned.
+     */
+    public static function new_identifier(?string $identifier = null): GTimeZone
+    {
+        unset($identifier);
+        return null;
+    }
+    /**
+     * Creates a #GTimeZone corresponding to local time. The local time zone may change between
+     * invocations to this function; for example, if the system administrator changes it.
+     */
+    public static function new_local(): GTimeZone
+    {
+        return null;
+    }
+    /** Creates a #GTimeZone corresponding to the given constant offset from UTC, in seconds. */
+    public static function new_offset(int $seconds): GTimeZone
+    {
+        unset($seconds);
+        return null;
+    }
+    /** Creates a #GTimeZone corresponding to UTC. */
+    public static function new_utc(): GTimeZone
+    {
+        return null;
+    }
+    /**
+     * Finds an interval within $tz that corresponds to the given $time_. The meaning of $time_
+     * depends on $type.
+     */
+    public function find_interval(int $type, int $time): int
+    {
+        unset($type);
+        unset($time);
+        return 0;
+    }
+    /**
+     * Determines the time zone abbreviation to be used during a particular $interval of time in
+     * the time zone $tz.
+     */
+    public function get_abbreviation(int $interval): string
+    {
+        unset($interval);
+        return '';
+    }
+    /**
+     * Get the identifier of this #GTimeZone, as passed to g_time_zone_new(). If the identifier
+     * passed at construction time was not recognised, `UTC` will be returned. If it was `null`,
+     * the identifier of the local timezone at construction time will be returned.
+     */
+    public function get_identifier(): string
+    {
+        return '';
+    }
+    /**
+     * Determines the offset to UTC in effect during a particular $interval of time in the time
+     * zone $tz.
+     */
+    public function get_offset(int $interval): int
+    {
+        unset($interval);
+        return 0;
+    }
+    /**
+     * Determines if daylight savings time is in effect during a particular $interval of time in
+     * the time zone $tz.
+     */
+    public function is_dst(int $interval): bool
+    {
+        unset($interval);
+        return false;
+    }
+}
+/**
  * The `GdkClipboard` object represents data shared between applications or inside an application.
  *
  * @property-read ?GdkContentProvider $content
@@ -1584,6 +2027,110 @@ class GdkCursor extends GObject
     }
 }
 /**
+ * The `GdkDevice` object represents an input device, such as a keyboard, a mouse, or a touchpad.
+ *
+ * @property-read bool $caps_lock_state
+ * @property-read PangoDirection $direction
+ * @property ?GdkDisplay $display
+ * @property-read bool $has_bidi_layouts
+ * @property bool $has_cursor
+ * @property-read int $modifier_state
+ * @property-read int $n_axes
+ * @property ?string $name
+ * @property-read bool $num_lock_state
+ * @property int $num_touches
+ * @property ?string $product_id
+ * @property-read bool $scroll_lock_state
+ * @property ?GdkSeat $seat
+ * @property GdkInputSource $source
+ * @property ?string $vendor_id
+ */
+class GdkDevice extends GObject
+{
+    /** GdkDevice is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Retrieves whether the Caps Lock modifier of the keyboard is locked. */
+    public function get_caps_lock_state(): bool
+    {
+        return false;
+    }
+    /** Returns the direction of effective layout of the keyboard. */
+    public function get_direction(): PangoDirection
+    {
+        return null;
+    }
+    /** Returns the `GdkDisplay` to which $device pertains. */
+    public function get_display(): GdkDisplay
+    {
+        return null;
+    }
+    /** Determines whether the pointer follows device motion. */
+    public function get_has_cursor(): bool
+    {
+        return false;
+    }
+    /** Retrieves the current modifier state of the keyboard. */
+    public function get_modifier_state(): int
+    {
+        return 0;
+    }
+    /** The name of the device, suitable for showing in a user interface. */
+    public function get_name(): string
+    {
+        return '';
+    }
+    /** Retrieves whether the Num Lock modifier of the keyboard is locked. */
+    public function get_num_lock_state(): bool
+    {
+        return false;
+    }
+    /** Retrieves the number of touch points associated to $device. */
+    public function get_num_touches(): int
+    {
+        return 0;
+    }
+    /** Returns the product ID of this device. */
+    public function get_product_id(): ?string
+    {
+        return null;
+    }
+    /** Retrieves whether the Scroll Lock modifier of the keyboard is locked. */
+    public function get_scroll_lock_state(): bool
+    {
+        return false;
+    }
+    /** Returns the `GdkSeat` the device belongs to. */
+    public function get_seat(): GdkSeat
+    {
+        return null;
+    }
+    /** Determines the type of the device. */
+    public function get_source(): GdkInputSource
+    {
+        return null;
+    }
+    /** Returns the timestamp of the last activity for this device. */
+    public function get_timestamp(): int
+    {
+        return 0;
+    }
+    /** Returns the vendor ID of this device. */
+    public function get_vendor_id(): ?string
+    {
+        return null;
+    }
+    /**
+     * Determines if layouts for both right-to-left and left-to-right languages are in use on the
+     * keyboard.
+     */
+    public function has_bidi_layouts(): bool
+    {
+        return false;
+    }
+}
+/**
  * `GdkDisplay` objects are the GDK representation of a workstation.
  *
  * @property-read bool $composited
@@ -1616,12 +2163,23 @@ class GdkDisplay extends GObject
     public function close(): void
     {
     }
+    /** Returns `true` if there is an ongoing grab on $device for $display. */
+    public function device_is_grabbed(GdkDevice $device): bool
+    {
+        unset($device);
+        return false;
+    }
     /** Flushes any requests queued for the windowing system. */
     public function flush(): void
     {
     }
     /** Gets the clipboard used for copy/paste operations. */
     public function get_clipboard(): GdkClipboard
+    {
+        return null;
+    }
+    /** Returns the default `GdkSeat` for this display. */
+    public function get_default_seat(): ?GdkSeat
     {
         return null;
     }
@@ -1663,6 +2221,15 @@ class GdkDisplay extends GObject
     public function is_rgba(): bool
     {
         return false;
+    }
+    /**
+     * Returns the list of seats known to $display.
+     *
+     * @return list<GdkSeat>
+     */
+    public function list_seats(): array
+    {
+        return [];
     }
     /**
      * Checks that OpenGL is available for $self and ensures that it is properly initialized. When
@@ -1707,6 +2274,7 @@ class GdkDisplay extends GObject
  *
  * @property int $actions
  * @property ?GdkContentProvider $content
+ * @property ?GdkDevice $device
  * @property-read ?GdkDisplay $display
  * @property ?GdkContentFormats $formats
  * @property int $selected_action
@@ -1717,6 +2285,17 @@ class GdkDrag extends GObject
     /** GdkDrag is abstract in GTK: instances come from GTK, never from `new`. */
     private function __construct()
     {
+    }
+    /** Starts a drag and creates a new drag context for it. */
+    public static function begin(GdkSurface $surface, GdkDevice $device, GdkContentProvider $content, int $actions, float $dx, float $dy): ?GdkDrag
+    {
+        unset($surface);
+        unset($device);
+        unset($content);
+        unset($actions);
+        unset($dx);
+        unset($dy);
+        return null;
     }
     /** Informs GDK that the drop ended. */
     public function drop_done(bool $success): void
@@ -1730,6 +2309,11 @@ class GdkDrag extends GObject
     }
     /** Returns the `GdkContentProvider` associated to the `GdkDrag` object. */
     public function get_content(): GdkContentProvider
+    {
+        return null;
+    }
+    /** Returns the `GdkDevice` associated to the `GdkDrag` object. */
+    public function get_device(): GdkDevice
     {
         return null;
     }
@@ -1789,6 +2373,7 @@ enum GdkDragCancelReason : int
  * The `GdkDrop` object represents the target of an ongoing DND operation.
  *
  * @property int $actions
+ * @property ?GdkDevice $device
  * @property-read ?GdkDisplay $display
  * @property ?GdkDrag $drag
  * @property ?GdkContentFormats $formats
@@ -1809,6 +2394,11 @@ class GdkDrop extends GObject
     public function get_actions(): int
     {
         return 0;
+    }
+    /** Returns the `GdkDevice` performing the drop. */
+    public function get_device(): GdkDevice
+    {
+        return null;
     }
     /** Gets the `GdkDisplay` that $self was created for. */
     public function get_display(): GdkDisplay
@@ -1886,6 +2476,19 @@ enum GdkEventType : int
     case PadGroupMode = 27;
     case TouchpadHold = 28;
     case EventLast = 29;
+}
+/**
+ * An enumeration describing the type of an input device in general terms.
+ */
+enum GdkInputSource : int
+{
+    case Mouse = 0;
+    case Pen = 1;
+    case Keyboard = 2;
+    case Touchscreen = 3;
+    case Touchpad = 4;
+    case Trackpoint = 5;
+    case TabletPad = 6;
 }
 /**
  * Describes how well an event matches a given keyval and modifiers.
@@ -2227,6 +2830,62 @@ enum GdkScrollUnit : int
     case Surface = 1;
 }
 /**
+ * The `GdkSeat` object represents a collection of input devices that belong to a user.
+ *
+ * @property ?GdkDisplay $display
+ */
+class GdkSeat extends GObject
+{
+    /** GdkSeat is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /** Returns the capabilities this `GdkSeat` currently has. */
+    public function get_capabilities(): int
+    {
+        return 0;
+    }
+    /**
+     * Returns the devices that match the given capabilities.
+     *
+     * @return list<GdkDevice>
+     */
+    public function get_devices(int $capabilities): array
+    {
+        unset($capabilities);
+        return [];
+    }
+    /** Returns the `GdkDisplay` this seat belongs to. */
+    public function get_display(): GdkDisplay
+    {
+        return null;
+    }
+    /** Returns the device that routes keyboard events. */
+    public function get_keyboard(): ?GdkDevice
+    {
+        return null;
+    }
+    /** Returns the device that routes pointer events. */
+    public function get_pointer(): ?GdkDevice
+    {
+        return null;
+    }
+}
+/**
+ * Flags describing the seat capabilities.
+ */
+final class GdkSeatCapabilities
+{
+    public const int NONE = 0;
+    public const int POINTER = 1;
+    public const int TOUCH = 2;
+    public const int TABLET_STYLUS = 4;
+    public const int KEYBOARD = 8;
+    public const int TABLET_PAD = 16;
+    public const int ALL_POINTING = 7;
+    public const int ALL = 31;
+}
+/**
  * Base type for snapshot operations.
  */
 class GdkSnapshot extends GObject
@@ -2295,6 +2954,24 @@ class GdkSurface extends GObject
     {
         return null;
     }
+    /**
+     * Retrieves a `GdkCursor` pointer for the $device currently set on the specified `GdkSurface`.
+     */
+    public function get_device_cursor(GdkDevice $device): ?GdkCursor
+    {
+        unset($device);
+        return null;
+    }
+    /**
+     * Obtains the current device position and modifier state.
+     *
+     * @return array{float, float, int}|null
+     */
+    public function get_device_position(GdkDevice $device): ?array
+    {
+        unset($device);
+        return null;
+    }
     /** Gets the `GdkDisplay` associated with a `GdkSurface`. */
     public function get_display(): GdkDisplay
     {
@@ -2348,6 +3025,12 @@ class GdkSurface extends GObject
     /** Sets the default mouse pointer for a `GdkSurface`. */
     public function set_cursor(?GdkCursor $cursor): void
     {
+        unset($cursor);
+    }
+    /** Sets a specific `GdkCursor` for a given device when it gets inside $surface. */
+    public function set_device_cursor(GdkDevice $device, GdkCursor $cursor): void
+    {
+        unset($device);
         unset($cursor);
     }
 }
@@ -5091,6 +5774,8 @@ class GThemedIcon extends GObject implements GIcon
  * @property ?string $certificate_pem
  * @property ?GTlsCertificate $issuer
  * @property-read ?string $issuer_name
+ * @property-read ?GDateTime $not_valid_after
+ * @property-read ?GDateTime $not_valid_before
  * @property-write ?string $password
  * @property ?string $pkcs11_uri
  * @property ?string $private_key_pem
@@ -5181,6 +5866,16 @@ class GTlsCertificate extends GObject
     }
     /** Returns the issuer name from the certificate. */
     public function get_issuer_name(): ?string
+    {
+        return null;
+    }
+    /** Returns the time at which the certificate became or will become invalid. */
+    public function get_not_valid_after(): ?GDateTime
+    {
+        return null;
+    }
+    /** Returns the time at which the certificate became or will become valid. */
+    public function get_not_valid_before(): ?GDateTime
     {
         return null;
     }
@@ -8952,6 +9647,11 @@ class GtkCalendar extends GtkWidget
     public function clear_marks(): void
     {
     }
+    /** Returns a `GDateTime` representing the shown year, month and the selected day. */
+    public function get_date(): GDateTime
+    {
+        return null;
+    }
     /** Gets the day of the selected date. */
     public function get_day(): int
     {
@@ -8992,6 +9692,11 @@ class GtkCalendar extends GtkWidget
     public function mark_day(int $day): void
     {
         unset($day);
+    }
+    /** Switches to $date's year and month and select its day. */
+    public function select_day(GDateTime $date): void
+    {
+        unset($date);
     }
     /** Sets the day for the selected date. */
     public function set_day(int $day): void
@@ -10913,6 +11618,11 @@ class GtkEventController extends GObject
     {
         return null;
     }
+    /** Returns the device of the event that is currently being handled by the controller. */
+    public function get_current_event_device(): ?GdkDevice
+    {
+        return null;
+    }
     /** Returns the modifier state of the event that is currently being handled by the controller. */
     public function get_current_event_state(): int
     {
@@ -12093,6 +12803,11 @@ class GtkGesture extends GtkEventController
      * in $rect with the bounding box containing all active touches.
      */
     public function get_bounding_box(): ?GdkRectangle
+    {
+        return null;
+    }
+    /** Returns the logical `GdkDevice` that is currently operating on $gesture. */
+    public function get_device(): ?GdkDevice
     {
         return null;
     }
@@ -19833,6 +20548,12 @@ class GtkTextBuffer extends GObject
     {
         unset($clipboard);
     }
+    /** Creates and inserts a child anchor. */
+    public function create_child_anchor(GtkTextIter $iter): GtkTextChildAnchor
+    {
+        unset($iter);
+        return null;
+    }
     /** Creates a mark at position $where. */
     public function create_mark(?string $mark_name, GtkTextIter $where, bool $left_gravity): GtkTextMark
     {
@@ -19943,6 +20664,12 @@ class GtkTextBuffer extends GObject
     {
         return null;
     }
+    /** Obtains the location of $anchor within $buffer. */
+    public function get_iter_at_child_anchor(GtkTextChildAnchor $anchor): GtkTextIter
+    {
+        unset($anchor);
+        return null;
+    }
     /** Initializes $iter to the start of the given line. */
     public function get_iter_at_line(int $line_number): ?GtkTextIter
     {
@@ -20047,6 +20774,12 @@ class GtkTextBuffer extends GObject
         unset($end);
         unset($include_hidden_chars);
         return '';
+    }
+    /** Inserts a child widget anchor into the text buffer at $iter. */
+    public function insert_child_anchor(GtkTextIter $iter, GtkTextChildAnchor $anchor): void
+    {
+        unset($iter);
+        unset($anchor);
     }
     /** Inserts an image into the text buffer at $iter. */
     public function insert_paintable(GtkTextIter $iter, GdkPaintable $paintable): void
@@ -20264,6 +20997,16 @@ class GtkTextBuffer extends GObject
     {
     }
     /**
+     * Native `insert_child_anchor` (TextBufferClass.insert_child_anchor): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_insert_child_anchor()` from an override. Inserts
+     * a child widget anchor into the text buffer at $iter.
+     */
+    public function vfunc_insert_child_anchor(GtkTextIter $iter, GtkTextChildAnchor $anchor): void
+    {
+        unset($iter);
+        unset($anchor);
+    }
+    /**
      * Native `insert_paintable` (TextBufferClass.insert_paintable): the GTK implementation below
      * any PHP subclass, for `parent::vfunc_insert_paintable()` from an override. Inserts an image
      * into the text buffer at $iter.
@@ -20346,6 +21089,22 @@ class GtkTextBuffer extends GObject
      */
     public function vfunc_undo(): void
     {
+    }
+}
+/**
+ * A `GtkTextChildAnchor` is a spot in a `GtkTextBuffer` where child widgets can be “anchored”.
+ */
+class GtkTextChildAnchor extends GObject
+{
+    /** Creates a new `GtkTextChildAnchor`. */
+    public function __construct()
+    {
+    }
+    /** Creates a new `GtkTextChildAnchor` with the given replacement character. */
+    public static function new_with_replacement(string $character): GtkTextChildAnchor
+    {
+        unset($character);
+        return null;
     }
 }
 /**
@@ -20680,6 +21439,11 @@ final class GtkTextIter
     public function get_chars_in_line(): int
     {
         return 0;
+    }
+    /** If the location at $iter contains a child anchor, the anchor is returned. */
+    public function get_child_anchor(): ?GtkTextChildAnchor
+    {
+        return null;
     }
     /** Returns the line number containing the iterator. */
     public function get_line(): int
@@ -21143,6 +21907,12 @@ class GtkTextView extends GtkWidget implements GtkScrollable
     {
         unset($buffer);
         return null;
+    }
+    /** Adds a child widget in the text buffer, at the given $anchor. */
+    public function add_child_at_anchor(GtkWidget $child, GtkTextChildAnchor $anchor): void
+    {
+        unset($child);
+        unset($anchor);
     }
     /** Adds $child at a fixed coordinate in the `GtkTextView`'s text window. */
     public function add_overlay(GtkWidget $child, int $xpos, int $ypos): void
@@ -24044,6 +24814,19 @@ final class JSCVirtualMachine extends GObject
     }
 }
 /**
+ * `PangoDirection` represents a direction in the Unicode bidirectional algorithm.
+ */
+enum PangoDirection : int
+{
+    case Ltr = 0;
+    case Rtl = 1;
+    case TtbLtr = 2;
+    case TtbRtl = 3;
+    case WeakLtr = 4;
+    case WeakRtl = 5;
+    case Neutral = 6;
+}
+/**
  * `PangoEllipsizeMode` describes what sort of ellipsization should be applied to text.
  */
 enum PangoEllipsizeMode : int
@@ -24486,6 +25269,11 @@ final class SoupCookie
     {
         return '';
     }
+    /** Gets $cookie's expiration time. */
+    public function get_expires(): ?GDateTime
+    {
+        return null;
+    }
     /** Gets $cookie's HttpOnly attribute. */
     public function get_http_only(): bool
     {
@@ -24520,6 +25308,11 @@ final class SoupCookie
     public function set_domain(string $domain): void
     {
         unset($domain);
+    }
+    /** Sets $cookie's expiration time to $expires. */
+    public function set_expires(GDateTime $expires): void
+    {
+        unset($expires);
     }
     /** Sets $cookie's HttpOnly attribute to $http_only. */
     public function set_http_only(bool $http_only): void
@@ -26115,6 +26908,11 @@ final class WebKitITPFirstParty
     public function get_domain(): string
     {
         return '';
+    }
+    /** Get the last time a #WebKitITPThirdParty has been seen under $itp_first_party. */
+    public function get_last_update_time(): GDateTime
+    {
+        return null;
     }
     /** Get whether $itp_first_party has granted website data access to its #WebKitITPThirdParty. */
     public function get_website_data_access_allowed(): bool

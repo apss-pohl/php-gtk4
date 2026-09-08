@@ -62,6 +62,7 @@
   phpgtk::register_enum(GTK_TYPE_TEXT_WINDOW_TYPE, register_class_Gtk4_GtkTextWindowType());
   phpgtk::register_enum(GTK_TYPE_UNIT, register_class_Gtk4_GtkUnit());
   phpgtk::register_enum(GTK_TYPE_WRAP_MODE, register_class_Gtk4_GtkWrapMode());
+  phpgtk::register_enum(PANGO_TYPE_DIRECTION, register_class_Gtk4_PangoDirection());
   phpgtk::register_enum(PANGO_TYPE_ELLIPSIZE_MODE, register_class_Gtk4_PangoEllipsizeMode());
   phpgtk::register_flags(PANGO_TYPE_FONT_MASK, register_class_Gtk4_PangoFontMask());
   phpgtk::register_enum(PANGO_TYPE_GRAVITY, register_class_Gtk4_PangoGravity());
@@ -80,6 +81,7 @@
   phpgtk::register_flags(GDK_TYPE_DRAG_ACTION, register_class_Gtk4_GdkDragAction());
   phpgtk::register_enum(GDK_TYPE_DRAG_CANCEL_REASON, register_class_Gtk4_GdkDragCancelReason());
   phpgtk::register_enum(GDK_TYPE_EVENT_TYPE, register_class_Gtk4_GdkEventType());
+  phpgtk::register_enum(GDK_TYPE_INPUT_SOURCE, register_class_Gtk4_GdkInputSource());
   phpgtk::register_enum(GDK_TYPE_KEY_MATCH, register_class_Gtk4_GdkKeyMatch());
   phpgtk::register_enum(GDK_TYPE_MEMORY_FORMAT, register_class_Gtk4_GdkMemoryFormat());
   phpgtk::register_flags(GDK_TYPE_MODIFIER_TYPE, register_class_Gtk4_GdkModifierType());
@@ -87,6 +89,7 @@
   phpgtk::register_flags(GDK_TYPE_PAINTABLE_FLAGS, register_class_Gtk4_GdkPaintableFlags());
   phpgtk::register_enum(GDK_TYPE_SCROLL_DIRECTION, register_class_Gtk4_GdkScrollDirection());
   phpgtk::register_enum(GDK_TYPE_SCROLL_UNIT, register_class_Gtk4_GdkScrollUnit());
+  phpgtk::register_flags(GDK_TYPE_SEAT_CAPABILITIES, register_class_Gtk4_GdkSeatCapabilities());
   phpgtk::register_enum(GDK_TYPE_SUBPIXEL_LAYOUT, register_class_Gtk4_GdkSubpixelLayout());
   phpgtk::register_enum(GDK_TYPE_TOUCHPAD_GESTURE_PHASE, register_class_Gtk4_GdkTouchpadGesturePhase());
   phpgtk::register_enum(GSK_TYPE_BLEND_MODE, register_class_Gtk4_GskBlendMode());
@@ -220,6 +223,8 @@
   phpgtk::register_interface_fallback(GTK_TYPE_STYLE_PROVIDER, ce_GtkStyleProviderObject);
   zend_class_entry *ce_GtkTextBuffer = register_class_Gtk4_GtkTextBuffer(ce_GObject);
   phpgtk::register_class("GtkTextBuffer", ce_GtkTextBuffer, GTK_TYPE_TEXT_BUFFER);
+  zend_class_entry *ce_GtkTextChildAnchor = register_class_Gtk4_GtkTextChildAnchor(ce_GObject);
+  phpgtk::register_class("GtkTextChildAnchor", ce_GtkTextChildAnchor, GTK_TYPE_TEXT_CHILD_ANCHOR);
   zend_class_entry *ce_GtkTextIter = register_class_Gtk4_GtkTextIter();
   phpgtk::register_GtkTextIter(ce_GtkTextIter);
   zend_class_entry *ce_GtkTextMark = register_class_Gtk4_GtkTextMark(ce_GObject);
@@ -294,6 +299,8 @@
   phpgtk::register_class("GdkContentProvider", ce_GdkContentProvider, GDK_TYPE_CONTENT_PROVIDER);
   zend_class_entry *ce_GdkCursor = register_class_Gtk4_GdkCursor(ce_GObject);
   phpgtk::register_class("GdkCursor", ce_GdkCursor, GDK_TYPE_CURSOR);
+  zend_class_entry *ce_GdkDevice = register_class_Gtk4_GdkDevice(ce_GObject);
+  phpgtk::register_class("GdkDevice", ce_GdkDevice, GDK_TYPE_DEVICE);
   zend_class_entry *ce_GdkDisplay = register_class_Gtk4_GdkDisplay(ce_GObject);
   phpgtk::register_class("GdkDisplay", ce_GdkDisplay, GDK_TYPE_DISPLAY);
   zend_class_entry *ce_GdkDrag = register_class_Gtk4_GdkDrag(ce_GObject);
@@ -306,6 +313,8 @@
   phpgtk::register_interface("GdkPaintable", ce_GdkPaintable, GDK_TYPE_PAINTABLE);
   zend_class_entry *ce_GdkPaintableObject = register_class_Gtk4_GdkPaintableObject(ce_GObject, ce_GdkPaintable);
   phpgtk::register_interface_fallback(GDK_TYPE_PAINTABLE, ce_GdkPaintableObject);
+  zend_class_entry *ce_GdkSeat = register_class_Gtk4_GdkSeat(ce_GObject);
+  phpgtk::register_class("GdkSeat", ce_GdkSeat, GDK_TYPE_SEAT);
   zend_class_entry *ce_GdkSnapshot = register_class_Gtk4_GdkSnapshot(ce_GObject);
   phpgtk::register_class("GdkSnapshot", ce_GdkSnapshot, GDK_TYPE_SNAPSHOT);
   zend_class_entry *ce_GdkSurface = register_class_Gtk4_GdkSurface(ce_GObject);
@@ -368,6 +377,10 @@
   phpgtk::register_GdkPixbufFormat(ce_GdkPixbufFormat);
   zend_class_entry *ce_GdkPixbufLoader = register_class_Gtk4_GdkPixbufLoader(ce_GObject);
   phpgtk::register_class("GdkPixbufLoader", ce_GdkPixbufLoader, GDK_TYPE_PIXBUF_LOADER);
+  zend_class_entry *ce_GDateTime = register_class_Gtk4_GDateTime();
+  phpgtk::register_GDateTime(ce_GDateTime);
+  zend_class_entry *ce_GTimeZone = register_class_Gtk4_GTimeZone();
+  phpgtk::register_GTimeZone(ce_GTimeZone);
   zend_class_entry *ce_GtkAboutDialog = register_class_Gtk4_GtkAboutDialog(ce_GtkWindow, ce_GtkNative, ce_GtkRoot);
   phpgtk::register_class("GtkAboutDialog", ce_GtkAboutDialog, GTK_TYPE_ABOUT_DIALOG);
   zend_class_entry *ce_GtkActionBar = register_class_Gtk4_GtkActionBar(ce_GtkWidget);

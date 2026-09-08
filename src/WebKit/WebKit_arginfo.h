@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: dc27172ed587b6be9c0c8f0b737940bf3f94a281 */
+ * Stub hash: cb91bdcff0dc1acc28929a4ad4545aded3b39241 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitApplicationInfo___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -507,6 +507,9 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_WebKitITPFirstParty___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
 
 #define arginfo_class_Gtk4_WebKitITPFirstParty_get_domain arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitITPFirstParty_get_last_update_time, 0, 0, Gtk4\\GDateTime, 0)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_WebKitITPFirstParty_get_website_data_access_allowed arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
 
@@ -2184,6 +2187,7 @@ ZEND_METHOD(Gtk4_WebKitHitTestResult, get_link_uri);
 ZEND_METHOD(Gtk4_WebKitHitTestResult, get_media_uri);
 ZEND_METHOD(Gtk4_WebKitITPFirstParty, __construct);
 ZEND_METHOD(Gtk4_WebKitITPFirstParty, get_domain);
+ZEND_METHOD(Gtk4_WebKitITPFirstParty, get_last_update_time);
 ZEND_METHOD(Gtk4_WebKitITPFirstParty, get_website_data_access_allowed);
 ZEND_METHOD(Gtk4_WebKitITPThirdParty, __construct);
 ZEND_METHOD(Gtk4_WebKitITPThirdParty, get_domain);
@@ -2983,6 +2987,7 @@ static const zend_function_entry class_Gtk4_WebKitHitTestResult_methods[] = {
 static const zend_function_entry class_Gtk4_WebKitITPFirstParty_methods[] = {
 	ZEND_ME(Gtk4_WebKitITPFirstParty, __construct, arginfo_class_Gtk4_WebKitITPFirstParty___construct, ZEND_ACC_PRIVATE)
 	ZEND_ME(Gtk4_WebKitITPFirstParty, get_domain, arginfo_class_Gtk4_WebKitITPFirstParty_get_domain, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitITPFirstParty, get_last_update_time, arginfo_class_Gtk4_WebKitITPFirstParty_get_last_update_time, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitITPFirstParty, get_website_data_access_allowed, arginfo_class_Gtk4_WebKitITPFirstParty_get_website_data_access_allowed, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };

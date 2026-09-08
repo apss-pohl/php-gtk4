@@ -40,6 +40,18 @@ ZEND_METHOD(Gtk4_GtkEventController, get_current_event) {
 }
 
 /**
+ * Gtk4\GtkEventController::get_current_event_device(): ?GdkDevice
+ *
+ * Returns the device of the event that is currently being handled by the controller.
+ */
+ZEND_METHOD(Gtk4_GtkEventController, get_current_event_device) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkEventController *self = PHPGTK_SELF(GtkEventController, GTK_TYPE_EVENT_CONTROLLER);
+  GdkDevice *phpgtk_ret = gtk_event_controller_get_current_event_device(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkEventController::get_current_event_state(): int
  *
  * Returns the modifier state of the event that is currently being handled by the controller.

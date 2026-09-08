@@ -4,6 +4,7 @@
 #include "core/object.h"
 #include "core/collections.h"
 #include "core/gerror.h"
+#include "core/boxed.h"
 
 using namespace phpgtk;
 
@@ -224,6 +225,32 @@ ZEND_METHOD(Gtk4_GTlsCertificate, get_issuer_name) {
   if (phpgtk_ret == nullptr) RETURN_NULL();
   RETVAL_STRING(phpgtk_ret);
   g_free(phpgtk_ret);
+}
+
+/**
+ * Gtk4\GTlsCertificate::get_not_valid_after(): ?GDateTime
+ *
+ * Returns the time at which the certificate became or will become invalid.
+ */
+ZEND_METHOD(Gtk4_GTlsCertificate, get_not_valid_after) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GTlsCertificate *self = PHPGTK_SELF(GTlsCertificate, G_TYPE_TLS_CERTIFICATE);
+  GDateTime *phpgtk_ret = g_tls_certificate_get_not_valid_after(self);
+  wrap_boxed(G_TYPE_DATE_TIME, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) g_boxed_free(G_TYPE_DATE_TIME, phpgtk_ret);
+}
+
+/**
+ * Gtk4\GTlsCertificate::get_not_valid_before(): ?GDateTime
+ *
+ * Returns the time at which the certificate became or will become valid.
+ */
+ZEND_METHOD(Gtk4_GTlsCertificate, get_not_valid_before) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GTlsCertificate *self = PHPGTK_SELF(GTlsCertificate, G_TYPE_TLS_CERTIFICATE);
+  GDateTime *phpgtk_ret = g_tls_certificate_get_not_valid_before(self);
+  wrap_boxed(G_TYPE_DATE_TIME, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) g_boxed_free(G_TYPE_DATE_TIME, phpgtk_ret);
 }
 
 /**

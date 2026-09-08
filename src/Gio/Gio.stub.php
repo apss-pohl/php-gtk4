@@ -1384,6 +1384,8 @@ class GThemedIcon extends GObject implements GIcon
  * @property ?string $certificate_pem
  * @property ?GTlsCertificate $issuer
  * @property-read ?string $issuer_name
+ * @property-read ?GDateTime $not_valid_after
+ * @property-read ?GDateTime $not_valid_before
  * @property-write ?string $password
  * @property ?string $pkcs11_uri
  * @property ?string $private_key_pem
@@ -1447,6 +1449,12 @@ class GTlsCertificate extends GObject
 
     /** Returns the issuer name from the certificate. */
     public function get_issuer_name(): ?string {}
+
+    /** Returns the time at which the certificate became or will become invalid. */
+    public function get_not_valid_after(): ?GDateTime {}
+
+    /** Returns the time at which the certificate became or will become valid. */
+    public function get_not_valid_before(): ?GDateTime {}
 
     /** Returns the subject name from the certificate. */
     public function get_subject_name(): ?string {}

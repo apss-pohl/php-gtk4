@@ -281,6 +281,9 @@ const SELF_PRECONDITIONS = [
  * pin report (GTK4_PIN_REPORT) prints, is what each predicate mirrors.
  */
 const ARG_PRECONDITIONS = [
+    // one character, not one byte: GTK counts with g_utf8_strlen()
+    'gtk_text_child_anchor_new_with_replacement' => [[1,
+        'g_utf8_strlen(ZSTR_VAL(character), -1) == 1', 'must be exactly one character']],
     // WebKit's own g_return_if_fail()s, each copied from the assertion RobustnessTest printed.
     'webkit_feature_list_get' => [
         [1, 'static_cast<gsize>(index) < webkit_feature_list_get_length(self)',

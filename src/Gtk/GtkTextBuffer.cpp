@@ -217,6 +217,24 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, copy_clipboard) {
 }
 
 /**
+ * Gtk4\GtkTextBuffer::create_child_anchor(GtkTextIter $iter): GtkTextChildAnchor
+ *
+ * Creates and inserts a child anchor.
+ */
+ZEND_METHOD(Gtk4_GtkTextBuffer, create_child_anchor) {
+  zval *iter;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(iter, boxed_class_for_type(GTK_TYPE_TEXT_ITER)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkTextBuffer *self = PHPGTK_SELF(GtkTextBuffer, GTK_TYPE_TEXT_BUFFER);
+  gpointer iter_b = unwrap_boxed(iter, GTK_TYPE_TEXT_ITER);
+  if (iter_b == nullptr) RETURN_THROWS();
+  GtkTextChildAnchor *phpgtk_ret =
+      gtk_text_buffer_create_child_anchor(self, static_cast<GtkTextIter *>(iter_b));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkTextBuffer::create_mark(?string $mark_name, GtkTextIter $where, bool $left_gravity):
  * GtkTextMark
  *
@@ -485,6 +503,24 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, get_insert) {
   GtkTextBuffer *self = PHPGTK_SELF(GtkTextBuffer, GTK_TYPE_TEXT_BUFFER);
   GtkTextMark *phpgtk_ret = gtk_text_buffer_get_insert(self);
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
+ * Gtk4\GtkTextBuffer::get_iter_at_child_anchor(GtkTextChildAnchor $anchor): GtkTextIter
+ *
+ * Obtains the location of $anchor within $buffer.
+ */
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_iter_at_child_anchor) {
+  zval *anchor;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(anchor, class_for_gtype(GTK_TYPE_TEXT_CHILD_ANCHOR))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkTextBuffer *self = PHPGTK_SELF(GtkTextBuffer, GTK_TYPE_TEXT_BUFFER);
+  GObject *anchor_o = unwrap(anchor, GTK_TYPE_TEXT_CHILD_ANCHOR);
+  if (anchor_o == nullptr) RETURN_THROWS();
+  GtkTextIter iter{};
+  gtk_text_buffer_get_iter_at_child_anchor(self, &iter, GTK_TEXT_CHILD_ANCHOR(anchor_o));
+  wrap_boxed(GTK_TYPE_TEXT_ITER, &iter, return_value);
 }
 
 /**
@@ -761,6 +797,27 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, get_text) {
   if (phpgtk_ret == nullptr) RETURN_EMPTY_STRING();
   RETVAL_STRING(phpgtk_ret);
   g_free(phpgtk_ret);
+}
+
+/**
+ * Gtk4\GtkTextBuffer::insert_child_anchor(GtkTextIter $iter, GtkTextChildAnchor $anchor): void
+ *
+ * Inserts a child widget anchor into the text buffer at $iter.
+ */
+ZEND_METHOD(Gtk4_GtkTextBuffer, insert_child_anchor) {
+  zval *iter;
+  zval *anchor;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(iter, boxed_class_for_type(GTK_TYPE_TEXT_ITER)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(anchor, class_for_gtype(GTK_TYPE_TEXT_CHILD_ANCHOR))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkTextBuffer *self = PHPGTK_SELF(GtkTextBuffer, GTK_TYPE_TEXT_BUFFER);
+  gpointer iter_b = unwrap_boxed(iter, GTK_TYPE_TEXT_ITER);
+  if (iter_b == nullptr) RETURN_THROWS();
+  GObject *anchor_o = unwrap(anchor, GTK_TYPE_TEXT_CHILD_ANCHOR);
+  if (anchor_o == nullptr) RETURN_THROWS();
+  gtk_text_buffer_insert_child_anchor(self, static_cast<GtkTextIter *>(iter_b),
+                                      GTK_TEXT_CHILD_ANCHOR(anchor_o));
 }
 
 /**
@@ -1385,6 +1442,40 @@ void vfunc_install_end_user_action(gpointer klass) {
   GTK_TEXT_BUFFER_CLASS(klass)->end_user_action = vfunc_thunk_end_user_action;
 }
 
+// vfunc thunk: GTK_TEXT_BUFFER_CLASS->insert_child_anchor -> $this->vfunc_insert_child_anchor() on
+// a PHP subclass
+void vfunc_thunk_insert_child_anchor(GtkTextBuffer *self, GtkTextIter *iter,
+                                     GtkTextChildAnchor *anchor) {
+  zval zself;
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_insert_child_anchor", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
+    auto *native = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->insert_child_anchor != nullptr) native->insert_child_anchor(self, iter, anchor);
+    return;
+  }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
+  std::array<zval, 2> args{};
+  zval *argv = args.data();
+  wrap_boxed(GTK_TYPE_TEXT_ITER, iter, &argv[0]);
+  wrap(anchor != nullptr ? G_OBJECT(anchor) : nullptr, &argv[1]);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 2, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GtkTextBuffer::vfunc_insert_child_anchor");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
+}
+
+// vfunc installer: GTK_TEXT_BUFFER_CLASS->insert_child_anchor (called from class_init / iface_init
+// of a PHP subtype)
+void vfunc_install_insert_child_anchor(gpointer klass) {
+  GTK_TEXT_BUFFER_CLASS(klass)->insert_child_anchor = vfunc_thunk_insert_child_anchor;
+}
+
 // vfunc thunk: GTK_TEXT_BUFFER_CLASS->insert_paintable -> $this->vfunc_insert_paintable() on a PHP
 // subclass
 void vfunc_thunk_insert_paintable(GtkTextBuffer *self, GtkTextIter *iter, GdkPaintable *paintable) {
@@ -1811,6 +1902,41 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_end_user_action) {
 }
 
 /**
+ * Gtk4\GtkTextBuffer::vfunc_insert_child_anchor(GtkTextIter $iter, GtkTextChildAnchor $anchor):
+ * void
+ *
+ * Native `insert_child_anchor` (TextBufferClass.insert_child_anchor): the GTK implementation below
+ * any PHP subclass, for `parent::vfunc_insert_child_anchor()` from an override. Inserts a child
+ * widget anchor into the text buffer at $iter.
+ */
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_insert_child_anchor) {
+  zval *iter;
+  zval *anchor;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(iter, boxed_class_for_type(GTK_TYPE_TEXT_ITER)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(anchor, class_for_gtype(GTK_TYPE_TEXT_CHILD_ANCHOR))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkTextBuffer *self = PHPGTK_SELF(GtkTextBuffer, GTK_TYPE_TEXT_BUFFER);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GtkTextBuffer::vfunc_insert_child_anchor(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->insert_child_anchor == nullptr) {
+    return;
+  }
+  gpointer iter_b = unwrap_boxed(iter, GTK_TYPE_TEXT_ITER);
+  if (iter_b == nullptr) RETURN_THROWS();
+  GObject *anchor_o = unwrap(anchor, GTK_TYPE_TEXT_CHILD_ANCHOR);
+  if (anchor_o == nullptr) RETURN_THROWS();
+  klass->insert_child_anchor(self, static_cast<GtkTextIter *>(iter_b),
+                             GTK_TEXT_CHILD_ANCHOR(anchor_o));
+}
+
+/**
  * Gtk4\GtkTextBuffer::vfunc_insert_paintable(GtkTextIter $iter, GdkPaintable $paintable): void
  *
  * Native `insert_paintable` (TextBufferClass.insert_paintable): the GTK implementation below any
@@ -2087,6 +2213,7 @@ void register_vfuncs_GtkTextBuffer() {
   register_vfunc(GTK_TYPE_TEXT_BUFFER, "changed", vfunc_install_changed);
   register_vfunc(GTK_TYPE_TEXT_BUFFER, "delete_range", vfunc_install_delete_range);
   register_vfunc(GTK_TYPE_TEXT_BUFFER, "end_user_action", vfunc_install_end_user_action);
+  register_vfunc(GTK_TYPE_TEXT_BUFFER, "insert_child_anchor", vfunc_install_insert_child_anchor);
   register_vfunc(GTK_TYPE_TEXT_BUFFER, "insert_paintable", vfunc_install_insert_paintable);
   register_vfunc(GTK_TYPE_TEXT_BUFFER, "insert_text", vfunc_install_insert_text);
   register_vfunc(GTK_TYPE_TEXT_BUFFER, "mark_deleted", vfunc_install_mark_deleted);

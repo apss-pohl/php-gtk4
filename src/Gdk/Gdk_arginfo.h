@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 49b9e3074b6412a86a311ba4d8f75cb93758ae6d */
+ * Stub hash: d19438ee92c90c0bbb46b2bd5306f196adbf806b */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkClipboard___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -170,6 +170,41 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkCursor_get_texture, 0, 0, Gtk4\\GdkTexture, 1)
 ZEND_END_ARG_INFO()
 
+#define arginfo_class_Gtk4_GdkDevice___construct arginfo_class_Gtk4_GdkClipboard___construct
+
+#define arginfo_class_Gtk4_GdkDevice_get_caps_lock_state arginfo_class_Gtk4_GdkClipboard_is_local
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDevice_get_direction, 0, 0, Gtk4\\PangoDirection, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkDevice_get_display arginfo_class_Gtk4_GdkClipboard_get_display
+
+#define arginfo_class_Gtk4_GdkDevice_get_has_cursor arginfo_class_Gtk4_GdkClipboard_is_local
+
+#define arginfo_class_Gtk4_GdkDevice_get_modifier_state arginfo_class_Gtk4_GdkCursor_get_hotspot_x
+
+#define arginfo_class_Gtk4_GdkDevice_get_name arginfo_class_Gtk4_GdkContentFormats_to_string
+
+#define arginfo_class_Gtk4_GdkDevice_get_num_lock_state arginfo_class_Gtk4_GdkClipboard_is_local
+
+#define arginfo_class_Gtk4_GdkDevice_get_num_touches arginfo_class_Gtk4_GdkCursor_get_hotspot_x
+
+#define arginfo_class_Gtk4_GdkDevice_get_product_id arginfo_class_Gtk4_GdkCursor_get_name
+
+#define arginfo_class_Gtk4_GdkDevice_get_scroll_lock_state arginfo_class_Gtk4_GdkClipboard_is_local
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDevice_get_seat, 0, 0, Gtk4\\GdkSeat, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDevice_get_source, 0, 0, Gtk4\\GdkInputSource, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkDevice_get_timestamp arginfo_class_Gtk4_GdkCursor_get_hotspot_x
+
+#define arginfo_class_Gtk4_GdkDevice_get_vendor_id arginfo_class_Gtk4_GdkCursor_get_name
+
+#define arginfo_class_Gtk4_GdkDevice_has_bidi_layouts arginfo_class_Gtk4_GdkClipboard_is_local
+
 #define arginfo_class_Gtk4_GdkDisplay___construct arginfo_class_Gtk4_GdkClipboard___construct
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDisplay_get_default, 0, 0, Gtk4\\GdkDisplay, 1)
@@ -183,9 +218,16 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkDisplay_close arginfo_class_Gtk4_GdkContentProvider_content_changed
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkDisplay_device_is_grabbed, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, device, Gtk4\\GdkDevice, 0)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_GdkDisplay_flush arginfo_class_Gtk4_GdkContentProvider_content_changed
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDisplay_get_clipboard, 0, 0, Gtk4\\GdkClipboard, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDisplay_get_default_seat, 0, 0, Gtk4\\GdkSeat, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDisplay_get_monitor_at_surface, 0, 1, Gtk4\\GdkMonitor, 1)
@@ -205,6 +247,8 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkDisplay_is_rgba arginfo_class_Gtk4_GdkClipboard_is_local
 
+#define arginfo_class_Gtk4_GdkDisplay_list_seats arginfo_class_Gtk4_GdkContentFormats_get_gtypes
+
 #define arginfo_class_Gtk4_GdkDisplay_prepare_gl arginfo_class_Gtk4_GdkClipboard_is_local
 
 #define arginfo_class_Gtk4_GdkDisplay_supports_input_shapes arginfo_class_Gtk4_GdkClipboard_is_local
@@ -221,6 +265,15 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkDrag___construct arginfo_class_Gtk4_GdkClipboard___construct
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDrag_begin, 0, 6, Gtk4\\GdkDrag, 1)
+	ZEND_ARG_OBJ_INFO(0, surface, Gtk4\\GdkSurface, 0)
+	ZEND_ARG_OBJ_INFO(0, device, Gtk4\\GdkDevice, 0)
+	ZEND_ARG_OBJ_INFO(0, content, Gtk4\\GdkContentProvider, 0)
+	ZEND_ARG_TYPE_INFO(0, actions, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, dx, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, dy, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkDrag_drop_done, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, success, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
@@ -228,6 +281,9 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GdkDrag_get_actions arginfo_class_Gtk4_GdkCursor_get_hotspot_x
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDrag_get_content, 0, 0, Gtk4\\GdkContentProvider, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkDrag_get_device, 0, 0, Gtk4\\GdkDevice, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkDrag_get_display arginfo_class_Gtk4_GdkClipboard_get_display
@@ -254,6 +310,8 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkDrop_finish, 0, 1,
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkDrop_get_actions arginfo_class_Gtk4_GdkCursor_get_hotspot_x
+
+#define arginfo_class_Gtk4_GdkDrop_get_device arginfo_class_Gtk4_GdkDrag_get_device
 
 #define arginfo_class_Gtk4_GdkDrop_get_display arginfo_class_Gtk4_GdkClipboard_get_display
 
@@ -386,6 +444,21 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkPaintableObject_snapshot arginfo_class_Gtk4_GdkMemoryTexture_snapshot
 
+#define arginfo_class_Gtk4_GdkSeat___construct arginfo_class_Gtk4_GdkClipboard___construct
+
+#define arginfo_class_Gtk4_GdkSeat_get_capabilities arginfo_class_Gtk4_GdkCursor_get_hotspot_x
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkSeat_get_devices, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, capabilities, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkSeat_get_display arginfo_class_Gtk4_GdkClipboard_get_display
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkSeat_get_keyboard, 0, 0, Gtk4\\GdkDevice, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkSeat_get_pointer arginfo_class_Gtk4_GdkSeat_get_keyboard
+
 #define arginfo_class_Gtk4_GdkSnapshot___construct arginfo_class_Gtk4_GdkClipboard___construct
 
 #define arginfo_class_Gtk4_GdkSurface___construct arginfo_class_Gtk4_GdkClipboard___construct
@@ -404,6 +477,14 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GdkSurface_destroy arginfo_class_Gtk4_GdkContentProvider_content_changed
 
 #define arginfo_class_Gtk4_GdkSurface_get_cursor arginfo_class_Gtk4_GdkCursor_get_fallback
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkSurface_get_device_cursor, 0, 1, Gtk4\\GdkCursor, 1)
+	ZEND_ARG_OBJ_INFO(0, device, Gtk4\\GdkDevice, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkSurface_get_device_position, 0, 1, IS_ARRAY, 1)
+	ZEND_ARG_OBJ_INFO(0, device, Gtk4\\GdkDevice, 0)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkSurface_get_display arginfo_class_Gtk4_GdkClipboard_get_display
 
@@ -427,6 +508,11 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkSurface_set_cursor, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, cursor, Gtk4\\GdkCursor, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkSurface_set_device_cursor, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, device, Gtk4\\GdkDevice, 0)
+	ZEND_ARG_OBJ_INFO(0, cursor, Gtk4\\GdkCursor, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GdkTexture___construct arginfo_class_Gtk4_GdkClipboard___construct
@@ -559,13 +645,31 @@ ZEND_METHOD(Gtk4_GdkCursor, get_hotspot_x);
 ZEND_METHOD(Gtk4_GdkCursor, get_hotspot_y);
 ZEND_METHOD(Gtk4_GdkCursor, get_name);
 ZEND_METHOD(Gtk4_GdkCursor, get_texture);
+ZEND_METHOD(Gtk4_GdkDevice, __construct);
+ZEND_METHOD(Gtk4_GdkDevice, get_caps_lock_state);
+ZEND_METHOD(Gtk4_GdkDevice, get_direction);
+ZEND_METHOD(Gtk4_GdkDevice, get_display);
+ZEND_METHOD(Gtk4_GdkDevice, get_has_cursor);
+ZEND_METHOD(Gtk4_GdkDevice, get_modifier_state);
+ZEND_METHOD(Gtk4_GdkDevice, get_name);
+ZEND_METHOD(Gtk4_GdkDevice, get_num_lock_state);
+ZEND_METHOD(Gtk4_GdkDevice, get_num_touches);
+ZEND_METHOD(Gtk4_GdkDevice, get_product_id);
+ZEND_METHOD(Gtk4_GdkDevice, get_scroll_lock_state);
+ZEND_METHOD(Gtk4_GdkDevice, get_seat);
+ZEND_METHOD(Gtk4_GdkDevice, get_source);
+ZEND_METHOD(Gtk4_GdkDevice, get_timestamp);
+ZEND_METHOD(Gtk4_GdkDevice, get_vendor_id);
+ZEND_METHOD(Gtk4_GdkDevice, has_bidi_layouts);
 ZEND_METHOD(Gtk4_GdkDisplay, __construct);
 ZEND_METHOD(Gtk4_GdkDisplay, get_default);
 ZEND_METHOD(Gtk4_GdkDisplay, open);
 ZEND_METHOD(Gtk4_GdkDisplay, beep);
 ZEND_METHOD(Gtk4_GdkDisplay, close);
+ZEND_METHOD(Gtk4_GdkDisplay, device_is_grabbed);
 ZEND_METHOD(Gtk4_GdkDisplay, flush);
 ZEND_METHOD(Gtk4_GdkDisplay, get_clipboard);
+ZEND_METHOD(Gtk4_GdkDisplay, get_default_seat);
 ZEND_METHOD(Gtk4_GdkDisplay, get_monitor_at_surface);
 ZEND_METHOD(Gtk4_GdkDisplay, get_monitors);
 ZEND_METHOD(Gtk4_GdkDisplay, get_name);
@@ -573,15 +677,18 @@ ZEND_METHOD(Gtk4_GdkDisplay, get_primary_clipboard);
 ZEND_METHOD(Gtk4_GdkDisplay, is_closed);
 ZEND_METHOD(Gtk4_GdkDisplay, is_composited);
 ZEND_METHOD(Gtk4_GdkDisplay, is_rgba);
+ZEND_METHOD(Gtk4_GdkDisplay, list_seats);
 ZEND_METHOD(Gtk4_GdkDisplay, prepare_gl);
 ZEND_METHOD(Gtk4_GdkDisplay, supports_input_shapes);
 ZEND_METHOD(Gtk4_GdkDisplay, supports_shadow_width);
 ZEND_METHOD(Gtk4_GdkDisplay, sync);
 ZEND_METHOD(Gtk4_GdkDisplay, translate_key);
 ZEND_METHOD(Gtk4_GdkDrag, __construct);
+ZEND_METHOD(Gtk4_GdkDrag, begin);
 ZEND_METHOD(Gtk4_GdkDrag, drop_done);
 ZEND_METHOD(Gtk4_GdkDrag, get_actions);
 ZEND_METHOD(Gtk4_GdkDrag, get_content);
+ZEND_METHOD(Gtk4_GdkDrag, get_device);
 ZEND_METHOD(Gtk4_GdkDrag, get_display);
 ZEND_METHOD(Gtk4_GdkDrag, get_drag_surface);
 ZEND_METHOD(Gtk4_GdkDrag, get_formats);
@@ -591,6 +698,7 @@ ZEND_METHOD(Gtk4_GdkDrag, set_hotspot);
 ZEND_METHOD(Gtk4_GdkDrop, __construct);
 ZEND_METHOD(Gtk4_GdkDrop, finish);
 ZEND_METHOD(Gtk4_GdkDrop, get_actions);
+ZEND_METHOD(Gtk4_GdkDrop, get_device);
 ZEND_METHOD(Gtk4_GdkDrop, get_display);
 ZEND_METHOD(Gtk4_GdkDrop, get_drag);
 ZEND_METHOD(Gtk4_GdkDrop, get_formats);
@@ -626,6 +734,12 @@ ZEND_METHOD(Gtk4_GdkMonitor, get_subpixel_layout);
 ZEND_METHOD(Gtk4_GdkMonitor, get_width_mm);
 ZEND_METHOD(Gtk4_GdkMonitor, is_valid);
 ZEND_METHOD(Gtk4_GdkPaintableObject, __construct);
+ZEND_METHOD(Gtk4_GdkSeat, __construct);
+ZEND_METHOD(Gtk4_GdkSeat, get_capabilities);
+ZEND_METHOD(Gtk4_GdkSeat, get_devices);
+ZEND_METHOD(Gtk4_GdkSeat, get_display);
+ZEND_METHOD(Gtk4_GdkSeat, get_keyboard);
+ZEND_METHOD(Gtk4_GdkSeat, get_pointer);
 ZEND_METHOD(Gtk4_GdkSnapshot, __construct);
 ZEND_METHOD(Gtk4_GdkSurface, __construct);
 ZEND_METHOD(Gtk4_GdkSurface, new_popup);
@@ -633,6 +747,8 @@ ZEND_METHOD(Gtk4_GdkSurface, new_toplevel);
 ZEND_METHOD(Gtk4_GdkSurface, beep);
 ZEND_METHOD(Gtk4_GdkSurface, destroy);
 ZEND_METHOD(Gtk4_GdkSurface, get_cursor);
+ZEND_METHOD(Gtk4_GdkSurface, get_device_cursor);
+ZEND_METHOD(Gtk4_GdkSurface, get_device_position);
 ZEND_METHOD(Gtk4_GdkSurface, get_display);
 ZEND_METHOD(Gtk4_GdkSurface, get_height);
 ZEND_METHOD(Gtk4_GdkSurface, get_mapped);
@@ -644,6 +760,7 @@ ZEND_METHOD(Gtk4_GdkSurface, is_destroyed);
 ZEND_METHOD(Gtk4_GdkSurface, queue_render);
 ZEND_METHOD(Gtk4_GdkSurface, request_layout);
 ZEND_METHOD(Gtk4_GdkSurface, set_cursor);
+ZEND_METHOD(Gtk4_GdkSurface, set_device_cursor);
 ZEND_METHOD(Gtk4_GdkTexture, __construct);
 ZEND_METHOD(Gtk4_GdkTexture, new_for_pixbuf);
 ZEND_METHOD(Gtk4_GdkTexture, new_from_bytes);
@@ -729,14 +846,36 @@ static const zend_function_entry class_Gtk4_GdkCursor_methods[] = {
 	ZEND_FE_END
 };
 
+static const zend_function_entry class_Gtk4_GdkDevice_methods[] = {
+	ZEND_ME(Gtk4_GdkDevice, __construct, arginfo_class_Gtk4_GdkDevice___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GdkDevice, get_caps_lock_state, arginfo_class_Gtk4_GdkDevice_get_caps_lock_state, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDevice, get_direction, arginfo_class_Gtk4_GdkDevice_get_direction, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDevice, get_display, arginfo_class_Gtk4_GdkDevice_get_display, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDevice, get_has_cursor, arginfo_class_Gtk4_GdkDevice_get_has_cursor, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDevice, get_modifier_state, arginfo_class_Gtk4_GdkDevice_get_modifier_state, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDevice, get_name, arginfo_class_Gtk4_GdkDevice_get_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDevice, get_num_lock_state, arginfo_class_Gtk4_GdkDevice_get_num_lock_state, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDevice, get_num_touches, arginfo_class_Gtk4_GdkDevice_get_num_touches, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDevice, get_product_id, arginfo_class_Gtk4_GdkDevice_get_product_id, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDevice, get_scroll_lock_state, arginfo_class_Gtk4_GdkDevice_get_scroll_lock_state, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDevice, get_seat, arginfo_class_Gtk4_GdkDevice_get_seat, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDevice, get_source, arginfo_class_Gtk4_GdkDevice_get_source, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDevice, get_timestamp, arginfo_class_Gtk4_GdkDevice_get_timestamp, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDevice, get_vendor_id, arginfo_class_Gtk4_GdkDevice_get_vendor_id, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDevice, has_bidi_layouts, arginfo_class_Gtk4_GdkDevice_has_bidi_layouts, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
 static const zend_function_entry class_Gtk4_GdkDisplay_methods[] = {
 	ZEND_ME(Gtk4_GdkDisplay, __construct, arginfo_class_Gtk4_GdkDisplay___construct, ZEND_ACC_PRIVATE)
 	ZEND_ME(Gtk4_GdkDisplay, get_default, arginfo_class_Gtk4_GdkDisplay_get_default, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkDisplay, open, arginfo_class_Gtk4_GdkDisplay_open, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkDisplay, beep, arginfo_class_Gtk4_GdkDisplay_beep, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, close, arginfo_class_Gtk4_GdkDisplay_close, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDisplay, device_is_grabbed, arginfo_class_Gtk4_GdkDisplay_device_is_grabbed, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, flush, arginfo_class_Gtk4_GdkDisplay_flush, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, get_clipboard, arginfo_class_Gtk4_GdkDisplay_get_clipboard, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDisplay, get_default_seat, arginfo_class_Gtk4_GdkDisplay_get_default_seat, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, get_monitor_at_surface, arginfo_class_Gtk4_GdkDisplay_get_monitor_at_surface, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, get_monitors, arginfo_class_Gtk4_GdkDisplay_get_monitors, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, get_name, arginfo_class_Gtk4_GdkDisplay_get_name, ZEND_ACC_PUBLIC)
@@ -744,6 +883,7 @@ static const zend_function_entry class_Gtk4_GdkDisplay_methods[] = {
 	ZEND_ME(Gtk4_GdkDisplay, is_closed, arginfo_class_Gtk4_GdkDisplay_is_closed, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, is_composited, arginfo_class_Gtk4_GdkDisplay_is_composited, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, is_rgba, arginfo_class_Gtk4_GdkDisplay_is_rgba, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDisplay, list_seats, arginfo_class_Gtk4_GdkDisplay_list_seats, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, prepare_gl, arginfo_class_Gtk4_GdkDisplay_prepare_gl, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, supports_input_shapes, arginfo_class_Gtk4_GdkDisplay_supports_input_shapes, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDisplay, supports_shadow_width, arginfo_class_Gtk4_GdkDisplay_supports_shadow_width, ZEND_ACC_PUBLIC)
@@ -754,9 +894,11 @@ static const zend_function_entry class_Gtk4_GdkDisplay_methods[] = {
 
 static const zend_function_entry class_Gtk4_GdkDrag_methods[] = {
 	ZEND_ME(Gtk4_GdkDrag, __construct, arginfo_class_Gtk4_GdkDrag___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GdkDrag, begin, arginfo_class_Gtk4_GdkDrag_begin, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkDrag, drop_done, arginfo_class_Gtk4_GdkDrag_drop_done, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDrag, get_actions, arginfo_class_Gtk4_GdkDrag_get_actions, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDrag, get_content, arginfo_class_Gtk4_GdkDrag_get_content, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrag, get_device, arginfo_class_Gtk4_GdkDrag_get_device, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDrag, get_display, arginfo_class_Gtk4_GdkDrag_get_display, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDrag, get_drag_surface, arginfo_class_Gtk4_GdkDrag_get_drag_surface, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDrag, get_formats, arginfo_class_Gtk4_GdkDrag_get_formats, ZEND_ACC_PUBLIC)
@@ -770,6 +912,7 @@ static const zend_function_entry class_Gtk4_GdkDrop_methods[] = {
 	ZEND_ME(Gtk4_GdkDrop, __construct, arginfo_class_Gtk4_GdkDrop___construct, ZEND_ACC_PRIVATE)
 	ZEND_ME(Gtk4_GdkDrop, finish, arginfo_class_Gtk4_GdkDrop_finish, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDrop, get_actions, arginfo_class_Gtk4_GdkDrop_get_actions, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkDrop, get_device, arginfo_class_Gtk4_GdkDrop_get_device, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDrop, get_display, arginfo_class_Gtk4_GdkDrop_get_display, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDrop, get_drag, arginfo_class_Gtk4_GdkDrop_get_drag, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkDrop, get_formats, arginfo_class_Gtk4_GdkDrop_get_formats, ZEND_ACC_PUBLIC)
@@ -839,6 +982,16 @@ static const zend_function_entry class_Gtk4_GdkPaintableObject_methods[] = {
 	ZEND_FE_END
 };
 
+static const zend_function_entry class_Gtk4_GdkSeat_methods[] = {
+	ZEND_ME(Gtk4_GdkSeat, __construct, arginfo_class_Gtk4_GdkSeat___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GdkSeat, get_capabilities, arginfo_class_Gtk4_GdkSeat_get_capabilities, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkSeat, get_devices, arginfo_class_Gtk4_GdkSeat_get_devices, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkSeat, get_display, arginfo_class_Gtk4_GdkSeat_get_display, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkSeat, get_keyboard, arginfo_class_Gtk4_GdkSeat_get_keyboard, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkSeat, get_pointer, arginfo_class_Gtk4_GdkSeat_get_pointer, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
 static const zend_function_entry class_Gtk4_GdkSnapshot_methods[] = {
 	ZEND_ME(Gtk4_GdkSnapshot, __construct, arginfo_class_Gtk4_GdkSnapshot___construct, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
@@ -851,6 +1004,8 @@ static const zend_function_entry class_Gtk4_GdkSurface_methods[] = {
 	ZEND_ME(Gtk4_GdkSurface, beep, arginfo_class_Gtk4_GdkSurface_beep, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkSurface, destroy, arginfo_class_Gtk4_GdkSurface_destroy, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkSurface, get_cursor, arginfo_class_Gtk4_GdkSurface_get_cursor, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkSurface, get_device_cursor, arginfo_class_Gtk4_GdkSurface_get_device_cursor, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkSurface, get_device_position, arginfo_class_Gtk4_GdkSurface_get_device_position, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkSurface, get_display, arginfo_class_Gtk4_GdkSurface_get_display, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkSurface, get_height, arginfo_class_Gtk4_GdkSurface_get_height, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkSurface, get_mapped, arginfo_class_Gtk4_GdkSurface_get_mapped, ZEND_ACC_PUBLIC)
@@ -862,6 +1017,7 @@ static const zend_function_entry class_Gtk4_GdkSurface_methods[] = {
 	ZEND_ME(Gtk4_GdkSurface, queue_render, arginfo_class_Gtk4_GdkSurface_queue_render, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkSurface, request_layout, arginfo_class_Gtk4_GdkSurface_request_layout, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkSurface, set_cursor, arginfo_class_Gtk4_GdkSurface_set_cursor, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GdkSurface, set_device_cursor, arginfo_class_Gtk4_GdkSurface_set_device_cursor, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -983,6 +1139,16 @@ static zend_class_entry *register_class_Gtk4_GdkCursor(zend_class_entry *class_e
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkCursor", class_Gtk4_GdkCursor_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkDevice(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkDevice", class_Gtk4_GdkDevice_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
 
 	return class_entry;
@@ -1194,6 +1360,41 @@ static zend_class_entry *register_class_Gtk4_GdkEventType(void)
 	zval enum_case_EventLast_value;
 	ZVAL_LONG(&enum_case_EventLast_value, 29);
 	zend_enum_add_case_cstr(class_entry, "EventLast", &enum_case_EventLast_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkInputSource(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GdkInputSource", IS_LONG, NULL);
+
+	zval enum_case_Mouse_value;
+	ZVAL_LONG(&enum_case_Mouse_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Mouse", &enum_case_Mouse_value);
+
+	zval enum_case_Pen_value;
+	ZVAL_LONG(&enum_case_Pen_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Pen", &enum_case_Pen_value);
+
+	zval enum_case_Keyboard_value;
+	ZVAL_LONG(&enum_case_Keyboard_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Keyboard", &enum_case_Keyboard_value);
+
+	zval enum_case_Touchscreen_value;
+	ZVAL_LONG(&enum_case_Touchscreen_value, 3);
+	zend_enum_add_case_cstr(class_entry, "Touchscreen", &enum_case_Touchscreen_value);
+
+	zval enum_case_Touchpad_value;
+	ZVAL_LONG(&enum_case_Touchpad_value, 4);
+	zend_enum_add_case_cstr(class_entry, "Touchpad", &enum_case_Touchpad_value);
+
+	zval enum_case_Trackpoint_value;
+	ZVAL_LONG(&enum_case_Trackpoint_value, 5);
+	zend_enum_add_case_cstr(class_entry, "Trackpoint", &enum_case_Trackpoint_value);
+
+	zval enum_case_TabletPad_value;
+	ZVAL_LONG(&enum_case_TabletPad_value, 6);
+	zend_enum_add_case_cstr(class_entry, "TabletPad", &enum_case_TabletPad_value);
 
 	return class_entry;
 }
@@ -1581,6 +1782,74 @@ static zend_class_entry *register_class_Gtk4_GdkScrollUnit(void)
 	zval enum_case_Surface_value;
 	ZVAL_LONG(&enum_case_Surface_value, 1);
 	zend_enum_add_case_cstr(class_entry, "Surface", &enum_case_Surface_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkSeat(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkSeat", class_Gtk4_GdkSeat_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GdkSeatCapabilities(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkSeatCapabilities", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NONE_value;
+	ZVAL_LONG(&const_NONE_value, 0);
+	zend_string *const_NONE_name = zend_string_init_interned("NONE", sizeof("NONE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NONE_name, &const_NONE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NONE_name);
+
+	zval const_POINTER_value;
+	ZVAL_LONG(&const_POINTER_value, 1);
+	zend_string *const_POINTER_name = zend_string_init_interned("POINTER", sizeof("POINTER") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_POINTER_name, &const_POINTER_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_POINTER_name);
+
+	zval const_TOUCH_value;
+	ZVAL_LONG(&const_TOUCH_value, 2);
+	zend_string *const_TOUCH_name = zend_string_init_interned("TOUCH", sizeof("TOUCH") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_TOUCH_name, &const_TOUCH_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_TOUCH_name);
+
+	zval const_TABLET_STYLUS_value;
+	ZVAL_LONG(&const_TABLET_STYLUS_value, 4);
+	zend_string *const_TABLET_STYLUS_name = zend_string_init_interned("TABLET_STYLUS", sizeof("TABLET_STYLUS") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_TABLET_STYLUS_name, &const_TABLET_STYLUS_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_TABLET_STYLUS_name);
+
+	zval const_KEYBOARD_value;
+	ZVAL_LONG(&const_KEYBOARD_value, 8);
+	zend_string *const_KEYBOARD_name = zend_string_init_interned("KEYBOARD", sizeof("KEYBOARD") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_KEYBOARD_name, &const_KEYBOARD_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_KEYBOARD_name);
+
+	zval const_TABLET_PAD_value;
+	ZVAL_LONG(&const_TABLET_PAD_value, 16);
+	zend_string *const_TABLET_PAD_name = zend_string_init_interned("TABLET_PAD", sizeof("TABLET_PAD") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_TABLET_PAD_name, &const_TABLET_PAD_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_TABLET_PAD_name);
+
+	zval const_ALL_POINTING_value;
+	ZVAL_LONG(&const_ALL_POINTING_value, 7);
+	zend_string *const_ALL_POINTING_name = zend_string_init_interned("ALL_POINTING", sizeof("ALL_POINTING") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_ALL_POINTING_name, &const_ALL_POINTING_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_ALL_POINTING_name);
+
+	zval const_ALL_value;
+	ZVAL_LONG(&const_ALL_value, 31);
+	zend_string *const_ALL_name = zend_string_init_interned("ALL", sizeof("ALL") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_ALL_name, &const_ALL_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_ALL_name);
 
 	return class_entry;
 }

@@ -778,6 +778,18 @@ ZEND_METHOD(Gtk4_GtkTextIter, get_chars_in_line) {
 }
 
 /**
+ * Gtk4\GtkTextIter::get_child_anchor(): ?GtkTextChildAnchor
+ *
+ * If the location at $iter contains a child anchor, the anchor is returned.
+ */
+ZEND_METHOD(Gtk4_GtkTextIter, get_child_anchor) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkTextIter *self = PHPGTK_BOXED_SELF(GtkTextIter);
+  GtkTextChildAnchor *phpgtk_ret = gtk_text_iter_get_child_anchor(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkTextIter::get_line(): int
  *
  * Returns the line number containing the iterator.

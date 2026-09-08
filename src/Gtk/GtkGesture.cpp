@@ -43,6 +43,18 @@ ZEND_METHOD(Gtk4_GtkGesture, get_bounding_box) {
 }
 
 /**
+ * Gtk4\GtkGesture::get_device(): ?GdkDevice
+ *
+ * Returns the logical `GdkDevice` that is currently operating on $gesture.
+ */
+ZEND_METHOD(Gtk4_GtkGesture, get_device) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkGesture *self = PHPGTK_SELF(GtkGesture, GTK_TYPE_GESTURE);
+  GdkDevice *phpgtk_ret = gtk_gesture_get_device(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GtkGesture::get_group(): array
  *
  * Returns all gestures in the group of $gesture

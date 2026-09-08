@@ -90,10 +90,13 @@ final class Demo
         'Drag and drop' => [
             'GtkDragSource', 'GtkDropTarget', 'GdkContentProvider', 'GdkContentFormats',
         ],
+        'Input devices' => [
+            'GdkSeat', 'GdkDevice', 'GdkInputSource', 'GdkSeatCapabilities',
+        ],
         'Objects & values' => [
             'GObject', 'GParamSpec', 'PhpValue', 'GdkRGBA', 'GdkRectangle',
             'GdkTexture', 'GdkMemoryFormat', 'GError', 'ExceptionMode',
-            'GIcon', 'GThemedIcon',
+            'GIcon', 'GThemedIcon', 'GDateTime', 'GTimeZone',
         ],
         'Lists' => [
             'GListModel', 'GListStore', 'GtkFilter', 'GtkCustomFilter',
@@ -127,6 +130,7 @@ final class Demo
         ],
         'Text view' => [
             'GtkTextView', 'GtkTextBuffer', 'GtkTextIter', 'GtkTextMark', 'GtkTextTag',
+            'GtkTextChildAnchor',
             'GtkTextTagTable', 'GtkWrapMode',
         ],
         'List views' => [

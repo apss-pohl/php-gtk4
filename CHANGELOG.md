@@ -94,6 +94,20 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **Dates, input devices and widgets inside text** — three types that were each blocking
+  several members:
+  - `GDateTime` with `GTimeZone`: `GtkCalendar::get_date()` and `select_day()` speak it, and so
+    do a cookie's expiry and a certificate's validity. A boxed value, so `add_years()` and the
+    rest answer with a new date and leave the original alone.
+  - `GdkDevice` and `GdkSeat`: which pointer or keyboard an event came from, reachable through
+    `GdkDisplay::get_default_seat()` and an event's `get_device()`. Both are abstract and belong
+    to the backend, so PHP never builds one — `EveryClassTest` segfaulted on a PHP subclass of
+    `GdkDevice` before the constructors were made private.
+  - `GtkTextChildAnchor`: a place in a text buffer that holds a widget rather than characters,
+    which makes `GtkTextBuffer::create_child_anchor()`, `insert_child_anchor()`,
+    `GtkTextIter::get_child_anchor()` and `GtkTextView::add_child_at_anchor()` reachable.
+    `new_with_replacement()` now refuses anything but exactly one character, as GTK asserts.
+
 - **Desktop notifications**: `GNotification` and `GApplication::send_notification()`. GTK 4 has
   no tray icon — `GtkStatusIcon` was removed — and this is what took over that job: a title, a
   body, an icon by name, and buttons wired to the application's own actions, handed to the

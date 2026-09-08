@@ -1084,6 +1084,9 @@ class GtkCalendar extends GtkWidget
     /** Remove all visual markers. */
     public function clear_marks(): void {}
 
+    /** Returns a `GDateTime` representing the shown year, month and the selected day. */
+    public function get_date(): GDateTime {}
+
     /** Gets the day of the selected date. */
     public function get_day(): int {}
 
@@ -1107,6 +1110,9 @@ class GtkCalendar extends GtkWidget
 
     /** Places a visual marker on a particular day of the current month. */
     public function mark_day(int $day): void {}
+
+    /** Switches to $date's year and month and select its day. */
+    public function select_day(GDateTime $date): void {}
 
     /** Sets the day for the selected date. */
     public function set_day(int $day): void {}
@@ -2443,6 +2449,9 @@ class GtkEventController extends GObject
     /** Returns the event that is currently being handled by the controller. */
     public function get_current_event(): ?GdkEvent {}
 
+    /** Returns the device of the event that is currently being handled by the controller. */
+    public function get_current_event_device(): ?GdkDevice {}
+
     /** Returns the modifier state of the event that is currently being handled by the controller. */
     public function get_current_event_state(): int {}
 
@@ -3271,6 +3280,9 @@ class GtkGesture extends GtkEventController
      * in $rect with the bounding box containing all active touches.
      */
     public function get_bounding_box(): ?GdkRectangle {}
+
+    /** Returns the logical `GdkDevice` that is currently operating on $gesture. */
+    public function get_device(): ?GdkDevice {}
 
     /**
      * Returns all gestures in the group of $gesture
@@ -8687,6 +8699,9 @@ class GtkTextBuffer extends GObject
     /** Copies the currently-selected text to a clipboard. */
     public function copy_clipboard(GdkClipboard $clipboard): void {}
 
+    /** Creates and inserts a child anchor. */
+    public function create_child_anchor(GtkTextIter $iter): GtkTextChildAnchor {}
+
     /** Creates a mark at position $where. */
     public function create_mark(?string $mark_name, GtkTextIter $where, bool $left_gravity): GtkTextMark {}
 
@@ -8755,6 +8770,9 @@ class GtkTextBuffer extends GObject
     /** Returns the mark that represents the cursor (insertion point). */
     public function get_insert(): GtkTextMark {}
 
+    /** Obtains the location of $anchor within $buffer. */
+    public function get_iter_at_child_anchor(GtkTextChildAnchor $anchor): GtkTextIter {}
+
     /** Initializes $iter to the start of the given line. */
     public function get_iter_at_line(int $line_number): ?GtkTextIter {}
 
@@ -8813,6 +8831,9 @@ class GtkTextBuffer extends GObject
 
     /** Returns the text in the range [$start,$end). */
     public function get_text(GtkTextIter $start, GtkTextIter $end, bool $include_hidden_chars): string {}
+
+    /** Inserts a child widget anchor into the text buffer at $iter. */
+    public function insert_child_anchor(GtkTextIter $iter, GtkTextChildAnchor $anchor): void {}
 
     /** Inserts an image into the text buffer at $iter. */
     public function insert_paintable(GtkTextIter $iter, GdkPaintable $paintable): void {}
@@ -8946,6 +8967,13 @@ class GtkTextBuffer extends GObject
     public function vfunc_end_user_action(): void {}
 
     /**
+     * Native `insert_child_anchor` (TextBufferClass.insert_child_anchor): the GTK implementation
+     * below any PHP subclass, for `parent::vfunc_insert_child_anchor()` from an override. Inserts
+     * a child widget anchor into the text buffer at $iter.
+     */
+    public function vfunc_insert_child_anchor(GtkTextIter $iter, GtkTextChildAnchor $anchor): void {}
+
+    /**
      * Native `insert_paintable` (TextBufferClass.insert_paintable): the GTK implementation below
      * any PHP subclass, for `parent::vfunc_insert_paintable()` from an override. Inserts an image
      * into the text buffer at $iter.
@@ -9007,6 +9035,18 @@ class GtkTextBuffer extends GObject
      * there is one.
      */
     public function vfunc_undo(): void {}
+}
+
+/**
+ * A `GtkTextChildAnchor` is a spot in a `GtkTextBuffer` where child widgets can be “anchored”.
+ */
+class GtkTextChildAnchor extends GObject
+{
+    /** Creates a new `GtkTextChildAnchor`. */
+    public function __construct() {}
+
+    /** Creates a new `GtkTextChildAnchor` with the given replacement character. */
+    public static function new_with_replacement(string $character): GtkTextChildAnchor {}
 }
 
 /**
@@ -9212,6 +9252,9 @@ final class GtkTextIter
      * delimiters.
      */
     public function get_chars_in_line(): int {}
+
+    /** If the location at $iter contains a child anchor, the anchor is returned. */
+    public function get_child_anchor(): ?GtkTextChildAnchor {}
 
     /** Returns the line number containing the iterator. */
     public function get_line(): int {}
@@ -9560,6 +9603,9 @@ class GtkTextView extends GtkWidget implements GtkScrollable
 
     /** Creates a new `GtkTextView` widget displaying the buffer $buffer. */
     public static function new_with_buffer(GtkTextBuffer $buffer): GtkTextView {}
+
+    /** Adds a child widget in the text buffer, at the given $anchor. */
+    public function add_child_at_anchor(GtkWidget $child, GtkTextChildAnchor $anchor): void {}
 
     /** Adds $child at a fixed coordinate in the `GtkTextView`'s text window. */
     public function add_overlay(GtkWidget $child, int $xpos, int $ypos): void {}

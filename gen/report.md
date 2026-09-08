@@ -52,6 +52,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `release_fd` — skip.txt: aborts the process (GLib-GIO:ERROR "priv->fd_refcount > 0") unless get_fd() was called first, and the refcount is not observable from here
 - `source_new` — return type GLib.Source
 
+## GDateTime
+
+- `PHP subclasses` — constructor argument tz is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GDateTime
+- `new_from_timeval_local` — deprecated (2.62)
+- `new_from_timeval_utc` — deprecated (2.62)
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `to_timeval` — deprecated (2.62)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
 ## GIcon
 
 - `deserialize` — static function on an interface (PHP interfaces have no bodies)
@@ -143,20 +152,23 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `PHP subclasses` — constructor argument iconname is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain GThemedIcon
 - `new_from_names` — parameter `iconnames` of type array (C array)
 
+## GTimeZone
+
+- `new` — deprecated (2.68)
+- `adjust_time` — inout parameter time
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
 ## GTlsCertificate
 
 - `new_from_pkcs12` — parameter `data` of type array (C array)
 - `get_ip_addresses` — list of Gio.InetAddress
-- `get_not_valid_after` — return type GLib.DateTime
-- `get_not_valid_before` — return type GLib.DateTime
 - `verify` — parameter `identity` of type Gio.SocketConnectable
 - `__construct` — skip.txt: abstract, and the properties belong to the TLS backend's subclass: g_object_new() on a PHP subtype answers every construct property with "invalid property id N ... in Php__..." (gio/gtlscertificate.c) and leaves an object with no certificate behind it - build one with new_from_pem() / new_from_file()
 - `vfunc verify` — parameter `identity` of type Gio.SocketConnectable
 - `property certificate` — property type GLib.ByteArray not mappable
 - `property dns-names` — property type GLib.PtrArray not mappable
 - `property ip-addresses` — property type GLib.PtrArray not mappable
-- `property not-valid-after` — property type GLib.DateTime not mappable
-- `property not-valid-before` — property type GLib.DateTime not mappable
 - `property pkcs12-data` — property type GLib.ByteArray not mappable
 - `property private-key` — property type GLib.ByteArray not mappable
 - `smoke test` — smoke-skip.txt: every factory needs a real certificate: 'smoke' is neither a PEM nor a
@@ -191,16 +203,21 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `vfunc write_mime_type_async` — parameter `stream` of type Gio.OutputStream
 - `vfunc write_mime_type_finish` — GError out parameter
 
+## GdkDevice
+
+- `get_device_tool` — return type Gdk.DeviceTool (not in the closure)
+- `get_surface_at_position` — return Gdk.Surface plus out parameters
+- `__construct` — skip.txt: abstract, and every device belongs to a GdkSeat that GDK built: g_object_new() on a PHP subtype has no backend device behind it, so the getters read uninitialised private state (EveryClassTest segfaulted on it). GdkSeat::get_pointer()/get_keyboard() and an event's get_device() are where one comes from
+- `property tool` — property type Gdk.DeviceTool not mappable
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## GdkDisplay
 
 - `create_gl_context` — return type Gdk.GLContext (not in the closure)
-- `device_is_grabbed` — parameter `device` of type Gdk.Device
 - `get_app_launch_context` — return type Gdk.AppLaunchContext (not in the closure)
-- `get_default_seat` — return type Gdk.Seat (not in the closure)
 - `get_dmabuf_formats` — return type Gdk.DmabufFormats
 - `get_setting` — parameter `value` of type GObject.Value
 - `get_startup_notification_id` — deprecated (4.10)
-- `list_seats` — list of Gdk.Seat
 - `map_keycode` — out parameter `keys` of type array
 - `map_keyval` — out parameter `keys` of type array
 - `notify_startup_complete` — deprecated (4.10)
@@ -211,20 +228,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GdkDrag
 
-- `begin` — parameter `device` of type Gdk.Device
-- `get_device` — return type Gdk.Device (not in the closure)
 - `__construct` — skip.txt: GDK creates a drag when a GtkDragSource starts one (get_drag()); a PHP subtype has no device and aborts the process in gdk_drag_set_property ("assertion failed: (priv->device != NULL)")
-- `property device` — property type Gdk.Device not mappable
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GdkDrop
 
-- `get_device` — return type Gdk.Device (not in the closure)
 - `read_finish` — return Gio.InputStream plus out parameters
 - `read_value_async` — parameter `type` of type Gdk.GType
 - `read_value_finish` — return type GObject.Value
 - `__construct` — skip.txt: the other end of the same drag, created by GDK; as Gdk.Drag
-- `property device` — property type Gdk.Device not mappable
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GdkMemoryTexture
@@ -287,16 +299,19 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `write` — skip.txt: a C byte array with its length; write_bytes() takes the same bytes as a PHP string
 
+## GdkSeat
+
+- `get_tools` — list of Gdk.DeviceTool
+- `__construct` — skip.txt: abstract, as GdkDevice: a seat belongs to a GdkDisplay, and GdkDisplay::get_default_seat() is where one comes from
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
 ## GdkSurface
 
 - `create_cairo_context` — return type Gdk.CairoContext (not in the closure)
 - `create_gl_context` — return type Gdk.GLContext (not in the closure)
 - `create_similar_surface` — deprecated (4.12)
 - `create_vulkan_context` — deprecated (4.14)
-- `get_device_cursor` — parameter `device` of type Gdk.Device
-- `get_device_position` — parameter `device` of type Gdk.Device
 - `get_frame_clock` — return type Gdk.FrameClock (not in the closure)
-- `set_device_cursor` — parameter `device` of type Gdk.Device
 - `set_input_region` — parameter `region` of type cairo.Region
 - `set_opaque_region` — parameter `region` of type cairo.Region
 - `translate_coordinates` — inout parameter x
@@ -574,11 +589,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `vfunc get_type_from_function` — return or argument type not convertible in a thunk
 - `vfunc get_type_from_name` — return or argument type not convertible in a thunk
 
-## GtkCalendar
-
-- `get_date` — return type GLib.DateTime
-- `select_day` — parameter `date` of type GLib.DateTime
-
 ## GtkCssProvider
 
 - `load_from_data` — deprecated (4.12)
@@ -628,10 +638,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `vfunc get_text` — parameter n_bytes is a pointer to a scalar without direction
 
-## GtkEventController
-
-- `get_current_event_device` — return type Gdk.Device (not in the closure)
-
 ## GtkEventControllerKey
 
 - `get_im_context` — return type Gtk.IMContext (not in the closure)
@@ -672,7 +678,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkGesture
 
-- `get_device` — return type Gdk.Device (not in the closure)
 - `set_sequence_state` — deprecated (4.10.)
 
 ## GtkGesturePan
@@ -890,13 +895,14 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkTextBuffer
 
-- `create_child_anchor` — return type Gtk.TextChildAnchor (not in the closure)
 - `create_tag` — varargs
-- `get_iter_at_child_anchor` — parameter `anchor` of type Gtk.TextChildAnchor
-- `insert_child_anchor` — parameter `anchor` of type Gtk.TextChildAnchor
 - `insert_with_tags` — varargs
 - `insert_with_tags_by_name` — varargs
-- `vfunc insert_child_anchor` — parameter `anchor` of type Gtk.TextChildAnchor
+
+## GtkTextChildAnchor
+
+- `get_deleted` — skip.txt: GTK warns ("hasn't been in a buffer yet") and answers TRUE for an anchor that was never inserted; the state it checks (the anchor's line segment) is private, so the binding cannot refuse the call before GTK complains
+- `get_widgets` — skip.txt: same: it needs the anchor to be in a buffer, and nothing here can ask whether it is
 
 ## GtkTextIter
 
@@ -904,7 +910,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `copy` — memory management belongs to the handle (clone / destructor)
 - `forward_find_char` — callback parameter (needs an override)
 - `free` — memory management belongs to the handle (clone / destructor)
-- `get_child_anchor` — return type Gtk.TextChildAnchor (not in the closure)
 - `get_language` — return type Pango.Language
 
 ## GtkTextTag
@@ -913,7 +918,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkTextView
 
-- `add_child_at_anchor` — parameter `anchor` of type Gtk.TextChildAnchor
 - `get_ltr_context` — return type Pango.Context (not in the closure)
 - `get_rtl_context` — return type Pango.Context (not in the closure)
 - `get_tabs` — return type Pango.TabArray
@@ -1017,8 +1021,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `applies_to_uri` — parameter `uri` of type GLib.Uri
 - `copy` — memory management belongs to the handle (clone / destructor)
 - `free` — memory management belongs to the handle (clone / destructor)
-- `get_expires` — return type GLib.DateTime
-- `set_expires` — parameter `expires` of type GLib.DateTime
 - `parse` — parameter `origin` of type GLib.Uri
 
 ## SoupMessageHeaders
@@ -1159,7 +1161,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## WebKitITPFirstParty
 
-- `get_last_update_time` — return type GLib.DateTime
 - `ref` — memory management belongs to the handle (clone / destructor)
 - `unref` — memory management belongs to the handle (clone / destructor)
 
@@ -1576,6 +1577,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkStyleProvider.cpp`
 - `Gtk/GtkText.cpp`
 - `Gtk/GtkTextBuffer.cpp`
+- `Gtk/GtkTextChildAnchor.cpp`
 - `Gtk/GtkTextIter.cpp`
 - `Gtk/GtkTextMark.cpp`
 - `Gtk/GtkTextTag.cpp`
@@ -1616,12 +1618,14 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gdk/GdkContentFormats.cpp`
 - `Gdk/GdkContentProvider.cpp`
 - `Gdk/GdkCursor.cpp`
+- `Gdk/GdkDevice.cpp`
 - `Gdk/GdkDisplay.cpp`
 - `Gdk/GdkDrag.cpp`
 - `Gdk/GdkDrop.cpp`
 - `Gdk/GdkMemoryTexture.cpp`
 - `Gdk/GdkMonitor.cpp`
 - `Gdk/GdkPaintable.cpp`
+- `Gdk/GdkSeat.cpp`
 - `Gdk/GdkSnapshot.cpp`
 - `Gdk/GdkSurface.cpp`
 - `Gdk/GdkTexture.cpp`
@@ -1755,6 +1759,9 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `JavaScriptCore/JSCValue.cpp`
 - `JavaScriptCore/JSCVirtualMachine.cpp`
 - `JavaScriptCore/JavaScriptCore.stub.php`
+- `GLib/GDateTime.cpp`
+- `GLib/GTimeZone.cpp`
+- `GLib/GLib.stub.php`
 - `Soup/SoupCookie.cpp`
 - `Soup/SoupMessageHeaders.cpp`
 - `Soup/Soup.stub.php`
@@ -1858,6 +1865,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkStringObjectSmokeTest.php`
 - `tests/Generated/GtkTextSmokeTest.php`
 - `tests/Generated/GtkTextBufferSmokeTest.php`
+- `tests/Generated/GtkTextChildAnchorSmokeTest.php`
 - `tests/Generated/GtkTextMarkSmokeTest.php`
 - `tests/Generated/GtkTextTagSmokeTest.php`
 - `tests/Generated/GtkTextTagTableSmokeTest.php`

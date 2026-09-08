@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: fbb6354d6df69bb4cfaed353cf88c2755a7bc90b */
+ * Stub hash: 9d19d7076d37744ab7314bec50e075f6fa3ab32d */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_change_state, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
@@ -822,6 +822,11 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GTlsCertificate_get_issuer_name arginfo_class_Gtk4_GAction_get_parameter_type
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GTlsCertificate_get_not_valid_after, 0, 0, Gtk4\\GDateTime, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GTlsCertificate_get_not_valid_before arginfo_class_Gtk4_GTlsCertificate_get_not_valid_after
+
 #define arginfo_class_Gtk4_GTlsCertificate_get_subject_name arginfo_class_Gtk4_GAction_get_parameter_type
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GTlsCertificate_is_same, 0, 1, _IS_BOOL, 0)
@@ -1006,6 +1011,8 @@ ZEND_METHOD(Gtk4_GTlsCertificate, list_new_from_file);
 ZEND_METHOD(Gtk4_GTlsCertificate, get_dns_names);
 ZEND_METHOD(Gtk4_GTlsCertificate, get_issuer);
 ZEND_METHOD(Gtk4_GTlsCertificate, get_issuer_name);
+ZEND_METHOD(Gtk4_GTlsCertificate, get_not_valid_after);
+ZEND_METHOD(Gtk4_GTlsCertificate, get_not_valid_before);
 ZEND_METHOD(Gtk4_GTlsCertificate, get_subject_name);
 ZEND_METHOD(Gtk4_GTlsCertificate, is_same);
 
@@ -1379,6 +1386,8 @@ static const zend_function_entry class_Gtk4_GTlsCertificate_methods[] = {
 	ZEND_ME(Gtk4_GTlsCertificate, get_dns_names, arginfo_class_Gtk4_GTlsCertificate_get_dns_names, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GTlsCertificate, get_issuer, arginfo_class_Gtk4_GTlsCertificate_get_issuer, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GTlsCertificate, get_issuer_name, arginfo_class_Gtk4_GTlsCertificate_get_issuer_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTlsCertificate, get_not_valid_after, arginfo_class_Gtk4_GTlsCertificate_get_not_valid_after, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTlsCertificate, get_not_valid_before, arginfo_class_Gtk4_GTlsCertificate_get_not_valid_before, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GTlsCertificate, get_subject_name, arginfo_class_Gtk4_GTlsCertificate_get_subject_name, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GTlsCertificate, is_same, arginfo_class_Gtk4_GTlsCertificate_is_same, ZEND_ACC_PUBLIC)
 	ZEND_FE_END

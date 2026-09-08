@@ -110,6 +110,18 @@ ZEND_METHOD(Gtk4_SoupCookie, get_domain) {
 }
 
 /**
+ * Gtk4\SoupCookie::get_expires(): ?GDateTime
+ *
+ * Gets $cookie's expiration time.
+ */
+ZEND_METHOD(Gtk4_SoupCookie, get_expires) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  SoupCookie *self = PHPGTK_BOXED_SELF(SoupCookie);
+  GDateTime *phpgtk_ret = soup_cookie_get_expires(self);
+  wrap_boxed(G_TYPE_DATE_TIME, phpgtk_ret, return_value);
+}
+
+/**
  * Gtk4\SoupCookie::get_http_only(): bool
  *
  * Gets $cookie's HttpOnly attribute.
@@ -194,6 +206,22 @@ ZEND_METHOD(Gtk4_SoupCookie, set_domain) {
   SoupCookie *self = PHPGTK_BOXED_SELF(SoupCookie);
   if (!phpgtk::check_utf8(domain, 1)) RETURN_THROWS();
   soup_cookie_set_domain(self, ZSTR_VAL(domain));
+}
+
+/**
+ * Gtk4\SoupCookie::set_expires(GDateTime $expires): void
+ *
+ * Sets $cookie's expiration time to $expires.
+ */
+ZEND_METHOD(Gtk4_SoupCookie, set_expires) {
+  zval *expires;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(expires, boxed_class_for_type(G_TYPE_DATE_TIME)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  SoupCookie *self = PHPGTK_BOXED_SELF(SoupCookie);
+  gpointer expires_b = unwrap_boxed(expires, G_TYPE_DATE_TIME);
+  if (expires_b == nullptr) RETURN_THROWS();
+  soup_cookie_set_expires(self, static_cast<GDateTime *>(expires_b));
 }
 
 /**

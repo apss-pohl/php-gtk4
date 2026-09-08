@@ -45,7 +45,7 @@ final class WrapTest extends GtkTestCase
         // GtkBuilder instantiates any GType GTK knows, bound here or not - the only way to get a
         // handle on an unregistered type without one existing in the binding. The candidates are
         // tried in order so that a later wave binding one does not leave the test with nothing.
-        $object = self::builtFromUi(['GtkPrintSettings', 'GtkPageSetup', 'GtkTextChildAnchor']);
+        $object = self::builtFromUi(['GtkWindowGroup', 'GtkMountOperation', 'GtkTreeListRowSorter']);
         self::assertInstanceOf(GObject::class, $object);
         self::assertSame(GObject::class, $object::class, 'the nearest registered ancestor is GObject');
         // A GObject handle is a handle like any other: identity holds while PHP holds it.

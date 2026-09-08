@@ -11,6 +11,20 @@
 namespace Gtk4;
 
 /**
+ * `PangoDirection` represents a direction in the Unicode bidirectional algorithm.
+ */
+enum PangoDirection: int
+{
+    case Ltr = 0;
+    case Rtl = 1;
+    case TtbLtr = 2;
+    case TtbRtl = 3;
+    case WeakLtr = 4;
+    case WeakRtl = 5;
+    case Neutral = 6;
+}
+
+/**
  * `PangoEllipsizeMode` describes what sort of ellipsization should be applied to text.
  */
 enum PangoEllipsizeMode: int

@@ -280,6 +280,12 @@ namespace phpgtk {
 void register_GdkPixbufFormat(zend_class_entry *ce);
 }  // namespace phpgtk
 void register_vfuncs_GdkPixbufLoader();
+namespace phpgtk {
+void register_GDateTime(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GTimeZone(zend_class_entry *ce);
+}  // namespace phpgtk
 
 #ifdef PHPGTK_WITH_WEBKIT
 #include <webkit/webkit.h>

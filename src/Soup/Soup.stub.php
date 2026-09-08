@@ -28,6 +28,9 @@ final class SoupCookie
     /** Gets $cookie's domain. */
     public function get_domain(): string {}
 
+    /** Gets $cookie's expiration time. */
+    public function get_expires(): ?GDateTime {}
+
     /** Gets $cookie's HttpOnly attribute. */
     public function get_http_only(): bool {}
 
@@ -48,6 +51,9 @@ final class SoupCookie
 
     /** Sets $cookie's domain to $domain. */
     public function set_domain(string $domain): void {}
+
+    /** Sets $cookie's expiration time to $expires. */
+    public function set_expires(GDateTime $expires): void {}
 
     /** Sets $cookie's HttpOnly attribute to $http_only. */
     public function set_http_only(bool $http_only): void {}

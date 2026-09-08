@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 6ec812837a9964d016d2b77deb2c4b58c2cb9593 */
+ * Stub hash: 6f9f7635fad7abb267baf51ec28d323d9118e629 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_SoupCookie___construct, 0, 0, 5)
 	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
@@ -20,6 +20,9 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_SoupCookie_get_domain, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_SoupCookie_get_expires, 0, 0, Gtk4\\GDateTime, 1)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_SoupCookie_get_http_only, 0, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
@@ -36,6 +39,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_SoupCookie_set_domain, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, domain, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_SoupCookie_set_expires, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, expires, Gtk4\\GDateTime, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_SoupCookie_set_http_only, 0, 1, IS_VOID, 0)
@@ -149,6 +156,7 @@ ZEND_METHOD(Gtk4_SoupCookie, __construct);
 ZEND_METHOD(Gtk4_SoupCookie, domain_matches);
 ZEND_METHOD(Gtk4_SoupCookie, equal);
 ZEND_METHOD(Gtk4_SoupCookie, get_domain);
+ZEND_METHOD(Gtk4_SoupCookie, get_expires);
 ZEND_METHOD(Gtk4_SoupCookie, get_http_only);
 ZEND_METHOD(Gtk4_SoupCookie, get_name);
 ZEND_METHOD(Gtk4_SoupCookie, get_path);
@@ -156,6 +164,7 @@ ZEND_METHOD(Gtk4_SoupCookie, get_same_site_policy);
 ZEND_METHOD(Gtk4_SoupCookie, get_secure);
 ZEND_METHOD(Gtk4_SoupCookie, get_value);
 ZEND_METHOD(Gtk4_SoupCookie, set_domain);
+ZEND_METHOD(Gtk4_SoupCookie, set_expires);
 ZEND_METHOD(Gtk4_SoupCookie, set_http_only);
 ZEND_METHOD(Gtk4_SoupCookie, set_max_age);
 ZEND_METHOD(Gtk4_SoupCookie, set_name);
@@ -192,6 +201,7 @@ static const zend_function_entry class_Gtk4_SoupCookie_methods[] = {
 	ZEND_ME(Gtk4_SoupCookie, domain_matches, arginfo_class_Gtk4_SoupCookie_domain_matches, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_SoupCookie, equal, arginfo_class_Gtk4_SoupCookie_equal, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_SoupCookie, get_domain, arginfo_class_Gtk4_SoupCookie_get_domain, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_SoupCookie, get_expires, arginfo_class_Gtk4_SoupCookie_get_expires, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_SoupCookie, get_http_only, arginfo_class_Gtk4_SoupCookie_get_http_only, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_SoupCookie, get_name, arginfo_class_Gtk4_SoupCookie_get_name, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_SoupCookie, get_path, arginfo_class_Gtk4_SoupCookie_get_path, ZEND_ACC_PUBLIC)
@@ -199,6 +209,7 @@ static const zend_function_entry class_Gtk4_SoupCookie_methods[] = {
 	ZEND_ME(Gtk4_SoupCookie, get_secure, arginfo_class_Gtk4_SoupCookie_get_secure, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_SoupCookie, get_value, arginfo_class_Gtk4_SoupCookie_get_value, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_SoupCookie, set_domain, arginfo_class_Gtk4_SoupCookie_set_domain, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_SoupCookie, set_expires, arginfo_class_Gtk4_SoupCookie_set_expires, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_SoupCookie, set_http_only, arginfo_class_Gtk4_SoupCookie_set_http_only, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_SoupCookie, set_max_age, arginfo_class_Gtk4_SoupCookie_set_max_age, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_SoupCookie, set_name, arginfo_class_Gtk4_SoupCookie_set_name, ZEND_ACC_PUBLIC)

@@ -50,6 +50,26 @@ ZEND_METHOD(Gtk4_GtkTextView, new_with_buffer) {
 }
 
 /**
+ * Gtk4\GtkTextView::add_child_at_anchor(GtkWidget $child, GtkTextChildAnchor $anchor): void
+ *
+ * Adds a child widget in the text buffer, at the given $anchor.
+ */
+ZEND_METHOD(Gtk4_GtkTextView, add_child_at_anchor) {
+  zval *child;
+  zval *anchor;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(child, class_for_gtype(GTK_TYPE_WIDGET))
+  Z_PARAM_OBJECT_OF_CLASS(anchor, class_for_gtype(GTK_TYPE_TEXT_CHILD_ANCHOR))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkTextView *self = PHPGTK_SELF(GtkTextView, GTK_TYPE_TEXT_VIEW);
+  GObject *child_o = unwrap(child, GTK_TYPE_WIDGET);
+  if (child_o == nullptr) RETURN_THROWS();
+  GObject *anchor_o = unwrap(anchor, GTK_TYPE_TEXT_CHILD_ANCHOR);
+  if (anchor_o == nullptr) RETURN_THROWS();
+  gtk_text_view_add_child_at_anchor(self, GTK_WIDGET(child_o), GTK_TEXT_CHILD_ANCHOR(anchor_o));
+}
+
+/**
  * Gtk4\GtkTextView::add_overlay(GtkWidget $child, int $xpos, int $ypos): void
  *
  * Adds $child at a fixed coordinate in the `GtkTextView`'s text window.

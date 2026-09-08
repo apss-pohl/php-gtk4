@@ -263,6 +263,79 @@ class GdkCursor extends GObject
 }
 
 /**
+ * The `GdkDevice` object represents an input device, such as a keyboard, a mouse, or a touchpad.
+ *
+ * @property-read bool $caps_lock_state
+ * @property-read PangoDirection $direction
+ * @property ?GdkDisplay $display
+ * @property-read bool $has_bidi_layouts
+ * @property bool $has_cursor
+ * @property-read int $modifier_state
+ * @property-read int $n_axes
+ * @property ?string $name
+ * @property-read bool $num_lock_state
+ * @property int $num_touches
+ * @property ?string $product_id
+ * @property-read bool $scroll_lock_state
+ * @property ?GdkSeat $seat
+ * @property GdkInputSource $source
+ * @property ?string $vendor_id
+ */
+class GdkDevice extends GObject
+{
+    /** GdkDevice is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Retrieves whether the Caps Lock modifier of the keyboard is locked. */
+    public function get_caps_lock_state(): bool {}
+
+    /** Returns the direction of effective layout of the keyboard. */
+    public function get_direction(): PangoDirection {}
+
+    /** Returns the `GdkDisplay` to which $device pertains. */
+    public function get_display(): GdkDisplay {}
+
+    /** Determines whether the pointer follows device motion. */
+    public function get_has_cursor(): bool {}
+
+    /** Retrieves the current modifier state of the keyboard. */
+    public function get_modifier_state(): int {}
+
+    /** The name of the device, suitable for showing in a user interface. */
+    public function get_name(): string {}
+
+    /** Retrieves whether the Num Lock modifier of the keyboard is locked. */
+    public function get_num_lock_state(): bool {}
+
+    /** Retrieves the number of touch points associated to $device. */
+    public function get_num_touches(): int {}
+
+    /** Returns the product ID of this device. */
+    public function get_product_id(): ?string {}
+
+    /** Retrieves whether the Scroll Lock modifier of the keyboard is locked. */
+    public function get_scroll_lock_state(): bool {}
+
+    /** Returns the `GdkSeat` the device belongs to. */
+    public function get_seat(): GdkSeat {}
+
+    /** Determines the type of the device. */
+    public function get_source(): GdkInputSource {}
+
+    /** Returns the timestamp of the last activity for this device. */
+    public function get_timestamp(): int {}
+
+    /** Returns the vendor ID of this device. */
+    public function get_vendor_id(): ?string {}
+
+    /**
+     * Determines if layouts for both right-to-left and left-to-right languages are in use on the
+     * keyboard.
+     */
+    public function has_bidi_layouts(): bool {}
+}
+
+/**
  * `GdkDisplay` objects are the GDK representation of a workstation.
  *
  * @property-read bool $composited
@@ -287,11 +360,17 @@ class GdkDisplay extends GObject
     /** Closes the connection to the windowing system for the given display. */
     public function close(): void {}
 
+    /** Returns `true` if there is an ongoing grab on $device for $display. */
+    public function device_is_grabbed(GdkDevice $device): bool {}
+
     /** Flushes any requests queued for the windowing system. */
     public function flush(): void {}
 
     /** Gets the clipboard used for copy/paste operations. */
     public function get_clipboard(): GdkClipboard {}
+
+    /** Returns the default `GdkSeat` for this display. */
+    public function get_default_seat(): ?GdkSeat {}
 
     /** Gets the monitor in which the largest area of $surface resides. */
     public function get_monitor_at_surface(GdkSurface $surface): ?GdkMonitor {}
@@ -316,6 +395,13 @@ class GdkDisplay extends GObject
 
     /** Returns whether surfaces on this $display are created with an alpha channel. */
     public function is_rgba(): bool {}
+
+    /**
+     * Returns the list of seats known to $display.
+     *
+     * @return list<GdkSeat>
+     */
+    public function list_seats(): array {}
 
     /**
      * Checks that OpenGL is available for $self and ensures that it is properly initialized. When
@@ -348,6 +434,7 @@ class GdkDisplay extends GObject
  *
  * @property int $actions
  * @property ?GdkContentProvider $content
+ * @property ?GdkDevice $device
  * @property-read ?GdkDisplay $display
  * @property ?GdkContentFormats $formats
  * @property int $selected_action
@@ -358,6 +445,9 @@ class GdkDrag extends GObject
     /** GdkDrag is abstract in GTK: instances come from GTK, never from `new`. */
     private function __construct() {}
 
+    /** Starts a drag and creates a new drag context for it. */
+    public static function begin(GdkSurface $surface, GdkDevice $device, GdkContentProvider $content, int $actions, float $dx, float $dy): ?GdkDrag {}
+
     /** Informs GDK that the drop ended. */
     public function drop_done(bool $success): void {}
 
@@ -366,6 +456,9 @@ class GdkDrag extends GObject
 
     /** Returns the `GdkContentProvider` associated to the `GdkDrag` object. */
     public function get_content(): GdkContentProvider {}
+
+    /** Returns the `GdkDevice` associated to the `GdkDrag` object. */
+    public function get_device(): GdkDevice {}
 
     /** Gets the `GdkDisplay` that the drag object was created for. */
     public function get_display(): GdkDisplay {}
@@ -412,6 +505,7 @@ enum GdkDragCancelReason: int
  * The `GdkDrop` object represents the target of an ongoing DND operation.
  *
  * @property int $actions
+ * @property ?GdkDevice $device
  * @property-read ?GdkDisplay $display
  * @property ?GdkDrag $drag
  * @property ?GdkContentFormats $formats
@@ -427,6 +521,9 @@ class GdkDrop extends GObject
 
     /** Returns the possible actions for this `GdkDrop`. */
     public function get_actions(): int {}
+
+    /** Returns the `GdkDevice` performing the drop. */
+    public function get_device(): GdkDevice {}
 
     /** Gets the `GdkDisplay` that $self was created for. */
     public function get_display(): GdkDisplay {}
@@ -488,6 +585,20 @@ enum GdkEventType: int
     case PadGroupMode = 27;
     case TouchpadHold = 28;
     case EventLast = 29;
+}
+
+/**
+ * An enumeration describing the type of an input device in general terms.
+ */
+enum GdkInputSource: int
+{
+    case Mouse = 0;
+    case Pen = 1;
+    case Keyboard = 2;
+    case Touchscreen = 3;
+    case Touchpad = 4;
+    case Trackpoint = 5;
+    case TabletPad = 6;
 }
 
 /**
@@ -779,6 +890,51 @@ enum GdkScrollUnit: int
 }
 
 /**
+ * The `GdkSeat` object represents a collection of input devices that belong to a user.
+ *
+ * @property ?GdkDisplay $display
+ */
+class GdkSeat extends GObject
+{
+    /** GdkSeat is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Returns the capabilities this `GdkSeat` currently has. */
+    public function get_capabilities(): int {}
+
+    /**
+     * Returns the devices that match the given capabilities.
+     *
+     * @return list<GdkDevice>
+     */
+    public function get_devices(int $capabilities): array {}
+
+    /** Returns the `GdkDisplay` this seat belongs to. */
+    public function get_display(): GdkDisplay {}
+
+    /** Returns the device that routes keyboard events. */
+    public function get_keyboard(): ?GdkDevice {}
+
+    /** Returns the device that routes pointer events. */
+    public function get_pointer(): ?GdkDevice {}
+}
+
+/**
+ * Flags describing the seat capabilities.
+ */
+final class GdkSeatCapabilities
+{
+    public const int NONE = 0;
+    public const int POINTER = 1;
+    public const int TOUCH = 2;
+    public const int TABLET_STYLUS = 4;
+    public const int KEYBOARD = 8;
+    public const int TABLET_PAD = 16;
+    public const int ALL_POINTING = 7;
+    public const int ALL = 31;
+}
+
+/**
  * Base type for snapshot operations.
  */
 class GdkSnapshot extends GObject
@@ -835,6 +991,18 @@ class GdkSurface extends GObject
     /** Retrieves a `GdkCursor` pointer for the cursor currently set on the `GdkSurface`. */
     public function get_cursor(): ?GdkCursor {}
 
+    /**
+     * Retrieves a `GdkCursor` pointer for the $device currently set on the specified `GdkSurface`.
+     */
+    public function get_device_cursor(GdkDevice $device): ?GdkCursor {}
+
+    /**
+     * Obtains the current device position and modifier state.
+     *
+     * @return array{float, float, int}|null
+     */
+    public function get_device_position(GdkDevice $device): ?array {}
+
     /** Gets the `GdkDisplay` associated with a `GdkSurface`. */
     public function get_display(): GdkDisplay {}
 
@@ -870,6 +1038,9 @@ class GdkSurface extends GObject
 
     /** Sets the default mouse pointer for a `GdkSurface`. */
     public function set_cursor(?GdkCursor $cursor): void {}
+
+    /** Sets a specific `GdkCursor` for a given device when it gets inside $surface. */
+    public function set_device_cursor(GdkDevice $device, GdkCursor $cursor): void {}
 }
 
 /**

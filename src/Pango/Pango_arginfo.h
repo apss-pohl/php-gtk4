@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 05f42fa992ada7d3238bceca9caffca84b56a438 */
+ * Stub hash: d6b2b2b0623f4e546cf222d67237650c815bf9ae */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_PangoFontDescription___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -179,6 +179,41 @@ static const zend_function_entry class_Gtk4_PangoFontDescription_methods[] = {
 	ZEND_ME(Gtk4_PangoFontDescription, from_string, arginfo_class_Gtk4_PangoFontDescription_from_string, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_FE_END
 };
+
+static zend_class_entry *register_class_Gtk4_PangoDirection(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\PangoDirection", IS_LONG, NULL);
+
+	zval enum_case_Ltr_value;
+	ZVAL_LONG(&enum_case_Ltr_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Ltr", &enum_case_Ltr_value);
+
+	zval enum_case_Rtl_value;
+	ZVAL_LONG(&enum_case_Rtl_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Rtl", &enum_case_Rtl_value);
+
+	zval enum_case_TtbLtr_value;
+	ZVAL_LONG(&enum_case_TtbLtr_value, 2);
+	zend_enum_add_case_cstr(class_entry, "TtbLtr", &enum_case_TtbLtr_value);
+
+	zval enum_case_TtbRtl_value;
+	ZVAL_LONG(&enum_case_TtbRtl_value, 3);
+	zend_enum_add_case_cstr(class_entry, "TtbRtl", &enum_case_TtbRtl_value);
+
+	zval enum_case_WeakLtr_value;
+	ZVAL_LONG(&enum_case_WeakLtr_value, 4);
+	zend_enum_add_case_cstr(class_entry, "WeakLtr", &enum_case_WeakLtr_value);
+
+	zval enum_case_WeakRtl_value;
+	ZVAL_LONG(&enum_case_WeakRtl_value, 5);
+	zend_enum_add_case_cstr(class_entry, "WeakRtl", &enum_case_WeakRtl_value);
+
+	zval enum_case_Neutral_value;
+	ZVAL_LONG(&enum_case_Neutral_value, 6);
+	zend_enum_add_case_cstr(class_entry, "Neutral", &enum_case_Neutral_value);
+
+	return class_entry;
+}
 
 static zend_class_entry *register_class_Gtk4_PangoEllipsizeMode(void)
 {

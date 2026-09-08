@@ -2,6 +2,7 @@
 // Gtk4\GdkDisplay
 #include "php_gtk4.h"
 #include "core/object.h"
+#include "core/collections.h"
 #include "core/gerror.h"
 
 using namespace phpgtk;
@@ -67,6 +68,22 @@ ZEND_METHOD(Gtk4_GdkDisplay, close) {
 }
 
 /**
+ * Gtk4\GdkDisplay::device_is_grabbed(GdkDevice $device): bool
+ *
+ * Returns `true` if there is an ongoing grab on $device for $display.
+ */
+ZEND_METHOD(Gtk4_GdkDisplay, device_is_grabbed) {
+  zval *device;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(device, class_for_gtype(GDK_TYPE_DEVICE))
+  ZEND_PARSE_PARAMETERS_END();
+  GdkDisplay *self = PHPGTK_SELF(GdkDisplay, GDK_TYPE_DISPLAY);
+  GObject *device_o = unwrap(device, GDK_TYPE_DEVICE);
+  if (device_o == nullptr) RETURN_THROWS();
+  RETURN_BOOL(gdk_display_device_is_grabbed(self, GDK_DEVICE(device_o)));
+}
+
+/**
  * Gtk4\GdkDisplay::flush(): void
  *
  * Flushes any requests queued for the windowing system.
@@ -86,6 +103,18 @@ ZEND_METHOD(Gtk4_GdkDisplay, get_clipboard) {
   ZEND_PARSE_PARAMETERS_NONE();
   GdkDisplay *self = PHPGTK_SELF(GdkDisplay, GDK_TYPE_DISPLAY);
   GdkClipboard *phpgtk_ret = gdk_display_get_clipboard(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
+ * Gtk4\GdkDisplay::get_default_seat(): ?GdkSeat
+ *
+ * Returns the default `GdkSeat` for this display.
+ */
+ZEND_METHOD(Gtk4_GdkDisplay, get_default_seat) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GdkDisplay *self = PHPGTK_SELF(GdkDisplay, GDK_TYPE_DISPLAY);
+  GdkSeat *phpgtk_ret = gdk_display_get_default_seat(self);
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
@@ -175,6 +204,17 @@ ZEND_METHOD(Gtk4_GdkDisplay, is_rgba) {
   ZEND_PARSE_PARAMETERS_NONE();
   GdkDisplay *self = PHPGTK_SELF(GdkDisplay, GDK_TYPE_DISPLAY);
   RETURN_BOOL(gdk_display_is_rgba(self));
+}
+
+/**
+ * Gtk4\GdkDisplay::list_seats(): array
+ *
+ * Returns the list of seats known to $display.
+ */
+ZEND_METHOD(Gtk4_GdkDisplay, list_seats) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GdkDisplay *self = PHPGTK_SELF(GdkDisplay, GDK_TYPE_DISPLAY);
+  glist_to_php(gdk_display_list_seats(self), GDK_TYPE_SEAT, Transfer::Container, return_value);
 }
 
 /**

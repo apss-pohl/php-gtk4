@@ -1035,6 +1035,9 @@ final class WebKitITPFirstParty
     /** Get the domain name of $itp_first_party. */
     public function get_domain(): string {}
 
+    /** Get the last time a #WebKitITPThirdParty has been seen under $itp_first_party. */
+    public function get_last_update_time(): GDateTime {}
+
     /** Get whether $itp_first_party has granted website data access to its #WebKitITPThirdParty. */
     public function get_website_data_access_allowed(): bool {}
 }

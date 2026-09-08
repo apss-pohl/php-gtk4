@@ -46,6 +46,18 @@ ZEND_METHOD(Gtk4_GdkDrop, get_actions) {
 }
 
 /**
+ * Gtk4\GdkDrop::get_device(): GdkDevice
+ *
+ * Returns the `GdkDevice` performing the drop.
+ */
+ZEND_METHOD(Gtk4_GdkDrop, get_device) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GdkDrop *self = PHPGTK_SELF(GdkDrop, GDK_TYPE_DROP);
+  GdkDevice *phpgtk_ret = gdk_drop_get_device(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\GdkDrop::get_display(): GdkDisplay
  *
  * Gets the `GdkDisplay` that $self was created for.

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: f0c4d051de6c7616402ede1c15e3f430ec159352 */
+ * Stub hash: 398aec18dca716ef59e49d3dca65f81774230718 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -734,6 +734,9 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkCalendar_clear_marks arginfo_class_Gtk4_GtkAboutDialog_realize
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkCalendar_get_date, 0, 0, Gtk4\\GDateTime, 0)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_GtkCalendar_get_day arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkCalendar_get_day_is_marked, 0, 1, _IS_BOOL, 0)
@@ -752,6 +755,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkCalendar_mark_day, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, day, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkCalendar_select_day, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, date, Gtk4\\GDateTime, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkCalendar_set_day arginfo_class_Gtk4_GtkCalendar_mark_day
@@ -1649,6 +1656,9 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkEventController_get_current_event, 0, 0, Gtk4\\GdkEvent, 1)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkEventController_get_current_event_device, 0, 0, Gtk4\\GdkDevice, 1)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_GtkEventController_get_current_event_state arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
 
 #define arginfo_class_Gtk4_GtkEventController_get_current_event_time arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
@@ -2109,6 +2119,8 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkGesture_get_bounding_box, 0, 0, Gtk4\\GdkRectangle, 1)
 ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkGesture_get_device arginfo_class_Gtk4_GtkEventController_get_current_event_device
 
 #define arginfo_class_Gtk4_GtkGesture_get_group arginfo_class_Gtk4_GtkAboutDialog_get_artists
 
@@ -5326,6 +5338,10 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkTextBuffer_copy_clipboard arginfo_class_Gtk4_GtkTextBuffer_add_selection_clipboard
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_create_child_anchor, 0, 1, Gtk4\\GtkTextChildAnchor, 0)
+	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_create_mark, 0, 3, Gtk4\\GtkTextMark, 0)
 	ZEND_ARG_TYPE_INFO(0, mark_name, IS_STRING, 1)
 	ZEND_ARG_OBJ_INFO(0, where, Gtk4\\GtkTextIter, 0)
@@ -5381,6 +5397,10 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_insert, 0, 0, Gtk4\\GtkTextMark, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_child_anchor, 0, 1, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, anchor, Gtk4\\GtkTextChildAnchor, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_line, 0, 1, Gtk4\\GtkTextIter, 1)
 	ZEND_ARG_TYPE_INFO(0, line_number, IS_LONG, 0)
 ZEND_END_ARG_INFO()
@@ -5432,6 +5452,11 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_get_tag_
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkTextBuffer_get_text arginfo_class_Gtk4_GtkTextBuffer_get_slice
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_insert_child_anchor, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 0)
+	ZEND_ARG_OBJ_INFO(0, anchor, Gtk4\\GtkTextChildAnchor, 0)
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_insert_paintable, 0, 2, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, iter, Gtk4\\GtkTextIter, 0)
@@ -5535,6 +5560,8 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkTextBuffer_vfunc_end_user_action arginfo_class_Gtk4_GtkAboutDialog_realize
 
+#define arginfo_class_Gtk4_GtkTextBuffer_vfunc_insert_child_anchor arginfo_class_Gtk4_GtkTextBuffer_insert_child_anchor
+
 #define arginfo_class_Gtk4_GtkTextBuffer_vfunc_insert_paintable arginfo_class_Gtk4_GtkTextBuffer_insert_paintable
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextBuffer_vfunc_insert_text, 0, 3, IS_VOID, 0)
@@ -5559,6 +5586,12 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GtkTextBuffer_vfunc_remove_tag arginfo_class_Gtk4_GtkTextBuffer_apply_tag
 
 #define arginfo_class_Gtk4_GtkTextBuffer_vfunc_undo arginfo_class_Gtk4_GtkAboutDialog_realize
+
+#define arginfo_class_Gtk4_GtkTextChildAnchor___construct arginfo_class_Gtk4_GtkAboutDialog___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextChildAnchor_new_with_replacement, 0, 1, Gtk4\\GtkTextChildAnchor, 0)
+	ZEND_ARG_TYPE_INFO(0, character, IS_STRING, 0)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkTextIter___construct arginfo_class_Gtk4_GtkAboutDialog___construct
 
@@ -5682,6 +5715,9 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GtkTextIter_get_char arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
 
 #define arginfo_class_Gtk4_GtkTextIter_get_chars_in_line arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextIter_get_child_anchor, 0, 0, Gtk4\\GtkTextChildAnchor, 1)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkTextIter_get_line arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
 
@@ -5818,6 +5854,11 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextView_new_with_buffer, 0, 1, Gtk4\\GtkTextView, 0)
 	ZEND_ARG_OBJ_INFO(0, buffer, Gtk4\\GtkTextBuffer, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_add_child_at_anchor, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, child, Gtk4\\GtkWidget, 0)
+	ZEND_ARG_OBJ_INFO(0, anchor, Gtk4\\GtkTextChildAnchor, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkTextView_add_overlay, 0, 3, IS_VOID, 0)
@@ -7066,6 +7107,7 @@ ZEND_METHOD(Gtk4_GtkButton, vfunc_activate);
 ZEND_METHOD(Gtk4_GtkButton, vfunc_clicked);
 ZEND_METHOD(Gtk4_GtkCalendar, __construct);
 ZEND_METHOD(Gtk4_GtkCalendar, clear_marks);
+ZEND_METHOD(Gtk4_GtkCalendar, get_date);
 ZEND_METHOD(Gtk4_GtkCalendar, get_day);
 ZEND_METHOD(Gtk4_GtkCalendar, get_day_is_marked);
 ZEND_METHOD(Gtk4_GtkCalendar, get_month);
@@ -7074,6 +7116,7 @@ ZEND_METHOD(Gtk4_GtkCalendar, get_show_heading);
 ZEND_METHOD(Gtk4_GtkCalendar, get_show_week_numbers);
 ZEND_METHOD(Gtk4_GtkCalendar, get_year);
 ZEND_METHOD(Gtk4_GtkCalendar, mark_day);
+ZEND_METHOD(Gtk4_GtkCalendar, select_day);
 ZEND_METHOD(Gtk4_GtkCalendar, set_day);
 ZEND_METHOD(Gtk4_GtkCalendar, set_month);
 ZEND_METHOD(Gtk4_GtkCalendar, set_show_day_names);
@@ -7345,6 +7388,7 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, vfunc_insert_text);
 ZEND_METHOD(Gtk4_GtkEntryBuffer, vfunc_inserted_text);
 ZEND_METHOD(Gtk4_GtkEventController, __construct);
 ZEND_METHOD(Gtk4_GtkEventController, get_current_event);
+ZEND_METHOD(Gtk4_GtkEventController, get_current_event_device);
 ZEND_METHOD(Gtk4_GtkEventController, get_current_event_state);
 ZEND_METHOD(Gtk4_GtkEventController, get_current_event_time);
 ZEND_METHOD(Gtk4_GtkEventController, get_name);
@@ -7515,6 +7559,7 @@ ZEND_METHOD(Gtk4_GtkFrame, set_label_align);
 ZEND_METHOD(Gtk4_GtkFrame, set_label_widget);
 ZEND_METHOD(Gtk4_GtkGesture, __construct);
 ZEND_METHOD(Gtk4_GtkGesture, get_bounding_box);
+ZEND_METHOD(Gtk4_GtkGesture, get_device);
 ZEND_METHOD(Gtk4_GtkGesture, get_group);
 ZEND_METHOD(Gtk4_GtkGesture, get_last_event);
 ZEND_METHOD(Gtk4_GtkGesture, get_last_updated_sequence);
@@ -8485,6 +8530,7 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, backspace);
 ZEND_METHOD(Gtk4_GtkTextBuffer, begin_irreversible_action);
 ZEND_METHOD(Gtk4_GtkTextBuffer, begin_user_action);
 ZEND_METHOD(Gtk4_GtkTextBuffer, copy_clipboard);
+ZEND_METHOD(Gtk4_GtkTextBuffer, create_child_anchor);
 ZEND_METHOD(Gtk4_GtkTextBuffer, create_mark);
 ZEND_METHOD(Gtk4_GtkTextBuffer, cut_clipboard);
 ZEND_METHOD(Gtk4_GtkTextBuffer, delete);
@@ -8502,6 +8548,7 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, get_enable_undo);
 ZEND_METHOD(Gtk4_GtkTextBuffer, get_end_iter);
 ZEND_METHOD(Gtk4_GtkTextBuffer, get_has_selection);
 ZEND_METHOD(Gtk4_GtkTextBuffer, get_insert);
+ZEND_METHOD(Gtk4_GtkTextBuffer, get_iter_at_child_anchor);
 ZEND_METHOD(Gtk4_GtkTextBuffer, get_iter_at_line);
 ZEND_METHOD(Gtk4_GtkTextBuffer, get_iter_at_line_index);
 ZEND_METHOD(Gtk4_GtkTextBuffer, get_iter_at_line_offset);
@@ -8518,6 +8565,7 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, get_slice);
 ZEND_METHOD(Gtk4_GtkTextBuffer, get_start_iter);
 ZEND_METHOD(Gtk4_GtkTextBuffer, get_tag_table);
 ZEND_METHOD(Gtk4_GtkTextBuffer, get_text);
+ZEND_METHOD(Gtk4_GtkTextBuffer, insert_child_anchor);
 ZEND_METHOD(Gtk4_GtkTextBuffer, insert_paintable);
 ZEND_METHOD(Gtk4_GtkTextBuffer, insert_range);
 ZEND_METHOD(Gtk4_GtkTextBuffer, insert_range_interactive);
@@ -8546,6 +8594,7 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_begin_user_action);
 ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_changed);
 ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_delete_range);
 ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_end_user_action);
+ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_insert_child_anchor);
 ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_insert_paintable);
 ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_insert_text);
 ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_mark_deleted);
@@ -8555,6 +8604,8 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_paste_done);
 ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_redo);
 ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_remove_tag);
 ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_undo);
+ZEND_METHOD(Gtk4_GtkTextChildAnchor, __construct);
+ZEND_METHOD(Gtk4_GtkTextChildAnchor, new_with_replacement);
 ZEND_METHOD(Gtk4_GtkTextIter, __construct);
 ZEND_METHOD(Gtk4_GtkTextIter, assign);
 ZEND_METHOD(Gtk4_GtkTextIter, backward_char);
@@ -8607,6 +8658,7 @@ ZEND_METHOD(Gtk4_GtkTextIter, get_buffer);
 ZEND_METHOD(Gtk4_GtkTextIter, get_bytes_in_line);
 ZEND_METHOD(Gtk4_GtkTextIter, get_char);
 ZEND_METHOD(Gtk4_GtkTextIter, get_chars_in_line);
+ZEND_METHOD(Gtk4_GtkTextIter, get_child_anchor);
 ZEND_METHOD(Gtk4_GtkTextIter, get_line);
 ZEND_METHOD(Gtk4_GtkTextIter, get_line_index);
 ZEND_METHOD(Gtk4_GtkTextIter, get_line_offset);
@@ -8659,6 +8711,7 @@ ZEND_METHOD(Gtk4_GtkTextTagTable, lookup);
 ZEND_METHOD(Gtk4_GtkTextTagTable, remove);
 ZEND_METHOD(Gtk4_GtkTextView, __construct);
 ZEND_METHOD(Gtk4_GtkTextView, new_with_buffer);
+ZEND_METHOD(Gtk4_GtkTextView, add_child_at_anchor);
 ZEND_METHOD(Gtk4_GtkTextView, add_overlay);
 ZEND_METHOD(Gtk4_GtkTextView, backward_display_line);
 ZEND_METHOD(Gtk4_GtkTextView, backward_display_line_start);
@@ -9303,6 +9356,7 @@ static const zend_function_entry class_Gtk4_GtkButton_methods[] = {
 static const zend_function_entry class_Gtk4_GtkCalendar_methods[] = {
 	ZEND_ME(Gtk4_GtkCalendar, __construct, arginfo_class_Gtk4_GtkCalendar___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkCalendar, clear_marks, arginfo_class_Gtk4_GtkCalendar_clear_marks, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkCalendar, get_date, arginfo_class_Gtk4_GtkCalendar_get_date, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkCalendar, get_day, arginfo_class_Gtk4_GtkCalendar_get_day, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkCalendar, get_day_is_marked, arginfo_class_Gtk4_GtkCalendar_get_day_is_marked, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkCalendar, get_month, arginfo_class_Gtk4_GtkCalendar_get_month, ZEND_ACC_PUBLIC)
@@ -9311,6 +9365,7 @@ static const zend_function_entry class_Gtk4_GtkCalendar_methods[] = {
 	ZEND_ME(Gtk4_GtkCalendar, get_show_week_numbers, arginfo_class_Gtk4_GtkCalendar_get_show_week_numbers, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkCalendar, get_year, arginfo_class_Gtk4_GtkCalendar_get_year, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkCalendar, mark_day, arginfo_class_Gtk4_GtkCalendar_mark_day, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkCalendar, select_day, arginfo_class_Gtk4_GtkCalendar_select_day, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkCalendar, set_day, arginfo_class_Gtk4_GtkCalendar_set_day, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkCalendar, set_month, arginfo_class_Gtk4_GtkCalendar_set_month, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkCalendar, set_show_day_names, arginfo_class_Gtk4_GtkCalendar_set_show_day_names, ZEND_ACC_PUBLIC)
@@ -9701,6 +9756,7 @@ static const zend_function_entry class_Gtk4_GtkEntryBuffer_methods[] = {
 static const zend_function_entry class_Gtk4_GtkEventController_methods[] = {
 	ZEND_ME(Gtk4_GtkEventController, __construct, arginfo_class_Gtk4_GtkEventController___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEventController, get_current_event, arginfo_class_Gtk4_GtkEventController_get_current_event, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkEventController, get_current_event_device, arginfo_class_Gtk4_GtkEventController_get_current_event_device, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEventController, get_current_event_state, arginfo_class_Gtk4_GtkEventController_get_current_event_state, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEventController, get_current_event_time, arginfo_class_Gtk4_GtkEventController_get_current_event_time, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkEventController, get_name, arginfo_class_Gtk4_GtkEventController_get_name, ZEND_ACC_PUBLIC)
@@ -9945,6 +10001,7 @@ static const zend_function_entry class_Gtk4_GtkFrame_methods[] = {
 static const zend_function_entry class_Gtk4_GtkGesture_methods[] = {
 	ZEND_ME(Gtk4_GtkGesture, __construct, arginfo_class_Gtk4_GtkGesture___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkGesture, get_bounding_box, arginfo_class_Gtk4_GtkGesture_get_bounding_box, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkGesture, get_device, arginfo_class_Gtk4_GtkGesture_get_device, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkGesture, get_group, arginfo_class_Gtk4_GtkGesture_get_group, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkGesture, get_last_event, arginfo_class_Gtk4_GtkGesture_get_last_event, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkGesture, get_last_updated_sequence, arginfo_class_Gtk4_GtkGesture_get_last_updated_sequence, ZEND_ACC_PUBLIC)
@@ -11443,6 +11500,7 @@ static const zend_function_entry class_Gtk4_GtkTextBuffer_methods[] = {
 	ZEND_ME(Gtk4_GtkTextBuffer, begin_irreversible_action, arginfo_class_Gtk4_GtkTextBuffer_begin_irreversible_action, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, begin_user_action, arginfo_class_Gtk4_GtkTextBuffer_begin_user_action, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, copy_clipboard, arginfo_class_Gtk4_GtkTextBuffer_copy_clipboard, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, create_child_anchor, arginfo_class_Gtk4_GtkTextBuffer_create_child_anchor, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, create_mark, arginfo_class_Gtk4_GtkTextBuffer_create_mark, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, cut_clipboard, arginfo_class_Gtk4_GtkTextBuffer_cut_clipboard, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, delete, arginfo_class_Gtk4_GtkTextBuffer_delete, ZEND_ACC_PUBLIC)
@@ -11460,6 +11518,7 @@ static const zend_function_entry class_Gtk4_GtkTextBuffer_methods[] = {
 	ZEND_ME(Gtk4_GtkTextBuffer, get_end_iter, arginfo_class_Gtk4_GtkTextBuffer_get_end_iter, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, get_has_selection, arginfo_class_Gtk4_GtkTextBuffer_get_has_selection, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, get_insert, arginfo_class_Gtk4_GtkTextBuffer_get_insert, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, get_iter_at_child_anchor, arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_child_anchor, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, get_iter_at_line, arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_line, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, get_iter_at_line_index, arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_line_index, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, get_iter_at_line_offset, arginfo_class_Gtk4_GtkTextBuffer_get_iter_at_line_offset, ZEND_ACC_PUBLIC)
@@ -11476,6 +11535,7 @@ static const zend_function_entry class_Gtk4_GtkTextBuffer_methods[] = {
 	ZEND_ME(Gtk4_GtkTextBuffer, get_start_iter, arginfo_class_Gtk4_GtkTextBuffer_get_start_iter, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, get_tag_table, arginfo_class_Gtk4_GtkTextBuffer_get_tag_table, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, get_text, arginfo_class_Gtk4_GtkTextBuffer_get_text, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, insert_child_anchor, arginfo_class_Gtk4_GtkTextBuffer_insert_child_anchor, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, insert_paintable, arginfo_class_Gtk4_GtkTextBuffer_insert_paintable, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, insert_range, arginfo_class_Gtk4_GtkTextBuffer_insert_range, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, insert_range_interactive, arginfo_class_Gtk4_GtkTextBuffer_insert_range_interactive, ZEND_ACC_PUBLIC)
@@ -11504,6 +11564,7 @@ static const zend_function_entry class_Gtk4_GtkTextBuffer_methods[] = {
 	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_changed, arginfo_class_Gtk4_GtkTextBuffer_vfunc_changed, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_delete_range, arginfo_class_Gtk4_GtkTextBuffer_vfunc_delete_range, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_end_user_action, arginfo_class_Gtk4_GtkTextBuffer_vfunc_end_user_action, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_insert_child_anchor, arginfo_class_Gtk4_GtkTextBuffer_vfunc_insert_child_anchor, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_insert_paintable, arginfo_class_Gtk4_GtkTextBuffer_vfunc_insert_paintable, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_insert_text, arginfo_class_Gtk4_GtkTextBuffer_vfunc_insert_text, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_mark_deleted, arginfo_class_Gtk4_GtkTextBuffer_vfunc_mark_deleted, ZEND_ACC_PUBLIC)
@@ -11513,6 +11574,12 @@ static const zend_function_entry class_Gtk4_GtkTextBuffer_methods[] = {
 	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_redo, arginfo_class_Gtk4_GtkTextBuffer_vfunc_redo, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_remove_tag, arginfo_class_Gtk4_GtkTextBuffer_vfunc_remove_tag, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextBuffer, vfunc_undo, arginfo_class_Gtk4_GtkTextBuffer_vfunc_undo, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkTextChildAnchor_methods[] = {
+	ZEND_ME(Gtk4_GtkTextChildAnchor, __construct, arginfo_class_Gtk4_GtkTextChildAnchor___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextChildAnchor, new_with_replacement, arginfo_class_Gtk4_GtkTextChildAnchor_new_with_replacement, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_FE_END
 };
 
@@ -11569,6 +11636,7 @@ static const zend_function_entry class_Gtk4_GtkTextIter_methods[] = {
 	ZEND_ME(Gtk4_GtkTextIter, get_bytes_in_line, arginfo_class_Gtk4_GtkTextIter_get_bytes_in_line, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextIter, get_char, arginfo_class_Gtk4_GtkTextIter_get_char, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextIter, get_chars_in_line, arginfo_class_Gtk4_GtkTextIter_get_chars_in_line, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_child_anchor, arginfo_class_Gtk4_GtkTextIter_get_child_anchor, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextIter, get_line, arginfo_class_Gtk4_GtkTextIter_get_line, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextIter, get_line_index, arginfo_class_Gtk4_GtkTextIter_get_line_index, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextIter, get_line_offset, arginfo_class_Gtk4_GtkTextIter_get_line_offset, ZEND_ACC_PUBLIC)
@@ -11637,6 +11705,7 @@ static const zend_function_entry class_Gtk4_GtkTextTagTable_methods[] = {
 static const zend_function_entry class_Gtk4_GtkTextView_methods[] = {
 	ZEND_ME(Gtk4_GtkTextView, __construct, arginfo_class_Gtk4_GtkTextView___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextView, new_with_buffer, arginfo_class_Gtk4_GtkTextView_new_with_buffer, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GtkTextView, add_child_at_anchor, arginfo_class_Gtk4_GtkTextView_add_child_at_anchor, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextView, add_overlay, arginfo_class_Gtk4_GtkTextView_add_overlay, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextView, backward_display_line, arginfo_class_Gtk4_GtkTextView_backward_display_line, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextView, backward_display_line_start, arginfo_class_Gtk4_GtkTextView_backward_display_line_start, ZEND_ACC_PUBLIC)
@@ -15038,6 +15107,16 @@ static zend_class_entry *register_class_Gtk4_GtkTextBuffer(zend_class_entry *cla
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkTextBuffer", class_Gtk4_GtkTextBuffer_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkTextChildAnchor(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkTextChildAnchor", class_Gtk4_GtkTextChildAnchor_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
 
 	return class_entry;

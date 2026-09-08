@@ -53,6 +53,18 @@ ZEND_METHOD(Gtk4_WebKitITPFirstParty, get_domain) {
 }
 
 /**
+ * Gtk4\WebKitITPFirstParty::get_last_update_time(): GDateTime
+ *
+ * Get the last time a #WebKitITPThirdParty has been seen under $itp_first_party.
+ */
+ZEND_METHOD(Gtk4_WebKitITPFirstParty, get_last_update_time) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  WebKitITPFirstParty *self = PHPGTK_BOXED_SELF(WebKitITPFirstParty);
+  GDateTime *phpgtk_ret = webkit_itp_first_party_get_last_update_time(self);
+  wrap_boxed(G_TYPE_DATE_TIME, phpgtk_ret, return_value);
+}
+
+/**
  * Gtk4\WebKitITPFirstParty::get_website_data_access_allowed(): bool
  *
  * Get whether $itp_first_party has granted website data access to its #WebKitITPThirdParty.

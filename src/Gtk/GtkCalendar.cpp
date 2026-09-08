@@ -2,6 +2,7 @@
 // Gtk4\GtkCalendar
 #include "php_gtk4.h"
 #include "core/object.h"
+#include "core/boxed.h"
 #include "core/subtype.h"
 
 using namespace phpgtk;
@@ -37,6 +38,19 @@ ZEND_METHOD(Gtk4_GtkCalendar, clear_marks) {
   ZEND_PARSE_PARAMETERS_NONE();
   GtkCalendar *self = PHPGTK_SELF(GtkCalendar, GTK_TYPE_CALENDAR);
   gtk_calendar_clear_marks(self);
+}
+
+/**
+ * Gtk4\GtkCalendar::get_date(): GDateTime
+ *
+ * Returns a `GDateTime` representing the shown year, month and the selected day.
+ */
+ZEND_METHOD(Gtk4_GtkCalendar, get_date) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkCalendar *self = PHPGTK_SELF(GtkCalendar, GTK_TYPE_CALENDAR);
+  GDateTime *phpgtk_ret = gtk_calendar_get_date(self);
+  wrap_boxed(G_TYPE_DATE_TIME, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) g_boxed_free(G_TYPE_DATE_TIME, phpgtk_ret);
 }
 
 /**
@@ -133,6 +147,22 @@ ZEND_METHOD(Gtk4_GtkCalendar, mark_day) {
   GtkCalendar *self = PHPGTK_SELF(GtkCalendar, GTK_TYPE_CALENDAR);
   if (!phpgtk::check_range<guint>(day, 1)) RETURN_THROWS();
   gtk_calendar_mark_day(self, static_cast<guint>(day));
+}
+
+/**
+ * Gtk4\GtkCalendar::select_day(GDateTime $date): void
+ *
+ * Switches to $date's year and month and select its day.
+ */
+ZEND_METHOD(Gtk4_GtkCalendar, select_day) {
+  zval *date;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(date, boxed_class_for_type(G_TYPE_DATE_TIME)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkCalendar *self = PHPGTK_SELF(GtkCalendar, GTK_TYPE_CALENDAR);
+  gpointer date_b = unwrap_boxed(date, G_TYPE_DATE_TIME);
+  if (date_b == nullptr) RETURN_THROWS();
+  gtk_calendar_select_day(self, static_cast<GDateTime *>(date_b));
 }
 
 /**
