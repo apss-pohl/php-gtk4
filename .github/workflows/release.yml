@@ -119,14 +119,18 @@ jobs:
       - name: Install PHPUnit
         run: composer install --no-interaction --no-progress --prefer-dist
 
-      # version + gen + stubs + lint + build + load + test + phpt. The version stage and
+      # version + gen + stubs + build + load + test + phpt. The version stage and
       # config.m4 both assert ./VERSION == src/php_gtk4.h, and the load stage
       # asserts the built .so reports it too.
+      #
+      # Without cpp-lint: clang-tidy does not depend on the PHP version, so this matrix ran it
+      # twice per merge, each time from a cold cache (30+ minutes since the WebKit namespaces
+      # arrived - past this job's own timeout). cpp-lint.yml runs on main and is the gate for it.
       - name: Full CI gate
         env:
           CLANG_TIDY: clang-tidy-20
           CLANG_FORMAT: clang-format-20
-        run: ./ci.sh
+        run: ./ci.sh --skip=cpp-lint
 
   # One .so per supported PHP. Named with the whole ABI identity: a gtk4.so is
   # bound to ZEND_MODULE_API, NTS/ZTS, the C++ ABI, glibc and the GTK soname,
@@ -191,6 +195,10 @@ jobs:
   build-windows:
     name: Build .dll (PHP ${{ matrix.php }} ${{ matrix.ts }})
     needs: [plan, verify]
+    # Real releases only. These are what PIE installs on Windows, and PIE resolves a release,
+    # never a dev pre-release - so four Windows jobs per merge built assets nobody could
+    # install. windows.yml is what says whether Windows still builds at all.
+    if: needs.plan.outputs.kind == 'release'
     strategy:
       fail-fast: false
       matrix:
@@ -207,6 +215,13 @@ jobs:
   publish:
     name: Publish ${{ needs.plan.outputs.tag }}
     needs: [plan, verify, build, build-windows]
+    # build-windows is skipped for a dev build, and a skipped dependency would take this job
+    # with it - so the conditions are spelled out rather than inherited.
+    if: |
+      always()
+      && needs.verify.result == 'success'
+      && needs.build.result == 'success'
+      && (needs.build-windows.result == 'success' || needs.build-windows.result == 'skipped')
     runs-on: ubuntu-24.04
     permissions:
       contents: write       # create/delete the tag and the release
@@ -231,6 +246,7 @@ jobs:
         run: |
           set -euo pipefail
           cd dist
+          shopt -s nullglob            # a dev build has no Windows dlls to wrap
           for dll in php_gtk4-*.dll; do
             zip -qj "${dll%.dll}.zip" "$dll"
             rm -- "$dll"
@@ -269,6 +285,9 @@ jobs:
           The module itself reports \`$version\` - the \`.$GITHUB_RUN_NUMBER\` in the tag and the
           filenames distinguishes builds of it. Only the newest $KEEP_PRERELEASES dev builds are
           kept; this one is deleted once $KEEP_PRERELEASES newer merges land.
+
+          Linux only: the Windows builds are made for real releases, which is what \`pie install\`
+          resolves.
 
           EOF
             else

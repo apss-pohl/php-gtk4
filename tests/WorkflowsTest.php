@@ -102,6 +102,65 @@ final class WorkflowsTest extends TestCase
         }
     }
 
+    /**
+     * A required status check has to come from a workflow that always starts. A `paths:` filter
+     * on one means it does not run at all for a change outside those paths - and a check that
+     * never runs never reports, so the pull request waits for it forever.
+     */
+    public function testNoRequiredCheckComesFromAPathFilteredWorkflow(): void
+    {
+        $required = $this->requiredContexts();
+        foreach (glob(self::WORKFLOWS . '/*.yml') ?: [] as $file) {
+            $yml = (string) file_get_contents($file);
+            // The `on:` block only - a `paths:` under a job step is something else entirely.
+            $on = (string) preg_replace('/^(jobs|permissions|concurrency|env):.*/ms', '', $yml);
+            if (!str_contains($on, 'paths:')) {
+                continue;
+            }
+            foreach ($required as $context) {
+                self::assertStringNotContainsString(
+                    "name: $context",
+                    $yml,
+                    basename($file) . " filters on paths but reports the required check '$context'",
+                );
+            }
+        }
+    }
+
+    /**
+     * The same commit used to be validated as the pull request head and again on push to main,
+     * where release.yml's own gate validates it a third time. Only the workflow whose cache the
+     * pull requests read still runs on main (docs/RELEASING.md "Gating").
+     */
+    public function testOnlyTheLintRunsAgainOnMain(): void
+    {
+        $onMain = [];
+        foreach (glob(self::WORKFLOWS . '/*.yml') ?: [] as $file) {
+            $yml = (string) file_get_contents($file);
+            $on = (string) preg_replace('/^jobs:.*/ms', '', $yml);
+            if (preg_match('/push:\s*\n\s*branches:\s*\[main\]/', $on) === 1) {
+                $onMain[] = basename($file);
+            }
+        }
+        sort($onMain);
+        self::assertSame(['cpp-lint.yml', 'release.yml'], $onMain);
+    }
+
+    /** Windows minutes bill at nearly twice Linux's, so the four-job matrix is not on every push. */
+    public function testWindowsIsNotBuiltForEveryDevBuild(): void
+    {
+        $release = (string) file_get_contents(self::WORKFLOWS . '/release.yml');
+        self::assertMatchesRegularExpression(
+            "/build-windows:.*?if: needs\.plan\.outputs\.kind == 'release'/s",
+            $release,
+            'release.yml builds the Windows assets for every dev build again',
+        );
+
+        $windows = (string) file_get_contents(self::WORKFLOWS . '/windows.yml');
+        $on = (string) preg_replace('/^jobs:.*/ms', '', $windows);
+        self::assertStringContainsString('paths:', $on, 'windows.yml runs for changes that cannot break it');
+    }
+
     /** @return list<string> job names without a `${{ }}` expression in them */
     private function literalJobNames(): array
     {

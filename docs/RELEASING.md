@@ -195,9 +195,27 @@ per merge. It buys a release job that cannot publish a broken artifact because o
 at this stage is the better half of the trade. `concurrency: release-main` with `cancel-in-progress: false`
 serialises two merges landing back to back — which also keeps the prune step from racing itself.
 
+Because that gate exists, `tests.yml`, `php-qa.yml` and `windows.yml` run on pull requests only: the commit
+being merged is the one the pull request just validated, and this job validates it again on `main`. Leaving
+`push: [main]` on them meant every merge paid for the same work three times over — a measured 132–146 Linux
+and 52 Windows minutes, of which about two thirds was repetition. `cpp-lint.yml` is the exception and still
+runs on `main`: a workflow run may read its own branch's caches and the *default* branch's, so a lint on main
+is what keeps every pull request's clang-tidy cache warm. Its own `verify` here skips `cpp-lint` for the same
+reason — clang-tidy does not depend on the PHP version, so this matrix used to run it twice per merge, each
+time cold, which since the WebKit namespaces arrived no longer fits in the job's 30-minute budget.
+
+The Windows assets are built for real releases only. They are what `pie install` puts on a Windows machine,
+and PIE resolves a release rather than a dev pre-release, so building four of them per merge produced
+binaries nobody could install. `windows.yml` is what says whether Windows still compiles at all, on the pull
+requests that touch anything it depends on and once a week regardless.
+
 Branch protection on `main` should require the `C++ static analysis`, `PHP QA (...)` and `PHP 8.4` /
 `PHP 8.5` checks (the job names in `.github/workflows/`), with squash merges — one merge
-is one commit is one dev build.
+is one commit is one dev build. A required check must come from a workflow that always starts:
+a `paths:` filter on one would mean it never runs for a change outside those paths, never reports,
+and the pull request waits for a check that cannot arrive. That is why `cpp-lint.yml` is not filtered
+and leans on its cache instead, and why `windows.yml` — which is filtered — is not a required check.
+`WorkflowsTest` holds both ends of that to each other.
 
 ## Not covered yet
 

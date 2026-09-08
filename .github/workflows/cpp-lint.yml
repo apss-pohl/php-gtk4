@@ -1,10 +1,19 @@
 name: C++ lint
 
+# `push: [main]` stays, unlike tests.yml and php-qa.yml: a run stores its clang-tidy cache in
+# its own branch's scope and a pull request may read the *default* branch's, so keeping main
+# linted is what keeps every PR's lint warm. A push that changed no C++ then costs the setup
+# and nothing else - ci.sh skips every file whose content it has already seen green.
+#
+# Deliberately *not* filtered by `paths`: "C++ static analysis" is a required status check
+# (.github/ruleset-main.json), and a workflow that never starts never reports one, which leaves
+# the pull request waiting for a check that cannot arrive. The cache is what makes it cheap
+# instead.
 on:
   workflow_dispatch:
-  pull_request:
   push:
     branches: [main]
+  pull_request:
 
 # Read-only token: these workflows only check out and build.
 permissions:

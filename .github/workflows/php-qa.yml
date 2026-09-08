@@ -1,10 +1,10 @@
 name: PHP QA
 
+# The PR run is the gate; release.yml's `verify` re-runs php-qa on main (docs/RELEASING.md
+# "Gating"), so running it again on push would validate the same commit twice.
 on:
   workflow_dispatch:
   pull_request:
-  push:
-    branches: [main]
 
 # Read-only token: these workflows only check out and build.
 permissions:

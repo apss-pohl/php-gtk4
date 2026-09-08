@@ -5,11 +5,27 @@ name: Windows build
 # windows-build.yml (shared with release.yml). tests/phpt is Linux-only (run-tests.php + Xvfb);
 # see docs/BUILD.md "Windows".
 
+# Windows minutes bill at nearly twice the Linux rate and this matrix is four jobs, so it runs
+# where it can actually break: the sources, the build recipe, the launcher, the runner script.
+# A docs or examples change cannot, and no longer pays for it.
+#
+# The weekly run is the safety net that `push: [main]` used to be - GTK, the runner image and
+# the pinned gvsbuild move underneath a tree nobody touched.
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '17 4 * * 1'   # Mondays, 04:17 UTC
   pull_request:
-  push:
-    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'config.m4'
+      - 'config.w32'
+      - 'VERSION'
+      - 'bin/php-gtk4.cmd'
+      - 'tests/run.cmd'
+      - '.github/workflows/windows.yml'
+      - '.github/workflows/windows-build.yml'
 
 permissions:
   contents: read

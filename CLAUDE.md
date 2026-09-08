@@ -412,7 +412,13 @@ the runner images / clang pins. `--check` writes nothing and exits non-zero when
 
 Five workflows plus one reusable recipe (three have a README badge): `.github/workflows/cpp-lint.yml`,
 `php-qa.yml`, `tests.yml`, `windows.yml`, `release.yml`, and `windows-build.yml` (`workflow_call`,
-the single Windows build recipe both `windows.yml` and `release.yml` use). (1) static analysis —
+the single Windows build recipe both `windows.yml` and `release.yml` use).
+**They run on pull requests only** — `release.yml`'s own `verify` re-runs `./ci.sh` on `main`, so a
+`push: [main]` trigger elsewhere validated the same commit a second and third time (docs/RELEASING.md
+"Gating"). `cpp-lint.yml` is the exception: it keeps `push: [main]` because a run reads its own branch's
+caches and the default branch's, so linting main is what keeps every PR's clang-tidy cache warm. A
+required status check must come from a workflow that always starts, so `cpp-lint.yml` carries no `paths:`
+filter (`windows.yml`, which is not required, does) — `WorkflowsTest` pins both. (1) static analysis —
 setup-php 8.4, GTK4/WebKitGTK headers, clang 20 from apt.llvm.org, `phpize && ./configure` (for
 `config.h`), then `./ci.sh --only=gen,stubs` (the only PR-time run of the generator gate) and
 `./ci.sh --only=cpp-lint` (same clang-tidy/clang-format stage as locally, any finding fails);
@@ -430,7 +436,9 @@ setup-php + the matching devel pack from windows.php.net + php-sdk-binary-tools 
 `GTK4_Gvsbuild_<ver>_x64.zip` release asset (`GVSBUILD_VERSION`, pinned by hand in
 `windows-build.yml` only — `WorkflowsTest` enforces that, nothing bumps it; docs/BUILD.md "The
 pinned GTK version"), `phpize && configure --with-gtk4 && nmake` with a warning gate over `src\`
-(`/W3`), load check, PHPUnit via `tests/run.cmd` on the runner's desktop (no phpt). (5) `release.yml` on
+(`/W3`), load check, PHPUnit via `tests/run.cmd` on the runner's desktop (no phpt) — on the pull requests
+that touch what it depends on (`paths:`) and once a week, because Windows minutes bill at nearly twice the
+Linux rate. (5) `release.yml` on
 every push to `main`: reads `VERSION` and either publishes an
 immutable `vX.Y.Z-dev.<run>` pre-release (suffix `-dev`; the newest 5 are kept, older ones deleted with their
 tags) or the real `vX.Y.Z` release (no suffix, once),

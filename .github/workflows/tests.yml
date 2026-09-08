@@ -1,10 +1,10 @@
 name: Build & tests
 
+# The PR run is the gate: release.yml re-validates main on every merge (its `verify` job
+# runs ./ci.sh in full), so a `push: [main]` trigger here only paid for the same commit twice.
 on:
   workflow_dispatch:
   pull_request:
-  push:
-    branches: [main]
 
 # Read-only token: these workflows only check out and build.
 permissions:
