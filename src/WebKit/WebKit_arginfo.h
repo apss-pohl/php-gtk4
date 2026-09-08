@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: aeff46a4c01716579e8ea0365a141e56f01da870 */
+ * Stub hash: 837f626be213456d30cf1096b0e80f0bfdc76dc8 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitApplicationInfo___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -1631,6 +1631,10 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_save, 0
 	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_save_finish, 0, 1, Gtk4\\GInputStream, 0)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_save_to_file, 0, 4, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, file, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, save_mode, Gtk4\\WebKitSaveMode, 0)
@@ -2489,6 +2493,7 @@ ZEND_METHOD(Gtk4_WebKitWebView, reload);
 ZEND_METHOD(Gtk4_WebKitWebView, reload_bypass_cache);
 ZEND_METHOD(Gtk4_WebKitWebView, restore_session_state);
 ZEND_METHOD(Gtk4_WebKitWebView, save);
+ZEND_METHOD(Gtk4_WebKitWebView, save_finish);
 ZEND_METHOD(Gtk4_WebKitWebView, save_to_file);
 ZEND_METHOD(Gtk4_WebKitWebView, save_to_file_finish);
 ZEND_METHOD(Gtk4_WebKitWebView, send_message_to_page);
@@ -3424,6 +3429,7 @@ static const zend_function_entry class_Gtk4_WebKitWebView_methods[] = {
 	ZEND_ME(Gtk4_WebKitWebView, reload_bypass_cache, arginfo_class_Gtk4_WebKitWebView_reload_bypass_cache, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebView, restore_session_state, arginfo_class_Gtk4_WebKitWebView_restore_session_state, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebView, save, arginfo_class_Gtk4_WebKitWebView_save, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, save_finish, arginfo_class_Gtk4_WebKitWebView_save_finish, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebView, save_to_file, arginfo_class_Gtk4_WebKitWebView_save_to_file, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebView, save_to_file_finish, arginfo_class_Gtk4_WebKitWebView_save_to_file_finish, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_WebKitWebView, send_message_to_page, arginfo_class_Gtk4_WebKitWebView_send_message_to_page, ZEND_ACC_PUBLIC)

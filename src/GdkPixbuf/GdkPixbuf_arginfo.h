@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 55c91a591725f9d42932a4c3c463b8d35cc91b17 */
+ * Stub hash: 1b8310393c805ec3b18fbf1d049b8d16bdc7a7d8 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkPixbuf___construct, 0, 0, 5)
 	ZEND_ARG_OBJ_INFO(0, colorspace, Gtk4\\GdkColorspace, 0)
@@ -47,6 +47,19 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_new_from_res
 	ZEND_ARG_TYPE_INFO(0, preserve_aspect_ratio, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_new_from_stream, 0, 1, Gtk4\\GdkPixbuf, 0)
+	ZEND_ARG_OBJ_INFO(0, stream, Gtk4\\GInputStream, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, cancellable, Gtk4\\GCancellable, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_new_from_stream_at_scale, 0, 4, Gtk4\\GdkPixbuf, 0)
+	ZEND_ARG_OBJ_INFO(0, stream, Gtk4\\GInputStream, 0)
+	ZEND_ARG_TYPE_INFO(0, width, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, height, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, preserve_aspect_ratio, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, cancellable, Gtk4\\GCancellable, 1, "null")
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_new_from_stream_finish, 0, 1, Gtk4\\GdkPixbuf, 0)
 	ZEND_ARG_OBJ_INFO(0, async_result, Gtk4\\GAsyncResult, 0)
 ZEND_END_ARG_INFO()
@@ -74,6 +87,21 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_init_modules, 0, 1, _IS_BOOL, 0)
 	ZEND_ARG_TYPE_INFO(0, path, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_new_from_stream_async, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, stream, Gtk4\\GInputStream, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, cancellable, Gtk4\\GCancellable, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, callback, IS_CALLABLE, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_new_from_stream_at_scale_async, 0, 4, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, stream, Gtk4\\GInputStream, 0)
+	ZEND_ARG_TYPE_INFO(0, width, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, height, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, preserve_aspect_ratio, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, cancellable, Gtk4\\GCancellable, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, callback, IS_CALLABLE, 1, "null")
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkPixbuf_save_to_stream_finish, 0, 1, _IS_BOOL, 0)
@@ -237,9 +265,16 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkPixbufAnimation_new
 	ZEND_ARG_TYPE_INFO(0, resource_path, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkPixbufAnimation_new_from_stream, 0, 1, Gtk4\\GdkPixbufAnimation, 0)
+	ZEND_ARG_OBJ_INFO(0, stream, Gtk4\\GInputStream, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, cancellable, Gtk4\\GCancellable, 1, "null")
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GdkPixbufAnimation_new_from_stream_finish, 0, 1, Gtk4\\GdkPixbufAnimation, 0)
 	ZEND_ARG_OBJ_INFO(0, async_result, Gtk4\\GAsyncResult, 0)
 ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GdkPixbufAnimation_new_from_stream_async arginfo_class_Gtk4_GdkPixbuf_new_from_stream_async
 
 #define arginfo_class_Gtk4_GdkPixbufAnimation_get_height arginfo_class_Gtk4_GdkPixbuf_get_bits_per_sample
 
@@ -334,12 +369,16 @@ ZEND_METHOD(Gtk4_GdkPixbuf, new_from_file_at_scale);
 ZEND_METHOD(Gtk4_GdkPixbuf, new_from_file_at_size);
 ZEND_METHOD(Gtk4_GdkPixbuf, new_from_resource);
 ZEND_METHOD(Gtk4_GdkPixbuf, new_from_resource_at_scale);
+ZEND_METHOD(Gtk4_GdkPixbuf, new_from_stream);
+ZEND_METHOD(Gtk4_GdkPixbuf, new_from_stream_at_scale);
 ZEND_METHOD(Gtk4_GdkPixbuf, new_from_stream_finish);
 ZEND_METHOD(Gtk4_GdkPixbuf, new_from_xpm_data);
 ZEND_METHOD(Gtk4_GdkPixbuf, calculate_rowstride);
 ZEND_METHOD(Gtk4_GdkPixbuf, get_file_info_async);
 ZEND_METHOD(Gtk4_GdkPixbuf, get_formats);
 ZEND_METHOD(Gtk4_GdkPixbuf, init_modules);
+ZEND_METHOD(Gtk4_GdkPixbuf, new_from_stream_async);
+ZEND_METHOD(Gtk4_GdkPixbuf, new_from_stream_at_scale_async);
 ZEND_METHOD(Gtk4_GdkPixbuf, save_to_stream_finish);
 ZEND_METHOD(Gtk4_GdkPixbuf, add_alpha);
 ZEND_METHOD(Gtk4_GdkPixbuf, apply_embedded_orientation);
@@ -374,7 +413,9 @@ ZEND_METHOD(Gtk4_GdkPixbuf, savev);
 ZEND_METHOD(Gtk4_GdkPixbufAnimation, __construct);
 ZEND_METHOD(Gtk4_GdkPixbufAnimation, new_from_file);
 ZEND_METHOD(Gtk4_GdkPixbufAnimation, new_from_resource);
+ZEND_METHOD(Gtk4_GdkPixbufAnimation, new_from_stream);
 ZEND_METHOD(Gtk4_GdkPixbufAnimation, new_from_stream_finish);
+ZEND_METHOD(Gtk4_GdkPixbufAnimation, new_from_stream_async);
 ZEND_METHOD(Gtk4_GdkPixbufAnimation, get_height);
 ZEND_METHOD(Gtk4_GdkPixbufAnimation, get_static_image);
 ZEND_METHOD(Gtk4_GdkPixbufAnimation, get_width);
@@ -416,12 +457,16 @@ static const zend_function_entry class_Gtk4_GdkPixbuf_methods[] = {
 	ZEND_ME(Gtk4_GdkPixbuf, new_from_file_at_size, arginfo_class_Gtk4_GdkPixbuf_new_from_file_at_size, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkPixbuf, new_from_resource, arginfo_class_Gtk4_GdkPixbuf_new_from_resource, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkPixbuf, new_from_resource_at_scale, arginfo_class_Gtk4_GdkPixbuf_new_from_resource_at_scale, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GdkPixbuf, new_from_stream, arginfo_class_Gtk4_GdkPixbuf_new_from_stream, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GdkPixbuf, new_from_stream_at_scale, arginfo_class_Gtk4_GdkPixbuf_new_from_stream_at_scale, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkPixbuf, new_from_stream_finish, arginfo_class_Gtk4_GdkPixbuf_new_from_stream_finish, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkPixbuf, new_from_xpm_data, arginfo_class_Gtk4_GdkPixbuf_new_from_xpm_data, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkPixbuf, calculate_rowstride, arginfo_class_Gtk4_GdkPixbuf_calculate_rowstride, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkPixbuf, get_file_info_async, arginfo_class_Gtk4_GdkPixbuf_get_file_info_async, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkPixbuf, get_formats, arginfo_class_Gtk4_GdkPixbuf_get_formats, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkPixbuf, init_modules, arginfo_class_Gtk4_GdkPixbuf_init_modules, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GdkPixbuf, new_from_stream_async, arginfo_class_Gtk4_GdkPixbuf_new_from_stream_async, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GdkPixbuf, new_from_stream_at_scale_async, arginfo_class_Gtk4_GdkPixbuf_new_from_stream_at_scale_async, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkPixbuf, save_to_stream_finish, arginfo_class_Gtk4_GdkPixbuf_save_to_stream_finish, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkPixbuf, add_alpha, arginfo_class_Gtk4_GdkPixbuf_add_alpha, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkPixbuf, apply_embedded_orientation, arginfo_class_Gtk4_GdkPixbuf_apply_embedded_orientation, ZEND_ACC_PUBLIC)
@@ -460,7 +505,9 @@ static const zend_function_entry class_Gtk4_GdkPixbufAnimation_methods[] = {
 	ZEND_ME(Gtk4_GdkPixbufAnimation, __construct, arginfo_class_Gtk4_GdkPixbufAnimation___construct, ZEND_ACC_PRIVATE)
 	ZEND_ME(Gtk4_GdkPixbufAnimation, new_from_file, arginfo_class_Gtk4_GdkPixbufAnimation_new_from_file, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkPixbufAnimation, new_from_resource, arginfo_class_Gtk4_GdkPixbufAnimation_new_from_resource, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GdkPixbufAnimation, new_from_stream, arginfo_class_Gtk4_GdkPixbufAnimation_new_from_stream, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkPixbufAnimation, new_from_stream_finish, arginfo_class_Gtk4_GdkPixbufAnimation_new_from_stream_finish, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GdkPixbufAnimation, new_from_stream_async, arginfo_class_Gtk4_GdkPixbufAnimation_new_from_stream_async, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_ME(Gtk4_GdkPixbufAnimation, get_height, arginfo_class_Gtk4_GdkPixbufAnimation_get_height, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkPixbufAnimation, get_static_image, arginfo_class_Gtk4_GdkPixbufAnimation_get_static_image, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GdkPixbufAnimation, get_width, arginfo_class_Gtk4_GdkPixbufAnimation_get_width, ZEND_ACC_PUBLIC)

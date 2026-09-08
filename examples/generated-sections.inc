@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 return [
     'Generated' => [
+        'GInputStream',
+        'GMemoryInputStream',
         'GTlsCertificateFlags',
         'GTlsPasswordFlags',
         'GdkClipboard',

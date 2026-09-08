@@ -254,12 +254,16 @@
   phpgtk::register_interface_fallback(G_TYPE_ASYNC_RESULT, ce_GAsyncResultObject);
   zend_class_entry *ce_GCancellable = register_class_Gtk4_GCancellable(ce_GObject);
   phpgtk::register_class("GCancellable", ce_GCancellable, G_TYPE_CANCELLABLE);
+  zend_class_entry *ce_GInputStream = register_class_Gtk4_GInputStream(ce_GObject);
+  phpgtk::register_class("GInputStream", ce_GInputStream, G_TYPE_INPUT_STREAM);
   zend_class_entry *ce_GListModel = register_class_Gtk4_GListModel();
   phpgtk::register_interface("GListModel", ce_GListModel, G_TYPE_LIST_MODEL);
   zend_class_entry *ce_GListModelObject = register_class_Gtk4_GListModelObject(ce_GObject, ce_GListModel);
   phpgtk::register_interface_fallback(G_TYPE_LIST_MODEL, ce_GListModelObject);
   zend_class_entry *ce_GListStore = register_class_Gtk4_GListStore(ce_GObject, ce_GListModel);
   phpgtk::register_class("GListStore", ce_GListStore, G_TYPE_LIST_STORE);
+  zend_class_entry *ce_GMemoryInputStream = register_class_Gtk4_GMemoryInputStream(ce_GInputStream);
+  phpgtk::register_class("GMemoryInputStream", ce_GMemoryInputStream, G_TYPE_MEMORY_INPUT_STREAM);
   zend_class_entry *ce_GMenuItem = register_class_Gtk4_GMenuItem(ce_GObject);
   phpgtk::register_class("GMenuItem", ce_GMenuItem, G_TYPE_MENU_ITEM);
   zend_class_entry *ce_GMenuModel = register_class_Gtk4_GMenuModel(ce_GObject);

@@ -345,7 +345,7 @@ Gdk.TextureDownloader
 # messages), find controller, back/forward list, inspector, policy decisions, downloads,
 # resources, dialogs and permission requests - plus JavaScriptCore's value/context, which is
 # what evaluate_javascript() answers with and what a script message carries. Out: the URI scheme
-# handler pair (GInputStream is not bound), WebExtension (2.52 API), WebProcess extensions.
+# handler pair, WebExtension (2.52 API), WebProcess extensions.
 WebKit.WebViewBase
 WebKit.WebView
 WebKit.Settings
@@ -439,3 +439,9 @@ WebKit.MediaError
 WebKit.UserContentFilterError
 WebKit.FaviconDatabaseError
 WebKit.UserMessageError
+
+# The read side of GIO. GInputStream is what a stream parameter is declared as - GdkPixbuf's four
+# stream constructors, GdkPixbufAnimation's two, WebKitWebView::save_finish() - and
+# GMemoryInputStream is the one PHP can build: a string in, a stream out.
+Gio.InputStream
+Gio.MemoryInputStream

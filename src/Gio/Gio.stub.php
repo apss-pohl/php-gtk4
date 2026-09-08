@@ -643,6 +643,81 @@ class GCancellable extends GObject
 }
 
 /**
+ * `GInputStream` is a base class for implementing streaming input.
+ */
+class GInputStream extends GObject
+{
+    /** GInputStream is abstract in GTK: `new` only works on a PHP subclass (which gets its own GType). */
+    public function __construct() {}
+
+    /** Clears the pending flag on $stream. */
+    public function clear_pending(): void {}
+
+    /** Closes the stream, releasing resources related to it. */
+    public function close(?GCancellable $cancellable): bool {}
+
+    /**
+     * Requests an asynchronous closes of the stream, releasing resources related to it. When the
+     * operation is finished $callback will be called. You can then call
+     * g_input_stream_close_finish() to get the result of the operation.
+     */
+    public function close_async(int $io_priority, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes closing a stream asynchronously, started from g_input_stream_close_async(). */
+    public function close_finish(GAsyncResult $result): bool {}
+
+    /** Checks if an input stream has pending actions. */
+    public function has_pending(): bool {}
+
+    /** Checks if an input stream is closed. */
+    public function is_closed(): bool {}
+
+    /**
+     * Finishes an asynchronous stream read operation started with g_input_stream_read_all_async().
+     */
+    public function read_all_finish(GAsyncResult $result): ?int {}
+
+    /**
+     * Like g_input_stream_read(), this tries to read $count bytes from the stream in a blocking
+     * fashion. However, rather than reading into a user-supplied buffer, this will create a new
+     * #GBytes containing the data that was read. This may be easier to use from language bindings.
+     */
+    public function read_bytes(int $count, ?GCancellable $cancellable): string {}
+
+    /**
+     * Request an asynchronous read of $count bytes from the stream into a new #GBytes. When the
+     * operation is finished $callback will be called. You can then call
+     * g_input_stream_read_bytes_finish() to get the result of the operation.
+     */
+    public function read_bytes_async(int $count, int $io_priority, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes an asynchronous stream read-into-#GBytes operation. */
+    public function read_bytes_finish(GAsyncResult $result): string {}
+
+    /** Finishes an asynchronous stream read operation. */
+    public function read_finish(GAsyncResult $result): int {}
+
+    /**
+     * Sets $stream to have actions pending. If the pending flag is already set or $stream is
+     * closed, it will return `false` and set $error.
+     */
+    public function set_pending(): bool {}
+
+    /** Tries to skip $count bytes from the stream. Will block during the operation. */
+    public function skip(int $count, ?GCancellable $cancellable): int {}
+
+    /**
+     * Request an asynchronous skip of $count bytes from the stream. When the operation is finished
+     * $callback will be called. You can then call g_input_stream_skip_finish() to get the result
+     * of the operation.
+     */
+    public function skip_async(int $count, int $io_priority, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes a stream skip operation. */
+    public function skip_finish(GAsyncResult $result): int {}
+}
+
+/**
  * `GListModel` is an interface that represents a mutable list of `Object`. Its main intention is
  * as a model for various widgets in user interfaces, such as list views, but it can also be used
  * as a convenient method of returning lists of data, with support for updates.
@@ -735,6 +810,22 @@ class GListStore extends GObject implements GListModel
 
     /** @implementation-alias Gtk4\GListModel::items_changed */
     public function items_changed(int $position, int $removed, int $added): void {}
+}
+
+/**
+ * `GMemoryInputStream` is a class for using arbitrary memory chunks as input for GIO streaming
+ * input operations.
+ */
+class GMemoryInputStream extends GInputStream
+{
+    /** Creates a new empty #GMemoryInputStream. */
+    public function __construct() {}
+
+    /** Creates a new #GMemoryInputStream with data from the given $bytes. */
+    public static function new_from_bytes(string $bytes): GMemoryInputStream {}
+
+    /** Appends $bytes to data that can be read from the input stream. */
+    public function add_bytes(string $bytes): void {}
 }
 
 /**

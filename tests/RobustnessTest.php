@@ -41,6 +41,8 @@ final class RobustnessTest extends GtkTestCase
         \Gtk4\GdkContentProvider::class . '::new_for_bytes' => [1],
         \Gtk4\GdkPixbuf::class . '::new_from_bytes' => [0],
         \Gtk4\GdkPixbufLoader::class . '::write_bytes' => [0],
+        \Gtk4\GMemoryInputStream::class . '::new_from_bytes' => [0],
+        \Gtk4\GMemoryInputStream::class . '::add_bytes' => [0],
         \Gtk4\WebKitWebView::class . '::load_bytes' => [0],
         \Gtk4\WebKitUserContentFilterStore::class . '::save' => [1],
         \Gtk4\JSCValue::class . '::new_string_from_bytes' => [1],

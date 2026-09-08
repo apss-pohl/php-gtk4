@@ -278,6 +278,81 @@ ZEND_METHOD(Gtk4_GdkPixbuf, new_from_resource_at_scale) {
 }
 
 /**
+ * static Gtk4\GdkPixbuf::new_from_stream(GInputStream $stream, ?GCancellable $cancellable = null):
+ * GdkPixbuf
+ *
+ * Creates a new pixbuf by loading an image from an input stream.
+ */
+ZEND_METHOD(Gtk4_GdkPixbuf, new_from_stream) {
+  zval *stream;
+  zval *cancellable = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 2)
+  Z_PARAM_OBJECT_OF_CLASS(stream, class_for_gtype(G_TYPE_INPUT_STREAM))
+  Z_PARAM_OPTIONAL
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
+  ZEND_PARSE_PARAMETERS_END();
+  GObject *stream_o = unwrap(stream, G_TYPE_INPUT_STREAM);
+  if (stream_o == nullptr) RETURN_THROWS();
+  GObject *cancellable_o = nullptr;
+  if (cancellable != nullptr) {
+    cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
+    if (cancellable_o == nullptr) RETURN_THROWS();
+  }
+  GError *error = nullptr;
+  GObject *obj = G_OBJECT(gdk_pixbuf_new_from_stream(
+      G_INPUT_STREAM(stream_o), cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
+      &error));
+  if (obj == nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  wrap(obj, return_value);
+  if (obj != nullptr) g_object_unref(obj);  // the handle took its own reference
+}
+
+/**
+ * static Gtk4\GdkPixbuf::new_from_stream_at_scale(GInputStream $stream, int $width, int $height,
+ * bool $preserve_aspect_ratio, ?GCancellable $cancellable = null): GdkPixbuf
+ *
+ * Creates a new pixbuf by loading an image from an input stream.
+ */
+ZEND_METHOD(Gtk4_GdkPixbuf, new_from_stream_at_scale) {
+  zval *stream;
+  zend_long width;
+  zend_long height;
+  bool preserve_aspect_ratio;
+  zval *cancellable = nullptr;
+  ZEND_PARSE_PARAMETERS_START(4, 5)
+  Z_PARAM_OBJECT_OF_CLASS(stream, class_for_gtype(G_TYPE_INPUT_STREAM))
+  Z_PARAM_LONG(width)
+  Z_PARAM_LONG(height)
+  Z_PARAM_BOOL(preserve_aspect_ratio)
+  Z_PARAM_OPTIONAL
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
+  ZEND_PARSE_PARAMETERS_END();
+  GObject *stream_o = unwrap(stream, G_TYPE_INPUT_STREAM);
+  if (stream_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_range<gint>(width, 2)) RETURN_THROWS();
+  if (!phpgtk::check_range<gint>(height, 3)) RETURN_THROWS();
+  GObject *cancellable_o = nullptr;
+  if (cancellable != nullptr) {
+    cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
+    if (cancellable_o == nullptr) RETURN_THROWS();
+  }
+  GError *error = nullptr;
+  GObject *obj = G_OBJECT(gdk_pixbuf_new_from_stream_at_scale(
+      G_INPUT_STREAM(stream_o), static_cast<gint>(width), static_cast<gint>(height),
+      preserve_aspect_ratio, cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
+      &error));
+  if (obj == nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  wrap(obj, return_value);
+  if (obj != nullptr) g_object_unref(obj);  // the handle took its own reference
+}
+
+/**
  * static Gtk4\GdkPixbuf::new_from_stream_finish(GAsyncResult $async_result): GdkPixbuf
  *
  * Finishes an asynchronous pixbuf creation operation started with
@@ -431,6 +506,119 @@ ZEND_METHOD(Gtk4_GdkPixbuf, init_modules) {
     RETURN_THROWS();
   }
   RETURN_BOOL(ok);
+}
+
+namespace {
+// AsyncReadyCallback trampoline for GdkPixbuf::new_from_stream_async(): wraps the C arguments,
+// invokes the PHP callable once and releases it (async scope).
+void cb_new_from_stream_async_callback(GObject *source_object, GAsyncResult *res, gpointer data) {
+  auto *cb = static_cast<Callback *>(data);
+  std::array<zval, 2> args{};
+  zval *argv = args.data();
+  wrap(source_object != nullptr ? G_OBJECT(source_object) : nullptr, &argv[0]);
+  wrap(res != nullptr ? G_OBJECT(res) : nullptr, &argv[1]);
+  zval ret;
+  callback_invoke(cb, 2, argv, &ret);
+  if (!Z_ISUNDEF(ret)) zval_ptr_dtor(&ret);
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  callback_free(cb);
+  callback_drain();
+}
+}  // namespace
+
+/**
+ * static Gtk4\GdkPixbuf::new_from_stream_async(GInputStream $stream, ?GCancellable $cancellable =
+ * null, ?callable $callback = null): void
+ *
+ * Creates a new pixbuf by asynchronously loading an image from an input stream.
+ */
+ZEND_METHOD(Gtk4_GdkPixbuf, new_from_stream_async) {
+  zval *stream;
+  zval *cancellable = nullptr;
+  zend_fcall_info fci_callback = empty_fcall_info;
+  zend_fcall_info_cache fcc_callback = empty_fcall_info_cache;
+  ZEND_PARSE_PARAMETERS_START(1, 3)
+  Z_PARAM_OBJECT_OF_CLASS(stream, class_for_gtype(G_TYPE_INPUT_STREAM))
+  Z_PARAM_OPTIONAL
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
+  Z_PARAM_FUNC_OR_NULL(fci_callback, fcc_callback)
+  ZEND_PARSE_PARAMETERS_END();
+  GObject *stream_o = unwrap(stream, G_TYPE_INPUT_STREAM);
+  if (stream_o == nullptr) RETURN_THROWS();
+  GObject *cancellable_o = nullptr;
+  if (cancellable != nullptr) {
+    cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
+    if (cancellable_o == nullptr) RETURN_THROWS();
+  }
+  Callback *cb_callback =
+      ZEND_FCI_INITIALIZED(fci_callback)
+          ? callback_new(&fci_callback.function_name, "GdkPixbuf::new_from_stream_async")
+          : nullptr;
+  gdk_pixbuf_new_from_stream_async(
+      G_INPUT_STREAM(stream_o), cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
+      cb_callback != nullptr ? cb_new_from_stream_async_callback : nullptr, cb_callback);
+}
+
+namespace {
+// AsyncReadyCallback trampoline for GdkPixbuf::new_from_stream_at_scale_async(): wraps the C
+// arguments, invokes the PHP callable once and releases it (async scope).
+void cb_new_from_stream_at_scale_async_callback(GObject *source_object, GAsyncResult *res,
+                                                gpointer data) {
+  auto *cb = static_cast<Callback *>(data);
+  std::array<zval, 2> args{};
+  zval *argv = args.data();
+  wrap(source_object != nullptr ? G_OBJECT(source_object) : nullptr, &argv[0]);
+  wrap(res != nullptr ? G_OBJECT(res) : nullptr, &argv[1]);
+  zval ret;
+  callback_invoke(cb, 2, argv, &ret);
+  if (!Z_ISUNDEF(ret)) zval_ptr_dtor(&ret);
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  callback_free(cb);
+  callback_drain();
+}
+}  // namespace
+
+/**
+ * static Gtk4\GdkPixbuf::new_from_stream_at_scale_async(GInputStream $stream, int $width, int
+ * $height, bool $preserve_aspect_ratio, ?GCancellable $cancellable = null, ?callable $callback =
+ * null): void
+ *
+ * Creates a new pixbuf by asynchronously loading an image from an input stream.
+ */
+ZEND_METHOD(Gtk4_GdkPixbuf, new_from_stream_at_scale_async) {
+  zval *stream;
+  zend_long width;
+  zend_long height;
+  bool preserve_aspect_ratio;
+  zval *cancellable = nullptr;
+  zend_fcall_info fci_callback = empty_fcall_info;
+  zend_fcall_info_cache fcc_callback = empty_fcall_info_cache;
+  ZEND_PARSE_PARAMETERS_START(4, 6)
+  Z_PARAM_OBJECT_OF_CLASS(stream, class_for_gtype(G_TYPE_INPUT_STREAM))
+  Z_PARAM_LONG(width)
+  Z_PARAM_LONG(height)
+  Z_PARAM_BOOL(preserve_aspect_ratio)
+  Z_PARAM_OPTIONAL
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
+  Z_PARAM_FUNC_OR_NULL(fci_callback, fcc_callback)
+  ZEND_PARSE_PARAMETERS_END();
+  GObject *stream_o = unwrap(stream, G_TYPE_INPUT_STREAM);
+  if (stream_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_range<gint>(width, 2)) RETURN_THROWS();
+  if (!phpgtk::check_range<gint>(height, 3)) RETURN_THROWS();
+  GObject *cancellable_o = nullptr;
+  if (cancellable != nullptr) {
+    cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
+    if (cancellable_o == nullptr) RETURN_THROWS();
+  }
+  Callback *cb_callback =
+      ZEND_FCI_INITIALIZED(fci_callback)
+          ? callback_new(&fci_callback.function_name, "GdkPixbuf::new_from_stream_at_scale_async")
+          : nullptr;
+  gdk_pixbuf_new_from_stream_at_scale_async(
+      G_INPUT_STREAM(stream_o), static_cast<gint>(width), static_cast<gint>(height),
+      preserve_aspect_ratio, cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
+      cb_callback != nullptr ? cb_new_from_stream_at_scale_async_callback : nullptr, cb_callback);
 }
 
 /**

@@ -64,6 +64,12 @@ class GdkPixbuf extends GObject
     /** Creates a new pixbuf by loading an image from an resource. */
     public static function new_from_resource_at_scale(string $resource_path, int $width, int $height, bool $preserve_aspect_ratio): GdkPixbuf {}
 
+    /** Creates a new pixbuf by loading an image from an input stream. */
+    public static function new_from_stream(GInputStream $stream, ?GCancellable $cancellable = null): GdkPixbuf {}
+
+    /** Creates a new pixbuf by loading an image from an input stream. */
+    public static function new_from_stream_at_scale(GInputStream $stream, int $width, int $height, bool $preserve_aspect_ratio, ?GCancellable $cancellable = null): GdkPixbuf {}
+
     /**
      * Finishes an asynchronous pixbuf creation operation started with
      * gdk_pixbuf_new_from_stream_async().
@@ -91,6 +97,12 @@ class GdkPixbuf extends GObject
      * inside that directory.
      */
     public static function init_modules(string $path): bool {}
+
+    /** Creates a new pixbuf by asynchronously loading an image from an input stream. */
+    public static function new_from_stream_async(GInputStream $stream, ?GCancellable $cancellable = null, ?callable $callback = null): void {}
+
+    /** Creates a new pixbuf by asynchronously loading an image from an input stream. */
+    public static function new_from_stream_at_scale_async(GInputStream $stream, int $width, int $height, bool $preserve_aspect_ratio, ?GCancellable $cancellable = null, ?callable $callback = null): void {}
 
     /**
      * Finishes an asynchronous pixbuf save operation started with
@@ -248,11 +260,17 @@ class GdkPixbufAnimation extends GObject
     /** Creates a new pixbuf animation by loading an image from an resource. */
     public static function new_from_resource(string $resource_path): GdkPixbufAnimation {}
 
+    /** Creates a new animation by loading it from an input stream. */
+    public static function new_from_stream(GInputStream $stream, ?GCancellable $cancellable = null): GdkPixbufAnimation {}
+
     /**
      * Finishes an asynchronous pixbuf animation creation operation started with
      * `new_from_stream_async`.
      */
     public static function new_from_stream_finish(GAsyncResult $async_result): GdkPixbufAnimation {}
+
+    /** Creates a new animation by asynchronously loading an image from an input stream. */
+    public static function new_from_stream_async(GInputStream $stream, ?GCancellable $cancellable = null, ?callable $callback = null): void {}
 
     /** Queries the height of the bounding box of a pixbuf animation. */
     public function get_height(): int {}

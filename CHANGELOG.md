@@ -94,6 +94,13 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **The read side of GIO**: `GInputStream` and `GMemoryInputStream`, which turns a PHP string
+  into a stream GTK will read. Seven members that were skipped for want of the type came back
+  with it - `GdkPixbuf::new_from_stream()`, `new_from_stream_at_scale()` and their async
+  counterparts, `GdkPixbufAnimation::new_from_stream()` and `WebKitWebView::save_finish()` - so
+  an image that arrives as bytes no longer has to reach the disk to be decoded. `read_bytes()`
+  answers with a PHP string and is binary-safe; the base class is abstract, as it is in GIO.
+
 - **`WebKitWebsiteDataManager::clear()`**, and every other member GIR describes with a type
   alias. An alias is a typedef - `GTimeSpan` is a `gint64` with a name - and GIR uses the alias
   wherever the C header uses the typedef, which no arm of the generator's type map matched, so

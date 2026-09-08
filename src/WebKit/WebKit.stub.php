@@ -3072,6 +3072,9 @@ class WebKitWebView extends WebKitWebViewBase
     /** Asynchronously save the current web page. */
     public function save(WebKitSaveMode $save_mode, ?GCancellable $cancellable, ?callable $callback): void {}
 
+    /** Finish an asynchronous operation started with webkit_web_view_save(). */
+    public function save_finish(GAsyncResult $result): GInputStream {}
+
     /** Asynchronously save the current web page. */
     public function save_to_file(string $file, WebKitSaveMode $save_mode, ?GCancellable $cancellable, ?callable $callback): void {}
 

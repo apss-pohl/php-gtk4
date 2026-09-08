@@ -1153,6 +1153,29 @@ ZEND_METHOD(Gtk4_WebKitWebView, save) {
                        cb_callback != nullptr ? cb_save_callback : nullptr, cb_callback);
 }
 
+/**
+ * Gtk4\WebKitWebView::save_finish(GAsyncResult $result): GInputStream
+ *
+ * Finish an asynchronous operation started with webkit_web_view_save().
+ */
+ZEND_METHOD(Gtk4_WebKitWebView, save_finish) {
+  zval *result;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(result, class_for_gtype(G_TYPE_ASYNC_RESULT))
+  ZEND_PARSE_PARAMETERS_END();
+  WebKitWebView *self = PHPGTK_SELF(WebKitWebView, WEBKIT_TYPE_WEB_VIEW);
+  GObject *result_o = unwrap(result, G_TYPE_ASYNC_RESULT);
+  if (result_o == nullptr) RETURN_THROWS();
+  GError *error = nullptr;
+  GInputStream *phpgtk_ret = webkit_web_view_save_finish(self, G_ASYNC_RESULT(result_o), &error);
+  if (phpgtk_ret == nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
 namespace {
 // AsyncReadyCallback trampoline for WebKitWebView::save_to_file(): wraps the C arguments, invokes
 // the PHP callable once and releases it (async scope).

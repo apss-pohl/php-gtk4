@@ -53,6 +53,22 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `release_fd` — skip.txt: aborts the process (GLib-GIO:ERROR "priv->fd_refcount > 0") unless get_fd() was called first, and the refcount is not observable from here
 - `source_new` — return type GLib.Source
 
+## GInputStream
+
+- `read` — caller-allocates out parameter `buffer` of type array
+- `read_all` — caller-allocates out parameter `buffer` of type array
+- `read_all_async` — caller-allocates out parameter `buffer` of type array
+- `read_async` — caller-allocates out parameter `buffer` of type array
+- `vfunc close_async` — return or argument type not convertible in a thunk
+- `vfunc close_finish` — GError out parameter
+- `vfunc close_fn` — GError out parameter
+- `vfunc read_async` — caller-allocates out parameter `buffer` of type array
+- `vfunc read_finish` — GError out parameter
+- `vfunc read_fn` — GError out parameter
+- `vfunc skip` — GError out parameter
+- `vfunc skip_async` — return or argument type not convertible in a thunk
+- `vfunc skip_finish` — GError out parameter
+
 ## GListModel
 
 - `get_item` — shadowed by get_object
@@ -64,6 +80,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `insert_sorted` — callback parameter (needs an override)
 - `sort` — callback parameter (needs an override)
 - `splice` — parameter `additions` of type array (C array)
+
+## GMemoryInputStream
+
+- `new_from_data` — callback parameter (needs an override)
+- `add_data` — callback parameter (needs an override)
 
 ## GMenuItem
 
@@ -190,11 +211,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `new_from_data` — skip.txt: takes a caller-owned pixel buffer with a destroy callback; new_from_bytes() copies the same bytes
 - `new_from_inline` — deprecated (2.32)
-- `new_from_stream` — parameter `stream` of type Gio.InputStream
-- `new_from_stream_at_scale` — parameter `stream` of type Gio.InputStream
 - `get_file_info_finish` — return GdkPixbuf.PixbufFormat plus out parameters
-- `new_from_stream_async` — parameter `stream` of type Gio.InputStream
-- `new_from_stream_at_scale_async` — parameter `stream` of type Gio.InputStream
 - `composite_color` — skip.txt: 17 parameters (the checkerboard-background variant of composite()); composite() and composite_color_simple() cover the same drawing, and a ZEND_METHOD that size trips clang-tidy's function-size gate
 - `get_pixels` — skip.txt: a bare pointer into the pixel buffer (the shadowing get_pixels_with_length is skipped for the same reason); read_pixel_bytes() answers the bytes
 - `get_pixels_with_length` — skip.txt: a bare pointer into the pixel buffer; read_pixel_bytes() answers the same bytes as a PHP string
@@ -214,8 +231,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GdkPixbufAnimation
 
-- `new_from_stream` — parameter `stream` of type Gio.InputStream
-- `new_from_stream_async` — parameter `stream` of type Gio.InputStream
 - `get_iter` — parameter `start_time` of type GLib.TimeVal
 - `ref` — deprecated (2.0)
 - `unref` — deprecated (2.0)
@@ -1295,7 +1310,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 ## WebKitWebView
 
 - `get_tls_info` — out parameter `certificate` of type Gio.TlsCertificate
-- `save_finish` — return type Gio.InputStream (not in the closure)
 - `vfunc load_failed_with_tls_errors` — parameter `certificate` of type Gio.TlsCertificate
 
 ## WebKitWebViewBase
@@ -1538,8 +1552,10 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GApplication.cpp`
 - `Gio/GAsyncResult.cpp`
 - `Gio/GCancellable.cpp`
+- `Gio/GInputStream.cpp`
 - `Gio/GListModel.cpp`
 - `Gio/GListStore.cpp`
+- `Gio/GMemoryInputStream.cpp`
 - `Gio/GMenu.cpp`
 - `Gio/GMenuItem.cpp`
 - `Gio/GMenuModel.cpp`
@@ -1790,7 +1806,9 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkWindowSmokeTest.php`
 - `tests/Generated/GApplicationSmokeTest.php`
 - `tests/Generated/GCancellableSmokeTest.php`
+- `tests/Generated/GInputStreamSmokeTest.php`
 - `tests/Generated/GListStoreSmokeTest.php`
+- `tests/Generated/GMemoryInputStreamSmokeTest.php`
 - `tests/Generated/GMenuSmokeTest.php`
 - `tests/Generated/GMenuItemSmokeTest.php`
 - `tests/Generated/GSimpleActionSmokeTest.php`

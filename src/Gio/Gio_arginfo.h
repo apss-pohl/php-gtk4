@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: ed804811489321d939f4eb88063134675e7259fe */
+ * Stub hash: 497490b91a3ce4b58bebf87e4117fb9daec2fcaa */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_change_state, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
@@ -327,6 +327,61 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GCancellable_vfunc_cancelled arginfo_class_Gtk4_GApplication_activate
 
+#define arginfo_class_Gtk4_GInputStream___construct arginfo_class_Gtk4_GActionObject___construct
+
+#define arginfo_class_Gtk4_GInputStream_clear_pending arginfo_class_Gtk4_GApplication_activate
+
+#define arginfo_class_Gtk4_GInputStream_close arginfo_class_Gtk4_GApplication_register
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GInputStream_close_async, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, io_priority, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GInputStream_close_finish, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GInputStream_has_pending arginfo_class_Gtk4_GAction_get_enabled
+
+#define arginfo_class_Gtk4_GInputStream_is_closed arginfo_class_Gtk4_GAction_get_enabled
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GInputStream_read_all_finish, 0, 1, IS_LONG, 1)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GInputStream_read_bytes, 0, 2, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, count, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GInputStream_read_bytes_async, 0, 4, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, count, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, io_priority, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GInputStream_read_bytes_finish, 0, 1, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GInputStream_read_finish, 0, 1, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GInputStream_set_pending arginfo_class_Gtk4_GAction_get_enabled
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GInputStream_skip, 0, 2, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, count, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GInputStream_skip_async arginfo_class_Gtk4_GInputStream_read_bytes_async
+
+#define arginfo_class_Gtk4_GInputStream_skip_finish arginfo_class_Gtk4_GInputStream_read_finish
+
 #define arginfo_class_Gtk4_GListModel_get_item_type arginfo_class_Gtk4_GAction_get_name
 
 #define arginfo_class_Gtk4_GListModel_get_n_items arginfo_class_Gtk4_GApplication_get_flags
@@ -379,6 +434,16 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GListStore_get_item arginfo_class_Gtk4_GListModel_get_item
 
 #define arginfo_class_Gtk4_GListStore_items_changed arginfo_class_Gtk4_GListModelObject_items_changed
+
+#define arginfo_class_Gtk4_GMemoryInputStream___construct arginfo_class_Gtk4_GActionObject___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GMemoryInputStream_new_from_bytes, 0, 1, Gtk4\\GMemoryInputStream, 0)
+	ZEND_ARG_TYPE_INFO(0, bytes, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GMemoryInputStream_add_bytes, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, bytes, IS_STRING, 0)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GMenu___construct arginfo_class_Gtk4_GActionObject___construct
 
@@ -686,6 +751,22 @@ ZEND_METHOD(Gtk4_GCancellable, push_current);
 ZEND_METHOD(Gtk4_GCancellable, reset);
 ZEND_METHOD(Gtk4_GCancellable, set_error_if_cancelled);
 ZEND_METHOD(Gtk4_GCancellable, vfunc_cancelled);
+ZEND_METHOD(Gtk4_GInputStream, __construct);
+ZEND_METHOD(Gtk4_GInputStream, clear_pending);
+ZEND_METHOD(Gtk4_GInputStream, close);
+ZEND_METHOD(Gtk4_GInputStream, close_async);
+ZEND_METHOD(Gtk4_GInputStream, close_finish);
+ZEND_METHOD(Gtk4_GInputStream, has_pending);
+ZEND_METHOD(Gtk4_GInputStream, is_closed);
+ZEND_METHOD(Gtk4_GInputStream, read_all_finish);
+ZEND_METHOD(Gtk4_GInputStream, read_bytes);
+ZEND_METHOD(Gtk4_GInputStream, read_bytes_async);
+ZEND_METHOD(Gtk4_GInputStream, read_bytes_finish);
+ZEND_METHOD(Gtk4_GInputStream, read_finish);
+ZEND_METHOD(Gtk4_GInputStream, set_pending);
+ZEND_METHOD(Gtk4_GInputStream, skip);
+ZEND_METHOD(Gtk4_GInputStream, skip_async);
+ZEND_METHOD(Gtk4_GInputStream, skip_finish);
 ZEND_METHOD(Gtk4_GListModelObject, __construct);
 ZEND_METHOD(Gtk4_GListModel, items_changed);
 ZEND_METHOD(Gtk4_GListStore, append);
@@ -694,6 +775,9 @@ ZEND_METHOD(Gtk4_GListStore, insert);
 ZEND_METHOD(Gtk4_GListStore, remove);
 ZEND_METHOD(Gtk4_GListStore, remove_all);
 ZEND_METHOD(Gtk4_GListStore, __construct);
+ZEND_METHOD(Gtk4_GMemoryInputStream, __construct);
+ZEND_METHOD(Gtk4_GMemoryInputStream, new_from_bytes);
+ZEND_METHOD(Gtk4_GMemoryInputStream, add_bytes);
 ZEND_METHOD(Gtk4_GMenu, __construct);
 ZEND_METHOD(Gtk4_GMenu, append);
 ZEND_METHOD(Gtk4_GMenu, append_item);
@@ -923,6 +1007,26 @@ static const zend_function_entry class_Gtk4_GCancellable_methods[] = {
 	ZEND_FE_END
 };
 
+static const zend_function_entry class_Gtk4_GInputStream_methods[] = {
+	ZEND_ME(Gtk4_GInputStream, __construct, arginfo_class_Gtk4_GInputStream___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GInputStream, clear_pending, arginfo_class_Gtk4_GInputStream_clear_pending, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GInputStream, close, arginfo_class_Gtk4_GInputStream_close, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GInputStream, close_async, arginfo_class_Gtk4_GInputStream_close_async, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GInputStream, close_finish, arginfo_class_Gtk4_GInputStream_close_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GInputStream, has_pending, arginfo_class_Gtk4_GInputStream_has_pending, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GInputStream, is_closed, arginfo_class_Gtk4_GInputStream_is_closed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GInputStream, read_all_finish, arginfo_class_Gtk4_GInputStream_read_all_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GInputStream, read_bytes, arginfo_class_Gtk4_GInputStream_read_bytes, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GInputStream, read_bytes_async, arginfo_class_Gtk4_GInputStream_read_bytes_async, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GInputStream, read_bytes_finish, arginfo_class_Gtk4_GInputStream_read_bytes_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GInputStream, read_finish, arginfo_class_Gtk4_GInputStream_read_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GInputStream, set_pending, arginfo_class_Gtk4_GInputStream_set_pending, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GInputStream, skip, arginfo_class_Gtk4_GInputStream_skip, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GInputStream, skip_async, arginfo_class_Gtk4_GInputStream_skip_async, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GInputStream, skip_finish, arginfo_class_Gtk4_GInputStream_skip_finish, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
 static const zend_function_entry class_Gtk4_GListModel_methods[] = {
 	ZEND_RAW_FENTRY("get_item_type", NULL, arginfo_class_Gtk4_GListModel_get_item_type, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("get_n_items", NULL, arginfo_class_Gtk4_GListModel_get_n_items, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
@@ -950,6 +1054,13 @@ static const zend_function_entry class_Gtk4_GListStore_methods[] = {
 	ZEND_RAW_FENTRY("get_n_items", zim_Gtk4_GListModel_get_n_items, arginfo_class_Gtk4_GListStore_get_n_items, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("get_item", zim_Gtk4_GListModel_get_item, arginfo_class_Gtk4_GListStore_get_item, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("items_changed", zim_Gtk4_GListModel_items_changed, arginfo_class_Gtk4_GListStore_items_changed, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GMemoryInputStream_methods[] = {
+	ZEND_ME(Gtk4_GMemoryInputStream, __construct, arginfo_class_Gtk4_GMemoryInputStream___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GMemoryInputStream, new_from_bytes, arginfo_class_Gtk4_GMemoryInputStream_new_from_bytes, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GMemoryInputStream, add_bytes, arginfo_class_Gtk4_GMemoryInputStream_add_bytes, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -1222,6 +1333,16 @@ static zend_class_entry *register_class_Gtk4_GCancellable(zend_class_entry *clas
 	return class_entry;
 }
 
+static zend_class_entry *register_class_Gtk4_GInputStream(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GInputStream", class_Gtk4_GInputStream_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
 static zend_class_entry *register_class_Gtk4_GListModel(void)
 {
 	zend_class_entry ce, *class_entry;
@@ -1250,6 +1371,16 @@ static zend_class_entry *register_class_Gtk4_GListStore(zend_class_entry *class_
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GListStore", class_Gtk4_GListStore_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
 	zend_class_implements(class_entry, 1, class_entry_Gtk4_GListModel);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GMemoryInputStream(zend_class_entry *class_entry_Gtk4_GInputStream)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GMemoryInputStream", class_Gtk4_GMemoryInputStream_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GInputStream, 0);
 
 	return class_entry;
 }
