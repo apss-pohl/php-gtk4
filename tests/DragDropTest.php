@@ -267,7 +267,9 @@ final class DragDropTest extends GtkTestCase
                 $outcome = $e;
             }
         });
-        self::pump(static fn(): bool => $outcome !== null);
+        self::pump(static function () use (&$outcome): bool {
+            return $outcome !== null;
+        });
         self::assertNotNull($outcome, 'the async callback ran');
         self::assertTrue($outcome === true || $outcome instanceof GError);
     }

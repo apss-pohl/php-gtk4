@@ -100,7 +100,9 @@ final class DisplayTest extends GtkTestCase
         $clipboard->read_text_async(null, function (GdkClipboard $self, GAsyncResult $result) use (&$got): void {
             $got = $self->read_text_finish($result);
         });
-        self::pump(static fn(): bool => $got !== null);
+        self::pump(static function () use (&$got): bool {
+            return $got !== null;
+        });
         self::assertSame('round trip', $got);
     }
 
@@ -116,7 +118,9 @@ final class DisplayTest extends GtkTestCase
         $clipboard->read_texture_async(null, function (GdkClipboard $self, GAsyncResult $result) use (&$got): void {
             $got = $self->read_texture_finish($result);
         });
-        self::pump(static fn(): bool => $got !== null);
+        self::pump(static function () use (&$got): bool {
+            return $got !== null;
+        });
         self::assertInstanceOf(GdkTexture::class, $got);
         self::assertSame(1, $got->get_width());
     }
@@ -130,7 +134,9 @@ final class DisplayTest extends GtkTestCase
         $clipboard->read_async(['text/plain;charset=utf-8'], 0, null, function () use (&$done): void {
             $done = true;   // the stream itself is not bound yet; the callback landing is the point
         });
-        self::pump(static fn(): bool => $done);
+        self::pump(static function () use (&$done): bool {
+            return $done;
+        });
         self::assertTrue($done, 'the async callback ran');
     }
 

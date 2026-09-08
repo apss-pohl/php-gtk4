@@ -94,7 +94,9 @@ final class IoWatchTest extends GtkTestCase
             return false;
         });
         fwrite($b, 'once');
-        self::pump(static fn(): bool => $calls === 1);
+        self::pump(static function () use (&$calls): bool {
+            return $calls === 1;
+        });
         self::assertSame(1, $calls);
         self::assertFalse(GLib::source_remove($id), 'the false return already removed it');
         fwrite($b, 'twice');
@@ -117,7 +119,9 @@ final class IoWatchTest extends GtkTestCase
         };
         GLib::io_add_watch($a, GIOCondition::IN | GIOCondition::HUP, $onEvent);
         fclose($b);
-        self::pump(static fn(): bool => $events !== []);
+        self::pump(static function () use (&$events): bool {
+            return $events !== [];
+        });
         self::assertNotEmpty($events);
         [$condition, $data] = end($events) ?: [0, null];
         self::assertTrue(
