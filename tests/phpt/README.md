@@ -35,6 +35,7 @@ What is here, by the rule above:
 | `debug-info-boxed` | `var_dump()` output of a handle |
 | `diagnostics-fatal` | `gtk4.diagnostics=fatal` raises an `E_ERROR`, which ends the process mid-script |
 | `diagnostics-modes`, `diagnostics-stderr` | the mode an `--INI--` picks before the first line runs, and `gtk4.diagnostics=stderr`, whose whole output *is* the process' stderr |
+| `diagnostics-off-ini` | `gtk4.diagnostics=off` in an `--INI--`, which PHP's ini scanner turns into the empty string long before the extension sees it |
 | `vfunc-unbound-warning` | a warning emitted once per GType, at the registration only a fresh process still has ahead of it |
 
 Every `.phpt` in this directory has a row above - `DocsTest::testPhptReadmeListsEveryTest()`

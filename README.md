@@ -54,12 +54,12 @@ PHP Warning:  Gtk: gtk_editable_get_chars: assertion 'end_pos == -1 || end_pos >
 and `@` all apply. The `gtk4.diagnostics` ini directive picks what happens (changeable at runtime
 with `ini_set()`):
 
-| value                | GLib `CRITICAL` | GLib `WARNING` |
-| -------------------- | --------------- | -------------- |
-| `warning` *(default)*| `E_WARNING`     | `E_WARNING`    |
-| `fatal`              | `E_ERROR`       | `E_WARNING`    |
-| `stderr`             | GLib's own output, unchanged     ||
-| `off`                | dropped                          ||
+| value                 | GLib `CRITICAL`              | GLib `WARNING` |
+| --------------------- | ---------------------------- | -------------- |
+| `warning` *(default)* | `E_WARNING`                  | `E_WARNING`    |
+| `fatal`               | `E_ERROR`                    | `E_WARNING`    |
+| `stderr`              | GLib's own output, unchanged |                |
+| `off`                 | dropped                      |                |
 
 GTK returns and carries on after a `CRITICAL`, so the default reports without ending your
 application. `fatal` is for development and CI, where an unguarded boundary should stop the run.
@@ -114,8 +114,10 @@ The decisions the extension is built on. `CLAUDE.md` has the working rules that 
   hand from then on) and the MINIT of the non-GObject types in `src/gtk4.cpp`. Generated files
   are never edited; CI fails when a fresh run differs.
 - **Modern GTK 4 only.** Everything GIR marks deprecated is skipped in favour of its replacement;
-  nothing carries `#[\Deprecated]`. `GtkTreeView`, `GtkDialog` and the pixbuf-to-texture calls are
-  not bound; the list widgets, the async dialogs and byte-based texture bridges are.
+  nothing carries `#[\Deprecated]`. `GtkTreeView`, `GtkDialog` and the pixbuf calls GTK 4.12
+  deprecated (`gtk_image_set_from_pixbuf`, `gdk_pixbuf_get_from_texture`) are not bound; the list
+  widgets, the async dialogs and the texture bridges that replaced them are
+  (`GdkTexture::new_from_bytes()`, `new_for_pixbuf()`).
 - **The C API's names, in snake_case, one spelling.** `gtk_window_set_title` is `set_title`,
   properties keep GTK's names with underscores (`$win->default_width`), enum cases are CamelCase
   PHP enums, flags are constant classes. No camelCase aliases.
@@ -163,20 +165,19 @@ The decisions the extension is built on. `CLAUDE.md` has the working rules that 
   much as a warning. The symbols and the GIR are there; the feature is not. Binding it against
   the WebKitGTK this project builds and tests on would ship a class whose every constructor
   throws. Revisit when a distribution enables it.
-- **Not carried over from php-gtk3**: varargs trampolines, a fresh wrapper per return, `GdkEvent`
-  field copies, `Gtk::main()`, `connect()` user data, raw pointers stored in user data, a
-  hand-maintained module table.
 - **What is deliberately not bound**, and why - the classes `docs/GTK3-MAP.md` still marks ❌
   are not a backlog:
   - *deprecated in GTK 4.10* - `GtkDialog`, `GtkInfoBar`, `GtkStatusbar`, `GtkEntryCompletion`,
-    `GtkColorButton`/`GtkFontButton`, `GtkAppChooser*`. The binding exposes the modern API only
-    and every replacement is bound (`GtkAlertDialog` and the other async dialogs, `GtkRevealer`
-    with a label, `GtkDropDown`, the colour and font dialogs). Port one only if a real program
-    turns out to need it.
+    `GtkAppChooser*`, and the `GtkColorButton`/`GtkFontButton` pair. The binding exposes the
+    modern API only and every replacement is bound (`GtkAlertDialog` and the other async dialogs,
+    `GtkRevealer` with a label, `GtkDropDown`, the colour and font dialogs with their
+    `GtkColorDialogButton`/`GtkFontDialogButton`). Port one only if a real program turns out to
+    need it.
   - *out of scope by design* - `GtkPrinter`/`GtkPrintJob`/`GtkPrintUnixDialog` (a separate
     library, gtk4-unix-print, built on the deprecated `GtkDialog`), `GskGLShader` (deprecated in
-    4.16), the Broadway/NGL/Vulkan renderer classes, and GIO's stream hierarchy beyond the
-    reading end (`GInputStream`, `GMemoryInputStream`) that decoding an image needs.
+    4.16), the Broadway/NGL/Vulkan renderer classes, and GIO's stream hierarchy beyond the memory
+    streams an image needs to decode and encode (`GInputStream`/`GMemoryInputStream`,
+    `GOutputStream`/`GMemoryOutputStream`): no file, socket, buffered or data streams.
   - WebKitGTK's WebExtensions API, for the reason in the WebKitGTK entry above.
 
 ## Threads
@@ -231,8 +232,16 @@ shares no code with it.
 
 ## License and warranty
 
-[MIT](LICENSE). `gen/gen_stub.php` is vendored from
-[php-src](https://github.com/php/php-src/blob/master/build/gen_stub.php) (PHP License 3.01).
+[MIT](LICENSE) — the code here, including everything the generator writes.
+
+Two things in a distribution are somebody else's and keep their own terms, both accounted for in
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md): `gen/gen_stub.php` is vendored from
+[php-src](https://github.com/php/php-src/blob/master/build/gen_stub.php) (PHP License 3.01, full text in
+[LICENSES/PHP-3.01.txt](LICENSES/PHP-3.01.txt)), and the documentation in the generated docblocks and
+comment blocks is GTK's, GLib's, Pango's and WebKitGTK's own prose under their licences (LGPL, MIT for
+graphene). The built extension links the GTK stack dynamically and bundles none of it.
+
+This product includes PHP software, freely available from <http://www.php.net/software/>.
 
 **This software comes with no warranty of any kind.** It is provided *as is*, without warranty
 express or implied, including but not limited to merchantability, fitness for a particular purpose

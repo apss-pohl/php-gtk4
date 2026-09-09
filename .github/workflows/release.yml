@@ -522,6 +522,9 @@ jobs:
           git rm -rq --ignore-unmatch .
           cp ../stubs/gtk4.php ../stubs/composer.json ../stubs/extension.neon ../stubs/README.md .
           cp ../LICENSE LICENSE
+          # The docblocks in gtk4.php are GTK's own documentation, so the notices travel with them.
+          cp ../THIRD-PARTY-NOTICES.md THIRD-PARTY-NOTICES.md
+          mkdir -p LICENSES && cp ../LICENSES/PHP-3.01.txt LICENSES/PHP-3.01.txt
           git add -A
           git -c user.name=github-actions -c user.email=github-actions@github.com \
             commit -q -m "php-gtk4 $version" \

@@ -16,6 +16,13 @@ API of php-gtk4 `0.3.0`.
 redeclare every one of them, so the package deliberately has no `autoload` section. It is read
 by tools, not by PHP.
 
+## Licence
+
+MIT, like the extension (`LICENSE`). One thing in this package is not: the docblocks are GTK's, GLib's,
+Pango's and WebKitGTK's own documentation, copied out of their GObject-Introspection data by the generator
+and reflowed — their authors' text under their licences (LGPL, MIT for graphene). `THIRD-PARTY-NOTICES.md`
+next to this file is the accounting.
+
 ## PHPStan
 
 With [`phpstan/extension-installer`](https://github.com/phpstan/extension-installer) nothing

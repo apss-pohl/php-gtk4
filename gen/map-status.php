@@ -18,17 +18,27 @@ $root = dirname(__DIR__);
 $mapPath = "$root/docs/GTK3-MAP.md";
 
 $declared = [];
+/** @var array<string, int> $perNamespace names declared per generated namespace stub */
+$perNamespace = [];
+$handWritten = 0;
 foreach (array_merge(["$root/src/gtk4.stub.php"], glob("$root/src/*/*.stub.php") ?: []) as $stub) {
     $src = file_get_contents($stub);
     if ($src === false) {
         throw new RuntimeException("cannot read $stub");
     }
-    if (preg_match_all('/^\s*(?:final\s+)?(?:class|interface|enum)\s+([A-Za-z0-9_]+)/m', $src, $m) > 0) {
-        foreach ($m[1] as $name) {
-            $declared[] = $name;
-        }
+    $found = preg_match_all('/^\s*(?:final\s+)?(?:class|interface|enum)\s+([A-Za-z0-9_]+)/m', $src, $m) > 0
+        ? $m[1]
+        : [];
+    foreach ($found as $name) {
+        $declared[] = $name;
+    }
+    if (basename($stub) === 'gtk4.stub.php') {
+        $handWritten += count($found);
+    } else {
+        $perNamespace[basename(dirname($stub))] = count($found);
     }
 }
+arsort($perNamespace);
 sort($declared);
 $declared = array_values(array_unique($declared));
 $isDeclared = array_fill_keys($declared, true);
@@ -37,6 +47,26 @@ $text = file_get_contents($mapPath);
 if ($text === false) {
     throw new RuntimeException("cannot read $mapPath");
 }
+
+/**
+ * Applies one replacement that must happen. A pattern that stops matching - because the text it
+ * anchors on was rewrapped or reworded - used to leave the document silently unchanged, which is
+ * how the class list below stayed frozen while the stubs grew past it; the --check gate saw
+ * nothing, because the "new" text was the old text.
+ *
+ * A closure, not a function: this file is a script, and phpcs' PSR1 rule refuses a file that both
+ * declares symbols and does work.
+ */
+$replaceOnce = static function (string $pattern, string $replacement, string $subject, string $what): string {
+    $out = preg_replace_callback($pattern, static fn(): string => $replacement, $subject, 1, $done);
+    if ($out === null) {
+        throw new RuntimeException("$what: " . preg_last_error_msg());
+    }
+    if ($done !== 1) {
+        throw new RuntimeException("$what: nothing in docs/GTK3-MAP.md matches $pattern");
+    }
+    return $out;
+};
 
 $marks = ['✅', '🟡', '❌'];
 $counts = ['✅' => 0, '🟡' => 0, '❌' => 0, '⛔' => 0, '🧩' => 0];
@@ -81,50 +111,59 @@ $text = implode("\n", $lines);
 // advance it below only when something else in the file really changed.
 $today = date('Y-m-d');
 $stamp = preg_match('/^Status column regenerated (\d{4}-\d{2}-\d{2})/m', $text, $m) === 1 ? $m[1] : $today;
-$listStamp = preg_match('/^php-gtk4 currently declares \((\d{4}-\d{2}-\d{2}),/m', $text, $m) === 1 ? $m[1] : $today;
-$text = preg_replace(
+$listStamp = preg_match('/^php-gtk4 currently declares \((\d{4}-\d{2}-\d{2})[,)]/m', $text, $m) === 1
+    ? $m[1]
+    : $today;
+$text = $replaceOnce(
     '/^(?:Generated \d{4}-\d{2}-\d{2}\.|Status column regenerated \d{4}-\d{2}-\d{2}).*(?:\n.*may lag\.)?$/m',
     "Status column regenerated $stamp by `gen/map-status.php` (run by `gen/gir.php --install`);\n" .
     'the notes are hand-written and may lag.',
     $text,
-    1,
-) ?? $text;
-$text = preg_replace(
+    'header stamp',
+);
+$text = $replaceOnce(
     '/^\| ✅ implemented \| \d+ \|/m',
     "| ✅ implemented | {$counts['✅']} |",
     $text,
-    1,
-) ?? $text;
-$text = preg_replace('/^\| 🟡 partial \| \d+ \|/m', "| 🟡 partial | {$counts['🟡']} |", $text, 1) ?? $text;
-$text = preg_replace(
+    'implemented count',
+);
+$text = $replaceOnce('/^\| 🟡 partial \| \d+ \|/m', "| 🟡 partial | {$counts['🟡']} |", $text, 'partial count');
+$text = $replaceOnce(
     '/^\| ❌ to port \(GTK 4 equivalent exists\) \| ~?\d+ \|/m',
     "| ❌ to port (GTK 4 equivalent exists) | {$counts['❌']} |",
     $text,
-    1,
-) ?? $text;
-$text = preg_replace(
+    'to-port count',
+);
+$text = $replaceOnce(
     '/^\| ⛔ removed in GTK 4 \| ~?\d+ \|/m',
     "| ⛔ removed in GTK 4 | {$counts['⛔']} |",
     $text,
-    1,
-) ?? $text;
-$text = preg_replace(
+    'removed count',
+);
+$text = $replaceOnce(
     '/^\| 🧩 out of scope \/ later milestone \| ~?\d+ \|/m',
     "| 🧩 out of scope / later milestone | {$counts['🧩']} |",
     $text,
-    1,
-) ?? $text;
+    'out-of-scope count',
+);
 
-$list = 'php-gtk4 currently declares (' . $listStamp . ', ' . count($declared) . ' names): ' .
-    implode(', ', array_map(static fn(string $n): string => "`$n`", $declared)) .
-    '. Everything else in this document is open work.';
-$wrapped = wordwrap($list, 110, "\n", false);
-$text = preg_replace(
-    '/^php-gtk4 currently (?:registers|declares) \(.*?\. Everything else in this document is open work\./ms',
-    $wrapped,
+// Naming every declared class here was readable at 65 of them and is noise at ten times that, so
+// the paragraph carries the shape of the surface - hand-written against generated, per namespace -
+// and points at the stub for the names themselves.
+$namespaces = [];
+foreach ($perNamespace as $ns => $n) {
+    $namespaces[] = "$ns ($n)";
+}
+$list = 'php-gtk4 currently declares (' . $listStamp . ') ' . count($declared) .
+    " classes, interfaces and enums: $handWritten hand-written (`src/gtk4.stub.php`) and " .
+    (count($declared) - $handWritten) . ' generated - ' . implode(', ', $namespaces) .
+    '. `stubs/gtk4.php` has the names; everything else in this document is open work.';
+$text = $replaceOnce(
+    '/^php-gtk4 currently (?:registers|declares) \(.*?open work\./ms',
+    wordwrap($list, 110, "\n", false),
     $text,
-    1,
-) ?? $text;
+    'declared-class summary',
+);
 
 $check = in_array('--check', $argv, true);
 $old = file_get_contents($mapPath);
@@ -133,18 +172,18 @@ if ($old === $text) {
     exit(0);
 }
 // Something else changed, so the file really is regenerated today: now the dates advance.
-$text = preg_replace(
+$text = $replaceOnce(
     '/^Status column regenerated \d{4}-\d{2}-\d{2}/m',
     "Status column regenerated $today",
     $text,
-    1,
-) ?? $text;
-$text = preg_replace(
-    '/^php-gtk4 currently declares \(\d{4}-\d{2}-\d{2},/m',
-    "php-gtk4 currently declares ($today,",
+    'header date',
+);
+$text = $replaceOnce(
+    '/^php-gtk4 currently declares \(\d{4}-\d{2}-\d{2}\)/m',
+    "php-gtk4 currently declares ($today)",
     $text,
-    1,
-) ?? $text;
+    'summary date',
+);
 if ($old === $text) {
     echo "docs/GTK3-MAP.md up to date\n";
     exit(0);

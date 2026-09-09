@@ -14,6 +14,7 @@
   phpgtk::register_enum(GTK_TYPE_EVENT_SEQUENCE_STATE, register_class_Gtk4_GtkEventSequenceState());
   phpgtk::register_enum(GTK_TYPE_FILTER_CHANGE, register_class_Gtk4_GtkFilterChange());
   phpgtk::register_enum(GTK_TYPE_FILTER_MATCH, register_class_Gtk4_GtkFilterMatch());
+  phpgtk::register_enum(GTK_TYPE_FONT_LEVEL, register_class_Gtk4_GtkFontLevel());
   phpgtk::register_flags(GTK_TYPE_ICON_LOOKUP_FLAGS, register_class_Gtk4_GtkIconLookupFlags());
   phpgtk::register_enum(GTK_TYPE_ICON_SIZE, register_class_Gtk4_GtkIconSize());
   phpgtk::register_enum(GTK_TYPE_IMAGE_TYPE, register_class_Gtk4_GtkImageType());
@@ -434,6 +435,8 @@
   phpgtk::register_class("GtkCenterLayout", ce_GtkCenterLayout, GTK_TYPE_CENTER_LAYOUT);
   zend_class_entry *ce_GtkCheckButton = register_class_Gtk4_GtkCheckButton(ce_GtkWidget);
   phpgtk::register_class("GtkCheckButton", ce_GtkCheckButton, GTK_TYPE_CHECK_BUTTON);
+  zend_class_entry *ce_GtkColorDialogButton = register_class_Gtk4_GtkColorDialogButton(ce_GtkWidget);
+  phpgtk::register_class("GtkColorDialogButton", ce_GtkColorDialogButton, GTK_TYPE_COLOR_DIALOG_BUTTON);
   zend_class_entry *ce_GtkColumnView = register_class_Gtk4_GtkColumnView(ce_GtkWidget, ce_GtkScrollable);
   phpgtk::register_class("GtkColumnView", ce_GtkColumnView, GTK_TYPE_COLUMN_VIEW);
   zend_class_entry *ce_GtkCssProvider = register_class_Gtk4_GtkCssProvider(ce_GObject, ce_GtkStyleProvider);
@@ -472,6 +475,8 @@
   phpgtk::register_class("GtkFlowBox", ce_GtkFlowBox, GTK_TYPE_FLOW_BOX);
   zend_class_entry *ce_GtkFlowBoxChild = register_class_Gtk4_GtkFlowBoxChild(ce_GtkWidget);
   phpgtk::register_class("GtkFlowBoxChild", ce_GtkFlowBoxChild, GTK_TYPE_FLOW_BOX_CHILD);
+  zend_class_entry *ce_GtkFontDialogButton = register_class_Gtk4_GtkFontDialogButton(ce_GtkWidget);
+  phpgtk::register_class("GtkFontDialogButton", ce_GtkFontDialogButton, GTK_TYPE_FONT_DIALOG_BUTTON);
   zend_class_entry *ce_GtkFrame = register_class_Gtk4_GtkFrame(ce_GtkWidget);
   phpgtk::register_class("GtkFrame", ce_GtkFrame, GTK_TYPE_FRAME);
   zend_class_entry *ce_GtkGestureClick = register_class_Gtk4_GtkGestureClick(ce_GtkGestureSingle);

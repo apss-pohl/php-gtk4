@@ -94,7 +94,10 @@ void interrupt_handler(zend_execute_data *execute_data) {
 
 }  // namespace
 
-// gtk4.diagnostics ini value -> mode.
+// gtk4.diagnostics ini value -> mode. The empty string is Off: PHP's ini scanner reads `off`
+// (and `no`, `false`, `none`) in a php.ini or a -d as the boolean false and hands the handler ""
+// long before it gets here, so refusing it would make the documented `off` unsettable from
+// anywhere but ini_set() - which is exactly what it did.
 bool diagnostics_mode_from_name(const char *name, size_t len, DiagnosticsMode *out) {
   const std::string value(name, len);
   if (value == "fatal") {
@@ -103,7 +106,7 @@ bool diagnostics_mode_from_name(const char *name, size_t len, DiagnosticsMode *o
     *out = DiagnosticsMode::Warning;
   } else if (value == "stderr") {
     *out = DiagnosticsMode::Stderr;
-  } else if (value == "off") {
+  } else if (value == "off" || value.empty()) {
     *out = DiagnosticsMode::Off;
   } else {
     return false;

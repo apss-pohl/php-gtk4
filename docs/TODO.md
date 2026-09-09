@@ -58,11 +58,12 @@ history; an item leaves this file when it is done or decided against, it is not 
   `GLib::invoke_on_main(callable)` (serialise the callable or require a `parallel`-style channel;
   `g_main_context_invoke` on the GUI context, the callable released on that thread). Needs a
   concrete consumer (`ext-parallel` or PHP-native threads) before designing the API.
-- **Branch protection for `main`**: blocked, private repository on a Free plan (the GitHub API
-  answers 403 "Upgrade to GitHub Pro or make this repository public"). The ruleset is ready in
-  `.github/ruleset-main.json`; once public or Pro:
+- **Branch protection for `main`**: unblocked - the repository is public since 2026-09-09, so the
+  ruleset in `.github/ruleset-main.json` can go up:
   `gh api -X POST repos/apss-pohl/php-gtk4/rulesets --input .github/ruleset-main.json`
-  (drop `required_approving_review_count` to 0 while there is a single maintainer).
+  (drop `required_approving_review_count` to 0 while there is a single maintainer). Still open with
+  it: the free security features a public repository gets - private vulnerability reporting (the
+  channel `SECURITY.md` sends people to), secret scanning and its push protection - are all off.
 
 - **What the generator still cannot shape**, in the order of how many members each blocks
   (`gen/report.md`; the count moves as classes are bound). None of these is a missing *type* -
@@ -93,6 +94,13 @@ history; an item leaves this file when it is done or decided against, it is not 
   hands out a class it calls unbuildable), but only through arg-less getters on classes the
   factory can build. A class reachable *only* through a method with arguments would keep a stale
   excuse.
+- `GtkFontDialogButton::set_font_desc()` logs a GLib CRITICAL on GTK < 4.18 when the description
+  names a family the font map does not list: `update_font_data()` walks
+  `g_list_model_get_n_items(self->font_family)` with `font_family` still NULL
+  (`gtk/gtkfontdialogbutton.c`; upstream added the NULL check in 4.18, so 4.14 and 4.16 - the
+  floor and one above it - complain). Nothing to guard here, any family string is legitimate;
+  `examples/GtkFontDialogButton.php` uses "Sans", which Pango always lists. Pin it if a sweep ever
+  reaches it.
 - `GskTextNode` (needs a Pango font and glyph string) and `GskColorMatrixNode` (a graphene matrix
   and vec4) have no constructor until those types are bound; `GdkPixbufAnimationIter` needs a
   `GTimeVal`, which is not.

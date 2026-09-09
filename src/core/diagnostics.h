@@ -40,7 +40,8 @@ namespace phpgtk {
 // reporting modes. INFO and DEBUG are left to GLib, which honours G_MESSAGES_DEBUG.
 enum class DiagnosticsMode : zend_long { Fatal = 0, Warning = 1, Stderr = 2, Off = 3 };
 
-// Parse an ini value. False (leaving *out alone) on an unknown name.
+// Parse an ini value. False (leaving *out alone) on an unknown name. The empty string is Off,
+// because that is what PHP's ini scanner makes of `off` in a php.ini or a -d.
 bool diagnostics_mode_from_name(const char *name, size_t len, DiagnosticsMode *out);
 
 void diagnostics_minit();             // install the GLib writer, chain zend_interrupt_function

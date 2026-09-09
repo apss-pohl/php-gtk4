@@ -58,7 +58,8 @@ static PHP_GSHUTDOWN_FUNCTION(gtk4) {
 }
 
 // gtk4.diagnostics: map the name to the mode the writer reads (src/core/diagnostics.h).
-// Rejecting an unknown value makes a typo a startup error rather than a silent default.
+// Rejecting an unknown value makes a typo a startup error rather than a silent default; the
+// empty string is not one, it is what PHP's ini scanner makes of `off`.
 static PHP_INI_MH(on_update_diagnostics) {
   phpgtk::DiagnosticsMode mode{};
   if (new_value == nullptr ||

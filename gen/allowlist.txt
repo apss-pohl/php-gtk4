@@ -171,6 +171,10 @@ Gtk.FileDialog
 Gtk.FileFilter
 Gtk.ColorDialog
 Gtk.FontDialog
+# The button shape of those two: GTK 4.10's replacements for GtkColorButton/GtkFontButton, which
+# open the dialog above and keep the chosen colour/font as a property.
+Gtk.ColorDialogButton
+Gtk.FontDialogButton
 Gtk.AboutDialog
 # The font a GtkFontDialog answers with (a boxed record); the face/family/map/language side of
 # that API stays unbound - a description is what an application sets on a widget.

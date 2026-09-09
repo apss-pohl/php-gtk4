@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 304f507fcfd9915e526336f16d4328808ee4b622 */
+ * Stub hash: e3b29ae08a5ed03f4da2fe4829acabf50330bead */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -908,6 +908,24 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkColorDialog_set_with_alpha, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, with_alpha, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkColorDialogButton___construct, 0, 0, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, dialog, Gtk4\\GtkColorDialog, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkColorDialogButton_get_dialog, 0, 0, Gtk4\\GtkColorDialog, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkColorDialogButton_get_rgba, 0, 0, Gtk4\\GdkRGBA, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkColorDialogButton_set_dialog, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, dialog, Gtk4\\GtkColorDialog, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkColorDialogButton_set_rgba, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, color, Gtk4\\GdkRGBA, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkColumnView___construct, 0, 0, 0)
@@ -2117,6 +2135,49 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GtkFontDialog_set_modal arginfo_class_Gtk4_GtkAlertDialog_set_modal
 
 #define arginfo_class_Gtk4_GtkFontDialog_set_title arginfo_class_Gtk4_GtkColorDialog_set_title
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkFontDialogButton___construct, 0, 0, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, dialog, Gtk4\\GtkFontDialog, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkFontDialogButton_get_dialog, 0, 0, Gtk4\\GtkFontDialog, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkFontDialogButton_get_font_desc, 0, 0, Gtk4\\PangoFontDescription, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkFontDialogButton_get_font_features arginfo_class_Gtk4_GtkAboutDialog_get_comments
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkFontDialogButton_get_level, 0, 0, Gtk4\\GtkFontLevel, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GtkFontDialogButton_get_use_font arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+#define arginfo_class_Gtk4_GtkFontDialogButton_get_use_size arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFontDialogButton_set_dialog, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, dialog, Gtk4\\GtkFontDialog, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFontDialogButton_set_font_desc, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, font_desc, Gtk4\\PangoFontDescription, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFontDialogButton_set_font_features, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, font_features, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFontDialogButton_set_level, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, level, Gtk4\\GtkFontLevel, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFontDialogButton_set_use_font, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, use_font, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFontDialogButton_set_use_size, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, use_size, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkFrame___construct arginfo_class_Gtk4_GtkExpander___construct
 
@@ -6482,8 +6543,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkWidget_get_clipboard, 0, 0, Gtk4\\GdkClipboard, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkWidget_get_color, 0, 0, Gtk4\\GdkRGBA, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_GtkWidget_get_color arginfo_class_Gtk4_GtkColorDialogButton_get_rgba
 
 #define arginfo_class_Gtk4_GtkWidget_get_css_classes arginfo_class_Gtk4_GtkAboutDialog_get_artists
 
@@ -7313,6 +7373,11 @@ ZEND_METHOD(Gtk4_GtkColorDialog, get_with_alpha);
 ZEND_METHOD(Gtk4_GtkColorDialog, set_modal);
 ZEND_METHOD(Gtk4_GtkColorDialog, set_title);
 ZEND_METHOD(Gtk4_GtkColorDialog, set_with_alpha);
+ZEND_METHOD(Gtk4_GtkColorDialogButton, __construct);
+ZEND_METHOD(Gtk4_GtkColorDialogButton, get_dialog);
+ZEND_METHOD(Gtk4_GtkColorDialogButton, get_rgba);
+ZEND_METHOD(Gtk4_GtkColorDialogButton, set_dialog);
+ZEND_METHOD(Gtk4_GtkColorDialogButton, set_rgba);
 ZEND_METHOD(Gtk4_GtkColumnView, __construct);
 ZEND_METHOD(Gtk4_GtkColumnView, append_column);
 ZEND_METHOD(Gtk4_GtkColumnView, get_columns);
@@ -7694,6 +7759,19 @@ ZEND_METHOD(Gtk4_GtkFontDialog, set_filter);
 ZEND_METHOD(Gtk4_GtkFontDialog, set_font_map);
 ZEND_METHOD(Gtk4_GtkFontDialog, set_modal);
 ZEND_METHOD(Gtk4_GtkFontDialog, set_title);
+ZEND_METHOD(Gtk4_GtkFontDialogButton, __construct);
+ZEND_METHOD(Gtk4_GtkFontDialogButton, get_dialog);
+ZEND_METHOD(Gtk4_GtkFontDialogButton, get_font_desc);
+ZEND_METHOD(Gtk4_GtkFontDialogButton, get_font_features);
+ZEND_METHOD(Gtk4_GtkFontDialogButton, get_level);
+ZEND_METHOD(Gtk4_GtkFontDialogButton, get_use_font);
+ZEND_METHOD(Gtk4_GtkFontDialogButton, get_use_size);
+ZEND_METHOD(Gtk4_GtkFontDialogButton, set_dialog);
+ZEND_METHOD(Gtk4_GtkFontDialogButton, set_font_desc);
+ZEND_METHOD(Gtk4_GtkFontDialogButton, set_font_features);
+ZEND_METHOD(Gtk4_GtkFontDialogButton, set_level);
+ZEND_METHOD(Gtk4_GtkFontDialogButton, set_use_font);
+ZEND_METHOD(Gtk4_GtkFontDialogButton, set_use_size);
 ZEND_METHOD(Gtk4_GtkFrame, __construct);
 ZEND_METHOD(Gtk4_GtkFrame, get_child);
 ZEND_METHOD(Gtk4_GtkFrame, get_label);
@@ -9626,6 +9704,15 @@ static const zend_function_entry class_Gtk4_GtkColorDialog_methods[] = {
 	ZEND_FE_END
 };
 
+static const zend_function_entry class_Gtk4_GtkColorDialogButton_methods[] = {
+	ZEND_ME(Gtk4_GtkColorDialogButton, __construct, arginfo_class_Gtk4_GtkColorDialogButton___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkColorDialogButton, get_dialog, arginfo_class_Gtk4_GtkColorDialogButton_get_dialog, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkColorDialogButton, get_rgba, arginfo_class_Gtk4_GtkColorDialogButton_get_rgba, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkColorDialogButton, set_dialog, arginfo_class_Gtk4_GtkColorDialogButton_set_dialog, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkColorDialogButton, set_rgba, arginfo_class_Gtk4_GtkColorDialogButton_set_rgba, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
 static const zend_function_entry class_Gtk4_GtkColumnView_methods[] = {
 	ZEND_ME(Gtk4_GtkColumnView, __construct, arginfo_class_Gtk4_GtkColumnView___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkColumnView, append_column, arginfo_class_Gtk4_GtkColumnView_append_column, ZEND_ACC_PUBLIC)
@@ -10171,6 +10258,23 @@ static const zend_function_entry class_Gtk4_GtkFontDialog_methods[] = {
 	ZEND_ME(Gtk4_GtkFontDialog, set_font_map, arginfo_class_Gtk4_GtkFontDialog_set_font_map, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialog, set_modal, arginfo_class_Gtk4_GtkFontDialog_set_modal, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialog, set_title, arginfo_class_Gtk4_GtkFontDialog_set_title, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GtkFontDialogButton_methods[] = {
+	ZEND_ME(Gtk4_GtkFontDialogButton, __construct, arginfo_class_Gtk4_GtkFontDialogButton___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialogButton, get_dialog, arginfo_class_Gtk4_GtkFontDialogButton_get_dialog, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialogButton, get_font_desc, arginfo_class_Gtk4_GtkFontDialogButton_get_font_desc, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialogButton, get_font_features, arginfo_class_Gtk4_GtkFontDialogButton_get_font_features, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialogButton, get_level, arginfo_class_Gtk4_GtkFontDialogButton_get_level, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialogButton, get_use_font, arginfo_class_Gtk4_GtkFontDialogButton_get_use_font, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialogButton, get_use_size, arginfo_class_Gtk4_GtkFontDialogButton_get_use_size, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialogButton, set_dialog, arginfo_class_Gtk4_GtkFontDialogButton_set_dialog, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialogButton, set_font_desc, arginfo_class_Gtk4_GtkFontDialogButton_set_font_desc, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialogButton, set_font_features, arginfo_class_Gtk4_GtkFontDialogButton_set_font_features, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialogButton, set_level, arginfo_class_Gtk4_GtkFontDialogButton_set_level, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialogButton, set_use_font, arginfo_class_Gtk4_GtkFontDialogButton_set_use_font, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialogButton, set_use_size, arginfo_class_Gtk4_GtkFontDialogButton_set_use_size, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -12663,6 +12767,16 @@ static zend_class_entry *register_class_Gtk4_GtkColorDialog(zend_class_entry *cl
 	return class_entry;
 }
 
+static zend_class_entry *register_class_Gtk4_GtkColorDialogButton(zend_class_entry *class_entry_Gtk4_GtkWidget)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkColorDialogButton", class_Gtk4_GtkColorDialogButton_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkWidget, 0);
+
+	return class_entry;
+}
+
 static zend_class_entry *register_class_Gtk4_GtkColumnView(zend_class_entry *class_entry_Gtk4_GtkWidget, zend_class_entry *class_entry_Gtk4_GtkScrollable)
 {
 	zend_class_entry ce, *class_entry;
@@ -13181,6 +13295,39 @@ static zend_class_entry *register_class_Gtk4_GtkFontDialog(zend_class_entry *cla
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkFontDialog", class_Gtk4_GtkFontDialog_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkFontDialogButton(zend_class_entry *class_entry_Gtk4_GtkWidget)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GtkFontDialogButton", class_Gtk4_GtkFontDialogButton_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkWidget, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GtkFontLevel(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GtkFontLevel", IS_LONG, NULL);
+
+	zval enum_case_Family_value;
+	ZVAL_LONG(&enum_case_Family_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Family", &enum_case_Family_value);
+
+	zval enum_case_Face_value;
+	ZVAL_LONG(&enum_case_Face_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Face", &enum_case_Face_value);
+
+	zval enum_case_Font_value;
+	ZVAL_LONG(&enum_case_Font_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Font", &enum_case_Font_value);
+
+	zval enum_case_Features_value;
+	ZVAL_LONG(&enum_case_Features_value, 3);
+	zend_enum_add_case_cstr(class_entry, "Features", &enum_case_Features_value);
 
 	return class_entry;
 }

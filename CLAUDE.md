@@ -6,8 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 php-gtk4 is a PHP extension written in C++20 against the **native Zend API** (no PHP-CPP — see
 README.md "Design" for why it was dropped), built with the standard `phpize`/`config.m4` flow.
-It is the successor to `/mnt/share/dev/code/php-gtk3`; README.md "Design" records the decisions and what is
-deliberately *not* carried over, `docs/TODO.md` what is open. Read both before changing
+It is the successor to [php-gtk3](https://github.com/scorninpc/php-gtk3); README.md "Design" records the
+decisions and what is deliberately *not* carried over, `docs/TODO.md` what is open. Read both before changing
 anything under `src/core/`.
 
 Module name is **`gtk4`** everywhere: `config.m4`, `zend_module_entry` in `src/gtk4.cpp`,

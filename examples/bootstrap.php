@@ -194,6 +194,7 @@ final class Demo
         ],
         'Dialogs & async' => [
             'GtkAlertDialog', 'GtkFileDialog', 'GtkFileFilter', 'GtkColorDialog', 'GtkFontDialog',
+            'GtkColorDialogButton', 'GtkFontDialogButton',
             'GtkAboutDialog', 'GtkLicense', 'PangoFontDescription',
             'GCancellable', 'GAsyncResult', 'GTask',
         ],

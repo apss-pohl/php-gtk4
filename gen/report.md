@@ -729,6 +729,12 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `set_language` — parameter `language` of type Pango.Language
 - `property language` — property type Pango.Language not mappable
 
+## GtkFontDialogButton
+
+- `get_language` — return type Pango.Language
+- `set_language` — parameter `language` of type Pango.Language
+- `property language` — property type Pango.Language not mappable
+
 ## GtkFrame
 
 - `vfunc compute_child_allocation` — parameter `allocation` of type Gtk.Allocation
@@ -1527,6 +1533,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkCenterLayout.cpp`
 - `Gtk/GtkCheckButton.cpp`
 - `Gtk/GtkColorDialog.cpp`
+- `Gtk/GtkColorDialogButton.cpp`
 - `Gtk/GtkColumnView.cpp`
 - `Gtk/GtkColumnViewColumn.cpp`
 - `Gtk/GtkCssProvider.cpp`
@@ -1558,6 +1565,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/GtkFlowBox.cpp`
 - `Gtk/GtkFlowBoxChild.cpp`
 - `Gtk/GtkFontDialog.cpp`
+- `Gtk/GtkFontDialogButton.cpp`
 - `Gtk/GtkFrame.cpp`
 - `Gtk/GtkGesture.cpp`
 - `Gtk/GtkGestureClick.cpp`
@@ -1854,6 +1862,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkCenterLayoutSmokeTest.php`
 - `tests/Generated/GtkCheckButtonSmokeTest.php`
 - `tests/Generated/GtkColorDialogSmokeTest.php`
+- `tests/Generated/GtkColorDialogButtonSmokeTest.php`
 - `tests/Generated/GtkColumnViewSmokeTest.php`
 - `tests/Generated/GtkColumnViewColumnSmokeTest.php`
 - `tests/Generated/GtkCssProviderSmokeTest.php`
@@ -1881,6 +1890,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `tests/Generated/GtkFlowBoxSmokeTest.php`
 - `tests/Generated/GtkFlowBoxChildSmokeTest.php`
 - `tests/Generated/GtkFontDialogSmokeTest.php`
+- `tests/Generated/GtkFontDialogButtonSmokeTest.php`
 - `tests/Generated/GtkFrameSmokeTest.php`
 - `tests/Generated/GtkGestureSmokeTest.php`
 - `tests/Generated/GtkGestureClickSmokeTest.php`

@@ -1350,6 +1350,34 @@ class GtkColorDialog extends GObject
 }
 
 /**
+ * The `GtkColorDialogButton` is a wrapped around a `ColorDialog` and allows to open a color
+ * chooser dialog to change the color.
+ *
+ * @property ?GtkColorDialog $dialog
+ * @property ?GdkRGBA $rgba
+ */
+class GtkColorDialogButton extends GtkWidget
+{
+    /** Creates a new `GtkColorDialogButton` with the given `GtkColorDialog`. */
+    public function __construct(?GtkColorDialog $dialog = null) {}
+
+    /** Returns the `GtkColorDialog` of $self. */
+    public function get_dialog(): ?GtkColorDialog {}
+
+    /** Returns the color of the button. */
+    public function get_rgba(): GdkRGBA {}
+
+    /**
+     * Sets a `GtkColorDialog` object to use for creating the color chooser dialog that is
+     * presented when the user clicks the button.
+     */
+    public function set_dialog(GtkColorDialog $dialog): void {}
+
+    /** Sets the color of the button. */
+    public function set_rgba(GdkRGBA $color): void {}
+}
+
+/**
  * `GtkColumnView` presents a large dynamic list of items using multiple columns with headers.
  *
  * @property-read ?GListModel $columns
@@ -3246,6 +3274,73 @@ class GtkFontDialog extends GObject
 
     /** Sets the title that will be shown on the font chooser dialog. */
     public function set_title(string $title): void {}
+}
+
+/**
+ * The `GtkFontDialogButton` is wrapped around a `FontDialog` and allows to open a font chooser
+ * dialog to change the font.
+ *
+ * @property ?GtkFontDialog $dialog
+ * @property ?PangoFontDescription $font_desc
+ * @property ?string $font_features
+ * @property GtkFontLevel $level
+ * @property bool $use_font
+ * @property bool $use_size
+ */
+class GtkFontDialogButton extends GtkWidget
+{
+    /** Creates a new `GtkFontDialogButton` with the given `GtkFontDialog`. */
+    public function __construct(?GtkFontDialog $dialog = null) {}
+
+    /** Returns the `GtkFontDialog` of $self. */
+    public function get_dialog(): ?GtkFontDialog {}
+
+    /** Returns the font of the button. */
+    public function get_font_desc(): ?PangoFontDescription {}
+
+    /** Returns the font features of the button. */
+    public function get_font_features(): ?string {}
+
+    /** Returns the level of detail at which this dialog lets the user select fonts. */
+    public function get_level(): GtkFontLevel {}
+
+    /** Returns whether the selected font is used in the label. */
+    public function get_use_font(): bool {}
+
+    /** Returns whether the selected font size is used in the label. */
+    public function get_use_size(): bool {}
+
+    /**
+     * Sets a `GtkFontDialog` object to use for creating the font chooser dialog that is presented
+     * when the user clicks the button.
+     */
+    public function set_dialog(GtkFontDialog $dialog): void {}
+
+    /** Sets the font of the button. */
+    public function set_font_desc(PangoFontDescription $font_desc): void {}
+
+    /** Sets the font features of the button. */
+    public function set_font_features(?string $font_features): void {}
+
+    /** Sets the level of detail at which this dialog lets the user select fonts. */
+    public function set_level(GtkFontLevel $level): void {}
+
+    /** If $use_font is `TRUE`, the font name will be written using the selected font. */
+    public function set_use_font(bool $use_font): void {}
+
+    /** If $use_size is `TRUE`, the font name will be written using the selected font size. */
+    public function set_use_size(bool $use_size): void {}
+}
+
+/**
+ * The level of granularity for the font selection.
+ */
+enum GtkFontLevel: int
+{
+    case Family = 0;
+    case Face = 1;
+    case Font = 2;
+    case Features = 3;
 }
 
 /**

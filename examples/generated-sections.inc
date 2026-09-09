@@ -66,6 +66,7 @@ return [
         'GtkDropTargetAsync',
         'GtkFixedLayout',
         'GtkFixedLayoutChild',
+        'GtkFontLevel',
         'GtkGridLayout',
         'GtkGridLayoutChild',
         'GtkIconLookupFlags',
