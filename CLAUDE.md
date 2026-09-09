@@ -446,7 +446,11 @@ that touch what it depends on (`paths:`) and once a week, because Windows minute
 Linux rate. (5) `release.yml` on
 every push to `main`: reads `VERSION` and either publishes an
 immutable `vX.Y.Z-dev.<run>` pre-release (suffix `-dev`; the newest 5 are kept, older ones deleted with their
-tags) or the real `vX.Y.Z` release (no suffix, once),
+tags) or the real `vX.Y.Z` release (no suffix, once). **The gate (`verify`, and `coverage` behind it) does
+not depend on whether there is anything to publish** — it used to, so a `main` parked on an already-released
+`VERSION`, which is where every real release leaves it until the follow-up bump, ran no tests, no coverage
+and no badge under a green tick (`WorkflowsTest` pins it); only `build`, `build-windows`, `release-gate` and
+`publish` ask for `publish == 'true'`,
 after running `./ci.sh --skip=cpp-lint` itself — it does not key off `tests.yml`. It also runs `coverage`
 on every merge, and a **real** release additionally gets the ZTS verify cells, a `release-gate` job
 (`--only=valgrind` + `--only=asan`) and Windows binaries that ran the suite; `publish` waits for all of it,
