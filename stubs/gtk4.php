@@ -14,7 +14,7 @@ namespace Gtk4;
  * Extension version, version_compare()-friendly.
  * @var string
  */
-const VERSION = '0.1.0-dev';
+const VERSION = '0.1.1';
 /**
  * "built <date>, git <hash>" of the loaded binary.
  * @var string
