@@ -120,6 +120,10 @@ const VFUNC_VARIANT_TYPE = [
  * arg-less getter and compares.
  */
 const NULLABLE_RETURNS = [
+    // GLib's own docs say so ("If the identifier cannot be loaded, NULL is returned"), and the
+    // Windows job proved it: without an IANA database g_time_zone_new_identifier('Europe/Berlin')
+    // is NULL, and the non-nullable declaration made that a fatal on a value GLib documents.
+    'g_time_zone_new_identifier' => 'NULL for an identifier the platform cannot resolve',
     'gtk_print_dialog_get_page_setup' => 'NULL until set_page_setup()',
     'gtk_print_dialog_get_print_settings' => 'NULL until set_print_settings()',
     'gtk_print_operation_get_default_page_setup' => 'NULL until set_default_page_setup()',
@@ -367,6 +371,21 @@ const ARG_PRECONDITIONS = [
     'webkit_web_view_call_async_javascript_function' => [
         [2, 'length == -1 || (length >= 0 && static_cast<gsize>(length) <= ZSTR_LEN(body))',
             'must be -1 or at most the length of the body'],
+    ],
+    // The same shape, and the reason the sweep found it: g_key_file_load_from_data() reads
+    // `length` bytes of `data` with no bound of its own, so load_from_data('', 10594, 0) was a
+    // 10 KB read past a 32-byte allocation (AddressSanitizer, the release run of 2026-09-09).
+    // Its length is a gsize, so -1 is not the "nul-terminated" shorthand it is elsewhere -
+    // check_range<gsize>() already refuses a negative one.
+    'g_key_file_load_from_data' => [
+        [2, 'length >= 0 && static_cast<gsize>(length) <= ZSTR_LEN(data)',
+            'must be at most the length of the data'],
+    ],
+    // g_tls_certificate_new_from_pem() reads `length` bytes of `data` the same way; here -1 is
+    // GLib's "the string is nul-terminated".
+    'g_tls_certificate_new_from_pem' => [
+        [2, 'length == -1 || (length >= 0 && static_cast<gsize>(length) <= ZSTR_LEN(data))',
+            'must be -1 or at most the length of the data'],
     ],
     // gdk_memory_texture_new() asserts that the bytes cover the image (a short buffer would be
     // read past its end); bytes_per_pixel() is the prelude's table (gen/overrides/Gdk.MemoryTexture.cpp)

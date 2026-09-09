@@ -20,12 +20,21 @@
 # for it, so a complaint would fail the sweep as unlisted). The CI floor is GTK 4.14 and the
 # Windows job runs whatever gvsbuild ships, so the same commit meets two GTKs.
 #
+# `optional` in that column says the complaint depends on the environment rather than on the
+# value, so silence does not mean the line is stale. Use it only where no `gtk>=` can express
+# the difference: a path GLib resolves against the process cwd (PHP's chdir() does not move it
+# under ZTS), or a message only a GTK built with G_ENABLE_DEBUG / G_ENABLE_CONSISTENCY_CHECKS
+# emits. The strict half still holds everywhere - a complaint with no line at all fails.
+#
 # To regenerate after a deliberate change, see tests/README-robustness-pin.md.
 Gtk4\GApplication::run#arguments
 Gtk4\GApplication::unbind_busy_property#arguments
 Gtk4\GtkCssProvider::load_from_bytes#arguments
 Gtk4\GtkCssProvider::load_from_bytes#values
-Gtk4\GtkCssProvider::load_from_file#arguments
+# The sweep runs in a scratch cwd and hands this one a relative name; g_file_new_for_commandline_arg()
+# resolves it against the *process* cwd, which PHP's chdir() does not move under ZTS - quiet there and
+# on the Windows GTK, a theme-parser error on the Linux NTS runner.
+Gtk4\GtkCssProvider::load_from_file#arguments	optional
 Gtk4\GtkCssProvider::load_from_file#values
 Gtk4\GtkCssProvider::load_from_path#arguments
 Gtk4\GtkCssProvider::load_from_path#values
@@ -52,3 +61,12 @@ Gtk4\GtkSpinButton::delete-text#emit
 Gtk4\GtkPrintOperation::$current_page#properties
 Gtk4\GtkPrintOperation::$n_pages#properties
 Gtk4\GdkPixbuf::new_from_xpm_data#arguments
+
+# Windows only, and none of them expressible as a GTK version. The first two are what a GTK built
+# with G_ENABLE_DEBUG / G_ENABLE_CONSISTENCY_CHECKS says about a bad size - gvsbuild ships such a
+# build, a distro release build compiles the checks out (docs/TODO.md). The third is the Win32
+# keymap asserting on a layout group the sweep invents; X11 takes the same value quietly.
+Gtk4\GtkWidget::measure#arguments	optional
+Gtk4\GtkWidget::allocate#arguments	optional
+Gtk4\GtkWidget::allocate#values	optional
+Gtk4\GdkDisplay::translate_key#arguments	optional

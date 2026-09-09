@@ -71,7 +71,7 @@ ZEND_METHOD(Gtk4_GDateTime, __construct) {
 }
 
 /**
- * static Gtk4\GDateTime::new_from_iso8601(string $text, ?GTimeZone $default_tz = null): GDateTime
+ * static Gtk4\GDateTime::new_from_iso8601(string $text, ?GTimeZone $default_tz = null): ?GDateTime
  *
  * Creates a #GDateTime corresponding to the given [ISO 8601 formatted
  * string](https://en.wikipedia.org/wiki/ISO_8601) $text. ISO 8601 strings of the form
@@ -99,7 +99,7 @@ ZEND_METHOD(Gtk4_GDateTime, new_from_iso8601) {
 }
 
 /**
- * static Gtk4\GDateTime::new_from_unix_local(int $t): GDateTime
+ * static Gtk4\GDateTime::new_from_unix_local(int $t): ?GDateTime
  *
  * Creates a #GDateTime corresponding to the given Unix time $t in the local time zone.
  */
@@ -114,7 +114,7 @@ ZEND_METHOD(Gtk4_GDateTime, new_from_unix_local) {
 }
 
 /**
- * static Gtk4\GDateTime::new_from_unix_local_usec(int $usecs): GDateTime
+ * static Gtk4\GDateTime::new_from_unix_local_usec(int $usecs): ?GDateTime
  *
  * Creates a `DateTime` corresponding to the given Unix time $t in the local time zone.
  */
@@ -129,7 +129,7 @@ ZEND_METHOD(Gtk4_GDateTime, new_from_unix_local_usec) {
 }
 
 /**
- * static Gtk4\GDateTime::new_from_unix_utc(int $t): GDateTime
+ * static Gtk4\GDateTime::new_from_unix_utc(int $t): ?GDateTime
  *
  * Creates a #GDateTime corresponding to the given Unix time $t in UTC.
  */
@@ -144,7 +144,7 @@ ZEND_METHOD(Gtk4_GDateTime, new_from_unix_utc) {
 }
 
 /**
- * static Gtk4\GDateTime::new_from_unix_utc_usec(int $usecs): GDateTime
+ * static Gtk4\GDateTime::new_from_unix_utc_usec(int $usecs): ?GDateTime
  *
  * Creates a `DateTime` corresponding to the given Unix time $t in UTC.
  */
@@ -160,7 +160,7 @@ ZEND_METHOD(Gtk4_GDateTime, new_from_unix_utc_usec) {
 
 /**
  * static Gtk4\GDateTime::new_local(int $year, int $month, int $day, int $hour, int $minute, float
- * $seconds): GDateTime
+ * $seconds): ?GDateTime
  *
  * Creates a new #GDateTime corresponding to the given date and time in the local time zone.
  */
@@ -192,7 +192,7 @@ ZEND_METHOD(Gtk4_GDateTime, new_local) {
 }
 
 /**
- * static Gtk4\GDateTime::new_now(GTimeZone $tz): GDateTime
+ * static Gtk4\GDateTime::new_now(GTimeZone $tz): ?GDateTime
  *
  * Creates a #GDateTime corresponding to this exact instant in the given time zone $tz. The time is
  * as accurate as the system allows, to a maximum accuracy of 1 microsecond.
@@ -210,7 +210,7 @@ ZEND_METHOD(Gtk4_GDateTime, new_now) {
 }
 
 /**
- * static Gtk4\GDateTime::new_now_local(): GDateTime
+ * static Gtk4\GDateTime::new_now_local(): ?GDateTime
  *
  * Creates a #GDateTime corresponding to this exact instant in the local time zone.
  */
@@ -222,7 +222,7 @@ ZEND_METHOD(Gtk4_GDateTime, new_now_local) {
 }
 
 /**
- * static Gtk4\GDateTime::new_now_utc(): GDateTime
+ * static Gtk4\GDateTime::new_now_utc(): ?GDateTime
  *
  * Creates a #GDateTime corresponding to this exact instant in UTC.
  */
@@ -235,7 +235,7 @@ ZEND_METHOD(Gtk4_GDateTime, new_now_utc) {
 
 /**
  * static Gtk4\GDateTime::new_utc(int $year, int $month, int $day, int $hour, int $minute, float
- * $seconds): GDateTime
+ * $seconds): ?GDateTime
  *
  * Creates a new #GDateTime corresponding to the given date and time in UTC.
  */

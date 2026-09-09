@@ -156,6 +156,9 @@ abstract class GtkTestCase extends TestCase
         // No notification daemon on a CI runner, so GtkPrintOperation cannot deliver the
         // "printing finished" notification it sends when the job completes (PrintTest).
         'unable to send notifications through org.freedesktop.Notifications',
+        // The same shape on Windows, where GIO's backend has no actions at all: a notification
+        // with a button is delivered without it rather than refused (NotificationTest).
+        'Notification actions are unsupported by this Windows backend',
     ];
 
     protected function tearDown(): void

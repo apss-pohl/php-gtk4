@@ -25,37 +25,37 @@ final class GDateTime
      * <date><sep><time><tz> are supported, with some extensions from [RFC
      * 3339](https://tools.ietf.org/html/rfc3339) as mentioned below.
      */
-    public static function new_from_iso8601(string $text, ?GTimeZone $default_tz = null): GDateTime {}
+    public static function new_from_iso8601(string $text, ?GTimeZone $default_tz = null): ?GDateTime {}
 
     /** Creates a #GDateTime corresponding to the given Unix time $t in the local time zone. */
-    public static function new_from_unix_local(int $t): GDateTime {}
+    public static function new_from_unix_local(int $t): ?GDateTime {}
 
     /** Creates a `DateTime` corresponding to the given Unix time $t in the local time zone. */
-    public static function new_from_unix_local_usec(int $usecs): GDateTime {}
+    public static function new_from_unix_local_usec(int $usecs): ?GDateTime {}
 
     /** Creates a #GDateTime corresponding to the given Unix time $t in UTC. */
-    public static function new_from_unix_utc(int $t): GDateTime {}
+    public static function new_from_unix_utc(int $t): ?GDateTime {}
 
     /** Creates a `DateTime` corresponding to the given Unix time $t in UTC. */
-    public static function new_from_unix_utc_usec(int $usecs): GDateTime {}
+    public static function new_from_unix_utc_usec(int $usecs): ?GDateTime {}
 
     /** Creates a new #GDateTime corresponding to the given date and time in the local time zone. */
-    public static function new_local(int $year, int $month, int $day, int $hour, int $minute, float $seconds): GDateTime {}
+    public static function new_local(int $year, int $month, int $day, int $hour, int $minute, float $seconds): ?GDateTime {}
 
     /**
      * Creates a #GDateTime corresponding to this exact instant in the given time zone $tz. The
      * time is as accurate as the system allows, to a maximum accuracy of 1 microsecond.
      */
-    public static function new_now(GTimeZone $tz): GDateTime {}
+    public static function new_now(GTimeZone $tz): ?GDateTime {}
 
     /** Creates a #GDateTime corresponding to this exact instant in the local time zone. */
-    public static function new_now_local(): GDateTime {}
+    public static function new_now_local(): ?GDateTime {}
 
     /** Creates a #GDateTime corresponding to this exact instant in UTC. */
-    public static function new_now_utc(): GDateTime {}
+    public static function new_now_utc(): ?GDateTime {}
 
     /** Creates a new #GDateTime corresponding to the given date and time in UTC. */
-    public static function new_utc(int $year, int $month, int $day, int $hour, int $minute, float $seconds): GDateTime {}
+    public static function new_utc(int $year, int $month, int $day, int $hour, int $minute, float $seconds): ?GDateTime {}
 
     /** Creates a copy of $datetime and adds the specified timespan to the copy. */
     public function add(int $timespan): ?GDateTime {}
@@ -510,7 +510,7 @@ final class GTimeZone
      * Creates a #GTimeZone corresponding to $identifier. If $identifier cannot be parsed or
      * loaded, `null` is returned.
      */
-    public static function new_identifier(?string $identifier = null): GTimeZone {}
+    public static function new_identifier(?string $identifier = null): ?GTimeZone {}
 
     /**
      * Creates a #GTimeZone corresponding to local time. The local time zone may change between

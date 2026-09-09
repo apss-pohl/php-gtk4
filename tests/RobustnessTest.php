@@ -80,18 +80,26 @@ final class RobustnessTest extends GtkTestCase
     /** The key currently being swept, or '' outside the two sweep tests. */
     private string $sweeping = '';
 
+    /** The second-column token that makes a line tolerate silence as well as a complaint. */
+    private const string OPTIONAL = 'optional';
+
     /**
-     * The pinned keys, read once.
+     * The pinned keys, read once. The value says whether silence fails the gate: `false` for an
+     * `optional` line, whose complaint depends on the environment.
      *
-     * @return array<string, true>
+     * @return array<string, bool>
      */
     private static function pinned(): array
     {
-        /** @var array<string, true>|null $keys */
+        /** @var array<string, bool>|null $keys */
         static $keys = null;
         if ($keys === null) {
             $keys = [];
             foreach (self::pinnedLines() as [$key, $condition]) {
+                if ($condition === self::OPTIONAL) {
+                    $keys[$key] = false;   // listed, but silence is not staleness
+                    continue;
+                }
                 if ($condition === null || self::conditionHolds($condition)) {
                     $keys[$key] = true;
                 }
@@ -129,14 +137,22 @@ final class RobustnessTest extends GtkTestCase
      * rather than tolerated: the older GTK is expected to stay *quiet*, so a complaint from it
      * still fails the sweep as unlisted.
      *
-     * Only that one form is understood, and anything else is a typo rather than a licence to
+     * `optional` is the other token, handled before this method: it says the complaint is
+     * environment-dependent, so silence is not staleness. It exists for the handful of sweeps
+     * whose complaint follows the platform rather than the value - a relative path that GLib
+     * resolves against the process cwd (which PHP's chdir() does not move under ZTS), or a
+     * message that only a GTK built with G_ENABLE_DEBUG / G_ENABLE_CONSISTENCY_CHECKS emits.
+     * The strict half of the gate still holds for them: a complaint from a method with no line
+     * at all fails, always.
+     *
+     * Only those two forms are understood, and anything else is a typo rather than a licence to
      * ignore the line - so it fails loudly.
      */
     private static function conditionHolds(string $condition): bool
     {
         if (preg_match('/^gtk>=(\d+)\.(\d+)$/', $condition, $m) !== 1) {
             self::fail(sprintf(
-                '%s: "%s" is not a condition this gate understands (only gtk>=<major>.<minor>).',
+                '%s: "%s" is not a condition this gate understands (gtk>=<major>.<minor> or optional).',
                 basename(self::PINNED),
                 $condition,
             ));
@@ -159,7 +175,7 @@ final class RobustnessTest extends GtkTestCase
                 'a key is <class>::<member>#<sweep> (tests/README-robustness-pin.md)',
             );
             if ($condition !== null) {
-                self::assertMatchesRegularExpression('/^gtk>=\\d+\\.\\d+$/', $condition);
+                self::assertMatchesRegularExpression('/^(gtk>=\\d+\\.\\d+|optional)$/', $condition);
             }
         }
     }
@@ -193,7 +209,8 @@ final class RobustnessTest extends GtkTestCase
             $m,
             'not supported by GtkFileChooserNativePortal because portal is too old',
         )));
-        $isPinned = isset(self::pinned()[$key]);
+        $pinned = self::pinned();
+        $isPinned = isset($pinned[$key]);
         if ($seen !== [] && !$isPinned) {
             self::fail(
                 "GTK complained while sweeping $key, which " . basename(self::PINNED)
@@ -201,10 +218,10 @@ final class RobustnessTest extends GtkTestCase
                 . "the point:\n  " . implode("\n  ", $seen),
             );
         }
-        if ($seen === [] && $isPinned) {
+        if ($seen === [] && $isPinned && $pinned[$key]) {
             self::fail(
                 basename(self::PINNED) . " lists $key but GTK no longer complains about it - "
-                . 'drop the line.',
+                . 'drop the line, or mark it optional if it is environment-dependent.',
             );
         }
     }

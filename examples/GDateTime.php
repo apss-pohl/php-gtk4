@@ -27,7 +27,14 @@ return Demo::page(
     'GDateTime',
     'a date and time as a value: arithmetic, formatting, time zones',
     function (GtkWindow $win): GtkWidget {
-        $start = GDateTime::new_utc(1815, 12, 10, 12, 30, 0.0);
+        // GLib answers null for an instant that does not exist (month 13, hour 25); this one does,
+        // so the example says what it expects rather than carrying a null through every step.
+        $start = GDateTime::new_utc(1815, 12, 10, 12, 30, 0.0)
+            ?? throw new \RuntimeException('1815-12-10 12:30 UTC is a real instant');
+
+        // An IANA name needs a tz database GLib can read; where there is none (Windows), the
+        // identifier answers null and UTC stands in.
+        $zone = static fn(string $name): GTimeZone => GTimeZone::new_identifier($name) ?? GTimeZone::new_utc();
 
         /** @var list<array{string, callable(GDateTime): ?GDateTime}> $steps */
         $steps = [
@@ -35,9 +42,9 @@ return Demo::page(
             ['add_years(200)', static fn(GDateTime $d): ?GDateTime => $d->add_years(200)],
             ['add_months(6)', static fn(GDateTime $d): ?GDateTime => $d->add_years(200)?->add_months(6)],
             ['to_timezone(Europe/Berlin)', static fn(GDateTime $d): ?GDateTime
-                => $d->add_years(200)?->to_timezone(GTimeZone::new_identifier('Europe/Berlin'))],
+                => $d->add_years(200)?->to_timezone($zone('Europe/Berlin'))],
             ['to_timezone(Asia/Tokyo)', static fn(GDateTime $d): ?GDateTime
-                => $d->add_years(200)?->to_timezone(GTimeZone::new_identifier('Asia/Tokyo'))],
+                => $d->add_years(200)?->to_timezone($zone('Asia/Tokyo'))],
         ];
 
         $label = Demo::label();

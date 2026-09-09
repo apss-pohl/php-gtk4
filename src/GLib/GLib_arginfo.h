@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 7204adfb23292d361b95828e7acde3c0f4840e76 */
+ * Stub hash: 765b269a327f46b2a972eeadf1d7aac0002f9ad6 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GDateTime___construct, 0, 0, 7)
 	ZEND_ARG_OBJ_INFO(0, tz, Gtk4\\GTimeZone, 0)
@@ -11,16 +11,16 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GDateTime___construct, 0, 0, 7)
 	ZEND_ARG_TYPE_INFO(0, seconds, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDateTime_new_from_iso8601, 0, 1, Gtk4\\GDateTime, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDateTime_new_from_iso8601, 0, 1, Gtk4\\GDateTime, 1)
 	ZEND_ARG_TYPE_INFO(0, text, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, default_tz, Gtk4\\GTimeZone, 1, "null")
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDateTime_new_from_unix_local, 0, 1, Gtk4\\GDateTime, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDateTime_new_from_unix_local, 0, 1, Gtk4\\GDateTime, 1)
 	ZEND_ARG_TYPE_INFO(0, t, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDateTime_new_from_unix_local_usec, 0, 1, Gtk4\\GDateTime, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDateTime_new_from_unix_local_usec, 0, 1, Gtk4\\GDateTime, 1)
 	ZEND_ARG_TYPE_INFO(0, usecs, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
@@ -28,7 +28,7 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GDateTime_new_from_unix_utc_usec arginfo_class_Gtk4_GDateTime_new_from_unix_local_usec
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDateTime_new_local, 0, 6, Gtk4\\GDateTime, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDateTime_new_local, 0, 6, Gtk4\\GDateTime, 1)
 	ZEND_ARG_TYPE_INFO(0, year, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, month, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, day, IS_LONG, 0)
@@ -37,11 +37,11 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDateTime_new_local, 0
 	ZEND_ARG_TYPE_INFO(0, seconds, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDateTime_new_now, 0, 1, Gtk4\\GDateTime, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDateTime_new_now, 0, 1, Gtk4\\GDateTime, 1)
 	ZEND_ARG_OBJ_INFO(0, tz, Gtk4\\GTimeZone, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDateTime_new_now_local, 0, 0, Gtk4\\GDateTime, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDateTime_new_now_local, 0, 0, Gtk4\\GDateTime, 1)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GDateTime_new_now_utc arginfo_class_Gtk4_GDateTime_new_now_local
@@ -150,18 +150,15 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDateTime_is_daylight_savings, 0, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDateTime_to_local, 0, 0, Gtk4\\GDateTime, 1)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_GDateTime_to_local arginfo_class_Gtk4_GDateTime_new_now_local
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDateTime_to_timezone, 0, 1, Gtk4\\GDateTime, 1)
-	ZEND_ARG_OBJ_INFO(0, tz, Gtk4\\GTimeZone, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_GDateTime_to_timezone arginfo_class_Gtk4_GDateTime_new_now
 
 #define arginfo_class_Gtk4_GDateTime_to_unix arginfo_class_Gtk4_GDateTime_get_day_of_month
 
 #define arginfo_class_Gtk4_GDateTime_to_unix_usec arginfo_class_Gtk4_GDateTime_get_day_of_month
 
-#define arginfo_class_Gtk4_GDateTime_to_utc arginfo_class_Gtk4_GDateTime_to_local
+#define arginfo_class_Gtk4_GDateTime_to_utc arginfo_class_Gtk4_GDateTime_new_now_local
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GKeyFile___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -350,7 +347,7 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GTimeZone___construct arginfo_class_Gtk4_GKeyFile___construct
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GTimeZone_new_identifier, 0, 0, Gtk4\\GTimeZone, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GTimeZone_new_identifier, 0, 0, Gtk4\\GTimeZone, 1)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, identifier, IS_STRING, 1, "null")
 ZEND_END_ARG_INFO()
 

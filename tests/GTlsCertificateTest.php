@@ -49,6 +49,26 @@ final class GTlsCertificateTest extends GtkTestCase
         return self::PEM;
     }
 
+    /**
+     * GTlsCertificate is abstract: the concrete class comes from GIO's TLS backend, and without
+     * one every call here answers "TLS support is not available". That is the environment, not
+     * the binding - Debian/Ubuntu put the backend in `glib-networking`, which a runner installed
+     * with --no-install-recommends does not get, and the Windows GTK ships without one. Skip
+     * rather than fail, the way a test of an optional feature does (tests/Features.php).
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        try {
+            GTlsCertificate::new_from_pem(self::PEM, -1);
+        } catch (GError $e) {
+            if (str_contains($e->getMessage(), 'TLS support is not available')) {
+                self::markTestSkipped('no GIO TLS backend here (Debian/Ubuntu: glib-networking)');
+            }
+            throw $e;
+        }
+    }
+
     public function testAPemParsesIntoACertificate(): void
     {
         $cert = GTlsCertificate::new_from_pem(self::PEM, -1);

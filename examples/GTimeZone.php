@@ -28,13 +28,16 @@ return Demo::page(
     'the same instant, read in different zones',
     function (GtkWindow $win): GtkWidget {
         $zones = ['UTC', 'Europe/Berlin', 'America/New_York', 'Asia/Tokyo', 'Australia/Sydney'];
-        $instant = GDateTime::new_utc(2026, 6, 21, 12, 0, 0.0);
+        $instant = GDateTime::new_utc(2026, 6, 21, 12, 0, 0.0)
+            ?? throw new \RuntimeException('2026-06-21 12:00 UTC is a real instant');
 
         $label = Demo::label();
         $at = 0;
         $render = function () use (&$at, $zones, $instant, $label): void {
             $name = $zones[$at % count($zones)];
-            $zone = GTimeZone::new_identifier($name);
+            // A name needs a tz database GLib can read - Windows has none of its own, so an
+            // unknown identifier answers null and UTC stands in.
+            $zone = GTimeZone::new_identifier($name) ?? GTimeZone::new_utc();
             $there = $instant->to_timezone($zone) ?? $instant;
             $local = $instant->to_timezone(GTimeZone::new_local());
             $label->set_markup(sprintf(

@@ -123,6 +123,12 @@ ZEND_METHOD(Gtk4_GTlsCertificate, new_from_pem) {
   Z_PARAM_LONG(length)
   ZEND_PARSE_PARAMETERS_END();
   if (!phpgtk::check_utf8(data, 1)) RETURN_THROWS();
+  const bool precondition_0 =
+      length == -1 || (length >= 0 && static_cast<gsize>(length) <= ZSTR_LEN(data));
+  if (!precondition_0) {
+    zend_argument_value_error(2, "must be -1 or at most the length of the data");
+    RETURN_THROWS();
+  }
   GError *error = nullptr;
   GObject *obj =
       G_OBJECT(g_tls_certificate_new_from_pem(ZSTR_VAL(data), static_cast<gssize>(length), &error));
