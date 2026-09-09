@@ -70,3 +70,4 @@ Gtk4\GtkWidget::measure#arguments	optional
 Gtk4\GtkWidget::allocate#arguments	optional
 Gtk4\GtkWidget::allocate#values	optional
 Gtk4\GdkDisplay::translate_key#arguments	optional
+Gtk4\GdkDisplay::translate_key#values	optional
