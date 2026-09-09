@@ -31,7 +31,7 @@ extern "C" {
 // ZTS is supported (per-request state is in module globals, core/globals.h);
 // GTK itself stays single-threaded - see assert_gui_thread().
 
-#define PHP_GTK4_VERSION "0.1.1"
+#define PHP_GTK4_VERSION "0.2.0-dev"
 #define PHP_GTK4_NAMESPACE "Gtk4"
 
 #ifndef PHPGTK_BUILD_INFO
