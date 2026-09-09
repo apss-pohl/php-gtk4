@@ -103,6 +103,30 @@ final class WorkflowsTest extends TestCase
     }
 
     /**
+     * A `badge.svg?branch=main` badge shows the newest run of that workflow **on main**, so a
+     * workflow that no longer runs on main freezes its badge at whatever it last said there -
+     * green, forever. That is what `php-qa.yml` and `tests.yml` did after they became
+     * pull-request-only: both README badges kept claiming "passing" from 2026-08-27 while the
+     * Release run on main was failing. Only a workflow that pushes to main may carry one.
+     */
+    public function testEveryMainBranchBadgeComesFromAWorkflowThatRunsOnMain(): void
+    {
+        $readme = (string) file_get_contents(self::WORKFLOWS . '/../../README.md');
+        preg_match_all('#/actions/workflows/([\w.-]+)/badge\.svg\?branch=main#', $readme, $m);
+        self::assertNotEmpty($m[1], 'the README used to carry workflow badges');
+
+        foreach (array_unique($m[1]) as $workflow) {
+            $yml = (string) file_get_contents(self::WORKFLOWS . '/' . $workflow);
+            self::assertMatchesRegularExpression(
+                '/push:\s*\n\s*branches:\s*\[main\]/',
+                $yml,
+                "README shows a ?branch=main badge for $workflow, which does not run on main -"
+                . ' the badge can only ever repeat its last run from before that changed',
+            );
+        }
+    }
+
+    /**
      * setup-php installs the *production* php.ini, which has `register_argc_argv = Off`. PHPStan
      * then reports "Variable $argv might not be defined" in every CLI entry script (gen/gir.php,
      * gen/ide-stub.php, gen/map-status.php, gen/method-comments.php, examples/demo.php) and
