@@ -40,13 +40,43 @@ final class WebKitCookieManagerTest extends GtkTestCase
         }
     }
 
+    /**
+     * The same read, but waiting for the store to hold $count of them.
+     *
+     * add_cookie_finish() reports that the write was *accepted*; the store itself lives in the
+     * network process, and a read issued straight after can still answer with the old state -
+     * which failed this suite twice on CI and once here. Polling turns that race into a wait,
+     * and a cookie that never arrives still fails the assertion with the real count. manager()
+     * closes the other half by waking the store before anything is written to it.
+     *
+     * @return list<SoupCookie>
+     */
+    private static function cookiesWhenThereAre(
+        WebKitCookieManager $manager,
+        int $count,
+        string $uri = self::URI,
+    ): array {
+        $deadline = microtime(true) + 20.0;
+        do {
+            $cookies = self::cookiesOf($manager, $uri);
+        } while (count($cookies) !== $count && microtime(true) < $deadline);
+        return $cookies;
+    }
+
     /** The session has to outlive the manager, so both are held for the length of a test. */
     private ?WebKitNetworkSession $session = null;
 
     private function manager(): WebKitCookieManager
     {
         $this->session = WebKitNetworkSession::new_ephemeral();
-        return $this->session->get_cookie_manager();
+        $manager = $this->session->get_cookie_manager();
+        // One read before any write. The store lives in a network process the session starts
+        // lazily, and add_cookie_finish() reports that the *write was accepted*, not that the
+        // store took it - a cookie added before the process answers for the first time went
+        // missing on CI twice and here once, with add_cookie_finish() cheerfully returning true.
+        // A round trip that comes back empty is proof the store is up and talking.
+        self::assertSame([], self::cookiesOf($manager), 'the ephemeral store starts empty');
+        return $manager;
     }
 
     private static function cookie(string $name = 'session', string $value = 'abc123'): SoupCookie
@@ -91,7 +121,7 @@ final class WebKitCookieManagerTest extends GtkTestCase
         $manager = $this->manager();
         self::add($manager, self::cookie());
 
-        $cookies = self::cookiesOf($manager);
+        $cookies = self::cookiesWhenThereAre($manager, 1);
         self::assertCount(1, $cookies);
         self::assertInstanceOf(SoupCookie::class, $cookies[0]);
         self::assertSame('session', $cookies[0]->get_name());
@@ -103,7 +133,7 @@ final class WebKitCookieManagerTest extends GtkTestCase
     {
         $manager = $this->manager();
         self::add($manager, self::cookie());
-        self::assertCount(1, self::cookiesOf($manager));
+        self::assertCount(1, self::cookiesWhenThereAre($manager, 1));
 
         $deleted = null;
         $manager->delete_cookie(self::cookie(), null, static function (
@@ -117,7 +147,7 @@ final class WebKitCookieManagerTest extends GtkTestCase
         });
 
         self::assertTrue($deleted);
-        self::assertSame([], self::cookiesOf($manager));
+        self::assertSame([], self::cookiesWhenThereAre($manager, 0));
     }
 
     /** get_all_cookies() answers with every cookie of the session, whatever the host. */
@@ -150,7 +180,7 @@ final class WebKitCookieManagerTest extends GtkTestCase
         $manager = $this->manager();
         self::add($manager, self::cookie());
 
-        self::assertSame([], self::cookiesOf($manager, 'http://elsewhere.test/'));
+        self::assertSame([], self::cookiesWhenThereAre($manager, 0, 'http://elsewhere.test/'));
     }
 
     /**
