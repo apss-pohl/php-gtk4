@@ -50,10 +50,22 @@ fails the sweep as unlisted. Nothing else is understood in that column, and a ty
 rather than silently disabling the line (`RobustnessTest::conditionHolds()`,
 `testThePinFileIsWellFormed()`).
 
-A GTK *built* with `G_ENABLE_DEBUG` or `G_ENABLE_CONSISTENCY_CHECKS` (gvsbuild's is; a distro
-release build is not) prints a further class of warnings that no condition can express, because
-they follow the build flags rather than the version. Those belong in the environmental filter in
-`gateAgainstPinnedList()`, next to the portal message — not in this file.
+The other token that column takes is **`optional`**: the complaint follows the *environment*
+rather than the value, so silence is not staleness and the line survives both. It is for the
+cases no `gtk>=` can express — a GTK *built* with `G_ENABLE_DEBUG` or
+`G_ENABLE_CONSISTENCY_CHECKS` (gvsbuild's is; a distro release build is not) says things about a
+bad size that no version condition covers, and a relative path GLib resolves against the process
+cwd is silent under ZTS, where PHP's `chdir()` moves only its own. The strict half of the gate is
+unchanged for those lines: a complaint from a method with **no** line at all still fails, so
+`optional` widens nothing but the "has gone quiet" direction.
+
+Prefer a real fix to either token. A complaint the binding could have refused at the boundary is
+a boundary to close, not a line to add — that is what the first paragraph of this file says, and
+`optional` does not change it.
+
+Messages that are about the machine and not about any value at all — no notification daemon, a
+portal too old — are not pinned here: they are filtered in `GtkTestCase::ENVIRONMENTAL` (the
+whole suite) and in `gateAgainstPinnedList()` (the sweeps).
 
 Recording is deliberately *not* a committed switch: regenerating
 wholesale is how a real leak gets pinned by accident, so it should cost a patch and a diff you

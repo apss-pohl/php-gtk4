@@ -108,6 +108,12 @@ jobs:
           extensions: dom, mbstring, tokenizer, xml, xmlwriter
           tools: composer
           coverage: none
+          # setup-php defaults to the production php.ini, where register_argc_argv is Off:
+          # PHPStan then reports "$argv might not be defined" in every CLI entry script
+          # (gen/gir.php, gen/ide-stub.php, examples/demo.php, ...) and php-qa fails on the
+          # runner while passing locally. ci.sh runs these scripts from the CLI, where argv
+          # is there - say so (WorkflowsTest pins it).
+          ini-values: register_argc_argv=On
 
       # clang 20 from apt.llvm.org: the same clang-tidy/clang-format the C++ lint
       # workflow and the local defaults use, so the release gate cannot pass or fail
@@ -118,7 +124,7 @@ jobs:
           echo "deb [signed-by=/usr/share/keyrings/apt.llvm.org.asc] http://apt.llvm.org/noble/ llvm-toolchain-noble-20 main" | sudo tee /etc/apt/sources.list.d/llvm-20.list
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            pkg-config libgtk-4-dev gir1.2-gtk-4.0 libwebkitgtk-6.0-dev xvfb libxtst6 build-essential \
+            pkg-config libgtk-4-dev gir1.2-gtk-4.0 libwebkitgtk-6.0-dev glib-networking xvfb libxtst6 build-essential \
             clang-tidy-20 clang-format-20
 
       - name: Install PHPUnit
@@ -243,7 +249,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            pkg-config libgtk-4-dev xvfb libxtst6 build-essential gcovr
+            pkg-config libgtk-4-dev glib-networking xvfb libxtst6 build-essential gcovr
       - name: Install PHPUnit
         run: composer install --no-interaction --no-progress --prefer-dist
       - name: Run coverage stage
@@ -279,7 +285,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            pkg-config libgtk-4-dev xvfb libxtst6 build-essential valgrind
+            pkg-config libgtk-4-dev glib-networking xvfb libxtst6 build-essential valgrind
       - name: Install PHPUnit
         run: composer install --no-interaction --no-progress --prefer-dist
       - name: Build extension (phpize)

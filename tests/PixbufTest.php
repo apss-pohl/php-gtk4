@@ -121,7 +121,12 @@ final class PixbufTest extends GtkTestCase
             @unlink($file);
         }
         self::assertNull(GdkPixbuf::get_file_info(__FILE__), 'PHP source is not an image');
-        self::assertGreaterThan(5, count(GdkPixbuf::get_formats()));
+        // Name the two the binding actually needs rather than counting: gvsbuild's gdk-pixbuf
+        // ships exactly five loaders, a distro build many more, and "more than five" was a
+        // Windows-only failure.
+        $names = array_map(static fn(GdkPixbufFormat $f): string => $f->get_name(), GdkPixbuf::get_formats());
+        self::assertContains('png', $names);
+        self::assertContains('jpeg', $names);
     }
 
     public function testPixelsCrossIntoATextureAndBack(): void

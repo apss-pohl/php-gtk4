@@ -25,26 +25,18 @@ history; an item leaves this file when it is done or decided against, it is not 
   of `phpize`/`php-config` at it, build, and run PHPUnit with `-n -d extension_dir=...` plus
   dom/mbstring/tokenizer/xml/xmlwriter - `-n` alone leaves the ide-stub subprocess without
   tokenizer and fails `StubsTest` for reasons that have nothing to do with the crash.
-- **What the Windows job still reports that GTK 4.14 never shows** (gvsbuild ships 4.22, built
-  with the debug and consistency checks a distro release build compiles out). Two open groups:
-  - *Two pin lines to write, and they need different mechanisms.* `GtkWidget::allocate`'s
-    complaints in `gtkwidget.c` sit behind `G_ENABLE_DEBUG` / `G_ENABLE_CONSISTENCY_CHECKS` -
-    that follows how GTK was *built*, which no `gtk>=` condition can express, so they belong in
-    the environmental filter in `gateAgainstPinnedList()` next to the portal message. The
-    `measure` one, `"Trying to measure %s %p for %s of %d, but it needs at least %d"`
-    (`gtksizerequest.c`), is unguarded and simply absent in 4.14, so it takes a condition in the
-    pin file. Neither is written: the run's logs are gone and the sweep suffix
-    (`#arguments`/`#values`) and exact wording are guesses without them. Take both off the next
-    Windows run.
-  - *Windows-only behaviour, not yet understood*: `DragDropTest` finds a `GtkTextBuffer` entry
-    in the content formats the serialisation test expects to be `['string']`, and
-    `PixbufTest::testEncodingTakesOptionsAsAMap` gets the same size back for both compression
-    levels. `DragDropTest::testStoringTheClipboardIsAnAnswerEitherWay` ("the async callback
-    ran") failed one run and passed the next, so that one is intermittent.
-  Reproduce without Windows: Arch's `gtk4` package is 4.22.4, and a
-  `meson --buildtype=debugoptimized` build of GTK turns the assertions and the consistency checks
-  back on. Reading GTK's own sources per version gets a long way without either -
-  `https://gitlab.gnome.org/GNOME/gtk/-/raw/<tag>/gtk/<file>.c`.
+- **What the Windows job reports that GTK 4.14 never shows** - the sweep complaints are pinned
+  now, as `optional` lines in `tests/robustness-criticals.txt` (`GtkWidget::measure`,
+  `GtkWidget::allocate`, `GdkDisplay::translate_key`): that marker says the complaint follows the
+  environment rather than the value, which is the honest shape for a message only a GTK built
+  with `G_ENABLE_DEBUG` / `G_ENABLE_CONSISTENCY_CHECKS` emits. It replaces the plan of a `gtk>=`
+  condition plus an environmental filter, which could not have expressed either message.
+  What is still not understood, only made portable: `DragDropTest` sees a `GtkTextBuffer` in the
+  content formats where Linux sees `['string']` (the test asserts containment now), and Windows
+  gdk-pixbuf ships exactly five loaders where the count assertion wanted more (it names `png` and
+  `jpeg` instead). Reproduce without Windows: Arch's `gtk4` package is 4.22.4, and a
+  `meson --buildtype=debugoptimized` build turns the assertions and consistency checks back on.
+
 - **`gtk_entry_set_extra_menu(entry, NULL)` is a GTK bug worth reporting upstream.** 4.20 rewrote
   it to `g_object_ref()` the model without the NULL check its `(nullable)` annotation promises
   (`g_object_ref: assertion 'G_IS_OBJECT (object)' failed`); 4.14/4.16/4.18 delegate to

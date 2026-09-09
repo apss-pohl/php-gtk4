@@ -200,7 +200,11 @@ final class DragDropTest extends GtkTestCase
         // application. The union_* calls are how GDK bridges the two.
         $gtypes = GdkContentProvider::new_for_value('x')->ref_formats();
         self::assertContains('text/plain', $gtypes->union_serialize_mime_types()->get_mime_types());
-        self::assertSame(['string'], new GdkContentFormats(['text/plain'])->union_deserialize_gtypes()->get_gtypes());
+        // Containment, not identity: which GTypes a mime type deserialises into is up to the
+        // deserialisers GDK registered, and the Windows backend adds a GtkTextBuffer to the
+        // string every platform has.
+        $gtypesForText = new GdkContentFormats(['text/plain'])->union_deserialize_gtypes()->get_gtypes();
+        self::assertContains('string', $gtypesForText);
     }
 
     public function testAProviderCarriesRawBytesUnderAMimeType(): void
@@ -314,11 +318,19 @@ final class DragDropTest extends GtkTestCase
         $provider->vfunc_content_changed();
     }
 
-    /** Pump the main context until $done() or the bound is reached (the async pair needs a loop). */
-    private static function pump(callable $done, int $rounds = 500): void
+    /**
+     * Pump the main context until $done() or the deadline (the async pair needs a loop).
+     *
+     * A budget in time, not in iterations: main_context_iteration(false) returns at once when
+     * nothing is ready, so a round count is a busy loop that can run out in microseconds. That
+     * is how the clipboard-manager round trip failed on one Windows run and passed on the next.
+     */
+    private static function pump(callable $done, float $seconds = 5.0): void
     {
-        for ($i = 0; $i < $rounds && !$done(); $i++) {
+        $deadline = microtime(true) + $seconds;
+        while (!$done() && microtime(true) < $deadline) {
             GLib::main_context_iteration(false);
+            usleep(1000);
         }
     }
 

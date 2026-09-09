@@ -39,7 +39,7 @@ ZEND_METHOD(Gtk4_GTimeZone, __construct) {
 }
 
 /**
- * static Gtk4\GTimeZone::new_identifier(?string $identifier = null): GTimeZone
+ * static Gtk4\GTimeZone::new_identifier(?string $identifier = null): ?GTimeZone
  *
  * Creates a #GTimeZone corresponding to $identifier. If $identifier cannot be parsed or loaded,
  * `null` is returned.

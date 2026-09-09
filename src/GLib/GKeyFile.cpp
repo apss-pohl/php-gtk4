@@ -596,6 +596,11 @@ ZEND_METHOD(Gtk4_GKeyFile, load_from_data) {
   GKeyFile *self = PHPGTK_BOXED_SELF(GKeyFile);
   if (!phpgtk::check_utf8(data, 1)) RETURN_THROWS();
   if (!phpgtk::check_range<gsize>(length, 2)) RETURN_THROWS();
+  const bool precondition_0 = length >= 0 && static_cast<gsize>(length) <= ZSTR_LEN(data);
+  if (!precondition_0) {
+    zend_argument_value_error(2, "must be at most the length of the data");
+    RETURN_THROWS();
+  }
   GError *error = nullptr;
   const gboolean ok = g_key_file_load_from_data(self, ZSTR_VAL(data), static_cast<gsize>(length),
                                                 static_cast<GKeyFileFlags>(flags), &error);

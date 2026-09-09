@@ -18,7 +18,11 @@ final class DateTimeTest extends GtkTestCase
     /** 1815-12-10 12:30:00 UTC, which is a date this project has a soft spot for. */
     private static function ada(): GDateTime
     {
-        return GDateTime::new_utc(1815, 12, 10, 12, 30, 0.0);
+        // new_utc() is nullable because GLib refuses an impossible instant (month 13); this one
+        // is a real date, so a null here would be the binding's fault and worth failing on.
+        $ada = GDateTime::new_utc(1815, 12, 10, 12, 30, 0.0);
+        self::assertInstanceOf(GDateTime::class, $ada);
+        return $ada;
     }
 
     public function testTheFieldsAreWhatItWasBuiltFrom(): void
@@ -65,16 +69,24 @@ final class DateTimeTest extends GtkTestCase
         $utc = GTimeZone::new_utc();
         self::assertSame('UTC', $utc->get_identifier());
 
+        // An IANA name needs a tz database GLib can read: Windows has none of its own, so
+        // new_identifier() answers null there rather than a zone.
         $berlin = GTimeZone::new_identifier('Europe/Berlin');
+        if ($berlin === null) {
+            self::markTestSkipped('no IANA time zone database here (GLib answered null)');
+        }
         self::assertSame('Europe/Berlin', $berlin->get_identifier());
 
-        $noon = GDateTime::new_utc(2026, 6, 1, 12, 0, 0.0)->to_timezone($berlin);
+        $utcNoon = GDateTime::new_utc(2026, 6, 1, 12, 0, 0.0);
+        self::assertInstanceOf(GDateTime::class, $utcNoon);
+        $noon = $utcNoon->to_timezone($berlin);
         self::assertSame(14, $noon?->get_hour(), 'summer time in Berlin is UTC+2');
     }
 
     public function testUnixTimeRoundTrips(): void
     {
         $date = GDateTime::new_from_unix_utc(1_000_000_000);
+        self::assertInstanceOf(GDateTime::class, $date);
 
         self::assertSame(1_000_000_000, $date->to_unix());
         self::assertSame('2001-09-09', $date->format('%Y-%m-%d'));
@@ -84,7 +96,9 @@ final class DateTimeTest extends GtkTestCase
     public function testACalendarAnswersWithADate(): void
     {
         $calendar = new GtkCalendar();
-        $calendar->select_day(GDateTime::new_utc(2026, 3, 14, 0, 0, 0.0));
+        $piDay = GDateTime::new_utc(2026, 3, 14, 0, 0, 0.0);
+        self::assertInstanceOf(GDateTime::class, $piDay);
+        $calendar->select_day($piDay);
 
         $date = $calendar->get_date();
         self::assertSame(2026, $date->get_year());

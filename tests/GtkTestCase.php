@@ -145,6 +145,22 @@ abstract class GtkTestCase extends TestCase
         return array_values(array_unique($this->diagnostics));
     }
 
+    /**
+     * GTK reporting about the *machine* rather than about the value it was handed: the same call
+     * is silent on a desktop and a complaint on a headless runner, so neither the gate below nor
+     * an expectsGtkCritical() can hold it - it would fail in one environment or the other.
+     * RobustnessTest::gateAgainstPinnedList() filters its sweeps the same way, for the same
+     * reason. Only what is genuinely environmental belongs here, with the test that met it.
+     */
+    private const array ENVIRONMENTAL = [
+        // No notification daemon on a CI runner, so GtkPrintOperation cannot deliver the
+        // "printing finished" notification it sends when the job completes (PrintTest).
+        'unable to send notifications through org.freedesktop.Notifications',
+        // The same shape on Windows, where GIO's backend has no actions at all: a notification
+        // with a button is delivered without it rather than refused (NotificationTest).
+        'Notification actions are unsupported by this Windows backend',
+    ];
+
     protected function tearDown(): void
     {
         restore_error_handler();
@@ -154,7 +170,17 @@ abstract class GtkTestCase extends TestCase
         $this->windows = [];
         Gtk::set_exception_handler(null);
 
-        $logs = array_values(array_unique($this->diagnostics));
+        $logs = array_values(array_filter(
+            array_unique($this->diagnostics),
+            static function (string $log): bool {
+                foreach (self::ENVIRONMENTAL as $substring) {
+                    if (str_contains($log, $substring)) {
+                        return false;
+                    }
+                }
+                return true;
+            },
+        ));
         $expected = $this->expectedCriticals;
         $this->diagnostics = [];
         $this->notices = [];

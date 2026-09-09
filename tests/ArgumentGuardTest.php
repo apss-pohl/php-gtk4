@@ -10,6 +10,7 @@ use Gtk4\GCancellable;
 use Gtk4\GdkClipboard;
 use Gtk4\GdkDisplay;
 use Gtk4\GdkTexture;
+use Gtk4\GKeyFile;
 use Gtk4\GListStore;
 use Gtk4\GMenu;
 use Gtk4\GMenuItem;
@@ -40,6 +41,7 @@ use Gtk4\GtkTextIter;
 use Gtk4\GtkTextView;
 use Gtk4\GtkTextWindowType;
 use Gtk4\GtkWindow;
+use Gtk4\GTlsCertificate;
 use Gtk4\PangoFontDescription;
 use Gtk4\PhpValue;
 use PhpGtk4\Tests\Subclass\ChainingScale;
@@ -155,6 +157,36 @@ final class ArgumentGuardTest extends GtkTestCase
     {
         $texture = GdkTexture::new_from_bytes(PngFixture::red(1, 1));
         self::assertSame(1, $texture->get_width());
+    }
+
+    /**
+     * A byte length is not the caller's to invent: GLib reads that many bytes of the string and
+     * has no bound of its own, so `load_from_data('', 10594, 0)` read 10 KB past a 32-byte
+     * allocation until the length was checked against the string (AddressSanitizer found it in
+     * the sanitizer job, not here - the read is silent without ASan).
+     */
+    public function testAKeyFileLengthPastTheDataIsRejected(): void
+    {
+        $keyfile = new GKeyFile();
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('must be at most the length of the data');
+        $keyfile->load_from_data('', 10594, 0);
+    }
+
+    public function testAKeyFileLengthWithinTheDataStillLoads(): void
+    {
+        $keyfile = new GKeyFile();
+        $data = "[section]\nkey=value\n";
+        self::assertTrue($keyfile->load_from_data($data, strlen($data), 0));
+        self::assertSame('value', $keyfile->get_value('section', 'key'));
+    }
+
+    /** The same shape on a certificate, where -1 keeps GLib's "the string is nul-terminated". */
+    public function testACertificateLengthPastThePemIsRejected(): void
+    {
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('must be -1 or at most the length of the data');
+        GTlsCertificate::new_from_pem('not a certificate', 4096);
     }
 
     // ---------------------------------------------------------------- property writes

@@ -1215,7 +1215,11 @@ final class TypeMap
                     return $l;
                 }];
             }
-            return ['phpType' => phpClass($n), 'lines' => function (string $call) use (
+            // The `?` the neighbouring arms already emit: wrap_boxed() answers null for a NULL
+            // pointer, so a boxed return GIR (or NULLABLE_RETURNS) marks nullable has to say so -
+            // g_time_zone_new_identifier() is NULL for an identifier the platform cannot resolve,
+            // and the non-nullable declaration was a lie PHPStan believed (DateTimeTest).
+            return ['phpType' => ($f->retNullable ? '?' : '') . phpClass($n), 'lines' => function (string $call) use (
                 $f,
                 $throwCheck,
                 $full,
