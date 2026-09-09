@@ -413,7 +413,7 @@ the runner images / clang pins. `--check` writes nothing and exits non-zero when
 
 ## CI
 
-Five workflows plus one reusable recipe (three have a README badge): `.github/workflows/cpp-lint.yml`,
+Five workflows plus one reusable recipe: `.github/workflows/cpp-lint.yml`,
 `php-qa.yml`, `tests.yml`, `windows.yml`, `release.yml`, and `windows-build.yml` (`workflow_call`,
 the single Windows build recipe both `windows.yml` and `release.yml` use).
 **They run on pull requests only** — `release.yml`'s own `verify` re-runs `./ci.sh` on `main`, so a
@@ -468,6 +468,16 @@ derives itself from `php-ext.extension-name` and the package version — `PiePac
 manifest, `config.m4`'s configure switches and the workflow's asset name to each other, because
 nothing else fails when they drift (docs/RELEASING.md "Shipping"). **`VERSION` is the only release trigger; never
 create a tag or a release by hand.** docs/RELEASING.md is the full description.
+**README badges may only come from a workflow that runs on `main`.** A `badge.svg?branch=main`
+shows that workflow's newest run *on main*, so a pull-request-only workflow freezes its badge at
+whatever it last said there - `php-qa.yml` and `tests.yml` kept claiming "passing" from 2026-08-27
+after they lost their push trigger, while the Release run on main was failing.
+`WorkflowsTest::testEveryMainBranchBadgeComesFromAWorkflowThatRunsOnMain()` enforces it, so the
+README carries `release.yml` (the whole gate on main) and `cpp-lint.yml`, and nothing else with a
+`?branch=main`. The **coverage badge** is a shields.io endpoint reading `coverage.json` from the
+orphan `badges` branch, which the `coverage` job rewrites on every push to main - including when
+it fails the floor, because a badge that only updates on success is the same lie.
+
 `.github/copilot-instructions.md` is a one-liner pointing at this file — keep project-wide
 conventions here only. `.github/ISSUE_TEMPLATE/` holds two issue forms (bug, feature) with the
 context fields marked required and blank issues disabled; `IssueTemplateTest` keeps them that way.

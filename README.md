@@ -1,8 +1,9 @@
 # php-gtk4
 
+[![Release](https://github.com/apss-pohl/php-gtk4/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/apss-pohl/php-gtk4/actions/workflows/release.yml)
 [![C++ lint](https://github.com/apss-pohl/php-gtk4/actions/workflows/cpp-lint.yml/badge.svg?branch=main)](https://github.com/apss-pohl/php-gtk4/actions/workflows/cpp-lint.yml)
-[![PHP QA](https://github.com/apss-pohl/php-gtk4/actions/workflows/php-qa.yml/badge.svg?branch=main)](https://github.com/apss-pohl/php-gtk4/actions/workflows/php-qa.yml)
-[![Build & tests](https://github.com/apss-pohl/php-gtk4/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/apss-pohl/php-gtk4/actions/workflows/tests.yml)
+[![coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/apss-pohl/php-gtk4/badges/coverage.json)](https://github.com/apss-pohl/php-gtk4/actions/workflows/release.yml)
+[![latest release](https://img.shields.io/github/v/release/apss-pohl/php-gtk4?include_prereleases&sort=semver&label=release&color=4A86CF)](https://github.com/apss-pohl/php-gtk4/releases)
 [![PHP 8.4+](https://img.shields.io/badge/PHP-8.4%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
 [![GTK 4](https://img.shields.io/badge/GTK-4.14%2B-4A86CF?logo=gtk&logoColor=white)](https://www.gtk.org/)
 [![C++20](https://img.shields.io/badge/C%2B%2B-20-00599C?logo=cplusplus&logoColor=white)](https://en.cppreference.com/w/cpp/20)
