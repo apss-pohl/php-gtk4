@@ -16,7 +16,8 @@ git config core.hooksPath .githooks         # pre-commit = fast QA, pre-push = f
 
 Besides the build requirements (`php8.4-dev`, `libgtk-4-dev` — docs/BUILD.md), the checks need
 `gir1.2-gtk-4.0` (the `gen` stage regenerates from the installed GIR files, and the pre-commit hook
-runs it), Node.js with `npx` (`md-lint`) and `jq` (`update-deps.sh`).
+runs it), `glib-networking` (without a TLS backend `GTlsCertificateTest` fails with "TLS support is
+not available"), Node.js with `npx` (`md-lint`) and `jq` (`update-deps.sh`).
 
 The hooks are the local gate: `commit-msg` checks the commit message (see below), `pre-commit` runs
 version/stub checks, PHP style (without phpstan),

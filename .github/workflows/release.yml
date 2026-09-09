@@ -124,7 +124,7 @@ jobs:
           echo "deb [signed-by=/usr/share/keyrings/apt.llvm.org.asc] http://apt.llvm.org/noble/ llvm-toolchain-noble-20 main" | sudo tee /etc/apt/sources.list.d/llvm-20.list
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            pkg-config libgtk-4-dev gir1.2-gtk-4.0 libwebkitgtk-6.0-dev xvfb libxtst6 build-essential \
+            pkg-config libgtk-4-dev gir1.2-gtk-4.0 libwebkitgtk-6.0-dev glib-networking xvfb libxtst6 build-essential \
             clang-tidy-20 clang-format-20
 
       - name: Install PHPUnit
@@ -249,7 +249,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            pkg-config libgtk-4-dev xvfb libxtst6 build-essential gcovr
+            pkg-config libgtk-4-dev glib-networking xvfb libxtst6 build-essential gcovr
       - name: Install PHPUnit
         run: composer install --no-interaction --no-progress --prefer-dist
       - name: Run coverage stage
@@ -285,7 +285,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            pkg-config libgtk-4-dev xvfb libxtst6 build-essential valgrind
+            pkg-config libgtk-4-dev glib-networking xvfb libxtst6 build-essential valgrind
       - name: Install PHPUnit
         run: composer install --no-interaction --no-progress --prefer-dist
       - name: Build extension (phpize)

@@ -12,12 +12,12 @@ that flow.
 | GTK | **4.14 or newer** — `libgtk-4-dev` (pulls GLib ≥ 2.76, cairo-gobject). Ubuntu 24.04 is the CI floor. |
 | Compiler | GCC 11+ or Clang 14+ (`-std=c++20`). |
 | `ci.sh` | `gir1.2-gtk-4.0` (the GIR files the default `gen` stage and the pre-commit hook regenerate from), Node.js/`npx` (`md-lint`, markdownlint-cli2), `jq` (`update-deps.sh`). |
-| Optional | `libwebkitgtk-6.0-dev` (`--enable-gtk4-webkit`; the `gen` stage needs it in any case, for `WebKit-6.0.gir`), `xvfb`, `valgrind`, `gcovr`, clang-tidy/format 20 for the QA stages. |
+| Optional | `libwebkitgtk-6.0-dev` (`--enable-gtk4-webkit`; the `gen` stage needs it in any case, for `WebKit-6.0.gir`), `xvfb`, `glib-networking` (a TLS backend, or `GTlsCertificate` answers "TLS support is not available" and `GTlsCertificateTest` fails), `valgrind`, `gcovr`, clang-tidy/format 20 for the QA stages. |
 
 Debian/Ubuntu in one line:
 
 ```sh
-sudo apt install php8.4-dev libgtk-4-dev build-essential pkg-config xvfb
+sudo apt install php8.4-dev libgtk-4-dev build-essential pkg-config xvfb glib-networking
 sudo apt install gir1.2-gtk-4.0 nodejs npm jq      # ./ci.sh gen + md-lint stages, update-deps.sh
 ```
 
