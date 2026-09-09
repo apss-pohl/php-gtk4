@@ -1,0 +1,101 @@
+# <Ns.Type.method>  <reason> - members the binding deliberately does not expose.
+Gio.ApplicationFlags.flags_none   deprecated enumerator (GLIB_DEPRECATED_ENUMERATOR is not in the GIR); DEFAULT_FLAGS is the name
+Gdk.Texture.new_from_resource   g_error()s (aborts the process) on an invalid resource path - not a PHP-safe API
+Gtk.Application.inhibit     crashes inside GTK when the window has no surface / the app is not registered
+Gtk.Application.uninhibit   pairs with inhibit
+Gdk.Texture.__construct abstract for GTK's own subclasses only: a texture needs internal state (color state, 4.16+) that only the factories set - no PHP subtypes, no `new`
+Gdk.Display.__construct GDK owns displays (GdkDisplay::get_default() / open()); a PHP subtype would have no backend behind it
+Gtk.StackPage.__construct GtkStack creates its pages (add_child()/add_titled(), get_page()); `new` g_error()s "is missing a child widget"
+Gtk.NotebookPage.__construct GtkNotebook creates its pages (get_page()); a page without a notebook has no child
+Gtk.ApplicationWindow.implements:Gio.ActionGroup   GtkWidget::activate_action(string, mixed): bool is incompatible with the interface's activate_action(): void; the window stays a GActionMap (add/lookup/remove_action) and the widget method reaches its actions ("win.x")
+Gtk.MenuButton.get_direction   gtk_menu_button_get_direction (GtkArrowType) clashes with GtkWidget::get_direction (GtkTextDirection) in PHP; the `direction` property still reads the arrow
+Gtk.MenuButton.set_direction   same; `$button->direction = GtkArrowType::Left` sets the arrow
+Gio.MenuModel.__construct   abstract with NULL class-struct slots (get_n_items ...) and vfuncs on GHashTables that cannot be thunked; a PHP subtype would segfault on first use - build menus with GMenu, whose PHP subclasses do reach the vfunc_* slots (GMenuVfuncTest)
+Gio.Cancellable.release_fd   aborts the process (GLib-GIO:ERROR "priv->fd_refcount > 0") unless get_fd() was called first, and the refcount is not observable from here
+Gtk.ListItem.__construct    a list item belongs to the factory that created it (the setup/bind handlers get it); a standalone one has no item and no position
+Gtk.TreeListRow.__construct GtkTreeListModel creates its rows (get_row()/get_child_row()); a row without a model has nothing to expand
+Gtk.LayoutChild.__construct   a layout manager creates its layout children (GtkLayoutManager::get_layout_child()); GTK stores the manager and the child widget *unowned* in construct-only properties, so one built from PHP CRITICALs when they are missing and dangles - get_layout_manager() then wraps freed memory - as soon as PHP drops what it was handed
+Gtk.FixedLayoutChild.__construct   GtkFixedLayout creates its layout children, as Gtk.LayoutChild
+Gtk.GridLayoutChild.__construct    GtkGridLayout creates its layout children, as Gtk.LayoutChild
+Gtk.OverlayLayoutChild.__construct GtkOverlayLayout creates its layout children, as Gtk.LayoutChild
+Gtk.Builder.new_from_string   g_error()s (Gtk-ERROR, aborts the process) on any document GTK cannot parse or instantiate, and a .ui document is data - `new GtkBuilder()` + add_from_string() reports the same failure as a Gtk4\GError
+Gtk.Builder.new_from_file     as new_from_string; add_from_file() throws instead
+Gtk.Builder.new_from_resource as new_from_string; add_from_resource() throws instead
+Gdk.Clipboard.__construct   GDK owns the clipboards (GdkDisplay::get_clipboard()/get_primary_clipboard()); `new` aborts the process in gdk_clipboard_set_property ("assertion failed: (priv->display != NULL)")
+Gdk.Surface.__construct     GDK creates surfaces for a widget (GtkWindow) or through new_toplevel()/new_popup(); a PHP subtype has no display and aborts in gdk_surface_set_property
+Gdk.Monitor.__construct     GDK owns the monitors (GdkDisplay::get_monitors()); a standalone one answers NULL from get_display(), which its declared type does not allow
+Gtk.IconPaintable.__construct   GtkIconTheme creates them (lookup_icon()); a standalone one paints nothing and has neither file nor icon name
+Gtk.Snapshot.free_to_paintable   frees the GtkSnapshot itself, so the handle is left on freed memory and its next qdata/toggle-ref touch is a SEGV (ASan caught it); to_paintable() answers with the same paintable and leaves the object alive
+Graphene.Rect.inset_r     the plain inset() is bound as this const form (graphene's own inset() rewrites the rectangle it is given, which a value handle must not do)
+Graphene.Rect.offset_r    as inset_r: offset() is the const form
+Graphene.Rect.normalize_r as inset_r: normalize() is the const form
+Gtk.Text.init_delegate    GtkEditable plumbing for a widget that *delegates* to a GtkText from its own init; calling it on a GtkText is "invalid (NULL) pointer instance" from GLib
+Gtk.Text.finish_delegate  pairs with init_delegate
+Gdk.Drag.__construct   GDK creates a drag when a GtkDragSource starts one (get_drag()); a PHP subtype has no device and aborts the process in gdk_drag_set_property ("assertion failed: (priv->device != NULL)")
+Gdk.Drop.__construct   the other end of the same drag, created by GDK; as Gdk.Drag
+Gtk.DragIcon.__construct   GTK creates the icon for a drag (get_for_drag()); a standalone one realizes without a GdkSurface and dies in gtk_drag_icon_realize
+Gsk.PathBuilder.free_to_path   unrefs the builder itself (GIR does not say so on the instance parameter), leaving the handle on freed memory - a SEGV on the next call; to_path() gives the same path and keeps the builder
+Gtk.Snapshot.free_to_node   frees the GtkSnapshot itself like free_to_paintable; to_node() answers with the same node and leaves the object alive
+Gtk.FixedLayoutChild.property:transform   GTK 4.14's getter hands the GValue the address of its pointer (g_value_set_boxed(value, &self->transform)), so a read through the property system is a GLib CRITICAL; get_transform()/set_transform() work and are what the stub promises
+Gtk.PrintContext.__construct   GTK creates the context inside a print operation (draw-page hands it over); one from g_object_new() has no page setup or cairo context and its getters dereference NULL (SIGSEGV)
+Gtk.PrintOperation.implements:Gtk.PrintOperationPreview   the preview slots (render_page, end_preview, is_selected) are only valid inside the `preview` signal, where GTK keeps the state private - outside it they dereference NULL (SIGSEGV); a PHP-driven preview is a follow-up (docs/TODO.md)
+GdkPixbuf.PixbufLoader.write   a C byte array with its length; write_bytes() takes the same bytes as a PHP string
+GdkPixbuf.Pixbuf.get_pixels_with_length   a bare pointer into the pixel buffer; read_pixel_bytes() answers the same bytes as a PHP string
+GdkPixbuf.Pixbuf.new_from_data   takes a caller-owned pixel buffer with a destroy callback; new_from_bytes() copies the same bytes
+GdkPixbuf.PixbufAnimation.vfuncs   the class struct is behind GDK_PIXBUF_ENABLE_BACKEND (the loader-module API), so no PHP subclass could override a slot
+GdkPixbuf.PixbufAnimationIter.vfuncs   as GdkPixbufAnimation
+GdkPixbuf.Pixbuf.get_pixels   a bare pointer into the pixel buffer (the shadowing get_pixels_with_length is skipped for the same reason); read_pixel_bytes() answers the bytes
+GdkPixbuf.Pixbuf.read_pixels   a bare pointer into the pixel buffer (GIR types it as a guint8 pointer, which would cross as an integer); read_pixel_bytes() answers the bytes
+GdkPixbuf.PixbufAnimation.__construct   abstract with a private class struct (GDK_PIXBUF_ENABLE_BACKEND): a PHP subtype has NULL slots and every getter dereferences them (SIGSEGV); animations come from new_from_file()
+GdkPixbuf.PixbufAnimationIter.__construct   as GdkPixbufAnimation; iterators come from an animation
+GdkPixbuf.Pixbuf.composite_color   17 parameters (the checkerboard-background variant of composite()); composite() and composite_color_simple() cover the same drawing, and a ZEND_METHOD that size trips clang-tidy's function-size gate
+# WebKitGTK: handles WebKit creates and hands out (in a signal, from a getter); g_object_new() on them builds an object with no web view, session or process behind it that asserts on first use
+WebKit.WebViewBase.__construct   the widget base WebKit builds only as part of a WebKitWebView; a bare one has no page behind it
+WebKit.AuthenticationRequest.__construct   only WebKitWebView::authenticate hands one out
+WebKit.AutomationSession.__construct   only WebKitWebContext::automation-started hands one out
+WebKit.BackForwardList.__construct   WebKitWebView::get_back_forward_list()
+WebKit.BackForwardListItem.__construct   WebKitBackForwardList::get_current_item() and friends
+WebKit.ClipboardPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.ColorChooserRequest.__construct   only WebKitWebView::run-color-chooser hands one out
+WebKit.CookieManager.__construct   WebKitNetworkSession::get_cookie_manager()
+WebKit.DeviceInfoPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.Download.__construct   WebKitWebView::download_uri() / the ::download-started signal
+WebKit.EditorState.__construct   WebKitWebView::get_editor_state()
+WebKit.FaviconDatabase.__construct   WebKitWebView::get_favicon_database() (a network session owns it)
+WebKit.FileChooserRequest.__construct   only WebKitWebView::run-file-chooser hands one out
+WebKit.FindController.__construct   WebKitWebView::get_find_controller()
+WebKit.FormSubmissionRequest.__construct   only WebKitWebView::submit-form hands one out
+WebKit.GeolocationManager.__construct   WebKitWebContext::get_geolocation_manager()
+WebKit.GeolocationPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.HitTestResult.__construct   only WebKitWebView::mouse-target-changed and ::context-menu hand one out
+WebKit.MediaKeySystemPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.NavigationPolicyDecision.__construct   only WebKitWebView::decide-policy hands one out
+WebKit.Notification.__construct   only WebKitWebView::show-notification hands one out
+WebKit.NotificationPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.OptionMenu.__construct   only WebKitWebView::show-option-menu hands one out
+WebKit.PointerLockPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.PolicyDecision.__construct   abstract with no slots to override; only WebKitWebView::decide-policy hands out its subclasses
+WebKit.ResponsePolicyDecision.__construct   only WebKitWebView::decide-policy hands one out
+WebKit.SecurityManager.__construct   WebKitWebContext::get_security_manager()
+WebKit.URIResponse.__construct   WebKitWebResource::get_response() and the policy decisions carry one
+WebKit.UserMediaPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.WebInspector.__construct   WebKitWebView::get_inspector()
+WebKit.WebResource.__construct   WebKitWebView::get_main_resource() / ::resource-load-started
+WebKit.WebsiteDataAccessPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.WebsiteDataManager.__construct   WebKitNetworkSession::get_website_data_manager() (the session sets its directories)
+WebKit.WindowProperties.__construct   WebKitWebView::get_window_properties()
+WebKit.XRPermissionRequest.__construct   only WebKitWebView::permission-request hands one out
+WebKit.ContextMenuItem.__construct   built by its factories (new_from_gaction(), new_separator(), ...); g_object_new() gives an item without an action
+JavaScriptCore.Value.__construct   built by its factories (new_number(), new_string(), ...) or by a JSCContext; g_object_new() without a context asserts
+JavaScriptCore.Value.new_typed_array   a length JavaScriptCore cannot allocate is a RELEASE_ASSERT (aborts the process), and the array's bytes are unreachable from PHP anyway (typed_array_get_data() is a gpointer)
+JavaScriptCore.Value.new_typed_array_with_buffer   as new_typed_array: an offset/length outside the buffer asserts inside JavaScriptCore
+WebKit.FindController.property:options   WebKit's get_property writes a flags GValue with g_value_set_uint() (a CRITICAL and no value); get_options() reads it fine
+WebKit.PrintOperation.property:web-view   WebKit's get_property hands the GValue the view without a reference of its own (g_value_take_object on a pointer it does not own), so every read of the property dropped one reference of the web view and the second one disposed it; get_web_view() borrows correctly
+Gio.Task.return_new_error_literal   a GQuark domain is an interned string GLib hands out, and PHP has no way to make a meaningful one - core/gerror owns error domains (bound since aliases resolve to the guint32 behind GQuark)
+WebKit.URISchemeRequest.__construct   only the handler of WebKitWebContext::register_uri_scheme() is handed one; a g_object_new() request has no WebKit request behind it and its getters dereference null (EveryClassTest segfaulted on it)
+Gio.TlsCertificate.__construct   abstract, and the properties belong to the TLS backend's subclass: g_object_new() on a PHP subtype answers every construct property with "invalid property id N ... in Php__..." (gio/gtlscertificate.c) and leaves an object with no certificate behind it - build one with new_from_pem() / new_from_file()
+Gdk.Device.__construct   abstract, and every device belongs to a GdkSeat that GDK built: g_object_new() on a PHP subtype has no backend device behind it, so the getters read uninitialised private state (EveryClassTest segfaulted on it). GdkSeat::get_pointer()/get_keyboard() and an event's get_device() are where one comes from
+Gdk.Seat.__construct   abstract, as GdkDevice: a seat belongs to a GdkDisplay, and GdkDisplay::get_default_seat() is where one comes from
+Gtk.TextChildAnchor.get_deleted   GTK warns ("hasn't been in a buffer yet") and answers TRUE for an anchor that was never inserted; the state it checks (the anchor's line segment) is private, so the binding cannot refuse the call before GTK complains
+Gtk.TextChildAnchor.get_widgets   same: it needs the anchor to be in a buffer, and nothing here can ask whether it is
+Pango.FontMap.__construct   abstract, and the concrete map belongs to the backend (PangoCairoFontMap here): a PHP subtype has no font map behind it and the getters read uninitialised state (EveryClassTest segfaulted on it). PangoContext::get_font_map() and GtkWidget::get_pango_context() are where one comes from

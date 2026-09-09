@@ -1,5 +1,5 @@
 --TEST--
-ExceptionMode::Log without a handler: signal handler exception -> g_critical on stderr
+ExceptionMode::Log without a handler: signal handler exception -> a PHP warning
 --EXTENSIONS--
 gtk4
 --SKIPIF--
@@ -19,5 +19,5 @@ echo "GTK kept running\n";
 $win->destroy();
 ?>
 --EXPECTF--
-%aCRITICAL %a: php-gtk4: uncaught RuntimeException in 'notify::title' handler: from the signal handler
+Warning: php-gtk4: uncaught RuntimeException in 'notify::title' handler: from the signal handler in %s on line %d
 GTK kept running

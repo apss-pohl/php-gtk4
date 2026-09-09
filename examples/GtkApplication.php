@@ -46,7 +46,8 @@ return Demo::page(
         $opened = 0;
         $button->connect('clicked', function () use ($app, $refresh, &$opened): void {
             $opened++;
-            $extra = new GtkWindow($app);          // adopting the app keeps its loop alive
+            $extra = new GtkWindow();
+            $extra->set_application($app);          // adopting the app keeps its loop alive
             $extra->set_title('extra #' . $opened);
             $extra->set_default_size(260, 140);
             $extra->set_child(Demo::label("closing me is fine -\nthe app quits with the <b>last</b> window"));

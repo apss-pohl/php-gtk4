@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+#
+# bin/php-gtk4 with Xdebug pointed at a listening IDE - the terminal half of
+# .vscode/launch.json ("Listen for Xdebug"). Start VS Code listening first, then:
+#
+#   bin/php-gtk4-debug examples/demo.php GtkBox     one example page
+#   bin/php-gtk4-debug examples/demo.php            the whole demo application
+#   XDEBUG_PORT=9004 bin/php-gtk4-debug script.php  when 9003 is taken
+#   XDEBUG_HOST=172.17.0.1 bin/php-gtk4-debug ...   IDE on the other side of a container
+#
+# Xdebug has to be installed for the PHP this runs (php8.4-xdebug); how it is configured
+# in php.ini does not matter, the environment below decides. Everything else - the
+# freshly built ./gtk4.so, php-gtk3 filtered out of the ini scan dir - is bin/php-gtk4's
+# job, and every variable it understands (PHP, GTK4_SO) still works here.
+set -euo pipefail
+
+here=$(cd "$(dirname "$0")" && pwd)
+
+if ! "${PHP:-php8.4}" -m 2>/dev/null | grep -qx 'xdebug'; then
+    echo "php-gtk4-debug: xdebug is not loaded for ${PHP:-php8.4} (apt install php8.4-xdebug)" >&2
+    exit 1
+fi
+
+# XDEBUG_SESSION is the trigger; start_with_request stays at its default so a plain
+# bin/php-gtk4 run never tries to reach an IDE. GDK_BACKEND: GTK 4.14's Wayland backend
+# is not what the project tests on (CLAUDE.md "Tests"), and a debugger stopped inside a
+# frame clock is exactly where that bites.
+export XDEBUG_MODE=debug
+export XDEBUG_SESSION=${XDEBUG_SESSION:-1}
+export XDEBUG_CONFIG="client_host=${XDEBUG_HOST:-127.0.0.1} client_port=${XDEBUG_PORT:-9003} ${XDEBUG_CONFIG:-}"
+export GDK_BACKEND=${GDK_BACKEND:-x11}
+
+exec "$here/php-gtk4" "$@"

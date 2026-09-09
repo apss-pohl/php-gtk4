@@ -1,0 +1,46 @@
+# <Ns.Type.member>  <reason> - members (or `*` for the class) left out of the generated smoke
+# tests (tests/Generated): round trips that GTK legitimately does not honour.
+Gdk.Texture.*   factories need real image data (TextureTest covers it)
+Gio.TlsCertificate.*   every factory needs a real certificate: 'smoke' is neither a PEM nor a
+#   file that holds one (GTlsCertificateTest builds one from a PEM literal)
+Gio.Application.set_application_id   'smoke' is not a valid application id (reverse-DNS); GTK rejects it
+Gio.Application.application_id       same, as a property
+Gio.Application.set_resource_base_path   must start with '/'; 'smoke' is rejected
+Gio.Application.resource_base_path       same, as a property
+Gtk.Notebook.set_current_page   an empty notebook has no page 1 (get_current_page() stays -1)
+Gtk.Notebook.page               same, as a property
+Gtk.Stack.set_visible_child_name   an empty stack has no child named 'smoke' (visible-child-name stays null)
+Gtk.Stack.visible_child_name       same, as a property
+Gtk.Adjustment.*   the sample (every argument 1.0: upper == lower with a page size) is refused by newer GTK (gvsbuild on Windows); LayoutTest builds it with a real range
+Gtk.DropDown.set_selected   without a model there is nothing to select (GTK_INVALID_LIST_POSITION stays)
+Gtk.DropDown.selected       same, as a property
+Gtk.EntryBuffer.text        the max_length(1) set just before truncates 'smoke' to 's'
+Gtk.Entry.set_position      the cursor cannot move inside empty text (stays 0)
+Gtk.PasswordEntry.set_position   same
+Gtk.SpinButton.set_position      same
+Gtk.SpinButton.set_value    the default adjustment has range 0..0, so every value clamps to 0
+Gtk.SpinButton.value        same, as a property
+Gtk.Range.set_value         same: a GtkRange without an adjustment range clamps to 0
+Gtk.Image.file              a path that does not exist is cleared by GTK (file stays null)
+Gtk.Entry.set_text          the max_length(1) set just before truncates 'smoke' to 's'
+Gtk.SpinButton.set_text     a numeric spin button parses its text; 'smoke' is not a number
+Gtk.Image.icon_name         the failed `file` assignment just before leaves the image showing the broken-image icon
+Gtk.Image.resource          a resource path that does not exist is cleared by GTK (resource stays null)
+Gtk.PopoverMenu.visible_submenu   names a submenu of the model; there is no submenu called "smoke" (stays null)
+Gtk.Text.set_position      the cursor cannot move inside empty text (stays 0), like the entries that delegate to it
+Gtk.Text.set_text          the max_length(1) set just before truncates 'smoke' to 's', as on GtkEntry
+Gtk.Text.text              same, as a property
+Gtk.Picture.set_file       a GFile parameter takes a path and answers with the absolute one ('smoke' -> '<cwd>/smoke'); the mapping is the point, the round trip cannot match
+Gtk.FileDialog.set_initial_file   GTK stores it as initial-folder + initial-name (initial-file stays NULL), so it never round trips
+Gtk.FileDialog.set_initial_folder   same: the path comes back absolute
+Gtk.TextTag.set_priority   a tag outside a GtkTextTagTable has no priority to set (stays 0)
+Gtk.SingleSelection.set_selected   without a model there is nothing to select (GTK_INVALID_LIST_POSITION stays)
+Gtk.SingleSelection.selected       same, as a property
+Gtk.TextTag.line_height_set   GTK 4.14 registers the property but its own get_property() switch has no case for it ("invalid property id 62 for line-height-set", gtktexttag.c:1875), so it cannot be read back - GTK's bug, not a round trip the binding can honour
+Gtk.DropTarget.*   the constructor takes a *type name* ("string", a registered class), not an arbitrary string; DragDropTest builds it properly
+Gtk.PrintOperation.current_page   a current page needs n_pages set first (GTK refuses it otherwise)
+Gtk.PrintOperation.set_current_page   same, as the setter
+GdkPixbuf.Pixbuf.*   the factories need real image data (PixbufTest covers it)
+GdkPixbuf.PixbufAnimation.*   same: new_from_file() needs an image file
+WebKit.Settings.set_webrtc_udp_ports_range   'smoke' is not a port range (min:max); WebKit keeps the old value
+WebKit.Settings.webrtc_udp_ports_range       same, as a property

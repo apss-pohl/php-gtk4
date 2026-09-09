@@ -10,9 +10,19 @@
 
 namespace phpgtk {
 
+// A floating GClosure invoking `callable` through the same GValue-array marshaller connect()
+// uses, with `origin` naming it at the exception boundary. The caller owns the reference
+// (g_closure_sink() it or hand it to something that does) and is responsible for tracking it
+// with core/teardown if it outlives the request.
+GClosure *php_closure_new(zval *callable, zend_string *origin);
+// RSHUTDOWN (core/teardown): drop the callable now, while Zend is up, of a closure someone else
+// (GTK, from a GtkBuilder scope) may still hold; the closure then never runs again.
+void php_closure_release(GClosure *closure);
 // Implements connect()/connect_after(); parses its own arguments.
 void signal_connect_method(INTERNAL_FUNCTION_PARAMETERS, bool after);
 // Implements emit(); parses its own arguments.
 void signal_emit_method(INTERNAL_FUNCTION_PARAMETERS);
+// Implements list_signals(); parses its own (no) arguments.
+void signal_list_method(INTERNAL_FUNCTION_PARAMETERS);
 
 }  // namespace phpgtk

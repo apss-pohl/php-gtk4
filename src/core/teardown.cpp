@@ -1,7 +1,10 @@
 #include "teardown.h"
 
 #include "callback.h"
+#include "error.h"
 #include "globals.h"
+#include "gsignal.h"
+#include "object.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -56,16 +59,24 @@ void teardown_untrack_notified(gpointer key) {
   notified().erase(key);
 }
 
-// RSHUTDOWN: disconnect every live handler, destroy every armed source and clear every
-// notified callable while Zend is up. Every entry's pointer is valid as long as the entry
-// exists (finalizing the instance/owner runs the finalize/destroy notify, which untracks),
-// so each step takes the *current* first entry rather than iterating a snapshot: one
-// disconnect/clear may finalize other tracked objects and remove their entries too.
+// RSHUTDOWN: disconnect every live handler, destroy every armed source, clear every
+// notified callable and release every toggle hold while Zend is up. Every entry's pointer is valid
+// as long as the entry exists (finalizing the instance/owner runs the finalize/destroy notify,
+// which untracks), so each step takes the *current* first entry rather than iterating a snapshot:
+// one disconnect/clear may finalize other tracked objects and remove their entries too.
 void teardown_request() {
   while (!closures().empty()) {
     const auto [closure, h] = *closures().begin();
     closures().erase(closure);  // in case the disconnect does not finalize it right away
-    if (g_signal_handler_is_connected(h.instance, h.id)) {
+    if (h.instance == nullptr) {
+      // Connected by GTK itself (a GtkBuilder <signal>): no handler id, so invalidating the
+      // closure is the disconnect, and the callable is released here rather than in a finalize
+      // that may only come after Zend is gone.
+      g_closure_ref(closure);
+      g_closure_invalidate(closure);
+      php_closure_release(closure);
+      g_closure_unref(closure);
+    } else if (g_signal_handler_is_connected(h.instance, h.id)) {
       g_signal_handler_disconnect(h.instance, h.id);
     }
   }
@@ -80,7 +91,13 @@ void teardown_request() {
     notified().erase(key);
     n.clear(n.owner);  // runs the destroy notify
   }
+  object_release_holds();  // may free handles -> finalize GObjects -> more destroy notifies
   callback_drain();
+  // A __destruct that threw during the above: nothing is left to rethrow to, report it.
+  if (EG(exception) != nullptr) {
+    set_exception_mode(ExceptionMode::Log);
+    report_pending_exception("request shutdown");
+  }
 }
 
 }  // namespace phpgtk

@@ -27,8 +27,27 @@ final class ExampleTest extends TestCase
     {
         foreach (new ReflectionExtension('gtk4')->getClasses() as $class) {
             $name = $class->getName();
+            if (self::isInterfaceFallback($class)) {
+                continue;  // Gtk4\GListModelObject is GListModel with a body: its page is the interface's
+            }
             yield $name => [substr($name, strrpos($name, '\\') + 1)];
         }
+    }
+
+    /**
+     * The generated `<Interface>Object` classes wrap() falls back to for GTK-private classes
+     * (core/object.cpp fallback_for): not constructible, no API of their own.
+     *
+     * @param \ReflectionClass<object> $class
+     */
+    private static function isInterfaceFallback(\ReflectionClass $class): bool
+    {
+        $name = $class->getName();
+        if (!str_ends_with($name, 'Object') || $class->isInstantiable()) {
+            return false;
+        }
+        $iface = substr($name, 0, -strlen('Object'));
+        return interface_exists($iface) && $class->implementsInterface($iface);
     }
 
     /** @return iterable<string, array{string}> */
@@ -131,7 +150,7 @@ final class ExampleTest extends TestCase
         require_once __DIR__ . '/../examples/bootstrap.php';
 
         $placed = [];
-        foreach (\PhpGtk4\Examples\Demo::SECTIONS as $section => $members) {
+        foreach (\PhpGtk4\Examples\Demo::sections() as $section => $members) {
             foreach ($members as $member) {
                 self::assertArrayNotHasKey($member, $placed, "$member is in two sections");
                 $placed[$member] = $section;
@@ -143,9 +162,11 @@ final class ExampleTest extends TestCase
             $registered[] = $short;
         }
         sort($registered);
-        $mapped = array_keys($placed);
+        // The map is the same for every build; a class of a feature this build lacks
+        // (tests/Features.php) is mapped and simply has no page to show.
+        $mapped = array_values(array_filter(array_keys($placed), Features::available(...)));
         sort($mapped);
-        self::assertSame($registered, $mapped, 'Demo::SECTIONS must list every registered class once');
+        self::assertSame($registered, $mapped, 'Demo::sections() must list every registered class once');
     }
 
     public function testTheCombinedDemoMountsEveryClass(): void
@@ -157,8 +178,8 @@ final class ExampleTest extends TestCase
         $pages = [];
         foreach (glob(self::DIR . '/*.php') ?: [] as $file) {
             $name = basename($file, '.php');
-            if (in_array($name, ['bootstrap', 'demo'], true)) {
-                continue;
+            if (in_array($name, ['bootstrap', 'demo'], true) || !Features::available($name)) {
+                continue;   // a page of a feature this build lacks (tests/Features.php)
             }
             $pages[] = $name;
         }

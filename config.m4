@@ -3,7 +3,7 @@ dnl
 dnl   phpize && ./configure [--with-php-config=...] && make && make install
 dnl   --enable-gtk4-sanitize   AddressSanitizer + UBSan build (ci.sh --only=asan)
 dnl   --enable-gtk4-coverage   gcov instrumentation (ci.sh --only=coverage)
-dnl   --enable-gtk4-webkit     WebKitGTK 6 support (not implemented yet)
+dnl   --enable-gtk4-webkit     WebKitGTK 6 support (the WebKit* and JSC* classes; Gtk4\FEATURES says webkit=yes)
 
 PHP_ARG_ENABLE([gtk4],
   [whether to enable the gtk4 extension],
@@ -16,10 +16,6 @@ PHP_ARG_ENABLE([gtk4-sanitize],
 PHP_ARG_ENABLE([gtk4-coverage],
   [whether to build gtk4 with gcov coverage],
   [AS_HELP_STRING([--enable-gtk4-coverage], [Build gtk4 with gcov instrumentation])],
-  [no], [no])
-PHP_ARG_ENABLE([gtk4-testing],
-  [whether to compile the test-only hooks into gtk4],
-  [AS_HELP_STRING([--enable-gtk4-testing], [Compile Gtk::testing_* hooks (test builds only, never ship)])],
   [no], [no])
 PHP_ARG_ENABLE([gtk4-webkit],
   [whether to enable WebKitGTK in gtk4],
@@ -51,12 +47,6 @@ if test "$PHP_GTK4" != "no"; then
     PHP_EVAL_LIBLINE([$WEBKITGTK_LIBS], [GTK4_SHARED_LIBADD])
     AC_DEFINE([PHPGTK_WITH_WEBKIT], [1], [WebKitGTK support])
     GTK4_FEATURES="webkit=yes"
-  fi
-  if test "$PHP_GTK4_TESTING" != "no"; then
-    AC_DEFINE([PHPGTK_TESTING], [1], [Test-only hooks compiled in])
-    GTK4_FEATURES="$GTK4_FEATURES testing=yes"
-  else
-    GTK4_FEATURES="$GTK4_FEATURES testing=no"
   fi
   AC_DEFINE_UNQUOTED([PHPGTK_BUILD_FEATURES], ["$GTK4_FEATURES"], [Compiled-in optional features])
 
@@ -93,18 +83,22 @@ if test "$PHP_GTK4" != "no"; then
   PHP_SUBST([GTK4_SHARED_LIBADD])
 
   dnl Every .cpp under src/ is compiled; nothing to maintain when a class file is added
-  dnl (sorted for a reproducible link order). The build dirs below must list every
-  dnl subdirectory or an out-of-tree build cannot place the objects.
-  GTK4_SOURCES=`cd "$srcdir" && find src -name '*.cpp' | LC_ALL=C sort | tr '\n' ' '`
+  dnl (sorted for a reproducible link order). Every directory under src/ becomes a build dir
+  dnl (an out-of-tree build cannot place the objects otherwise) - derived, like the sources,
+  dnl so a new GIR namespace directory (src/Pango, src/Gsk) needs no edit here or in config.w32.
+  dnl The one exception: the namespaces that need WebKitGTK (src/WebKit, src/JavaScriptCore,
+  dnl src/Soup - libsoup is WebKitGTK's HTTP library and reaches PHP only through it -
+  dnl CONDITIONAL_NAMESPACES in gen/gir/config.php) are left out without --enable-gtk4-webkit;
+  dnl their registration and arginfo are under #ifdef PHPGTK_WITH_WEBKIT in the generated files.
+  if test "$PHP_GTK4_WEBKIT" = "no"; then
+    GTK4_SOURCES=`cd "$srcdir" && find src -name '*.cpp' | grep -v '^src/\(WebKit\|JavaScriptCore\|Soup\)/' | LC_ALL=C sort | tr '\n' ' '`
+  else
+    GTK4_SOURCES=`cd "$srcdir" && find src -name '*.cpp' | LC_ALL=C sort | tr '\n' ' '`
+  fi
   PHP_NEW_EXTENSION([gtk4], [$GTK4_SOURCES], [$ext_shared], [], [$GTK4_CXXFLAGS], [cxx])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/core])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/GLib])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/GObject])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/Gio])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/Gdk])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/Gtk])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/Cairo])
+  for gtk4_dir in `cd "$srcdir" && find src -type d -not -name '.libs' | LC_ALL=C sort`; do
+    PHP_ADD_BUILD_DIR([$ext_builddir/$gtk4_dir])
+  done
   PHP_ADD_INCLUDE([$ext_srcdir])
   PHP_ADD_INCLUDE([$ext_srcdir/src])
 fi

@@ -1,0 +1,14 @@
+# The "Sponsor" button GitHub renders on the repository page and next to each release.
+# One entry per platform; GitHub shows them in the order they appear here.
+#
+# It only becomes visible once the repository is public *and* the account is enrolled in
+# GitHub Sponsors (Settings -> Sponsors on github.com/apss-pohl). Until then this file is inert.
+#
+# To add another platform, uncomment its line: `custom` takes up to four URLs and needs no
+# enrolment, so it is the one that works while Sponsors is still pending.
+
+github: [apss-pohl]
+# ko_fi:
+# liberapay:
+# buy_me_a_coffee:
+# custom: ["https://www.paypal.com/paypalme/..."]

@@ -1,18 +1,59 @@
 name: Build & tests
 
+# The PR run is the gate: release.yml re-validates main on every merge (its `verify` job
+# runs ./ci.sh in full), so a `push: [main]` trigger here only paid for the same commit twice.
 on:
   workflow_dispatch:
   pull_request:
-  push:
-    branches: [main]
 
 # Read-only token: these workflows only check out and build.
 permissions:
   contents: read
 
+# Superseded runs of the same ref are cancelled (a PR push while the previous one runs).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  # Which thread models this push has to be run against. ZTS exists here to catch per-request
+  # state put in a plain static instead of the module globals, so it is worth its four jobs when
+  # something under src/core (or the header that declares the globals) moved, and not otherwise.
+  # Anything that is not a pull request has no base to compare against and gets both.
+  # `PHP 8.4 ZTS` / `PHP 8.5 ZTS` are deliberately not required status checks, which is what
+  # makes leaving the cells out safe - see docs/RELEASING.md "Gating".
+  changes:
+    name: What this push touches
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      thread-models: ${{ steps.pick.outputs.thread-models }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - id: pick
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$BASE" ]]; then
+            echo 'thread-models=["nts","ts"]' >> "$GITHUB_OUTPUT"
+            echo "not a pull request: both thread models" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if git diff --name-only "$BASE" HEAD \
+             | grep -qE '^(src/core/|src/php_gtk4\.h$|src/classes\.h$|config\.m4$)'; then
+            echo 'thread-models=["nts","ts"]' >> "$GITHUB_OUTPUT"
+            echo "core changed: NTS and ZTS" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'thread-models=["nts"]' >> "$GITHUB_OUTPUT"
+            echo "no core change: NTS only (ZTS runs on merge and before a release)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
   php-tests:
     name: PHP ${{ matrix.php }}${{ matrix.ts == 'ts' && ' ZTS' || '' }}
+    needs: changes
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
@@ -20,12 +61,7 @@ jobs:
       matrix:
         # Everything we claim to support (8.4+), on the GTK floor (24.04 = GTK 4.14).
         php: ['8.4', '8.5']
-        ts: [nts]
-        include:
-          # One thread-safe build: per-request state lives in module globals (src/core/globals.h);
-          # the suite is single-threaded, so this checks the build and the GINIT/GSHUTDOWN path.
-          - php: '8.4'
-            ts: ts
+        ts: ${{ fromJSON(needs.changes.outputs.thread-models) }}
     env:
       phpts: ${{ matrix.ts }}
       # tests/run.sh, bin/php-gtk4 and ci.sh default to the php8.4 binaries; setup-php provides plain names.
@@ -34,10 +70,10 @@ jobs:
       PHPIZE: phpize
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up PHP ${{ matrix.php }}
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, mbstring, tokenizer, xml, xmlwriter
@@ -48,7 +84,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            libgtk-4-dev xvfb build-essential
+            pkg-config libgtk-4-dev xvfb libxtst6 build-essential
 
       - name: Build extension (phpize)
         run: ./ci.sh --only=build
@@ -57,7 +93,7 @@ jobs:
         run: ./ci.sh --only=load
 
       - name: Cache Composer packages
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: vendor
           key: composer-php${{ matrix.php }}-${{ hashFiles('composer.lock') }}
@@ -71,15 +107,23 @@ jobs:
           php -v | head -1
           pkg-config --modversion gtk4
 
+      # --log-events-text is written as the run goes, so a crash (PHPUnit dies with the
+      # process and writes no JUnit file) still names the test that was running.
       - name: Run PHPUnit
-        run: ./ci.sh --only=test -- --log-junit phpunit-junit.xml --display-warnings
+        run: ./ci.sh --only=test -- --log-junit phpunit-junit.xml --log-events-text phpunit-events.txt --display-warnings
+
+      - name: Name the last test on a crash
+        if: failure()
+        run: tail -20 phpunit-events.txt || true
 
       - name: Upload PHPUnit report
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: phpunit-junit-php${{ matrix.php }}-${{ matrix.ts }}
-          path: phpunit-junit.xml
+          path: |
+            phpunit-junit.xml
+            phpunit-events.txt
           if-no-files-found: ignore
 
       # php-src run-tests.php: the process-level assertions PHPUnit cannot make
@@ -89,9 +133,9 @@ jobs:
 
       - name: Upload failing phpt output
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: phpt-failures-php${{ matrix.php }}
+          name: phpt-failures-php${{ matrix.php }}-${{ matrix.ts }}
           path: |
             tests/phpt/*.out
             tests/phpt/*.diff
@@ -108,10 +152,10 @@ jobs:
       PHPIZE: phpize
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up PHP 8.4
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: '8.4'
           extensions: dom, mbstring, tokenizer, xml, xmlwriter
@@ -121,7 +165,7 @@ jobs:
       - name: Install build deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libgtk-4-dev xvfb build-essential valgrind
+          sudo apt-get install -y --no-install-recommends pkg-config libgtk-4-dev xvfb libxtst6 build-essential valgrind
 
       - name: Install PHPUnit
         run: composer install --no-interaction --no-progress --prefer-dist
@@ -137,8 +181,11 @@ jobs:
       - name: Run sanitizer stage
         run: ./ci.sh --only=asan
 
-  coverage:
-    name: C++ line coverage (gcov)
+  # --enable-gtk4-webkit is analysed by cpp-lint.yml; this leg builds it, loads it and runs the
+  # suite against it - the only run in which the WebKit* / JSC* classes exist (the matrix above
+  # builds without WebKit and skips their tests through tests/Features.php).
+  webkit:
+    name: WebKitGTK build & tests
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
@@ -147,10 +194,10 @@ jobs:
       PHPIZE: phpize
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up PHP 8.4
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: '8.4'
           extensions: dom, mbstring, tokenizer, xml, xmlwriter
@@ -160,17 +207,34 @@ jobs:
       - name: Install build deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libgtk-4-dev xvfb build-essential gcovr
+          sudo apt-get install -y --no-install-recommends \
+            pkg-config libgtk-4-dev libwebkitgtk-6.0-dev xvfb libxtst6 build-essential
+
+      - name: Build and load with WebKit
+        run: GTK4_CONFIGURE_ARGS=--enable-gtk4-webkit ./ci.sh --only=build,load
+
+      - name: Cache Composer packages
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: vendor
+          key: composer-php8.4-${{ hashFiles('composer.lock') }}
 
       - name: Install PHPUnit
         run: composer install --no-interaction --no-progress --prefer-dist
 
-      - name: Run coverage stage
-        run: ./ci.sh --only=coverage
+      - name: Run PHPUnit
+        run: ./ci.sh --only=test -- --log-junit phpunit-junit.xml --log-events-text phpunit-events.txt --display-warnings
 
-      - name: Upload HTML coverage report
-        uses: actions/upload-artifact@v7
+      - name: Name the last test on a crash
+        if: failure()
+        run: tail -20 phpunit-events.txt || true
+
+      - name: Upload PHPUnit report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: cpp-coverage
-          path: coverage/
+          name: phpunit-junit-php8.4-webkit
+          path: |
+            phpunit-junit.xml
+            phpunit-events.txt
           if-no-files-found: ignore

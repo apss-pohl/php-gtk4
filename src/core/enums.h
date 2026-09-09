@@ -18,6 +18,7 @@ void register_flags(GType type, zend_class_entry *ce);
 // (nick is not checked); a mismatch is a fatal error - the stub drifted from the
 // GTK headers. Cannot run at MINIT: internal enum case objects do not exist yet.
 void enums_verify();
+// Registry lookup by GType: the PHP enum (or flags constant class) bound to it, nullptr if none.
 zend_class_entry *enum_class_for_type(GType type);
 
 // gint -> case object (or long if the type is not registered / value unknown).

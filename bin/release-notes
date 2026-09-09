@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+#
+# The commit messages of a release, grouped by Conventional Commit type - the
+# "### Changes since <tag>" section that .github/workflows/release.yml appends to
+# every release body (docs/RELEASING.md). Run it by hand to see what the next
+# release will say:
+#
+#   bin/release-notes                 since the newest tag reachable from HEAD
+#   bin/release-notes v0.1.0          since that tag
+#   bin/release-notes --stable        since the newest *real* release tag, skipping v*-dev.*
+#
+# Commit links are added when GITHUB_SERVER_URL and GITHUB_REPOSITORY are set (they
+# are inside Actions); locally the short hash is printed on its own.
+#
+# Subjects that are not conventional (history from before the rule, a merge someone
+# hand-wrote) are kept under "Other" rather than dropped: the notes never hide a commit.
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+
+stable_only=0
+since=""
+case ${1:-} in
+    --stable) stable_only=1 ;;
+    -h|--help) sed -n '2,/^set -/p' "$0" | sed '$d' | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -*) echo "release-notes: unknown option '$1'" >&2; exit 2 ;;
+    '') ;;
+    *) since=$1 ;;
+esac
+
+# The tag the previous release was cut from: the nearest one *in history*, not the
+# newest by date (two tags can share a timestamp; only the graph is authoritative).
+# Dev pre-releases are tagged too (v0.2.0-dev.7), so --stable skips anything with a
+# suffix and measures a real release from the previous real release.
+previous_tag() {
+    local from=$1
+    if [[ $stable_only -eq 1 ]]; then
+        git describe --tags --abbrev=0 --match 'v[0-9]*' --exclude '*-*' "$from" 2>/dev/null
+    else
+        git describe --tags --abbrev=0 --match 'v[0-9]*' "$from" 2>/dev/null
+    fi
+}
+
+if [[ -z $since ]]; then
+    since=$(previous_tag HEAD || true)
+    # A release is tagged after its notes are written, but if HEAD already carries the
+    # tag (a re-run, a local dry run) step back one commit and take the one before it.
+    if [[ -n $since && $(git rev-parse "$since^{commit}") == $(git rev-parse HEAD) ]]; then
+        since=$(previous_tag 'HEAD^' || true)
+    fi
+fi
+
+range=${since:+$since..}HEAD
+
+link() {  # short hash, linked to the commit when running in Actions
+    local sha=$1 short=${1:0:7}
+    if [[ -n ${GITHUB_SERVER_URL:-} && -n ${GITHUB_REPOSITORY:-} ]]; then
+        printf '([`%s`](%s/%s/commit/%s))' "$short" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$sha"
+    else
+        printf '(`%s`)' "$short"
+    fi
+}
+
+# Section titles in output order; every commit lands in exactly one bucket.
+sections=(breaking feat fix perf refactor docs test buildci chore other)
+declare -A titles=(
+    [breaking]='⚠ Breaking changes' [feat]='Features' [fix]='Fixes' [perf]='Performance'
+    [refactor]='Refactoring' [docs]='Documentation' [test]='Tests' [buildci]='Build & CI'
+    [chore]='Chores' [other]='Other'
+)
+declare -A lines=()
+
+total=0
+# One record per commit (\x1e), three fields (\x1f) - a body spans many lines, so the
+# record separator cannot be the newline.
+while IFS=$'\x1f' read -r -d $'\x1e' sha subject body; do
+    sha=${sha//[$'\n\r']/}
+    [[ -n $sha ]] || continue
+    total=$((total + 1))
+    bucket=other
+    scope=""
+    breaking=""
+    text=$subject
+    if [[ $subject =~ ^([a-z]+)(\(([a-z0-9][a-z0-9._/-]*)\))?(!)?:\ (.+)$ ]]; then
+        type=${BASH_REMATCH[1]}
+        breaking=${BASH_REMATCH[4]}
+        case $type in
+            feat|fix|perf|refactor|docs|test) bucket=$type ;;
+            build|ci) bucket=buildci ;;
+            chore|style|revert) bucket=chore ;;
+            # An unknown type is not ours to interpret: the subject stays whole under
+            # "Other", prefix included, so nothing is silently relabelled.
+            *) bucket=other ;;
+        esac
+        if [[ $bucket != other ]]; then
+            scope=${BASH_REMATCH[3]}
+            text=${BASH_REMATCH[5]}
+        fi
+        # `!` in the header or a BREAKING CHANGE footer moves it to the top section,
+        # where it is listed once - not again under its own type.
+        if [[ -n $breaking || $body == *"BREAKING CHANGE:"* || $body == *"BREAKING-CHANGE:"* ]]; then
+            bucket=breaking
+        fi
+    fi
+    entry="- ${scope:+**$scope**: }$text $(link "$sha")"
+    lines[$bucket]+="$entry"$'\n'
+done < <(git log --no-merges --reverse --format="%H%x1f%s%x1f%b%x1e" "$range" 2>/dev/null | tr -d '\r')
+
+if [[ $total -eq 0 ]]; then
+    echo "_No commits${since:+ since \`$since\`}._"
+    exit 0
+fi
+
+printf '### Changes%s\n\n' "${since:+ since \`$since\`}"
+for bucket in "${sections[@]}"; do
+    [[ -n ${lines[$bucket]:-} ]] || continue
+    printf '**%s**\n\n%s\n' "${titles[$bucket]}" "${lines[$bucket]}"
+done
+printf '_%d commit(s)%s._\n' "$total" "${since:+ since \`$since\`}"

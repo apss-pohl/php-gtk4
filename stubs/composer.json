@@ -1,0 +1,23 @@
+{
+    "name": "php-gtk4/stubs",
+    "description": "IDE and PHPStan stubs for the php-gtk4 extension (the Gtk4\\ namespace). Declarations only - the extension defines the classes, so this package is never autoloaded.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["gtk", "gtk4", "php-gtk4", "stubs", "ide", "phpstan"],
+    "homepage": "https://github.com/apss-pohl/php-gtk4",
+    "support": {
+        "issues": "https://github.com/apss-pohl/php-gtk4/issues",
+        "source": "https://github.com/apss-pohl/php-gtk4/tree/main/stubs"
+    },
+    "require": {
+        "php": ">=8.4"
+    },
+    "suggest": {
+        "phpstan/extension-installer": "Registers extension.neon with PHPStan, so Gtk4\\ symbols resolve without configuration"
+    },
+    "extra": {
+        "phpstan": {
+            "includes": ["extension.neon"]
+        }
+    }
+}

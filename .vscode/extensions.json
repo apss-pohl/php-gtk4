@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "bmewburn.vscode-intelephense-client",
+    "xdebug.php-debug",
     "ms-vscode.cpptools",
     "llvm-vs-code-extensions.vscode-clangd",
     "junstyle.php-cs-fixer",

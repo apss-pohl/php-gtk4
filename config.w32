@@ -1,0 +1,199 @@
+// vim:ft=javascript
+// php-gtk4 - Windows build (php-sdk / phpize.bat + configure + nmake).
+//
+// The Windows counterpart of config.m4. GTK 4 comes from gvsbuild
+// (https://github.com/wingtk/gvsbuild): an MSVC-built GTK, the toolchain PHP itself
+// uses, so no CRT mixing. Either build it (`gvsbuild build gtk4`) or unpack one of the
+// GTK4_Gvsbuild_<ver>_x64.zip release assets - both give the layout this file expects:
+//
+//   <root>\include\gtk-4.0 ...   <root>\lib\*.lib   <root>\lib\pkgconfig\*.pc   <root>\bin\*.dll
+//
+// Point the build at it with --with-gtk4=<root> or GTK4_ROOT; the gvsbuild default
+// (C:\gtk-build\gtk\x64\release) is tried when neither is given. The include and library
+// flags are taken from pkg-config when gvsbuild's pkgconf is present in <root>\bin, and
+// from the well-known gvsbuild layout otherwise. Output: php_gtk4.dll. docs/BUILD.md has
+// the whole procedure.
+
+// No ';' inside the ARG_* calls: phpize.js lifts them out with /ARG_(ENABLE|WITH)\([^;]+\);/
+// and a semicolon in the help text cuts the call in half (JScript "Unterminated string constant").
+ARG_WITH("gtk4", "Enable the GTK 4 binding - value: gvsbuild root (or set GTK4_ROOT)", "no");
+ARG_ENABLE("gtk4-webkit", "Enable WebKitGTK 6 support in gtk4 (not available on Windows)", "no");
+
+if (PHP_GTK4 != "no") {
+	var gtk4_src = configure_module_dirname;
+
+	// ---- PHP >= 8.4 (config.m4 and src/php_gtk4.h refuse older PHP too).
+	if (PHP_VERSION < 8 || (PHP_VERSION == 8 && PHP_MINOR_VERSION < 4)) {
+		ERROR("php-gtk4 requires PHP >= 8.4, this tree is " + PHP_VERSION_STRING);
+	}
+	if (PHP_GTK4_WEBKIT != "no") {
+		ERROR("--enable-gtk4-webkit is not available on Windows (WebKitGTK 6 is Linux-only; WebView2 is planned)");
+	}
+
+	// ---- Where GTK lives.
+	function gtk4_env(name) {
+		var v = "" + WshShell.Environment("PROCESS")(name);
+		return v;
+	}
+	var gtk4_root = "";
+	if (PHP_GTK4 != "yes") {
+		gtk4_root = PHP_GTK4;
+	} else if (gtk4_env("GTK4_ROOT") != "") {
+		gtk4_root = gtk4_env("GTK4_ROOT");
+	} else {
+		gtk4_root = "C:\\gtk-build\\gtk\\x64\\release";
+	}
+	gtk4_root = gtk4_root.replace(new RegExp("/", "g"), "\\").replace(new RegExp("\\\\+$"), "");
+	if (!FSO.FolderExists(gtk4_root + "\\include\\gtk-4.0")) {
+		ERROR("GTK 4 not found under " + gtk4_root + " (no include\\gtk-4.0). " +
+			"Build it with gvsbuild or unpack a GTK4_Gvsbuild_*.zip, then pass --with-gtk4=<root> or set GTK4_ROOT.");
+	}
+	STDOUT.WriteLine("Using GTK 4 from " + gtk4_root);
+
+	// ---- Include and library flags: pkg-config (gvsbuild ships pkgconf) or the known layout.
+	var gtk4_cflags = "";
+	var gtk4_libs = "";
+	var gtk4_version = "";
+	var pkgconf = "";
+	var candidates = ["\\bin\\pkgconf.exe", "\\bin\\pkg-config.exe"];
+	for (var i = 0; i < candidates.length; i++) {
+		if (FSO.FileExists(gtk4_root + candidates[i])) { pkgconf = gtk4_root + candidates[i]; break; }
+	}
+	var modules = "gtk4 >= 4.14 cairo-gobject gobject-2.0 >= 2.76 glib-2.0 >= 2.76";
+	if (pkgconf != "") {
+		// The .pc files carry an absolute prefix baked in at gvsbuild time; --define-prefix
+		// (pkgconf >= 1.3) re-anchors them to wherever the tree was unpacked.
+		var penv = WshShell.Environment("PROCESS");
+		penv("PKG_CONFIG_PATH") = gtk4_root + "\\lib\\pkgconfig";
+		var pc = '"' + pkgconf + '" --define-prefix ';
+		gtk4_version = trim(execute(pc + '--modversion gtk4'));
+		if (gtk4_version == "") {
+			ERROR(pkgconf + " cannot resolve gtk4 (is " + gtk4_root + "\\lib\\pkgconfig complete?)");
+		}
+		gtk4_cflags = trim(execute(pc + '--cflags-only-I "' + modules + '"'));
+		gtk4_libs = trim(execute(pc + '--libs-only-l "' + modules + '"'));
+		if (gtk4_cflags == "" || gtk4_libs == "") {
+			ERROR("pkg-config could not satisfy '" + modules + "' under " + gtk4_root);
+		}
+	} else {
+		WARNING("no pkgconf.exe in " + gtk4_root + "\\bin - assuming the gvsbuild layout");
+		// The same floor as the pkg-config path (gtk4 >= 4.14), read from gtkversion.h.
+		var vh = gtk4_root + "\\include\\gtk-4.0\\gtk\\gtkversion.h";
+		if (!FSO.FileExists(vh)) {
+			ERROR("no " + vh + " - not a GTK 4 tree");
+		}
+		var vtext = file_get_contents(vh);
+		var major = /#define\s+GTK_MAJOR_VERSION\s+\((\d+)\)/.exec(vtext);
+		var minor = /#define\s+GTK_MINOR_VERSION\s+\((\d+)\)/.exec(vtext);
+		var micro = /#define\s+GTK_MICRO_VERSION\s+\((\d+)\)/.exec(vtext);
+		if (!major || !minor || !micro) {
+			ERROR("cannot read the GTK version from " + vh);
+		}
+		if (parseInt(major[1]) != 4 || parseInt(minor[1]) < 14) {
+			ERROR("GTK " + major[1] + "." + minor[1] + " found, php-gtk4 needs gtk4 >= 4.14");
+		}
+		gtk4_version = major[1] + "." + minor[1] + "." + micro[1];
+		var incs = ["include\\gtk-4.0", "include\\glib-2.0", "lib\\glib-2.0\\include", "include\\cairo",
+			"include\\pango-1.0", "include\\harfbuzz", "include\\gdk-pixbuf-2.0", "include\\graphene-1.0",
+			"lib\\graphene-1.0\\include", "include\\fribidi", "include\\freetype2", "include\\pixman-1", "include"];
+		for (var i = 0; i < incs.length; i++) {
+			gtk4_cflags += '-I"' + gtk4_root + "\\" + incs[i] + '" ';
+		}
+		gtk4_libs = "-lgtk-4 -lgdk_pixbuf-2.0 -lgraphene-1.0 -lpango-1.0 -lpangocairo-1.0 -lharfbuzz " +
+			"-lcairo -lcairo-gobject -lgio-2.0 -lgobject-2.0 -lgmodule-2.0 -lglib-2.0 -lintl";
+	}
+	if (gtk4_version != "") {
+		STDOUT.WriteLine("GTK version " + gtk4_version);
+	}
+
+	// -I<dir> -> /I "<dir>" ; -lfoo -> foo.lib (MSVC import libraries in <root>\lib).
+	var inc_flags = "";
+	var m;
+	var parts = gtk4_cflags.replace(new RegExp("\\r?\\n", "g"), " ").split(new RegExp("\\s+"));
+	for (var i = 0; i < parts.length; i++) {
+		var p = parts[i];
+		if (p.substr(0, 2) != "-I") continue;
+		p = p.substr(2).replace(new RegExp('^"|"$', "g"), "").replace(new RegExp("/", "g"), "\\");
+		inc_flags += '/I "' + p + '" ';
+	}
+	var lib_names = [];
+	parts = gtk4_libs.replace(new RegExp("\\r?\\n", "g"), " ").split(new RegExp("\\s+"));
+	for (var i = 0; i < parts.length; i++) {
+		if (parts[i].substr(0, 2) == "-l") lib_names.push(parts[i].substr(2) + ".lib");
+	}
+	// pkgconf's --libs-only-l drops the -L; the import libraries are all in <root>\lib.
+	ADD_FLAG("LDFLAGS_GTK4", '/LIBPATH:"' + gtk4_root + '\\lib"');
+	for (var i = 0; i < lib_names.length; i++) {
+		ADD_FLAG("LIBS_GTK4", lib_names[i]);
+	}
+	if (!FSO.FileExists(gtk4_root + "\\lib\\gtk-4.lib")) {
+		ERROR("gtk-4.lib not found in " + gtk4_root + "\\lib");
+	}
+	if (!CHECK_HEADER_ADD_INCLUDE("gtk/gtk.h", "CFLAGS_GTK4", gtk4_root + "\\include\\gtk-4.0")) {
+		ERROR("gtk/gtk.h not found under " + gtk4_root);
+	}
+	ADD_FLAG("CFLAGS_GTK4", inc_flags);
+
+	// ---- Version: ./VERSION is the single source of truth, src/php_gtk4.h mirrors it.
+	var want = trim(file_get_contents(gtk4_src + "\\VERSION"));
+	if (want == "") {
+		ERROR("VERSION is missing or empty");
+	}
+	var hdr = file_get_contents(gtk4_src + "\\src\\php_gtk4.h");
+	m = hdr.match(new RegExp('#define PHP_GTK4_VERSION "([^"]*)"'));
+	if (m == null || m[1] != want) {
+		ERROR("version mismatch: VERSION is " + want + ", src/php_gtk4.h is " + (m ? m[1] : "?") +
+			"; run ./ci.sh --only=version --fix");
+	}
+	STDOUT.WriteLine("php-gtk4 version " + want);
+
+	// ---- Build metadata (what config.m4 bakes into PHPGTK_BUILD_INFO / PHPGTK_BUILD_FEATURES).
+	var git_hash = "unknown";
+	try {
+		var h = trim(execute('git -C "' + gtk4_src + '" rev-parse --short HEAD'));
+		if (h.match(new RegExp("^[0-9a-f]+$"))) git_hash = h;
+	} catch (e) {}
+	var d = new Date();
+	function pad(n) { return (n < 10 ? "0" : "") + n; }
+	var build_date = d.getUTCFullYear() + "-" + pad(d.getUTCMonth() + 1) + "-" + pad(d.getUTCDate()) + "T" +
+		pad(d.getUTCHours()) + ":" + pad(d.getUTCMinutes()) + ":" + pad(d.getUTCSeconds()) + "Z";
+	var features = "webkit=no";
+	AC_DEFINE("PHPGTK_BUILD_INFO", "built " + build_date + ", git " + git_hash, "Build info", true);
+	AC_DEFINE("PHPGTK_BUILD_FEATURES", features, "Compiled-in optional features", true);
+
+	// ---- Sources: every .cpp under src/, recursively (relative paths; the object tree mirrors
+	// the source tree), so nothing has to be maintained here when a class file *or a namespace
+	// directory* is added - the same rule as config.m4's find. The one exception, as there: the
+	// namespaces that need WebKitGTK (src\WebKit, src\JavaScriptCore, src\Soup -
+	// libsoup is its HTTP library - CONDITIONAL_NAMESPACES in
+	// gen/gir/config.php) are left out, since --enable-gtk4-webkit is refused on Windows.
+	var sources = [];
+	var webkit_dirs = { "WebKit": true, "JavaScriptCore": true, "Soup": true };
+	function gtk4_collect(rel) {
+		var files = glob(gtk4_src + "\\" + rel + "\\*.cpp");
+		for (var j = 0; j < files.length; j++) {
+			sources.push(rel + "\\" + FSO.GetFileName(files[j]));
+		}
+		var sub = FSO.GetFolder(gtk4_src + "\\" + rel).SubFolders;
+		for (var e = new Enumerator(sub); !e.atEnd(); e.moveNext()) {
+			var name = e.item().Name;
+			if (name == ".libs") continue;
+			if (rel == "src" && webkit_dirs[name]) continue;
+			gtk4_collect(rel + "\\" + name);
+		}
+	}
+	gtk4_collect("src");
+	sources.sort();
+	if (sources.length == 0) {
+		ERROR("no .cpp files found under " + gtk4_src + "\\src");
+	}
+	// C++20 with exceptions enabled (the standard library needs EH; PHP throwables never unwind
+	// through GLib frames regardless - see the trampoline rule in CLAUDE.md). /utf-8: the sources
+	// and GTK headers are UTF-8. /wd4200: zend structs with flexible array members. /W3 like
+	// -Wall -Wextra on Linux; the workflow fails the build on a warning in src\ (windows-build.yml),
+	// the counterpart of ci.sh's grep, so system headers cannot break it (/WX would).
+	var cxxflags = "/std:c++20 /EHsc /utf-8 /Zc:__cplusplus /W3 /wd4200 " +
+		'/I "' + gtk4_src + '" /I "' + gtk4_src + '\\src" ';
+	EXTENSION("gtk4", sources.join(" "), true, cxxflags);
+	ADD_FLAG("CFLAGS_GTK4", cxxflags);
+}

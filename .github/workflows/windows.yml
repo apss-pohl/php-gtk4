@@ -1,0 +1,53 @@
+name: Windows build
+
+# The Windows counterpart of tests.yml: php_gtk4.dll built with the PHP SDK against gvsbuild's
+# MSVC GTK 4, loaded, then the PHPUnit suite on the runner's desktop - the recipe lives in
+# windows-build.yml (shared with release.yml). tests/phpt is Linux-only (run-tests.php + Xvfb);
+# see docs/BUILD.md "Windows".
+
+# Windows minutes bill at nearly twice the Linux rate and this matrix is four jobs, so it runs
+# where it can actually break: the sources, the build recipe, the launcher, the runner script.
+# A docs or examples change cannot, and no longer pays for it.
+#
+# The weekly run is the safety net that `push: [main]` used to be - GTK, the runner image and
+# the pinned gvsbuild move underneath a tree nobody touched.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 4 * * 1'   # Mondays, 04:17 UTC
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'config.m4'
+      - 'config.w32'
+      - 'VERSION'
+      - 'bin/php-gtk4.cmd'
+      - 'tests/run.cmd'
+      - '.github/workflows/windows.yml'
+      - '.github/workflows/windows-build.yml'
+
+permissions:
+  contents: read
+
+# Superseded runs of the same ref are cancelled (a PR push while the previous one runs).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Windows PHP ${{ matrix.php }} (${{ matrix.ts }})
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.4', '8.5']
+        # Both thread models, like tests.yml. setup-php reads phpts; the devel pack drops its
+        # -nts suffix; output lands in Release_TS.
+        ts: [nts, ts]
+    uses: ./.github/workflows/windows-build.yml
+    with:
+      php: ${{ matrix.php }}
+      ts: ${{ matrix.ts }}
+      run-tests: true
+      artifact: php_gtk4-php${{ matrix.php }}-${{ matrix.ts }}-vs17-x64

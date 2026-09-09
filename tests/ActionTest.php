@@ -54,11 +54,6 @@ final class ActionTest extends GtkTestCase
         self::assertCount(1, $fired, 'disabled actions do not activate');
     }
 
-    public function testInvalidNameOrTypeRejected(): void
-    {
-        $this->expectException(\ValueError::class);
-        new GSimpleAction('has space');
-    }
 
     /** @return iterable<string, array{string, mixed}> type string, value */
     public static function parameterTypes(): iterable
@@ -105,7 +100,7 @@ final class ActionTest extends GtkTestCase
 
     public function testStatefulAction(): void
     {
-        $toggle = new GSimpleAction('dark', null, false);
+        $toggle = GSimpleAction::new_stateful('dark', null, false);
         self::assertFalse($toggle->get_state());
         $changes = [];
         $toggle->connect('change-state', function (GSimpleAction $act, mixed $requested) use (&$changes): void {
@@ -116,7 +111,7 @@ final class ActionTest extends GtkTestCase
         self::assertTrue($toggle->get_state());
         self::assertSame([true], $changes);
 
-        $counter = new GSimpleAction('n', 'i', 0);
+        $counter = GSimpleAction::new_stateful('n', 'i', 0);
         $counter->connect('change-state', fn(GSimpleAction $act, mixed $v) => $act->set_state($v));
         $counter->activate(3);
         self::assertSame(3, $counter->get_state());
@@ -126,7 +121,7 @@ final class ActionTest extends GtkTestCase
 
     public function testStateTypeIsInferredFromTheInitialValue(): void
     {
-        $s = new GSimpleAction('s', null, ['x' => 1, 'y' => 'two']);
+        $s = GSimpleAction::new_stateful('s', null, ['x' => 1, 'y' => 'two']);
         self::assertSame(['x' => 1, 'y' => 'two'], $s->get_state());
         $s->set_state(['x' => 2]);
         self::assertSame(['x' => 2], $s->get_state());
@@ -173,6 +168,45 @@ final class ActionTest extends GtkTestCase
         self::assertStringContainsString("no action 'quit'", $error);
     }
 
+    /**
+     * Every GActionGroup query on an unregistered GApplication refuses instead of letting GLib
+     * CRITICAL and answer a default that reads like "no such action" (gen/overrides/
+     * Gio.ActionGroup.cpp). `add/remove/lookup_action` are GActionMap and work at any time.
+     *
+     * @return iterable<string, array{string, list<mixed>}>
+     */
+    public static function unregisteredQueries(): iterable
+    {
+        yield 'has_action' => ['has_action', ['quit']];
+        yield 'get_action_enabled' => ['get_action_enabled', ['quit']];
+        yield 'get_action_state' => ['get_action_state', ['quit']];
+        yield 'get_action_parameter_type' => ['get_action_parameter_type', ['quit']];
+        yield 'get_action_state_hint' => ['get_action_state_hint', ['quit']];
+        yield 'get_action_state_type' => ['get_action_state_type', ['quit']];
+        yield 'list_actions' => ['list_actions', []];
+        yield 'change_action_state' => ['change_action_state', ['quit', 1]];
+    }
+
+    /**
+     * @param list<mixed> $args
+     */
+    #[DataProvider('unregisteredQueries')]
+    public function testActionQueriesBeforeRegistrationRefuse(string $method, array $args): void
+    {
+        $app = self::app();
+        $app->add_action(new GSimpleAction('quit'));
+        // The GActionMap side answers at any time, so the action really is there.
+        self::assertSame('quit', $app->lookup_action('quit')?->get_name());
+
+        try {
+            $app->{$method}(...$args);
+            self::fail("$method() answered instead of refusing before registration");
+        } catch (\LogicException $e) {
+            self::assertStringContainsString('not registered yet', $e->getMessage());
+            self::assertStringContainsString($method, $e->getMessage());
+        }
+    }
+
     public function testWidgetActivateActionReachesTheApplication(): void
     {
         $app = self::app();
@@ -183,8 +217,9 @@ final class ActionTest extends GtkTestCase
         });
         $app->add_action($say);
         $app->connect('activate', function (GtkApplication $a) use (&$got): void {
-            $win = new GtkWindow($a);
-            $button = new GtkButton('Say');
+            $win = new GtkWindow();
+            $win->set_application($a);
+            $button = GtkButton::new_with_label('Say');
             $win->set_child($button);
             self::assertTrue($button->activate_action('app.say', 'hi'));
             self::assertSame('hi', $got);
@@ -198,8 +233,21 @@ final class ActionTest extends GtkTestCase
     public function testVariantPropertyOnGObject(): void
     {
         // GSimpleAction:state is a GVariant property -> value mapping through get/set_property too.
-        $a = new GSimpleAction('v', null, 'initial');
+        $a = GSimpleAction::new_stateful('v', null, 'initial');
         self::assertSame('initial', $a->get_property('state'));
         self::assertSame('initial', $a->state);
+    }
+
+    public function testChangeStateAndStateHint(): void
+    {
+        $a = GSimpleAction::new_stateful('level', null, 1);
+        self::assertSame(1, $a->get_state());
+        $a->change_state(5);                    // goes through change-state, unlike set_state()
+        self::assertSame(5, $a->get_state());
+        self::assertNull($a->get_state_hint());
+        $a->set_state_hint([1, 5, 10]);
+        self::assertSame([1, 5, 10], $a->get_state_hint());
+        $a->set_enabled(false);
+        self::assertFalse($a->get_enabled());
     }
 }

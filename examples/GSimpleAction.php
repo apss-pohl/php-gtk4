@@ -59,7 +59,7 @@ return Demo::page(
         });
 
         // Stateful: the state's GVariant type is inferred from the initial value.
-        $dark = new GSimpleAction('dark', null, false);
+        $dark = GSimpleAction::new_stateful('dark', null, false);
         $dark->connect('change-state', function (GSimpleAction $self, mixed $state) use (&$log, $render): void {
             $self->set_state($state);          // change-state proposes, set_state commits
             $log[] = sprintf('state    %-7s -> %s', $self->get_name(), var_export($self->get_state(), true));

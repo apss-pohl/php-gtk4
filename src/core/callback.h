@@ -21,6 +21,8 @@ Callback *callback_new(zval *callable, const char *origin);
 // releasing the callable there can drop the last PHP reference on that very
 // owner - a nested finalize the C caller does not survive.
 void callback_free(gpointer p);
+// Park any zval the same way (the stream an I/O watch keeps): released by callback_drain().
+void callback_park(zval *zv);
 // Release every callable parked by callback_free(). Called wherever no C frame
 // is in the middle of the owner: after a trampoline returns, after a method
 // installed/removed a callback, after a handle released its GObject, at RSHUTDOWN.

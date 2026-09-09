@@ -22,10 +22,6 @@ final class StubsTest extends TestCase
     {
         $src = file_get_contents(self::STUB);
         self::assertIsString($src);
-        // `#if defined(PHPGTK_TESTING)` blocks exist only in --enable-gtk4-testing builds.
-        if (!str_contains(\Gtk4\FEATURES, 'testing=yes')) {
-            $src = preg_replace('/^[ \t]*#if defined\(PHPGTK_TESTING\)\n.*?^[ \t]*#endif\n/ms', '', $src) ?? $src;
-        }
         return $src;
     }
 
@@ -96,7 +92,10 @@ final class StubsTest extends TestCase
 
     public function testClassesMatch(): void
     {
-        self::assertSame(array_keys(self::fromExtension()['classes']), array_keys(self::fromStub()['classes']));
+        // The stub declares every build's classes; the ones of a feature this build lacks
+        // (tests/Features.php) are not registered and are not expected to be.
+        $declared = array_values(array_filter(array_keys(self::fromStub()['classes']), Features::available(...)));
+        self::assertSame(array_keys(self::fromExtension()['classes']), $declared);
     }
 
     public function testMethodsMatchPerClass(): void
@@ -114,7 +113,7 @@ final class StubsTest extends TestCase
 
     public function testStubNamesAreSnakeCase(): void
     {
-        // docs/PLAN.md: one spelling, snake_case, no camelCase - parameter names are API (named arguments).
+        // README.md "Design": one spelling, snake_case, no camelCase - parameter names are API (named arguments).
         $src = self::source();
         preg_match_all('/function\s+(\w+)\s*\(([^)]*)\)/', $src, $m, PREG_SET_ORDER);
         self::assertNotEmpty($m);

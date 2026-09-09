@@ -9,12 +9,25 @@ use Gtk4\GLib;
 use Gtk4\GMainLoop;
 use Gtk4\Gtk;
 use Gtk4\GtkApplication;
+use Gtk4\GtkOrientation;
+use Gtk4\GtkSizeRequestMode;
+use Gtk4\GtkWidget;
 
 /** Gtk4\ExceptionMode::Rethrow - callback throwables propagate to PHP. */
 final class RethrowModeTest extends GtkTestCase
 {
+    /**
+     * A Throwable parked inside a nested loop is reported with g_warning; that line is the
+     * behaviour under test.
+     */
+    protected function toleratesGtkCriticals(): bool
+    {
+        return true;
+    }
+
     protected function setUp(): void
     {
+        parent::setUp();
         Gtk::set_exception_mode(ExceptionMode::Rethrow);
     }
 
@@ -168,9 +181,6 @@ final class RethrowModeTest extends GtkTestCase
     public function testCDrivenNestedLoopParksAndRunRethrowsWithPreviousChained(): void
     {
         // Needs the test hook: a nested loop driven from C with no PHP boundary in between.
-        if (!str_contains((string) ini_get('gtk4.features'), 'testing=yes')) {
-            self::markTestSkipped('needs --enable-gtk4-testing (FEATURES testing=yes)');
-        }
         $loop = new GMainLoop();
         $afterNested = false;
         $secondRan = false;
@@ -204,9 +214,6 @@ final class RethrowModeTest extends GtkTestCase
 
     public function testCDrivenNestingWithoutRegisteredLoopPropagatesDirectly(): void
     {
-        if (!str_contains((string) ini_get('gtk4.features'), 'testing=yes')) {
-            self::markTestSkipped('needs --enable-gtk4-testing (FEATURES testing=yes)');
-        }
         GLib::timeout_add(0, static function (): bool {
             throw new \LengthException('top level');
         });
@@ -223,5 +230,43 @@ final class RethrowModeTest extends GtkTestCase
         });
         $this->expectException(\TypeError::class);
         $w->set_title('x');
+    }
+
+    public function testVfuncThunksReportOneThrowableOnce(): void
+    {
+        // Two PHP vfuncs run in one GTK call (measure() calls get_request_mode() and measure);
+        // the first throws. The second still runs - a slot that answered its default because PHP
+        // happens to be unwinding would be lying to GTK about the object - with the first
+        // Throwable parked for the duration, so it is reported once and propagates once.
+        $w = new class extends GtkWidget {
+            public int $calls = 0;
+
+            public function vfunc_get_request_mode(): GtkSizeRequestMode
+            {
+                $this->calls++;
+                throw new \RuntimeException('first');
+            }
+
+            public function vfunc_measure(GtkOrientation $orientation, int $for_size): array
+            {
+                $this->calls++;
+
+                return [1, 1, -1, -1];
+            }
+        };
+        $seen = 0;
+        Gtk::set_exception_handler(function () use (&$seen): void {
+            $seen++;
+        });
+        try {
+            $w->measure(GtkOrientation::Horizontal, -1);
+            self::fail('Rethrow mode must propagate the Throwable');
+        } catch (\RuntimeException $e) {
+            self::assertSame('first', $e->getMessage());
+        } finally {
+            Gtk::set_exception_handler(null);
+        }
+        self::assertSame(1, $seen, 'the handler saw the Throwable exactly once');
+        self::assertSame(2, $w->calls, 'the second vfunc ran with the first Throwable parked');
     }
 }

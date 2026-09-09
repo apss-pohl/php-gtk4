@@ -1,157 +1,113 @@
 # TODO
 
-Findings of the 2026-08-25 review ("best practice or php-gtk3 ballast?"). Ordered by impact.
-Tick items off here; design rationale lives in docs/PLAN.md.
+What is still open. Decisions live in README.md "Design", what shipped in `CHANGELOG.md` and the git
+history; an item leaves this file when it is done or decided against, it is not ticked.
 
-## 1. Runtime foundation — replace PHP-CPP with the native Zend API  ✅ done 2026-08-25
+## Open work
 
-Inherited from php-gtk3 without re-examination. PHP-CPP's 2018 rationale (Zend API churn) no
-longer holds for a PHP 8.4+ target, and it blocks idiomatic PHP:
+- **The segfault behind the 8.5 ZTS CI job is worked around, not understood.** The event log
+  named it twice in a row:
+  `RobustnessTest::testWrongArgumentsThrowInsteadOfCrashing#Gtk4\GtkFontDialog::choose_font`,
+  prepared and never finished (runs 34115054496 and 34116287179; an earlier one, 34085363767,
+  died at the same ~46% mark). The async choosers are off the sweep now - every argument may
+  legitimately be null, so the sweep was *opening* a dialog that outlives the test, which a
+  headless argument sweep has no business doing - and that is what makes the job green, not a
+  fix. Only that one matrix cell ever dies: 8.5 NTS and 8.4 ZTS pass the same commit.
+  What is known: it reproduces on no configuration that can be built here, and the PHP build is
+  no longer the unknown. The *exact* binary the job runs - the `php_8.5-zts+ubuntu24.04.tar.zst`
+  that `shivammathur/php-builder` publishes and setup-php unpacks, PHP 8.5.10 ZTS - runs the
+  whole suite with the async choosers put back into the sweep, on Ubuntu 24.04 with GTK 4.14.5,
+  and passes: twice over, plain and under `dbus-run-session`. So it is neither ZTS by itself nor
+  an artefact of a hand-built PHP (a hand-built one and 8.4 NTS pass too). What is left is the
+  runner: 4 cores against 16, its font set, and whatever else `choose_font` reaches for when it
+  opens a dialog nothing will close.
+  To try again without CI: extract that tarball into a scratch prefix (never `/`), point copies
+  of `phpize`/`php-config` at it, build, and run PHPUnit with `-n -d extension_dir=...` plus
+  dom/mbstring/tokenizer/xml/xmlwriter - `-n` alone leaves the ide-stub subprocess without
+  tokenizer and fails `StubsTest` for reasons that have nothing to do with the crash.
+- **What the Windows job still reports that GTK 4.14 never shows** (gvsbuild ships 4.22, built
+  with the debug and consistency checks a distro release build compiles out). Two open groups:
+  - *Two pin lines to write, and they need different mechanisms.* `GtkWidget::allocate`'s
+    complaints in `gtkwidget.c` sit behind `G_ENABLE_DEBUG` / `G_ENABLE_CONSISTENCY_CHECKS` -
+    that follows how GTK was *built*, which no `gtk>=` condition can express, so they belong in
+    the environmental filter in `gateAgainstPinnedList()` next to the portal message. The
+    `measure` one, `"Trying to measure %s %p for %s of %d, but it needs at least %d"`
+    (`gtksizerequest.c`), is unguarded and simply absent in 4.14, so it takes a condition in the
+    pin file. Neither is written: the run's logs are gone and the sweep suffix
+    (`#arguments`/`#values`) and exact wording are guesses without them. Take both off the next
+    Windows run.
+  - *Windows-only behaviour, not yet understood*: `DragDropTest` finds a `GtkTextBuffer` entry
+    in the content formats the serialisation test expects to be `['string']`, and
+    `PixbufTest::testEncodingTakesOptionsAsAMap` gets the same size back for both compression
+    levels. `DragDropTest::testStoringTheClipboardIsAnAnswerEitherWay` ("the async callback
+    ran") failed one run and passed the next, so that one is intermittent.
+  Reproduce without Windows: Arch's `gtk4` package is 4.22.4, and a
+  `meson --buildtype=debugoptimized` build of GTK turns the assertions and the consistency checks
+  back on. Reading GTK's own sources per version gets a long way without either -
+  `https://gitlab.gnome.org/GNOME/gtk/-/raw/<tag>/gtk/<file>.c`.
+- **`gtk_entry_set_extra_menu(entry, NULL)` is a GTK bug worth reporting upstream.** 4.20 rewrote
+  it to `g_object_ref()` the model without the NULL check its `(nullable)` annotation promises
+  (`g_object_ref: assertion 'G_IS_OBJECT (object)' failed`); 4.14/4.16/4.18 delegate to
+  `gtk_text_set_extra_menu()` and are quiet, and `main` still has it. The end state is right, so
+  it is only a spurious complaint - pinned for `gtk>=4.20`, nothing to fix here.
+- **A PHP-driven print preview.** `GtkPrintOperation` does not implement
+  `GtkPrintOperationPreview` in PHP: its slots (`render_page`, `end_preview`, `is_selected`) are only
+  valid inside the `preview` signal, where GTK keeps the state private, and dereference NULL
+  outside it. Binding them needs the signal to hand PHP an object that carries that state.
+- **Cross-thread hand-off** for the "one GUI thread + workers" shape: a thread-safe
+  `GLib::invoke_on_main(callable)` (serialise the callable or require a `parallel`-style channel;
+  `g_main_context_invoke` on the GUI context, the callable released on that thread). Needs a
+  concrete consumer (`ext-parallel` or PHP-native threads) before designing the API.
+- **Branch protection for `main`**: unblocked - the repository is public since 2026-09-09, so the
+  ruleset in `.github/ruleset-main.json` can go up:
+  `gh api -X POST repos/apss-pohl/php-gtk4/rulesets --input .github/ruleset-main.json`
+  (drop `required_approving_review_count` to 0 while there is a single maintainer). Still open with
+  it: the free security features a public repository gets - private vulnerability reporting (the
+  channel `SECURITY.md` sends people to), secret scanning and its push protection - are all off.
 
-- [x] `struct { GObject *obj; zend_object std; }` objects with custom handlers
-      (`free_obj`, no clone, `get_debug_info`, `read_property`/`write_property` → GObject props)
-- [x] `src/gtk4.stub.php` as the **single source**: `gen_stub.php` → `gtk4_arginfo.h`
-      (typed arginfo, return types, nullable class types, enums, `#[\Deprecated]`); IDE stub is
-      derived, not hand-synced → delete the sync half of `StubsTest`
-- [x] `phpize` / `config.m4` build (PIE/PECL-installable, Windows via php-sdk); drop the
-      PHP-CPP template Makefile, `PHPCPP_STATIC`/`PHPCPP_BASE` pairing logic, the PHP-CPP fork
-- [x] signals: `zend_fcall_info` + cache resolved once at `connect()`, `zend_call_function`
-      directly (no `call_user_func_array` round trip)
-- [x] arity/type violations = `ArgumentCountError`/`TypeError` (PHP 8 semantics), not `E_WARNING`
-- [x] exception boundary: capture the real `Throwable` (`EG(exception)`), hand the object to
-      `Gtk::set_exception_handler` (done); rethrow mode (done, §2)
-- [x] `var_dump($obj)` shows GObject properties (`get_debug_info`)
+- **What the generator still cannot shape**, in the order of how many members each blocks
+  (`gen/report.md`; the count moves as classes are bound). None of these is a missing *type* -
+  the one-class-away list is empty - they are shapes the emitters do not map yet:
+  - *a C array as an input parameter*, for the element types that are not scalars or strings:
+    `GApplication::open()` wants an array of `GFile` (unbound), `GActionMap::add_action_entries()`
+    an array of C structs. The scalar and string cases are mapped.
+  - *a caller-allocated buffer out* (5): `GInputStream::read()` and friends. `read_bytes()`
+    already answers with a string, so these may be better skipped than bound.
+  - *`GType` as a value* (12), *`GObject.Value`* (7), *`GLib.HashTable`* (6), *`GLib.List`* and
+    *`GLib.PtrArray`* where the element type is unbound, *`gpointer`* (4, unsupported by design).
+  - Pango's own leaves, now that the cluster is bound: `Pango.Font` and `Pango.FontFamily`
+    (abstract, backend-owned - the same shape as `PangoFontMap`), `Pango.Language` and
+    `Pango.Rectangle` (~19 members between them).
 
-## 2. GTK3 mental-model ballast in the PHP API  ✅ done 2026-08-25
+## Smaller notes
 
-- [x] `Gtk::main()` / `Gtk::main_quit()` (+ the `quit_pending` hack) → `GtkApplication::run()`
-      as the documented path, `Gtk4\GMainLoop` (+ `GLib::idle_add/timeout_add/source_remove`) for
-      scripts that need a bare loop; `Gtk::init()` kept
-- [x] `connect($signal, $handler, ...$userData)` → `connect(string $signal, callable $handler): int`;
-      PHP closures capture context with `use`
-- [x] `Gtk4\PHPGTK_VERSION` → `Gtk4\VERSION` etc. (double prefix)
-- [x] exception model: `Gtk4\ExceptionMode::Log` (default) / `::Rethrow` via
-      `Gtk::set_exception_mode()`; Rethrow stops running loops and propagates the Throwable
+- `gdk_drop_read_async()` very likely asserts `callback != NULL` like its four `GdkClipboard`
+  siblings, but a `GdkDrop` needs a real drag from another client and no test can reach one
+  (`DragDropTest`), so `NON_NULLABLE_PARAMS` deliberately has no line for it: every entry there is
+  a precondition that was *observed* firing. Revisit when a drag test exists.
+- `RETURNS_HOLD_SELF` can only name `$this`, so the sibling walk is outside it -
+  `get_next_sibling()`'s result belongs to the shared parent. Measured, not assumed: reaching a
+  sibling through the eight composite widgets that have one, dropping everything that holds the
+  parent and calling every arg-less getter on the orphan is clean under ASan+UBSan. Re-measure
+  before adding the owner-expression form `BOXED_OWNERS` has.
+- `GtkInstances::UNREACHABLE` is guarded dynamically (`TypeDeclarationTest` fails if any getter
+  hands out a class it calls unbuildable), but only through arg-less getters on classes the
+  factory can build. A class reachable *only* through a method with arguments would keep a stale
+  excuse.
+- `GtkFontDialogButton::set_font_desc()` logs a GLib CRITICAL on GTK < 4.18 when the description
+  names a family the font map does not list: `update_font_data()` walks
+  `g_list_model_get_n_items(self->font_family)` with `font_family` still NULL
+  (`gtk/gtkfontdialogbutton.c`; upstream added the NULL check in 4.18, so 4.14 and 4.16 - the
+  floor and one above it - complain). Nothing to guard here, any family string is legitimate;
+  `examples/GtkFontDialogButton.php` uses "Sans", which Pango always lists. Pin it if a sweep ever
+  reaches it.
+- `GskTextNode` (needs a Pango font and glyph string) and `GskColorMatrixNode` (a graphene matrix
+  and vec4) have no constructor until those types are bound; `GdkPixbufAnimationIter` needs a
+  `GTimeVal`, which is not.
 
-## 3. Decisions to write down  ✅ done 2026-08-25
+## Keep (verified good, do not "clean up")
 
-- [x] **snake_case methods** (`set_title`) — kept, final. 1:1 mapping to docs.gtk.org and every
-      other binding (PyGObject, gjs, gtk-rs, Vala); recorded in docs/PLAN.md; single spelling, no
-      camelCase aliases; phpcs exclusion for the stub is intentional
-- [x] property access: `get_property()/set_property()` *and* `$obj->prop` via handlers
-
-- [ ] **Branch protection for `main`** — blocked: private repo on a Free plan (GitHub API returns
-      403 "Upgrade to GitHub Pro or make this repository public"). Ruleset is ready in
-      `.github/ruleset-main.json`; once public/Pro:
-      `gh api -X POST repos/apss-pohl/php-gtk4/rulesets --input .github/ruleset-main.json`
-      (drop `required_approving_review_count` to 0 while there is a single maintainer)
-- [x] **License file** — MIT, `LICENSE` added 2026-08-25 (matches composer.json);
-      keep php-src header on `gen/gen_stub.php` (PHP License 3.01, MIT-compatible)
-
-## 4. Milestone 2 leftovers  ✅ done 2026-08-25
-
-- [x] boxed core (`src/core/boxed.*`: value handles, clone/compare by value, field properties) +
-      `GdkRGBA`, `GdkRectangle`, `GStrv` ↔ `list<string>`; graphene/GBytes/GError when an API needs them
-- [x] `G_TYPE_VARIANT` ↔ PHP values (`src/core/variant.*`), real `GParamSpec` class;
-      `G_TYPE_POINTER` deliberately unsupported (no meaningful PHP value)
-- [x] interface mechanism (`zend_class_implements` from the stub's `implements`): `GAction`,
-      `GActionMap`, `GActionGroup`; the rest come with the generator
-- [x] one callback abstraction for non-signal callbacks (`src/core/callback.*`, used by GLib
-      idle/timeout; reuse for sorters, draw funcs, factories)
-- [x] `GtkWidget` layer (+ `GtkButton`, `GtkLabel`), `GObject::emit()`
-- [x] closure/source teardown in RSHUTDOWN (`src/core/teardown.*`, `tests/scripts/shutdown.php`)
-
-## 7. Milestone 2b — foundation the generator will emit against (decided 2026-08-26)
-
-Do before milestone 3; each changes what generated code looks like.
-
-- [x] **Enums and flags as PHP types** (2026-08-26) — `src/core/enums.*`; `GtkAlign`, `GtkOrientation`
-      as PHP enums (cases literal in the stub, verified against the C enum at RINIT), `GApplicationFlags`
-      as a constant class (values literal, verified at RINIT); properties return cases and accept
-      cases or ints, typed methods
-      take the enum only; unregistered enum types stay ints.
-- [x] **Collection helpers** (2026-08-26) — `src/core/collections.*`: `GList`/`GSList`/`GPtrArray`/`char**`
-      → PHP list by element GType with `Transfer::{None,Container,Full}`; `strv_from_php`. Users:
-      `GtkApplication::get_windows()` (none), `GtkWidget::list_mnemonic_labels()` (container),
-      CSS classes (`GStrv`). `GPtrArray` helper exists but has no bound user yet.
-- [x] **Out parameters** (2026-08-26) — convention recorded in PLAN.md: outs become the return value
-      (one → value, several → list in declaration order); a `bool` C return with outs → the outs or
-      `null`. Users: `get_size_request()`, `GtkWindow::get_default_size()`, `GtkLabel::get_selection_bounds()`.
-- [x] **Fundamental handle mechanism** (2026-08-26) — `src/core/fundamental.*`: registry of
-      GType → {class, ref, unref}; `GParamSpec` migrated onto it. `GdkEvent`/`GskRenderNode`/
-      `GtkExpression` register the same way when their APIs arrive (GdkEvent with controllers).
-- [x] **Typed C callbacks from GIR** (2026-08-26) — hand-written trampolines as the generator
-      template (PLAN.md "Typed C callbacks"): `GtkDrawingArea::set_draw_func()`
-      (`GtkDrawingAreaDrawFunc`, with a minimal `CairoContext` handle on the fundamental registry),
-      `GtkCustomFilter` (`GtkCustomFilterFunc`) + `GtkFilterListModel`, `GtkCustomSorter`
-      (`GCompareDataFunc`) + `GtkSortListModel`; notified scope tracked by `teardown.*`, callable
-      release deferred to `callback_drain()` (destroy notifies run inside GTK frames).
-- [x] **`GError` → exception, `GBytes` ↔ string** (2026-08-26) — `Gtk4\GError extends RuntimeException`
-      (`getDomain()`, GLib code in `getCode()`), `throw_gerror()` for `GError **` APIs, `G_TYPE_ERROR`
-      values become exception objects; `GBytes` ↔ string in marshal and method signatures.
-      First user: `GdkTexture` (`new_from_filename/new_from_bytes/save_to_png_bytes/save_to_png`).
-
-## 6. GTK4 feature surface (what the binding still has to expose to deliver GTK4's benefits)
-
-Inherited for free (nothing to do): GSK/GPU rendering, the flat widget hierarchy (no
-GtkContainer), Wayland/HiDPI/platform backends, the cleaned-up API (the stub is generated from
-GTK4 GIR only).
-
-- [ ] **Event controllers** — `GtkGestureClick`, `GtkEventControllerKey/Motion/Scroll/Focus`,
-      `GtkWidget::add_controller()/remove_controller()`; signals already marshal (ints/doubles/flags).
-      Pure generator output (milestone 3).
-- [ ] **List models** — `GListModel` interface, `GtkStringList`, `GListStore`, selection models,
-      `GtkListView`/`GtkColumnView`/`GtkGridView`, `GtkSignalListItemFactory` (`setup`/`bind`),
-      `GtkListItem`. Done 2026-08-26: `Gtk4\PhpValue` (GType `PhpValue`, a GObject carrying a zval),
-      `GListModel` interface, `GListStore`, `GtkFilterListModel`/`GtkCustomFilter`,
-      `GtkSortListModel`/`GtkCustomSorter`. Selection models and the views are generator wave 7.
-- [ ] **Drag and drop** — `GtkDragSource`, `GtkDropTarget`, `GdkContentProvider` (GValue payloads:
-      boxed/variant support exists). Generator output.
-- [ ] **CSS** — `GtkCssProvider` + `gtk_style_context_add_provider_for_display`; custom properties.
-      Two small classes.
-- [ ] **Concrete layouts** — `GtkBox` ✅ (2026-08-26); `GtkGrid`, `GtkCenterBox`, `GtkStack`, `GtkPaned`,
-      `GtkScrolledWindow` (+ `GtkOrientable` interface) are generator wave 1.
-- [ ] **Custom `GtkLayoutManager` / GObject subclassing from PHP** — vfunc overriding; separate
-      design, after milestone 4.
-- [ ] **Rendering from PHP** — `GdkTexture` ✅ and `GtkDrawingArea::set_draw_func` + `CairoContext` ✅
-      (2026-08-26); `GtkSnapshot`, `GdkPaintable` open. Milestone 4.
-- [x] **GL renderer smoke test** — the test infrastructure forces `GSK_RENDERER=cairo` +
-      `GDK_DEBUG=gl-disable` (Xvfb). Verified manually on a real Wayland session with an AMD GPU on
-      2026-08-26 (see PLAN.md §6 "GL"); repeat before a release, no automation possible on CI runners.
-
-## 8. Milestone 3 — generator rollout (decided 2026-08-26, see PLAN.md §3 "Rollout")
-
-Map-driven: generate only the classes in `docs/GTK3-MAP.md`, wave by wave, review each wave as a
-draft, hand-write via overrides / promotion where the project needs more.
-
-- [ ] **Prep** — commit milestone 2/2b; generic `tests/scripts/stress.php`; interface methods
-      emitted once per interface (refactor the three `GListModel` copies to that shape).
-- [ ] **`gir.php` in `gen/`** — GIR parser (Gtk/Gdk/Gio/GObject/GLib/Pango/Gsk), allow-list + transitive
-      closure, emitters (stub section, `.cpp` per class, MINIT block, `config.m4` list, smoke tests,
-      `report.md` (in `gen/`)), `overrides/` (under `gen/`), `skip.txt`, `handwritten.txt`, `GENERATED` header
-      + staleness check in `ci.sh`, version policy (≤ 4.14 unconditional, newer guarded).
-- [ ] **Wave 0** — regenerate the 27 existing classes; the current suite passes unchanged; the
-      hand-written trampolines become the first overrides.
-- [ ] **Waves 1–8** as listed in PLAN.md; each merged only with the full pipeline green and the
-      map's status column regenerated.
-
-## 9. Threads (decided 2026-08-27)
-
-- [x] ZTS build: per-request state in module globals (`src/core/globals.h`, `GTK4_G()`), GINIT/
-      GSHUTDOWN construct/destroy the C++ members per thread, `config.m4`/`php_gtk4.h` no longer
-      refuse ZTS, one `phpts: ts` job in `tests.yml`. Registries filled in MINIT stay static.
-- [x] GUI-thread guard: `record_gui_thread()` in `Gtk::init()`, `assert_gui_thread()` in the
-      loop-driving methods → `Error` from any other thread.
-- [ ] Cross-thread hand-off for the "one GUI thread + workers" shape: a thread-safe
-      `GLib::invoke_on_main(callable)` (serialise the callable or require a `parallel`-style
-      channel; `g_main_context_invoke` on the GUI context, callable released on that thread).
-      Needs a concrete consumer (`ext-parallel` or PHP-native threads) before designing the API.
-- [ ] Not doing: multiple GUI threads / one GTK per request thread. GTK is single-threaded;
-      documented in README "Threads" and docs/BUILD.md.
-
-## 5. Keep (verified good, do not "clean up")
-
-Namespace `Gtk4\`; PHP class == GType name + registry; owned refs + qdata identity + weak ref;
+Namespace `Gtk4\`; PHP class == GType name + registry; toggle-ref hold + qdata identity;
 GValue-array GClosure marshaller; single GValue bridge; catch → leave scope → report; `ci.sh`
-stages; ASan/UBSan/LSan + valgrind + gcov; `EveryClassTest`/`ExampleTest`; PHP 8.4/8.5 ×
-GTK 4.14/4.22 matrix; C++20.
+stages; ASan/UBSan/LSan + valgrind + gcov; `EveryClassTest`/`ExampleTest`; PHP 8.4/8.5 × NTS/ZTS
+on GTK 4.14 (Linux) and the pinned gvsbuild GTK (Windows); C++20.

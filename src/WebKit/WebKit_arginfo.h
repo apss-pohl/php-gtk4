@@ -1,0 +1,5771 @@
+/* This is a generated file, edit the .stub.php file instead.
+ * Stub hash: 3b26cd59f197e515b407af6d390d7128d12ea52b */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitApplicationInfo___construct, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitApplicationInfo_get_name, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitApplicationInfo_get_version, 0, 0, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitApplicationInfo_set_name, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitApplicationInfo_set_version, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, major, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, minor, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, micro, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitAuthenticationRequest___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitAuthenticationRequest_authenticate, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, credential, Gtk4\\WebKitCredential, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials, 0, 0, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel, 0, 0, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags, 0, 0, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitAuthenticationRequest_get_host arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitAuthenticationRequest_get_port arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitAuthenticationRequest_get_proposed_credential, 0, 0, Gtk4\\WebKitCredential, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitAuthenticationRequest_get_realm arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitAuthenticationRequest_get_scheme, 0, 0, Gtk4\\WebKitAuthenticationScheme, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitAuthenticationRequest_get_security_origin, 0, 0, Gtk4\\WebKitSecurityOrigin, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitAuthenticationRequest_is_for_proxy arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitAuthenticationRequest_is_retry arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, enabled, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitAuthenticationRequest_set_proposed_credential, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, credential, Gtk4\\WebKitCredential, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitAutomationSession___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitAutomationSession_get_application_info, 0, 0, Gtk4\\WebKitApplicationInfo, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitAutomationSession_get_id arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitAutomationSession_set_application_info, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, info, Gtk4\\WebKitApplicationInfo, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitBackForwardList___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitBackForwardList_get_back_item, 0, 0, Gtk4\\WebKitBackForwardListItem, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitBackForwardList_get_back_list arginfo_class_Gtk4_WebKitApplicationInfo_get_version
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitBackForwardList_get_back_list_with_limit, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, limit, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitBackForwardList_get_current_item arginfo_class_Gtk4_WebKitBackForwardList_get_back_item
+
+#define arginfo_class_Gtk4_WebKitBackForwardList_get_forward_item arginfo_class_Gtk4_WebKitBackForwardList_get_back_item
+
+#define arginfo_class_Gtk4_WebKitBackForwardList_get_forward_list arginfo_class_Gtk4_WebKitApplicationInfo_get_version
+
+#define arginfo_class_Gtk4_WebKitBackForwardList_get_forward_list_with_limit arginfo_class_Gtk4_WebKitBackForwardList_get_back_list_with_limit
+
+#define arginfo_class_Gtk4_WebKitBackForwardList_get_length arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitBackForwardList_get_nth_item, 0, 1, Gtk4\\WebKitBackForwardListItem, 1)
+	ZEND_ARG_TYPE_INFO(0, index, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitBackForwardListItem___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitBackForwardListItem_get_original_uri arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitBackForwardListItem_get_title arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitBackForwardListItem_get_uri arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitClipboardPermissionRequest___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitClipboardPermissionRequest_allow arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitClipboardPermissionRequest_deny arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitColorChooserRequest___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitColorChooserRequest_cancel arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitColorChooserRequest_finish arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitColorChooserRequest_get_element_rectangle, 0, 0, Gtk4\\GdkRectangle, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitColorChooserRequest_get_rgba, 0, 0, Gtk4\\GdkRGBA, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitColorChooserRequest_set_rgba, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, rgba, Gtk4\\GdkRGBA, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitContextMenu___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitContextMenu_append, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, item, Gtk4\\WebKitContextMenuItem, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitContextMenu_first, 0, 0, Gtk4\\WebKitContextMenuItem, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitContextMenu_get_event, 0, 0, Gtk4\\GdkEvent, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitContextMenu_get_item_at_position, 0, 1, Gtk4\\WebKitContextMenuItem, 0)
+	ZEND_ARG_TYPE_INFO(0, position, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitContextMenu_get_items arginfo_class_Gtk4_WebKitApplicationInfo_get_version
+
+#define arginfo_class_Gtk4_WebKitContextMenu_get_n_items arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitContextMenu_get_position, 0, 0, IS_ARRAY, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitContextMenu_get_user_data, 0, 0, IS_MIXED, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitContextMenu_insert, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, item, Gtk4\\WebKitContextMenuItem, 0)
+	ZEND_ARG_TYPE_INFO(0, position, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitContextMenu_last arginfo_class_Gtk4_WebKitContextMenu_first
+
+#define arginfo_class_Gtk4_WebKitContextMenu_move_item arginfo_class_Gtk4_WebKitContextMenu_insert
+
+#define arginfo_class_Gtk4_WebKitContextMenu_prepend arginfo_class_Gtk4_WebKitContextMenu_append
+
+#define arginfo_class_Gtk4_WebKitContextMenu_remove arginfo_class_Gtk4_WebKitContextMenu_append
+
+#define arginfo_class_Gtk4_WebKitContextMenu_remove_all arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitContextMenu_set_user_data, 0, 0, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, user_data, IS_MIXED, 0, "null")
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitContextMenuItem___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitContextMenuItem_new_from_gaction, 0, 2, Gtk4\\WebKitContextMenuItem, 0)
+	ZEND_ARG_OBJ_INFO(0, action, Gtk4\\GAction, 0)
+	ZEND_ARG_TYPE_INFO(0, label, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, target, IS_MIXED, 0, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitContextMenuItem_new_from_stock_action, 0, 1, Gtk4\\WebKitContextMenuItem, 0)
+	ZEND_ARG_OBJ_INFO(0, action, Gtk4\\WebKitContextMenuAction, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitContextMenuItem_new_from_stock_action_with_label, 0, 2, Gtk4\\WebKitContextMenuItem, 0)
+	ZEND_ARG_OBJ_INFO(0, action, Gtk4\\WebKitContextMenuAction, 0)
+	ZEND_ARG_TYPE_INFO(0, label, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitContextMenuItem_new_separator, 0, 0, Gtk4\\WebKitContextMenuItem, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitContextMenuItem_new_with_submenu, 0, 2, Gtk4\\WebKitContextMenuItem, 0)
+	ZEND_ARG_TYPE_INFO(0, label, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, submenu, Gtk4\\WebKitContextMenu, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitContextMenuItem_get_gaction, 0, 0, Gtk4\\GAction, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitContextMenuItem_get_gaction_target arginfo_class_Gtk4_WebKitContextMenu_get_user_data
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitContextMenuItem_get_stock_action, 0, 0, Gtk4\\WebKitContextMenuAction, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitContextMenuItem_get_submenu, 0, 0, Gtk4\\WebKitContextMenu, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitContextMenuItem_get_title arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitContextMenuItem_is_separator arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitContextMenuItem_set_submenu, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, submenu, Gtk4\\WebKitContextMenu, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitCookieManager___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitCookieManager_add_cookie, 0, 3, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, cookie, Gtk4\\SoupCookie, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitCookieManager_add_cookie_finish, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitCookieManager_delete_cookie arginfo_class_Gtk4_WebKitCookieManager_add_cookie
+
+#define arginfo_class_Gtk4_WebKitCookieManager_delete_cookie_finish arginfo_class_Gtk4_WebKitCookieManager_add_cookie_finish
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitCookieManager_get_accept_policy, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitCookieManager_get_accept_policy_finish, 0, 1, Gtk4\\WebKitCookieAcceptPolicy, 0)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies arginfo_class_Gtk4_WebKitCookieManager_get_accept_policy
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies_finish, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitCookieManager_get_cookies, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, uri, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitCookieManager_get_cookies_finish arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies_finish
+
+#define arginfo_class_Gtk4_WebKitCookieManager_replace_cookies_finish arginfo_class_Gtk4_WebKitCookieManager_add_cookie_finish
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitCookieManager_set_accept_policy, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, policy, Gtk4\\WebKitCookieAcceptPolicy, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitCookieManager_set_persistent_storage, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, filename, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, storage, Gtk4\\WebKitCookiePersistentStorage, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitCredential___construct, 0, 0, 3)
+	ZEND_ARG_TYPE_INFO(0, username, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, password, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, persistence, Gtk4\\WebKitCredentialPersistence, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitCredential_new_for_certificate, 0, 2, Gtk4\\WebKitCredential, 0)
+	ZEND_ARG_OBJ_INFO(0, certificate, Gtk4\\GTlsCertificate, 1)
+	ZEND_ARG_OBJ_INFO(0, persistence, Gtk4\\WebKitCredentialPersistence, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitCredential_new_for_certificate_pin, 0, 2, Gtk4\\WebKitCredential, 0)
+	ZEND_ARG_TYPE_INFO(0, pin, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, persistence, Gtk4\\WebKitCredentialPersistence, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitCredential_get_certificate, 0, 0, Gtk4\\GTlsCertificate, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitCredential_get_password arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitCredential_get_persistence, 0, 0, Gtk4\\WebKitCredentialPersistence, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitCredential_get_username arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitCredential_has_password arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitDeviceInfoPermissionRequest___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitDeviceInfoPermissionRequest_allow arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitDeviceInfoPermissionRequest_deny arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitDownload___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitDownload_cancel arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitDownload_get_allow_overwrite arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitDownload_get_destination, 0, 0, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitDownload_get_elapsed_time, 0, 0, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitDownload_get_estimated_progress arginfo_class_Gtk4_WebKitDownload_get_elapsed_time
+
+#define arginfo_class_Gtk4_WebKitDownload_get_received_data_length arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitDownload_get_request, 0, 0, Gtk4\\WebKitURIRequest, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitDownload_get_response, 0, 0, Gtk4\\WebKitURIResponse, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitDownload_get_web_view, 0, 0, Gtk4\\WebKitWebView, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitDownload_set_allow_overwrite, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, allowed, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitDownload_set_destination, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, destination, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitEditorState___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitEditorState_get_typing_attributes arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitEditorState_is_copy_available arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitEditorState_is_cut_available arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitEditorState_is_paste_available arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitEditorState_is_redo_available arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitEditorState_is_undo_available arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitFaviconDatabase___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitFaviconDatabase_clear arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitFaviconDatabase_get_favicon, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, page_uri, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitFaviconDatabase_get_favicon_finish, 0, 1, Gtk4\\GdkTexture, 0)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitFaviconDatabase_get_favicon_uri, 0, 1, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, page_uri, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitFeature___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitFeature_get_category arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitFeature_get_default_value arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitFeature_get_details arginfo_class_Gtk4_WebKitDownload_get_destination
+
+#define arginfo_class_Gtk4_WebKitFeature_get_identifier arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitFeature_get_name arginfo_class_Gtk4_WebKitDownload_get_destination
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitFeature_get_status, 0, 0, Gtk4\\WebKitFeatureStatus, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitFeatureList___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitFeatureList_get, 0, 1, Gtk4\\WebKitFeature, 0)
+	ZEND_ARG_TYPE_INFO(0, index, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitFeatureList_get_length arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitFileChooserRequest___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitFileChooserRequest_cancel arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitFileChooserRequest_get_mime_types arginfo_class_Gtk4_WebKitApplicationInfo_get_version
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitFileChooserRequest_get_mime_types_filter, 0, 0, Gtk4\\GtkFileFilter, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitFileChooserRequest_get_select_multiple arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitFileChooserRequest_get_selected_files arginfo_class_Gtk4_WebKitApplicationInfo_get_version
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitFileChooserRequest_select_files, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, files, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitFindController___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitFindController_count_matches, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, search_text, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, find_options, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, max_match_count, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitFindController_get_max_match_count arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitFindController_get_options arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitFindController_get_search_text arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitFindController_get_web_view arginfo_class_Gtk4_WebKitDownload_get_web_view
+
+#define arginfo_class_Gtk4_WebKitFindController_search arginfo_class_Gtk4_WebKitFindController_count_matches
+
+#define arginfo_class_Gtk4_WebKitFindController_search_finish arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitFindController_search_next arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitFindController_search_previous arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitFormSubmissionRequest___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitFormSubmissionRequest_submit arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitGeolocationManager___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitGeolocationManager_failed, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, error_message, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitGeolocationManager_get_enable_high_accuracy arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitGeolocationManager_update_position, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, position, Gtk4\\WebKitGeolocationPosition, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitGeolocationPermissionRequest___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitGeolocationPermissionRequest_allow arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitGeolocationPermissionRequest_deny arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitGeolocationPosition___construct, 0, 0, 3)
+	ZEND_ARG_TYPE_INFO(0, latitude, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, longitude, IS_DOUBLE, 0)
+	ZEND_ARG_TYPE_INFO(0, accuracy, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitGeolocationPosition_set_altitude, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, altitude, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitGeolocationPosition_set_altitude_accuracy, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, altitude_accuracy, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitGeolocationPosition_set_heading, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, heading, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitGeolocationPosition_set_speed, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, speed, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitGeolocationPosition_set_timestamp, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, timestamp, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitHitTestResult___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitHitTestResult_context_is_editable arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitHitTestResult_context_is_image arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitHitTestResult_context_is_link arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitHitTestResult_context_is_media arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitHitTestResult_context_is_scrollbar arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitHitTestResult_context_is_selection arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitHitTestResult_get_context arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitHitTestResult_get_image_uri arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitHitTestResult_get_link_label arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitHitTestResult_get_link_title arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitHitTestResult_get_link_uri arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitHitTestResult_get_media_uri arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitITPFirstParty___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitITPFirstParty_get_domain arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitITPFirstParty_get_last_update_time, 0, 0, Gtk4\\GDateTime, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitITPFirstParty_get_website_data_access_allowed arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitITPThirdParty___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitITPThirdParty_get_domain arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitITPThirdParty_get_first_parties arginfo_class_Gtk4_WebKitApplicationInfo_get_version
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitInputMethodContext_filter_key_event, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, key_event, Gtk4\\GdkEvent, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext_get_input_hints arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitInputMethodContext_get_input_purpose, 0, 0, Gtk4\\WebKitInputPurpose, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitInputMethodContext_notify_cursor_area, 0, 4, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, x, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, y, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, width, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, height, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext_notify_focus_in arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext_notify_focus_out arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitInputMethodContext_notify_surrounding, 0, 4, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, text, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, length, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, cursor_index, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, selection_index, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext_reset arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext_set_enable_preedit arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitInputMethodContext_set_input_hints, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, hints, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitInputMethodContext_set_input_purpose, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, purpose, Gtk4\\WebKitInputPurpose, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_committed, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, text, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_delete_surrounding, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, offset, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, n_chars, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_filter_key_event arginfo_class_Gtk4_WebKitInputMethodContext_filter_key_event
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_notify_cursor_area arginfo_class_Gtk4_WebKitInputMethodContext_notify_cursor_area
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_notify_focus_in arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_notify_focus_out arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_notify_surrounding arginfo_class_Gtk4_WebKitInputMethodContext_notify_surrounding
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_preedit_changed arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_preedit_finished arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_preedit_started arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_reset arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_set_enable_preedit arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitInputMethodUnderline___construct, 0, 0, 2)
+	ZEND_ARG_TYPE_INFO(0, start_offset, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, end_offset, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitInputMethodUnderline_set_color, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, rgba, Gtk4\\GdkRGBA, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitMediaKeySystemPermissionRequest___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitMediaKeySystemPermissionRequest_allow arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitMediaKeySystemPermissionRequest_deny arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitMemoryPressureSettings___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitMemoryPressureSettings_get_conservative_threshold arginfo_class_Gtk4_WebKitDownload_get_elapsed_time
+
+#define arginfo_class_Gtk4_WebKitMemoryPressureSettings_get_kill_threshold arginfo_class_Gtk4_WebKitDownload_get_elapsed_time
+
+#define arginfo_class_Gtk4_WebKitMemoryPressureSettings_get_memory_limit arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitMemoryPressureSettings_get_poll_interval arginfo_class_Gtk4_WebKitDownload_get_elapsed_time
+
+#define arginfo_class_Gtk4_WebKitMemoryPressureSettings_get_strict_threshold arginfo_class_Gtk4_WebKitDownload_get_elapsed_time
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitMemoryPressureSettings_set_conservative_threshold, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, value, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitMemoryPressureSettings_set_kill_threshold arginfo_class_Gtk4_WebKitMemoryPressureSettings_set_conservative_threshold
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitMemoryPressureSettings_set_memory_limit, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, memory_limit, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitMemoryPressureSettings_set_poll_interval arginfo_class_Gtk4_WebKitMemoryPressureSettings_set_conservative_threshold
+
+#define arginfo_class_Gtk4_WebKitMemoryPressureSettings_set_strict_threshold arginfo_class_Gtk4_WebKitMemoryPressureSettings_set_conservative_threshold
+
+#define arginfo_class_Gtk4_WebKitNavigationAction___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitNavigationAction_get_frame_name arginfo_class_Gtk4_WebKitDownload_get_destination
+
+#define arginfo_class_Gtk4_WebKitNavigationAction_get_modifiers arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitNavigationAction_get_mouse_button arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitNavigationAction_get_navigation_type, 0, 0, Gtk4\\WebKitNavigationType, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitNavigationAction_get_request arginfo_class_Gtk4_WebKitDownload_get_request
+
+#define arginfo_class_Gtk4_WebKitNavigationAction_is_redirect arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitNavigationAction_is_user_gesture arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitNavigationPolicyDecision___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitNavigationPolicyDecision_get_navigation_action, 0, 0, Gtk4\\WebKitNavigationAction, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitNetworkProxySettings___construct, 0, 0, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, default_proxy_uri, IS_STRING, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, ignore_hosts, IS_ARRAY, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitNetworkProxySettings_add_proxy_for_scheme, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, scheme, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, proxy_uri, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitNetworkSession___construct, 0, 0, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, data_directory, IS_STRING, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, cache_directory, IS_STRING, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitNetworkSession_new_ephemeral, 0, 0, Gtk4\\WebKitNetworkSession, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitNetworkSession_get_default arginfo_class_Gtk4_WebKitNetworkSession_new_ephemeral
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitNetworkSession_set_memory_pressure_settings, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, settings, Gtk4\\WebKitMemoryPressureSettings, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitNetworkSession_allow_tls_certificate_for_host, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, certificate, Gtk4\\GTlsCertificate, 0)
+	ZEND_ARG_TYPE_INFO(0, host, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitNetworkSession_download_uri, 0, 1, Gtk4\\WebKitDownload, 0)
+	ZEND_ARG_TYPE_INFO(0, uri, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitNetworkSession_get_cookie_manager, 0, 0, Gtk4\\WebKitCookieManager, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitNetworkSession_get_itp_enabled arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitNetworkSession_get_itp_summary arginfo_class_Gtk4_WebKitCookieManager_get_accept_policy
+
+#define arginfo_class_Gtk4_WebKitNetworkSession_get_itp_summary_finish arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies_finish
+
+#define arginfo_class_Gtk4_WebKitNetworkSession_get_persistent_credential_storage_enabled arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitNetworkSession_get_tls_errors_policy, 0, 0, Gtk4\\WebKitTLSErrorsPolicy, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitNetworkSession_get_website_data_manager, 0, 0, Gtk4\\WebKitWebsiteDataManager, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitNetworkSession_is_ephemeral arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitNetworkSession_prefetch_dns, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, hostname, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitNetworkSession_set_itp_enabled arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitNetworkSession_set_persistent_credential_storage_enabled arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitNetworkSession_set_proxy_settings, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, proxy_mode, Gtk4\\WebKitNetworkProxyMode, 0)
+	ZEND_ARG_OBJ_INFO(0, proxy_settings, Gtk4\\WebKitNetworkProxySettings, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitNetworkSession_set_tls_errors_policy, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, policy, Gtk4\\WebKitTLSErrorsPolicy, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitNotification___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitNotification_clicked arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitNotification_close arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitNotification_get_body arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitNotification_get_id arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitNotification_get_tag arginfo_class_Gtk4_WebKitDownload_get_destination
+
+#define arginfo_class_Gtk4_WebKitNotification_get_title arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitNotificationPermissionRequest___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitNotificationPermissionRequest_allow arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitNotificationPermissionRequest_deny arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitOptionMenu___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitOptionMenu_activate_item, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, index, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitOptionMenu_close arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitOptionMenu_get_event, 0, 0, Gtk4\\GdkEvent, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitOptionMenu_get_item, 0, 1, Gtk4\\WebKitOptionMenuItem, 0)
+	ZEND_ARG_TYPE_INFO(0, index, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitOptionMenu_get_n_items arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitOptionMenu_select_item arginfo_class_Gtk4_WebKitOptionMenu_activate_item
+
+#define arginfo_class_Gtk4_WebKitOptionMenuItem___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitOptionMenuItem_get_label arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitOptionMenuItem_get_tooltip arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitOptionMenuItem_is_enabled arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitOptionMenuItem_is_group_child arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitOptionMenuItem_is_group_label arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitOptionMenuItem_is_selected arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitPermissionRequest_allow arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitPermissionRequest_deny arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitPermissionRequestObject___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitPermissionRequestObject_allow arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitPermissionRequestObject_deny arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitPermissionStateQuery___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitPermissionStateQuery_finish, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, state, Gtk4\\WebKitPermissionState, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitPermissionStateQuery_get_name arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitPermissionStateQuery_get_security_origin arginfo_class_Gtk4_WebKitAuthenticationRequest_get_security_origin
+
+#define arginfo_class_Gtk4_WebKitPointerLockPermissionRequest___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitPointerLockPermissionRequest_allow arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitPointerLockPermissionRequest_deny arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitPolicyDecision___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitPolicyDecision_download arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitPolicyDecision_ignore arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitPolicyDecision_use arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitPolicyDecision_use_with_policies, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, policies, Gtk4\\WebKitWebsitePolicies, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitPrintOperation___construct, 0, 0, 1)
+	ZEND_ARG_OBJ_INFO(0, web_view, Gtk4\\WebKitWebView, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitPrintOperation_get_page_setup, 0, 0, Gtk4\\GtkPageSetup, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitPrintOperation_get_print_settings, 0, 0, Gtk4\\GtkPrintSettings, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitPrintOperation_print arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitPrintOperation_run_dialog, 0, 1, Gtk4\\WebKitPrintOperationResponse, 0)
+	ZEND_ARG_OBJ_INFO(0, parent, Gtk4\\GtkWindow, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitPrintOperation_set_page_setup, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, page_setup, Gtk4\\GtkPageSetup, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitPrintOperation_set_print_settings, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, print_settings, Gtk4\\GtkPrintSettings, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitResponsePolicyDecision___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitResponsePolicyDecision_get_request arginfo_class_Gtk4_WebKitDownload_get_request
+
+#define arginfo_class_Gtk4_WebKitResponsePolicyDecision_get_response arginfo_class_Gtk4_WebKitDownload_get_response
+
+#define arginfo_class_Gtk4_WebKitResponsePolicyDecision_is_main_frame_main_resource arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitResponsePolicyDecision_is_mime_type_supported arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitScriptDialog___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitScriptDialog_close arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitScriptDialog_confirm_set_confirmed, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, confirmed, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitScriptDialog_get_dialog_type, 0, 0, Gtk4\\WebKitScriptDialogType, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitScriptDialog_get_message arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitScriptDialog_prompt_get_default_text arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitScriptDialog_prompt_set_text arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_committed
+
+#define arginfo_class_Gtk4_WebKitScriptMessageReply___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitScriptMessageReply_return_error_message arginfo_class_Gtk4_WebKitGeolocationManager_failed
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitScriptMessageReply_return_value, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, reply_value, Gtk4\\JSCValue, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitSecurityManager___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_cors_enabled, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, scheme, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_display_isolated arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_cors_enabled
+
+#define arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_empty_document arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_cors_enabled
+
+#define arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_local arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_cors_enabled
+
+#define arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_no_access arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_cors_enabled
+
+#define arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_secure arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_cors_enabled
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_cors_enabled, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, scheme, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_display_isolated arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_cors_enabled
+
+#define arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_empty_document arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_cors_enabled
+
+#define arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_local arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_cors_enabled
+
+#define arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_no_access arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_cors_enabled
+
+#define arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_secure arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_cors_enabled
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitSecurityOrigin___construct, 0, 0, 3)
+	ZEND_ARG_TYPE_INFO(0, protocol, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, host, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, port, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitSecurityOrigin_new_for_uri, 0, 1, Gtk4\\WebKitSecurityOrigin, 0)
+	ZEND_ARG_TYPE_INFO(0, uri, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitSecurityOrigin_get_host arginfo_class_Gtk4_WebKitDownload_get_destination
+
+#define arginfo_class_Gtk4_WebKitSecurityOrigin_get_port arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitSecurityOrigin_get_protocol arginfo_class_Gtk4_WebKitDownload_get_destination
+
+#define arginfo_class_Gtk4_WebKitSecurityOrigin_to_string arginfo_class_Gtk4_WebKitDownload_get_destination
+
+#define arginfo_class_Gtk4_WebKitSettings___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_font_size_to_pixels, 0, 1, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, points, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_font_size_to_points, 0, 1, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, pixels, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitSettings_get_all_features, 0, 0, Gtk4\\WebKitFeatureList, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitSettings_get_development_features arginfo_class_Gtk4_WebKitSettings_get_all_features
+
+#define arginfo_class_Gtk4_WebKitSettings_get_experimental_features arginfo_class_Gtk4_WebKitSettings_get_all_features
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_apply_from_key_file, 0, 2, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, key_file, Gtk4\\GKeyFile, 0)
+	ZEND_ARG_TYPE_INFO(0, group_name, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitSettings_get_allow_file_access_from_file_urls arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_allow_modal_dialogs arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_allow_top_navigation_to_data_urls arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_allow_universal_access_from_file_urls arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_auto_load_images arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_cursive_font_family arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitSettings_get_default_charset arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitSettings_get_default_font_family arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitSettings_get_default_font_size arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitSettings_get_default_monospace_font_size arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitSettings_get_disable_web_security arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_draw_compositing_indicators arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_2d_canvas_acceleration arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_back_forward_navigation_gestures arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_caret_browsing arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_developer_extras arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_encrypted_media arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_fullscreen arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_html5_database arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_html5_local_storage arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_javascript arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_javascript_markup arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_media arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_media_capabilities arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_media_stream arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_mediasource arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_mock_capture_devices arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_page_cache arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_resizable_text_areas arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_site_specific_quirks arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_smooth_scrolling arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_spatial_navigation arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_tabs_to_links arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_webaudio arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_webgl arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_webrtc arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_enable_write_console_messages_to_stdout arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_fantasy_font_family arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_get_feature_enabled, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, feature, Gtk4\\WebKitFeature, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitSettings_get_hardware_acceleration_policy, 0, 0, Gtk4\\WebKitHardwareAccelerationPolicy, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitSettings_get_javascript_can_access_clipboard arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_javascript_can_open_windows_automatically arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_math_font_family arginfo_class_Gtk4_WebKitDownload_get_destination
+
+#define arginfo_class_Gtk4_WebKitSettings_get_media_content_types_requiring_hardware_support arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitSettings_get_media_playback_allows_inline arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_media_playback_requires_user_gesture arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_minimum_font_size arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitSettings_get_monospace_font_family arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitSettings_get_pictograph_font_family arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitSettings_get_print_backgrounds arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_get_sans_serif_font_family arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitSettings_get_serif_font_family arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitSettings_get_user_agent arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitSettings_get_webrtc_udp_ports_range arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitSettings_get_zoom_text_only arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_allow_file_access_from_file_urls arginfo_class_Gtk4_WebKitDownload_set_allow_overwrite
+
+#define arginfo_class_Gtk4_WebKitSettings_set_allow_modal_dialogs arginfo_class_Gtk4_WebKitDownload_set_allow_overwrite
+
+#define arginfo_class_Gtk4_WebKitSettings_set_allow_top_navigation_to_data_urls arginfo_class_Gtk4_WebKitDownload_set_allow_overwrite
+
+#define arginfo_class_Gtk4_WebKitSettings_set_allow_universal_access_from_file_urls arginfo_class_Gtk4_WebKitDownload_set_allow_overwrite
+
+#define arginfo_class_Gtk4_WebKitSettings_set_auto_load_images arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_cursive_font_family, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, cursive_font_family, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_default_charset, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, default_charset, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_default_font_family, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, default_font_family, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_default_font_size, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, font_size, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitSettings_set_default_monospace_font_size arginfo_class_Gtk4_WebKitSettings_set_default_font_size
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_disable_web_security, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, disabled, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitSettings_set_draw_compositing_indicators arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_2d_canvas_acceleration arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_back_forward_navigation_gestures arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_caret_browsing arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_developer_extras arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_encrypted_media arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_fullscreen arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_html5_database arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_html5_local_storage arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_javascript arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_javascript_markup arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_media arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_media_capabilities arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_media_stream arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_mediasource arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_mock_capture_devices arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_page_cache arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_resizable_text_areas arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_site_specific_quirks arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_smooth_scrolling arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_spatial_navigation arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_tabs_to_links arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_webaudio arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_webgl arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_webrtc arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_enable_write_console_messages_to_stdout arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_fantasy_font_family, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, fantasy_font_family, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_feature_enabled, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, feature, Gtk4\\WebKitFeature, 0)
+	ZEND_ARG_TYPE_INFO(0, enabled, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_hardware_acceleration_policy, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, policy, Gtk4\\WebKitHardwareAccelerationPolicy, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitSettings_set_javascript_can_access_clipboard arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_javascript_can_open_windows_automatically arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_math_font_family, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, math_font_family, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_media_content_types_requiring_hardware_support, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, content_types, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitSettings_set_media_playback_allows_inline arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_media_playback_requires_user_gesture arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitSettings_set_minimum_font_size arginfo_class_Gtk4_WebKitSettings_set_default_font_size
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_monospace_font_family, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, monospace_font_family, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_pictograph_font_family, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, pictograph_font_family, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_print_backgrounds, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, print_backgrounds, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_sans_serif_font_family, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, sans_serif_font_family, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_serif_font_family, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, serif_font_family, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_user_agent, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, user_agent, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_user_agent_with_application_details, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, application_name, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, application_version, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_webrtc_udp_ports_range, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, udp_port_range, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitSettings_set_zoom_text_only, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, zoom_text_only, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitURIRequest___construct, 0, 0, 1)
+	ZEND_ARG_TYPE_INFO(0, uri, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitURIRequest_get_http_headers, 0, 0, Gtk4\\SoupMessageHeaders, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitURIRequest_get_http_method arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitURIRequest_get_uri arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitURIRequest_set_uri, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, uri, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitURIResponse___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitURIResponse_get_content_length arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitURIResponse_get_http_headers, 0, 0, Gtk4\\SoupMessageHeaders, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitURIResponse_get_mime_type arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitURIResponse_get_status_code arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitURIResponse_get_suggested_filename arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitURIResponse_get_uri arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitURISchemeRequest___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeRequest_finish, 0, 3, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, stream, Gtk4\\GInputStream, 0)
+	ZEND_ARG_TYPE_INFO(0, stream_length, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, content_type, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeRequest_finish_error, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, error, Gtk4\\GError, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeRequest_finish_with_response, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, response, Gtk4\\WebKitURISchemeResponse, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_body, 0, 0, Gtk4\\GInputStream, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_headers arginfo_class_Gtk4_WebKitURIResponse_get_http_headers
+
+#define arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_method arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitURISchemeRequest_get_path arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitURISchemeRequest_get_scheme arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitURISchemeRequest_get_uri arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitURISchemeRequest_get_web_view arginfo_class_Gtk4_WebKitDownload_get_web_view
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeResponse___construct, 0, 0, 2)
+	ZEND_ARG_OBJ_INFO(0, input_stream, Gtk4\\GInputStream, 0)
+	ZEND_ARG_TYPE_INFO(0, stream_length, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeResponse_set_content_type, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, content_type, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeResponse_set_http_headers, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, headers, Gtk4\\SoupMessageHeaders, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitURISchemeResponse_set_status, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, status_code, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, reason_phrase, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitUserContentFilter___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitUserContentFilter_get_identifier arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitUserContentFilterStore___construct, 0, 0, 1)
+	ZEND_ARG_TYPE_INFO(0, storage_path, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitUserContentFilterStore_fetch_identifiers, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitUserContentFilterStore_fetch_identifiers_finish arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies_finish
+
+#define arginfo_class_Gtk4_WebKitUserContentFilterStore_get_path arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitUserContentFilterStore_load, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, identifier, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitUserContentFilterStore_load_finish, 0, 1, Gtk4\\WebKitUserContentFilter, 0)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitUserContentFilterStore_remove arginfo_class_Gtk4_WebKitUserContentFilterStore_load
+
+#define arginfo_class_Gtk4_WebKitUserContentFilterStore_remove_finish arginfo_class_Gtk4_WebKitCookieManager_add_cookie_finish
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitUserContentFilterStore_save, 0, 4, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, identifier, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, source, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitUserContentFilterStore_save_finish arginfo_class_Gtk4_WebKitUserContentFilterStore_load_finish
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitUserContentFilterStore_save_from_file, 0, 4, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, identifier, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, file, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitUserContentFilterStore_save_from_file_finish arginfo_class_Gtk4_WebKitUserContentFilterStore_load_finish
+
+#define arginfo_class_Gtk4_WebKitUserContentManager___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitUserContentManager_add_filter, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, filter, Gtk4\\WebKitUserContentFilter, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitUserContentManager_add_script, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, script, Gtk4\\WebKitUserScript, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitUserContentManager_add_style_sheet, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, stylesheet, Gtk4\\WebKitUserStyleSheet, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitUserContentManager_register_script_message_handler, 0, 2, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, world_name, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitUserContentManager_register_script_message_handler_with_reply arginfo_class_Gtk4_WebKitUserContentManager_register_script_message_handler
+
+#define arginfo_class_Gtk4_WebKitUserContentManager_remove_all_filters arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitUserContentManager_remove_all_scripts arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitUserContentManager_remove_all_style_sheets arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitUserContentManager_remove_filter arginfo_class_Gtk4_WebKitUserContentManager_add_filter
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitUserContentManager_remove_filter_by_id, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, filter_id, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitUserContentManager_remove_script arginfo_class_Gtk4_WebKitUserContentManager_add_script
+
+#define arginfo_class_Gtk4_WebKitUserContentManager_remove_style_sheet arginfo_class_Gtk4_WebKitUserContentManager_add_style_sheet
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitUserContentManager_unregister_script_message_handler, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, world_name, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitUserMediaPermissionRequest___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitUserMediaPermissionRequest_allow arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitUserMediaPermissionRequest_deny arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitUserMessage___construct, 0, 0, 1)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameters, IS_MIXED, 0, "null")
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitUserMessage_get_name arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitUserMessage_get_parameters arginfo_class_Gtk4_WebKitContextMenu_get_user_data
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitUserMessage_send_reply, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, reply, Gtk4\\WebKitUserMessage, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitUserScript___construct, 0, 0, 3)
+	ZEND_ARG_TYPE_INFO(0, source, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, injected_frames, Gtk4\\WebKitUserContentInjectedFrames, 0)
+	ZEND_ARG_OBJ_INFO(0, injection_time, Gtk4\\WebKitUserScriptInjectionTime, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, allow_list, IS_ARRAY, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, block_list, IS_ARRAY, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitUserScript_new_for_world, 0, 4, Gtk4\\WebKitUserScript, 0)
+	ZEND_ARG_TYPE_INFO(0, source, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, injected_frames, Gtk4\\WebKitUserContentInjectedFrames, 0)
+	ZEND_ARG_OBJ_INFO(0, injection_time, Gtk4\\WebKitUserScriptInjectionTime, 0)
+	ZEND_ARG_TYPE_INFO(0, world_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, allow_list, IS_ARRAY, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, block_list, IS_ARRAY, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitUserStyleSheet___construct, 0, 0, 3)
+	ZEND_ARG_TYPE_INFO(0, source, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, injected_frames, Gtk4\\WebKitUserContentInjectedFrames, 0)
+	ZEND_ARG_OBJ_INFO(0, level, Gtk4\\WebKitUserStyleLevel, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, allow_list, IS_ARRAY, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, block_list, IS_ARRAY, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitUserStyleSheet_new_for_world, 0, 4, Gtk4\\WebKitUserStyleSheet, 0)
+	ZEND_ARG_TYPE_INFO(0, source, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, injected_frames, Gtk4\\WebKitUserContentInjectedFrames, 0)
+	ZEND_ARG_OBJ_INFO(0, level, Gtk4\\WebKitUserStyleLevel, 0)
+	ZEND_ARG_TYPE_INFO(0, world_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, allow_list, IS_ARRAY, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, block_list, IS_ARRAY, 1, "null")
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebContext___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebContext_get_default, 0, 0, Gtk4\\WebKitWebContext, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebContext_add_path_to_sandbox, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, path, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, read_only, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebContext_get_cache_model, 0, 0, Gtk4\\WebKitCacheModel, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebContext_get_geolocation_manager, 0, 0, Gtk4\\WebKitGeolocationManager, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebContext_get_network_session_for_automation, 0, 0, Gtk4\\WebKitNetworkSession, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebContext_get_security_manager, 0, 0, Gtk4\\WebKitSecurityManager, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebContext_get_spell_checking_enabled arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWebContext_get_spell_checking_languages arginfo_class_Gtk4_WebKitApplicationInfo_get_version
+
+#define arginfo_class_Gtk4_WebKitWebContext_get_time_zone_override arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitWebContext_is_automation_allowed arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebContext_send_message_to_all_extensions, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, message, Gtk4\\WebKitUserMessage, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebContext_set_automation_allowed arginfo_class_Gtk4_WebKitDownload_set_allow_overwrite
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebContext_set_cache_model, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, cache_model, Gtk4\\WebKitCacheModel, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebContext_set_preferred_languages, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, languages, IS_ARRAY, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebContext_set_spell_checking_enabled arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebContext_set_spell_checking_languages, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, languages, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebContext_set_web_process_extensions_directory, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, directory, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebContext_set_web_process_extensions_initialization_user_data arginfo_class_Gtk4_WebKitContextMenu_set_user_data
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebContext_register_uri_scheme, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, scheme, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, handler, IS_CALLABLE, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebInspector___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitWebInspector_attach arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitWebInspector_close arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitWebInspector_detach arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitWebInspector_get_attached_height arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitWebInspector_get_can_attach arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWebInspector_get_inspected_uri arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebInspector_get_web_view, 0, 0, Gtk4\\WebKitWebViewBase, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebInspector_is_attached arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWebInspector_show arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitWebResource___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitWebResource_get_data arginfo_class_Gtk4_WebKitCookieManager_get_accept_policy
+
+#define arginfo_class_Gtk4_WebKitWebResource_get_response arginfo_class_Gtk4_WebKitDownload_get_response
+
+#define arginfo_class_Gtk4_WebKitWebResource_get_uri arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebResource_get_data_finish, 0, 1, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_call_async_javascript_function, 0, 7, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, body, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, length, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, arguments, IS_MIXED, 0)
+	ZEND_ARG_TYPE_INFO(0, world_name, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, source_uri, IS_STRING, 1)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_call_async_javascript_function_finish, 0, 1, Gtk4\\JSCValue, 0)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_can_execute_editing_command, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, command, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_can_execute_editing_command_finish arginfo_class_Gtk4_WebKitCookieManager_add_cookie_finish
+
+#define arginfo_class_Gtk4_WebKitWebView_can_go_back arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWebView_can_go_forward arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_can_show_mime_type, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, mime_type, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_download_uri arginfo_class_Gtk4_WebKitNetworkSession_download_uri
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_evaluate_javascript, 0, 6, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, script, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, length, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, world_name, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, source_uri, IS_STRING, 1)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_evaluate_javascript_finish arginfo_class_Gtk4_WebKitWebView_call_async_javascript_function_finish
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_execute_editing_command, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, command, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_execute_editing_command_with_argument, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, command, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, argument, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_automation_presentation_type, 0, 0, Gtk4\\WebKitAutomationBrowsingContextPresentation, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_back_forward_list, 0, 0, Gtk4\\WebKitBackForwardList, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_get_background_color arginfo_class_Gtk4_WebKitColorChooserRequest_get_rgba
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_camera_capture_state, 0, 0, Gtk4\\WebKitMediaCaptureState, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_get_context arginfo_class_Gtk4_WebKitWebContext_get_default
+
+#define arginfo_class_Gtk4_WebKitWebView_get_custom_charset arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitWebView_get_default_content_security_policy arginfo_class_Gtk4_WebKitDownload_get_destination
+
+#define arginfo_class_Gtk4_WebKitWebView_get_display_capture_state arginfo_class_Gtk4_WebKitWebView_get_camera_capture_state
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_editor_state, 0, 0, Gtk4\\WebKitEditorState, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_get_estimated_load_progress arginfo_class_Gtk4_WebKitDownload_get_elapsed_time
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_favicon, 0, 0, Gtk4\\GdkTexture, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_find_controller, 0, 0, Gtk4\\WebKitFindController, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_input_method_context, 0, 0, Gtk4\\WebKitInputMethodContext, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_inspector, 0, 0, Gtk4\\WebKitWebInspector, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_get_is_muted arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWebView_get_is_web_process_responsive arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_main_resource, 0, 0, Gtk4\\WebKitWebResource, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_get_microphone_capture_state arginfo_class_Gtk4_WebKitWebView_get_camera_capture_state
+
+#define arginfo_class_Gtk4_WebKitWebView_get_network_session arginfo_class_Gtk4_WebKitNetworkSession_new_ephemeral
+
+#define arginfo_class_Gtk4_WebKitWebView_get_page_id arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_session_state, 0, 0, Gtk4\\WebKitWebViewSessionState, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_settings, 0, 0, Gtk4\\WebKitSettings, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_snapshot, 0, 4, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, region, Gtk4\\WebKitSnapshotRegion, 0)
+	ZEND_ARG_TYPE_INFO(0, options, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_get_snapshot_finish arginfo_class_Gtk4_WebKitFaviconDatabase_get_favicon_finish
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_theme_color, 0, 0, Gtk4\\GdkRGBA, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_get_title arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitWebView_get_tls_info arginfo_class_Gtk4_WebKitContextMenu_get_position
+
+#define arginfo_class_Gtk4_WebKitWebView_get_uri arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_user_content_manager, 0, 0, Gtk4\\WebKitUserContentManager, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_web_extension_mode, 0, 0, Gtk4\\WebKitWebExtensionMode, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_website_policies, 0, 0, Gtk4\\WebKitWebsitePolicies, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_get_window_properties, 0, 0, Gtk4\\WebKitWindowProperties, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_get_zoom_level arginfo_class_Gtk4_WebKitDownload_get_elapsed_time
+
+#define arginfo_class_Gtk4_WebKitWebView_go_back arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitWebView_go_forward arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_go_to_back_forward_list_item, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, list_item, Gtk4\\WebKitBackForwardListItem, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_is_controlled_by_automation arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWebView_is_editable arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWebView_is_immersive_mode_enabled arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWebView_is_loading arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWebView_is_playing_audio arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWebView_leave_immersive_mode arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_load_alternate_html, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, content, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, content_uri, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, base_uri, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_load_bytes, 0, 4, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, bytes, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, mime_type, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, encoding, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, base_uri, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_load_html, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, content, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, base_uri, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_load_plain_text, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, plain_text, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_load_request, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, request, Gtk4\\WebKitURIRequest, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_load_uri arginfo_class_Gtk4_WebKitURIRequest_set_uri
+
+#define arginfo_class_Gtk4_WebKitWebView_reload arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitWebView_reload_bypass_cache arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_restore_session_state, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, state, Gtk4\\WebKitWebViewSessionState, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_save, 0, 3, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, save_mode, Gtk4\\WebKitSaveMode, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_save_finish, 0, 1, Gtk4\\GInputStream, 0)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_save_to_file, 0, 4, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, file, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, save_mode, Gtk4\\WebKitSaveMode, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_save_to_file_finish arginfo_class_Gtk4_WebKitCookieManager_add_cookie_finish
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_send_message_to_page, 0, 3, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, message, Gtk4\\WebKitUserMessage, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_send_message_to_page_finish, 0, 1, Gtk4\\WebKitUserMessage, 0)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_set_background_color arginfo_class_Gtk4_WebKitColorChooserRequest_set_rgba
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_set_camera_capture_state, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, state, Gtk4\\WebKitMediaCaptureState, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_set_cors_allowlist, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, allowlist, IS_ARRAY, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_set_custom_charset, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, charset, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_set_display_capture_state arginfo_class_Gtk4_WebKitWebView_set_camera_capture_state
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_set_editable, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, editable, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_set_input_method_context, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, context, Gtk4\\WebKitInputMethodContext, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_set_is_muted, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, muted, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_set_microphone_capture_state arginfo_class_Gtk4_WebKitWebView_set_camera_capture_state
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_set_settings, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, settings, Gtk4\\WebKitSettings, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_set_zoom_level, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, zoom_level, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_stop_loading arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitWebView_terminate_web_process arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitWebView_try_close arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_authenticate, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, request, Gtk4\\WebKitAuthenticationRequest, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_vfunc_close arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_context_menu, 0, 2, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, context_menu, Gtk4\\WebKitContextMenu, 0)
+	ZEND_ARG_OBJ_INFO(0, hit_test_result, Gtk4\\WebKitHitTestResult, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_vfunc_context_menu_dismissed arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_create, 0, 1, Gtk4\\GtkWidget, 0)
+	ZEND_ARG_OBJ_INFO(0, navigation_action, Gtk4\\WebKitNavigationAction, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_decide_policy, 0, 2, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, decision, Gtk4\\WebKitPolicyDecision, 0)
+	ZEND_ARG_OBJ_INFO(0, type, Gtk4\\WebKitPolicyDecisionType, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_vfunc_enter_fullscreen arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_insecure_content_detected, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, event, Gtk4\\WebKitInsecureContentEvent, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_vfunc_leave_fullscreen arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_load_changed, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, load_event, Gtk4\\WebKitLoadEvent, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_load_failed, 0, 3, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, load_event, Gtk4\\WebKitLoadEvent, 0)
+	ZEND_ARG_TYPE_INFO(0, failing_uri, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, error, Gtk4\\GError, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_load_failed_with_tls_errors, 0, 3, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, failing_uri, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, certificate, Gtk4\\GTlsCertificate, 0)
+	ZEND_ARG_TYPE_INFO(0, errors, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_mouse_target_changed, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, hit_test_result, Gtk4\\WebKitHitTestResult, 0)
+	ZEND_ARG_TYPE_INFO(0, modifiers, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_permission_request, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, permission_request, Gtk4\\WebKitPermissionRequest, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_print, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, print_operation, Gtk4\\WebKitPrintOperation, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_query_permission_state, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, query, Gtk4\\WebKitPermissionStateQuery, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_vfunc_ready_to_show arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_resource_load_started, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, resource, Gtk4\\WebKitWebResource, 0)
+	ZEND_ARG_OBJ_INFO(0, request, Gtk4\\WebKitURIRequest, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_vfunc_run_as_modal arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_run_color_chooser, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, request, Gtk4\\WebKitColorChooserRequest, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_run_file_chooser, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, request, Gtk4\\WebKitFileChooserRequest, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_script_dialog, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, dialog, Gtk4\\WebKitScriptDialog, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_show_notification, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, notification, Gtk4\\WebKitNotification, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_show_option_menu, 0, 2, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, menu, Gtk4\\WebKitOptionMenu, 0)
+	ZEND_ARG_OBJ_INFO(0, rectangle, Gtk4\\GdkRectangle, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_submit_form, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, request, Gtk4\\WebKitFormSubmissionRequest, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_user_message_received, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, message, Gtk4\\WebKitUserMessage, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebView_vfunc_web_process_crashed arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebView_vfunc_web_process_terminated, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, reason, Gtk4\\WebKitWebProcessTerminationReason, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebViewBase___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_WebKitWebViewSessionState___construct, 0, 0, 1)
+	ZEND_ARG_TYPE_INFO(0, data, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebViewSessionState_serialize arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitWebsiteData___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitWebsiteData_get_name arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebsiteData_get_size, 0, 1, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, types, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebsiteData_get_types arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataAccessPermissionRequest___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataAccessPermissionRequest_get_current_domain arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataAccessPermissionRequest_get_requesting_domain arginfo_class_Gtk4_WebKitApplicationInfo_get_name
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataAccessPermissionRequest_allow arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataAccessPermissionRequest_deny arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataManager___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebsiteDataManager_clear, 0, 4, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, types, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, timespan, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataManager_clear_finish arginfo_class_Gtk4_WebKitCookieManager_add_cookie_finish
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitWebsiteDataManager_fetch, 0, 3, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, types, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataManager_fetch_finish arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies_finish
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataManager_get_base_cache_directory arginfo_class_Gtk4_WebKitDownload_get_destination
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataManager_get_base_data_directory arginfo_class_Gtk4_WebKitDownload_get_destination
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebsiteDataManager_get_favicon_database, 0, 0, Gtk4\\WebKitFaviconDatabase, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataManager_get_favicons_enabled arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataManager_get_itp_summary arginfo_class_Gtk4_WebKitCookieManager_get_accept_policy
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataManager_get_itp_summary_finish arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies_finish
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataManager_is_ephemeral arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataManager_remove_finish arginfo_class_Gtk4_WebKitCookieManager_add_cookie_finish
+
+#define arginfo_class_Gtk4_WebKitWebsiteDataManager_set_favicons_enabled arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWebsitePolicies___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitWebsitePolicies_get_autoplay_policy, 0, 0, Gtk4\\WebKitAutoplayPolicy, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitWindowProperties___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitWindowProperties_get_fullscreen arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWindowProperties_get_geometry arginfo_class_Gtk4_WebKitColorChooserRequest_get_element_rectangle
+
+#define arginfo_class_Gtk4_WebKitWindowProperties_get_locationbar_visible arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWindowProperties_get_menubar_visible arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWindowProperties_get_resizable arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWindowProperties_get_scrollbars_visible arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWindowProperties_get_statusbar_visible arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitWindowProperties_get_toolbar_visible arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials
+
+#define arginfo_class_Gtk4_WebKitXRPermissionRequest___construct arginfo_class_Gtk4_WebKitApplicationInfo___construct
+
+#define arginfo_class_Gtk4_WebKitXRPermissionRequest_get_consent_optional_features arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitXRPermissionRequest_get_consent_required_features arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitXRPermissionRequest_get_granted_features arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitXRPermissionRequest_get_optional_features_requested arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitXRPermissionRequest_get_required_features_requested arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags
+
+#define arginfo_class_Gtk4_WebKitXRPermissionRequest_get_security_origin arginfo_class_Gtk4_WebKitAuthenticationRequest_get_security_origin
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_WebKitXRPermissionRequest_get_session_mode, 0, 0, Gtk4\\WebKitXRSessionMode, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_WebKitXRPermissionRequest_set_granted_optional_features, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, granted, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_WebKitXRPermissionRequest_allow arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+#define arginfo_class_Gtk4_WebKitXRPermissionRequest_deny arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel
+
+ZEND_METHOD(Gtk4_WebKitApplicationInfo, __construct);
+ZEND_METHOD(Gtk4_WebKitApplicationInfo, get_name);
+ZEND_METHOD(Gtk4_WebKitApplicationInfo, get_version);
+ZEND_METHOD(Gtk4_WebKitApplicationInfo, set_name);
+ZEND_METHOD(Gtk4_WebKitApplicationInfo, set_version);
+ZEND_METHOD(Gtk4_WebKitAuthenticationRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitAuthenticationRequest, authenticate);
+ZEND_METHOD(Gtk4_WebKitAuthenticationRequest, can_save_credentials);
+ZEND_METHOD(Gtk4_WebKitAuthenticationRequest, cancel);
+ZEND_METHOD(Gtk4_WebKitAuthenticationRequest, get_certificate_pin_flags);
+ZEND_METHOD(Gtk4_WebKitAuthenticationRequest, get_host);
+ZEND_METHOD(Gtk4_WebKitAuthenticationRequest, get_port);
+ZEND_METHOD(Gtk4_WebKitAuthenticationRequest, get_proposed_credential);
+ZEND_METHOD(Gtk4_WebKitAuthenticationRequest, get_realm);
+ZEND_METHOD(Gtk4_WebKitAuthenticationRequest, get_scheme);
+ZEND_METHOD(Gtk4_WebKitAuthenticationRequest, get_security_origin);
+ZEND_METHOD(Gtk4_WebKitAuthenticationRequest, is_for_proxy);
+ZEND_METHOD(Gtk4_WebKitAuthenticationRequest, is_retry);
+ZEND_METHOD(Gtk4_WebKitAuthenticationRequest, set_can_save_credentials);
+ZEND_METHOD(Gtk4_WebKitAuthenticationRequest, set_proposed_credential);
+ZEND_METHOD(Gtk4_WebKitAutomationSession, __construct);
+ZEND_METHOD(Gtk4_WebKitAutomationSession, get_application_info);
+ZEND_METHOD(Gtk4_WebKitAutomationSession, get_id);
+ZEND_METHOD(Gtk4_WebKitAutomationSession, set_application_info);
+ZEND_METHOD(Gtk4_WebKitBackForwardList, __construct);
+ZEND_METHOD(Gtk4_WebKitBackForwardList, get_back_item);
+ZEND_METHOD(Gtk4_WebKitBackForwardList, get_back_list);
+ZEND_METHOD(Gtk4_WebKitBackForwardList, get_back_list_with_limit);
+ZEND_METHOD(Gtk4_WebKitBackForwardList, get_current_item);
+ZEND_METHOD(Gtk4_WebKitBackForwardList, get_forward_item);
+ZEND_METHOD(Gtk4_WebKitBackForwardList, get_forward_list);
+ZEND_METHOD(Gtk4_WebKitBackForwardList, get_forward_list_with_limit);
+ZEND_METHOD(Gtk4_WebKitBackForwardList, get_length);
+ZEND_METHOD(Gtk4_WebKitBackForwardList, get_nth_item);
+ZEND_METHOD(Gtk4_WebKitBackForwardListItem, __construct);
+ZEND_METHOD(Gtk4_WebKitBackForwardListItem, get_original_uri);
+ZEND_METHOD(Gtk4_WebKitBackForwardListItem, get_title);
+ZEND_METHOD(Gtk4_WebKitBackForwardListItem, get_uri);
+ZEND_METHOD(Gtk4_WebKitClipboardPermissionRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitPermissionRequest, allow);
+ZEND_METHOD(Gtk4_WebKitPermissionRequest, deny);
+ZEND_METHOD(Gtk4_WebKitColorChooserRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitColorChooserRequest, cancel);
+ZEND_METHOD(Gtk4_WebKitColorChooserRequest, finish);
+ZEND_METHOD(Gtk4_WebKitColorChooserRequest, get_element_rectangle);
+ZEND_METHOD(Gtk4_WebKitColorChooserRequest, get_rgba);
+ZEND_METHOD(Gtk4_WebKitColorChooserRequest, set_rgba);
+ZEND_METHOD(Gtk4_WebKitContextMenu, __construct);
+ZEND_METHOD(Gtk4_WebKitContextMenu, append);
+ZEND_METHOD(Gtk4_WebKitContextMenu, first);
+ZEND_METHOD(Gtk4_WebKitContextMenu, get_event);
+ZEND_METHOD(Gtk4_WebKitContextMenu, get_item_at_position);
+ZEND_METHOD(Gtk4_WebKitContextMenu, get_items);
+ZEND_METHOD(Gtk4_WebKitContextMenu, get_n_items);
+ZEND_METHOD(Gtk4_WebKitContextMenu, get_position);
+ZEND_METHOD(Gtk4_WebKitContextMenu, get_user_data);
+ZEND_METHOD(Gtk4_WebKitContextMenu, insert);
+ZEND_METHOD(Gtk4_WebKitContextMenu, last);
+ZEND_METHOD(Gtk4_WebKitContextMenu, move_item);
+ZEND_METHOD(Gtk4_WebKitContextMenu, prepend);
+ZEND_METHOD(Gtk4_WebKitContextMenu, remove);
+ZEND_METHOD(Gtk4_WebKitContextMenu, remove_all);
+ZEND_METHOD(Gtk4_WebKitContextMenu, set_user_data);
+ZEND_METHOD(Gtk4_WebKitContextMenuItem, __construct);
+ZEND_METHOD(Gtk4_WebKitContextMenuItem, new_from_gaction);
+ZEND_METHOD(Gtk4_WebKitContextMenuItem, new_from_stock_action);
+ZEND_METHOD(Gtk4_WebKitContextMenuItem, new_from_stock_action_with_label);
+ZEND_METHOD(Gtk4_WebKitContextMenuItem, new_separator);
+ZEND_METHOD(Gtk4_WebKitContextMenuItem, new_with_submenu);
+ZEND_METHOD(Gtk4_WebKitContextMenuItem, get_gaction);
+ZEND_METHOD(Gtk4_WebKitContextMenuItem, get_gaction_target);
+ZEND_METHOD(Gtk4_WebKitContextMenuItem, get_stock_action);
+ZEND_METHOD(Gtk4_WebKitContextMenuItem, get_submenu);
+ZEND_METHOD(Gtk4_WebKitContextMenuItem, get_title);
+ZEND_METHOD(Gtk4_WebKitContextMenuItem, is_separator);
+ZEND_METHOD(Gtk4_WebKitContextMenuItem, set_submenu);
+ZEND_METHOD(Gtk4_WebKitCookieManager, __construct);
+ZEND_METHOD(Gtk4_WebKitCookieManager, add_cookie);
+ZEND_METHOD(Gtk4_WebKitCookieManager, add_cookie_finish);
+ZEND_METHOD(Gtk4_WebKitCookieManager, delete_cookie);
+ZEND_METHOD(Gtk4_WebKitCookieManager, delete_cookie_finish);
+ZEND_METHOD(Gtk4_WebKitCookieManager, get_accept_policy);
+ZEND_METHOD(Gtk4_WebKitCookieManager, get_accept_policy_finish);
+ZEND_METHOD(Gtk4_WebKitCookieManager, get_all_cookies);
+ZEND_METHOD(Gtk4_WebKitCookieManager, get_all_cookies_finish);
+ZEND_METHOD(Gtk4_WebKitCookieManager, get_cookies);
+ZEND_METHOD(Gtk4_WebKitCookieManager, get_cookies_finish);
+ZEND_METHOD(Gtk4_WebKitCookieManager, replace_cookies_finish);
+ZEND_METHOD(Gtk4_WebKitCookieManager, set_accept_policy);
+ZEND_METHOD(Gtk4_WebKitCookieManager, set_persistent_storage);
+ZEND_METHOD(Gtk4_WebKitCredential, __construct);
+ZEND_METHOD(Gtk4_WebKitCredential, new_for_certificate);
+ZEND_METHOD(Gtk4_WebKitCredential, new_for_certificate_pin);
+ZEND_METHOD(Gtk4_WebKitCredential, get_certificate);
+ZEND_METHOD(Gtk4_WebKitCredential, get_password);
+ZEND_METHOD(Gtk4_WebKitCredential, get_persistence);
+ZEND_METHOD(Gtk4_WebKitCredential, get_username);
+ZEND_METHOD(Gtk4_WebKitCredential, has_password);
+ZEND_METHOD(Gtk4_WebKitDeviceInfoPermissionRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitDownload, __construct);
+ZEND_METHOD(Gtk4_WebKitDownload, cancel);
+ZEND_METHOD(Gtk4_WebKitDownload, get_allow_overwrite);
+ZEND_METHOD(Gtk4_WebKitDownload, get_destination);
+ZEND_METHOD(Gtk4_WebKitDownload, get_elapsed_time);
+ZEND_METHOD(Gtk4_WebKitDownload, get_estimated_progress);
+ZEND_METHOD(Gtk4_WebKitDownload, get_received_data_length);
+ZEND_METHOD(Gtk4_WebKitDownload, get_request);
+ZEND_METHOD(Gtk4_WebKitDownload, get_response);
+ZEND_METHOD(Gtk4_WebKitDownload, get_web_view);
+ZEND_METHOD(Gtk4_WebKitDownload, set_allow_overwrite);
+ZEND_METHOD(Gtk4_WebKitDownload, set_destination);
+ZEND_METHOD(Gtk4_WebKitEditorState, __construct);
+ZEND_METHOD(Gtk4_WebKitEditorState, get_typing_attributes);
+ZEND_METHOD(Gtk4_WebKitEditorState, is_copy_available);
+ZEND_METHOD(Gtk4_WebKitEditorState, is_cut_available);
+ZEND_METHOD(Gtk4_WebKitEditorState, is_paste_available);
+ZEND_METHOD(Gtk4_WebKitEditorState, is_redo_available);
+ZEND_METHOD(Gtk4_WebKitEditorState, is_undo_available);
+ZEND_METHOD(Gtk4_WebKitFaviconDatabase, __construct);
+ZEND_METHOD(Gtk4_WebKitFaviconDatabase, clear);
+ZEND_METHOD(Gtk4_WebKitFaviconDatabase, get_favicon);
+ZEND_METHOD(Gtk4_WebKitFaviconDatabase, get_favicon_finish);
+ZEND_METHOD(Gtk4_WebKitFaviconDatabase, get_favicon_uri);
+ZEND_METHOD(Gtk4_WebKitFeature, __construct);
+ZEND_METHOD(Gtk4_WebKitFeature, get_category);
+ZEND_METHOD(Gtk4_WebKitFeature, get_default_value);
+ZEND_METHOD(Gtk4_WebKitFeature, get_details);
+ZEND_METHOD(Gtk4_WebKitFeature, get_identifier);
+ZEND_METHOD(Gtk4_WebKitFeature, get_name);
+ZEND_METHOD(Gtk4_WebKitFeature, get_status);
+ZEND_METHOD(Gtk4_WebKitFeatureList, __construct);
+ZEND_METHOD(Gtk4_WebKitFeatureList, get);
+ZEND_METHOD(Gtk4_WebKitFeatureList, get_length);
+ZEND_METHOD(Gtk4_WebKitFileChooserRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitFileChooserRequest, cancel);
+ZEND_METHOD(Gtk4_WebKitFileChooserRequest, get_mime_types);
+ZEND_METHOD(Gtk4_WebKitFileChooserRequest, get_mime_types_filter);
+ZEND_METHOD(Gtk4_WebKitFileChooserRequest, get_select_multiple);
+ZEND_METHOD(Gtk4_WebKitFileChooserRequest, get_selected_files);
+ZEND_METHOD(Gtk4_WebKitFileChooserRequest, select_files);
+ZEND_METHOD(Gtk4_WebKitFindController, __construct);
+ZEND_METHOD(Gtk4_WebKitFindController, count_matches);
+ZEND_METHOD(Gtk4_WebKitFindController, get_max_match_count);
+ZEND_METHOD(Gtk4_WebKitFindController, get_options);
+ZEND_METHOD(Gtk4_WebKitFindController, get_search_text);
+ZEND_METHOD(Gtk4_WebKitFindController, get_web_view);
+ZEND_METHOD(Gtk4_WebKitFindController, search);
+ZEND_METHOD(Gtk4_WebKitFindController, search_finish);
+ZEND_METHOD(Gtk4_WebKitFindController, search_next);
+ZEND_METHOD(Gtk4_WebKitFindController, search_previous);
+ZEND_METHOD(Gtk4_WebKitFormSubmissionRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitFormSubmissionRequest, submit);
+ZEND_METHOD(Gtk4_WebKitGeolocationManager, __construct);
+ZEND_METHOD(Gtk4_WebKitGeolocationManager, failed);
+ZEND_METHOD(Gtk4_WebKitGeolocationManager, get_enable_high_accuracy);
+ZEND_METHOD(Gtk4_WebKitGeolocationManager, update_position);
+ZEND_METHOD(Gtk4_WebKitGeolocationPermissionRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitGeolocationPosition, __construct);
+ZEND_METHOD(Gtk4_WebKitGeolocationPosition, set_altitude);
+ZEND_METHOD(Gtk4_WebKitGeolocationPosition, set_altitude_accuracy);
+ZEND_METHOD(Gtk4_WebKitGeolocationPosition, set_heading);
+ZEND_METHOD(Gtk4_WebKitGeolocationPosition, set_speed);
+ZEND_METHOD(Gtk4_WebKitGeolocationPosition, set_timestamp);
+ZEND_METHOD(Gtk4_WebKitHitTestResult, __construct);
+ZEND_METHOD(Gtk4_WebKitHitTestResult, context_is_editable);
+ZEND_METHOD(Gtk4_WebKitHitTestResult, context_is_image);
+ZEND_METHOD(Gtk4_WebKitHitTestResult, context_is_link);
+ZEND_METHOD(Gtk4_WebKitHitTestResult, context_is_media);
+ZEND_METHOD(Gtk4_WebKitHitTestResult, context_is_scrollbar);
+ZEND_METHOD(Gtk4_WebKitHitTestResult, context_is_selection);
+ZEND_METHOD(Gtk4_WebKitHitTestResult, get_context);
+ZEND_METHOD(Gtk4_WebKitHitTestResult, get_image_uri);
+ZEND_METHOD(Gtk4_WebKitHitTestResult, get_link_label);
+ZEND_METHOD(Gtk4_WebKitHitTestResult, get_link_title);
+ZEND_METHOD(Gtk4_WebKitHitTestResult, get_link_uri);
+ZEND_METHOD(Gtk4_WebKitHitTestResult, get_media_uri);
+ZEND_METHOD(Gtk4_WebKitITPFirstParty, __construct);
+ZEND_METHOD(Gtk4_WebKitITPFirstParty, get_domain);
+ZEND_METHOD(Gtk4_WebKitITPFirstParty, get_last_update_time);
+ZEND_METHOD(Gtk4_WebKitITPFirstParty, get_website_data_access_allowed);
+ZEND_METHOD(Gtk4_WebKitITPThirdParty, __construct);
+ZEND_METHOD(Gtk4_WebKitITPThirdParty, get_domain);
+ZEND_METHOD(Gtk4_WebKitITPThirdParty, get_first_parties);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, __construct);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, filter_key_event);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, get_input_hints);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, get_input_purpose);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, notify_cursor_area);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, notify_focus_in);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, notify_focus_out);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, notify_surrounding);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, reset);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, set_enable_preedit);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, set_input_hints);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, set_input_purpose);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_committed);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_delete_surrounding);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_filter_key_event);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_notify_cursor_area);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_notify_focus_in);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_notify_focus_out);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_notify_surrounding);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_preedit_changed);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_preedit_finished);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_preedit_started);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_reset);
+ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_set_enable_preedit);
+ZEND_METHOD(Gtk4_WebKitInputMethodUnderline, __construct);
+ZEND_METHOD(Gtk4_WebKitInputMethodUnderline, set_color);
+ZEND_METHOD(Gtk4_WebKitMediaKeySystemPermissionRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitMemoryPressureSettings, __construct);
+ZEND_METHOD(Gtk4_WebKitMemoryPressureSettings, get_conservative_threshold);
+ZEND_METHOD(Gtk4_WebKitMemoryPressureSettings, get_kill_threshold);
+ZEND_METHOD(Gtk4_WebKitMemoryPressureSettings, get_memory_limit);
+ZEND_METHOD(Gtk4_WebKitMemoryPressureSettings, get_poll_interval);
+ZEND_METHOD(Gtk4_WebKitMemoryPressureSettings, get_strict_threshold);
+ZEND_METHOD(Gtk4_WebKitMemoryPressureSettings, set_conservative_threshold);
+ZEND_METHOD(Gtk4_WebKitMemoryPressureSettings, set_kill_threshold);
+ZEND_METHOD(Gtk4_WebKitMemoryPressureSettings, set_memory_limit);
+ZEND_METHOD(Gtk4_WebKitMemoryPressureSettings, set_poll_interval);
+ZEND_METHOD(Gtk4_WebKitMemoryPressureSettings, set_strict_threshold);
+ZEND_METHOD(Gtk4_WebKitNavigationAction, __construct);
+ZEND_METHOD(Gtk4_WebKitNavigationAction, get_frame_name);
+ZEND_METHOD(Gtk4_WebKitNavigationAction, get_modifiers);
+ZEND_METHOD(Gtk4_WebKitNavigationAction, get_mouse_button);
+ZEND_METHOD(Gtk4_WebKitNavigationAction, get_navigation_type);
+ZEND_METHOD(Gtk4_WebKitNavigationAction, get_request);
+ZEND_METHOD(Gtk4_WebKitNavigationAction, is_redirect);
+ZEND_METHOD(Gtk4_WebKitNavigationAction, is_user_gesture);
+ZEND_METHOD(Gtk4_WebKitNavigationPolicyDecision, __construct);
+ZEND_METHOD(Gtk4_WebKitNavigationPolicyDecision, get_navigation_action);
+ZEND_METHOD(Gtk4_WebKitNetworkProxySettings, __construct);
+ZEND_METHOD(Gtk4_WebKitNetworkProxySettings, add_proxy_for_scheme);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, __construct);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, new_ephemeral);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, get_default);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, set_memory_pressure_settings);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, allow_tls_certificate_for_host);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, download_uri);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, get_cookie_manager);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, get_itp_enabled);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, get_itp_summary);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, get_itp_summary_finish);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, get_persistent_credential_storage_enabled);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, get_tls_errors_policy);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, get_website_data_manager);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, is_ephemeral);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, prefetch_dns);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, set_itp_enabled);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, set_persistent_credential_storage_enabled);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, set_proxy_settings);
+ZEND_METHOD(Gtk4_WebKitNetworkSession, set_tls_errors_policy);
+ZEND_METHOD(Gtk4_WebKitNotification, __construct);
+ZEND_METHOD(Gtk4_WebKitNotification, clicked);
+ZEND_METHOD(Gtk4_WebKitNotification, close);
+ZEND_METHOD(Gtk4_WebKitNotification, get_body);
+ZEND_METHOD(Gtk4_WebKitNotification, get_id);
+ZEND_METHOD(Gtk4_WebKitNotification, get_tag);
+ZEND_METHOD(Gtk4_WebKitNotification, get_title);
+ZEND_METHOD(Gtk4_WebKitNotificationPermissionRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitOptionMenu, __construct);
+ZEND_METHOD(Gtk4_WebKitOptionMenu, activate_item);
+ZEND_METHOD(Gtk4_WebKitOptionMenu, close);
+ZEND_METHOD(Gtk4_WebKitOptionMenu, get_event);
+ZEND_METHOD(Gtk4_WebKitOptionMenu, get_item);
+ZEND_METHOD(Gtk4_WebKitOptionMenu, get_n_items);
+ZEND_METHOD(Gtk4_WebKitOptionMenu, select_item);
+ZEND_METHOD(Gtk4_WebKitOptionMenuItem, __construct);
+ZEND_METHOD(Gtk4_WebKitOptionMenuItem, get_label);
+ZEND_METHOD(Gtk4_WebKitOptionMenuItem, get_tooltip);
+ZEND_METHOD(Gtk4_WebKitOptionMenuItem, is_enabled);
+ZEND_METHOD(Gtk4_WebKitOptionMenuItem, is_group_child);
+ZEND_METHOD(Gtk4_WebKitOptionMenuItem, is_group_label);
+ZEND_METHOD(Gtk4_WebKitOptionMenuItem, is_selected);
+ZEND_METHOD(Gtk4_WebKitPermissionRequestObject, __construct);
+ZEND_METHOD(Gtk4_WebKitPermissionStateQuery, __construct);
+ZEND_METHOD(Gtk4_WebKitPermissionStateQuery, finish);
+ZEND_METHOD(Gtk4_WebKitPermissionStateQuery, get_name);
+ZEND_METHOD(Gtk4_WebKitPermissionStateQuery, get_security_origin);
+ZEND_METHOD(Gtk4_WebKitPointerLockPermissionRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitPolicyDecision, __construct);
+ZEND_METHOD(Gtk4_WebKitPolicyDecision, download);
+ZEND_METHOD(Gtk4_WebKitPolicyDecision, ignore);
+ZEND_METHOD(Gtk4_WebKitPolicyDecision, use);
+ZEND_METHOD(Gtk4_WebKitPolicyDecision, use_with_policies);
+ZEND_METHOD(Gtk4_WebKitPrintOperation, __construct);
+ZEND_METHOD(Gtk4_WebKitPrintOperation, get_page_setup);
+ZEND_METHOD(Gtk4_WebKitPrintOperation, get_print_settings);
+ZEND_METHOD(Gtk4_WebKitPrintOperation, print);
+ZEND_METHOD(Gtk4_WebKitPrintOperation, run_dialog);
+ZEND_METHOD(Gtk4_WebKitPrintOperation, set_page_setup);
+ZEND_METHOD(Gtk4_WebKitPrintOperation, set_print_settings);
+ZEND_METHOD(Gtk4_WebKitResponsePolicyDecision, __construct);
+ZEND_METHOD(Gtk4_WebKitResponsePolicyDecision, get_request);
+ZEND_METHOD(Gtk4_WebKitResponsePolicyDecision, get_response);
+ZEND_METHOD(Gtk4_WebKitResponsePolicyDecision, is_main_frame_main_resource);
+ZEND_METHOD(Gtk4_WebKitResponsePolicyDecision, is_mime_type_supported);
+ZEND_METHOD(Gtk4_WebKitScriptDialog, __construct);
+ZEND_METHOD(Gtk4_WebKitScriptDialog, close);
+ZEND_METHOD(Gtk4_WebKitScriptDialog, confirm_set_confirmed);
+ZEND_METHOD(Gtk4_WebKitScriptDialog, get_dialog_type);
+ZEND_METHOD(Gtk4_WebKitScriptDialog, get_message);
+ZEND_METHOD(Gtk4_WebKitScriptDialog, prompt_get_default_text);
+ZEND_METHOD(Gtk4_WebKitScriptDialog, prompt_set_text);
+ZEND_METHOD(Gtk4_WebKitScriptMessageReply, __construct);
+ZEND_METHOD(Gtk4_WebKitScriptMessageReply, return_error_message);
+ZEND_METHOD(Gtk4_WebKitScriptMessageReply, return_value);
+ZEND_METHOD(Gtk4_WebKitSecurityManager, __construct);
+ZEND_METHOD(Gtk4_WebKitSecurityManager, register_uri_scheme_as_cors_enabled);
+ZEND_METHOD(Gtk4_WebKitSecurityManager, register_uri_scheme_as_display_isolated);
+ZEND_METHOD(Gtk4_WebKitSecurityManager, register_uri_scheme_as_empty_document);
+ZEND_METHOD(Gtk4_WebKitSecurityManager, register_uri_scheme_as_local);
+ZEND_METHOD(Gtk4_WebKitSecurityManager, register_uri_scheme_as_no_access);
+ZEND_METHOD(Gtk4_WebKitSecurityManager, register_uri_scheme_as_secure);
+ZEND_METHOD(Gtk4_WebKitSecurityManager, uri_scheme_is_cors_enabled);
+ZEND_METHOD(Gtk4_WebKitSecurityManager, uri_scheme_is_display_isolated);
+ZEND_METHOD(Gtk4_WebKitSecurityManager, uri_scheme_is_empty_document);
+ZEND_METHOD(Gtk4_WebKitSecurityManager, uri_scheme_is_local);
+ZEND_METHOD(Gtk4_WebKitSecurityManager, uri_scheme_is_no_access);
+ZEND_METHOD(Gtk4_WebKitSecurityManager, uri_scheme_is_secure);
+ZEND_METHOD(Gtk4_WebKitSecurityOrigin, __construct);
+ZEND_METHOD(Gtk4_WebKitSecurityOrigin, new_for_uri);
+ZEND_METHOD(Gtk4_WebKitSecurityOrigin, get_host);
+ZEND_METHOD(Gtk4_WebKitSecurityOrigin, get_port);
+ZEND_METHOD(Gtk4_WebKitSecurityOrigin, get_protocol);
+ZEND_METHOD(Gtk4_WebKitSecurityOrigin, to_string);
+ZEND_METHOD(Gtk4_WebKitSettings, __construct);
+ZEND_METHOD(Gtk4_WebKitSettings, font_size_to_pixels);
+ZEND_METHOD(Gtk4_WebKitSettings, font_size_to_points);
+ZEND_METHOD(Gtk4_WebKitSettings, get_all_features);
+ZEND_METHOD(Gtk4_WebKitSettings, get_development_features);
+ZEND_METHOD(Gtk4_WebKitSettings, get_experimental_features);
+ZEND_METHOD(Gtk4_WebKitSettings, apply_from_key_file);
+ZEND_METHOD(Gtk4_WebKitSettings, get_allow_file_access_from_file_urls);
+ZEND_METHOD(Gtk4_WebKitSettings, get_allow_modal_dialogs);
+ZEND_METHOD(Gtk4_WebKitSettings, get_allow_top_navigation_to_data_urls);
+ZEND_METHOD(Gtk4_WebKitSettings, get_allow_universal_access_from_file_urls);
+ZEND_METHOD(Gtk4_WebKitSettings, get_auto_load_images);
+ZEND_METHOD(Gtk4_WebKitSettings, get_cursive_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, get_default_charset);
+ZEND_METHOD(Gtk4_WebKitSettings, get_default_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, get_default_font_size);
+ZEND_METHOD(Gtk4_WebKitSettings, get_default_monospace_font_size);
+ZEND_METHOD(Gtk4_WebKitSettings, get_disable_web_security);
+ZEND_METHOD(Gtk4_WebKitSettings, get_draw_compositing_indicators);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_2d_canvas_acceleration);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_back_forward_navigation_gestures);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_caret_browsing);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_developer_extras);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_encrypted_media);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_fullscreen);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_html5_database);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_html5_local_storage);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_javascript);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_javascript_markup);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_media);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_media_capabilities);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_media_stream);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_mediasource);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_mock_capture_devices);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_page_cache);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_resizable_text_areas);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_site_specific_quirks);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_smooth_scrolling);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_spatial_navigation);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_tabs_to_links);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_webaudio);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_webgl);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_webrtc);
+ZEND_METHOD(Gtk4_WebKitSettings, get_enable_write_console_messages_to_stdout);
+ZEND_METHOD(Gtk4_WebKitSettings, get_fantasy_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, get_feature_enabled);
+ZEND_METHOD(Gtk4_WebKitSettings, get_hardware_acceleration_policy);
+ZEND_METHOD(Gtk4_WebKitSettings, get_javascript_can_access_clipboard);
+ZEND_METHOD(Gtk4_WebKitSettings, get_javascript_can_open_windows_automatically);
+ZEND_METHOD(Gtk4_WebKitSettings, get_math_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, get_media_content_types_requiring_hardware_support);
+ZEND_METHOD(Gtk4_WebKitSettings, get_media_playback_allows_inline);
+ZEND_METHOD(Gtk4_WebKitSettings, get_media_playback_requires_user_gesture);
+ZEND_METHOD(Gtk4_WebKitSettings, get_minimum_font_size);
+ZEND_METHOD(Gtk4_WebKitSettings, get_monospace_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, get_pictograph_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, get_print_backgrounds);
+ZEND_METHOD(Gtk4_WebKitSettings, get_sans_serif_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, get_serif_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, get_user_agent);
+ZEND_METHOD(Gtk4_WebKitSettings, get_webrtc_udp_ports_range);
+ZEND_METHOD(Gtk4_WebKitSettings, get_zoom_text_only);
+ZEND_METHOD(Gtk4_WebKitSettings, set_allow_file_access_from_file_urls);
+ZEND_METHOD(Gtk4_WebKitSettings, set_allow_modal_dialogs);
+ZEND_METHOD(Gtk4_WebKitSettings, set_allow_top_navigation_to_data_urls);
+ZEND_METHOD(Gtk4_WebKitSettings, set_allow_universal_access_from_file_urls);
+ZEND_METHOD(Gtk4_WebKitSettings, set_auto_load_images);
+ZEND_METHOD(Gtk4_WebKitSettings, set_cursive_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, set_default_charset);
+ZEND_METHOD(Gtk4_WebKitSettings, set_default_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, set_default_font_size);
+ZEND_METHOD(Gtk4_WebKitSettings, set_default_monospace_font_size);
+ZEND_METHOD(Gtk4_WebKitSettings, set_disable_web_security);
+ZEND_METHOD(Gtk4_WebKitSettings, set_draw_compositing_indicators);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_2d_canvas_acceleration);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_back_forward_navigation_gestures);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_caret_browsing);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_developer_extras);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_encrypted_media);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_fullscreen);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_html5_database);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_html5_local_storage);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_javascript);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_javascript_markup);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_media);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_media_capabilities);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_media_stream);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_mediasource);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_mock_capture_devices);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_page_cache);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_resizable_text_areas);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_site_specific_quirks);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_smooth_scrolling);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_spatial_navigation);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_tabs_to_links);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_webaudio);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_webgl);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_webrtc);
+ZEND_METHOD(Gtk4_WebKitSettings, set_enable_write_console_messages_to_stdout);
+ZEND_METHOD(Gtk4_WebKitSettings, set_fantasy_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, set_feature_enabled);
+ZEND_METHOD(Gtk4_WebKitSettings, set_hardware_acceleration_policy);
+ZEND_METHOD(Gtk4_WebKitSettings, set_javascript_can_access_clipboard);
+ZEND_METHOD(Gtk4_WebKitSettings, set_javascript_can_open_windows_automatically);
+ZEND_METHOD(Gtk4_WebKitSettings, set_math_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, set_media_content_types_requiring_hardware_support);
+ZEND_METHOD(Gtk4_WebKitSettings, set_media_playback_allows_inline);
+ZEND_METHOD(Gtk4_WebKitSettings, set_media_playback_requires_user_gesture);
+ZEND_METHOD(Gtk4_WebKitSettings, set_minimum_font_size);
+ZEND_METHOD(Gtk4_WebKitSettings, set_monospace_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, set_pictograph_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, set_print_backgrounds);
+ZEND_METHOD(Gtk4_WebKitSettings, set_sans_serif_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, set_serif_font_family);
+ZEND_METHOD(Gtk4_WebKitSettings, set_user_agent);
+ZEND_METHOD(Gtk4_WebKitSettings, set_user_agent_with_application_details);
+ZEND_METHOD(Gtk4_WebKitSettings, set_webrtc_udp_ports_range);
+ZEND_METHOD(Gtk4_WebKitSettings, set_zoom_text_only);
+ZEND_METHOD(Gtk4_WebKitURIRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitURIRequest, get_http_headers);
+ZEND_METHOD(Gtk4_WebKitURIRequest, get_http_method);
+ZEND_METHOD(Gtk4_WebKitURIRequest, get_uri);
+ZEND_METHOD(Gtk4_WebKitURIRequest, set_uri);
+ZEND_METHOD(Gtk4_WebKitURIResponse, __construct);
+ZEND_METHOD(Gtk4_WebKitURIResponse, get_content_length);
+ZEND_METHOD(Gtk4_WebKitURIResponse, get_http_headers);
+ZEND_METHOD(Gtk4_WebKitURIResponse, get_mime_type);
+ZEND_METHOD(Gtk4_WebKitURIResponse, get_status_code);
+ZEND_METHOD(Gtk4_WebKitURIResponse, get_suggested_filename);
+ZEND_METHOD(Gtk4_WebKitURIResponse, get_uri);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, finish);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, finish_error);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, finish_with_response);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_http_body);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_http_headers);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_http_method);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_path);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_scheme);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_uri);
+ZEND_METHOD(Gtk4_WebKitURISchemeRequest, get_web_view);
+ZEND_METHOD(Gtk4_WebKitURISchemeResponse, __construct);
+ZEND_METHOD(Gtk4_WebKitURISchemeResponse, set_content_type);
+ZEND_METHOD(Gtk4_WebKitURISchemeResponse, set_http_headers);
+ZEND_METHOD(Gtk4_WebKitURISchemeResponse, set_status);
+ZEND_METHOD(Gtk4_WebKitUserContentFilter, __construct);
+ZEND_METHOD(Gtk4_WebKitUserContentFilter, get_identifier);
+ZEND_METHOD(Gtk4_WebKitUserContentFilterStore, __construct);
+ZEND_METHOD(Gtk4_WebKitUserContentFilterStore, fetch_identifiers);
+ZEND_METHOD(Gtk4_WebKitUserContentFilterStore, fetch_identifiers_finish);
+ZEND_METHOD(Gtk4_WebKitUserContentFilterStore, get_path);
+ZEND_METHOD(Gtk4_WebKitUserContentFilterStore, load);
+ZEND_METHOD(Gtk4_WebKitUserContentFilterStore, load_finish);
+ZEND_METHOD(Gtk4_WebKitUserContentFilterStore, remove);
+ZEND_METHOD(Gtk4_WebKitUserContentFilterStore, remove_finish);
+ZEND_METHOD(Gtk4_WebKitUserContentFilterStore, save);
+ZEND_METHOD(Gtk4_WebKitUserContentFilterStore, save_finish);
+ZEND_METHOD(Gtk4_WebKitUserContentFilterStore, save_from_file);
+ZEND_METHOD(Gtk4_WebKitUserContentFilterStore, save_from_file_finish);
+ZEND_METHOD(Gtk4_WebKitUserContentManager, __construct);
+ZEND_METHOD(Gtk4_WebKitUserContentManager, add_filter);
+ZEND_METHOD(Gtk4_WebKitUserContentManager, add_script);
+ZEND_METHOD(Gtk4_WebKitUserContentManager, add_style_sheet);
+ZEND_METHOD(Gtk4_WebKitUserContentManager, register_script_message_handler);
+ZEND_METHOD(Gtk4_WebKitUserContentManager, register_script_message_handler_with_reply);
+ZEND_METHOD(Gtk4_WebKitUserContentManager, remove_all_filters);
+ZEND_METHOD(Gtk4_WebKitUserContentManager, remove_all_scripts);
+ZEND_METHOD(Gtk4_WebKitUserContentManager, remove_all_style_sheets);
+ZEND_METHOD(Gtk4_WebKitUserContentManager, remove_filter);
+ZEND_METHOD(Gtk4_WebKitUserContentManager, remove_filter_by_id);
+ZEND_METHOD(Gtk4_WebKitUserContentManager, remove_script);
+ZEND_METHOD(Gtk4_WebKitUserContentManager, remove_style_sheet);
+ZEND_METHOD(Gtk4_WebKitUserContentManager, unregister_script_message_handler);
+ZEND_METHOD(Gtk4_WebKitUserMediaPermissionRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitUserMessage, __construct);
+ZEND_METHOD(Gtk4_WebKitUserMessage, get_name);
+ZEND_METHOD(Gtk4_WebKitUserMessage, get_parameters);
+ZEND_METHOD(Gtk4_WebKitUserMessage, send_reply);
+ZEND_METHOD(Gtk4_WebKitUserScript, __construct);
+ZEND_METHOD(Gtk4_WebKitUserScript, new_for_world);
+ZEND_METHOD(Gtk4_WebKitUserStyleSheet, __construct);
+ZEND_METHOD(Gtk4_WebKitUserStyleSheet, new_for_world);
+ZEND_METHOD(Gtk4_WebKitWebContext, __construct);
+ZEND_METHOD(Gtk4_WebKitWebContext, get_default);
+ZEND_METHOD(Gtk4_WebKitWebContext, add_path_to_sandbox);
+ZEND_METHOD(Gtk4_WebKitWebContext, get_cache_model);
+ZEND_METHOD(Gtk4_WebKitWebContext, get_geolocation_manager);
+ZEND_METHOD(Gtk4_WebKitWebContext, get_network_session_for_automation);
+ZEND_METHOD(Gtk4_WebKitWebContext, get_security_manager);
+ZEND_METHOD(Gtk4_WebKitWebContext, get_spell_checking_enabled);
+ZEND_METHOD(Gtk4_WebKitWebContext, get_spell_checking_languages);
+ZEND_METHOD(Gtk4_WebKitWebContext, get_time_zone_override);
+ZEND_METHOD(Gtk4_WebKitWebContext, is_automation_allowed);
+ZEND_METHOD(Gtk4_WebKitWebContext, send_message_to_all_extensions);
+ZEND_METHOD(Gtk4_WebKitWebContext, set_automation_allowed);
+ZEND_METHOD(Gtk4_WebKitWebContext, set_cache_model);
+ZEND_METHOD(Gtk4_WebKitWebContext, set_preferred_languages);
+ZEND_METHOD(Gtk4_WebKitWebContext, set_spell_checking_enabled);
+ZEND_METHOD(Gtk4_WebKitWebContext, set_spell_checking_languages);
+ZEND_METHOD(Gtk4_WebKitWebContext, set_web_process_extensions_directory);
+ZEND_METHOD(Gtk4_WebKitWebContext, set_web_process_extensions_initialization_user_data);
+ZEND_METHOD(Gtk4_WebKitWebContext, register_uri_scheme);
+ZEND_METHOD(Gtk4_WebKitWebInspector, __construct);
+ZEND_METHOD(Gtk4_WebKitWebInspector, attach);
+ZEND_METHOD(Gtk4_WebKitWebInspector, close);
+ZEND_METHOD(Gtk4_WebKitWebInspector, detach);
+ZEND_METHOD(Gtk4_WebKitWebInspector, get_attached_height);
+ZEND_METHOD(Gtk4_WebKitWebInspector, get_can_attach);
+ZEND_METHOD(Gtk4_WebKitWebInspector, get_inspected_uri);
+ZEND_METHOD(Gtk4_WebKitWebInspector, get_web_view);
+ZEND_METHOD(Gtk4_WebKitWebInspector, is_attached);
+ZEND_METHOD(Gtk4_WebKitWebInspector, show);
+ZEND_METHOD(Gtk4_WebKitWebResource, __construct);
+ZEND_METHOD(Gtk4_WebKitWebResource, get_data);
+ZEND_METHOD(Gtk4_WebKitWebResource, get_response);
+ZEND_METHOD(Gtk4_WebKitWebResource, get_uri);
+ZEND_METHOD(Gtk4_WebKitWebResource, get_data_finish);
+ZEND_METHOD(Gtk4_WebKitWebView, __construct);
+ZEND_METHOD(Gtk4_WebKitWebView, call_async_javascript_function);
+ZEND_METHOD(Gtk4_WebKitWebView, call_async_javascript_function_finish);
+ZEND_METHOD(Gtk4_WebKitWebView, can_execute_editing_command);
+ZEND_METHOD(Gtk4_WebKitWebView, can_execute_editing_command_finish);
+ZEND_METHOD(Gtk4_WebKitWebView, can_go_back);
+ZEND_METHOD(Gtk4_WebKitWebView, can_go_forward);
+ZEND_METHOD(Gtk4_WebKitWebView, can_show_mime_type);
+ZEND_METHOD(Gtk4_WebKitWebView, download_uri);
+ZEND_METHOD(Gtk4_WebKitWebView, evaluate_javascript);
+ZEND_METHOD(Gtk4_WebKitWebView, evaluate_javascript_finish);
+ZEND_METHOD(Gtk4_WebKitWebView, execute_editing_command);
+ZEND_METHOD(Gtk4_WebKitWebView, execute_editing_command_with_argument);
+ZEND_METHOD(Gtk4_WebKitWebView, get_automation_presentation_type);
+ZEND_METHOD(Gtk4_WebKitWebView, get_back_forward_list);
+ZEND_METHOD(Gtk4_WebKitWebView, get_background_color);
+ZEND_METHOD(Gtk4_WebKitWebView, get_camera_capture_state);
+ZEND_METHOD(Gtk4_WebKitWebView, get_context);
+ZEND_METHOD(Gtk4_WebKitWebView, get_custom_charset);
+ZEND_METHOD(Gtk4_WebKitWebView, get_default_content_security_policy);
+ZEND_METHOD(Gtk4_WebKitWebView, get_display_capture_state);
+ZEND_METHOD(Gtk4_WebKitWebView, get_editor_state);
+ZEND_METHOD(Gtk4_WebKitWebView, get_estimated_load_progress);
+ZEND_METHOD(Gtk4_WebKitWebView, get_favicon);
+ZEND_METHOD(Gtk4_WebKitWebView, get_find_controller);
+ZEND_METHOD(Gtk4_WebKitWebView, get_input_method_context);
+ZEND_METHOD(Gtk4_WebKitWebView, get_inspector);
+ZEND_METHOD(Gtk4_WebKitWebView, get_is_muted);
+ZEND_METHOD(Gtk4_WebKitWebView, get_is_web_process_responsive);
+ZEND_METHOD(Gtk4_WebKitWebView, get_main_resource);
+ZEND_METHOD(Gtk4_WebKitWebView, get_microphone_capture_state);
+ZEND_METHOD(Gtk4_WebKitWebView, get_network_session);
+ZEND_METHOD(Gtk4_WebKitWebView, get_page_id);
+ZEND_METHOD(Gtk4_WebKitWebView, get_session_state);
+ZEND_METHOD(Gtk4_WebKitWebView, get_settings);
+ZEND_METHOD(Gtk4_WebKitWebView, get_snapshot);
+ZEND_METHOD(Gtk4_WebKitWebView, get_snapshot_finish);
+ZEND_METHOD(Gtk4_WebKitWebView, get_theme_color);
+ZEND_METHOD(Gtk4_WebKitWebView, get_title);
+ZEND_METHOD(Gtk4_WebKitWebView, get_tls_info);
+ZEND_METHOD(Gtk4_WebKitWebView, get_uri);
+ZEND_METHOD(Gtk4_WebKitWebView, get_user_content_manager);
+ZEND_METHOD(Gtk4_WebKitWebView, get_web_extension_mode);
+ZEND_METHOD(Gtk4_WebKitWebView, get_website_policies);
+ZEND_METHOD(Gtk4_WebKitWebView, get_window_properties);
+ZEND_METHOD(Gtk4_WebKitWebView, get_zoom_level);
+ZEND_METHOD(Gtk4_WebKitWebView, go_back);
+ZEND_METHOD(Gtk4_WebKitWebView, go_forward);
+ZEND_METHOD(Gtk4_WebKitWebView, go_to_back_forward_list_item);
+ZEND_METHOD(Gtk4_WebKitWebView, is_controlled_by_automation);
+ZEND_METHOD(Gtk4_WebKitWebView, is_editable);
+ZEND_METHOD(Gtk4_WebKitWebView, is_immersive_mode_enabled);
+ZEND_METHOD(Gtk4_WebKitWebView, is_loading);
+ZEND_METHOD(Gtk4_WebKitWebView, is_playing_audio);
+ZEND_METHOD(Gtk4_WebKitWebView, leave_immersive_mode);
+ZEND_METHOD(Gtk4_WebKitWebView, load_alternate_html);
+ZEND_METHOD(Gtk4_WebKitWebView, load_bytes);
+ZEND_METHOD(Gtk4_WebKitWebView, load_html);
+ZEND_METHOD(Gtk4_WebKitWebView, load_plain_text);
+ZEND_METHOD(Gtk4_WebKitWebView, load_request);
+ZEND_METHOD(Gtk4_WebKitWebView, load_uri);
+ZEND_METHOD(Gtk4_WebKitWebView, reload);
+ZEND_METHOD(Gtk4_WebKitWebView, reload_bypass_cache);
+ZEND_METHOD(Gtk4_WebKitWebView, restore_session_state);
+ZEND_METHOD(Gtk4_WebKitWebView, save);
+ZEND_METHOD(Gtk4_WebKitWebView, save_finish);
+ZEND_METHOD(Gtk4_WebKitWebView, save_to_file);
+ZEND_METHOD(Gtk4_WebKitWebView, save_to_file_finish);
+ZEND_METHOD(Gtk4_WebKitWebView, send_message_to_page);
+ZEND_METHOD(Gtk4_WebKitWebView, send_message_to_page_finish);
+ZEND_METHOD(Gtk4_WebKitWebView, set_background_color);
+ZEND_METHOD(Gtk4_WebKitWebView, set_camera_capture_state);
+ZEND_METHOD(Gtk4_WebKitWebView, set_cors_allowlist);
+ZEND_METHOD(Gtk4_WebKitWebView, set_custom_charset);
+ZEND_METHOD(Gtk4_WebKitWebView, set_display_capture_state);
+ZEND_METHOD(Gtk4_WebKitWebView, set_editable);
+ZEND_METHOD(Gtk4_WebKitWebView, set_input_method_context);
+ZEND_METHOD(Gtk4_WebKitWebView, set_is_muted);
+ZEND_METHOD(Gtk4_WebKitWebView, set_microphone_capture_state);
+ZEND_METHOD(Gtk4_WebKitWebView, set_settings);
+ZEND_METHOD(Gtk4_WebKitWebView, set_zoom_level);
+ZEND_METHOD(Gtk4_WebKitWebView, stop_loading);
+ZEND_METHOD(Gtk4_WebKitWebView, terminate_web_process);
+ZEND_METHOD(Gtk4_WebKitWebView, try_close);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_authenticate);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_close);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_context_menu);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_context_menu_dismissed);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_create);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_decide_policy);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_enter_fullscreen);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_insecure_content_detected);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_leave_fullscreen);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_load_changed);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_load_failed);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_load_failed_with_tls_errors);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_mouse_target_changed);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_permission_request);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_print);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_query_permission_state);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_ready_to_show);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_resource_load_started);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_run_as_modal);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_run_color_chooser);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_run_file_chooser);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_script_dialog);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_show_notification);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_show_option_menu);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_submit_form);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_user_message_received);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_web_process_crashed);
+ZEND_METHOD(Gtk4_WebKitWebView, vfunc_web_process_terminated);
+ZEND_METHOD(Gtk4_WebKitWebViewBase, __construct);
+ZEND_METHOD(Gtk4_WebKitWebViewSessionState, __construct);
+ZEND_METHOD(Gtk4_WebKitWebViewSessionState, serialize);
+ZEND_METHOD(Gtk4_WebKitWebsiteData, __construct);
+ZEND_METHOD(Gtk4_WebKitWebsiteData, get_name);
+ZEND_METHOD(Gtk4_WebKitWebsiteData, get_size);
+ZEND_METHOD(Gtk4_WebKitWebsiteData, get_types);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataAccessPermissionRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataAccessPermissionRequest, get_current_domain);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataAccessPermissionRequest, get_requesting_domain);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, __construct);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, clear);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, clear_finish);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, fetch);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, fetch_finish);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, get_base_cache_directory);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, get_base_data_directory);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, get_favicon_database);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, get_favicons_enabled);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, get_itp_summary);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, get_itp_summary_finish);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, is_ephemeral);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, remove_finish);
+ZEND_METHOD(Gtk4_WebKitWebsiteDataManager, set_favicons_enabled);
+ZEND_METHOD(Gtk4_WebKitWebsitePolicies, __construct);
+ZEND_METHOD(Gtk4_WebKitWebsitePolicies, get_autoplay_policy);
+ZEND_METHOD(Gtk4_WebKitWindowProperties, __construct);
+ZEND_METHOD(Gtk4_WebKitWindowProperties, get_fullscreen);
+ZEND_METHOD(Gtk4_WebKitWindowProperties, get_geometry);
+ZEND_METHOD(Gtk4_WebKitWindowProperties, get_locationbar_visible);
+ZEND_METHOD(Gtk4_WebKitWindowProperties, get_menubar_visible);
+ZEND_METHOD(Gtk4_WebKitWindowProperties, get_resizable);
+ZEND_METHOD(Gtk4_WebKitWindowProperties, get_scrollbars_visible);
+ZEND_METHOD(Gtk4_WebKitWindowProperties, get_statusbar_visible);
+ZEND_METHOD(Gtk4_WebKitWindowProperties, get_toolbar_visible);
+ZEND_METHOD(Gtk4_WebKitXRPermissionRequest, __construct);
+ZEND_METHOD(Gtk4_WebKitXRPermissionRequest, get_consent_optional_features);
+ZEND_METHOD(Gtk4_WebKitXRPermissionRequest, get_consent_required_features);
+ZEND_METHOD(Gtk4_WebKitXRPermissionRequest, get_granted_features);
+ZEND_METHOD(Gtk4_WebKitXRPermissionRequest, get_optional_features_requested);
+ZEND_METHOD(Gtk4_WebKitXRPermissionRequest, get_required_features_requested);
+ZEND_METHOD(Gtk4_WebKitXRPermissionRequest, get_security_origin);
+ZEND_METHOD(Gtk4_WebKitXRPermissionRequest, get_session_mode);
+ZEND_METHOD(Gtk4_WebKitXRPermissionRequest, set_granted_optional_features);
+
+static const zend_function_entry class_Gtk4_WebKitApplicationInfo_methods[] = {
+	ZEND_ME(Gtk4_WebKitApplicationInfo, __construct, arginfo_class_Gtk4_WebKitApplicationInfo___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitApplicationInfo, get_name, arginfo_class_Gtk4_WebKitApplicationInfo_get_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitApplicationInfo, get_version, arginfo_class_Gtk4_WebKitApplicationInfo_get_version, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitApplicationInfo, set_name, arginfo_class_Gtk4_WebKitApplicationInfo_set_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitApplicationInfo, set_version, arginfo_class_Gtk4_WebKitApplicationInfo_set_version, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitAuthenticationRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitAuthenticationRequest, __construct, arginfo_class_Gtk4_WebKitAuthenticationRequest___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitAuthenticationRequest, authenticate, arginfo_class_Gtk4_WebKitAuthenticationRequest_authenticate, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitAuthenticationRequest, can_save_credentials, arginfo_class_Gtk4_WebKitAuthenticationRequest_can_save_credentials, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitAuthenticationRequest, cancel, arginfo_class_Gtk4_WebKitAuthenticationRequest_cancel, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitAuthenticationRequest, get_certificate_pin_flags, arginfo_class_Gtk4_WebKitAuthenticationRequest_get_certificate_pin_flags, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitAuthenticationRequest, get_host, arginfo_class_Gtk4_WebKitAuthenticationRequest_get_host, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitAuthenticationRequest, get_port, arginfo_class_Gtk4_WebKitAuthenticationRequest_get_port, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitAuthenticationRequest, get_proposed_credential, arginfo_class_Gtk4_WebKitAuthenticationRequest_get_proposed_credential, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitAuthenticationRequest, get_realm, arginfo_class_Gtk4_WebKitAuthenticationRequest_get_realm, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitAuthenticationRequest, get_scheme, arginfo_class_Gtk4_WebKitAuthenticationRequest_get_scheme, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitAuthenticationRequest, get_security_origin, arginfo_class_Gtk4_WebKitAuthenticationRequest_get_security_origin, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitAuthenticationRequest, is_for_proxy, arginfo_class_Gtk4_WebKitAuthenticationRequest_is_for_proxy, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitAuthenticationRequest, is_retry, arginfo_class_Gtk4_WebKitAuthenticationRequest_is_retry, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitAuthenticationRequest, set_can_save_credentials, arginfo_class_Gtk4_WebKitAuthenticationRequest_set_can_save_credentials, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitAuthenticationRequest, set_proposed_credential, arginfo_class_Gtk4_WebKitAuthenticationRequest_set_proposed_credential, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitAutomationSession_methods[] = {
+	ZEND_ME(Gtk4_WebKitAutomationSession, __construct, arginfo_class_Gtk4_WebKitAutomationSession___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitAutomationSession, get_application_info, arginfo_class_Gtk4_WebKitAutomationSession_get_application_info, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitAutomationSession, get_id, arginfo_class_Gtk4_WebKitAutomationSession_get_id, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitAutomationSession, set_application_info, arginfo_class_Gtk4_WebKitAutomationSession_set_application_info, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitBackForwardList_methods[] = {
+	ZEND_ME(Gtk4_WebKitBackForwardList, __construct, arginfo_class_Gtk4_WebKitBackForwardList___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitBackForwardList, get_back_item, arginfo_class_Gtk4_WebKitBackForwardList_get_back_item, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitBackForwardList, get_back_list, arginfo_class_Gtk4_WebKitBackForwardList_get_back_list, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitBackForwardList, get_back_list_with_limit, arginfo_class_Gtk4_WebKitBackForwardList_get_back_list_with_limit, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitBackForwardList, get_current_item, arginfo_class_Gtk4_WebKitBackForwardList_get_current_item, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitBackForwardList, get_forward_item, arginfo_class_Gtk4_WebKitBackForwardList_get_forward_item, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitBackForwardList, get_forward_list, arginfo_class_Gtk4_WebKitBackForwardList_get_forward_list, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitBackForwardList, get_forward_list_with_limit, arginfo_class_Gtk4_WebKitBackForwardList_get_forward_list_with_limit, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitBackForwardList, get_length, arginfo_class_Gtk4_WebKitBackForwardList_get_length, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitBackForwardList, get_nth_item, arginfo_class_Gtk4_WebKitBackForwardList_get_nth_item, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitBackForwardListItem_methods[] = {
+	ZEND_ME(Gtk4_WebKitBackForwardListItem, __construct, arginfo_class_Gtk4_WebKitBackForwardListItem___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitBackForwardListItem, get_original_uri, arginfo_class_Gtk4_WebKitBackForwardListItem_get_original_uri, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitBackForwardListItem, get_title, arginfo_class_Gtk4_WebKitBackForwardListItem_get_title, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitBackForwardListItem, get_uri, arginfo_class_Gtk4_WebKitBackForwardListItem_get_uri, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitClipboardPermissionRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitClipboardPermissionRequest, __construct, arginfo_class_Gtk4_WebKitClipboardPermissionRequest___construct, ZEND_ACC_PRIVATE)
+	ZEND_RAW_FENTRY("allow", zim_Gtk4_WebKitPermissionRequest_allow, arginfo_class_Gtk4_WebKitClipboardPermissionRequest_allow, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("deny", zim_Gtk4_WebKitPermissionRequest_deny, arginfo_class_Gtk4_WebKitClipboardPermissionRequest_deny, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitColorChooserRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitColorChooserRequest, __construct, arginfo_class_Gtk4_WebKitColorChooserRequest___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitColorChooserRequest, cancel, arginfo_class_Gtk4_WebKitColorChooserRequest_cancel, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitColorChooserRequest, finish, arginfo_class_Gtk4_WebKitColorChooserRequest_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitColorChooserRequest, get_element_rectangle, arginfo_class_Gtk4_WebKitColorChooserRequest_get_element_rectangle, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitColorChooserRequest, get_rgba, arginfo_class_Gtk4_WebKitColorChooserRequest_get_rgba, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitColorChooserRequest, set_rgba, arginfo_class_Gtk4_WebKitColorChooserRequest_set_rgba, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitContextMenu_methods[] = {
+	ZEND_ME(Gtk4_WebKitContextMenu, __construct, arginfo_class_Gtk4_WebKitContextMenu___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenu, append, arginfo_class_Gtk4_WebKitContextMenu_append, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenu, first, arginfo_class_Gtk4_WebKitContextMenu_first, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenu, get_event, arginfo_class_Gtk4_WebKitContextMenu_get_event, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenu, get_item_at_position, arginfo_class_Gtk4_WebKitContextMenu_get_item_at_position, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenu, get_items, arginfo_class_Gtk4_WebKitContextMenu_get_items, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenu, get_n_items, arginfo_class_Gtk4_WebKitContextMenu_get_n_items, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenu, get_position, arginfo_class_Gtk4_WebKitContextMenu_get_position, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenu, get_user_data, arginfo_class_Gtk4_WebKitContextMenu_get_user_data, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenu, insert, arginfo_class_Gtk4_WebKitContextMenu_insert, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenu, last, arginfo_class_Gtk4_WebKitContextMenu_last, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenu, move_item, arginfo_class_Gtk4_WebKitContextMenu_move_item, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenu, prepend, arginfo_class_Gtk4_WebKitContextMenu_prepend, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenu, remove, arginfo_class_Gtk4_WebKitContextMenu_remove, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenu, remove_all, arginfo_class_Gtk4_WebKitContextMenu_remove_all, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenu, set_user_data, arginfo_class_Gtk4_WebKitContextMenu_set_user_data, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitContextMenuItem_methods[] = {
+	ZEND_ME(Gtk4_WebKitContextMenuItem, __construct, arginfo_class_Gtk4_WebKitContextMenuItem___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitContextMenuItem, new_from_gaction, arginfo_class_Gtk4_WebKitContextMenuItem_new_from_gaction, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitContextMenuItem, new_from_stock_action, arginfo_class_Gtk4_WebKitContextMenuItem_new_from_stock_action, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitContextMenuItem, new_from_stock_action_with_label, arginfo_class_Gtk4_WebKitContextMenuItem_new_from_stock_action_with_label, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitContextMenuItem, new_separator, arginfo_class_Gtk4_WebKitContextMenuItem_new_separator, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitContextMenuItem, new_with_submenu, arginfo_class_Gtk4_WebKitContextMenuItem_new_with_submenu, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitContextMenuItem, get_gaction, arginfo_class_Gtk4_WebKitContextMenuItem_get_gaction, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenuItem, get_gaction_target, arginfo_class_Gtk4_WebKitContextMenuItem_get_gaction_target, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenuItem, get_stock_action, arginfo_class_Gtk4_WebKitContextMenuItem_get_stock_action, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenuItem, get_submenu, arginfo_class_Gtk4_WebKitContextMenuItem_get_submenu, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenuItem, get_title, arginfo_class_Gtk4_WebKitContextMenuItem_get_title, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenuItem, is_separator, arginfo_class_Gtk4_WebKitContextMenuItem_is_separator, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitContextMenuItem, set_submenu, arginfo_class_Gtk4_WebKitContextMenuItem_set_submenu, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitCookieManager_methods[] = {
+	ZEND_ME(Gtk4_WebKitCookieManager, __construct, arginfo_class_Gtk4_WebKitCookieManager___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitCookieManager, add_cookie, arginfo_class_Gtk4_WebKitCookieManager_add_cookie, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCookieManager, add_cookie_finish, arginfo_class_Gtk4_WebKitCookieManager_add_cookie_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCookieManager, delete_cookie, arginfo_class_Gtk4_WebKitCookieManager_delete_cookie, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCookieManager, delete_cookie_finish, arginfo_class_Gtk4_WebKitCookieManager_delete_cookie_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCookieManager, get_accept_policy, arginfo_class_Gtk4_WebKitCookieManager_get_accept_policy, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCookieManager, get_accept_policy_finish, arginfo_class_Gtk4_WebKitCookieManager_get_accept_policy_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCookieManager, get_all_cookies, arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCookieManager, get_all_cookies_finish, arginfo_class_Gtk4_WebKitCookieManager_get_all_cookies_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCookieManager, get_cookies, arginfo_class_Gtk4_WebKitCookieManager_get_cookies, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCookieManager, get_cookies_finish, arginfo_class_Gtk4_WebKitCookieManager_get_cookies_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCookieManager, replace_cookies_finish, arginfo_class_Gtk4_WebKitCookieManager_replace_cookies_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCookieManager, set_accept_policy, arginfo_class_Gtk4_WebKitCookieManager_set_accept_policy, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCookieManager, set_persistent_storage, arginfo_class_Gtk4_WebKitCookieManager_set_persistent_storage, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitCredential_methods[] = {
+	ZEND_ME(Gtk4_WebKitCredential, __construct, arginfo_class_Gtk4_WebKitCredential___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCredential, new_for_certificate, arginfo_class_Gtk4_WebKitCredential_new_for_certificate, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitCredential, new_for_certificate_pin, arginfo_class_Gtk4_WebKitCredential_new_for_certificate_pin, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitCredential, get_certificate, arginfo_class_Gtk4_WebKitCredential_get_certificate, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCredential, get_password, arginfo_class_Gtk4_WebKitCredential_get_password, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCredential, get_persistence, arginfo_class_Gtk4_WebKitCredential_get_persistence, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCredential, get_username, arginfo_class_Gtk4_WebKitCredential_get_username, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitCredential, has_password, arginfo_class_Gtk4_WebKitCredential_has_password, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitDeviceInfoPermissionRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitDeviceInfoPermissionRequest, __construct, arginfo_class_Gtk4_WebKitDeviceInfoPermissionRequest___construct, ZEND_ACC_PRIVATE)
+	ZEND_RAW_FENTRY("allow", zim_Gtk4_WebKitPermissionRequest_allow, arginfo_class_Gtk4_WebKitDeviceInfoPermissionRequest_allow, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("deny", zim_Gtk4_WebKitPermissionRequest_deny, arginfo_class_Gtk4_WebKitDeviceInfoPermissionRequest_deny, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitDownload_methods[] = {
+	ZEND_ME(Gtk4_WebKitDownload, __construct, arginfo_class_Gtk4_WebKitDownload___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitDownload, cancel, arginfo_class_Gtk4_WebKitDownload_cancel, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitDownload, get_allow_overwrite, arginfo_class_Gtk4_WebKitDownload_get_allow_overwrite, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitDownload, get_destination, arginfo_class_Gtk4_WebKitDownload_get_destination, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitDownload, get_elapsed_time, arginfo_class_Gtk4_WebKitDownload_get_elapsed_time, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitDownload, get_estimated_progress, arginfo_class_Gtk4_WebKitDownload_get_estimated_progress, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitDownload, get_received_data_length, arginfo_class_Gtk4_WebKitDownload_get_received_data_length, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitDownload, get_request, arginfo_class_Gtk4_WebKitDownload_get_request, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitDownload, get_response, arginfo_class_Gtk4_WebKitDownload_get_response, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitDownload, get_web_view, arginfo_class_Gtk4_WebKitDownload_get_web_view, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitDownload, set_allow_overwrite, arginfo_class_Gtk4_WebKitDownload_set_allow_overwrite, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitDownload, set_destination, arginfo_class_Gtk4_WebKitDownload_set_destination, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitEditorState_methods[] = {
+	ZEND_ME(Gtk4_WebKitEditorState, __construct, arginfo_class_Gtk4_WebKitEditorState___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitEditorState, get_typing_attributes, arginfo_class_Gtk4_WebKitEditorState_get_typing_attributes, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitEditorState, is_copy_available, arginfo_class_Gtk4_WebKitEditorState_is_copy_available, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitEditorState, is_cut_available, arginfo_class_Gtk4_WebKitEditorState_is_cut_available, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitEditorState, is_paste_available, arginfo_class_Gtk4_WebKitEditorState_is_paste_available, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitEditorState, is_redo_available, arginfo_class_Gtk4_WebKitEditorState_is_redo_available, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitEditorState, is_undo_available, arginfo_class_Gtk4_WebKitEditorState_is_undo_available, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitFaviconDatabase_methods[] = {
+	ZEND_ME(Gtk4_WebKitFaviconDatabase, __construct, arginfo_class_Gtk4_WebKitFaviconDatabase___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitFaviconDatabase, clear, arginfo_class_Gtk4_WebKitFaviconDatabase_clear, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFaviconDatabase, get_favicon, arginfo_class_Gtk4_WebKitFaviconDatabase_get_favicon, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFaviconDatabase, get_favicon_finish, arginfo_class_Gtk4_WebKitFaviconDatabase_get_favicon_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFaviconDatabase, get_favicon_uri, arginfo_class_Gtk4_WebKitFaviconDatabase_get_favicon_uri, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitFeature_methods[] = {
+	ZEND_ME(Gtk4_WebKitFeature, __construct, arginfo_class_Gtk4_WebKitFeature___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitFeature, get_category, arginfo_class_Gtk4_WebKitFeature_get_category, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFeature, get_default_value, arginfo_class_Gtk4_WebKitFeature_get_default_value, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFeature, get_details, arginfo_class_Gtk4_WebKitFeature_get_details, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFeature, get_identifier, arginfo_class_Gtk4_WebKitFeature_get_identifier, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFeature, get_name, arginfo_class_Gtk4_WebKitFeature_get_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFeature, get_status, arginfo_class_Gtk4_WebKitFeature_get_status, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitFeatureList_methods[] = {
+	ZEND_ME(Gtk4_WebKitFeatureList, __construct, arginfo_class_Gtk4_WebKitFeatureList___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitFeatureList, get, arginfo_class_Gtk4_WebKitFeatureList_get, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFeatureList, get_length, arginfo_class_Gtk4_WebKitFeatureList_get_length, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitFileChooserRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitFileChooserRequest, __construct, arginfo_class_Gtk4_WebKitFileChooserRequest___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitFileChooserRequest, cancel, arginfo_class_Gtk4_WebKitFileChooserRequest_cancel, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFileChooserRequest, get_mime_types, arginfo_class_Gtk4_WebKitFileChooserRequest_get_mime_types, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFileChooserRequest, get_mime_types_filter, arginfo_class_Gtk4_WebKitFileChooserRequest_get_mime_types_filter, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFileChooserRequest, get_select_multiple, arginfo_class_Gtk4_WebKitFileChooserRequest_get_select_multiple, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFileChooserRequest, get_selected_files, arginfo_class_Gtk4_WebKitFileChooserRequest_get_selected_files, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFileChooserRequest, select_files, arginfo_class_Gtk4_WebKitFileChooserRequest_select_files, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitFindController_methods[] = {
+	ZEND_ME(Gtk4_WebKitFindController, __construct, arginfo_class_Gtk4_WebKitFindController___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitFindController, count_matches, arginfo_class_Gtk4_WebKitFindController_count_matches, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFindController, get_max_match_count, arginfo_class_Gtk4_WebKitFindController_get_max_match_count, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFindController, get_options, arginfo_class_Gtk4_WebKitFindController_get_options, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFindController, get_search_text, arginfo_class_Gtk4_WebKitFindController_get_search_text, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFindController, get_web_view, arginfo_class_Gtk4_WebKitFindController_get_web_view, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFindController, search, arginfo_class_Gtk4_WebKitFindController_search, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFindController, search_finish, arginfo_class_Gtk4_WebKitFindController_search_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFindController, search_next, arginfo_class_Gtk4_WebKitFindController_search_next, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitFindController, search_previous, arginfo_class_Gtk4_WebKitFindController_search_previous, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitFormSubmissionRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitFormSubmissionRequest, __construct, arginfo_class_Gtk4_WebKitFormSubmissionRequest___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitFormSubmissionRequest, submit, arginfo_class_Gtk4_WebKitFormSubmissionRequest_submit, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitGeolocationManager_methods[] = {
+	ZEND_ME(Gtk4_WebKitGeolocationManager, __construct, arginfo_class_Gtk4_WebKitGeolocationManager___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitGeolocationManager, failed, arginfo_class_Gtk4_WebKitGeolocationManager_failed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitGeolocationManager, get_enable_high_accuracy, arginfo_class_Gtk4_WebKitGeolocationManager_get_enable_high_accuracy, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitGeolocationManager, update_position, arginfo_class_Gtk4_WebKitGeolocationManager_update_position, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitGeolocationPermissionRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitGeolocationPermissionRequest, __construct, arginfo_class_Gtk4_WebKitGeolocationPermissionRequest___construct, ZEND_ACC_PRIVATE)
+	ZEND_RAW_FENTRY("allow", zim_Gtk4_WebKitPermissionRequest_allow, arginfo_class_Gtk4_WebKitGeolocationPermissionRequest_allow, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("deny", zim_Gtk4_WebKitPermissionRequest_deny, arginfo_class_Gtk4_WebKitGeolocationPermissionRequest_deny, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitGeolocationPosition_methods[] = {
+	ZEND_ME(Gtk4_WebKitGeolocationPosition, __construct, arginfo_class_Gtk4_WebKitGeolocationPosition___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitGeolocationPosition, set_altitude, arginfo_class_Gtk4_WebKitGeolocationPosition_set_altitude, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitGeolocationPosition, set_altitude_accuracy, arginfo_class_Gtk4_WebKitGeolocationPosition_set_altitude_accuracy, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitGeolocationPosition, set_heading, arginfo_class_Gtk4_WebKitGeolocationPosition_set_heading, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitGeolocationPosition, set_speed, arginfo_class_Gtk4_WebKitGeolocationPosition_set_speed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitGeolocationPosition, set_timestamp, arginfo_class_Gtk4_WebKitGeolocationPosition_set_timestamp, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitHitTestResult_methods[] = {
+	ZEND_ME(Gtk4_WebKitHitTestResult, __construct, arginfo_class_Gtk4_WebKitHitTestResult___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitHitTestResult, context_is_editable, arginfo_class_Gtk4_WebKitHitTestResult_context_is_editable, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitHitTestResult, context_is_image, arginfo_class_Gtk4_WebKitHitTestResult_context_is_image, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitHitTestResult, context_is_link, arginfo_class_Gtk4_WebKitHitTestResult_context_is_link, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitHitTestResult, context_is_media, arginfo_class_Gtk4_WebKitHitTestResult_context_is_media, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitHitTestResult, context_is_scrollbar, arginfo_class_Gtk4_WebKitHitTestResult_context_is_scrollbar, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitHitTestResult, context_is_selection, arginfo_class_Gtk4_WebKitHitTestResult_context_is_selection, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitHitTestResult, get_context, arginfo_class_Gtk4_WebKitHitTestResult_get_context, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitHitTestResult, get_image_uri, arginfo_class_Gtk4_WebKitHitTestResult_get_image_uri, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitHitTestResult, get_link_label, arginfo_class_Gtk4_WebKitHitTestResult_get_link_label, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitHitTestResult, get_link_title, arginfo_class_Gtk4_WebKitHitTestResult_get_link_title, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitHitTestResult, get_link_uri, arginfo_class_Gtk4_WebKitHitTestResult_get_link_uri, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitHitTestResult, get_media_uri, arginfo_class_Gtk4_WebKitHitTestResult_get_media_uri, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitITPFirstParty_methods[] = {
+	ZEND_ME(Gtk4_WebKitITPFirstParty, __construct, arginfo_class_Gtk4_WebKitITPFirstParty___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitITPFirstParty, get_domain, arginfo_class_Gtk4_WebKitITPFirstParty_get_domain, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitITPFirstParty, get_last_update_time, arginfo_class_Gtk4_WebKitITPFirstParty_get_last_update_time, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitITPFirstParty, get_website_data_access_allowed, arginfo_class_Gtk4_WebKitITPFirstParty_get_website_data_access_allowed, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitITPThirdParty_methods[] = {
+	ZEND_ME(Gtk4_WebKitITPThirdParty, __construct, arginfo_class_Gtk4_WebKitITPThirdParty___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitITPThirdParty, get_domain, arginfo_class_Gtk4_WebKitITPThirdParty_get_domain, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitITPThirdParty, get_first_parties, arginfo_class_Gtk4_WebKitITPThirdParty_get_first_parties, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitInputMethodContext_methods[] = {
+	ZEND_ME(Gtk4_WebKitInputMethodContext, __construct, arginfo_class_Gtk4_WebKitInputMethodContext___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, filter_key_event, arginfo_class_Gtk4_WebKitInputMethodContext_filter_key_event, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, get_input_hints, arginfo_class_Gtk4_WebKitInputMethodContext_get_input_hints, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, get_input_purpose, arginfo_class_Gtk4_WebKitInputMethodContext_get_input_purpose, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, notify_cursor_area, arginfo_class_Gtk4_WebKitInputMethodContext_notify_cursor_area, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, notify_focus_in, arginfo_class_Gtk4_WebKitInputMethodContext_notify_focus_in, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, notify_focus_out, arginfo_class_Gtk4_WebKitInputMethodContext_notify_focus_out, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, notify_surrounding, arginfo_class_Gtk4_WebKitInputMethodContext_notify_surrounding, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, reset, arginfo_class_Gtk4_WebKitInputMethodContext_reset, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, set_enable_preedit, arginfo_class_Gtk4_WebKitInputMethodContext_set_enable_preedit, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, set_input_hints, arginfo_class_Gtk4_WebKitInputMethodContext_set_input_hints, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, set_input_purpose, arginfo_class_Gtk4_WebKitInputMethodContext_set_input_purpose, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, vfunc_committed, arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_committed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, vfunc_delete_surrounding, arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_delete_surrounding, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, vfunc_filter_key_event, arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_filter_key_event, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, vfunc_notify_cursor_area, arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_notify_cursor_area, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, vfunc_notify_focus_in, arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_notify_focus_in, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, vfunc_notify_focus_out, arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_notify_focus_out, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, vfunc_notify_surrounding, arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_notify_surrounding, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, vfunc_preedit_changed, arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_preedit_changed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, vfunc_preedit_finished, arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_preedit_finished, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, vfunc_preedit_started, arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_preedit_started, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, vfunc_reset, arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_reset, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodContext, vfunc_set_enable_preedit, arginfo_class_Gtk4_WebKitInputMethodContext_vfunc_set_enable_preedit, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitInputMethodUnderline_methods[] = {
+	ZEND_ME(Gtk4_WebKitInputMethodUnderline, __construct, arginfo_class_Gtk4_WebKitInputMethodUnderline___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitInputMethodUnderline, set_color, arginfo_class_Gtk4_WebKitInputMethodUnderline_set_color, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitMediaKeySystemPermissionRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitMediaKeySystemPermissionRequest, __construct, arginfo_class_Gtk4_WebKitMediaKeySystemPermissionRequest___construct, ZEND_ACC_PRIVATE)
+	ZEND_RAW_FENTRY("allow", zim_Gtk4_WebKitPermissionRequest_allow, arginfo_class_Gtk4_WebKitMediaKeySystemPermissionRequest_allow, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("deny", zim_Gtk4_WebKitPermissionRequest_deny, arginfo_class_Gtk4_WebKitMediaKeySystemPermissionRequest_deny, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitMemoryPressureSettings_methods[] = {
+	ZEND_ME(Gtk4_WebKitMemoryPressureSettings, __construct, arginfo_class_Gtk4_WebKitMemoryPressureSettings___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitMemoryPressureSettings, get_conservative_threshold, arginfo_class_Gtk4_WebKitMemoryPressureSettings_get_conservative_threshold, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitMemoryPressureSettings, get_kill_threshold, arginfo_class_Gtk4_WebKitMemoryPressureSettings_get_kill_threshold, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitMemoryPressureSettings, get_memory_limit, arginfo_class_Gtk4_WebKitMemoryPressureSettings_get_memory_limit, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitMemoryPressureSettings, get_poll_interval, arginfo_class_Gtk4_WebKitMemoryPressureSettings_get_poll_interval, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitMemoryPressureSettings, get_strict_threshold, arginfo_class_Gtk4_WebKitMemoryPressureSettings_get_strict_threshold, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitMemoryPressureSettings, set_conservative_threshold, arginfo_class_Gtk4_WebKitMemoryPressureSettings_set_conservative_threshold, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitMemoryPressureSettings, set_kill_threshold, arginfo_class_Gtk4_WebKitMemoryPressureSettings_set_kill_threshold, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitMemoryPressureSettings, set_memory_limit, arginfo_class_Gtk4_WebKitMemoryPressureSettings_set_memory_limit, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitMemoryPressureSettings, set_poll_interval, arginfo_class_Gtk4_WebKitMemoryPressureSettings_set_poll_interval, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitMemoryPressureSettings, set_strict_threshold, arginfo_class_Gtk4_WebKitMemoryPressureSettings_set_strict_threshold, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitNavigationAction_methods[] = {
+	ZEND_ME(Gtk4_WebKitNavigationAction, __construct, arginfo_class_Gtk4_WebKitNavigationAction___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitNavigationAction, get_frame_name, arginfo_class_Gtk4_WebKitNavigationAction_get_frame_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNavigationAction, get_modifiers, arginfo_class_Gtk4_WebKitNavigationAction_get_modifiers, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNavigationAction, get_mouse_button, arginfo_class_Gtk4_WebKitNavigationAction_get_mouse_button, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNavigationAction, get_navigation_type, arginfo_class_Gtk4_WebKitNavigationAction_get_navigation_type, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNavigationAction, get_request, arginfo_class_Gtk4_WebKitNavigationAction_get_request, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNavigationAction, is_redirect, arginfo_class_Gtk4_WebKitNavigationAction_is_redirect, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNavigationAction, is_user_gesture, arginfo_class_Gtk4_WebKitNavigationAction_is_user_gesture, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitNavigationPolicyDecision_methods[] = {
+	ZEND_ME(Gtk4_WebKitNavigationPolicyDecision, __construct, arginfo_class_Gtk4_WebKitNavigationPolicyDecision___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitNavigationPolicyDecision, get_navigation_action, arginfo_class_Gtk4_WebKitNavigationPolicyDecision_get_navigation_action, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitNetworkProxySettings_methods[] = {
+	ZEND_ME(Gtk4_WebKitNetworkProxySettings, __construct, arginfo_class_Gtk4_WebKitNetworkProxySettings___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkProxySettings, add_proxy_for_scheme, arginfo_class_Gtk4_WebKitNetworkProxySettings_add_proxy_for_scheme, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitNetworkSession_methods[] = {
+	ZEND_ME(Gtk4_WebKitNetworkSession, __construct, arginfo_class_Gtk4_WebKitNetworkSession___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, new_ephemeral, arginfo_class_Gtk4_WebKitNetworkSession_new_ephemeral, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, get_default, arginfo_class_Gtk4_WebKitNetworkSession_get_default, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, set_memory_pressure_settings, arginfo_class_Gtk4_WebKitNetworkSession_set_memory_pressure_settings, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, allow_tls_certificate_for_host, arginfo_class_Gtk4_WebKitNetworkSession_allow_tls_certificate_for_host, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, download_uri, arginfo_class_Gtk4_WebKitNetworkSession_download_uri, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, get_cookie_manager, arginfo_class_Gtk4_WebKitNetworkSession_get_cookie_manager, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, get_itp_enabled, arginfo_class_Gtk4_WebKitNetworkSession_get_itp_enabled, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, get_itp_summary, arginfo_class_Gtk4_WebKitNetworkSession_get_itp_summary, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, get_itp_summary_finish, arginfo_class_Gtk4_WebKitNetworkSession_get_itp_summary_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, get_persistent_credential_storage_enabled, arginfo_class_Gtk4_WebKitNetworkSession_get_persistent_credential_storage_enabled, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, get_tls_errors_policy, arginfo_class_Gtk4_WebKitNetworkSession_get_tls_errors_policy, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, get_website_data_manager, arginfo_class_Gtk4_WebKitNetworkSession_get_website_data_manager, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, is_ephemeral, arginfo_class_Gtk4_WebKitNetworkSession_is_ephemeral, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, prefetch_dns, arginfo_class_Gtk4_WebKitNetworkSession_prefetch_dns, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, set_itp_enabled, arginfo_class_Gtk4_WebKitNetworkSession_set_itp_enabled, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, set_persistent_credential_storage_enabled, arginfo_class_Gtk4_WebKitNetworkSession_set_persistent_credential_storage_enabled, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, set_proxy_settings, arginfo_class_Gtk4_WebKitNetworkSession_set_proxy_settings, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNetworkSession, set_tls_errors_policy, arginfo_class_Gtk4_WebKitNetworkSession_set_tls_errors_policy, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitNotification_methods[] = {
+	ZEND_ME(Gtk4_WebKitNotification, __construct, arginfo_class_Gtk4_WebKitNotification___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitNotification, clicked, arginfo_class_Gtk4_WebKitNotification_clicked, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNotification, close, arginfo_class_Gtk4_WebKitNotification_close, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNotification, get_body, arginfo_class_Gtk4_WebKitNotification_get_body, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNotification, get_id, arginfo_class_Gtk4_WebKitNotification_get_id, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNotification, get_tag, arginfo_class_Gtk4_WebKitNotification_get_tag, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitNotification, get_title, arginfo_class_Gtk4_WebKitNotification_get_title, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitNotificationPermissionRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitNotificationPermissionRequest, __construct, arginfo_class_Gtk4_WebKitNotificationPermissionRequest___construct, ZEND_ACC_PRIVATE)
+	ZEND_RAW_FENTRY("allow", zim_Gtk4_WebKitPermissionRequest_allow, arginfo_class_Gtk4_WebKitNotificationPermissionRequest_allow, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("deny", zim_Gtk4_WebKitPermissionRequest_deny, arginfo_class_Gtk4_WebKitNotificationPermissionRequest_deny, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitOptionMenu_methods[] = {
+	ZEND_ME(Gtk4_WebKitOptionMenu, __construct, arginfo_class_Gtk4_WebKitOptionMenu___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitOptionMenu, activate_item, arginfo_class_Gtk4_WebKitOptionMenu_activate_item, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitOptionMenu, close, arginfo_class_Gtk4_WebKitOptionMenu_close, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitOptionMenu, get_event, arginfo_class_Gtk4_WebKitOptionMenu_get_event, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitOptionMenu, get_item, arginfo_class_Gtk4_WebKitOptionMenu_get_item, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitOptionMenu, get_n_items, arginfo_class_Gtk4_WebKitOptionMenu_get_n_items, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitOptionMenu, select_item, arginfo_class_Gtk4_WebKitOptionMenu_select_item, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitOptionMenuItem_methods[] = {
+	ZEND_ME(Gtk4_WebKitOptionMenuItem, __construct, arginfo_class_Gtk4_WebKitOptionMenuItem___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitOptionMenuItem, get_label, arginfo_class_Gtk4_WebKitOptionMenuItem_get_label, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitOptionMenuItem, get_tooltip, arginfo_class_Gtk4_WebKitOptionMenuItem_get_tooltip, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitOptionMenuItem, is_enabled, arginfo_class_Gtk4_WebKitOptionMenuItem_is_enabled, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitOptionMenuItem, is_group_child, arginfo_class_Gtk4_WebKitOptionMenuItem_is_group_child, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitOptionMenuItem, is_group_label, arginfo_class_Gtk4_WebKitOptionMenuItem_is_group_label, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitOptionMenuItem, is_selected, arginfo_class_Gtk4_WebKitOptionMenuItem_is_selected, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitPermissionRequest_methods[] = {
+	ZEND_RAW_FENTRY("allow", NULL, arginfo_class_Gtk4_WebKitPermissionRequest_allow, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+	ZEND_RAW_FENTRY("deny", NULL, arginfo_class_Gtk4_WebKitPermissionRequest_deny, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitPermissionRequestObject_methods[] = {
+	ZEND_ME(Gtk4_WebKitPermissionRequestObject, __construct, arginfo_class_Gtk4_WebKitPermissionRequestObject___construct, ZEND_ACC_PRIVATE)
+	ZEND_RAW_FENTRY("allow", zim_Gtk4_WebKitPermissionRequest_allow, arginfo_class_Gtk4_WebKitPermissionRequestObject_allow, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("deny", zim_Gtk4_WebKitPermissionRequest_deny, arginfo_class_Gtk4_WebKitPermissionRequestObject_deny, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitPermissionStateQuery_methods[] = {
+	ZEND_ME(Gtk4_WebKitPermissionStateQuery, __construct, arginfo_class_Gtk4_WebKitPermissionStateQuery___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitPermissionStateQuery, finish, arginfo_class_Gtk4_WebKitPermissionStateQuery_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitPermissionStateQuery, get_name, arginfo_class_Gtk4_WebKitPermissionStateQuery_get_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitPermissionStateQuery, get_security_origin, arginfo_class_Gtk4_WebKitPermissionStateQuery_get_security_origin, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitPointerLockPermissionRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitPointerLockPermissionRequest, __construct, arginfo_class_Gtk4_WebKitPointerLockPermissionRequest___construct, ZEND_ACC_PRIVATE)
+	ZEND_RAW_FENTRY("allow", zim_Gtk4_WebKitPermissionRequest_allow, arginfo_class_Gtk4_WebKitPointerLockPermissionRequest_allow, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("deny", zim_Gtk4_WebKitPermissionRequest_deny, arginfo_class_Gtk4_WebKitPointerLockPermissionRequest_deny, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitPolicyDecision_methods[] = {
+	ZEND_ME(Gtk4_WebKitPolicyDecision, __construct, arginfo_class_Gtk4_WebKitPolicyDecision___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitPolicyDecision, download, arginfo_class_Gtk4_WebKitPolicyDecision_download, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitPolicyDecision, ignore, arginfo_class_Gtk4_WebKitPolicyDecision_ignore, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitPolicyDecision, use, arginfo_class_Gtk4_WebKitPolicyDecision_use, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitPolicyDecision, use_with_policies, arginfo_class_Gtk4_WebKitPolicyDecision_use_with_policies, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitPrintOperation_methods[] = {
+	ZEND_ME(Gtk4_WebKitPrintOperation, __construct, arginfo_class_Gtk4_WebKitPrintOperation___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitPrintOperation, get_page_setup, arginfo_class_Gtk4_WebKitPrintOperation_get_page_setup, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitPrintOperation, get_print_settings, arginfo_class_Gtk4_WebKitPrintOperation_get_print_settings, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitPrintOperation, print, arginfo_class_Gtk4_WebKitPrintOperation_print, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitPrintOperation, run_dialog, arginfo_class_Gtk4_WebKitPrintOperation_run_dialog, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitPrintOperation, set_page_setup, arginfo_class_Gtk4_WebKitPrintOperation_set_page_setup, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitPrintOperation, set_print_settings, arginfo_class_Gtk4_WebKitPrintOperation_set_print_settings, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitResponsePolicyDecision_methods[] = {
+	ZEND_ME(Gtk4_WebKitResponsePolicyDecision, __construct, arginfo_class_Gtk4_WebKitResponsePolicyDecision___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitResponsePolicyDecision, get_request, arginfo_class_Gtk4_WebKitResponsePolicyDecision_get_request, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitResponsePolicyDecision, get_response, arginfo_class_Gtk4_WebKitResponsePolicyDecision_get_response, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitResponsePolicyDecision, is_main_frame_main_resource, arginfo_class_Gtk4_WebKitResponsePolicyDecision_is_main_frame_main_resource, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitResponsePolicyDecision, is_mime_type_supported, arginfo_class_Gtk4_WebKitResponsePolicyDecision_is_mime_type_supported, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitScriptDialog_methods[] = {
+	ZEND_ME(Gtk4_WebKitScriptDialog, __construct, arginfo_class_Gtk4_WebKitScriptDialog___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitScriptDialog, close, arginfo_class_Gtk4_WebKitScriptDialog_close, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitScriptDialog, confirm_set_confirmed, arginfo_class_Gtk4_WebKitScriptDialog_confirm_set_confirmed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitScriptDialog, get_dialog_type, arginfo_class_Gtk4_WebKitScriptDialog_get_dialog_type, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitScriptDialog, get_message, arginfo_class_Gtk4_WebKitScriptDialog_get_message, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitScriptDialog, prompt_get_default_text, arginfo_class_Gtk4_WebKitScriptDialog_prompt_get_default_text, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitScriptDialog, prompt_set_text, arginfo_class_Gtk4_WebKitScriptDialog_prompt_set_text, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitScriptMessageReply_methods[] = {
+	ZEND_ME(Gtk4_WebKitScriptMessageReply, __construct, arginfo_class_Gtk4_WebKitScriptMessageReply___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitScriptMessageReply, return_error_message, arginfo_class_Gtk4_WebKitScriptMessageReply_return_error_message, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitScriptMessageReply, return_value, arginfo_class_Gtk4_WebKitScriptMessageReply_return_value, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitSecurityManager_methods[] = {
+	ZEND_ME(Gtk4_WebKitSecurityManager, __construct, arginfo_class_Gtk4_WebKitSecurityManager___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitSecurityManager, register_uri_scheme_as_cors_enabled, arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_cors_enabled, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSecurityManager, register_uri_scheme_as_display_isolated, arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_display_isolated, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSecurityManager, register_uri_scheme_as_empty_document, arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_empty_document, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSecurityManager, register_uri_scheme_as_local, arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_local, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSecurityManager, register_uri_scheme_as_no_access, arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_no_access, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSecurityManager, register_uri_scheme_as_secure, arginfo_class_Gtk4_WebKitSecurityManager_register_uri_scheme_as_secure, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSecurityManager, uri_scheme_is_cors_enabled, arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_cors_enabled, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSecurityManager, uri_scheme_is_display_isolated, arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_display_isolated, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSecurityManager, uri_scheme_is_empty_document, arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_empty_document, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSecurityManager, uri_scheme_is_local, arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_local, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSecurityManager, uri_scheme_is_no_access, arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_no_access, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSecurityManager, uri_scheme_is_secure, arginfo_class_Gtk4_WebKitSecurityManager_uri_scheme_is_secure, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitSecurityOrigin_methods[] = {
+	ZEND_ME(Gtk4_WebKitSecurityOrigin, __construct, arginfo_class_Gtk4_WebKitSecurityOrigin___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSecurityOrigin, new_for_uri, arginfo_class_Gtk4_WebKitSecurityOrigin_new_for_uri, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitSecurityOrigin, get_host, arginfo_class_Gtk4_WebKitSecurityOrigin_get_host, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSecurityOrigin, get_port, arginfo_class_Gtk4_WebKitSecurityOrigin_get_port, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSecurityOrigin, get_protocol, arginfo_class_Gtk4_WebKitSecurityOrigin_get_protocol, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSecurityOrigin, to_string, arginfo_class_Gtk4_WebKitSecurityOrigin_to_string, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitSettings_methods[] = {
+	ZEND_ME(Gtk4_WebKitSettings, __construct, arginfo_class_Gtk4_WebKitSettings___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, font_size_to_pixels, arginfo_class_Gtk4_WebKitSettings_font_size_to_pixels, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitSettings, font_size_to_points, arginfo_class_Gtk4_WebKitSettings_font_size_to_points, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_all_features, arginfo_class_Gtk4_WebKitSettings_get_all_features, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_development_features, arginfo_class_Gtk4_WebKitSettings_get_development_features, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_experimental_features, arginfo_class_Gtk4_WebKitSettings_get_experimental_features, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitSettings, apply_from_key_file, arginfo_class_Gtk4_WebKitSettings_apply_from_key_file, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_allow_file_access_from_file_urls, arginfo_class_Gtk4_WebKitSettings_get_allow_file_access_from_file_urls, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_allow_modal_dialogs, arginfo_class_Gtk4_WebKitSettings_get_allow_modal_dialogs, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_allow_top_navigation_to_data_urls, arginfo_class_Gtk4_WebKitSettings_get_allow_top_navigation_to_data_urls, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_allow_universal_access_from_file_urls, arginfo_class_Gtk4_WebKitSettings_get_allow_universal_access_from_file_urls, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_auto_load_images, arginfo_class_Gtk4_WebKitSettings_get_auto_load_images, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_cursive_font_family, arginfo_class_Gtk4_WebKitSettings_get_cursive_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_default_charset, arginfo_class_Gtk4_WebKitSettings_get_default_charset, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_default_font_family, arginfo_class_Gtk4_WebKitSettings_get_default_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_default_font_size, arginfo_class_Gtk4_WebKitSettings_get_default_font_size, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_default_monospace_font_size, arginfo_class_Gtk4_WebKitSettings_get_default_monospace_font_size, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_disable_web_security, arginfo_class_Gtk4_WebKitSettings_get_disable_web_security, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_draw_compositing_indicators, arginfo_class_Gtk4_WebKitSettings_get_draw_compositing_indicators, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_2d_canvas_acceleration, arginfo_class_Gtk4_WebKitSettings_get_enable_2d_canvas_acceleration, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_back_forward_navigation_gestures, arginfo_class_Gtk4_WebKitSettings_get_enable_back_forward_navigation_gestures, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_caret_browsing, arginfo_class_Gtk4_WebKitSettings_get_enable_caret_browsing, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_developer_extras, arginfo_class_Gtk4_WebKitSettings_get_enable_developer_extras, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_encrypted_media, arginfo_class_Gtk4_WebKitSettings_get_enable_encrypted_media, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_fullscreen, arginfo_class_Gtk4_WebKitSettings_get_enable_fullscreen, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_html5_database, arginfo_class_Gtk4_WebKitSettings_get_enable_html5_database, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_html5_local_storage, arginfo_class_Gtk4_WebKitSettings_get_enable_html5_local_storage, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_javascript, arginfo_class_Gtk4_WebKitSettings_get_enable_javascript, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_javascript_markup, arginfo_class_Gtk4_WebKitSettings_get_enable_javascript_markup, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_media, arginfo_class_Gtk4_WebKitSettings_get_enable_media, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_media_capabilities, arginfo_class_Gtk4_WebKitSettings_get_enable_media_capabilities, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_media_stream, arginfo_class_Gtk4_WebKitSettings_get_enable_media_stream, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_mediasource, arginfo_class_Gtk4_WebKitSettings_get_enable_mediasource, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_mock_capture_devices, arginfo_class_Gtk4_WebKitSettings_get_enable_mock_capture_devices, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_page_cache, arginfo_class_Gtk4_WebKitSettings_get_enable_page_cache, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_resizable_text_areas, arginfo_class_Gtk4_WebKitSettings_get_enable_resizable_text_areas, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_site_specific_quirks, arginfo_class_Gtk4_WebKitSettings_get_enable_site_specific_quirks, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_smooth_scrolling, arginfo_class_Gtk4_WebKitSettings_get_enable_smooth_scrolling, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_spatial_navigation, arginfo_class_Gtk4_WebKitSettings_get_enable_spatial_navigation, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_tabs_to_links, arginfo_class_Gtk4_WebKitSettings_get_enable_tabs_to_links, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_webaudio, arginfo_class_Gtk4_WebKitSettings_get_enable_webaudio, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_webgl, arginfo_class_Gtk4_WebKitSettings_get_enable_webgl, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_webrtc, arginfo_class_Gtk4_WebKitSettings_get_enable_webrtc, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_enable_write_console_messages_to_stdout, arginfo_class_Gtk4_WebKitSettings_get_enable_write_console_messages_to_stdout, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_fantasy_font_family, arginfo_class_Gtk4_WebKitSettings_get_fantasy_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_feature_enabled, arginfo_class_Gtk4_WebKitSettings_get_feature_enabled, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_hardware_acceleration_policy, arginfo_class_Gtk4_WebKitSettings_get_hardware_acceleration_policy, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_javascript_can_access_clipboard, arginfo_class_Gtk4_WebKitSettings_get_javascript_can_access_clipboard, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_javascript_can_open_windows_automatically, arginfo_class_Gtk4_WebKitSettings_get_javascript_can_open_windows_automatically, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_math_font_family, arginfo_class_Gtk4_WebKitSettings_get_math_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_media_content_types_requiring_hardware_support, arginfo_class_Gtk4_WebKitSettings_get_media_content_types_requiring_hardware_support, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_media_playback_allows_inline, arginfo_class_Gtk4_WebKitSettings_get_media_playback_allows_inline, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_media_playback_requires_user_gesture, arginfo_class_Gtk4_WebKitSettings_get_media_playback_requires_user_gesture, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_minimum_font_size, arginfo_class_Gtk4_WebKitSettings_get_minimum_font_size, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_monospace_font_family, arginfo_class_Gtk4_WebKitSettings_get_monospace_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_pictograph_font_family, arginfo_class_Gtk4_WebKitSettings_get_pictograph_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_print_backgrounds, arginfo_class_Gtk4_WebKitSettings_get_print_backgrounds, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_sans_serif_font_family, arginfo_class_Gtk4_WebKitSettings_get_sans_serif_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_serif_font_family, arginfo_class_Gtk4_WebKitSettings_get_serif_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_user_agent, arginfo_class_Gtk4_WebKitSettings_get_user_agent, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_webrtc_udp_ports_range, arginfo_class_Gtk4_WebKitSettings_get_webrtc_udp_ports_range, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, get_zoom_text_only, arginfo_class_Gtk4_WebKitSettings_get_zoom_text_only, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_allow_file_access_from_file_urls, arginfo_class_Gtk4_WebKitSettings_set_allow_file_access_from_file_urls, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_allow_modal_dialogs, arginfo_class_Gtk4_WebKitSettings_set_allow_modal_dialogs, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_allow_top_navigation_to_data_urls, arginfo_class_Gtk4_WebKitSettings_set_allow_top_navigation_to_data_urls, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_allow_universal_access_from_file_urls, arginfo_class_Gtk4_WebKitSettings_set_allow_universal_access_from_file_urls, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_auto_load_images, arginfo_class_Gtk4_WebKitSettings_set_auto_load_images, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_cursive_font_family, arginfo_class_Gtk4_WebKitSettings_set_cursive_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_default_charset, arginfo_class_Gtk4_WebKitSettings_set_default_charset, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_default_font_family, arginfo_class_Gtk4_WebKitSettings_set_default_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_default_font_size, arginfo_class_Gtk4_WebKitSettings_set_default_font_size, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_default_monospace_font_size, arginfo_class_Gtk4_WebKitSettings_set_default_monospace_font_size, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_disable_web_security, arginfo_class_Gtk4_WebKitSettings_set_disable_web_security, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_draw_compositing_indicators, arginfo_class_Gtk4_WebKitSettings_set_draw_compositing_indicators, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_2d_canvas_acceleration, arginfo_class_Gtk4_WebKitSettings_set_enable_2d_canvas_acceleration, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_back_forward_navigation_gestures, arginfo_class_Gtk4_WebKitSettings_set_enable_back_forward_navigation_gestures, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_caret_browsing, arginfo_class_Gtk4_WebKitSettings_set_enable_caret_browsing, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_developer_extras, arginfo_class_Gtk4_WebKitSettings_set_enable_developer_extras, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_encrypted_media, arginfo_class_Gtk4_WebKitSettings_set_enable_encrypted_media, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_fullscreen, arginfo_class_Gtk4_WebKitSettings_set_enable_fullscreen, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_html5_database, arginfo_class_Gtk4_WebKitSettings_set_enable_html5_database, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_html5_local_storage, arginfo_class_Gtk4_WebKitSettings_set_enable_html5_local_storage, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_javascript, arginfo_class_Gtk4_WebKitSettings_set_enable_javascript, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_javascript_markup, arginfo_class_Gtk4_WebKitSettings_set_enable_javascript_markup, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_media, arginfo_class_Gtk4_WebKitSettings_set_enable_media, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_media_capabilities, arginfo_class_Gtk4_WebKitSettings_set_enable_media_capabilities, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_media_stream, arginfo_class_Gtk4_WebKitSettings_set_enable_media_stream, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_mediasource, arginfo_class_Gtk4_WebKitSettings_set_enable_mediasource, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_mock_capture_devices, arginfo_class_Gtk4_WebKitSettings_set_enable_mock_capture_devices, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_page_cache, arginfo_class_Gtk4_WebKitSettings_set_enable_page_cache, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_resizable_text_areas, arginfo_class_Gtk4_WebKitSettings_set_enable_resizable_text_areas, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_site_specific_quirks, arginfo_class_Gtk4_WebKitSettings_set_enable_site_specific_quirks, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_smooth_scrolling, arginfo_class_Gtk4_WebKitSettings_set_enable_smooth_scrolling, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_spatial_navigation, arginfo_class_Gtk4_WebKitSettings_set_enable_spatial_navigation, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_tabs_to_links, arginfo_class_Gtk4_WebKitSettings_set_enable_tabs_to_links, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_webaudio, arginfo_class_Gtk4_WebKitSettings_set_enable_webaudio, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_webgl, arginfo_class_Gtk4_WebKitSettings_set_enable_webgl, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_webrtc, arginfo_class_Gtk4_WebKitSettings_set_enable_webrtc, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_enable_write_console_messages_to_stdout, arginfo_class_Gtk4_WebKitSettings_set_enable_write_console_messages_to_stdout, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_fantasy_font_family, arginfo_class_Gtk4_WebKitSettings_set_fantasy_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_feature_enabled, arginfo_class_Gtk4_WebKitSettings_set_feature_enabled, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_hardware_acceleration_policy, arginfo_class_Gtk4_WebKitSettings_set_hardware_acceleration_policy, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_javascript_can_access_clipboard, arginfo_class_Gtk4_WebKitSettings_set_javascript_can_access_clipboard, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_javascript_can_open_windows_automatically, arginfo_class_Gtk4_WebKitSettings_set_javascript_can_open_windows_automatically, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_math_font_family, arginfo_class_Gtk4_WebKitSettings_set_math_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_media_content_types_requiring_hardware_support, arginfo_class_Gtk4_WebKitSettings_set_media_content_types_requiring_hardware_support, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_media_playback_allows_inline, arginfo_class_Gtk4_WebKitSettings_set_media_playback_allows_inline, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_media_playback_requires_user_gesture, arginfo_class_Gtk4_WebKitSettings_set_media_playback_requires_user_gesture, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_minimum_font_size, arginfo_class_Gtk4_WebKitSettings_set_minimum_font_size, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_monospace_font_family, arginfo_class_Gtk4_WebKitSettings_set_monospace_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_pictograph_font_family, arginfo_class_Gtk4_WebKitSettings_set_pictograph_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_print_backgrounds, arginfo_class_Gtk4_WebKitSettings_set_print_backgrounds, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_sans_serif_font_family, arginfo_class_Gtk4_WebKitSettings_set_sans_serif_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_serif_font_family, arginfo_class_Gtk4_WebKitSettings_set_serif_font_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_user_agent, arginfo_class_Gtk4_WebKitSettings_set_user_agent, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_user_agent_with_application_details, arginfo_class_Gtk4_WebKitSettings_set_user_agent_with_application_details, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_webrtc_udp_ports_range, arginfo_class_Gtk4_WebKitSettings_set_webrtc_udp_ports_range, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitSettings, set_zoom_text_only, arginfo_class_Gtk4_WebKitSettings_set_zoom_text_only, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitURIRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitURIRequest, __construct, arginfo_class_Gtk4_WebKitURIRequest___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURIRequest, get_http_headers, arginfo_class_Gtk4_WebKitURIRequest_get_http_headers, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURIRequest, get_http_method, arginfo_class_Gtk4_WebKitURIRequest_get_http_method, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURIRequest, get_uri, arginfo_class_Gtk4_WebKitURIRequest_get_uri, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURIRequest, set_uri, arginfo_class_Gtk4_WebKitURIRequest_set_uri, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitURIResponse_methods[] = {
+	ZEND_ME(Gtk4_WebKitURIResponse, __construct, arginfo_class_Gtk4_WebKitURIResponse___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitURIResponse, get_content_length, arginfo_class_Gtk4_WebKitURIResponse_get_content_length, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURIResponse, get_http_headers, arginfo_class_Gtk4_WebKitURIResponse_get_http_headers, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURIResponse, get_mime_type, arginfo_class_Gtk4_WebKitURIResponse_get_mime_type, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURIResponse, get_status_code, arginfo_class_Gtk4_WebKitURIResponse_get_status_code, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURIResponse, get_suggested_filename, arginfo_class_Gtk4_WebKitURIResponse_get_suggested_filename, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURIResponse, get_uri, arginfo_class_Gtk4_WebKitURIResponse_get_uri, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitURISchemeRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, __construct, arginfo_class_Gtk4_WebKitURISchemeRequest___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, finish, arginfo_class_Gtk4_WebKitURISchemeRequest_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, finish_error, arginfo_class_Gtk4_WebKitURISchemeRequest_finish_error, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, finish_with_response, arginfo_class_Gtk4_WebKitURISchemeRequest_finish_with_response, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_http_body, arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_body, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_http_headers, arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_headers, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_http_method, arginfo_class_Gtk4_WebKitURISchemeRequest_get_http_method, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_path, arginfo_class_Gtk4_WebKitURISchemeRequest_get_path, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_scheme, arginfo_class_Gtk4_WebKitURISchemeRequest_get_scheme, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_uri, arginfo_class_Gtk4_WebKitURISchemeRequest_get_uri, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeRequest, get_web_view, arginfo_class_Gtk4_WebKitURISchemeRequest_get_web_view, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitURISchemeResponse_methods[] = {
+	ZEND_ME(Gtk4_WebKitURISchemeResponse, __construct, arginfo_class_Gtk4_WebKitURISchemeResponse___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeResponse, set_content_type, arginfo_class_Gtk4_WebKitURISchemeResponse_set_content_type, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeResponse, set_http_headers, arginfo_class_Gtk4_WebKitURISchemeResponse_set_http_headers, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitURISchemeResponse, set_status, arginfo_class_Gtk4_WebKitURISchemeResponse_set_status, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitUserContentFilter_methods[] = {
+	ZEND_ME(Gtk4_WebKitUserContentFilter, __construct, arginfo_class_Gtk4_WebKitUserContentFilter___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitUserContentFilter, get_identifier, arginfo_class_Gtk4_WebKitUserContentFilter_get_identifier, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitUserContentFilterStore_methods[] = {
+	ZEND_ME(Gtk4_WebKitUserContentFilterStore, __construct, arginfo_class_Gtk4_WebKitUserContentFilterStore___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentFilterStore, fetch_identifiers, arginfo_class_Gtk4_WebKitUserContentFilterStore_fetch_identifiers, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentFilterStore, fetch_identifiers_finish, arginfo_class_Gtk4_WebKitUserContentFilterStore_fetch_identifiers_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentFilterStore, get_path, arginfo_class_Gtk4_WebKitUserContentFilterStore_get_path, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentFilterStore, load, arginfo_class_Gtk4_WebKitUserContentFilterStore_load, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentFilterStore, load_finish, arginfo_class_Gtk4_WebKitUserContentFilterStore_load_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentFilterStore, remove, arginfo_class_Gtk4_WebKitUserContentFilterStore_remove, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentFilterStore, remove_finish, arginfo_class_Gtk4_WebKitUserContentFilterStore_remove_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentFilterStore, save, arginfo_class_Gtk4_WebKitUserContentFilterStore_save, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentFilterStore, save_finish, arginfo_class_Gtk4_WebKitUserContentFilterStore_save_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentFilterStore, save_from_file, arginfo_class_Gtk4_WebKitUserContentFilterStore_save_from_file, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentFilterStore, save_from_file_finish, arginfo_class_Gtk4_WebKitUserContentFilterStore_save_from_file_finish, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitUserContentManager_methods[] = {
+	ZEND_ME(Gtk4_WebKitUserContentManager, __construct, arginfo_class_Gtk4_WebKitUserContentManager___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentManager, add_filter, arginfo_class_Gtk4_WebKitUserContentManager_add_filter, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentManager, add_script, arginfo_class_Gtk4_WebKitUserContentManager_add_script, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentManager, add_style_sheet, arginfo_class_Gtk4_WebKitUserContentManager_add_style_sheet, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentManager, register_script_message_handler, arginfo_class_Gtk4_WebKitUserContentManager_register_script_message_handler, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentManager, register_script_message_handler_with_reply, arginfo_class_Gtk4_WebKitUserContentManager_register_script_message_handler_with_reply, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentManager, remove_all_filters, arginfo_class_Gtk4_WebKitUserContentManager_remove_all_filters, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentManager, remove_all_scripts, arginfo_class_Gtk4_WebKitUserContentManager_remove_all_scripts, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentManager, remove_all_style_sheets, arginfo_class_Gtk4_WebKitUserContentManager_remove_all_style_sheets, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentManager, remove_filter, arginfo_class_Gtk4_WebKitUserContentManager_remove_filter, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentManager, remove_filter_by_id, arginfo_class_Gtk4_WebKitUserContentManager_remove_filter_by_id, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentManager, remove_script, arginfo_class_Gtk4_WebKitUserContentManager_remove_script, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentManager, remove_style_sheet, arginfo_class_Gtk4_WebKitUserContentManager_remove_style_sheet, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserContentManager, unregister_script_message_handler, arginfo_class_Gtk4_WebKitUserContentManager_unregister_script_message_handler, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitUserMediaPermissionRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitUserMediaPermissionRequest, __construct, arginfo_class_Gtk4_WebKitUserMediaPermissionRequest___construct, ZEND_ACC_PRIVATE)
+	ZEND_RAW_FENTRY("allow", zim_Gtk4_WebKitPermissionRequest_allow, arginfo_class_Gtk4_WebKitUserMediaPermissionRequest_allow, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("deny", zim_Gtk4_WebKitPermissionRequest_deny, arginfo_class_Gtk4_WebKitUserMediaPermissionRequest_deny, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitUserMessage_methods[] = {
+	ZEND_ME(Gtk4_WebKitUserMessage, __construct, arginfo_class_Gtk4_WebKitUserMessage___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserMessage, get_name, arginfo_class_Gtk4_WebKitUserMessage_get_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserMessage, get_parameters, arginfo_class_Gtk4_WebKitUserMessage_get_parameters, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserMessage, send_reply, arginfo_class_Gtk4_WebKitUserMessage_send_reply, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitUserScript_methods[] = {
+	ZEND_ME(Gtk4_WebKitUserScript, __construct, arginfo_class_Gtk4_WebKitUserScript___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserScript, new_for_world, arginfo_class_Gtk4_WebKitUserScript_new_for_world, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitUserStyleSheet_methods[] = {
+	ZEND_ME(Gtk4_WebKitUserStyleSheet, __construct, arginfo_class_Gtk4_WebKitUserStyleSheet___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitUserStyleSheet, new_for_world, arginfo_class_Gtk4_WebKitUserStyleSheet_new_for_world, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitWebContext_methods[] = {
+	ZEND_ME(Gtk4_WebKitWebContext, __construct, arginfo_class_Gtk4_WebKitWebContext___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, get_default, arginfo_class_Gtk4_WebKitWebContext_get_default, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_WebKitWebContext, add_path_to_sandbox, arginfo_class_Gtk4_WebKitWebContext_add_path_to_sandbox, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, get_cache_model, arginfo_class_Gtk4_WebKitWebContext_get_cache_model, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, get_geolocation_manager, arginfo_class_Gtk4_WebKitWebContext_get_geolocation_manager, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, get_network_session_for_automation, arginfo_class_Gtk4_WebKitWebContext_get_network_session_for_automation, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, get_security_manager, arginfo_class_Gtk4_WebKitWebContext_get_security_manager, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, get_spell_checking_enabled, arginfo_class_Gtk4_WebKitWebContext_get_spell_checking_enabled, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, get_spell_checking_languages, arginfo_class_Gtk4_WebKitWebContext_get_spell_checking_languages, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, get_time_zone_override, arginfo_class_Gtk4_WebKitWebContext_get_time_zone_override, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, is_automation_allowed, arginfo_class_Gtk4_WebKitWebContext_is_automation_allowed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, send_message_to_all_extensions, arginfo_class_Gtk4_WebKitWebContext_send_message_to_all_extensions, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, set_automation_allowed, arginfo_class_Gtk4_WebKitWebContext_set_automation_allowed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, set_cache_model, arginfo_class_Gtk4_WebKitWebContext_set_cache_model, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, set_preferred_languages, arginfo_class_Gtk4_WebKitWebContext_set_preferred_languages, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, set_spell_checking_enabled, arginfo_class_Gtk4_WebKitWebContext_set_spell_checking_enabled, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, set_spell_checking_languages, arginfo_class_Gtk4_WebKitWebContext_set_spell_checking_languages, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, set_web_process_extensions_directory, arginfo_class_Gtk4_WebKitWebContext_set_web_process_extensions_directory, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, set_web_process_extensions_initialization_user_data, arginfo_class_Gtk4_WebKitWebContext_set_web_process_extensions_initialization_user_data, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebContext, register_uri_scheme, arginfo_class_Gtk4_WebKitWebContext_register_uri_scheme, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitWebInspector_methods[] = {
+	ZEND_ME(Gtk4_WebKitWebInspector, __construct, arginfo_class_Gtk4_WebKitWebInspector___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitWebInspector, attach, arginfo_class_Gtk4_WebKitWebInspector_attach, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebInspector, close, arginfo_class_Gtk4_WebKitWebInspector_close, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebInspector, detach, arginfo_class_Gtk4_WebKitWebInspector_detach, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebInspector, get_attached_height, arginfo_class_Gtk4_WebKitWebInspector_get_attached_height, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebInspector, get_can_attach, arginfo_class_Gtk4_WebKitWebInspector_get_can_attach, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebInspector, get_inspected_uri, arginfo_class_Gtk4_WebKitWebInspector_get_inspected_uri, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebInspector, get_web_view, arginfo_class_Gtk4_WebKitWebInspector_get_web_view, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebInspector, is_attached, arginfo_class_Gtk4_WebKitWebInspector_is_attached, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebInspector, show, arginfo_class_Gtk4_WebKitWebInspector_show, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitWebResource_methods[] = {
+	ZEND_ME(Gtk4_WebKitWebResource, __construct, arginfo_class_Gtk4_WebKitWebResource___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitWebResource, get_data, arginfo_class_Gtk4_WebKitWebResource_get_data, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebResource, get_response, arginfo_class_Gtk4_WebKitWebResource_get_response, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebResource, get_uri, arginfo_class_Gtk4_WebKitWebResource_get_uri, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebResource, get_data_finish, arginfo_class_Gtk4_WebKitWebResource_get_data_finish, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitWebView_methods[] = {
+	ZEND_ME(Gtk4_WebKitWebView, __construct, arginfo_class_Gtk4_WebKitWebView___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, call_async_javascript_function, arginfo_class_Gtk4_WebKitWebView_call_async_javascript_function, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, call_async_javascript_function_finish, arginfo_class_Gtk4_WebKitWebView_call_async_javascript_function_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, can_execute_editing_command, arginfo_class_Gtk4_WebKitWebView_can_execute_editing_command, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, can_execute_editing_command_finish, arginfo_class_Gtk4_WebKitWebView_can_execute_editing_command_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, can_go_back, arginfo_class_Gtk4_WebKitWebView_can_go_back, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, can_go_forward, arginfo_class_Gtk4_WebKitWebView_can_go_forward, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, can_show_mime_type, arginfo_class_Gtk4_WebKitWebView_can_show_mime_type, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, download_uri, arginfo_class_Gtk4_WebKitWebView_download_uri, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, evaluate_javascript, arginfo_class_Gtk4_WebKitWebView_evaluate_javascript, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, evaluate_javascript_finish, arginfo_class_Gtk4_WebKitWebView_evaluate_javascript_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, execute_editing_command, arginfo_class_Gtk4_WebKitWebView_execute_editing_command, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, execute_editing_command_with_argument, arginfo_class_Gtk4_WebKitWebView_execute_editing_command_with_argument, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_automation_presentation_type, arginfo_class_Gtk4_WebKitWebView_get_automation_presentation_type, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_back_forward_list, arginfo_class_Gtk4_WebKitWebView_get_back_forward_list, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_background_color, arginfo_class_Gtk4_WebKitWebView_get_background_color, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_camera_capture_state, arginfo_class_Gtk4_WebKitWebView_get_camera_capture_state, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_context, arginfo_class_Gtk4_WebKitWebView_get_context, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_custom_charset, arginfo_class_Gtk4_WebKitWebView_get_custom_charset, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_default_content_security_policy, arginfo_class_Gtk4_WebKitWebView_get_default_content_security_policy, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_display_capture_state, arginfo_class_Gtk4_WebKitWebView_get_display_capture_state, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_editor_state, arginfo_class_Gtk4_WebKitWebView_get_editor_state, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_estimated_load_progress, arginfo_class_Gtk4_WebKitWebView_get_estimated_load_progress, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_favicon, arginfo_class_Gtk4_WebKitWebView_get_favicon, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_find_controller, arginfo_class_Gtk4_WebKitWebView_get_find_controller, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_input_method_context, arginfo_class_Gtk4_WebKitWebView_get_input_method_context, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_inspector, arginfo_class_Gtk4_WebKitWebView_get_inspector, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_is_muted, arginfo_class_Gtk4_WebKitWebView_get_is_muted, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_is_web_process_responsive, arginfo_class_Gtk4_WebKitWebView_get_is_web_process_responsive, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_main_resource, arginfo_class_Gtk4_WebKitWebView_get_main_resource, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_microphone_capture_state, arginfo_class_Gtk4_WebKitWebView_get_microphone_capture_state, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_network_session, arginfo_class_Gtk4_WebKitWebView_get_network_session, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_page_id, arginfo_class_Gtk4_WebKitWebView_get_page_id, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_session_state, arginfo_class_Gtk4_WebKitWebView_get_session_state, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_settings, arginfo_class_Gtk4_WebKitWebView_get_settings, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_snapshot, arginfo_class_Gtk4_WebKitWebView_get_snapshot, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_snapshot_finish, arginfo_class_Gtk4_WebKitWebView_get_snapshot_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_theme_color, arginfo_class_Gtk4_WebKitWebView_get_theme_color, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_title, arginfo_class_Gtk4_WebKitWebView_get_title, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_tls_info, arginfo_class_Gtk4_WebKitWebView_get_tls_info, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_uri, arginfo_class_Gtk4_WebKitWebView_get_uri, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_user_content_manager, arginfo_class_Gtk4_WebKitWebView_get_user_content_manager, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_web_extension_mode, arginfo_class_Gtk4_WebKitWebView_get_web_extension_mode, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_website_policies, arginfo_class_Gtk4_WebKitWebView_get_website_policies, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_window_properties, arginfo_class_Gtk4_WebKitWebView_get_window_properties, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, get_zoom_level, arginfo_class_Gtk4_WebKitWebView_get_zoom_level, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, go_back, arginfo_class_Gtk4_WebKitWebView_go_back, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, go_forward, arginfo_class_Gtk4_WebKitWebView_go_forward, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, go_to_back_forward_list_item, arginfo_class_Gtk4_WebKitWebView_go_to_back_forward_list_item, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, is_controlled_by_automation, arginfo_class_Gtk4_WebKitWebView_is_controlled_by_automation, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, is_editable, arginfo_class_Gtk4_WebKitWebView_is_editable, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, is_immersive_mode_enabled, arginfo_class_Gtk4_WebKitWebView_is_immersive_mode_enabled, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, is_loading, arginfo_class_Gtk4_WebKitWebView_is_loading, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, is_playing_audio, arginfo_class_Gtk4_WebKitWebView_is_playing_audio, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, leave_immersive_mode, arginfo_class_Gtk4_WebKitWebView_leave_immersive_mode, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, load_alternate_html, arginfo_class_Gtk4_WebKitWebView_load_alternate_html, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, load_bytes, arginfo_class_Gtk4_WebKitWebView_load_bytes, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, load_html, arginfo_class_Gtk4_WebKitWebView_load_html, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, load_plain_text, arginfo_class_Gtk4_WebKitWebView_load_plain_text, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, load_request, arginfo_class_Gtk4_WebKitWebView_load_request, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, load_uri, arginfo_class_Gtk4_WebKitWebView_load_uri, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, reload, arginfo_class_Gtk4_WebKitWebView_reload, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, reload_bypass_cache, arginfo_class_Gtk4_WebKitWebView_reload_bypass_cache, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, restore_session_state, arginfo_class_Gtk4_WebKitWebView_restore_session_state, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, save, arginfo_class_Gtk4_WebKitWebView_save, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, save_finish, arginfo_class_Gtk4_WebKitWebView_save_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, save_to_file, arginfo_class_Gtk4_WebKitWebView_save_to_file, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, save_to_file_finish, arginfo_class_Gtk4_WebKitWebView_save_to_file_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, send_message_to_page, arginfo_class_Gtk4_WebKitWebView_send_message_to_page, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, send_message_to_page_finish, arginfo_class_Gtk4_WebKitWebView_send_message_to_page_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, set_background_color, arginfo_class_Gtk4_WebKitWebView_set_background_color, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, set_camera_capture_state, arginfo_class_Gtk4_WebKitWebView_set_camera_capture_state, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, set_cors_allowlist, arginfo_class_Gtk4_WebKitWebView_set_cors_allowlist, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, set_custom_charset, arginfo_class_Gtk4_WebKitWebView_set_custom_charset, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, set_display_capture_state, arginfo_class_Gtk4_WebKitWebView_set_display_capture_state, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, set_editable, arginfo_class_Gtk4_WebKitWebView_set_editable, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, set_input_method_context, arginfo_class_Gtk4_WebKitWebView_set_input_method_context, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, set_is_muted, arginfo_class_Gtk4_WebKitWebView_set_is_muted, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, set_microphone_capture_state, arginfo_class_Gtk4_WebKitWebView_set_microphone_capture_state, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, set_settings, arginfo_class_Gtk4_WebKitWebView_set_settings, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, set_zoom_level, arginfo_class_Gtk4_WebKitWebView_set_zoom_level, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, stop_loading, arginfo_class_Gtk4_WebKitWebView_stop_loading, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, terminate_web_process, arginfo_class_Gtk4_WebKitWebView_terminate_web_process, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, try_close, arginfo_class_Gtk4_WebKitWebView_try_close, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_authenticate, arginfo_class_Gtk4_WebKitWebView_vfunc_authenticate, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_close, arginfo_class_Gtk4_WebKitWebView_vfunc_close, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_context_menu, arginfo_class_Gtk4_WebKitWebView_vfunc_context_menu, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_context_menu_dismissed, arginfo_class_Gtk4_WebKitWebView_vfunc_context_menu_dismissed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_create, arginfo_class_Gtk4_WebKitWebView_vfunc_create, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_decide_policy, arginfo_class_Gtk4_WebKitWebView_vfunc_decide_policy, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_enter_fullscreen, arginfo_class_Gtk4_WebKitWebView_vfunc_enter_fullscreen, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_insecure_content_detected, arginfo_class_Gtk4_WebKitWebView_vfunc_insecure_content_detected, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_leave_fullscreen, arginfo_class_Gtk4_WebKitWebView_vfunc_leave_fullscreen, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_load_changed, arginfo_class_Gtk4_WebKitWebView_vfunc_load_changed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_load_failed, arginfo_class_Gtk4_WebKitWebView_vfunc_load_failed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_load_failed_with_tls_errors, arginfo_class_Gtk4_WebKitWebView_vfunc_load_failed_with_tls_errors, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_mouse_target_changed, arginfo_class_Gtk4_WebKitWebView_vfunc_mouse_target_changed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_permission_request, arginfo_class_Gtk4_WebKitWebView_vfunc_permission_request, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_print, arginfo_class_Gtk4_WebKitWebView_vfunc_print, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_query_permission_state, arginfo_class_Gtk4_WebKitWebView_vfunc_query_permission_state, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_ready_to_show, arginfo_class_Gtk4_WebKitWebView_vfunc_ready_to_show, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_resource_load_started, arginfo_class_Gtk4_WebKitWebView_vfunc_resource_load_started, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_run_as_modal, arginfo_class_Gtk4_WebKitWebView_vfunc_run_as_modal, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_run_color_chooser, arginfo_class_Gtk4_WebKitWebView_vfunc_run_color_chooser, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_run_file_chooser, arginfo_class_Gtk4_WebKitWebView_vfunc_run_file_chooser, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_script_dialog, arginfo_class_Gtk4_WebKitWebView_vfunc_script_dialog, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_show_notification, arginfo_class_Gtk4_WebKitWebView_vfunc_show_notification, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_show_option_menu, arginfo_class_Gtk4_WebKitWebView_vfunc_show_option_menu, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_submit_form, arginfo_class_Gtk4_WebKitWebView_vfunc_submit_form, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_user_message_received, arginfo_class_Gtk4_WebKitWebView_vfunc_user_message_received, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_web_process_crashed, arginfo_class_Gtk4_WebKitWebView_vfunc_web_process_crashed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebView, vfunc_web_process_terminated, arginfo_class_Gtk4_WebKitWebView_vfunc_web_process_terminated, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitWebViewBase_methods[] = {
+	ZEND_ME(Gtk4_WebKitWebViewBase, __construct, arginfo_class_Gtk4_WebKitWebViewBase___construct, ZEND_ACC_PRIVATE)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitWebViewSessionState_methods[] = {
+	ZEND_ME(Gtk4_WebKitWebViewSessionState, __construct, arginfo_class_Gtk4_WebKitWebViewSessionState___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebViewSessionState, serialize, arginfo_class_Gtk4_WebKitWebViewSessionState_serialize, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitWebsiteData_methods[] = {
+	ZEND_ME(Gtk4_WebKitWebsiteData, __construct, arginfo_class_Gtk4_WebKitWebsiteData___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitWebsiteData, get_name, arginfo_class_Gtk4_WebKitWebsiteData_get_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsiteData, get_size, arginfo_class_Gtk4_WebKitWebsiteData_get_size, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsiteData, get_types, arginfo_class_Gtk4_WebKitWebsiteData_get_types, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitWebsiteDataAccessPermissionRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitWebsiteDataAccessPermissionRequest, __construct, arginfo_class_Gtk4_WebKitWebsiteDataAccessPermissionRequest___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitWebsiteDataAccessPermissionRequest, get_current_domain, arginfo_class_Gtk4_WebKitWebsiteDataAccessPermissionRequest_get_current_domain, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsiteDataAccessPermissionRequest, get_requesting_domain, arginfo_class_Gtk4_WebKitWebsiteDataAccessPermissionRequest_get_requesting_domain, ZEND_ACC_PUBLIC)
+	ZEND_RAW_FENTRY("allow", zim_Gtk4_WebKitPermissionRequest_allow, arginfo_class_Gtk4_WebKitWebsiteDataAccessPermissionRequest_allow, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("deny", zim_Gtk4_WebKitPermissionRequest_deny, arginfo_class_Gtk4_WebKitWebsiteDataAccessPermissionRequest_deny, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitWebsiteDataManager_methods[] = {
+	ZEND_ME(Gtk4_WebKitWebsiteDataManager, __construct, arginfo_class_Gtk4_WebKitWebsiteDataManager___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitWebsiteDataManager, clear, arginfo_class_Gtk4_WebKitWebsiteDataManager_clear, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsiteDataManager, clear_finish, arginfo_class_Gtk4_WebKitWebsiteDataManager_clear_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsiteDataManager, fetch, arginfo_class_Gtk4_WebKitWebsiteDataManager_fetch, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsiteDataManager, fetch_finish, arginfo_class_Gtk4_WebKitWebsiteDataManager_fetch_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsiteDataManager, get_base_cache_directory, arginfo_class_Gtk4_WebKitWebsiteDataManager_get_base_cache_directory, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsiteDataManager, get_base_data_directory, arginfo_class_Gtk4_WebKitWebsiteDataManager_get_base_data_directory, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsiteDataManager, get_favicon_database, arginfo_class_Gtk4_WebKitWebsiteDataManager_get_favicon_database, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsiteDataManager, get_favicons_enabled, arginfo_class_Gtk4_WebKitWebsiteDataManager_get_favicons_enabled, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsiteDataManager, get_itp_summary, arginfo_class_Gtk4_WebKitWebsiteDataManager_get_itp_summary, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsiteDataManager, get_itp_summary_finish, arginfo_class_Gtk4_WebKitWebsiteDataManager_get_itp_summary_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsiteDataManager, is_ephemeral, arginfo_class_Gtk4_WebKitWebsiteDataManager_is_ephemeral, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsiteDataManager, remove_finish, arginfo_class_Gtk4_WebKitWebsiteDataManager_remove_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsiteDataManager, set_favicons_enabled, arginfo_class_Gtk4_WebKitWebsiteDataManager_set_favicons_enabled, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitWebsitePolicies_methods[] = {
+	ZEND_ME(Gtk4_WebKitWebsitePolicies, __construct, arginfo_class_Gtk4_WebKitWebsitePolicies___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWebsitePolicies, get_autoplay_policy, arginfo_class_Gtk4_WebKitWebsitePolicies_get_autoplay_policy, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitWindowProperties_methods[] = {
+	ZEND_ME(Gtk4_WebKitWindowProperties, __construct, arginfo_class_Gtk4_WebKitWindowProperties___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitWindowProperties, get_fullscreen, arginfo_class_Gtk4_WebKitWindowProperties_get_fullscreen, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWindowProperties, get_geometry, arginfo_class_Gtk4_WebKitWindowProperties_get_geometry, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWindowProperties, get_locationbar_visible, arginfo_class_Gtk4_WebKitWindowProperties_get_locationbar_visible, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWindowProperties, get_menubar_visible, arginfo_class_Gtk4_WebKitWindowProperties_get_menubar_visible, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWindowProperties, get_resizable, arginfo_class_Gtk4_WebKitWindowProperties_get_resizable, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWindowProperties, get_scrollbars_visible, arginfo_class_Gtk4_WebKitWindowProperties_get_scrollbars_visible, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWindowProperties, get_statusbar_visible, arginfo_class_Gtk4_WebKitWindowProperties_get_statusbar_visible, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitWindowProperties, get_toolbar_visible, arginfo_class_Gtk4_WebKitWindowProperties_get_toolbar_visible, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_WebKitXRPermissionRequest_methods[] = {
+	ZEND_ME(Gtk4_WebKitXRPermissionRequest, __construct, arginfo_class_Gtk4_WebKitXRPermissionRequest___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_WebKitXRPermissionRequest, get_consent_optional_features, arginfo_class_Gtk4_WebKitXRPermissionRequest_get_consent_optional_features, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitXRPermissionRequest, get_consent_required_features, arginfo_class_Gtk4_WebKitXRPermissionRequest_get_consent_required_features, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitXRPermissionRequest, get_granted_features, arginfo_class_Gtk4_WebKitXRPermissionRequest_get_granted_features, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitXRPermissionRequest, get_optional_features_requested, arginfo_class_Gtk4_WebKitXRPermissionRequest_get_optional_features_requested, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitXRPermissionRequest, get_required_features_requested, arginfo_class_Gtk4_WebKitXRPermissionRequest_get_required_features_requested, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitXRPermissionRequest, get_security_origin, arginfo_class_Gtk4_WebKitXRPermissionRequest_get_security_origin, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitXRPermissionRequest, get_session_mode, arginfo_class_Gtk4_WebKitXRPermissionRequest_get_session_mode, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_WebKitXRPermissionRequest, set_granted_optional_features, arginfo_class_Gtk4_WebKitXRPermissionRequest_set_granted_optional_features, ZEND_ACC_PUBLIC)
+	ZEND_RAW_FENTRY("allow", zim_Gtk4_WebKitPermissionRequest_allow, arginfo_class_Gtk4_WebKitXRPermissionRequest_allow, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_RAW_FENTRY("deny", zim_Gtk4_WebKitPermissionRequest_deny, arginfo_class_Gtk4_WebKitXRPermissionRequest_deny, ZEND_ACC_PUBLIC, NULL, NULL)
+	ZEND_FE_END
+};
+
+static zend_class_entry *register_class_Gtk4_WebKitApplicationInfo(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitApplicationInfo", class_Gtk4_WebKitApplicationInfo_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitAuthenticationRequest(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitAuthenticationRequest", class_Gtk4_WebKitAuthenticationRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitAuthenticationScheme(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitAuthenticationScheme", IS_LONG, NULL);
+
+	zval enum_case_Default_value;
+	ZVAL_LONG(&enum_case_Default_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Default", &enum_case_Default_value);
+
+	zval enum_case_HttpBasic_value;
+	ZVAL_LONG(&enum_case_HttpBasic_value, 2);
+	zend_enum_add_case_cstr(class_entry, "HttpBasic", &enum_case_HttpBasic_value);
+
+	zval enum_case_HttpDigest_value;
+	ZVAL_LONG(&enum_case_HttpDigest_value, 3);
+	zend_enum_add_case_cstr(class_entry, "HttpDigest", &enum_case_HttpDigest_value);
+
+	zval enum_case_HtmlForm_value;
+	ZVAL_LONG(&enum_case_HtmlForm_value, 4);
+	zend_enum_add_case_cstr(class_entry, "HtmlForm", &enum_case_HtmlForm_value);
+
+	zval enum_case_Ntlm_value;
+	ZVAL_LONG(&enum_case_Ntlm_value, 5);
+	zend_enum_add_case_cstr(class_entry, "Ntlm", &enum_case_Ntlm_value);
+
+	zval enum_case_Negotiate_value;
+	ZVAL_LONG(&enum_case_Negotiate_value, 6);
+	zend_enum_add_case_cstr(class_entry, "Negotiate", &enum_case_Negotiate_value);
+
+	zval enum_case_ClientCertificateRequested_value;
+	ZVAL_LONG(&enum_case_ClientCertificateRequested_value, 7);
+	zend_enum_add_case_cstr(class_entry, "ClientCertificateRequested", &enum_case_ClientCertificateRequested_value);
+
+	zval enum_case_ServerTrustEvaluationRequested_value;
+	ZVAL_LONG(&enum_case_ServerTrustEvaluationRequested_value, 8);
+	zend_enum_add_case_cstr(class_entry, "ServerTrustEvaluationRequested", &enum_case_ServerTrustEvaluationRequested_value);
+
+	zval enum_case_ClientCertificatePinRequested_value;
+	ZVAL_LONG(&enum_case_ClientCertificatePinRequested_value, 9);
+	zend_enum_add_case_cstr(class_entry, "ClientCertificatePinRequested", &enum_case_ClientCertificatePinRequested_value);
+
+	zval enum_case_Unknown_value;
+	ZVAL_LONG(&enum_case_Unknown_value, 100);
+	zend_enum_add_case_cstr(class_entry, "Unknown", &enum_case_Unknown_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitAutomationBrowsingContextPresentation(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitAutomationBrowsingContextPresentation", IS_LONG, NULL);
+
+	zval enum_case_Window_value;
+	ZVAL_LONG(&enum_case_Window_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Window", &enum_case_Window_value);
+
+	zval enum_case_Tab_value;
+	ZVAL_LONG(&enum_case_Tab_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Tab", &enum_case_Tab_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitAutomationSession(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitAutomationSession", class_Gtk4_WebKitAutomationSession_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitAutoplayPolicy(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitAutoplayPolicy", IS_LONG, NULL);
+
+	zval enum_case_Allow_value;
+	ZVAL_LONG(&enum_case_Allow_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Allow", &enum_case_Allow_value);
+
+	zval enum_case_AllowWithoutSound_value;
+	ZVAL_LONG(&enum_case_AllowWithoutSound_value, 1);
+	zend_enum_add_case_cstr(class_entry, "AllowWithoutSound", &enum_case_AllowWithoutSound_value);
+
+	zval enum_case_Deny_value;
+	ZVAL_LONG(&enum_case_Deny_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Deny", &enum_case_Deny_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitBackForwardList(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitBackForwardList", class_Gtk4_WebKitBackForwardList_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitBackForwardListItem(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitBackForwardListItem", class_Gtk4_WebKitBackForwardListItem_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitCacheModel(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitCacheModel", IS_LONG, NULL);
+
+	zval enum_case_DocumentViewer_value;
+	ZVAL_LONG(&enum_case_DocumentViewer_value, 0);
+	zend_enum_add_case_cstr(class_entry, "DocumentViewer", &enum_case_DocumentViewer_value);
+
+	zval enum_case_WebBrowser_value;
+	ZVAL_LONG(&enum_case_WebBrowser_value, 1);
+	zend_enum_add_case_cstr(class_entry, "WebBrowser", &enum_case_WebBrowser_value);
+
+	zval enum_case_DocumentBrowser_value;
+	ZVAL_LONG(&enum_case_DocumentBrowser_value, 2);
+	zend_enum_add_case_cstr(class_entry, "DocumentBrowser", &enum_case_DocumentBrowser_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitClipboardPermissionRequest(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_WebKitPermissionRequest)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitClipboardPermissionRequest", class_Gtk4_WebKitClipboardPermissionRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_WebKitPermissionRequest);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitColorChooserRequest(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitColorChooserRequest", class_Gtk4_WebKitColorChooserRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitContextMenu(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitContextMenu", class_Gtk4_WebKitContextMenu_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitContextMenuAction(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitContextMenuAction", IS_LONG, NULL);
+
+	zval enum_case_NoAction_value;
+	ZVAL_LONG(&enum_case_NoAction_value, 0);
+	zend_enum_add_case_cstr(class_entry, "NoAction", &enum_case_NoAction_value);
+
+	zval enum_case_OpenLink_value;
+	ZVAL_LONG(&enum_case_OpenLink_value, 1);
+	zend_enum_add_case_cstr(class_entry, "OpenLink", &enum_case_OpenLink_value);
+
+	zval enum_case_OpenLinkInNewWindow_value;
+	ZVAL_LONG(&enum_case_OpenLinkInNewWindow_value, 2);
+	zend_enum_add_case_cstr(class_entry, "OpenLinkInNewWindow", &enum_case_OpenLinkInNewWindow_value);
+
+	zval enum_case_DownloadLinkToDisk_value;
+	ZVAL_LONG(&enum_case_DownloadLinkToDisk_value, 3);
+	zend_enum_add_case_cstr(class_entry, "DownloadLinkToDisk", &enum_case_DownloadLinkToDisk_value);
+
+	zval enum_case_CopyLinkToClipboard_value;
+	ZVAL_LONG(&enum_case_CopyLinkToClipboard_value, 4);
+	zend_enum_add_case_cstr(class_entry, "CopyLinkToClipboard", &enum_case_CopyLinkToClipboard_value);
+
+	zval enum_case_OpenImageInNewWindow_value;
+	ZVAL_LONG(&enum_case_OpenImageInNewWindow_value, 5);
+	zend_enum_add_case_cstr(class_entry, "OpenImageInNewWindow", &enum_case_OpenImageInNewWindow_value);
+
+	zval enum_case_DownloadImageToDisk_value;
+	ZVAL_LONG(&enum_case_DownloadImageToDisk_value, 6);
+	zend_enum_add_case_cstr(class_entry, "DownloadImageToDisk", &enum_case_DownloadImageToDisk_value);
+
+	zval enum_case_CopyImageToClipboard_value;
+	ZVAL_LONG(&enum_case_CopyImageToClipboard_value, 7);
+	zend_enum_add_case_cstr(class_entry, "CopyImageToClipboard", &enum_case_CopyImageToClipboard_value);
+
+	zval enum_case_CopyImageUrlToClipboard_value;
+	ZVAL_LONG(&enum_case_CopyImageUrlToClipboard_value, 8);
+	zend_enum_add_case_cstr(class_entry, "CopyImageUrlToClipboard", &enum_case_CopyImageUrlToClipboard_value);
+
+	zval enum_case_OpenFrameInNewWindow_value;
+	ZVAL_LONG(&enum_case_OpenFrameInNewWindow_value, 9);
+	zend_enum_add_case_cstr(class_entry, "OpenFrameInNewWindow", &enum_case_OpenFrameInNewWindow_value);
+
+	zval enum_case_GoBack_value;
+	ZVAL_LONG(&enum_case_GoBack_value, 10);
+	zend_enum_add_case_cstr(class_entry, "GoBack", &enum_case_GoBack_value);
+
+	zval enum_case_GoForward_value;
+	ZVAL_LONG(&enum_case_GoForward_value, 11);
+	zend_enum_add_case_cstr(class_entry, "GoForward", &enum_case_GoForward_value);
+
+	zval enum_case_Stop_value;
+	ZVAL_LONG(&enum_case_Stop_value, 12);
+	zend_enum_add_case_cstr(class_entry, "Stop", &enum_case_Stop_value);
+
+	zval enum_case_Reload_value;
+	ZVAL_LONG(&enum_case_Reload_value, 13);
+	zend_enum_add_case_cstr(class_entry, "Reload", &enum_case_Reload_value);
+
+	zval enum_case_Copy_value;
+	ZVAL_LONG(&enum_case_Copy_value, 14);
+	zend_enum_add_case_cstr(class_entry, "Copy", &enum_case_Copy_value);
+
+	zval enum_case_Cut_value;
+	ZVAL_LONG(&enum_case_Cut_value, 15);
+	zend_enum_add_case_cstr(class_entry, "Cut", &enum_case_Cut_value);
+
+	zval enum_case_Paste_value;
+	ZVAL_LONG(&enum_case_Paste_value, 16);
+	zend_enum_add_case_cstr(class_entry, "Paste", &enum_case_Paste_value);
+
+	zval enum_case_Delete_value;
+	ZVAL_LONG(&enum_case_Delete_value, 17);
+	zend_enum_add_case_cstr(class_entry, "Delete", &enum_case_Delete_value);
+
+	zval enum_case_SelectAll_value;
+	ZVAL_LONG(&enum_case_SelectAll_value, 18);
+	zend_enum_add_case_cstr(class_entry, "SelectAll", &enum_case_SelectAll_value);
+
+	zval enum_case_InputMethods_value;
+	ZVAL_LONG(&enum_case_InputMethods_value, 19);
+	zend_enum_add_case_cstr(class_entry, "InputMethods", &enum_case_InputMethods_value);
+
+	zval enum_case_Unicode_value;
+	ZVAL_LONG(&enum_case_Unicode_value, 20);
+	zend_enum_add_case_cstr(class_entry, "Unicode", &enum_case_Unicode_value);
+
+	zval enum_case_SpellingGuess_value;
+	ZVAL_LONG(&enum_case_SpellingGuess_value, 21);
+	zend_enum_add_case_cstr(class_entry, "SpellingGuess", &enum_case_SpellingGuess_value);
+
+	zval enum_case_NoGuessesFound_value;
+	ZVAL_LONG(&enum_case_NoGuessesFound_value, 22);
+	zend_enum_add_case_cstr(class_entry, "NoGuessesFound", &enum_case_NoGuessesFound_value);
+
+	zval enum_case_IgnoreSpelling_value;
+	ZVAL_LONG(&enum_case_IgnoreSpelling_value, 23);
+	zend_enum_add_case_cstr(class_entry, "IgnoreSpelling", &enum_case_IgnoreSpelling_value);
+
+	zval enum_case_LearnSpelling_value;
+	ZVAL_LONG(&enum_case_LearnSpelling_value, 24);
+	zend_enum_add_case_cstr(class_entry, "LearnSpelling", &enum_case_LearnSpelling_value);
+
+	zval enum_case_IgnoreGrammar_value;
+	ZVAL_LONG(&enum_case_IgnoreGrammar_value, 25);
+	zend_enum_add_case_cstr(class_entry, "IgnoreGrammar", &enum_case_IgnoreGrammar_value);
+
+	zval enum_case_FontMenu_value;
+	ZVAL_LONG(&enum_case_FontMenu_value, 26);
+	zend_enum_add_case_cstr(class_entry, "FontMenu", &enum_case_FontMenu_value);
+
+	zval enum_case_Bold_value;
+	ZVAL_LONG(&enum_case_Bold_value, 27);
+	zend_enum_add_case_cstr(class_entry, "Bold", &enum_case_Bold_value);
+
+	zval enum_case_Italic_value;
+	ZVAL_LONG(&enum_case_Italic_value, 28);
+	zend_enum_add_case_cstr(class_entry, "Italic", &enum_case_Italic_value);
+
+	zval enum_case_Underline_value;
+	ZVAL_LONG(&enum_case_Underline_value, 29);
+	zend_enum_add_case_cstr(class_entry, "Underline", &enum_case_Underline_value);
+
+	zval enum_case_Outline_value;
+	ZVAL_LONG(&enum_case_Outline_value, 30);
+	zend_enum_add_case_cstr(class_entry, "Outline", &enum_case_Outline_value);
+
+	zval enum_case_InspectElement_value;
+	ZVAL_LONG(&enum_case_InspectElement_value, 31);
+	zend_enum_add_case_cstr(class_entry, "InspectElement", &enum_case_InspectElement_value);
+
+	zval enum_case_OpenVideoInNewWindow_value;
+	ZVAL_LONG(&enum_case_OpenVideoInNewWindow_value, 32);
+	zend_enum_add_case_cstr(class_entry, "OpenVideoInNewWindow", &enum_case_OpenVideoInNewWindow_value);
+
+	zval enum_case_OpenAudioInNewWindow_value;
+	ZVAL_LONG(&enum_case_OpenAudioInNewWindow_value, 33);
+	zend_enum_add_case_cstr(class_entry, "OpenAudioInNewWindow", &enum_case_OpenAudioInNewWindow_value);
+
+	zval enum_case_CopyVideoLinkToClipboard_value;
+	ZVAL_LONG(&enum_case_CopyVideoLinkToClipboard_value, 34);
+	zend_enum_add_case_cstr(class_entry, "CopyVideoLinkToClipboard", &enum_case_CopyVideoLinkToClipboard_value);
+
+	zval enum_case_CopyAudioLinkToClipboard_value;
+	ZVAL_LONG(&enum_case_CopyAudioLinkToClipboard_value, 35);
+	zend_enum_add_case_cstr(class_entry, "CopyAudioLinkToClipboard", &enum_case_CopyAudioLinkToClipboard_value);
+
+	zval enum_case_ToggleMediaControls_value;
+	ZVAL_LONG(&enum_case_ToggleMediaControls_value, 36);
+	zend_enum_add_case_cstr(class_entry, "ToggleMediaControls", &enum_case_ToggleMediaControls_value);
+
+	zval enum_case_ToggleMediaLoop_value;
+	ZVAL_LONG(&enum_case_ToggleMediaLoop_value, 37);
+	zend_enum_add_case_cstr(class_entry, "ToggleMediaLoop", &enum_case_ToggleMediaLoop_value);
+
+	zval enum_case_EnterVideoFullscreen_value;
+	ZVAL_LONG(&enum_case_EnterVideoFullscreen_value, 38);
+	zend_enum_add_case_cstr(class_entry, "EnterVideoFullscreen", &enum_case_EnterVideoFullscreen_value);
+
+	zval enum_case_MediaPlay_value;
+	ZVAL_LONG(&enum_case_MediaPlay_value, 39);
+	zend_enum_add_case_cstr(class_entry, "MediaPlay", &enum_case_MediaPlay_value);
+
+	zval enum_case_MediaPause_value;
+	ZVAL_LONG(&enum_case_MediaPause_value, 40);
+	zend_enum_add_case_cstr(class_entry, "MediaPause", &enum_case_MediaPause_value);
+
+	zval enum_case_MediaMute_value;
+	ZVAL_LONG(&enum_case_MediaMute_value, 41);
+	zend_enum_add_case_cstr(class_entry, "MediaMute", &enum_case_MediaMute_value);
+
+	zval enum_case_DownloadVideoToDisk_value;
+	ZVAL_LONG(&enum_case_DownloadVideoToDisk_value, 42);
+	zend_enum_add_case_cstr(class_entry, "DownloadVideoToDisk", &enum_case_DownloadVideoToDisk_value);
+
+	zval enum_case_DownloadAudioToDisk_value;
+	ZVAL_LONG(&enum_case_DownloadAudioToDisk_value, 43);
+	zend_enum_add_case_cstr(class_entry, "DownloadAudioToDisk", &enum_case_DownloadAudioToDisk_value);
+
+	zval enum_case_InsertEmoji_value;
+	ZVAL_LONG(&enum_case_InsertEmoji_value, 44);
+	zend_enum_add_case_cstr(class_entry, "InsertEmoji", &enum_case_InsertEmoji_value);
+
+	zval enum_case_PasteAsPlainText_value;
+	ZVAL_LONG(&enum_case_PasteAsPlainText_value, 45);
+	zend_enum_add_case_cstr(class_entry, "PasteAsPlainText", &enum_case_PasteAsPlainText_value);
+
+	zval enum_case_Custom_value;
+	ZVAL_LONG(&enum_case_Custom_value, 10000);
+	zend_enum_add_case_cstr(class_entry, "Custom", &enum_case_Custom_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitContextMenuItem(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitContextMenuItem", class_Gtk4_WebKitContextMenuItem_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitCookieAcceptPolicy(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitCookieAcceptPolicy", IS_LONG, NULL);
+
+	zval enum_case_Always_value;
+	ZVAL_LONG(&enum_case_Always_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Always", &enum_case_Always_value);
+
+	zval enum_case_Never_value;
+	ZVAL_LONG(&enum_case_Never_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Never", &enum_case_Never_value);
+
+	zval enum_case_NoThirdParty_value;
+	ZVAL_LONG(&enum_case_NoThirdParty_value, 2);
+	zend_enum_add_case_cstr(class_entry, "NoThirdParty", &enum_case_NoThirdParty_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitCookieManager(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitCookieManager", class_Gtk4_WebKitCookieManager_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitCookiePersistentStorage(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitCookiePersistentStorage", IS_LONG, NULL);
+
+	zval enum_case_Text_value;
+	ZVAL_LONG(&enum_case_Text_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Text", &enum_case_Text_value);
+
+	zval enum_case_Sqlite_value;
+	ZVAL_LONG(&enum_case_Sqlite_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Sqlite", &enum_case_Sqlite_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitCredential(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitCredential", class_Gtk4_WebKitCredential_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitCredentialPersistence(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitCredentialPersistence", IS_LONG, NULL);
+
+	zval enum_case_None_value;
+	ZVAL_LONG(&enum_case_None_value, 0);
+	zend_enum_add_case_cstr(class_entry, "None", &enum_case_None_value);
+
+	zval enum_case_ForSession_value;
+	ZVAL_LONG(&enum_case_ForSession_value, 1);
+	zend_enum_add_case_cstr(class_entry, "ForSession", &enum_case_ForSession_value);
+
+	zval enum_case_Permanent_value;
+	ZVAL_LONG(&enum_case_Permanent_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Permanent", &enum_case_Permanent_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitDeviceInfoPermissionRequest(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_WebKitPermissionRequest)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitDeviceInfoPermissionRequest", class_Gtk4_WebKitDeviceInfoPermissionRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_WebKitPermissionRequest);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitDownload(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitDownload", class_Gtk4_WebKitDownload_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitDownloadError(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitDownloadError", IS_LONG, NULL);
+
+	zval enum_case_Network_value;
+	ZVAL_LONG(&enum_case_Network_value, 499);
+	zend_enum_add_case_cstr(class_entry, "Network", &enum_case_Network_value);
+
+	zval enum_case_CancelledByUser_value;
+	ZVAL_LONG(&enum_case_CancelledByUser_value, 400);
+	zend_enum_add_case_cstr(class_entry, "CancelledByUser", &enum_case_CancelledByUser_value);
+
+	zval enum_case_Destination_value;
+	ZVAL_LONG(&enum_case_Destination_value, 401);
+	zend_enum_add_case_cstr(class_entry, "Destination", &enum_case_Destination_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitEditorState(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitEditorState", class_Gtk4_WebKitEditorState_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitEditorTypingAttributes(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitEditorTypingAttributes", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NONE_value;
+	ZVAL_LONG(&const_NONE_value, 2);
+	zend_string *const_NONE_name = zend_string_init_interned("NONE", sizeof("NONE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NONE_name, &const_NONE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NONE_name);
+
+	zval const_BOLD_value;
+	ZVAL_LONG(&const_BOLD_value, 4);
+	zend_string *const_BOLD_name = zend_string_init_interned("BOLD", sizeof("BOLD") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_BOLD_name, &const_BOLD_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_BOLD_name);
+
+	zval const_ITALIC_value;
+	ZVAL_LONG(&const_ITALIC_value, 8);
+	zend_string *const_ITALIC_name = zend_string_init_interned("ITALIC", sizeof("ITALIC") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_ITALIC_name, &const_ITALIC_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_ITALIC_name);
+
+	zval const_UNDERLINE_value;
+	ZVAL_LONG(&const_UNDERLINE_value, 16);
+	zend_string *const_UNDERLINE_name = zend_string_init_interned("UNDERLINE", sizeof("UNDERLINE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_UNDERLINE_name, &const_UNDERLINE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_UNDERLINE_name);
+
+	zval const_STRIKETHROUGH_value;
+	ZVAL_LONG(&const_STRIKETHROUGH_value, 32);
+	zend_string *const_STRIKETHROUGH_name = zend_string_init_interned("STRIKETHROUGH", sizeof("STRIKETHROUGH") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_STRIKETHROUGH_name, &const_STRIKETHROUGH_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_STRIKETHROUGH_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitFaviconDatabase(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitFaviconDatabase", class_Gtk4_WebKitFaviconDatabase_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitFaviconDatabaseError(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitFaviconDatabaseError", IS_LONG, NULL);
+
+	zval enum_case_NotInitialized_value;
+	ZVAL_LONG(&enum_case_NotInitialized_value, 0);
+	zend_enum_add_case_cstr(class_entry, "NotInitialized", &enum_case_NotInitialized_value);
+
+	zval enum_case_FaviconNotFound_value;
+	ZVAL_LONG(&enum_case_FaviconNotFound_value, 1);
+	zend_enum_add_case_cstr(class_entry, "FaviconNotFound", &enum_case_FaviconNotFound_value);
+
+	zval enum_case_FaviconUnknown_value;
+	ZVAL_LONG(&enum_case_FaviconUnknown_value, 2);
+	zend_enum_add_case_cstr(class_entry, "FaviconUnknown", &enum_case_FaviconUnknown_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitFeature(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitFeature", class_Gtk4_WebKitFeature_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitFeatureList(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitFeatureList", class_Gtk4_WebKitFeatureList_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitFeatureStatus(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitFeatureStatus", IS_LONG, NULL);
+
+	zval enum_case_Embedder_value;
+	ZVAL_LONG(&enum_case_Embedder_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Embedder", &enum_case_Embedder_value);
+
+	zval enum_case_Unstable_value;
+	ZVAL_LONG(&enum_case_Unstable_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Unstable", &enum_case_Unstable_value);
+
+	zval enum_case_Internal_value;
+	ZVAL_LONG(&enum_case_Internal_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Internal", &enum_case_Internal_value);
+
+	zval enum_case_Developer_value;
+	ZVAL_LONG(&enum_case_Developer_value, 3);
+	zend_enum_add_case_cstr(class_entry, "Developer", &enum_case_Developer_value);
+
+	zval enum_case_Testable_value;
+	ZVAL_LONG(&enum_case_Testable_value, 4);
+	zend_enum_add_case_cstr(class_entry, "Testable", &enum_case_Testable_value);
+
+	zval enum_case_Preview_value;
+	ZVAL_LONG(&enum_case_Preview_value, 5);
+	zend_enum_add_case_cstr(class_entry, "Preview", &enum_case_Preview_value);
+
+	zval enum_case_Stable_value;
+	ZVAL_LONG(&enum_case_Stable_value, 6);
+	zend_enum_add_case_cstr(class_entry, "Stable", &enum_case_Stable_value);
+
+	zval enum_case_Mature_value;
+	ZVAL_LONG(&enum_case_Mature_value, 7);
+	zend_enum_add_case_cstr(class_entry, "Mature", &enum_case_Mature_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitFileChooserRequest(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitFileChooserRequest", class_Gtk4_WebKitFileChooserRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitFindController(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitFindController", class_Gtk4_WebKitFindController_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitFindOptions(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitFindOptions", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NONE_value;
+	ZVAL_LONG(&const_NONE_value, 0);
+	zend_string *const_NONE_name = zend_string_init_interned("NONE", sizeof("NONE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NONE_name, &const_NONE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NONE_name);
+
+	zval const_CASE_INSENSITIVE_value;
+	ZVAL_LONG(&const_CASE_INSENSITIVE_value, 1);
+	zend_string *const_CASE_INSENSITIVE_name = zend_string_init_interned("CASE_INSENSITIVE", sizeof("CASE_INSENSITIVE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_CASE_INSENSITIVE_name, &const_CASE_INSENSITIVE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_CASE_INSENSITIVE_name);
+
+	zval const_AT_WORD_STARTS_value;
+	ZVAL_LONG(&const_AT_WORD_STARTS_value, 2);
+	zend_string *const_AT_WORD_STARTS_name = zend_string_init_interned("AT_WORD_STARTS", sizeof("AT_WORD_STARTS") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_AT_WORD_STARTS_name, &const_AT_WORD_STARTS_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_AT_WORD_STARTS_name);
+
+	zval const_TREAT_MEDIAL_CAPITAL_AS_WORD_START_value;
+	ZVAL_LONG(&const_TREAT_MEDIAL_CAPITAL_AS_WORD_START_value, 4);
+	zend_string *const_TREAT_MEDIAL_CAPITAL_AS_WORD_START_name = zend_string_init_interned("TREAT_MEDIAL_CAPITAL_AS_WORD_START", sizeof("TREAT_MEDIAL_CAPITAL_AS_WORD_START") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_TREAT_MEDIAL_CAPITAL_AS_WORD_START_name, &const_TREAT_MEDIAL_CAPITAL_AS_WORD_START_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_TREAT_MEDIAL_CAPITAL_AS_WORD_START_name);
+
+	zval const_BACKWARDS_value;
+	ZVAL_LONG(&const_BACKWARDS_value, 8);
+	zend_string *const_BACKWARDS_name = zend_string_init_interned("BACKWARDS", sizeof("BACKWARDS") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_BACKWARDS_name, &const_BACKWARDS_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_BACKWARDS_name);
+
+	zval const_WRAP_AROUND_value;
+	ZVAL_LONG(&const_WRAP_AROUND_value, 16);
+	zend_string *const_WRAP_AROUND_name = zend_string_init_interned("WRAP_AROUND", sizeof("WRAP_AROUND") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_WRAP_AROUND_name, &const_WRAP_AROUND_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_WRAP_AROUND_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitFormSubmissionRequest(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitFormSubmissionRequest", class_Gtk4_WebKitFormSubmissionRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitGeolocationManager(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitGeolocationManager", class_Gtk4_WebKitGeolocationManager_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitGeolocationPermissionRequest(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_WebKitPermissionRequest)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitGeolocationPermissionRequest", class_Gtk4_WebKitGeolocationPermissionRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_WebKitPermissionRequest);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitGeolocationPosition(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitGeolocationPosition", class_Gtk4_WebKitGeolocationPosition_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitHardwareAccelerationPolicy(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitHardwareAccelerationPolicy", IS_LONG, NULL);
+
+	zval enum_case_Always_value;
+	ZVAL_LONG(&enum_case_Always_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Always", &enum_case_Always_value);
+
+	zval enum_case_Never_value;
+	ZVAL_LONG(&enum_case_Never_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Never", &enum_case_Never_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitHitTestResult(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitHitTestResult", class_Gtk4_WebKitHitTestResult_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitHitTestResultContext(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitHitTestResultContext", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_DOCUMENT_value;
+	ZVAL_LONG(&const_DOCUMENT_value, 2);
+	zend_string *const_DOCUMENT_name = zend_string_init_interned("DOCUMENT", sizeof("DOCUMENT") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_DOCUMENT_name, &const_DOCUMENT_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_DOCUMENT_name);
+
+	zval const_LINK_value;
+	ZVAL_LONG(&const_LINK_value, 4);
+	zend_string *const_LINK_name = zend_string_init_interned("LINK", sizeof("LINK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_LINK_name, &const_LINK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_LINK_name);
+
+	zval const_IMAGE_value;
+	ZVAL_LONG(&const_IMAGE_value, 8);
+	zend_string *const_IMAGE_name = zend_string_init_interned("IMAGE", sizeof("IMAGE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_IMAGE_name, &const_IMAGE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_IMAGE_name);
+
+	zval const_MEDIA_value;
+	ZVAL_LONG(&const_MEDIA_value, 16);
+	zend_string *const_MEDIA_name = zend_string_init_interned("MEDIA", sizeof("MEDIA") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_MEDIA_name, &const_MEDIA_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_MEDIA_name);
+
+	zval const_EDITABLE_value;
+	ZVAL_LONG(&const_EDITABLE_value, 32);
+	zend_string *const_EDITABLE_name = zend_string_init_interned("EDITABLE", sizeof("EDITABLE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_EDITABLE_name, &const_EDITABLE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_EDITABLE_name);
+
+	zval const_SCROLLBAR_value;
+	ZVAL_LONG(&const_SCROLLBAR_value, 64);
+	zend_string *const_SCROLLBAR_name = zend_string_init_interned("SCROLLBAR", sizeof("SCROLLBAR") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_SCROLLBAR_name, &const_SCROLLBAR_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_SCROLLBAR_name);
+
+	zval const_SELECTION_value;
+	ZVAL_LONG(&const_SELECTION_value, 128);
+	zend_string *const_SELECTION_name = zend_string_init_interned("SELECTION", sizeof("SELECTION") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_SELECTION_name, &const_SELECTION_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_SELECTION_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitITPFirstParty(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitITPFirstParty", class_Gtk4_WebKitITPFirstParty_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitITPThirdParty(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitITPThirdParty", class_Gtk4_WebKitITPThirdParty_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitInputHints(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitInputHints", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NONE_value;
+	ZVAL_LONG(&const_NONE_value, 0);
+	zend_string *const_NONE_name = zend_string_init_interned("NONE", sizeof("NONE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NONE_name, &const_NONE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NONE_name);
+
+	zval const_SPELLCHECK_value;
+	ZVAL_LONG(&const_SPELLCHECK_value, 1);
+	zend_string *const_SPELLCHECK_name = zend_string_init_interned("SPELLCHECK", sizeof("SPELLCHECK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_SPELLCHECK_name, &const_SPELLCHECK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_SPELLCHECK_name);
+
+	zval const_LOWERCASE_value;
+	ZVAL_LONG(&const_LOWERCASE_value, 2);
+	zend_string *const_LOWERCASE_name = zend_string_init_interned("LOWERCASE", sizeof("LOWERCASE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_LOWERCASE_name, &const_LOWERCASE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_LOWERCASE_name);
+
+	zval const_UPPERCASE_CHARS_value;
+	ZVAL_LONG(&const_UPPERCASE_CHARS_value, 4);
+	zend_string *const_UPPERCASE_CHARS_name = zend_string_init_interned("UPPERCASE_CHARS", sizeof("UPPERCASE_CHARS") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_UPPERCASE_CHARS_name, &const_UPPERCASE_CHARS_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_UPPERCASE_CHARS_name);
+
+	zval const_UPPERCASE_WORDS_value;
+	ZVAL_LONG(&const_UPPERCASE_WORDS_value, 8);
+	zend_string *const_UPPERCASE_WORDS_name = zend_string_init_interned("UPPERCASE_WORDS", sizeof("UPPERCASE_WORDS") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_UPPERCASE_WORDS_name, &const_UPPERCASE_WORDS_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_UPPERCASE_WORDS_name);
+
+	zval const_UPPERCASE_SENTENCES_value;
+	ZVAL_LONG(&const_UPPERCASE_SENTENCES_value, 16);
+	zend_string *const_UPPERCASE_SENTENCES_name = zend_string_init_interned("UPPERCASE_SENTENCES", sizeof("UPPERCASE_SENTENCES") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_UPPERCASE_SENTENCES_name, &const_UPPERCASE_SENTENCES_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_UPPERCASE_SENTENCES_name);
+
+	zval const_INHIBIT_OSK_value;
+	ZVAL_LONG(&const_INHIBIT_OSK_value, 32);
+	zend_string *const_INHIBIT_OSK_name = zend_string_init_interned("INHIBIT_OSK", sizeof("INHIBIT_OSK") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_INHIBIT_OSK_name, &const_INHIBIT_OSK_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_INHIBIT_OSK_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitInputMethodContext(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitInputMethodContext", class_Gtk4_WebKitInputMethodContext_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitInputMethodUnderline(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitInputMethodUnderline", class_Gtk4_WebKitInputMethodUnderline_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitInputPurpose(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitInputPurpose", IS_LONG, NULL);
+
+	zval enum_case_FreeForm_value;
+	ZVAL_LONG(&enum_case_FreeForm_value, 0);
+	zend_enum_add_case_cstr(class_entry, "FreeForm", &enum_case_FreeForm_value);
+
+	zval enum_case_Digits_value;
+	ZVAL_LONG(&enum_case_Digits_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Digits", &enum_case_Digits_value);
+
+	zval enum_case_Number_value;
+	ZVAL_LONG(&enum_case_Number_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Number", &enum_case_Number_value);
+
+	zval enum_case_Phone_value;
+	ZVAL_LONG(&enum_case_Phone_value, 3);
+	zend_enum_add_case_cstr(class_entry, "Phone", &enum_case_Phone_value);
+
+	zval enum_case_Url_value;
+	ZVAL_LONG(&enum_case_Url_value, 4);
+	zend_enum_add_case_cstr(class_entry, "Url", &enum_case_Url_value);
+
+	zval enum_case_Email_value;
+	ZVAL_LONG(&enum_case_Email_value, 5);
+	zend_enum_add_case_cstr(class_entry, "Email", &enum_case_Email_value);
+
+	zval enum_case_Password_value;
+	ZVAL_LONG(&enum_case_Password_value, 6);
+	zend_enum_add_case_cstr(class_entry, "Password", &enum_case_Password_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitInsecureContentEvent(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitInsecureContentEvent", IS_LONG, NULL);
+
+	zval enum_case_Run_value;
+	ZVAL_LONG(&enum_case_Run_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Run", &enum_case_Run_value);
+
+	zval enum_case_Displayed_value;
+	ZVAL_LONG(&enum_case_Displayed_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Displayed", &enum_case_Displayed_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitJavascriptError(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitJavascriptError", IS_LONG, NULL);
+
+	zval enum_case_ScriptFailed_value;
+	ZVAL_LONG(&enum_case_ScriptFailed_value, 699);
+	zend_enum_add_case_cstr(class_entry, "ScriptFailed", &enum_case_ScriptFailed_value);
+
+	zval enum_case_InvalidParameter_value;
+	ZVAL_LONG(&enum_case_InvalidParameter_value, 600);
+	zend_enum_add_case_cstr(class_entry, "InvalidParameter", &enum_case_InvalidParameter_value);
+
+	zval enum_case_InvalidResult_value;
+	ZVAL_LONG(&enum_case_InvalidResult_value, 601);
+	zend_enum_add_case_cstr(class_entry, "InvalidResult", &enum_case_InvalidResult_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitLoadEvent(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitLoadEvent", IS_LONG, NULL);
+
+	zval enum_case_Started_value;
+	ZVAL_LONG(&enum_case_Started_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Started", &enum_case_Started_value);
+
+	zval enum_case_Redirected_value;
+	ZVAL_LONG(&enum_case_Redirected_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Redirected", &enum_case_Redirected_value);
+
+	zval enum_case_Committed_value;
+	ZVAL_LONG(&enum_case_Committed_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Committed", &enum_case_Committed_value);
+
+	zval enum_case_Finished_value;
+	ZVAL_LONG(&enum_case_Finished_value, 3);
+	zend_enum_add_case_cstr(class_entry, "Finished", &enum_case_Finished_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitMediaCaptureState(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitMediaCaptureState", IS_LONG, NULL);
+
+	zval enum_case_None_value;
+	ZVAL_LONG(&enum_case_None_value, 0);
+	zend_enum_add_case_cstr(class_entry, "None", &enum_case_None_value);
+
+	zval enum_case_Active_value;
+	ZVAL_LONG(&enum_case_Active_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Active", &enum_case_Active_value);
+
+	zval enum_case_Muted_value;
+	ZVAL_LONG(&enum_case_Muted_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Muted", &enum_case_Muted_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitMediaError(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitMediaError", IS_LONG, NULL);
+
+	zval enum_case_Load_value;
+	ZVAL_LONG(&enum_case_Load_value, 204);
+	zend_enum_add_case_cstr(class_entry, "Load", &enum_case_Load_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitMediaKeySystemPermissionRequest(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_WebKitPermissionRequest)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitMediaKeySystemPermissionRequest", class_Gtk4_WebKitMediaKeySystemPermissionRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_WebKitPermissionRequest);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitMemoryPressureSettings(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitMemoryPressureSettings", class_Gtk4_WebKitMemoryPressureSettings_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitNavigationAction(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitNavigationAction", class_Gtk4_WebKitNavigationAction_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitNavigationPolicyDecision(zend_class_entry *class_entry_Gtk4_WebKitPolicyDecision)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitNavigationPolicyDecision", class_Gtk4_WebKitNavigationPolicyDecision_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_WebKitPolicyDecision, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitNavigationType(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitNavigationType", IS_LONG, NULL);
+
+	zval enum_case_LinkClicked_value;
+	ZVAL_LONG(&enum_case_LinkClicked_value, 0);
+	zend_enum_add_case_cstr(class_entry, "LinkClicked", &enum_case_LinkClicked_value);
+
+	zval enum_case_FormSubmitted_value;
+	ZVAL_LONG(&enum_case_FormSubmitted_value, 1);
+	zend_enum_add_case_cstr(class_entry, "FormSubmitted", &enum_case_FormSubmitted_value);
+
+	zval enum_case_BackForward_value;
+	ZVAL_LONG(&enum_case_BackForward_value, 2);
+	zend_enum_add_case_cstr(class_entry, "BackForward", &enum_case_BackForward_value);
+
+	zval enum_case_Reload_value;
+	ZVAL_LONG(&enum_case_Reload_value, 3);
+	zend_enum_add_case_cstr(class_entry, "Reload", &enum_case_Reload_value);
+
+	zval enum_case_FormResubmitted_value;
+	ZVAL_LONG(&enum_case_FormResubmitted_value, 4);
+	zend_enum_add_case_cstr(class_entry, "FormResubmitted", &enum_case_FormResubmitted_value);
+
+	zval enum_case_Other_value;
+	ZVAL_LONG(&enum_case_Other_value, 5);
+	zend_enum_add_case_cstr(class_entry, "Other", &enum_case_Other_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitNetworkError(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitNetworkError", IS_LONG, NULL);
+
+	zval enum_case_Failed_value;
+	ZVAL_LONG(&enum_case_Failed_value, 399);
+	zend_enum_add_case_cstr(class_entry, "Failed", &enum_case_Failed_value);
+
+	zval enum_case_Transport_value;
+	ZVAL_LONG(&enum_case_Transport_value, 300);
+	zend_enum_add_case_cstr(class_entry, "Transport", &enum_case_Transport_value);
+
+	zval enum_case_UnknownProtocol_value;
+	ZVAL_LONG(&enum_case_UnknownProtocol_value, 301);
+	zend_enum_add_case_cstr(class_entry, "UnknownProtocol", &enum_case_UnknownProtocol_value);
+
+	zval enum_case_Cancelled_value;
+	ZVAL_LONG(&enum_case_Cancelled_value, 302);
+	zend_enum_add_case_cstr(class_entry, "Cancelled", &enum_case_Cancelled_value);
+
+	zval enum_case_FileDoesNotExist_value;
+	ZVAL_LONG(&enum_case_FileDoesNotExist_value, 303);
+	zend_enum_add_case_cstr(class_entry, "FileDoesNotExist", &enum_case_FileDoesNotExist_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitNetworkProxyMode(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitNetworkProxyMode", IS_LONG, NULL);
+
+	zval enum_case_Default_value;
+	ZVAL_LONG(&enum_case_Default_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Default", &enum_case_Default_value);
+
+	zval enum_case_NoProxy_value;
+	ZVAL_LONG(&enum_case_NoProxy_value, 1);
+	zend_enum_add_case_cstr(class_entry, "NoProxy", &enum_case_NoProxy_value);
+
+	zval enum_case_Custom_value;
+	ZVAL_LONG(&enum_case_Custom_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Custom", &enum_case_Custom_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitNetworkProxySettings(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitNetworkProxySettings", class_Gtk4_WebKitNetworkProxySettings_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitNetworkSession(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitNetworkSession", class_Gtk4_WebKitNetworkSession_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitNotification(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitNotification", class_Gtk4_WebKitNotification_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitNotificationPermissionRequest(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_WebKitPermissionRequest)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitNotificationPermissionRequest", class_Gtk4_WebKitNotificationPermissionRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_WebKitPermissionRequest);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitOptionMenu(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitOptionMenu", class_Gtk4_WebKitOptionMenu_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitOptionMenuItem(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitOptionMenuItem", class_Gtk4_WebKitOptionMenuItem_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitPermissionRequest(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitPermissionRequest", class_Gtk4_WebKitPermissionRequest_methods);
+	class_entry = zend_register_internal_interface(&ce);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitPermissionRequestObject(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_WebKitPermissionRequest)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitPermissionRequestObject", class_Gtk4_WebKitPermissionRequestObject_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_WebKitPermissionRequest);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitPermissionState(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitPermissionState", IS_LONG, NULL);
+
+	zval enum_case_Granted_value;
+	ZVAL_LONG(&enum_case_Granted_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Granted", &enum_case_Granted_value);
+
+	zval enum_case_Denied_value;
+	ZVAL_LONG(&enum_case_Denied_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Denied", &enum_case_Denied_value);
+
+	zval enum_case_Prompt_value;
+	ZVAL_LONG(&enum_case_Prompt_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Prompt", &enum_case_Prompt_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitPermissionStateQuery(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitPermissionStateQuery", class_Gtk4_WebKitPermissionStateQuery_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitPointerLockPermissionRequest(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_WebKitPermissionRequest)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitPointerLockPermissionRequest", class_Gtk4_WebKitPointerLockPermissionRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_WebKitPermissionRequest);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitPolicyDecision(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitPolicyDecision", class_Gtk4_WebKitPolicyDecision_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitPolicyDecisionType(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitPolicyDecisionType", IS_LONG, NULL);
+
+	zval enum_case_NavigationAction_value;
+	ZVAL_LONG(&enum_case_NavigationAction_value, 0);
+	zend_enum_add_case_cstr(class_entry, "NavigationAction", &enum_case_NavigationAction_value);
+
+	zval enum_case_NewWindowAction_value;
+	ZVAL_LONG(&enum_case_NewWindowAction_value, 1);
+	zend_enum_add_case_cstr(class_entry, "NewWindowAction", &enum_case_NewWindowAction_value);
+
+	zval enum_case_Response_value;
+	ZVAL_LONG(&enum_case_Response_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Response", &enum_case_Response_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitPolicyError(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitPolicyError", IS_LONG, NULL);
+
+	zval enum_case_Failed_value;
+	ZVAL_LONG(&enum_case_Failed_value, 199);
+	zend_enum_add_case_cstr(class_entry, "Failed", &enum_case_Failed_value);
+
+	zval enum_case_CannotShowMimeType_value;
+	ZVAL_LONG(&enum_case_CannotShowMimeType_value, 100);
+	zend_enum_add_case_cstr(class_entry, "CannotShowMimeType", &enum_case_CannotShowMimeType_value);
+
+	zval enum_case_CannotShowUri_value;
+	ZVAL_LONG(&enum_case_CannotShowUri_value, 101);
+	zend_enum_add_case_cstr(class_entry, "CannotShowUri", &enum_case_CannotShowUri_value);
+
+	zval enum_case_FrameLoadInterruptedByPolicyChange_value;
+	ZVAL_LONG(&enum_case_FrameLoadInterruptedByPolicyChange_value, 102);
+	zend_enum_add_case_cstr(class_entry, "FrameLoadInterruptedByPolicyChange", &enum_case_FrameLoadInterruptedByPolicyChange_value);
+
+	zval enum_case_CannotUseRestrictedPort_value;
+	ZVAL_LONG(&enum_case_CannotUseRestrictedPort_value, 103);
+	zend_enum_add_case_cstr(class_entry, "CannotUseRestrictedPort", &enum_case_CannotUseRestrictedPort_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitPrintError(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitPrintError", IS_LONG, NULL);
+
+	zval enum_case_General_value;
+	ZVAL_LONG(&enum_case_General_value, 599);
+	zend_enum_add_case_cstr(class_entry, "General", &enum_case_General_value);
+
+	zval enum_case_PrinterNotFound_value;
+	ZVAL_LONG(&enum_case_PrinterNotFound_value, 500);
+	zend_enum_add_case_cstr(class_entry, "PrinterNotFound", &enum_case_PrinterNotFound_value);
+
+	zval enum_case_InvalidPageRange_value;
+	ZVAL_LONG(&enum_case_InvalidPageRange_value, 501);
+	zend_enum_add_case_cstr(class_entry, "InvalidPageRange", &enum_case_InvalidPageRange_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitPrintOperation(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitPrintOperation", class_Gtk4_WebKitPrintOperation_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitPrintOperationResponse(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitPrintOperationResponse", IS_LONG, NULL);
+
+	zval enum_case_Print_value;
+	ZVAL_LONG(&enum_case_Print_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Print", &enum_case_Print_value);
+
+	zval enum_case_Cancel_value;
+	ZVAL_LONG(&enum_case_Cancel_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Cancel", &enum_case_Cancel_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitResponsePolicyDecision(zend_class_entry *class_entry_Gtk4_WebKitPolicyDecision)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitResponsePolicyDecision", class_Gtk4_WebKitResponsePolicyDecision_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_WebKitPolicyDecision, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitSaveMode(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitSaveMode", IS_LONG, NULL);
+
+	zval enum_case_Mhtml_value;
+	ZVAL_LONG(&enum_case_Mhtml_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Mhtml", &enum_case_Mhtml_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitScriptDialog(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitScriptDialog", class_Gtk4_WebKitScriptDialog_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitScriptDialogType(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitScriptDialogType", IS_LONG, NULL);
+
+	zval enum_case_Alert_value;
+	ZVAL_LONG(&enum_case_Alert_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Alert", &enum_case_Alert_value);
+
+	zval enum_case_Confirm_value;
+	ZVAL_LONG(&enum_case_Confirm_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Confirm", &enum_case_Confirm_value);
+
+	zval enum_case_Prompt_value;
+	ZVAL_LONG(&enum_case_Prompt_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Prompt", &enum_case_Prompt_value);
+
+	zval enum_case_BeforeUnloadConfirm_value;
+	ZVAL_LONG(&enum_case_BeforeUnloadConfirm_value, 3);
+	zend_enum_add_case_cstr(class_entry, "BeforeUnloadConfirm", &enum_case_BeforeUnloadConfirm_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitScriptMessageReply(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitScriptMessageReply", class_Gtk4_WebKitScriptMessageReply_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitSecurityManager(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitSecurityManager", class_Gtk4_WebKitSecurityManager_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitSecurityOrigin(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitSecurityOrigin", class_Gtk4_WebKitSecurityOrigin_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitSettings(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitSettings", class_Gtk4_WebKitSettings_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitSnapshotError(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitSnapshotError", IS_LONG, NULL);
+
+	zval enum_case_Create_value;
+	ZVAL_LONG(&enum_case_Create_value, 799);
+	zend_enum_add_case_cstr(class_entry, "Create", &enum_case_Create_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitSnapshotOptions(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitSnapshotOptions", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NONE_value;
+	ZVAL_LONG(&const_NONE_value, 0);
+	zend_string *const_NONE_name = zend_string_init_interned("NONE", sizeof("NONE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NONE_name, &const_NONE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NONE_name);
+
+	zval const_INCLUDE_SELECTION_HIGHLIGHTING_value;
+	ZVAL_LONG(&const_INCLUDE_SELECTION_HIGHLIGHTING_value, 1);
+	zend_string *const_INCLUDE_SELECTION_HIGHLIGHTING_name = zend_string_init_interned("INCLUDE_SELECTION_HIGHLIGHTING", sizeof("INCLUDE_SELECTION_HIGHLIGHTING") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_INCLUDE_SELECTION_HIGHLIGHTING_name, &const_INCLUDE_SELECTION_HIGHLIGHTING_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_INCLUDE_SELECTION_HIGHLIGHTING_name);
+
+	zval const_TRANSPARENT_BACKGROUND_value;
+	ZVAL_LONG(&const_TRANSPARENT_BACKGROUND_value, 2);
+	zend_string *const_TRANSPARENT_BACKGROUND_name = zend_string_init_interned("TRANSPARENT_BACKGROUND", sizeof("TRANSPARENT_BACKGROUND") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_TRANSPARENT_BACKGROUND_name, &const_TRANSPARENT_BACKGROUND_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_TRANSPARENT_BACKGROUND_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitSnapshotRegion(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitSnapshotRegion", IS_LONG, NULL);
+
+	zval enum_case_Visible_value;
+	ZVAL_LONG(&enum_case_Visible_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Visible", &enum_case_Visible_value);
+
+	zval enum_case_FullDocument_value;
+	ZVAL_LONG(&enum_case_FullDocument_value, 1);
+	zend_enum_add_case_cstr(class_entry, "FullDocument", &enum_case_FullDocument_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitTLSErrorsPolicy(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitTLSErrorsPolicy", IS_LONG, NULL);
+
+	zval enum_case_Ignore_value;
+	ZVAL_LONG(&enum_case_Ignore_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Ignore", &enum_case_Ignore_value);
+
+	zval enum_case_Fail_value;
+	ZVAL_LONG(&enum_case_Fail_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Fail", &enum_case_Fail_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitURIRequest(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitURIRequest", class_Gtk4_WebKitURIRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitURIResponse(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitURIResponse", class_Gtk4_WebKitURIResponse_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitURISchemeRequest(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitURISchemeRequest", class_Gtk4_WebKitURISchemeRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitURISchemeResponse(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitURISchemeResponse", class_Gtk4_WebKitURISchemeResponse_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitUserContentFilter(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitUserContentFilter", class_Gtk4_WebKitUserContentFilter_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitUserContentFilterError(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitUserContentFilterError", IS_LONG, NULL);
+
+	zval enum_case_InvalidSource_value;
+	ZVAL_LONG(&enum_case_InvalidSource_value, 0);
+	zend_enum_add_case_cstr(class_entry, "InvalidSource", &enum_case_InvalidSource_value);
+
+	zval enum_case_NotFound_value;
+	ZVAL_LONG(&enum_case_NotFound_value, 1);
+	zend_enum_add_case_cstr(class_entry, "NotFound", &enum_case_NotFound_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitUserContentFilterStore(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitUserContentFilterStore", class_Gtk4_WebKitUserContentFilterStore_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitUserContentInjectedFrames(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitUserContentInjectedFrames", IS_LONG, NULL);
+
+	zval enum_case_AllFrames_value;
+	ZVAL_LONG(&enum_case_AllFrames_value, 0);
+	zend_enum_add_case_cstr(class_entry, "AllFrames", &enum_case_AllFrames_value);
+
+	zval enum_case_TopFrame_value;
+	ZVAL_LONG(&enum_case_TopFrame_value, 1);
+	zend_enum_add_case_cstr(class_entry, "TopFrame", &enum_case_TopFrame_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitUserContentManager(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitUserContentManager", class_Gtk4_WebKitUserContentManager_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitUserMediaPermissionRequest(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_WebKitPermissionRequest)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitUserMediaPermissionRequest", class_Gtk4_WebKitUserMediaPermissionRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_WebKitPermissionRequest);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitUserMessage(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitUserMessage", class_Gtk4_WebKitUserMessage_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitUserMessageError(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitUserMessageError", IS_LONG, NULL);
+
+	zval enum_case_Message_value;
+	ZVAL_LONG(&enum_case_Message_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Message", &enum_case_Message_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitUserScript(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitUserScript", class_Gtk4_WebKitUserScript_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitUserScriptInjectionTime(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitUserScriptInjectionTime", IS_LONG, NULL);
+
+	zval enum_case_Start_value;
+	ZVAL_LONG(&enum_case_Start_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Start", &enum_case_Start_value);
+
+	zval enum_case_End_value;
+	ZVAL_LONG(&enum_case_End_value, 1);
+	zend_enum_add_case_cstr(class_entry, "End", &enum_case_End_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitUserStyleLevel(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitUserStyleLevel", IS_LONG, NULL);
+
+	zval enum_case_User_value;
+	ZVAL_LONG(&enum_case_User_value, 0);
+	zend_enum_add_case_cstr(class_entry, "User", &enum_case_User_value);
+
+	zval enum_case_Author_value;
+	ZVAL_LONG(&enum_case_Author_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Author", &enum_case_Author_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitUserStyleSheet(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitUserStyleSheet", class_Gtk4_WebKitUserStyleSheet_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitWebContext(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitWebContext", class_Gtk4_WebKitWebContext_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitWebExtensionMode(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitWebExtensionMode", IS_LONG, NULL);
+
+	zval enum_case_None_value;
+	ZVAL_LONG(&enum_case_None_value, 0);
+	zend_enum_add_case_cstr(class_entry, "None", &enum_case_None_value);
+
+	zval enum_case_Manifestv2_value;
+	ZVAL_LONG(&enum_case_Manifestv2_value, 1);
+	zend_enum_add_case_cstr(class_entry, "Manifestv2", &enum_case_Manifestv2_value);
+
+	zval enum_case_Manifestv3_value;
+	ZVAL_LONG(&enum_case_Manifestv3_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Manifestv3", &enum_case_Manifestv3_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitWebInspector(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitWebInspector", class_Gtk4_WebKitWebInspector_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitWebProcessTerminationReason(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitWebProcessTerminationReason", IS_LONG, NULL);
+
+	zval enum_case_Crashed_value;
+	ZVAL_LONG(&enum_case_Crashed_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Crashed", &enum_case_Crashed_value);
+
+	zval enum_case_ExceededMemoryLimit_value;
+	ZVAL_LONG(&enum_case_ExceededMemoryLimit_value, 1);
+	zend_enum_add_case_cstr(class_entry, "ExceededMemoryLimit", &enum_case_ExceededMemoryLimit_value);
+
+	zval enum_case_TerminatedByApi_value;
+	ZVAL_LONG(&enum_case_TerminatedByApi_value, 2);
+	zend_enum_add_case_cstr(class_entry, "TerminatedByApi", &enum_case_TerminatedByApi_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitWebResource(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitWebResource", class_Gtk4_WebKitWebResource_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitWebView(zend_class_entry *class_entry_Gtk4_WebKitWebViewBase)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitWebView", class_Gtk4_WebKitWebView_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_WebKitWebViewBase, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitWebViewBase(zend_class_entry *class_entry_Gtk4_GtkWidget)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitWebViewBase", class_Gtk4_WebKitWebViewBase_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GtkWidget, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitWebViewSessionState(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitWebViewSessionState", class_Gtk4_WebKitWebViewSessionState_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitWebsiteData(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitWebsiteData", class_Gtk4_WebKitWebsiteData_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitWebsiteDataAccessPermissionRequest(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_WebKitPermissionRequest)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitWebsiteDataAccessPermissionRequest", class_Gtk4_WebKitWebsiteDataAccessPermissionRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_WebKitPermissionRequest);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitWebsiteDataManager(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitWebsiteDataManager", class_Gtk4_WebKitWebsiteDataManager_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitWebsiteDataTypes(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitWebsiteDataTypes", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_MEMORY_CACHE_value;
+	ZVAL_LONG(&const_MEMORY_CACHE_value, 1);
+	zend_string *const_MEMORY_CACHE_name = zend_string_init_interned("MEMORY_CACHE", sizeof("MEMORY_CACHE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_MEMORY_CACHE_name, &const_MEMORY_CACHE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_MEMORY_CACHE_name);
+
+	zval const_DISK_CACHE_value;
+	ZVAL_LONG(&const_DISK_CACHE_value, 2);
+	zend_string *const_DISK_CACHE_name = zend_string_init_interned("DISK_CACHE", sizeof("DISK_CACHE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_DISK_CACHE_name, &const_DISK_CACHE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_DISK_CACHE_name);
+
+	zval const_OFFLINE_APPLICATION_CACHE_value;
+	ZVAL_LONG(&const_OFFLINE_APPLICATION_CACHE_value, 4);
+	zend_string *const_OFFLINE_APPLICATION_CACHE_name = zend_string_init_interned("OFFLINE_APPLICATION_CACHE", sizeof("OFFLINE_APPLICATION_CACHE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_OFFLINE_APPLICATION_CACHE_name, &const_OFFLINE_APPLICATION_CACHE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_OFFLINE_APPLICATION_CACHE_name);
+
+	zval const_SESSION_STORAGE_value;
+	ZVAL_LONG(&const_SESSION_STORAGE_value, 8);
+	zend_string *const_SESSION_STORAGE_name = zend_string_init_interned("SESSION_STORAGE", sizeof("SESSION_STORAGE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_SESSION_STORAGE_name, &const_SESSION_STORAGE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_SESSION_STORAGE_name);
+
+	zval const_LOCAL_STORAGE_value;
+	ZVAL_LONG(&const_LOCAL_STORAGE_value, 16);
+	zend_string *const_LOCAL_STORAGE_name = zend_string_init_interned("LOCAL_STORAGE", sizeof("LOCAL_STORAGE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_LOCAL_STORAGE_name, &const_LOCAL_STORAGE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_LOCAL_STORAGE_name);
+
+	zval const_INDEXEDDB_DATABASES_value;
+	ZVAL_LONG(&const_INDEXEDDB_DATABASES_value, 32);
+	zend_string *const_INDEXEDDB_DATABASES_name = zend_string_init_interned("INDEXEDDB_DATABASES", sizeof("INDEXEDDB_DATABASES") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_INDEXEDDB_DATABASES_name, &const_INDEXEDDB_DATABASES_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_INDEXEDDB_DATABASES_name);
+
+	zval const_COOKIES_value;
+	ZVAL_LONG(&const_COOKIES_value, 64);
+	zend_string *const_COOKIES_name = zend_string_init_interned("COOKIES", sizeof("COOKIES") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_COOKIES_name, &const_COOKIES_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_COOKIES_name);
+
+	zval const_DEVICE_ID_HASH_SALT_value;
+	ZVAL_LONG(&const_DEVICE_ID_HASH_SALT_value, 128);
+	zend_string *const_DEVICE_ID_HASH_SALT_name = zend_string_init_interned("DEVICE_ID_HASH_SALT", sizeof("DEVICE_ID_HASH_SALT") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_DEVICE_ID_HASH_SALT_name, &const_DEVICE_ID_HASH_SALT_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_DEVICE_ID_HASH_SALT_name);
+
+	zval const_HSTS_CACHE_value;
+	ZVAL_LONG(&const_HSTS_CACHE_value, 256);
+	zend_string *const_HSTS_CACHE_name = zend_string_init_interned("HSTS_CACHE", sizeof("HSTS_CACHE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_HSTS_CACHE_name, &const_HSTS_CACHE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_HSTS_CACHE_name);
+
+	zval const_ITP_value;
+	ZVAL_LONG(&const_ITP_value, 512);
+	zend_string *const_ITP_name = zend_string_init_interned("ITP", sizeof("ITP") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_ITP_name, &const_ITP_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_ITP_name);
+
+	zval const_SERVICE_WORKER_REGISTRATIONS_value;
+	ZVAL_LONG(&const_SERVICE_WORKER_REGISTRATIONS_value, 1024);
+	zend_string *const_SERVICE_WORKER_REGISTRATIONS_name = zend_string_init_interned("SERVICE_WORKER_REGISTRATIONS", sizeof("SERVICE_WORKER_REGISTRATIONS") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_SERVICE_WORKER_REGISTRATIONS_name, &const_SERVICE_WORKER_REGISTRATIONS_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_SERVICE_WORKER_REGISTRATIONS_name);
+
+	zval const_DOM_CACHE_value;
+	ZVAL_LONG(&const_DOM_CACHE_value, 2048);
+	zend_string *const_DOM_CACHE_name = zend_string_init_interned("DOM_CACHE", sizeof("DOM_CACHE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_DOM_CACHE_name, &const_DOM_CACHE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_DOM_CACHE_name);
+
+	zval const_ALL_value;
+	ZVAL_LONG(&const_ALL_value, 4095);
+	zend_string *const_ALL_name = zend_string_init_interned("ALL", sizeof("ALL") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_ALL_name, &const_ALL_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_ALL_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitWebsitePolicies(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitWebsitePolicies", class_Gtk4_WebKitWebsitePolicies_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitWindowProperties(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitWindowProperties", class_Gtk4_WebKitWindowProperties_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitXRPermissionRequest(zend_class_entry *class_entry_Gtk4_GObject, zend_class_entry *class_entry_Gtk4_WebKitPermissionRequest)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitXRPermissionRequest", class_Gtk4_WebKitXRPermissionRequest_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, ZEND_ACC_FINAL);
+	zend_class_implements(class_entry, 1, class_entry_Gtk4_WebKitPermissionRequest);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitXRSessionFeatures(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "WebKitXRSessionFeatures", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_VIEWER_value;
+	ZVAL_LONG(&const_VIEWER_value, 1);
+	zend_string *const_VIEWER_name = zend_string_init_interned("VIEWER", sizeof("VIEWER") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_VIEWER_name, &const_VIEWER_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_VIEWER_name);
+
+	zval const_LOCAL_value;
+	ZVAL_LONG(&const_LOCAL_value, 2);
+	zend_string *const_LOCAL_name = zend_string_init_interned("LOCAL", sizeof("LOCAL") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_LOCAL_name, &const_LOCAL_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_LOCAL_name);
+
+	zval const_LOCAL_FLOOR_value;
+	ZVAL_LONG(&const_LOCAL_FLOOR_value, 4);
+	zend_string *const_LOCAL_FLOOR_name = zend_string_init_interned("LOCAL_FLOOR", sizeof("LOCAL_FLOOR") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_LOCAL_FLOOR_name, &const_LOCAL_FLOOR_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_LOCAL_FLOOR_name);
+
+	zval const_BOUNDED_FLOOR_value;
+	ZVAL_LONG(&const_BOUNDED_FLOOR_value, 8);
+	zend_string *const_BOUNDED_FLOOR_name = zend_string_init_interned("BOUNDED_FLOOR", sizeof("BOUNDED_FLOOR") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_BOUNDED_FLOOR_name, &const_BOUNDED_FLOOR_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_BOUNDED_FLOOR_name);
+
+	zval const_UNBOUNDED_value;
+	ZVAL_LONG(&const_UNBOUNDED_value, 16);
+	zend_string *const_UNBOUNDED_name = zend_string_init_interned("UNBOUNDED", sizeof("UNBOUNDED") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_UNBOUNDED_name, &const_UNBOUNDED_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_UNBOUNDED_name);
+
+	zval const_HAND_TRACKING_value;
+	ZVAL_LONG(&const_HAND_TRACKING_value, 32);
+	zend_string *const_HAND_TRACKING_name = zend_string_init_interned("HAND_TRACKING", sizeof("HAND_TRACKING") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_HAND_TRACKING_name, &const_HAND_TRACKING_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_HAND_TRACKING_name);
+
+	zval const_HIT_TEST_value;
+	ZVAL_LONG(&const_HIT_TEST_value, 64);
+	zend_string *const_HIT_TEST_name = zend_string_init_interned("HIT_TEST", sizeof("HIT_TEST") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_HIT_TEST_name, &const_HIT_TEST_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_HIT_TEST_name);
+
+	zval const_LAYERS_value;
+	ZVAL_LONG(&const_LAYERS_value, 128);
+	zend_string *const_LAYERS_name = zend_string_init_interned("LAYERS", sizeof("LAYERS") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_LAYERS_name, &const_LAYERS_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_LAYERS_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_WebKitXRSessionMode(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\WebKitXRSessionMode", IS_LONG, NULL);
+
+	zval enum_case_Inline_value;
+	ZVAL_LONG(&enum_case_Inline_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Inline", &enum_case_Inline_value);
+
+	zval enum_case_ImmersiveVr_value;
+	ZVAL_LONG(&enum_case_ImmersiveVr_value, 1);
+	zend_enum_add_case_cstr(class_entry, "ImmersiveVr", &enum_case_ImmersiveVr_value);
+
+	zval enum_case_ImmersiveAr_value;
+	ZVAL_LONG(&enum_case_ImmersiveAr_value, 2);
+	zend_enum_add_case_cstr(class_entry, "ImmersiveAr", &enum_case_ImmersiveAr_value);
+
+	return class_entry;
+}

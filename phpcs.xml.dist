@@ -9,6 +9,8 @@
     <exclude-pattern>tests/phpt/*</exclude-pattern>
     <exclude-pattern>gen/gen_stub.php</exclude-pattern>
     <exclude-pattern>gen/PHP-Parser-*</exclude-pattern>
+    <exclude-pattern>gen/out/*</exclude-pattern>
+    <exclude-pattern>tests/Generated/*</exclude-pattern>
 
     <arg name="extensions" value="php"/>
     <arg name="colors"/>
@@ -26,6 +28,35 @@
         </properties>
     </rule>
 
+    <!-- gen/gir.php and gen/gir/*: one program in six files (loader, model, type map, writer,
+         emitters, CLI), not a PSR-4 library - the model's four value objects belong together and
+         the entry point runs on include. There is no autoloader here. -->
+    <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
+        <exclude-pattern>gen/gir.php</exclude-pattern>
+        <exclude-pattern>gen/gir/*</exclude-pattern>
+    </rule>
+    <rule ref="PSR1.Files.SideEffects">
+        <exclude-pattern>gen/gir.php</exclude-pattern>
+        <exclude-pattern>gen/gir/*</exclude-pattern>
+    </rule>
+    <!-- PER-CS 2.0 (php-cs-fixer, which rewrites) allows `) {}` on a promoted-property
+         constructor; these PSR-12 sniffs predate that. The fixer wins, as for the stub. -->
+    <rule ref="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine">
+        <exclude-pattern>gen/gir.php</exclude-pattern>
+        <exclude-pattern>gen/gir/*</exclude-pattern>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.ScopeClosingBrace.ContentBefore">
+        <exclude-pattern>gen/gir.php</exclude-pattern>
+        <exclude-pattern>gen/gir/*</exclude-pattern>
+    </rule>
+
+    <!-- PHP subclasses override GTK virtual methods as vfunc_<name>() (src/core/subtype,
+         README.md "Design"): the name mirrors the class-struct slot, snake_case like the whole API. -->
+    <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
+        <exclude-pattern>tests/*</exclude-pattern>
+        <exclude-pattern>examples/*</exclude-pattern>
+    </rule>
+
     <!-- Not linted: src/gtk4.stub.php (php-src stub syntax) and the generated stubs/gtk4.php
-         (snake_case API, all classes in one file, dummy bodies - see docs/PLAN.md). -->
+         (snake_case API, all classes in one file, dummy bodies - see README.md "Design"). -->
 </ruleset>

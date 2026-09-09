@@ -1,5 +1,7 @@
 #include "fundamental.h"
 
+#include "globals.h"
+
 #include <unordered_map>
 
 namespace phpgtk {
@@ -8,6 +10,7 @@ namespace {
 
 zend_object_handlers handlers;
 
+// GType -> fundamental class info (MINIT-filled).
 std::unordered_map<GType, FundamentalClass> &registry() {
   static std::unordered_map<GType, FundamentalClass> map;
   return map;
@@ -24,18 +27,25 @@ zend_object *create_object(zend_class_entry *ce) {
   return &self->std;
 }
 
-// get_constructor handler: handles only come from C (wrap_fundamental) - `new X()` would
-// otherwise yield an empty handle whose methods dereference nullptr.
+// get_constructor handler: a class that declares a constructor (a generated GskColorNode, whose
+// `new` adopts the C constructor's result through fundamental_adopt()) gets the standard
+// handling; the hand-written ones (GdkEvent) declare none and only come from C
+// (wrap_fundamental) - `new X()` would otherwise yield an empty handle whose methods
+// dereference nullptr.
 zend_function *get_constructor(zend_object *o) {
+  if (o->ce->constructor != nullptr) return zend_std_get_constructor(o);
   zend_throw_error(nullptr, "%s instances are created by the extension, not with new",
                    ZSTR_VAL(o->ce->name));
   return nullptr;
 }
 
-// free_obj handler: drop our reference through the type's unref.
+// free_obj handler: forget the identity entry, then drop our reference through the type's unref.
 void free_obj(zend_object *o) {
   Fundamental *self = fundamental_from_zend(o);
   if (self->instance != nullptr) {
+    auto &handles = GTK4_G(fundamental_handles);
+    auto it = handles.find(self->instance);
+    if (it != handles.end() && it->second == o) handles.erase(it);
     const FundamentalClass *info = fundamental_class_for_type(self->type);
     if (info != nullptr) info->unref(self->instance);
   }
@@ -59,18 +69,34 @@ void register_fundamental(const FundamentalClass &info) {
   registry()[info.type] = info;
 }
 
-// Registry lookup by GType.
+// Registry lookup by GType, walking up to the nearest registered ancestor (a GdkKeyEvent is
+// handled by the GdkEvent class, like wrap() does for GObjects).
 const FundamentalClass *fundamental_class_for_type(GType type) {
-  auto it = registry().find(type);
-  return it == registry().end() ? nullptr : &it->second;
+  for (GType t = type; t != 0; t = g_type_parent(t)) {
+    auto it = registry().find(t);
+    if (it != registry().end()) return &it->second;
+  }
+  return nullptr;
 }
 
-// C -> PHP: new handle with its own reference.
+// C -> PHP: the live handle of this instance (`===` holds while PHP keeps it, like GObject
+// handles do through their qdata), else a new one with its own reference. The map is keyed by
+// the instance pointer; a handle owns a reference, so the pointer cannot be reused behind it -
+// except for types without a refcount (GdkEventSequence: GTK frees the sequence when the touch
+// ends and may hand the address out again; a stale handle then names the new sequence).
 void wrap_fundamental(GType type, gpointer instance, zval *rv) {
   if (instance == nullptr) {
     ZVAL_NULL(rv);
     return;
   }
+  auto &handles = GTK4_G(fundamental_handles);
+  if (auto it = handles.find(instance); it != handles.end()) {
+    ZVAL_OBJ_COPY(rv, it->second);
+    return;
+  }
+  // An instantiatable fundamental (GdkEvent) knows its real type: a GdkKeyEvent handed over as
+  // a GdkEvent still gets the GdkKeyEvent class. Refcounted boxed types (cairo_t) have no header.
+  if (G_TYPE_IS_INSTANTIATABLE(type)) type = G_TYPE_FROM_INSTANCE(instance);
   const FundamentalClass *info = fundamental_class_for_type(type);
   if (info == nullptr) {
     ZVAL_NULL(rv);
@@ -81,12 +107,45 @@ void wrap_fundamental(GType type, gpointer instance, zval *rv) {
   Fundamental *self = fundamental_from_zval(rv);
   self->type = type;
   self->instance = info->ref(instance);
+  handles[instance] = Z_OBJ_P(rv);
+}
+
+// A generated constructor's result becomes the handle's instance: ownership moves (the C
+// constructor returned a full reference), and the identity map learns the pointer so the same
+// instance wraps back to this handle. A constructor called twice releases the first instance.
+void fundamental_adopt(Fundamental *self, GType type, gpointer instance) {
+  auto &handles = GTK4_G(fundamental_handles);
+  if (self->instance != nullptr) {
+    if (auto it = handles.find(self->instance); it != handles.end() && it->second == &self->std) {
+      handles.erase(it);
+    }
+    const FundamentalClass *old = fundamental_class_for_type(self->type);
+    if (old != nullptr) old->unref(self->instance);
+  }
+  if (G_TYPE_IS_INSTANTIATABLE(type)) type = G_TYPE_FROM_INSTANCE(instance);
+  self->type = type;
+  self->instance = instance;
+  handles[instance] = &self->std;
+}
+
+// $this's instance, or nullptr with the Error a never-initialised handle deserves.
+gpointer fundamental_self(zend_execute_data *execute_data) {
+  Fundamental *self = fundamental_from_zval(ZEND_THIS);
+  if (self->instance == nullptr) {
+    zend_throw_error(nullptr, "%s::%s(): this handle has no instance (its constructor did not run)",
+                     ZSTR_VAL(Z_OBJCE_P(ZEND_THIS)->name),
+                     ZSTR_VAL(EX(func)->common.function_name));
+    return nullptr;
+  }
+  return self->instance;
 }
 
 // PHP -> C: borrowed instance of exactly `expected`.
 gpointer unwrap_fundamental(zval *zv, GType expected) {
   const FundamentalClass *info = fundamental_class_for_type(expected);
-  if (info == nullptr || Z_TYPE_P(zv) != IS_OBJECT || Z_OBJCE_P(zv) != info->ce) {
+  if (info == nullptr || Z_TYPE_P(zv) != IS_OBJECT ||
+      !instanceof_function(Z_OBJCE_P(zv), info->ce) ||
+      g_type_is_a(fundamental_from_zval(zv)->type, expected) == FALSE) {
     zend_type_error("expected %s, %s given", g_type_name(expected), zend_zval_value_name(zv));
     return nullptr;
   }

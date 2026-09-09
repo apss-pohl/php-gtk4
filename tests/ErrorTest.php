@@ -9,6 +9,14 @@ use Gtk4\Gtk;
 /** src/core/error: the C++/PHP exception boundary. */
 final class ErrorTest extends GtkTestCase
 {
+    /**
+     * It exercises the no-handler fallback itself - the reported warning *is* the assertion.
+     */
+    protected function toleratesGtkCriticals(): bool
+    {
+        return true;
+    }
+
     public function testHandlerReceivesTheThrowableObject(): void
     {
         $w = $this->window();
@@ -64,7 +72,7 @@ final class ErrorTest extends GtkTestCase
         $w->connect('notify::title', function (): void {
             throw new \RuntimeException('boom');
         });
-        // No handler installed: falls back to g_critical() on stderr. Must not throw here.
+        // No handler installed: falls back to an E_WARNING. Must not throw here.
         $w->set_title('x');
         self::assertSame('x', $w->get_title(), 'emitter continues after the failing handler');
     }
@@ -106,7 +114,7 @@ final class ErrorTest extends GtkTestCase
         });
         $w->set_title('a');
         Gtk::set_exception_handler(null);
-        $w->set_title('b');  // now goes to g_critical instead
+        $w->set_title('b');  // now goes to the warning fallback instead
         self::assertSame(1, $calls);
     }
 
@@ -126,7 +134,7 @@ final class ErrorTest extends GtkTestCase
         Gtk::set_exception_handler(function (): void {
             throw new \LogicException('handler itself is broken');
         });
-        $w->set_title('x');  // g_critical twice on stderr; process must survive
+        $w->set_title('x');  // reported twice; process must survive
         self::assertSame('x', $w->get_title());
     }
 }

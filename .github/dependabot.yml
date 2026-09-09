@@ -1,13 +1,24 @@
 version: 2
+
+# Conventional Commits are mandatory here (docs/CONTRIBUTING.md) and CI checks the PR
+# title, so Dependabot has to write them too: without a prefix it opens "Bump x from a
+# to b", which the gate rejects. `include: scope` appends (deps) / (deps-dev).
 updates:
   - package-ecosystem: composer
     directory: /
     schedule: { interval: weekly }
+    commit-message: { prefix: build, prefix-development: build, include: scope }
     groups:
       dev-tools: { patterns: ["*"] }
   - package-ecosystem: github-actions
     directory: /
     schedule: { interval: weekly }
+    commit-message: { prefix: ci, include: scope }
+    groups:
+      actions: { patterns: ["*"] }
   - package-ecosystem: npm
     directory: /
     schedule: { interval: weekly }
+    commit-message: { prefix: build, prefix-development: build, include: scope }
+    groups:
+      npm-tools: { patterns: ["*"] }

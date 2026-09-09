@@ -2,6 +2,11 @@
 #include "php_gtk4.h"
 #include "core/error.h"
 #include "core/globals.h"
+#include "core/mainloop.h"
+#include "core/object.h"
+
+#include <cstring>
+#include <string>
 
 using namespace phpgtk;
 
@@ -16,6 +21,62 @@ ZEND_METHOD(Gtk4_Gtk, init) {
   const bool ok = gtk_init_check();
   if (ok) record_gui_thread();
   RETURN_BOOL(ok);
+}
+
+/**
+ * static Gtk4\Gtk::get_major_version(): int
+ *
+ * The major version of the GTK library in use - 4 here (gtk_get_major_version).
+ */
+ZEND_METHOD(Gtk4_Gtk, get_major_version) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  RETURN_LONG(gtk_get_major_version());
+}
+
+/**
+ * static Gtk4\Gtk::get_minor_version(): int
+ *
+ * The minor version of the GTK library in use (gtk_get_minor_version).
+ */
+ZEND_METHOD(Gtk4_Gtk, get_minor_version) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  RETURN_LONG(gtk_get_minor_version());
+}
+
+/**
+ * static Gtk4\Gtk::get_micro_version(): int
+ *
+ * The micro version of the GTK library in use (gtk_get_micro_version).
+ */
+ZEND_METHOD(Gtk4_Gtk, get_micro_version) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  RETURN_LONG(gtk_get_micro_version());
+}
+
+/**
+ * static Gtk4\Gtk::check_version(int $required_major, int $required_minor, int $required_micro):
+ * ?string
+ *
+ * Null when the GTK in use is compatible with the given version, otherwise a string saying how it
+ * is not (gtk_check_version): older than what was asked for, or a different major version, which
+ * is not binary compatible either way.
+ */
+ZEND_METHOD(Gtk4_Gtk, check_version) {
+  zend_long required_major;
+  zend_long required_minor;
+  zend_long required_micro;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_LONG(required_major)
+  Z_PARAM_LONG(required_minor)
+  Z_PARAM_LONG(required_micro)
+  ZEND_PARSE_PARAMETERS_END();
+  if (!check_range<guint>(required_major, 1)) RETURN_THROWS();
+  if (!check_range<guint>(required_minor, 2)) RETURN_THROWS();
+  if (!check_range<guint>(required_micro, 3)) RETURN_THROWS();
+  const char *mismatch =
+      gtk_check_version(static_cast<guint>(required_major), static_cast<guint>(required_minor),
+                        static_cast<guint>(required_micro));
+  PHPGTK_RETURN_STRING_OR_NULL(mismatch);
 }
 
 /**
@@ -37,6 +98,9 @@ ZEND_METHOD(Gtk4_Gtk, set_exception_handler) {
 
 /**
  * static Gtk4\Gtk::set_exception_mode(ExceptionMode $mode): void
+ *
+ * What a Throwable escaping a handler does: `Log` (report, GTK continues) or `Rethrow` (stop
+ * loops, propagate).
  */
 ZEND_METHOD(Gtk4_Gtk, set_exception_mode) {
   zval *mode;
@@ -49,6 +113,8 @@ ZEND_METHOD(Gtk4_Gtk, set_exception_mode) {
 
 /**
  * static Gtk4\Gtk::get_exception_mode(): ExceptionMode
+ *
+ * The current mode; `Log` by default.
  */
 ZEND_METHOD(Gtk4_Gtk, get_exception_mode) {
   ZEND_PARSE_PARAMETERS_NONE();
@@ -57,14 +123,64 @@ ZEND_METHOD(Gtk4_Gtk, get_exception_mode) {
   RETURN_OBJ_COPY(c);
 }
 
-#ifdef PHPGTK_TESTING
+/**
+ * static Gtk4\Gtk::add_provider_for_display(GdkDisplay $display, GtkStyleProvider $provider, int
+ * $priority = GtkStyleProviderPriority::APPLICATION): void
+ *
+ * Add a style provider (a {@see GtkCssProvider}) to every widget on $display
+ * (gtk_style_context_add_provider_for_display - the function outlived the GtkStyleContext class it
+ * is named after).
+ */
+ZEND_METHOD(Gtk4_Gtk, add_provider_for_display) {
+  zval *display = nullptr;
+  zval *provider = nullptr;
+  zend_long priority = GTK_STYLE_PROVIDER_PRIORITY_APPLICATION;
+  ZEND_PARSE_PARAMETERS_START(2, 3)
+  Z_PARAM_OBJECT_OF_CLASS(display, class_for_gtype(GDK_TYPE_DISPLAY))
+  Z_PARAM_OBJECT_OF_CLASS(provider, class_for_gtype(GTK_TYPE_STYLE_PROVIDER))
+  Z_PARAM_OPTIONAL
+  Z_PARAM_LONG(priority)
+  ZEND_PARSE_PARAMETERS_END();
+  if (priority < 0) {
+    zend_argument_value_error(3, "must be greater than or equal to 0");
+    RETURN_THROWS();
+  }
+  GObject *display_o = unwrap(display, GDK_TYPE_DISPLAY);
+  if (display_o == nullptr) RETURN_THROWS();
+  GObject *provider_o = unwrap(provider, GTK_TYPE_STYLE_PROVIDER);
+  if (provider_o == nullptr) RETURN_THROWS();
+  gtk_style_context_add_provider_for_display(GDK_DISPLAY(display_o), GTK_STYLE_PROVIDER(provider_o),
+                                             static_cast<guint>(priority));
+}
+
+/**
+ * static Gtk4\Gtk::remove_provider_for_display(GdkDisplay $display, GtkStyleProvider $provider):
+ * void
+ *
+ * Detach a provider added with {@see add_provider_for_display()}; unknown providers are ignored.
+ */
+ZEND_METHOD(Gtk4_Gtk, remove_provider_for_display) {
+  zval *display = nullptr;
+  zval *provider = nullptr;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(display, class_for_gtype(GDK_TYPE_DISPLAY))
+  Z_PARAM_OBJECT_OF_CLASS(provider, class_for_gtype(GTK_TYPE_STYLE_PROVIDER))
+  ZEND_PARSE_PARAMETERS_END();
+  GObject *display_o = unwrap(display, GDK_TYPE_DISPLAY);
+  if (display_o == nullptr) RETURN_THROWS();
+  GObject *provider_o = unwrap(provider, GTK_TYPE_STYLE_PROVIDER);
+  if (provider_o == nullptr) RETURN_THROWS();
+  gtk_style_context_remove_provider_for_display(GDK_DISPLAY(display_o),
+                                                GTK_STYLE_PROVIDER(provider_o));
+}
+
 /**
  * static Gtk4\Gtk::testing_iterate_nested(int $iterations): void
  *
- * Test builds only (`--enable-gtk4-testing`, `FEATURES` has `testing=yes`): iterate the default
- * context $iterations times from C, blocking each time, the way GTK does inside DnD or a portal
- * call. Deliberately *not* a rethrow boundary - a Throwable parked in {@see
- * ExceptionMode::Rethrow} surfaces from the enclosing run(), as it would then.
+ * A test hook, not part of the supported surface: iterate the default context $iterations times
+ * from C, blocking each time, the way GTK does inside DnD or a portal call. Deliberately *not* a
+ * rethrow boundary - a Throwable parked in {@see ExceptionMode::Rethrow} surfaces from the
+ * enclosing run(), as it would then.
  */
 ZEND_METHOD(Gtk4_Gtk, testing_iterate_nested) {
   zend_long iterations;
@@ -81,4 +197,22 @@ ZEND_METHOD(Gtk4_Gtk, testing_iterate_nested) {
     g_main_context_iteration(nullptr, TRUE);
   }
 }
-#endif
+
+/**
+ * static Gtk4\Gtk::testing_run_dispose(GtkWidget $object): void
+ *
+ * A test hook, not part of the supported surface: run `g_object_run_dispose()` on $object from C
+ * while PHP still holds it, the way GTK guts a widget that a C owner destroys. The handle turns
+ * *disposed*: method calls and passing it as an argument throw an `Error` from then on.
+ */
+ZEND_METHOD(Gtk4_Gtk, testing_run_dispose) {
+  zval *object;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(object, class_for_gtype(GTK_TYPE_WIDGET))
+  ZEND_PARSE_PARAMETERS_END();
+  // Widgets only: disposing a GdkDisplay, GtkSettings or GtkApplication from here gutted a
+  // singleton GTK goes on using, and the next `new GtkWindow()` was a SIGSEGV.
+  GObject *obj = unwrap(object, GTK_TYPE_WIDGET);
+  if (obj == nullptr) RETURN_THROWS();
+  g_object_run_dispose(obj);
+}

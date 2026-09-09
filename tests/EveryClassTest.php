@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
 use ReflectionExtension;
 use ReflectionMethod;
@@ -12,7 +13,7 @@ use ReflectionMethod;
  * Smoke test over the *whole* registered surface: every instantiable class is
  * constructed and every argument-less getter/predicate is called once. Catches
  * a wrapper whose GType/class mapping, factory registration or return-value
- * marshalling is broken - which the generator (docs/PLAN.md milestone 3) makes easy
+ * marshalling is broken - which the generator (README.md "Design") makes easy
  * to get wrong at scale. Deliberately generic: it must not need editing when
  * classes are added.
  */
@@ -37,13 +38,32 @@ final class EveryClassTest extends GtkTestCase
         }
     }
 
+    /** @param class-string $class */
+    private static function phpSubclassOf(string $class): object
+    {
+        $sub = 'PhpGtk4\\Tests\\Every\\' . str_replace('\\', '_', $class);
+        if (!class_exists($sub, false)) {
+            eval('namespace PhpGtk4\\Tests\\Every; final class ' . str_replace('\\', '_', $class)
+                . ' extends \\' . $class . ' {}');
+        }
+        return new $sub();
+    }
+
     /**
      * @param class-string $class
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('instantiableClasses')]
+    #[DataProvider('instantiableClasses')]
     public function testConstructAndCallEveryGetter(string $class): void
     {
-        $object = new $class();
+        try {
+            $object = new $class();
+        } catch (\Error $e) {
+            if (!str_contains($e->getMessage(), 'subclass it in PHP')) {
+                throw $e;
+            }
+            // Abstract in GTK: `new` works on a PHP subclass only (its own GType, core/subtype.h).
+            $object = self::phpSubclassOf($class);
+        }
         self::assertInstanceOf($class, $object);
 
         $called = 0;
@@ -54,8 +74,15 @@ final class EveryClassTest extends GtkTestCase
             if (!preg_match('/^(get|is|has|in)_/', $m->getName())) {
                 continue;
             }
-            // Return value must be a plain PHP value, an enum case or a Gtk4 handle - never a crash.
-            $value = $m->invoke($object);
+            // Return value must be a plain PHP value, an enum case or a Gtk4 handle - never a
+            // crash. A getter whose answer depends on state the object does not have yet
+            // (GtkLayoutManager::get_request_mode() before it is set on a widget) refuses with a
+            // LogicException instead of letting GLib CRITICAL and answer with a made-up value.
+            try {
+                $value = $m->invoke($object);
+            } catch (\LogicException) {
+                continue;
+            }
             self::assertTrue(
                 $value === null || is_scalar($value) || is_array($value) || $value instanceof \UnitEnum
                     || (is_object($value) && str_starts_with($value::class, 'Gtk4\\')),

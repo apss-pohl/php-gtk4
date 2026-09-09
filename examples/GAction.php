@@ -33,7 +33,7 @@ return Demo::page(
         $button = new GtkButton();
         $button->set_child($label);
 
-        $counter = new GSimpleAction('counter', null, 0);
+        $counter = GSimpleAction::new_stateful('counter', null, 0);
         $counter->connect('activate', function (GSimpleAction $self): void {
             $state = $self->get_state();
             $self->set_state(is_int($state) ? $state + 1 : 0);

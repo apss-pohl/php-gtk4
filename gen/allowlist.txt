@@ -1,0 +1,534 @@
+# Wave 0: the classes that exist hand-written today (gen/README.md).
+# One qualified GIR name per line; parents, same-namespace interfaces and the
+# enums used by kept signatures are pulled in automatically.
+Gtk.Widget
+Gtk.Window
+Gtk.Button
+Gtk.Label
+Gtk.Box
+Gtk.DrawingArea
+Gtk.Filter
+Gtk.CustomFilter
+Gtk.FilterListModel
+Gtk.Sorter
+Gtk.CustomSorter
+Gtk.SortListModel
+Gio.Application
+Gtk.Application
+Gtk.Orientable
+Gtk.Root
+Gdk.Texture
+Gio.ListModel
+Gio.ListStore
+Gio.Action
+Gio.ActionMap
+Gio.ActionGroup
+Gio.SimpleAction
+Gtk.Align
+Gtk.Orientation
+Gtk.FilterChange
+Gtk.SorterChange
+Gio.ApplicationFlags
+
+# Wave 8 (CSS): stylesheets from PHP - GtkCssProvider + the display to attach it to.
+# GtkCssSection (the parsing-error argument) is hand-written: an opaque refcounted
+# boxed type on the fundamental registry, like CairoContext.
+Gtk.CssProvider
+Gtk.StyleProvider
+Gdk.Display
+
+# Boxed records generated from GIR (core/boxed value handles): the first one, a plain struct,
+# also the type behind GtkWidget::get_preferred_size()'s caller-allocated outs.
+Gtk.Requisition
+
+# Async API (the wave-5 shape, validated early): a dialog whose choose() takes a
+# GAsyncReadyCallback (scope async -> generated trampoline), the cancellable that ends it,
+# and the result handle the *_finish() call takes.
+Gtk.AlertDialog
+Gio.Cancellable
+Gio.AsyncResult
+# The GAsyncResult GTK actually hands to the callback is a GTask: wrap() resolves by class
+# (interfaces are not instantiable), so the concrete class must be known.
+Gio.Task
+
+# Wave 1 (layout, gen/README.md): the containers a GTK3 application's structure maps onto -
+# scrolling, grid, paned, frame, stack (+ switcher/sidebar/page), notebook (+ page), overlay,
+# revealer, fixed, separator, size group. GtkAdjustment/GtkScrollable are what the scrolled
+# window's and viewport's signatures are made of (otherwise every adjustment method is skipped).
+Gtk.ScrolledWindow
+Gtk.Viewport
+Gtk.Scrollable
+Gtk.Adjustment
+Gtk.Grid
+Gtk.Paned
+Gtk.Frame
+Gtk.Stack
+Gtk.StackPage
+Gtk.StackSwitcher
+Gtk.StackSidebar
+Gtk.Notebook
+Gtk.NotebookPage
+Gtk.Overlay
+Gtk.Revealer
+Gtk.Fixed
+Gtk.Separator
+Gtk.SizeGroup
+
+# Wave 9 (the containers wave 1 left): the everyday widgets a GTK 3 program still reaches for -
+# a list of rows and a wrapping grid of children (both selectable, both with their own child
+# widget), a disclosure triangle, a bar for secondary actions, an aspect-preserving frame and a
+# start/centre/end row. The last of docs/GTK3-MAP.md's "current widgets, no wave needed".
+Gtk.ListBox
+Gtk.ListBoxRow
+Gtk.FlowBox
+Gtk.FlowBoxChild
+Gtk.Expander
+Gtk.ActionBar
+Gtk.AspectFrame
+Gtk.CenterBox
+
+# Wave 2 (controls, gen/README.md): the input widgets - text entry (+ the GtkEditable
+# interface and the buffer behind it), check/toggle buttons, spin button, scale (+ its GtkRange
+# parent), progress bar, image, spinner, calendar. Plus the neighbours a ported GTK3 application
+# needs next to them (docs/GTK3-MAP.md): GtkPicture + GdkPaintable for photos, GtkPasswordEntry,
+# and GtkDropDown over a GtkStringList as the GtkComboBox replacement.
+Gtk.Entry
+Gtk.Editable
+Gtk.EntryBuffer
+Gtk.PasswordEntry
+Gtk.CheckButton
+Gtk.ToggleButton
+Gtk.SpinButton
+Gtk.Range
+Gtk.Scale
+Gtk.ProgressBar
+Gtk.Image
+Gtk.Picture
+Gdk.Paintable
+Gtk.Spinner
+Gtk.Calendar
+Gtk.DropDown
+Gtk.StringList
+Gtk.StringObject
+
+# Wave 3 (event controllers, gen/README.md): GTK 4's replacement for the GdkEvent signals -
+# controllers attached with GtkWidget::add_controller(). Key/motion/scroll/focus/legacy
+# controllers and the gestures (click, drag, long press, swipe, pan, zoom, rotate), with the
+# phase/limit/flag enums. GdkEvent itself is hand-written (fundamental registry).
+Gtk.EventController
+Gtk.EventControllerKey
+Gtk.EventControllerMotion
+Gtk.EventControllerScroll
+Gtk.EventControllerFocus
+Gtk.EventControllerLegacy
+Gtk.Gesture
+Gtk.GestureSingle
+Gtk.GestureClick
+Gtk.GestureDrag
+Gtk.GestureLongPress
+Gtk.GestureSwipe
+Gtk.GesturePan
+Gtk.GestureZoom
+Gtk.GestureRotate
+Gtk.PropagationPhase
+Gtk.PropagationLimit
+Gtk.EventControllerScrollFlags
+Gtk.PanDirection
+Gdk.ScrollUnit
+# The enums GdkEvent's typed getters return (GdkEvent itself is hand-written, src/Gdk/GdkEvent.cpp).
+Gdk.EventType
+Gdk.ScrollDirection
+Gdk.CrossingMode
+Gdk.NotifyType
+Gdk.TouchpadGesturePhase
+Gdk.KeyMatch
+
+# Wave 4 (menus/actions, gen/README.md): the GMenuModel stack that replaces GtkMenu -
+# GMenu/GMenuItem models, popovers to show them, the menu button, the header bar, and
+# GtkApplicationWindow (the window that is a GActionMap, with the application menubar).
+Gio.MenuModel
+Gio.Menu
+Gio.MenuItem
+Gtk.Popover
+Gtk.PopoverMenu
+Gtk.PopoverMenuBar
+Gtk.MenuButton
+Gtk.HeaderBar
+Gtk.ApplicationWindow
+Gtk.PopoverMenuFlags
+Gtk.ArrowType
+
+# The widget behind GtkEntry/GtkPasswordEntry/GtkSpinButton: their get_delegate() declares
+# GtkEditable, and without GtkText bound wrap() answered with a plain GtkWidget - a value
+# that does not implement the interface the signature promises (security/type review
+# 2026-08-30, TypeDeclarationTest).
+Gtk.Text
+
+# Wave 5 (dialogs, gen/README.md): GTK 4.10's async dialog API - no run(), the answer arrives in a
+# GAsyncReadyCallback and *_finish() throws the GError. GtkAlertDialog came with the async
+# machinery in the review wave; these are the rest.
+Gtk.FileDialog
+Gtk.FileFilter
+Gtk.ColorDialog
+Gtk.FontDialog
+# The button shape of those two: GTK 4.10's replacements for GtkColorButton/GtkFontButton, which
+# open the dialog above and keep the chosen colour/font as a property.
+Gtk.ColorDialogButton
+Gtk.FontDialogButton
+Gtk.AboutDialog
+# The font a GtkFontDialog answers with (a boxed record); the face/family/map/language side of
+# that API stays unbound - a description is what an application sets on a widget.
+Pango.FontDescription
+
+# Wave 6 (text, gen/README.md): the multi-line text stack - GtkTextView over a GtkTextBuffer,
+# positions as GtkTextIter (a boxed record with many methods, core/boxed), stable positions
+# as GtkTextMark, formatting as GtkTextTag in a GtkTextTagTable. GtkWrapMode is the view's
+# wrap policy; the other enums its signatures keep are pulled in automatically.
+Gtk.TextView
+Gtk.TextBuffer
+Gtk.TextIter
+Gtk.TextMark
+Gtk.TextTag
+Gtk.TextTagTable
+Gtk.WrapMode
+
+# Wave 7 (list models/views, gen/README.md): GTK 4's replacement for GtkTreeView - a GListModel
+# behind a selection model, rendered by a widget through a GtkListItemFactory.
+Gtk.ListView
+Gtk.GridView
+Gtk.ColumnView
+Gtk.ColumnViewColumn
+Gtk.ListItem
+Gtk.ListItemFactory
+Gtk.SignalListItemFactory
+Gtk.SelectionModel
+Gtk.SingleSelection
+Gtk.MultiSelection
+Gtk.NoSelection
+Gtk.TreeListModel
+Gtk.TreeListRow
+# The widget that draws a tree row's triangle and indent - without it a tree list model
+# has no expanders in the view.
+Gtk.TreeExpander
+# The set of positions a selection model answers with, and the scroll target of the views'
+# scroll_to() (which unlocks GtkViewport::scroll_to() too).
+Gtk.Bitset
+Gtk.ScrollInfo
+
+# Layout managers (out of band, gen/README.md): the object GTK 4 delegates allocation to. A widget that has a
+# layout manager never reaches WidgetClass.size_allocate/measure (VfuncTest pins that), so
+# without GtkLayoutManager a PHP subclass of GtkBox or GtkOverlay cannot influence its own
+# layout at all - vfunc_allocate()/vfunc_measure() on a manager is the way in, and
+# GtkWidget::set_layout_manager() is how it gets installed. The concrete managers are what a
+# subclass swaps in or chains to; GtkConstraintLayout stays out (it needs the whole
+# GtkConstraint/GtkConstraintTarget API).
+Gtk.LayoutManager
+Gtk.LayoutChild
+Gtk.BinLayout
+Gtk.BoxLayout
+Gtk.CenterLayout
+Gtk.FixedLayout
+Gtk.FixedLayoutChild
+Gtk.OverlayLayout
+Gtk.OverlayLayoutChild
+Gtk.GridLayout
+Gtk.GridLayoutChild
+Gtk.SizeRequestMode
+
+# Wave 8 (styling/builder/Gdk, gen/README.md): what is left of the wave whose CSS and GdkDisplay
+# halves landed on 2026-08-28. GtkBuilder is the headline - a .ui file is how a GTK application
+# of any size describes its widgets, and GTK 4 replaced GtkBuilder::connect_signals() with
+# GtkBuilderScope, so the PHP side needs a scope that resolves a handler name to a callable.
+# The Gdk half is what a window has to ask about the screen it is on: the monitor, the surface,
+# the cursor over it, and the clipboard.
+Gtk.Builder
+Gtk.BuilderScope
+Gtk.IconTheme
+Gtk.IconPaintable
+Gtk.IconLookupFlags
+Gdk.Monitor
+Gdk.Surface
+Gdk.Cursor
+Gdk.Clipboard
+Gdk.SubpixelLayout
+Gtk.TextDirection
+# GtkNative is how a widget reaches the GdkSurface it is drawn on (gtk_native_get_surface());
+# without it GdkSurface would be bound and unreachable.
+Gtk.Native
+
+# Snapshot (README.md "Design"): what a widget paints. GtkSnapshot::append_cairo()
+# hands back a cairo context, so a PHP widget draws with the CairoContext API it already has -
+# and binding the type is what lets `vfunc_snapshot()` out of gen/skip's closure, the one
+# GtkWidget slot a PHP subclass could not override. The graphene records are the geometry its
+# signatures take (rectangles and points, like GdkRectangle only in floats).
+Gtk.Snapshot
+Gdk.Snapshot
+Graphene.Rect
+Graphene.Point
+Graphene.Size
+# The 3D types a transform and a snapshot speak: a 4x4 matrix, the vectors and the 3D point that
+# rotate_3d()/translate_3d() take, and the vec4 a colour-matrix node offsets with.
+Graphene.Matrix
+Graphene.Vec2
+Graphene.Vec3
+Graphene.Vec4
+Graphene.Point3D
+
+# Wave 3b (drag and drop, gen/README.md): a drag is a
+# GtkDragSource gesture producing a GdkContentProvider, and a GtkDropTarget event controller
+# consuming one through a GdkDrop. GdkContentProvider is also what GdkClipboard's typed payloads
+# need - wave 8 bound the clipboard's text/texture convenience calls and skipped set_content()
+# and get_content() because the type was not in the closure.
+Gtk.DragSource
+Gtk.DropTarget
+Gtk.DropTargetAsync
+Gtk.DragIcon
+Gdk.ContentProvider
+Gdk.Drag
+Gdk.Drop
+Gdk.ContentFormats
+Gdk.DragCancelReason
+Gdk.DragAction
+
+# GSK (2026-09-06): the scene graph itself. Render nodes are GIR *fundamental* classes (refcounted,
+# neither GObject nor boxed) generated onto the fundamental registry - `new GskColorNode(...)`
+# builds one, GtkSnapshot::to_node()/append_node() and GskRenderer::render_texture() move them
+# around. GskTransform, GskPath (+ builder, measure, point, stroke) are boxed records. What stays
+# out: GskGLShader (+ node, args builder; deprecated in 4.16), the Broadway/NGL/Vulkan renderers.
+Gsk.RenderNode
+Gsk.BlendNode
+Gsk.BlurNode
+Gsk.BorderNode
+Gsk.CairoNode
+Gsk.ClipNode
+Gsk.ColorMatrixNode
+Gsk.ColorNode
+Gsk.ConicGradientNode
+Gsk.ContainerNode
+Gsk.CrossFadeNode
+Gsk.DebugNode
+Gsk.FillNode
+Gsk.InsetShadowNode
+Gsk.LinearGradientNode
+Gsk.MaskNode
+Gsk.OpacityNode
+Gsk.OutsetShadowNode
+Gsk.RadialGradientNode
+Gsk.RepeatNode
+Gsk.RepeatingLinearGradientNode
+Gsk.RepeatingRadialGradientNode
+Gsk.RoundedClipNode
+Gsk.ShadowNode
+Gsk.StrokeNode
+Gsk.SubsurfaceNode
+Gsk.TextNode
+Gsk.TextureNode
+Gsk.TextureScaleNode
+Gsk.TransformNode
+Gsk.Renderer
+Gsk.CairoRenderer
+Gsk.GLRenderer
+Gsk.Transform
+Gsk.Path
+Gsk.PathBuilder
+Gsk.PathMeasure
+Gsk.PathPoint
+Gsk.Stroke
+Gsk.Corner
+
+# Printing (2026-09-06): GtkPrintOperation (draw-page hands a GtkPrintContext whose cairo context
+# is the bound CairoContext; ACTION_EXPORT writes a PDF with no dialog, which is what the tests
+# use), the settings, page setup and paper size it works with, and GTK 4.14's async
+# GtkPrintDialog + GtkPrintSetup. Out: GtkPrinter/GtkPrintJob/GtkPrintUnixDialog/
+# GtkPageSetupUnixDialog (gtk4-unix-print, a separate library, and GtkDialog parents).
+Gtk.PrintOperation
+Gtk.PrintContext
+Gtk.PrintSettings
+Gtk.PageSetup
+Gtk.PaperSize
+Gtk.PrintDialog
+Gtk.PrintSetup
+
+# GdkPixbuf (2026-09-06): the image library GTK 4 still ships - loading any format, scaling,
+# rotating, compositing, saving - and the two Gdk classes that move pixels between a pixbuf and
+# a GdkTexture through bytes, because the direct bridge (GdkTexture::new_for_pixbuf,
+# GtkImage::set_from_pixbuf) is deprecated since 4.12 and therefore not bound:
+# GdkMemoryTexture::new() takes the pixbuf's read_pixel_bytes(), GdkTextureDownloader hands a
+# texture's pixels back for GdkPixbuf::new_from_bytes().
+GdkPixbuf.Pixbuf
+GdkPixbuf.PixbufLoader
+GdkPixbuf.PixbufFormat
+GdkPixbuf.PixbufAnimation
+GdkPixbuf.PixbufAnimationIter
+Gdk.MemoryTexture
+Gdk.TextureDownloader
+
+# WebKitGTK 6 (2026-09-07, --enable-gtk4-webkit only - CONDITIONAL_NAMESPACES in gen/gir/config.php):
+# the web view and what an application reaches through it - its settings, context, network
+# session (cookies, website data, proxy), user content (scripts, style sheets, filters, script
+# messages), find controller, back/forward list, inspector, policy decisions, downloads,
+# resources, dialogs and permission requests - plus JavaScriptCore's value/context, which is
+# what evaluate_javascript() answers with and what a script message carries, and the URI scheme
+# request/response pair a custom scheme is answered with. Out: the WebExtensions API (2.52) -
+# Ubuntu builds WebKitGTK with ENABLE(WK_WEB_EXTENSIONS) off, so every entry point answers NULL
+# without a warning (README.md "Design") - and the WebProcess extensions.
+WebKit.WebViewBase
+WebKit.WebView
+WebKit.Settings
+WebKit.WebContext
+WebKit.NetworkSession
+WebKit.UserContentManager
+WebKit.UserScript
+WebKit.UserStyleSheet
+WebKit.UserContentFilter
+WebKit.UserContentFilterStore
+WebKit.CookieManager
+WebKit.WebsiteDataManager
+WebKit.WebsiteData
+WebKit.BackForwardList
+WebKit.BackForwardListItem
+WebKit.FindController
+WebKit.HitTestResult
+WebKit.NavigationAction
+WebKit.PolicyDecision
+WebKit.NavigationPolicyDecision
+WebKit.ResponsePolicyDecision
+WebKit.URIRequest
+WebKit.URIResponse
+WebKit.URISchemeRequest
+WebKit.URISchemeResponse
+WebKit.WebResource
+WebKit.Download
+WebKit.WebInspector
+WebKit.ScriptDialog
+WebKit.ScriptMessageReply
+WebKit.PrintOperation
+WebKit.ContextMenu
+WebKit.ContextMenuItem
+WebKit.WindowProperties
+WebKit.SecurityManager
+WebKit.SecurityOrigin
+WebKit.WebsitePolicies
+WebKit.FaviconDatabase
+WebKit.PermissionRequest
+WebKit.ClipboardPermissionRequest
+WebKit.DeviceInfoPermissionRequest
+WebKit.GeolocationPermissionRequest
+WebKit.MediaKeySystemPermissionRequest
+WebKit.NotificationPermissionRequest
+WebKit.PointerLockPermissionRequest
+WebKit.UserMediaPermissionRequest
+WebKit.WebsiteDataAccessPermissionRequest
+WebKit.XRPermissionRequest
+WebKit.PermissionStateQuery
+WebKit.Notification
+WebKit.OptionMenu
+WebKit.OptionMenuItem
+WebKit.EditorState
+WebKit.InputMethodContext
+WebKit.InputMethodUnderline
+WebKit.ColorChooserRequest
+WebKit.FileChooserRequest
+WebKit.FormSubmissionRequest
+WebKit.AuthenticationRequest
+WebKit.Credential
+WebKit.GeolocationManager
+WebKit.GeolocationPosition
+WebKit.Feature
+WebKit.FeatureList
+WebKit.MemoryPressureSettings
+WebKit.NetworkProxySettings
+WebKit.ITPFirstParty
+WebKit.ITPThirdParty
+WebKit.UserMessage
+WebKit.ApplicationInfo
+WebKit.WebViewSessionState
+WebKit.AutomationSession
+JavaScriptCore.Value
+JavaScriptCore.Context
+JavaScriptCore.Exception
+JavaScriptCore.VirtualMachine
+# The enums and flags WebKit's signals carry (a signal argument converts through the GType
+# registry, so an unregistered enum arrives as an int) and the flags its methods take.
+WebKit.LoadEvent
+WebKit.PolicyDecisionType
+WebKit.InsecureContentEvent
+WebKit.WebProcessTerminationReason
+WebKit.FindOptions
+WebKit.HitTestResultContext
+WebKit.EditorTypingAttributes
+WebKit.DownloadError
+WebKit.NetworkError
+WebKit.PolicyError
+WebKit.JavascriptError
+WebKit.SnapshotError
+WebKit.PrintError
+WebKit.MediaError
+WebKit.UserContentFilterError
+WebKit.FaviconDatabaseError
+WebKit.UserMessageError
+
+# The write side of GIO, the counterpart of GInputStream: what a content provider writes into
+# and what a pixbuf can be saved to. GMemoryOutputStream is the one PHP can read back afterwards.
+Gio.OutputStream
+Gio.MemoryOutputStream
+
+# The read side of GIO. GInputStream is what a stream parameter is declared as - GdkPixbuf's four
+# stream constructors, GdkPixbufAnimation's two, WebKitWebView::save_finish() - and
+# GMemoryInputStream is the one PHP can build: a string in, a stream out.
+Gio.InputStream
+Gio.MemoryInputStream
+
+# Pango, the text engine under every label: the tab stops a text widget lays out to, the
+# attribute list that styles a run of it, the layout a widget or a print context measures with,
+# and the context and font map behind those. PangoFontDescription is already here (wave 2).
+Pango.TabArray
+Pango.AttrList
+Pango.Layout
+Pango.Context
+Pango.FontMap
+
+# The key file GTK's print settings, page setup and paper size load from and save to.
+GLib.KeyFile
+
+# Dates and times as GLib hands them out: a calendar's selected day, a cookie's expiry, the
+# validity of a certificate. A boxed record, and its time zone.
+GLib.DateTime
+GLib.TimeZone
+
+# The input device behind an event or a drag - which pointer, which keyboard, which seat.
+Gdk.Device
+Gdk.Seat
+
+# A place in a text buffer that holds a widget rather than characters.
+Gtk.TextChildAnchor
+
+# The desktop notification a background application sends: GNotification is the message (title,
+# body, icon, buttons wired to the application's own actions) and GApplication::send_notification()
+# hands it to the desktop. GTK 4 has no tray icon - this is what replaced that use of one.
+Gio.Notification
+Gio.NotificationPriority
+
+# Icons by name rather than by pixels: the GIcon a GtkImage, a GtkEntry, a GMenuItem or the icon
+# theme takes, and the themed icon PHP can build one from (a name, or a list of names to try in
+# turn). Plain GIO, and an interface - g_icon_new_for_string() and the icon a widget hands back
+# are whatever the theme made, which wrap() resolves through the interface.
+Gio.Icon
+Gio.ThemedIcon
+
+# Opening a URI in whatever the desktop uses for it (GTK 4.10's replacement for gtk_show_uri).
+Gtk.UriLauncher
+
+# TLS certificates: what a web view's get_tls_info() answers with, what a credential can carry
+# and what a network session can be told to accept for a host. Plain GIO (abstract - the TLS
+# backend provides the concrete class - so PHP builds one through new_from_pem()), so it is not
+# gated on WebKit even though WebKit is what asks for it today.
+Gio.TlsCertificate
+Gio.TlsCertificateFlags
+
+# libsoup 3, through WebKitGTK only (CONDITIONAL_NAMESPACES): the cookie a WebKitCookieManager
+# stores or deletes, and the HTTP headers of a request or a response.
+Soup.Cookie
+Soup.MessageHeaders
+Soup.MessageHeadersType
+Soup.SameSitePolicy

@@ -8,6 +8,8 @@ use Gtk4\GdkRectangle;
 use Gtk4\GdkRGBA;
 use Gtk4\GtkButton;
 use Gtk4\GtkLabel;
+use Gtk4\GtkScrollInfo;
+use Gtk4\GtkTextBuffer;
 
 /** src/core/boxed: value-type handles, field properties, GStrv <-> array. */
 final class BoxedTest extends GtkTestCase
@@ -120,7 +122,7 @@ final class BoxedTest extends GtkTestCase
 
     public function testStrvPropertyRoundTrip(): void
     {
-        $b = new GtkButton('labelled');
+        $b = GtkButton::new_with_label('labelled');
         self::assertContains('text-button', $b->get_css_classes(), 'GTK sets its own classes');
         $b->set_css_classes(['a', 'b']);
         self::assertSame(['a', 'b'], $b->get_css_classes());
@@ -135,6 +137,29 @@ final class BoxedTest extends GtkTestCase
     {
         $this->expectException(\TypeError::class);
         new GtkButton()->set_property('css-classes', 'not-an-array');
+    }
+
+    public function testAnOpaqueRecordComparesThroughItsOwnEquality(): void
+    {
+        // GtkTextIter has no public fields, so `==` cannot go by them: the class registers
+        // gtk_text_iter_equal() instead (core/boxed BoxedClass::equal).
+        $buffer = new GtkTextBuffer();
+        $buffer->set_text('hello');
+        $start = $buffer->get_start_iter();
+        $alsoStart = $buffer->get_start_iter();
+        $end = $buffer->get_end_iter();
+        self::assertNotSame($start, $alsoStart);
+        self::assertSame(0, self::compare($start, $alsoStart), 'the same position is the same value');
+        self::assertNotSame(0, self::compare($start, $end));
+    }
+
+    public function testARecordWithNeitherFieldsNorEqualityComparesByIdentity(): void
+    {
+        // A GtkScrollInfo has nothing to compare: two of them are the same value only when
+        // they are the same value - and clone of a refcounted record shares it.
+        $info = new GtkScrollInfo();
+        self::assertSame(0, self::compare($info, $info));
+        self::assertNotSame(0, self::compare($info, new GtkScrollInfo()));
     }
 
     public function testUnregisteredBoxedTypeIsATypeErrorNotACrash(): void

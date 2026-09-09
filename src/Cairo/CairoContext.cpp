@@ -6,6 +6,8 @@
 
 #include "core/boxed.h"
 #include "classes.h"
+#include "Cairo/CairoContext.h"
+#include "Cairo/CairoSurface.h"
 #include "core/fundamental.h"
 
 using namespace phpgtk;
@@ -42,18 +44,28 @@ void wrap_cairo(cairo_t *cr, zval *rv) {
 // The cairo_t behind $this.
 #define SELF_CR cairo_t *cr = PHPGTK_FUNDAMENTAL_SELF(cairo_t)
 
+// The argument list of a method taking N doubles. Zend's ZPP macros are a state machine whose
+// failure path is a `break`, so they have to expand in a straight line: a `for` loop over the
+// array swallowed that break and carried on into a point the engine asserts is unreachable -
+// UBSan says so on a wrong-typed first argument, and the release build only got away with it
+// (found by RobustnessTest once CairoContext had an instance to sweep).
+// NOLINTBEGIN(bugprone-macro-parentheses) ZPP argument lists, not expressions
+#define CAIRO_DOUBLES_1 Z_PARAM_DOUBLE(a[0])
+#define CAIRO_DOUBLES_2 CAIRO_DOUBLES_1 Z_PARAM_DOUBLE(a[1])
+#define CAIRO_DOUBLES_3 CAIRO_DOUBLES_2 Z_PARAM_DOUBLE(a[2])
+#define CAIRO_DOUBLES_4 CAIRO_DOUBLES_3 Z_PARAM_DOUBLE(a[3])
+#define CAIRO_DOUBLES_5 CAIRO_DOUBLES_4 Z_PARAM_DOUBLE(a[4])
+
 // Methods taking N doubles and returning nothing share one parser.
-#define CAIRO_DOUBLE_METHOD(name, n, call) \
-  ZEND_METHOD(Gtk4_CairoContext, name) {   \
-    double a[n] = {};                      \
-    ZEND_PARSE_PARAMETERS_START(n, n)      \
-    for (double &d : a) {                  \
-      Z_PARAM_DOUBLE(d)                    \
-    }                                      \
-    ZEND_PARSE_PARAMETERS_END();           \
-    SELF_CR;                               \
-    call;                                  \
+#define CAIRO_DOUBLE_METHOD(name, n, call)         \
+  ZEND_METHOD(Gtk4_CairoContext, name) {           \
+    double a[n] = {};                              \
+    ZEND_PARSE_PARAMETERS_START(n, n)              \
+    CAIRO_DOUBLES_##n ZEND_PARSE_PARAMETERS_END(); \
+    SELF_CR;                                       \
+    call;                                          \
   }
+// NOLINTEND(bugprone-macro-parentheses)
 
 /**
  * Gtk4\CairoContext::set_source_rgb(float $red, float $green, float $blue): void
@@ -67,6 +79,8 @@ CAIRO_DOUBLE_METHOD(set_source_rgba, 4, cairo_set_source_rgba(cr, a[0], a[1], a[
 
 /**
  * Gtk4\CairoContext::set_source_color(GdkRGBA $color): void
+ *
+ * Source colour from a `GdkRGBA`.
  */
 ZEND_METHOD(Gtk4_CairoContext, set_source_color) {
   zval *color;
@@ -174,12 +188,38 @@ CAIRO_VOID_METHOD(restore, cairo_restore)
 
 /**
  * Gtk4\CairoContext::show_text(string $text): void
+ *
+ * Draw the text at the current point with the toy font API.
  */
 ZEND_METHOD(Gtk4_CairoContext, show_text) {
   zend_string *text;
   ZEND_PARSE_PARAMETERS_START(1, 1)
   Z_PARAM_STR(text)
   ZEND_PARSE_PARAMETERS_END();
+  if (!check_utf8(text, 1)) RETURN_THROWS();
   SELF_CR;
   cairo_show_text(cr, ZSTR_VAL(text));
+}
+
+/**
+ * Gtk4\CairoContext::set_source_surface(CairoSurface $surface, float $x = 0.0, float $y = 0.0):
+ * void
+ *
+ * Use $surface as the source pattern, its origin at ($x, $y).
+ */
+ZEND_METHOD(Gtk4_CairoContext, set_source_surface) {
+  zval *zsurface;
+  double x = 0.0;
+  double y = 0.0;
+  ZEND_PARSE_PARAMETERS_START(1, 3)
+  Z_PARAM_OBJECT_OF_CLASS(zsurface, fundamental_class_for_type(CAIRO_GOBJECT_TYPE_SURFACE)->ce)
+  Z_PARAM_OPTIONAL
+  Z_PARAM_DOUBLE(x)
+  Z_PARAM_DOUBLE(y)
+  ZEND_PARSE_PARAMETERS_END();
+  SELF_CR;
+  auto *surface =
+      static_cast<cairo_surface_t *>(unwrap_fundamental(zsurface, CAIRO_GOBJECT_TYPE_SURFACE));
+  if (surface == nullptr) RETURN_THROWS();
+  cairo_set_source_surface(cr, surface, x, y);
 }

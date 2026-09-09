@@ -1,5 +1,6 @@
 #include "enums.h"
 
+#include <atomic>
 #include <unordered_map>
 
 namespace phpgtk {
@@ -37,9 +38,10 @@ void register_flags(GType type, zend_class_entry *ce) {
 
 // RINIT, once: compare every PHP case / constant value with the C enum / flags (see enums.h).
 void enums_verify() {
-  static bool done = false;
-  if (done) return;
-  done = true;
+  // Process-wide: internal class entries are shared by every ZTS thread, so one check serves
+  // all of them; atomic so two RINITs racing do not both run it.
+  static std::atomic<bool> done = false;
+  if (done.exchange(true)) return;
   for (const auto &[type, ce] : flags_registry()) {
     auto *klass = static_cast<GFlagsClass *>(g_type_class_ref(type));
     zend_string *key;

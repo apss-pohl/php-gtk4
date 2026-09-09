@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use Gtk4\GdkMemoryFormat;
 use Gtk4\GdkTexture;
 use Gtk4\GError;
 use Gtk4\GObject;
@@ -68,11 +69,11 @@ final class TextureTest extends GtkTestCase
         GdkTexture::new_from_bytes('definitely not an image');
     }
 
-    public function testUnwritablePathIsAGError(): void
+    public function testUnwritablePathReturnsFalse(): void
     {
+        // gdk_texture_save_to_png() reports failure by return value, not by GError.
         $t = GdkTexture::new_from_bytes(self::png());
-        $this->expectException(GError::class);
-        $t->save_to_png('/nonexistent-dir/x.png');
+        self::assertFalse($t->save_to_png('/nonexistent-dir/x.png'));
     }
 
     public function testGErrorIsARegularException(): void
@@ -80,5 +81,18 @@ final class TextureTest extends GtkTestCase
         $e = new GError('manual');
         self::assertSame('', $e->getDomain());
         self::assertSame('manual', $e->getMessage());
+    }
+
+    public function testFormatAndTiff(): void
+    {
+        $t = GdkTexture::new_from_bytes(self::png());
+        self::assertInstanceOf(GdkMemoryFormat::class, $t->get_format());
+        $tiff = $t->save_to_tiff_bytes();
+        self::assertContains(substr($tiff, 0, 2), ['II', 'MM'], 'a TIFF byte-order mark');
+        $path = sys_get_temp_dir() . '/php-gtk4-texture-test.tiff';
+        self::assertTrue($t->save_to_tiff($path));
+        self::assertFileExists($path);
+        unlink($path);
+        self::assertFalse($t->save_to_tiff('/nonexistent-dir/x.tiff'));
     }
 }

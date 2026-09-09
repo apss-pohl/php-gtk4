@@ -1,4 +1,6 @@
 #include "boxed.h"
+#include "object.h"
+#include "marshal.h"
 
 #include <string>
 #include <unordered_map>
@@ -9,6 +11,7 @@ namespace {
 
 zend_object_handlers handlers;
 
+// GType -> boxed class info (MINIT-filled).
 std::unordered_map<GType, BoxedClass> &registry() {
   static std::unordered_map<GType, BoxedClass> map;
   return map;
@@ -24,26 +27,45 @@ zend_object *create_object(zend_class_entry *ce) {
   auto *self = static_cast<Boxed *>(zend_object_alloc(sizeof(Boxed), ce));
   self->type = 0;
   self->data = nullptr;
+  ZVAL_UNDEF(&self->owner);
   zend_object_std_init(&self->std, ce);
   object_properties_init(&self->std, ce);
   self->std.handlers = &handlers;
   return &self->std;
 }
 
-// free_obj handler: releases the owned copy with g_boxed_free().
+// get_constructor handler: a record the GIR gives no constructor (GtkTextIter: iterators come
+// from the buffer) has no `__construct`, and `new X()` would leave a handle whose data is
+// nullptr - refuse it; classes with a constructor keep the standard lookup.
+zend_function *get_constructor(zend_object *o) {
+  if (o->ce->constructor != nullptr) return zend_std_get_constructor(o);
+  zend_throw_error(nullptr, "%s instances are created by the extension, not with new",
+                   ZSTR_VAL(o->ce->name));
+  return nullptr;
+}
+
+// free_obj handler: releases the owned copy with g_boxed_free(), then the owner ref.
 void free_obj(zend_object *o) {
   Boxed *self = boxed_from_zend(o);
   if (self->data != nullptr) g_boxed_free(self->type, self->data);
+  zval_ptr_dtor(&self->owner);
   zend_object_std_dtor(o);
 }
 
-// clone_obj handler: boxed values are copyable - `clone $rgba` is an independent g_boxed_copy().
+// clone_obj handler: boxed values are copyable - `clone $rgba` is an independent copy
+// (BoxedClass::copy where the type's boxed copy only takes a reference).
 zend_object *clone_obj(zend_object *o) {
   Boxed *self = boxed_from_zend(o);
+  const BoxedClass *info = info_of(self);
   zend_object *copy = create_object(o->ce);
   Boxed *other = boxed_from_zend(copy);
   other->type = self->type;
-  other->data = self->data != nullptr ? g_boxed_copy(self->type, self->data) : nullptr;
+  other->data = nullptr;
+  if (self->data != nullptr) {
+    other->data = info != nullptr && info->copy != nullptr ? info->copy(self->data)
+                                                           : g_boxed_copy(self->type, self->data);
+  }
+  ZVAL_COPY(&other->owner, &self->owner);
   zend_objects_clone_members(copy, o);
   return copy;
 }
@@ -125,12 +147,20 @@ HashTable *get_debug_info(zend_object *o, int *is_temp) {
   return ht;
 }
 
-// compare handler: same type and equal fields -> 0 (so == and <=> work by value).
+// compare handler: two values of the same type are 0 (equal) when the type's own equal()
+// says so, else when their public fields match - so == and <=> work by value. An opaque
+// record with neither (a GtkScrollInfo) can only answer for the very same value.
 int compare_objects(zval *a, zval *b) {
   ZEND_COMPARE_OBJECTS_FALLBACK(a, b);
   Boxed *x = boxed_from_zval(a);
   Boxed *y = boxed_from_zval(b);
   if (x->type != y->type) return 1;
+  const BoxedClass *info = info_of(x);
+  if (info != nullptr && info->equal != nullptr) {
+    if (x->data == nullptr || y->data == nullptr) return x->data == y->data ? 0 : 1;
+    return info->equal(x->data, y->data) ? 0 : 1;
+  }
+  if (info != nullptr && *info->fields == nullptr) return x->data == y->data ? 0 : 1;
   // Compare through the debug view: field by field.
   int ta = 0;
   int tb = 0;
@@ -148,11 +178,35 @@ int compare_objects(zval *a, zval *b) {
 
 }  // namespace
 
+namespace {
+// The owner as a *handle* (wrap), not a GObject reference: a PHP GtkTextBuffer subclass storing
+// one of its own iters ($this->cursor = $this->get_start_iter()) is then a cycle of zvals the
+// collector sees through get_gc, where a g_object_ref() from the iter to the buffer's GObject -
+// which holds the buffer's handle - was uncollectable until RSHUTDOWN. The handle keeps the
+// GObject alive exactly as the reference did (its toggle ref).
+void take_owner(Boxed *self, const BoxedClass *info) {
+  ZVAL_UNDEF(&self->owner);
+  GObject *owner = info != nullptr && info->owner != nullptr ? info->owner(self->data) : nullptr;
+  if (owner != nullptr) wrap(owner, &self->owner);
+}
+
+// get_gc handler: the owner handle is the one reference this object holds besides its data.
+HashTable *get_gc(zend_object *o, zval **table, int *n) {
+  Boxed *self = boxed_from_zend(o);
+  if (Z_TYPE(self->owner) != IS_OBJECT) return zend_std_get_gc(o, table, n);
+  zend_get_gc_buffer *buffer = zend_get_gc_buffer_create();
+  zend_get_gc_buffer_add_zval(buffer, &self->owner);
+  zend_get_gc_buffer_use(buffer, table, n);
+  return zend_std_get_properties(o);
+}
+}  // namespace
+
 // MINIT: build the shared handler table for all boxed classes.
 void boxed_handlers_init() {
   memcpy(&handlers, &std_object_handlers, sizeof(zend_object_handlers));
   handlers.offset = XtOffsetOf(Boxed, std);
   handlers.free_obj = free_obj;
+  handlers.get_constructor = get_constructor;
   handlers.clone_obj = clone_obj;
   handlers.read_property = read_property;
   handlers.write_property = write_property;
@@ -160,14 +214,53 @@ void boxed_handlers_init() {
   handlers.get_property_ptr_ptr = get_property_ptr_ptr;
   handlers.unset_property = unset_property;
   handlers.get_debug_info = get_debug_info;
+  handlers.get_gc = get_gc;
   handlers.compare = compare_objects;
 }
 
+// Field writers (boxed.h): an int field takes an int, a float field an int or a float.
+bool boxed_field_long(zval *v, const char *class_name, const char *field, zend_long *out) {
+  if (Z_TYPE_P(v) == IS_LONG) {
+    *out = Z_LVAL_P(v);
+    return true;
+  }
+  if (!caller_is_strict() && zend_parse_arg_long_weak(v, out, 0)) return true;
+  zend_type_error("Cannot assign %s to property %s::$%s of type int", zend_zval_value_name(v),
+                  class_name, field);
+  return false;
+}
+// A float field: an int widens, anything else follows the caller's coercion rules.
+bool boxed_field_double(zval *v, const char *class_name, const char *field, double *out) {
+  if (Z_TYPE_P(v) == IS_DOUBLE) {
+    *out = Z_DVAL_P(v);
+    return true;
+  }
+  if (Z_TYPE_P(v) == IS_LONG) {  // widening: allowed under strict_types too
+    *out = static_cast<double>(Z_LVAL_P(v));
+    return true;
+  }
+  if (!caller_is_strict() && zend_parse_arg_double_weak(v, out, 0)) return true;
+  zend_type_error("Cannot assign %s to property %s::$%s of type float", zend_zval_value_name(v),
+                  class_name, field);
+  return false;
+}
+
+// A bool field: true/false, or what weak mode accepts where strict_types is not declared.
+bool boxed_field_bool(zval *v, const char *class_name, const char *field, bool *out) {
+  if (Z_TYPE_P(v) == IS_TRUE || Z_TYPE_P(v) == IS_FALSE) {
+    *out = Z_TYPE_P(v) == IS_TRUE;
+    return true;
+  }
+  if (!caller_is_strict() && zend_parse_arg_bool_weak(v, out, 0)) return true;
+  zend_type_error("Cannot assign %s to property %s::$%s of type bool", zend_zval_value_name(v),
+                  class_name, field);
+  return false;
+}
+
 // MINIT: bind a PHP class to a boxed GType with its field accessors.
-void register_boxed(const char *gtype_name, const BoxedClass &info) {
+void register_boxed(const BoxedClass &info) {
   info.ce->create_object = create_object;
   registry()[info.type] = info;
-  (void)gtype_name;
 }
 
 // Registry lookup by GType.
@@ -179,8 +272,11 @@ const BoxedClass *boxed_class_for_type(GType type) {
 // Constructor helper: give a fresh handle its (already allocated) data.
 void boxed_adopt(Boxed *self, GType type, gpointer data) {
   if (self->data != nullptr) g_boxed_free(self->type, self->data);
+  zval_ptr_dtor(&self->owner);
   self->type = type;
   self->data = data;
+  const BoxedClass *info = boxed_class_for_type(type);
+  take_owner(self, info);
 }
 
 // C -> PHP: new handle holding a copy of `data`; null for nullptr, TypeError for unregistered
@@ -188,6 +284,22 @@ void boxed_adopt(Boxed *self, GType type, gpointer data) {
 void wrap_boxed(GType type, gconstpointer data, zval *rv) {
   if (data == nullptr) {
     ZVAL_NULL(rv);
+    return;
+  }
+  // A GBytes is binary data rather than a handle, and crosses as a PHP string everywhere else
+  // (core/marshal for a GValue, the generated returns): a list of them - the DNS names of a
+  // GTlsCertificate - is therefore a list of strings, not a TypeError about an unregistered type.
+  if (type == G_TYPE_BYTES) {
+    // g_bytes_get_data() takes a mutable GBytes * although it only reads from it.
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast) a GLib signature we cannot change
+    auto *bytes = const_cast<GBytes *>(static_cast<const GBytes *>(data));
+    gsize size = 0;
+    const auto *bits = static_cast<const char *>(g_bytes_get_data(bytes, &size));
+    if (bits == nullptr) {
+      ZVAL_EMPTY_STRING(rv);
+    } else {
+      ZVAL_STRINGL(rv, bits, size);
+    }
     return;
   }
   const BoxedClass *info = boxed_class_for_type(type);
@@ -200,6 +312,7 @@ void wrap_boxed(GType type, gconstpointer data, zval *rv) {
   Boxed *self = boxed_from_zval(rv);
   self->type = type;
   self->data = g_boxed_copy(type, data);
+  take_owner(self, info);
 }
 
 // PHP -> C: borrowed data pointer of a handle of exactly `expected`, else TypeError + nullptr.
@@ -210,6 +323,16 @@ gpointer unwrap_boxed(zval *zv, GType expected) {
     return nullptr;
   }
   return boxed_from_zval(zv)->data;
+}
+
+// $this of a boxed method: the data, or an Error when the handle never received any.
+gpointer boxed_self(zend_execute_data *execute_data, const char *method) {
+  Boxed *self = boxed_from_zval(ZEND_THIS);
+  if (self->data == nullptr) {
+    zend_throw_error(nullptr, "%s() on an uninitialized %s", method, ZSTR_VAL(self->std.ce->name));
+    return nullptr;
+  }
+  return self->data;
 }
 
 }  // namespace phpgtk

@@ -5,7 +5,14 @@
 # Skip once:              git commit --no-verify
 set -e
 cd "$(git rev-parse --show-toplevel)"
-./ci.sh --only=version,stubs,cpp-lint,md-lint,php-qa --skip=tidy,stan
+./ci.sh --only=version,gen,stubs,cpp-lint,md-lint,php-qa --skip=tidy,stan
 # Remember which tree passed, so pre-push can skip exactly these steps for it.
 # (The index tree is what the commit will contain; HEAD^{tree} matches it after the commit.)
-git write-tree > "$(git rev-parse --git-dir)/gtk4-precommit-tree"
+# ci.sh checked the working tree, so the stamp is only honest when that equals the index:
+# with unstaged changes in tracked files the commit gets no stamp and pre-push runs everything.
+if git diff --quiet; then
+    git write-tree > "$(git rev-parse --git-dir)/gtk4-precommit-tree"
+else
+    echo "pre-commit: unstaged changes in tracked files - the checked tree is not the one being committed, not stamping it (pre-push runs the full gate)"
+    rm -f "$(git rev-parse --git-dir)/gtk4-precommit-tree"
+fi

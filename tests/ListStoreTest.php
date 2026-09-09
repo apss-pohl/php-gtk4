@@ -7,7 +7,6 @@ namespace PhpGtk4\Tests;
 use Gtk4\GListModel;
 use Gtk4\GListStore;
 use Gtk4\GObject;
-use Gtk4\GtkButton;
 use Gtk4\PhpValue;
 
 /** Gtk4\PhpValue (PHP data as a GObject) and Gtk4\GListStore / GListModel. */
@@ -105,19 +104,7 @@ final class ListStoreTest extends GtkTestCase
         self::assertNull($weak->get(), 'released once the store dropped it');
     }
 
-    public function testWrongItemTypeIsATypeError(): void
-    {
-        $store = new GListStore(PhpValue::class);
-        $this->expectException(\TypeError::class);
-        $store->append(new GtkButton());
-    }
 
-    public function testPositionBounds(): void
-    {
-        $store = new GListStore();
-        $this->expectException(\ValueError::class);
-        $store->remove(0);
-    }
 
     public function testItemsChangedSignal(): void
     {

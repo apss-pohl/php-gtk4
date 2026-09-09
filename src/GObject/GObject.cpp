@@ -3,8 +3,28 @@
 #include "core/gsignal.h"
 #include "core/marshal.h"
 #include "core/object.h"
+#include "core/subtype.h"
+
+#include <string>
 
 using namespace phpgtk;
+
+/**
+ * Gtk4\GObject::__construct()
+ *
+ * A plain GObject - or, on a PHP subclass, an instance of that class' own GType (the way to
+ * implement a GTK interface such as {@see GListModel} in PHP: `class M extends GObject implements
+ * GListModel`).
+ */
+ZEND_METHOD(Gtk4_GObject, __construct) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GObject *obj = subtype_new(ZEND_THIS, nullptr);
+  if (obj == nullptr) {
+    if (EG(exception) != nullptr) RETURN_THROWS();
+    obj = static_cast<GObject *>(g_object_new(G_TYPE_OBJECT, nullptr));
+  }
+  attach_new(object_from_zval(ZEND_THIS), obj);
+}
 
 /**
  * Gtk4\GObject::connect(string $signal, callable $handler): int
@@ -34,6 +54,18 @@ ZEND_METHOD(Gtk4_GObject, emit) {
 }
 
 /**
+ * Gtk4\GObject::list_signals(): array
+ *
+ * Every signal this object can emit - its class', its ancestors' and its interfaces' - keyed by
+ * name: the parameter GTypes in order (`gchararray`, `gint`, `GtkWidget`, ...), the return GType
+ * or null, whether it is an action signal (meant to be emitted by the application, `activate`,
+ * `move-cursor`) and whether it takes a detail (`notify::title`).
+ */
+ZEND_METHOD(Gtk4_GObject, list_signals) {
+  signal_list_method(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+}
+
+/**
  * Gtk4\GObject::handler_disconnect(int $handler_id): void
  *
  * Disconnect a handler previously returned by connect(). No-op if already disconnected.
@@ -52,9 +84,11 @@ ZEND_METHOD(Gtk4_GObject, handler_disconnect) {
 
 // Look up a GObject property by name or throw ValueError (nullptr returned).
 static GParamSpec *require_property(GObject *obj, zend_string *name) {
+  // A name that ends at a NUL would find a different property, or none, without saying why.
+  if (!check_utf8(name, 1)) return nullptr;
   GParamSpec *spec = g_object_class_find_property(G_OBJECT_GET_CLASS(obj), ZSTR_VAL(name));
   if (spec == nullptr) {
-    zend_value_error("no property '%s' on %s", ZSTR_VAL(name), G_OBJECT_TYPE_NAME(obj));
+    zend_argument_value_error(1, "no property '%s' on %s", ZSTR_VAL(name), G_OBJECT_TYPE_NAME(obj));
   }
   return spec;
 }
@@ -94,8 +128,12 @@ ZEND_METHOD(Gtk4_GObject, set_property) {
   GObject *obj = PHPGTK_SELF(GObject, G_TYPE_OBJECT);
   GParamSpec *spec = require_property(obj, name);
   if (spec == nullptr) RETURN_THROWS();
+  if (!property_writable(spec, ZSTR_VAL(Z_OBJCE_P(ZEND_THIS)->name), spec->name)) RETURN_THROWS();
   GValue v = G_VALUE_INIT;
   if (!to_gvalue(value, spec->value_type, &v)) RETURN_THROWS();
-  g_object_set_property(obj, spec->name, &v);
+  const std::string what = std::string(ZSTR_VAL(Z_OBJCE_P(ZEND_THIS)->name)) + "::$" + spec->name;
+  const bool ok = property_value_in_range(spec, &v, what.c_str());
+  if (ok) g_object_set_property(obj, spec->name, &v);
   g_value_unset(&v);
+  if (!ok) RETURN_THROWS();
 }

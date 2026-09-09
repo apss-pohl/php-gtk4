@@ -1,0 +1,8 @@
+# PHPStan picks the Gtk4\ symbols up from the stub without loading it (scanFiles, not
+# autoloading): the extension defines the classes at runtime, and loading the stub next
+# to it would redeclare every one of them. Registered automatically by
+# phpstan/extension-installer through composer.json's extra.phpstan; otherwise add
+# vendor/php-gtk4/stubs/extension.neon under `includes:` yourself.
+parameters:
+    scanFiles:
+        - gtk4.php

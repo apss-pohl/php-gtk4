@@ -10,15 +10,21 @@
 
 namespace phpgtk {
 
+// `instance`/`handler_id` are what connect() got back; nullptr/0 for a closure GTK connected
+// itself (a GtkBuilder <signal>), which teardown invalidates instead of disconnecting by id.
 void teardown_track_closure(GClosure *closure, GObject *instance, gulong handler_id);
+// Called by the closure finalize notifier.
 void teardown_untrack_closure(GClosure *closure);
+// Called by GLib::idle_add()/timeout_add(): remember an armed source until its destroy notify.
 void teardown_track_source(guint source_id);
 // A PHP callable installed on `owner` with a GDestroyNotify (draw funcs,
 // filter/sort funcs - GIR scope "notified"). `clear(owner)` must make the
 // owner drop the callable (which runs the notify -> untrack). Track from the
 // installing method, untrack from the destroy notify.
 void teardown_track_notified(gpointer key, GObject *owner, void (*clear)(GObject *));
+// Called by the callable's destroy notify.
 void teardown_untrack_notified(gpointer key);
+// Called by the source destroy notify.
 void teardown_untrack_source(guint source_id);
 
 // RSHUTDOWN: disconnect all tracked handlers, remove all tracked sources,

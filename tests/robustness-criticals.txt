@@ -1,0 +1,54 @@
+# Methods whose RobustnessTest sweep GTK is known to complain about.
+#
+# The sweep hands every method hostile values of the right type on purpose, so a GLib
+# CRITICAL is an expected outcome for some of them - but only for the ones listed here.
+# RobustnessTest::gateAgainstPinnedList() fails a sweep that complains without a line, and
+# fails a line whose method has gone quiet, so neither a new leak nor a stale entry hides.
+#
+# Keyed on the triggering method, never on GTK's wording, which changes between versions.
+#
+# Before adding a line, check the boundary: if the binding could refuse the value with a
+# TypeError/ValueError/LogicException (CLAUDE.md, "Convert at the boundary" and the error
+# vocabulary), do that instead. A line here says "GTK's own precondition is the only thing
+# that can catch this".
+#
+# The key is `<class>::<method>#<sweep>`: `#arguments` is the wrong-types/arity sweep,
+# `#values` the right-type-hostile-value one, because a method can trip only one of them.
+#
+# A second column narrows a line to the GTK versions it is true of: `gtk>=4.20` means only a
+# GTK that new complains, and an older one is still expected to stay quiet (the line is dropped
+# for it, so a complaint would fail the sweep as unlisted). The CI floor is GTK 4.14 and the
+# Windows job runs whatever gvsbuild ships, so the same commit meets two GTKs.
+#
+# To regenerate after a deliberate change, see tests/README-robustness-pin.md.
+Gtk4\GApplication::run#arguments
+Gtk4\GApplication::unbind_busy_property#arguments
+Gtk4\GtkCssProvider::load_from_bytes#arguments
+Gtk4\GtkCssProvider::load_from_bytes#values
+Gtk4\GtkCssProvider::load_from_file#arguments
+Gtk4\GtkCssProvider::load_from_file#values
+Gtk4\GtkCssProvider::load_from_path#arguments
+Gtk4\GtkCssProvider::load_from_path#values
+Gtk4\GtkCssProvider::load_from_resource#arguments
+Gtk4\GtkCssProvider::load_from_string#arguments
+# GTK 4.20 rewrote gtk_entry_set_extra_menu() to g_object_ref() the model without the NULL
+# check the (nullable) annotation promises - `g_object_ref: assertion 'G_IS_OBJECT (object)'
+# failed` for the null the sweep passes. Still there in main; the end state is right, only
+# the complaint is spurious. 4.14/4.16/4.18 delegate to gtk_text_set_extra_menu() and are quiet.
+Gtk4\GtkEntry::set_extra_menu#arguments   gtk>=4.20
+Gtk4\GtkSnapshot::push_blur#arguments
+Gtk4\GtkSnapshot::push_cross_fade#arguments
+Gtk4\GtkSnapshot::push_opacity#arguments
+Gtk4\GtkTextTag::set_priority#arguments
+Gtk4\GtkTextTag::set_priority#values
+Gtk4\GtkWidget::insert_after#arguments
+Gtk4\GtkWidget::insert_before#arguments
+Gtk4\GtkTextTag::$size_points#properties
+Gtk4\GtkDropTarget::enter#emit
+Gtk4\GtkDropTarget::motion#emit
+Gtk4\GtkEntry::delete-text#emit
+Gtk4\GtkPasswordEntry::delete-text#emit
+Gtk4\GtkSpinButton::delete-text#emit
+Gtk4\GtkPrintOperation::$current_page#properties
+Gtk4\GtkPrintOperation::$n_pages#properties
+Gtk4\GdkPixbuf::new_from_xpm_data#arguments

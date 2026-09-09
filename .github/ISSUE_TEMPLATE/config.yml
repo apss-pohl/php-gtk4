@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Build or installation trouble
+    url: https://github.com/apss-pohl/php-gtk4/blob/main/docs/INSTALL.md
+    about: Dependencies, prebuilt binaries and a troubleshooting table for Linux and Windows.
+  - name: How the project works
+    url: https://github.com/apss-pohl/php-gtk4/blob/main/docs/CONTRIBUTING.md
+    about: Setup, the definition of done, commit conventions and how to run the checks.
+  - name: A bug in GTK itself
+    url: https://gitlab.gnome.org/GNOME/gtk/-/issues
+    about: If the same thing happens in C or PyGObject, GTK is where it belongs.

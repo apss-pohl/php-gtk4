@@ -13,14 +13,31 @@ namespace phpgtk {
 
 enum class Transfer { None, Container, Full };
 
+// GList -> list, elements converted by `element_type`, the list released per `transfer`.
 void glist_to_php(GList *list, GType element_type, Transfer transfer, zval *rv);
+// GSList -> list, likewise.
 void gslist_to_php(GSList *list, GType element_type, Transfer transfer, zval *rv);
+// GPtrArray -> list, likewise.
 void gptrarray_to_php(GPtrArray *array, GType element_type, Transfer transfer, zval *rv);
+// A char** of exactly `length` items (GLib's "array plus its length" shape, where the array is
+// not necessarily NULL-terminated); Full frees the strings and the array.
+void strv_to_php(char **strv, gsize length, Transfer transfer, zval *rv);
 // NULL-terminated char**; Full frees it with g_strfreev().
 void strv_to_php(char **strv, Transfer transfer, zval *rv);
+// A borrowed `const char * const *` (GTK getters): never freed.
+void strv_to_php(const char *const *strv, zval *rv);
 
 // PHP list of strings -> NULL-terminated char** (g_strfreev() it). Throws
 // TypeError and returns nullptr if the value is not an array of scalars.
 char **strv_from_php(zval *value);
+
+// PHP list -> a freshly allocated C array of gint (g_free() it), for the GLib members that take
+// "an array and its length" (g_key_file_set_integer_list()); `n` receives the count. An element
+// of the wrong type is a TypeError naming argument `arg`, and the result is nullptr.
+gint *int_array_from_php(zval *value, gsize *n, uint32_t arg);
+// The same for a list of floats.
+gdouble *double_array_from_php(zval *value, gsize *n, uint32_t arg);
+// The same for a list of booleans; anything but an array or object converts, as PHP does.
+gboolean *bool_array_from_php(zval *value, gsize *n, uint32_t arg);
 
 }  // namespace phpgtk

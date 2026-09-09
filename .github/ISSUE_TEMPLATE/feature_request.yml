@@ -1,0 +1,53 @@
+name: Feature request
+description: A GTK class, method or capability php-gtk4 should bind
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        php-gtk4 is generated wave by wave from GObject-Introspection over the classes in
+        [docs/GTK3-MAP.md](https://github.com/apss-pohl/php-gtk4/blob/main/docs/GTK3-MAP.md); the plan and its order live in
+        [README.md "Design"](https://github.com/apss-pohl/php-gtk4/blob/main/README.md#design) and [docs/TODO.md](https://github.com/apss-pohl/php-gtk4/blob/main/docs/TODO.md).
+        Checking those first tells you whether something is unbound on purpose, planned for a later
+        wave, or genuinely missing.
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you start
+      options:
+        - label: I searched the existing issues and docs/TODO.md, and this is not already planned
+          required: true
+        - label: This exists in GTK 4.14 or newer (php-gtk4 does not add API of its own)
+          required: true
+  - type: input
+    id: symbol
+    attributes:
+      label: What should be bound?
+      description: The GTK/GLib class, method or signal, by its C or GIR name.
+      placeholder: gtk_file_dialog_open() / GtkColumnView / GtkEventControllerKey::key-pressed
+    validations:
+      required: true
+  - type: textarea
+    id: usecase
+    attributes:
+      label: What do you want to build with it?
+      description: |
+        The application need, not the API shape. It decides priority far more than the class count
+        does, and it often turns out something already bound covers it.
+    validations:
+      required: true
+  - type: textarea
+    id: sketch
+    attributes:
+      label: How would it look from PHP?
+      description: |
+        A sketch of the call as you would write it. Naming here is mechanical — the GTK C name with
+        the type prefix stripped, snake_case (`gtk_window_set_title` → `$win->set_title()`).
+      render: php
+  - type: input
+    id: docs
+    attributes:
+      label: Link to the GTK documentation
+      placeholder: https://docs.gtk.org/gtk4/class.ColumnView.html
+    validations:
+      required: true

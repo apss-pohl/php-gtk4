@@ -12,11 +12,15 @@
 
 #include <unordered_map>
 #include <unordered_set>
+#include <string>
 #include <vector>
 
 #include "error.h"
+#include "diagnostics.h"
 
 namespace phpgtk {
+
+struct Object;  // object.h
 
 // mainloop.cpp: a run() in progress.
 struct RunningLoopEntry {
@@ -29,15 +33,38 @@ struct TrackedHandler {
   GObject *instance;
   gulong id;
 };
+// subtype.cpp: what a vfunc lookup is keyed by - the instance's PHP class and the slot, whose
+// name is the thunk's own string literal, so its address identifies it.
+struct VfuncKey {
+  zend_class_entry *ce;
+  const char *method;
+  bool operator==(const VfuncKey &other) const { return ce == other.ce && method == other.method; }
+};
+struct VfuncKeyHash {
+  size_t operator()(const VfuncKey &key) const {
+    // Two pointers, one shifted: both halves are addresses, so the low bits already differ.
+    return std::hash<const void *>{}(key.ce) ^ (std::hash<const void *>{}(key.method) << 1U);
+  }
+};
 // teardown.cpp: a notified-scope callable.
 struct TrackedNotified {
   GObject *owner;
   void (*clear)(GObject *);
 };
+// diagnostics.cpp: a GLib/php-gtk4 message waiting for a VM safe point, with the PHP
+// file/line that was executing when it arrived.
+struct Diagnostic {
+  int type = E_WARNING;  // or E_ERROR
+  std::string message;
+  std::string filename;  // empty when no PHP frame was executing
+  uint32_t lineno = 0;
+};
 
 }  // namespace phpgtk
 
-// NOLINTNEXTLINE(modernize-use-using) Zend macro expands to a typedef struct
+// Zend macro: a typedef struct, value-initialised by GINIT's placement new; `_PhpValue` is
+// GObject's naming (G_DECLARE_FINAL_TYPE) for the C struct.
+// NOLINTBEGIN(modernize-use-using,cppcoreguidelines-pro-type-member-init,bugprone-reserved-identifier)
 ZEND_BEGIN_MODULE_GLOBALS(gtk4)
 zval exception_handler;  // Gtk::set_exception_handler(); IS_UNDEF when none
 zval parked_exception;   // Rethrow mode, nested unregistered loop: waiting for a boundary
@@ -48,16 +75,20 @@ std::unordered_map<GClosure *, phpgtk::TrackedHandler> closures;
 std::unordered_set<guint> sources;
 std::unordered_map<gpointer, phpgtk::TrackedNotified> notified;
 std::unordered_set<struct _PhpValue *> phpvalues;  // live PhpValue instances
+std::unordered_set<phpgtk::Object *> held;         // handles their GObject holds a ref on (toggle)
+std::unordered_set<phpgtk::Object *> owner_holders;  // handles with an `owner` (object_hold_owner)
+// subtype_vfunc(): the PHP method (or nullptr) per class and slot, resolved once per request.
+// Keyed by both halves at once rather than a map of maps: this is looked up for every vfunc GTK
+// routes through PHP, and a widget's measure/snapshot/size_allocate run on every frame.
+std::unordered_map<phpgtk::VfuncKey, zend_function *, phpgtk::VfuncKeyHash> vfunc_cache;
+std::unordered_map<gpointer, zend_object *> fundamental_handles;  // instance -> its live handle
+std::vector<phpgtk::Diagnostic> diagnostics;  // recorded, waiting for a VM safe point
+phpgtk::DiagnosticsMode diagnostics_mode;     // gtk4.diagnostics
+bool reporting_diagnostic;                    // diagnostics_flush() re-entrancy guard
+bool shutting_down;                           // RSHUTDOWN: no new holds, Zend is going away
+phpgtk::Object *constructing;                 // subtype.cpp: handle a g_object_new() is for
 ZEND_END_MODULE_GLOBALS(gtk4)
+// NOLINTEND(modernize-use-using,cppcoreguidelines-pro-type-member-init,bugprone-reserved-identifier)
 
 ZEND_EXTERN_MODULE_GLOBALS(gtk4)
 #define GTK4_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(gtk4, v)
-
-namespace phpgtk {
-// Records the thread that ran Gtk::init(); every later GTK entry point that
-// drives the main loop asserts it is on that thread. GTK is one per process
-// and single-threaded, whatever PHP's build: with ZTS, only one request
-// thread may own the GUI. Throws \Error and returns false on a violation.
-bool assert_gui_thread(const char *what);
-void record_gui_thread();
-}  // namespace phpgtk

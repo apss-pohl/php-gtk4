@@ -1,28 +1,49 @@
 name: C++ lint
 
+# `push: [main]` stays, unlike tests.yml and php-qa.yml: a run stores its clang-tidy cache in
+# its own branch's scope and a pull request may read the *default* branch's, so keeping main
+# linted is what keeps every PR's lint warm. A push that changed no C++ then costs the setup
+# and nothing else - ci.sh skips every file whose content it has already seen green.
+#
+# Deliberately *not* filtered by `paths`: "C++ static analysis" is a required status check
+# (.github/ruleset-main.json), and a workflow that never starts never reports one, which leaves
+# the pull request waiting for a check that cannot arrive. The cache is what makes it cheap
+# instead.
 on:
   workflow_dispatch:
-  pull_request:
   push:
     branches: [main]
+  pull_request:
 
 # Read-only token: these workflows only check out and build.
 permissions:
   contents: read
 
+# Superseded runs of the same ref are cancelled (a PR push while the previous one runs).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   cpp-static-analysis:
     name: C++ static analysis
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    # A cold run lints every translation unit; src/WebKit + src/JavaScriptCore (74 of the 314,
+    # and the slowest, webkit/webkit.h being what it is) took the old 30-minute budget past the
+    # end. The cache below makes every warm run a fraction of this.
+    timeout-minutes: 60
+    env:
+      PHP: php
+      PHP_CONFIG: php-config
+      PHPIZE: phpize
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # ubuntu-latest ships PHP 8.3; the project is PHP 8.4+ only.
       - name: Set up PHP 8.4
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: '8.4'
           tools: none
@@ -32,11 +53,33 @@ jobs:
       # TU is analysed too. No bear/compile_commands.json: ci.sh derives the flags itself.
       - name: Install GTK4 / WebKitGTK dev headers and clang 20
         run: |
-          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc >/dev/null
-          echo "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-20 main" | sudo tee /etc/apt/sources.list.d/llvm-20.list
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /usr/share/keyrings/apt.llvm.org.asc >/dev/null
+          echo "deb [signed-by=/usr/share/keyrings/apt.llvm.org.asc] http://apt.llvm.org/noble/ llvm-toolchain-noble-20 main" | sudo tee /etc/apt/sources.list.d/llvm-20.list
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            libgtk-4-dev libwebkitgtk-6.0-dev clang-tidy-20 clang-format-20
+            pkg-config libgtk-4-dev libwebkitgtk-6.0-dev gir1.2-gtk-4.0 clang-tidy-20 clang-format-20
+
+      # ci.sh remembers which files it linted at which content (.ci/tidy-ok), keyed on
+      # .clang-tidy, every src/ header and the include flags - so a push that touched no C++
+      # relints nothing. That file is gitignored, so without a cache CI re-lints all ~180
+      # translation units every run: 748s of an 851s job, the whole critical path.
+      #
+      # What ci.sh's own key cannot see is the toolchain: a new clang-tidy or new GTK/PHP headers
+      # change what the same file analyses to. Those go in the *cache* key, so any of them starts
+      # from an empty cache and every file is linted again.
+      - name: Fingerprint the analysis toolchain
+        id: toolchain
+        run: |
+          printf 'key=%s\n' \
+            "$(clang-tidy-20 --version | sha256sum | cut -c1-16)-gtk$(pkg-config --modversion gtk4)-php$(php-config --version)" \
+            >> "$GITHUB_OUTPUT"
+
+      - name: Cache clang-tidy results
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .ci/tidy-ok
+          key: tidy-ok-${{ steps.toolchain.outputs.key }}-${{ github.sha }}
+          restore-keys: tidy-ok-${{ steps.toolchain.outputs.key }}-
 
       # config.h (build metadata) is what src/php_gtk4.h includes; configure generates it.
       - name: Configure
@@ -45,12 +88,21 @@ jobs:
           PHPIZE: phpize
         run: phpize && ./configure --with-php-config="$(command -v php-config)" --enable-gtk4-webkit
 
-      - name: Generated stubs are up to date
-        run: composer install --no-interaction --no-progress --prefer-dist && ./ci.sh --only=stubs
+      # gen: a fresh gir.php --install must equal the committed tree (src/<Ns>/, tests/Generated,
+      # gen/report.md, the map) - the only PR-time run of that gate; then the stubs derived from it.
+      - name: Generated sources and stubs are up to date
+        run: composer install --no-interaction --no-progress --prefer-dist && ./ci.sh --only=gen,stubs
 
       # Same stage as the pre-commit hook and `./ci.sh --only=cpp-lint`: clang-tidy with
       # WarningsAsErrors '*' and clang-format --dry-run over src/. Any finding fails the job.
+      #
+      # The step timeout is deliberately below the job's: a step that runs out of time *fails*,
+      # and the post-cache step then still saves the files ci.sh got through (ci.sh appends each
+      # one as it passes), so the next run starts where this one stopped. A *job* timeout is a
+      # cancellation - post steps are skipped and the whole pass is lost, which is how the
+      # 30-minute budget above turned into a run that could never finish.
       - name: clang-tidy + clang-format
+        timeout-minutes: 50
         env:
           PHP_CONFIG: php-config
           CLANG_TIDY: clang-tidy-20

@@ -1,4 +1,5 @@
 #include "variant.h"
+#include "marshal.h"
 
 #include <string>
 
@@ -114,8 +115,10 @@ void variant_to_php(GVariant *v, zval *rv) {
   ZVAL_NULL(rv);
 }
 
+namespace {
+
 // True for a list (0..n-1 keys) whose values are all strings -> inferred as "as".
-static bool array_is_string_list(HashTable *ht) {
+bool array_is_string_list(HashTable *ht) {
   if (!zend_array_is_list(ht)) return false;
   zval *item;
   // NOLINTNEXTLINE(readability-math-missing-parentheses) Zend macro expansion
@@ -126,17 +129,46 @@ static bool array_is_string_list(HashTable *ht) {
   return true;
 }
 
+// Levels of *nesting in the PHP value* - resolving a type for the same value (inference, the
+// v/m wrappers) is not one. Deeper than any GVariant can be (its own type strings stop at 64)
+// and shallow enough that the C stack is never the thing that gives way first.
+constexpr int max_depth = 64;
+
+// Marks an array as "being converted" for as long as it is on the stack, so a value that
+// contains itself is rejected instead of recursed into. Zend's own array-walking code
+// (var_dump, json_encode) does the same with these macros.
+class RecursionGuard {
+ public:
+  explicit RecursionGuard(HashTable *table) : ht(table) { GC_TRY_PROTECT_RECURSION(ht); }
+  ~RecursionGuard() { GC_TRY_UNPROTECT_RECURSION(ht); }
+  RecursionGuard(const RecursionGuard &) = delete;
+  RecursionGuard &operator=(const RecursionGuard &) = delete;
+  RecursionGuard(RecursionGuard &&) = delete;
+  RecursionGuard &operator=(RecursionGuard &&) = delete;
+
+ private:
+  HashTable *ht = nullptr;
+};
+
 // Throw the TypeError for a value that does not fit `type` and return nullptr.
-static GVariant *fail(zval *value, const GVariantType *type) {
+GVariant *fail(zval *value, const GVariantType *type) {
   gchar *ts = type != nullptr ? g_variant_type_dup_string(type) : g_strdup("(inferred)");
   zend_type_error("cannot convert %s to GVariant type %s", zend_zval_value_name(value), ts);
   g_free(ts);
   return nullptr;
 }
+}  // namespace
 
-// PHP value -> GVariant of `type` (or inferred when nullptr); see variant.h.
-GVariant *php_to_variant(zval *value, const GVariantType *type) {
+// PHP value -> GVariant of `type` (or inferred when nullptr), `depth` levels into the value.
+static GVariant *php_to_variant_at(zval *value, const GVariantType *type, int depth) {
   ZVAL_DEREF(value);
+  // A GVariant cannot be deeper than this either (GVariant's own limit is 64 for a type
+  // string), and without the cap a deeply nested array recursed until the C stack ran out:
+  // 20 000 levels was a SIGSEGV, not an exception.
+  if (depth > max_depth) {
+    zend_value_error("array is nested too deeply for a GVariant (limit %d)", max_depth);
+    return nullptr;
+  }
   if (type == nullptr) {
     // Inference
     switch (Z_TYPE_P(value)) {
@@ -151,14 +183,20 @@ GVariant *php_to_variant(zval *value, const GVariantType *type) {
       case IS_DOUBLE:
         return g_variant_new_double(Z_DVAL_P(value));
       case IS_STRING:
+        if (!check_utf8(Z_STR_P(value), 0)) return nullptr;
         return g_variant_new_string(Z_STRVAL_P(value));
       case IS_NULL:
         return g_variant_new_maybe(G_VARIANT_TYPE_VARIANT, nullptr);
       case IS_ARRAY: {
         HashTable *ht = Z_ARRVAL_P(value);
-        if (array_is_string_list(ht)) return php_to_variant(value, G_VARIANT_TYPE_STRING_ARRAY);
-        if (zend_array_is_list(ht)) return php_to_variant(value, G_VARIANT_TYPE("av"));
-        return php_to_variant(value, G_VARIANT_TYPE_VARDICT);
+        if (GC_IS_RECURSIVE(ht)) {
+          zend_value_error("array contains itself and cannot be converted to a GVariant");
+          return nullptr;
+        }
+        if (array_is_string_list(ht))
+          return php_to_variant_at(value, G_VARIANT_TYPE_STRING_ARRAY, depth);
+        if (zend_array_is_list(ht)) return php_to_variant_at(value, G_VARIANT_TYPE("av"), depth);
+        return php_to_variant_at(value, G_VARIANT_TYPE_VARDICT, depth);
       }
       default:
         return fail(value, nullptr);
@@ -166,44 +204,80 @@ GVariant *php_to_variant(zval *value, const GVariantType *type) {
   }
 
   if (g_variant_type_is_variant(type)) {
-    GVariant *inner = php_to_variant(value, nullptr);
+    GVariant *inner = php_to_variant_at(value, nullptr, depth);
     return inner != nullptr ? g_variant_new_variant(inner) : nullptr;
   }
   if (g_variant_type_is_maybe(type)) {
     if (Z_TYPE_P(value) == IS_NULL)
       return g_variant_new_maybe(g_variant_type_element(type), nullptr);
-    GVariant *inner = php_to_variant(value, g_variant_type_element(type));
+    GVariant *inner = php_to_variant_at(value, g_variant_type_element(type), depth);
     return inner != nullptr ? g_variant_new_maybe(nullptr, inner) : nullptr;
   }
   if (g_variant_type_is_basic(type)) {
     if (Z_TYPE_P(value) == IS_ARRAY || Z_TYPE_P(value) == IS_OBJECT) return fail(value, type);
     const gchar c = g_variant_type_peek_string(type)[0];
+    // Scalars convert exactly like a typed parameter - strict_types honoured where the value was
+    // written, weak coercion otherwise - and then have to fit the C width (check_range): -1 for
+    // a `u` used to reach GLib as 4294967295, 'abc' for an `i` as 0, silently.
+    zend_long l = 0;
+    const auto integer = [&](auto width) -> bool {
+      using T = decltype(width);
+      if (Z_TYPE_P(value) == IS_LONG) {
+        l = Z_LVAL_P(value);
+      } else if (caller_is_strict() || !zend_parse_arg_long_weak(value, &l, 0)) {
+        fail(value, type);
+        return false;
+      }
+      return check_range<T>(l, 0);
+    };
     switch (c) {
-      case 'b':
-        return g_variant_new_boolean(zend_is_true(value));
+      case 'b': {
+        bool b = false;
+        if (Z_TYPE_P(value) == IS_TRUE || Z_TYPE_P(value) == IS_FALSE) {
+          b = Z_TYPE_P(value) == IS_TRUE;
+        } else if (caller_is_strict() || !zend_parse_arg_bool_weak(value, &b, 0)) {
+          return fail(value, type);
+        }
+        return g_variant_new_boolean(b ? TRUE : FALSE);
+      }
       case 'y':
-        return g_variant_new_byte(static_cast<guint8>(zval_get_long(value)));
+        return integer(guint8{}) ? g_variant_new_byte(static_cast<guint8>(l)) : nullptr;
       case 'n':
-        return g_variant_new_int16(static_cast<gint16>(zval_get_long(value)));
+        return integer(gint16{}) ? g_variant_new_int16(static_cast<gint16>(l)) : nullptr;
       case 'q':
-        return g_variant_new_uint16(static_cast<guint16>(zval_get_long(value)));
+        return integer(guint16{}) ? g_variant_new_uint16(static_cast<guint16>(l)) : nullptr;
       case 'i':
-        return g_variant_new_int32(static_cast<gint32>(zval_get_long(value)));
+        return integer(gint32{}) ? g_variant_new_int32(static_cast<gint32>(l)) : nullptr;
       case 'u':
-        return g_variant_new_uint32(static_cast<guint32>(zval_get_long(value)));
+        return integer(guint32{}) ? g_variant_new_uint32(static_cast<guint32>(l)) : nullptr;
       case 'x':
-        return g_variant_new_int64(zval_get_long(value));
+        return integer(gint64{}) ? g_variant_new_int64(l) : nullptr;
       case 't':
-        return g_variant_new_uint64(static_cast<guint64>(zval_get_long(value)));
+        return integer(guint64{}) ? g_variant_new_uint64(static_cast<guint64>(l)) : nullptr;
       case 'h':
-        return g_variant_new_handle(static_cast<gint32>(zval_get_long(value)));
-      case 'd':
-        return g_variant_new_double(zval_get_double(value));
+        return integer(gint32{}) ? g_variant_new_handle(static_cast<gint32>(l)) : nullptr;
+      case 'd': {
+        double d = 0;
+        if (Z_TYPE_P(value) == IS_DOUBLE) {
+          d = Z_DVAL_P(value);
+        } else if (Z_TYPE_P(value) == IS_LONG) {  // widening: allowed under strict_types too
+          d = static_cast<double>(Z_LVAL_P(value));
+        } else if (caller_is_strict() || !zend_parse_arg_double_weak(value, &d, 0)) {
+          return fail(value, type);
+        }
+        return g_variant_new_double(d);
+      }
       case 's':
       case 'o':
       case 'g': {
-        if (Z_TYPE_P(value) == IS_ARRAY || Z_TYPE_P(value) == IS_OBJECT) return fail(value, type);
+        if (Z_TYPE_P(value) != IS_STRING && (caller_is_strict() || !weak_to_string_ok(value))) {
+          return fail(value, type);
+        }
         zend_string *s = zval_get_string(value);
+        if (!check_utf8(s, 0)) {
+          zend_string_release(s);
+          return nullptr;
+        }
         GVariant *v = nullptr;
         if (c == 's') {
           v = g_variant_new_string(ZSTR_VAL(s));
@@ -221,6 +295,12 @@ GVariant *php_to_variant(zval *value, const GVariantType *type) {
   }
   if (Z_TYPE_P(value) != IS_ARRAY) return fail(value, type);
   HashTable *ht = Z_ARRVAL_P(value);
+  // `$a = [1]; $a[] = &$a;` used to recurse until the stack was gone.
+  if (GC_IS_RECURSIVE(ht)) {
+    zend_value_error("array contains itself and cannot be converted to a GVariant");
+    return nullptr;
+  }
+  const RecursionGuard guard(ht);
 
   if (g_variant_type_is_array(type)) {
     const GVariantType *elem = g_variant_type_element(type);
@@ -239,9 +319,9 @@ GVariant *php_to_variant(zval *value, const GVariantType *type) {
           ZVAL_STR_COPY(&zk, key);
         else
           ZVAL_LONG(&zk, static_cast<zend_long>(idx));
-        GVariant *vk = php_to_variant(&zk, kt);
+        GVariant *vk = php_to_variant_at(&zk, kt, depth + 1);
         zval_ptr_dtor(&zk);
-        GVariant *vv = vk != nullptr ? php_to_variant(item, vt) : nullptr;
+        GVariant *vv = vk != nullptr ? php_to_variant_at(item, vt, depth + 1) : nullptr;
         if (vk == nullptr || vv == nullptr) {
           if (vk != nullptr) g_variant_unref(g_variant_ref_sink(vk));
           g_variant_builder_clear(&builder);
@@ -254,7 +334,7 @@ GVariant *php_to_variant(zval *value, const GVariantType *type) {
       zval *item;
       // NOLINTNEXTLINE(readability-math-missing-parentheses) Zend macro expansion
       ZEND_HASH_FOREACH_VAL(ht, item) {
-        GVariant *vv = php_to_variant(item, elem);
+        GVariant *vv = php_to_variant_at(item, elem, depth + 1);
         if (vv == nullptr) {
           g_variant_builder_clear(&builder);
           return nullptr;
@@ -276,7 +356,7 @@ GVariant *php_to_variant(zval *value, const GVariantType *type) {
         g_variant_builder_clear(&builder);
         return fail(value, type);
       }
-      GVariant *vv = php_to_variant(item, elem);
+      GVariant *vv = php_to_variant_at(item, elem, depth + 1);
       if (vv == nullptr) {
         g_variant_builder_clear(&builder);
         return nullptr;
@@ -292,6 +372,11 @@ GVariant *php_to_variant(zval *value, const GVariantType *type) {
     return g_variant_builder_end(&builder);
   }
   return fail(value, type);
+}
+
+// PHP value -> GVariant of `type` (or inferred when nullptr); see variant.h.
+GVariant *php_to_variant(zval *value, const GVariantType *type) {
+  return php_to_variant_at(value, type, 0);
 }
 
 }  // namespace phpgtk

@@ -38,7 +38,7 @@ return Demo::page(
         $left = new GtkLabel('append()');
         $middle = new GtkLabel('hexpand');
         $middle->set_hexpand(true);
-        $right = new GtkButton('remove me');
+        $right = GtkButton::new_with_label('remove me');
         foreach ([$left, $middle, $right] as $child) {
             $child->add_css_class('card');
             $demo->append($child);

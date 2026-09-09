@@ -1,0 +1,115 @@
+name: Bug report
+description: Something in php-gtk4 crashes, leaks, or behaves differently from GTK
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. php-gtk4 runs a native toolkit inside your PHP
+        process, so *which* PHP, *which* GTK and *which* session matters more than usual — the
+        fields below are what makes a report reproducible. Please fill them in rather than
+        describing them in prose.
+
+        Security issues do not belong here: report those privately to the maintainer instead.
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you start
+      options:
+        - label: I searched the existing issues and this is not a duplicate
+          required: true
+        - label: This is php-gtk4 (`Gtk4\` namespace), not [php-gtk3](https://github.com/scorninpc/php-gtk3)
+          required: true
+        - label: I ran the script from the command line (php-gtk4 is CLI-only; web SAPIs are not supported)
+          required: true
+  - type: textarea
+    id: versions
+    attributes:
+      label: Versions
+      description: |
+        Paste the output of these two commands. `bin/php-gtk4` is in the repository; with the
+        extension enabled system-wide, plain `php` works too.
+      value: |
+        ```
+        $ bin/php-gtk4 -r 'echo Gtk4\VERSION, "\n", Gtk4\BUILD_INFO, "\n", Gtk4\FEATURES, "\n";'
+
+
+        $ php -v && pkg-config --modversion gtk4
+        ```
+      render: shell
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How did you install php-gtk4?
+      options:
+        - Built from source (phpize / ci.sh)
+        - Prebuilt .so from a release
+        - Prebuilt .dll from a release (Windows)
+        - Other (say so below)
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      description: Distribution and version, or the Windows build.
+      placeholder: Ubuntu 24.04.1 / Fedora 41 / Windows 11 23H2
+    validations:
+      required: true
+  - type: dropdown
+    id: session
+    attributes:
+      label: Display server
+      description: GTK behaves differently per backend; `echo $XDG_SESSION_TYPE` if you are unsure.
+      options:
+        - X11
+        - Wayland
+        - Xvfb / headless
+        - Windows
+        - macOS
+        - Other / unknown
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction script
+      description: |
+        The **smallest complete script** that shows the problem — one file, no framework, runnable
+        as `bin/php-gtk4 bug.php`. A report without one usually cannot be acted on.
+      value: |
+        ```php
+        <?php
+        use Gtk4\{GApplicationFlags, GtkApplication, GtkWindow};
+
+        $app = new GtkApplication('org.example.Bug', GApplicationFlags::DEFAULT_FLAGS);
+        $app->connect('activate', function (GtkApplication $app): void {
+            $win = new GtkWindow();
+            $win->set_application($app);
+            // ... what goes wrong
+            $win->present();
+        });
+        exit($app->run($argv));
+        ```
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect, and what happened instead?
+      description: If GTK's own documentation says something different, link the page.
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: |
+        Everything the process printed: PHP errors, GLib `CRITICAL`/`WARNING` lines, the exit code.
+        For a crash, a backtrace helps enormously — run your normal command under gdb:
+        `gdb -q -batch -ex run -ex bt --args php -d extension=gtk4 bug.php`
+      render: shell
+    validations:
+      required: true

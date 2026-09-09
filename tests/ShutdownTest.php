@@ -15,7 +15,8 @@ final class ShutdownTest extends TestCase
 {
     public function testProcessExitsCleanlyWithLiveCallbacks(): void
     {
-        $so = getenv('GTK4_SO') ?: './gtk4.so';
+        // GTK4_SO (tests/run.sh) or GTK4_DLL (tests/run.cmd) name the module under test.
+        $so = getenv('GTK4_SO') ?: (getenv('GTK4_DLL') ?: './gtk4.so');
         $cmd = sprintf(
             '%s -n -dextension=%s %s 2>&1',
             escapeshellarg(PHP_BINARY),

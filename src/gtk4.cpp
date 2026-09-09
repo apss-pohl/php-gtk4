@@ -2,6 +2,7 @@
 #include "php_gtk4.h"
 #include "classes.h"
 #include "core/boxed.h"
+#include "core/diagnostics.h"
 #include "core/enums.h"
 #include "core/fundamental.h"
 #include "core/gerror.h"
@@ -9,11 +10,13 @@
 #include "core/globals.h"
 #include "core/object.h"
 #include "core/phpvalue.h"
+#include "core/subtype.h"
 #include "core/teardown.h"
-#include "Gio/GListModel.h"
 #include <Zend/zend_modules.h>
 
-#ifndef _WIN32
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <dlfcn.h>
 #endif
 
@@ -24,6 +27,13 @@
 // once with the method tables; other TUs only need the ZEND_METHOD prototypes
 // (the header is guarded for that).
 #include "gtk4_arginfo.h"
+// Generated classes: interface-method prototypes first (the MALIAS entries need them), then
+// the per-namespace arginfo of src/<Ns>/<Ns>.stub.php.
+#include "gen_prototypes.h"
+#include "gen_arginfo.h"
+// ...and the MINIT block of every conditional namespace, one function per feature: a build
+// without the feature compiles none of it, and MINIT keeps its size.
+#include "gen_minit_defs.inc"
 
 ZEND_DECLARE_MODULE_GLOBALS(gtk4)
 
@@ -47,9 +57,23 @@ static PHP_GSHUTDOWN_FUNCTION(gtk4) {
 #endif
 }
 
+// gtk4.diagnostics: map the name to the mode the writer reads (src/core/diagnostics.h).
+// Rejecting an unknown value makes a typo a startup error rather than a silent default; the
+// empty string is not one, it is what PHP's ini scanner makes of `off`.
+static PHP_INI_MH(on_update_diagnostics) {
+  phpgtk::DiagnosticsMode mode{};
+  if (new_value == nullptr ||
+      !phpgtk::diagnostics_mode_from_name(ZSTR_VAL(new_value), ZSTR_LEN(new_value), &mode)) {
+    return FAILURE;
+  }
+  GTK4_G(diagnostics_mode) = mode;
+  return SUCCESS;
+}
+
 PHP_INI_BEGIN()
 PHP_INI_ENTRY("gtk4.build_info", PHPGTK_BUILD_INFO, PHP_INI_SYSTEM, nullptr)
 PHP_INI_ENTRY("gtk4.features", PHPGTK_BUILD_FEATURES, PHP_INI_SYSTEM, nullptr)
+PHP_INI_ENTRY("gtk4.diagnostics", "warning", PHP_INI_ALL, on_update_diagnostics)
 PHP_INI_END()
 
 // GTK, like GLib, cannot be unloaded from a process: it registers GTypes, atexit handlers
@@ -61,11 +85,17 @@ PHP_INI_END()
 // the already loaded mapping, and it (with everything it depends on) then stays mapped for
 // the life of the process. Our own gtk4.so is still unloaded normally.
 static void pin_gtk_library() {
-#ifndef _WIN32
+#ifdef _WIN32
+  // Same idea with the Win32 loader: pin the module that contains gtk_init so FreeLibrary()
+  // (which PHP calls on every extension at MSHUTDOWN) never unmaps libgtk-4 and its deps.
+  HMODULE module = nullptr;
+  // GetModuleHandleEx wants an LPCSTR
+  (void)GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
+                           reinterpret_cast<LPCSTR>(&gtk_init), &module);
+#else
   Dl_info info{};
-  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast) dladdr wants a data pointer
+  // dladdr wants a data pointer
   if (dladdr(reinterpret_cast<const void *>(&gtk_init), &info) != 0 && info.dli_fname != nullptr) {
-    // NOLINTNEXTLINE(hicpp-signed-bitwise) glibc flag macros
     void *handle = dlopen(info.dli_fname, RTLD_NOW | RTLD_NOLOAD | RTLD_NODELETE);
     (void)handle;  // deliberately leaked: the reference is the point
   }
@@ -76,13 +106,13 @@ static void pin_gtk_library() {
 static PHP_MINIT_FUNCTION(gtk4) {
   REGISTER_INI_ENTRIES();
   pin_gtk_library();
+  phpgtk::diagnostics_minit();           // before anything can log
   register_gtk4_symbols(module_number);  // Gtk4\VERSION, BUILD_INFO, FEATURES
   phpgtk::object_handlers_init();
   phpgtk::boxed_handlers_init();
   phpgtk::fundamental_handlers_init();
 
-  // Class registration, parents first (the generator will emit this block).
-  // Three shapes, nothing else:
+  // Hand-written classes first (src/gtk4.stub.php), three registration shapes only:
   //   register_class("GType", register_class_Gtk4_X(parent...), G_TYPE_X)  GObject handles
   //   register_X(register_class_Gtk4_X())                                    classes.h hooks
   //   register_enum/flags(G_TYPE_X, register_class_Gtk4_X())                 enums
@@ -91,58 +121,40 @@ static PHP_MINIT_FUNCTION(gtk4) {
   zend_class_entry *ce_GObject = register_class_Gtk4_GObject();
   phpgtk::register_class("GObject", ce_GObject, G_TYPE_OBJECT);
   phpgtk::ce_ExceptionMode = register_class_Gtk4_ExceptionMode();
-  // Enums/flags: registered before any class that mentions them in arginfo.
-  phpgtk::register_enum(GTK_TYPE_ALIGN, register_class_Gtk4_GtkAlign());
-  phpgtk::register_enum(GTK_TYPE_ORIENTATION, register_class_Gtk4_GtkOrientation());
-  phpgtk::register_flags(G_TYPE_APPLICATION_FLAGS, register_class_Gtk4_GApplicationFlags());
-  phpgtk::register_enum(GTK_TYPE_FILTER_CHANGE, register_class_Gtk4_GtkFilterChange());
-  phpgtk::register_enum(GTK_TYPE_SORTER_CHANGE, register_class_Gtk4_GtkSorterChange());
   register_class_Gtk4_Gtk();
   register_class_Gtk4_GLib();
   phpgtk::register_GMainLoop(register_class_Gtk4_GMainLoop());
   phpgtk::register_GdkRGBA(register_class_Gtk4_GdkRGBA());
   phpgtk::register_GdkRectangle(register_class_Gtk4_GdkRectangle());
+  phpgtk::register_GskRoundedRect(register_class_Gtk4_GskRoundedRect());
   phpgtk::register_GParamSpec(register_class_Gtk4_GParamSpec());
   phpgtk::ce_GError = register_class_Gtk4_GError(spl_ce_RuntimeException);
-  phpgtk::register_class("GdkTexture", register_class_Gtk4_GdkTexture(ce_GObject),
-                         GDK_TYPE_TEXTURE);
   phpgtk::register_class("PhpValue", register_class_Gtk4_PhpValue(ce_GObject), PHP_TYPE_VALUE);
   phpgtk::register_CairoContext(register_class_Gtk4_CairoContext());
-  zend_class_entry *ce_GListModel = register_class_Gtk4_GListModel();
-  phpgtk::ce_GListModel = ce_GListModel;  // for ?GListModel parameters (Gio/GListModel.h)
-  phpgtk::register_class("GListStore", register_class_Gtk4_GListStore(ce_GObject, ce_GListModel),
-                         G_TYPE_LIST_STORE);
-  zend_class_entry *ce_GAction = register_class_Gtk4_GAction();
-  zend_class_entry *ce_GActionMap = register_class_Gtk4_GActionMap();
-  zend_class_entry *ce_GActionGroup = register_class_Gtk4_GActionGroup();
-  phpgtk::register_class("GSimpleAction", register_class_Gtk4_GSimpleAction(ce_GObject, ce_GAction),
-                         G_TYPE_SIMPLE_ACTION);
-  phpgtk::register_class(
-      "GtkApplication",
-      register_class_Gtk4_GtkApplication(ce_GObject, ce_GActionMap, ce_GActionGroup),
-      GTK_TYPE_APPLICATION);
-  zend_class_entry *ce_GtkWidget = register_class_Gtk4_GtkWidget(ce_GObject);
-  phpgtk::register_class("GtkWidget", ce_GtkWidget, GTK_TYPE_WIDGET);
-  phpgtk::register_class("GtkButton", register_class_Gtk4_GtkButton(ce_GtkWidget), GTK_TYPE_BUTTON);
-  phpgtk::register_class("GtkBox", register_class_Gtk4_GtkBox(ce_GtkWidget), GTK_TYPE_BOX);
-  phpgtk::register_class("GtkLabel", register_class_Gtk4_GtkLabel(ce_GtkWidget), GTK_TYPE_LABEL);
-  phpgtk::register_class("GtkWindow", register_class_Gtk4_GtkWindow(ce_GtkWidget), GTK_TYPE_WINDOW);
-  phpgtk::register_class("GtkDrawingArea", register_class_Gtk4_GtkDrawingArea(ce_GtkWidget),
-                         GTK_TYPE_DRAWING_AREA);
-  zend_class_entry *ce_GtkFilter = register_class_Gtk4_GtkFilter(ce_GObject);
-  phpgtk::register_class("GtkFilter", ce_GtkFilter, GTK_TYPE_FILTER);
-  phpgtk::register_class("GtkCustomFilter", register_class_Gtk4_GtkCustomFilter(ce_GtkFilter),
-                         GTK_TYPE_CUSTOM_FILTER);
-  phpgtk::register_class("GtkFilterListModel",
-                         register_class_Gtk4_GtkFilterListModel(ce_GObject, ce_GListModel),
-                         GTK_TYPE_FILTER_LIST_MODEL);
-  zend_class_entry *ce_GtkSorter = register_class_Gtk4_GtkSorter(ce_GObject);
-  phpgtk::register_class("GtkSorter", ce_GtkSorter, GTK_TYPE_SORTER);
-  phpgtk::register_class("GtkCustomSorter", register_class_Gtk4_GtkCustomSorter(ce_GtkSorter),
-                         GTK_TYPE_CUSTOM_SORTER);
-  phpgtk::register_class("GtkSortListModel",
-                         register_class_Gtk4_GtkSortListModel(ce_GObject, ce_GListModel),
-                         GTK_TYPE_SORT_LIST_MODEL);
+  phpgtk::register_CairoSurface(register_class_Gtk4_CairoSurface());
+  phpgtk::register_GtkCssSection(register_class_Gtk4_GtkCssSection());
+  // GdkEvent and the subtypes with getters of their own; the rest (motion, delete, ...) resolve
+  // to GdkEvent through the registry's parent walk.
+  zend_class_entry *ce_GdkEvent = register_class_Gtk4_GdkEvent();
+  phpgtk::register_GdkEvent(GDK_TYPE_EVENT, ce_GdkEvent);
+  phpgtk::register_GdkEvent(GDK_TYPE_KEY_EVENT, register_class_Gtk4_GdkKeyEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_BUTTON_EVENT, register_class_Gtk4_GdkButtonEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_SCROLL_EVENT, register_class_Gtk4_GdkScrollEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_CROSSING_EVENT,
+                            register_class_Gtk4_GdkCrossingEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_FOCUS_EVENT, register_class_Gtk4_GdkFocusEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_TOUCH_EVENT, register_class_Gtk4_GdkTouchEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_TOUCHPAD_EVENT,
+                            register_class_Gtk4_GdkTouchpadEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_PAD_EVENT, register_class_Gtk4_GdkPadEvent(ce_GdkEvent));
+  phpgtk::register_GdkEvent(GDK_TYPE_GRAB_BROKEN_EVENT,
+                            register_class_Gtk4_GdkGrabBrokenEvent(ce_GdkEvent));
+  phpgtk::register_GdkEventSequence(register_class_Gtk4_GdkEventSequence());
+  register_class_Gtk4_GtkStyleProviderPriority();
+  phpgtk::register_flags(G_TYPE_IO_CONDITION, register_class_Gtk4_GIOCondition());
+  // Generated classes (gen/gir.php): enums first, then interfaces and classes parents first;
+  // a conditional namespace registers from its own function in gen_minit_defs.inc.
+#include "gen_minit.inc"
 
   // libgtk-3 and libgtk-4 export the same C symbols; whichever loaded first
   // wins symbol resolution, so with php-gtk3 present every gtk4 call silently
@@ -158,12 +170,15 @@ static PHP_MINIT_FUNCTION(gtk4) {
 
 // Module shutdown.
 static PHP_MSHUTDOWN_FUNCTION(gtk4) {
+  phpgtk::diagnostics_mshutdown();  // the engine must not keep pointing into this .so
   UNREGISTER_INI_ENTRIES();
   return SUCCESS;
 }
 
 // Request init: one-time verification of the PHP enums against the C enums.
 static PHP_RINIT_FUNCTION(gtk4) {
+  phpgtk::diagnostics_request_init();
+  phpgtk::object_request_init();
   phpgtk::enums_verify();
   return SUCCESS;
 }
@@ -172,7 +187,9 @@ static PHP_RINIT_FUNCTION(gtk4) {
 static PHP_RSHUTDOWN_FUNCTION(gtk4) {
   phpgtk::teardown_request();  // before anything that holds callables could finalize later
   phpgtk::phpvalue_request_shutdown();
+  phpgtk::subtype_request_shutdown();
   phpgtk::exception_state_shutdown();
+  phpgtk::diagnostics_request_shutdown();  // last: the three above can still report
   return SUCCESS;
 }
 

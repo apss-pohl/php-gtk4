@@ -1,0 +1,373 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property PhpGtk4\\Gen\\Generator\:\:\$writer\.$#'
+			identifier: property.notFound
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 2
+			path: gen/gir.php
+
+		-
+			message: '#^Binary operation "\." between ''  '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 4
+			path: gen/gir.php
+
+		-
+			message: '#^Binary operation "\." between '' \= '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Binary operation "\." between mixed and '' \$'' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Function PhpGtk4\\Gen\\readList\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Method PhpGtk4\\Gen\\Generator\:\:clangFormat\(\) should return string\|null but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Method PhpGtk4\\Gen\\Generator\:\:configure\(\) has parameter \$allow with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Method PhpGtk4\\Gen\\Generator\:\:configure\(\) has parameter \$handwritten with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Method PhpGtk4\\Gen\\Generator\:\:configure\(\) has parameter \$skip with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Method PhpGtk4\\Gen\\Generator\:\:setSmokeSkip\(\) has parameter \$skip with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Offset 1 might not exist on array\{\}\|array\{non\-falsy\-string, non\-falsy\-string, string\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Offset 2 might not exist on array\{\}\|array\{non\-falsy\-string, non\-falsy\-string, string\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Only iterables can be unpacked, mixed given in argument \#2\.$#'
+			identifier: argument.unpackNonIterable
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Parameter \#1 \$body of static method PhpGtk4\\Gen\\Generator\:\:spliceCall\(\) expects list\<string\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Parameter \#1 \$haystack of function str_contains expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: gen/gir.php
+
+		-
+			message: '#^Parameter \#1 \$haystack of function str_ends_with expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: gen/gir.php
+
+		-
+			message: '#^Parameter \#1 \$q of method PhpGtk4\\Gen\\Generator\:\:add\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Parameter \#1 \$string of function ltrim expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: gen/gir.php
+
+		-
+			message: '#^Parameter \#1 \$type of static method PhpGtk4\\Gen\\Generator\:\:assertion\(\) expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, list given\.$#'
+			identifier: argument.type
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, list\<mixed\> given\.$#'
+			identifier: argument.type
+			count: 2
+			path: gen/gir.php
+
+		-
+			message: '#^Parameter \#2 \$subject of function preg_split expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: gen/gir.php
+
+		-
+			message: '#^Parameter \#3 \$ins of method PhpGtk4\\Gen\\Generator\:\:subtypeCall\(\) expects list\<array\<string, mixed\>\>, list\<non\-empty\-array\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Parameter \#3 \$ins of method PhpGtk4\\Gen\\Generator\:\:vfuncThunk\(\) expects list\<array\<string, mixed\>\>, list\<array\> given\.$#'
+			identifier: argument.type
+			count: 2
+			path: gen/gir.php
+
+		-
+			message: '#^Parameter \#3 \$posts of static method PhpGtk4\\Gen\\Generator\:\:spliceCall\(\) expects list\<string\>, non\-empty\-list given\.$#'
+			identifier: argument.type
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Parameter \#4 \$outs of method PhpGtk4\\Gen\\Generator\:\:vfuncThunk\(\) expects list\<array\<string, mixed\>\>, list\<array\> given\.$#'
+			identifier: argument.type
+			count: 2
+			path: gen/gir.php
+
+		-
+			message: '#^Part \$name \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Part \$o\[''ctype''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 2
+			path: gen/gir.php
+
+		-
+			message: '#^Part \$o\[''init''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Part \$o\[''name''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 2
+			path: gen/gir.php
+
+		-
+			message: '#^Part \$p\[''objectVar''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 2
+			path: gen/gir.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 2
+			path: gen/gir.php
+
+		-
+			message: '#^Property PhpGtk4\\Gen\\Generator\:\:\$skipList \(array\<string, string\>\) does not accept array\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Property PhpGtk4\\Gen\\Generator\:\:\$smokeSkip \(array\<string, string\>\) does not accept array\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Property PhpGtk4\\Gen\\TypeSet\:\:\$handwritten \(array\<string, true\>\) does not accept non\-empty\-array\<true\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: gen/gir.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>props" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: gen/gir/emit-class.php
+
+		-
+			message: '#^Access to an undefined property DOMNameSpaceNode\|DOMNode\:\:\$textContent\.$#'
+			identifier: property.notFound
+			count: 1
+			path: gen/gir/loader.php
+
+		-
+			message: '#^Argument of an invalid type DOMNodeList\<DOMNameSpaceNode\|DOMNode\>\|false supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 10
+			path: gen/gir/loader.php
+
+		-
+			message: '#^Cannot call method item\(\) on DOMNodeList\<DOMNameSpaceNode\|DOMNode\>\|false\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: gen/gir/loader.php
+
+		-
+			message: '#^Match expression does not handle remaining values\: string\|null$#'
+			identifier: match.unhandled
+			count: 1
+			path: gen/gir/loader.php
+
+		-
+			message: '#^Anonymous function has an unused use \$f\.$#'
+			identifier: closure.unusedUse
+			count: 1
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Binary operation "\." between '' \= '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Binary operation "\." between mixed and '' \$'' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Method PhpGtk4\\Gen\\TypeMap\:\:outMapping\(\) should return array\{name\: string, ctype\: string, init\: string, kind\: string, phpType\: string, arg\: string, add\: string, toZval\: callable\(string\)\: list\<string\>, \.\.\.\}\|null but returns array\{ctype\: string\|null, init\: ''\{\}'', kind\: ''boxed'', phpType\: string, toZval\: Closure\(string\)\: array\{non\-falsy\-string\}, name\: string, arg\: non\-falsy\-string, post\: array\{\}, \.\.\.\}\.$#'
+			identifier: return.type
+			count: 1
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Method PhpGtk4\\Gen\\TypeMap\:\:outMapping\(\) should return array\{name\: string, ctype\: string, init\: string, kind\: string, phpType\: string, arg\: string, add\: string, toZval\: callable\(string\)\: list\<string\>, \.\.\.\}\|null but returns array\{ctype\: string\|null, init\: non\-falsy\-string, kind\: ''enum'', phpType\: string, toZval\: Closure\(string\)\: array\{non\-falsy\-string\}, name\: string, arg\: non\-falsy\-string, post\: array\{\}, \.\.\.\}\.$#'
+			identifier: return.type
+			count: 1
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Method PhpGtk4\\Gen\\TypeMap\:\:outScalar\(\) has parameter \$o with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Method PhpGtk4\\Gen\\TypeMap\:\:outScalar\(\) should return string but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Method PhpGtk4\\Gen\\TypeMap\:\:retMapping\(\) should return array\{phpType\: string, docType\?\: string, lines\: callable\(\)\: mixed, tail\?\: list\<string\>\}\|string but returns array\{phpType\: mixed, lines\: Closure\(string\)\: non\-empty\-array\}\.$#'
+			identifier: return.type
+			count: 1
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Only iterables can be unpacked, mixed given\.$#'
+			identifier: arrayUnpacking.nonIterable
+			count: 1
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Parameter \#1 \$string of function ltrim expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$arrays of function array_merge expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Part \$subtype\[''call''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Part \$x \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 2
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Property PhpGtk4\\Gen\\TypeMap\:\:\$report is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Trying to invoke mixed but it''s not a callable\.$#'
+			identifier: callable.nonCallable
+			count: 2
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: gen/gir/type-map.php
+
+		-
+			message: '#^Method PhpGtk4\\Gen\\Writer\:\:clangFormat\(\) should return string\|null but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: gen/gir/writer.php

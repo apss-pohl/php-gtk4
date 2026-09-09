@@ -117,7 +117,7 @@ final class SignalTest extends GtkTestCase
 
     public function testEmitRejectsWrongArgumentCount(): void
     {
-        $this->expectException(\ValueError::class);
+        $this->expectException(\ArgumentCountError::class);
         $this->window()->emit('close-request', 'extra');
     }
 
@@ -173,5 +173,21 @@ final class SignalTest extends GtkTestCase
         }
         $w->set_title('x');
         self::assertSame('x', $w->get_title());
+    }
+    /** list_signals(): the class', the ancestors' and the interfaces' signals, with their shape. */
+    public function testListSignalsDescribesEverySignal(): void
+    {
+        $button = new \Gtk4\GtkButton();
+
+        $signals = $button->list_signals();
+
+        self::assertSame(
+            ['params' => [], 'return' => null, 'action' => true, 'detailed' => false],
+            $signals['clicked'],
+        );
+        self::assertSame(['GParam'], $signals['notify']['params']);   // GObject's, via the chain
+        self::assertTrue($signals['notify']['detailed']);
+        self::assertSame('gboolean', $signals['query-tooltip']['return']);
+        self::assertSame(['gint', 'gint', 'gboolean', 'GtkTooltip'], $signals['query-tooltip']['params']);
     }
 }

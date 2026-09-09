@@ -52,6 +52,13 @@ const FEATURES = UNKNOWN;
 class GObject
 {
     /**
+     * A plain GObject - or, on a PHP subclass, an instance of that class' own GType (the way to
+     * implement a GTK interface such as {@see GListModel} in PHP: `class M extends GObject
+     * implements GListModel`).
+     */
+    public function __construct() {}
+
+    /**
      * Connect a handler to a signal (optionally detailed, e.g. "notify::title").
      *
      * The handler receives the emitting object first, then the signal's own
@@ -60,7 +67,7 @@ class GObject
      *
      * What happens when the handler throws depends on {@see Gtk::set_exception_mode()}:
      * `ExceptionMode::Log` (default) reports it to the {@see Gtk::set_exception_handler()}
-     * callable (or g_critical() on stderr) and GTK continues; `ExceptionMode::Rethrow`
+     * callable (or an `E_WARNING`) and GTK continues; `ExceptionMode::Rethrow`
      * stops any running main loop and rethrows it to the PHP code that triggered the
      * emission (or from {@see GtkApplication::run()} / {@see GMainLoop::run()}).
      *
@@ -76,12 +83,28 @@ class GObject
      * Emit a signal on this object with the given arguments (converted to the
      * signal's parameter types) and return the signal's return value, if any.
      *
-     * @throws \ValueError If the signal does not exist or the argument count is wrong
+     * The class handler runs too, so this is GTK's own code being driven with PHP's values:
+     * an `int` that follows a `string` parameter (`insert-text`'s length) is bounded by that
+     * string, but a signal whose handler needs the object in a state PHP cannot check
+     * (`realize`, `map`) is not guarded beyond what GTK asserts.
+     *
+     * @throws \ValueError If the signal does not exist, the argument count is wrong, or a
+     *                     length exceeds the string before it
      */
     public function emit(string $signal, mixed ...$args): mixed {}
 
     /** Disconnect a handler previously returned by connect(). No-op if already disconnected. */
     public function handler_disconnect(int $handler_id): void {}
+
+    /**
+     * Every signal this object can emit - its class', its ancestors' and its interfaces' -
+     * keyed by name: the parameter GTypes in order (`gchararray`, `gint`, `GtkWidget`, ...),
+     * the return GType or null, whether it is an action signal (meant to be emitted by the
+     * application, `activate`, `move-cursor`) and whether it takes a detail (`notify::title`).
+     *
+     * @return array<string, array{params: list<string>, return: ?string, action: bool, detailed: bool}>
+     */
+    public function list_signals(): array {}
 
     /**
      * Read a GObject property by name, converted to the matching PHP type.
@@ -107,10 +130,13 @@ class GObject
  */
 final class GParamSpec
 {
+    /** GTK's property name with dashes, e.g. `default-width`. */
     public function get_name(): string {}
 
+    /** Short human-readable name, or null. */
     public function get_nick(): ?string {}
 
+    /** Longer description, or null. */
     public function get_blurb(): ?string {}
 
     /** GType name of the value, e.g. "gchararray", "gint", "GtkWindow". */
@@ -119,8 +145,10 @@ final class GParamSpec
     /** GParamFlags bitmask (READABLE = 1, WRITABLE = 2, CONSTRUCT_ONLY = 8, ...). */
     public function get_flags(): int {}
 
+    /** Whether `get_property()` / `$obj->prop` may read it (G_PARAM_READABLE). */
     public function is_readable(): bool {}
 
+    /** Whether `set_property()` / `$obj->prop = ...` may write it (G_PARAM_WRITABLE). */
     public function is_writable(): bool {}
 
     /** The property's default, converted like get_property(); null if the type is unsupported. */
@@ -128,74 +156,11 @@ final class GParamSpec
 }
 
 /**
- * Horizontal / vertical alignment of a widget within its allocation.
- * (Case values are verified against GTK's GEnumClass when the extension loads.)
- *
- * @link https://docs.gtk.org/gtk4/enum.Align.html
- */
-enum GtkAlign: int
-{
-    case Fill = 0;
-    case Start = 1;
-    case End = 2;
-    case Center = 3;
-    case BaselineFill = 4;
-    case BaselineCenter = 5;
-}
-
-/**
- * @link https://docs.gtk.org/gtk4/enum.Orientation.html
- */
-enum GtkOrientation: int
-{
-    case Horizontal = 0;
-    case Vertical = 1;
-}
-
-/**
- * GApplication flags - a bitmask, combine with `|`. Flags types are constant
- * classes (PHP enums cannot be OR-ed); the values are verified against GLib's
- * GFlagsClass when the extension loads.
- *
- * @link https://docs.gtk.org/gio/flags.ApplicationFlags.html
- */
-final class GApplicationFlags
-{
-    public const int DEFAULT_FLAGS = 0;
-    public const int IS_SERVICE = 1;
-    public const int IS_LAUNCHER = 2;
-    public const int HANDLES_OPEN = 4;
-    public const int HANDLES_COMMAND_LINE = 8;
-    public const int SEND_ENVIRONMENT = 16;
-    public const int NON_UNIQUE = 32;
-    public const int CAN_OVERRIDE_APP_ID = 64;
-    public const int ALLOW_REPLACEMENT = 128;
-    public const int REPLACE = 256;
-}
-
-/** @link https://docs.gtk.org/gtk4/enum.FilterChange.html */
-enum GtkFilterChange: int
-{
-    case Different = 0;
-    case LessStrict = 1;
-    case MoreStrict = 2;
-}
-
-/** @link https://docs.gtk.org/gtk4/enum.SorterChange.html */
-enum GtkSorterChange: int
-{
-    case Different = 0;
-    case Inverted = 1;
-    case LessStrict = 2;
-    case MoreStrict = 3;
-}
-
-/**
  * How a Throwable thrown inside a signal handler or GLib callback is handled.
  */
 enum ExceptionMode: int
 {
-    /** Report via {@see Gtk::set_exception_handler()} (or g_critical()) and keep going. */
+    /** Report via {@see Gtk::set_exception_handler()} (or an `E_WARNING`) and keep going. */
     case Log = 0;
     /**
      * Stop any running {@see GtkApplication::run()} / {@see GMainLoop::run()} and rethrow the
@@ -214,6 +179,25 @@ final class Gtk
     /** Initialise GTK (gtk_init_check). Returns false if no display is available. */
     public static function init(): bool {}
 
+    /** The major version of the GTK library in use - 4 here (gtk_get_major_version). */
+    public static function get_major_version(): int {}
+
+    /** The minor version of the GTK library in use (gtk_get_minor_version). */
+    public static function get_minor_version(): int {}
+
+    /** The micro version of the GTK library in use (gtk_get_micro_version). */
+    public static function get_micro_version(): int {}
+
+    /**
+     * Null when the GTK in use is compatible with the given version, otherwise a string saying
+     * how it is not (gtk_check_version): older than what was asked for, or a different major
+     * version, which is not binary compatible either way.
+     *
+     * This is the runtime library's answer, not what the extension was built against, so it is
+     * what a script should ask before using something a later GTK added.
+     */
+    public static function check_version(int $required_major, int $required_minor, int $required_micro): ?string {}
+
     /**
      * Install (or with null, remove) the callable that receives exceptions
      * thrown inside signal handlers and other callbacks. Signature:
@@ -223,19 +207,45 @@ final class Gtk
      */
     public static function set_exception_handler(?callable $handler): void {}
 
+    /** What a Throwable escaping a handler does: `Log` (report, GTK continues) or `Rethrow` (stop loops, propagate). */
     public static function set_exception_mode(ExceptionMode $mode): void {}
 
+    /** The current mode; `Log` by default. */
     public static function get_exception_mode(): ExceptionMode {}
 
-#if defined(PHPGTK_TESTING)
     /**
-     * Test builds only (`--enable-gtk4-testing`, `FEATURES` has `testing=yes`): iterate the
-     * default context $iterations times from C, blocking each time, the way GTK does inside
-     * DnD or a portal call. Deliberately *not* a rethrow boundary - a Throwable parked in
+     * Add a style provider (a {@see GtkCssProvider}) to every widget on $display
+     * (gtk_style_context_add_provider_for_display - the function outlived the
+     * GtkStyleContext class it is named after).
+     *
+     * The highest priority wins per property; use {@see GtkStyleProviderPriority}
+     * for $priority. Providers stay attached until removed, and reloading the
+     * provider's CSS restyles everything immediately.
+     */
+    public static function add_provider_for_display(
+        GdkDisplay $display,
+        GtkStyleProvider $provider,
+        int $priority = GtkStyleProviderPriority::APPLICATION,
+    ): void {}
+
+    /** Detach a provider added with {@see add_provider_for_display()}; unknown providers are ignored. */
+    public static function remove_provider_for_display(GdkDisplay $display, GtkStyleProvider $provider): void {}
+
+    /**
+     * A test hook, not part of the supported surface: iterate the default context $iterations
+     * times from C, blocking each time, the way GTK does inside DnD or a portal call.
+     * Deliberately *not* a rethrow boundary - a Throwable parked in
      * {@see ExceptionMode::Rethrow} surfaces from the enclosing run(), as it would then.
      */
     public static function testing_iterate_nested(int $iterations): void {}
-#endif
+
+    /**
+     * A test hook, not part of the supported surface: run `g_object_run_dispose()` on $object
+     * from C while PHP still holds it, the way GTK guts a widget that a C owner destroys. The
+     * handle turns *disposed*: method calls and passing it as an argument throw an `Error` from
+     * then on.
+     */
+    public static function testing_run_dispose(GtkWidget $object): void {}
 }
 
 /**
@@ -250,7 +260,23 @@ final class GLib
     /** @return int Source id for {@see source_remove()} */
     public static function timeout_add(int $interval_ms, callable $callback): int {}
 
-    /** Remove an idle/timeout source; false if it was already gone. */
+    /**
+     * Watch a socket stream on the default main context: `$callback($stream, int $condition)`
+     * runs whenever one of the {@see GIOCondition} bits in $condition is met, and keeps the
+     * watch by returning true. This is how a socket joins the GTK main loop instead of being
+     * polled between manual iterations. $stream is a stream resource over a socket
+     * (`stream_socket_client()`, `stream_socket_pair()`, or an ext-sockets `\Socket` through
+     * `socket_export_stream()`); the descriptor stays PHP's - closing the stream ends the watch
+     * with a `HUP`/`NVAL` condition.
+     *
+     * @param resource $stream
+     * @return int Source id for {@see source_remove()}
+     * @throws \TypeError When $stream is not an open stream resource
+     * @throws \ValueError When the stream has no socket descriptor or $condition has no valid bit
+     */
+    public static function io_add_watch(mixed $stream, int $condition, callable $callback): int {}
+
+    /** Remove an idle/timeout/I/O source; false if it was already gone. */
     public static function source_remove(int $source_id): bool {}
 
     /**
@@ -273,6 +299,7 @@ final class GLib
  */
 final class GMainLoop
 {
+    /** A loop on the default main context (`GLib::idle_add()` / `timeout_add()` sources run in it). */
     public function __construct() {}
 
     /**
@@ -282,8 +309,10 @@ final class GMainLoop
      */
     public function run(): void {}
 
+    /** Make a running `run()` return; a no-op when not running. */
     public function quit(): void {}
 
+    /** True between `run()` and the `quit()` that ends it. */
     public function is_running(): bool {}
 }
 
@@ -304,38 +333,6 @@ class GError extends \RuntimeException
 }
 
 /**
- * Pixel data usable by widgets and paintables. Byte buffers (`GBytes`) are
- * plain PHP strings on this side.
- *
- * @property int $width
- * @property int $height
- *
- * @link https://docs.gtk.org/gdk4/class.Texture.html
- * @not-serializable
- */
-class GdkTexture extends GObject
-{
-    /** @throws GError If the file cannot be read or decoded */
-    public static function new_from_filename(string $path): GdkTexture {}
-
-    /**
-     * @param string $bytes Encoded image data (PNG, JPEG, ...)
-     * @throws GError If the data cannot be decoded
-     */
-    public static function new_from_bytes(string $bytes): GdkTexture {}
-
-    public function get_width(): int {}
-
-    public function get_height(): int {}
-
-    /** The texture encoded as PNG. */
-    public function save_to_png_bytes(): string {}
-
-    /** @throws GError If the file cannot be written */
-    public function save_to_png(string $path): void {}
-}
-
-/**
  * A GObject that carries an arbitrary PHP value, so PHP data can live where
  * GTK expects GObjects - above all in a {@see GListStore} feeding list views.
  * The value is held by reference (objects and arrays keep their identity);
@@ -351,227 +348,14 @@ class GdkTexture extends GObject
  */
 final class PhpValue extends GObject
 {
+    /** A GObject carrying any PHP value, so PHP data can live in a `GListStore`. */
     public function __construct(mixed $value = null) {}
 
+    /** The carried value. */
     public function get_value(): mixed {}
 
+    /** Replace the carried value. */
     public function set_value(mixed $value): void {}
-}
-
-/**
- * A list of GObjects with change notification (`items-changed`).
- *
- * @link https://docs.gtk.org/gio/iface.ListModel.html
- */
-interface GListModel
-{
-    /** GType name of the items, e.g. "PhpValue" or "GObject". */
-    public function get_item_type(): string;
-
-    public function get_n_items(): int;
-
-    /** The item at $position, or null past the end. */
-    public function get_item(int $position): ?GObject;
-}
-
-/**
- * A GListModel backed by an array; items must be instances of the item type.
- *
- * @property int $n_items
- *
- * @link https://docs.gtk.org/gio/class.ListStore.html
- * @not-serializable
- */
-class GListStore extends GObject implements GListModel
-{
-    /**
-     * @param string $item_type PHP class (e.g. PhpValue::class) or GType name of the items
-     * @throws \ValueError If the type is unknown or not a GObject type
-     */
-    public function __construct(string $item_type = GObject::class) {}
-
-    /** @implementation-alias Gtk4\GListModel::get_item_type */
-    public function get_item_type(): string {}
-
-    /** @implementation-alias Gtk4\GListModel::get_n_items */
-    public function get_n_items(): int {}
-
-    /** @implementation-alias Gtk4\GListModel::get_item */
-    public function get_item(int $position): ?GObject {}
-
-    /** @throws \TypeError If $item is not of the item type */
-    public function append(GObject $item): void {}
-
-    /** @throws \TypeError If $item is not of the item type */
-    public function insert(int $position, GObject $item): void {}
-
-    public function remove(int $position): void {}
-
-    public function remove_all(): void {}
-
-    /** Position of $item, or null if it is not in the store. */
-    public function find(GObject $item): ?int {}
-}
-
-/**
- * An action: a named, optionally parameterised and stateful operation.
- * GVariant parameters and states are mapped to plain PHP values (bool, int,
- * float, string, list, associative array, null for "maybe" types).
- *
- * @link https://docs.gtk.org/gio/iface.Action.html
- */
-interface GAction
-{
-    public function get_name(): string;
-
-    public function get_enabled(): bool;
-
-    /** GVariant type string of the activation parameter (e.g. "s", "i"), or null. */
-    public function get_parameter_type(): ?string;
-
-    /** Current state as a PHP value, or null for a stateless action. */
-    public function get_state(): mixed;
-}
-
-/**
- * A container of actions, keyed by name.
- *
- * @link https://docs.gtk.org/gio/iface.ActionMap.html
- */
-interface GActionMap
-{
-    public function add_action(GAction $action): void;
-
-    public function remove_action(string $name): void;
-
-    public function lookup_action(string $name): ?GAction;
-}
-
-/**
- * Something that can activate its actions by name.
- *
- * @link https://docs.gtk.org/gio/iface.ActionGroup.html
- */
-interface GActionGroup
-{
-    public function has_action(string $name): bool;
-
-    /** @return list<string> */
-    public function list_actions(): array;
-
-    /** Activate by name; $parameter is converted to the action's parameter type. */
-    public function activate_action(string $name, mixed $parameter = null): void;
-}
-
-/**
- * The plain GAction implementation: emits `activate` (with the parameter as a
- * PHP value) and, if stateful, `change-state`.
- *
- * ```php
- * $quit = new GSimpleAction('quit');
- * $quit->connect('activate', fn() => $app->quit());
- * $app->add_action($quit);            // reachable as "app.quit"
- * ```
- *
- * @property string $name
- * @property bool $enabled
- * @property ?string $parameter_type
- * @property mixed $state
- *
- * @link https://docs.gtk.org/gio/class.SimpleAction.html
- * @not-serializable
- */
-class GSimpleAction extends GObject implements GAction
-{
-    /**
-     * @param string $name Action name (letters, digits, `-` and `.`)
-     * @param string|null $parameter_type GVariant type string the `activate` parameter must have, or null for none
-     * @param mixed $state Initial state for a stateful action (its GVariant type is inferred), or null for stateless
-     */
-    public function __construct(string $name, ?string $parameter_type = null, mixed $state = null) {}
-
-    public function get_name(): string {}
-
-    public function get_enabled(): bool {}
-
-    public function set_enabled(bool $enabled): void {}
-
-    public function get_parameter_type(): ?string {}
-
-    public function get_state(): mixed {}
-
-    /** Set the state directly (emits `notify::state`, not `change-state`). */
-    public function set_state(mixed $state): void {}
-
-    /** Activate as if through an action group; emits `activate`. */
-    public function activate(mixed $parameter = null): void {}
-}
-
-/**
- * The application object: owns the main loop and the windows.
- *
- * ```php
- * $app = new GtkApplication('org.example.Hello');
- * $app->connect('activate', function (GtkApplication $app): void {
- *     $win = new GtkWindow($app);
- *     $win->present();
- * });
- * exit($app->run($argv));
- * ```
- *
- * @property ?string $application_id
- * @property ?GtkWindow $active_window
- *
- * @link https://docs.gtk.org/gtk4/class.Application.html
- * @not-serializable
- */
-class GtkApplication extends GObject implements GActionMap, GActionGroup
-{
-    /**
-     * @param string|null $application_id Reverse-DNS id, or null for a non-unique app
-     * @param int $flags Bitmask of {@see GApplicationFlags} constants
-     */
-    public function __construct(?string $application_id = null, int $flags = 0) {}
-
-    /**
-     * Run the application (emits `startup`, `activate`, ...) until the last
-     * window closes or {@see quit()} is called.
-     *
-     * @param array $argv Command line as passed to the script (list of strings)
-     * @return int Exit status
-     */
-    public function run(array $argv = []): int {}
-
-    public function quit(): void {}
-
-    public function add_window(GtkWindow $window): void {}
-
-    public function get_active_window(): ?GtkWindow {}
-
-    public function get_application_id(): ?string {}
-
-    /**
-     * The application's windows, most recently focused first.
-     *
-     * @return list<GtkWindow>
-     */
-    public function get_windows(): array {}
-
-    public function add_action(GAction $action): void {}
-
-    public function remove_action(string $name): void {}
-
-    public function lookup_action(string $name): ?GAction {}
-
-    /**
-     * GActionGroup methods (has_action, list_actions, activate_action) work once the
-     * application is registered, i.e. from `startup` on; add/remove/lookup_action work any time.
-     */
-    public function has_action(string $name): bool {}
-
-    public function list_actions(): array {}
-
-    public function activate_action(string $name, mixed $parameter = null): void {}
 }
 
 /**
@@ -599,8 +383,10 @@ final class GdkRGBA
     /** CSS representation, e.g. `rgb(255,0,0)` or `rgba(255,0,0,0.5)`. */
     public function to_string(): string {}
 
+    /** Component-wise equality (`==` compares handles by value too). */
     public function equal(GdkRGBA $other): bool {}
 
+    /** True when alpha is 1. */
     public function is_opaque(): bool {}
 }
 
@@ -617,6 +403,7 @@ final class GdkRGBA
  */
 final class GdkRectangle
 {
+    /** Origin and size in pixels. */
     public function __construct(int $x = 0, int $y = 0, int $width = 0, int $height = 0) {}
 
     /** The overlap with $other, or null if they do not intersect. */
@@ -625,270 +412,335 @@ final class GdkRectangle
     /** The smallest rectangle containing both. */
     public function union(GdkRectangle $other): GdkRectangle {}
 
+    /** Whether the point lies inside the rectangle. */
     public function contains_point(int $x, int $y): bool {}
 
+    /** Position and size equal. */
     public function equal(GdkRectangle $other): bool {}
 }
 
 /**
- * Base class of all widgets. Not instantiable from PHP.
+ * A rectangle with a size per corner (a boxed value type: cloneable, compared by value) - what
+ * {@see GskRoundedClipNode}, {@see GskBorderNode}, the shadow nodes and
+ * {@see GtkSnapshot::push_rounded_clip()} take. GSK gives the struct no GType; the binding
+ * registers one. The GSK calls that rewrite the rectangle in place (normalize, offset, shrink)
+ * answer with a copy here, like graphene's do: a value handle never changes under you.
  *
- * GObject properties are also available as PHP properties (dashes become
- * underscores).
- *
- * @property bool $visible
- * @property bool $sensitive
- * @property bool $can_focus
- * @property bool $has_focus
- * @property ?string $tooltip_text
- * @property ?string $name
- * @property GtkAlign $halign
- * @property GtkAlign $valign
- * @property bool $hexpand
- * @property bool $vexpand
- * @property int $margin_start
- * @property int $margin_end
- * @property int $margin_top
- * @property int $margin_bottom
- * @property float $opacity
- * @property array $css_classes
- * @property int $width_request
- * @property int $height_request
- * @property ?GtkWidget $parent
- *
- * @link https://docs.gtk.org/gtk4/class.Widget.html
+ * @link https://docs.gtk.org/gsk4/struct.RoundedRect.html
  * @not-serializable
  */
-abstract class GtkWidget extends GObject
+final class GskRoundedRect
 {
-    public function show(): void {}
-
-    public function hide(): void {}
-
-    public function set_visible(bool $visible): void {}
-
-    public function get_visible(): bool {}
-
-    /** Whether the widget and all its ancestors are visible. */
-    public function is_visible(): bool {}
-
-    public function set_sensitive(bool $sensitive): void {}
-
-    public function get_sensitive(): bool {}
-
-    /** Minimum size in pixels; -1 = natural size. */
-    public function set_size_request(int $width, int $height): void {}
-
-    /**
-     * The size request as [width, height] (out parameters become a list).
-     *
-     * @return array{int, int}
-     */
-    public function get_size_request(): array {}
-
-    /**
-     * Widgets whose mnemonic activates this widget.
-     *
-     * @return list<GtkWidget>
-     */
-    public function list_mnemonic_labels(): array {}
-
-    public function get_parent(): ?GtkWidget {}
-
-    /** The toplevel GtkWindow (or other root) this widget is in, if any. */
-    public function get_root(): ?GtkWidget {}
-
-    public function grab_focus(): bool {}
-
-    /** Activate the widget (a button emits `clicked`); false if it is not activatable. */
-    public function activate(): bool {}
-
-    public function set_tooltip_text(?string $text): void {}
-
-    public function get_tooltip_text(): ?string {}
-
-    public function set_name(?string $name): void {}
-
-    public function get_name(): ?string {}
-
-    public function add_css_class(string $css_class): void {}
-
-    public function remove_css_class(string $css_class): void {}
-
-    public function has_css_class(string $css_class): bool {}
-
-    /** @return list<string> */
-    public function get_css_classes(): array {}
-
-    /** @param array $classes list of class names (replaces all current ones) */
-    public function set_css_classes(array $classes): void {}
-
-    /**
-     * Activate a named action ("app.quit", "win.close") found on this widget's ancestry.
-     * $parameter is converted to the action's parameter type. False if no such action.
-     */
-    public function activate_action(string $name, mixed $parameter = null): bool {}
-
-    public function set_halign(GtkAlign $align): void {}
-
-    public function get_halign(): GtkAlign {}
-
-    public function set_valign(GtkAlign $align): void {}
-
-    public function get_valign(): GtkAlign {}
-
-    /** Whether the widget takes the horizontal space its parent has spare. */
-    public function set_hexpand(bool $expand): void {}
-
-    public function get_hexpand(): bool {}
-
-    public function set_vexpand(bool $expand): void {}
-
-    public function get_vexpand(): bool {}
-
-    /** Queue a redraw of the widget. */
-    public function queue_draw(): void {}
-}
-
-/**
- * A widget that emits `clicked` when activated.
- *
- * @property ?string $label
- * @property ?GtkWidget $child
- *
- * @link https://docs.gtk.org/gtk4/class.Button.html
- * @not-serializable
- */
-class GtkButton extends GtkWidget
-{
-    /** @param string|null $label Text label; null for an empty button */
-    public function __construct(?string $label = null) {}
-
-    public function set_label(?string $label): void {}
-
-    public function get_label(): ?string {}
-
-    public function set_child(?GtkWidget $child): void {}
-
-    public function get_child(): ?GtkWidget {}
-}
-
-/**
- * The layout container: children in a row or a column.
- *
- * GTK 4 has no GtkContainer - a window or a button holds exactly one child, and
- * this is what holds several. `pack_start`/`pack_end` are gone; children are
- * appended, prepended or inserted after a sibling, and where the spare space goes
- * is the child's own {@see GtkWidget::set_hexpand()} / `set_vexpand()`.
- *
- * ```php
- * $row = new GtkBox(GtkOrientation::Horizontal, 6);
- * $row->append(new GtkLabel('left'));
- * $row->append(new GtkButton('right'));
- * $window->set_child($row);
- * ```
- *
- * @property int $spacing
- * @property bool $homogeneous
- * @property GtkOrientation $orientation
- *
- * @link https://docs.gtk.org/gtk4/class.Box.html
- * @not-serializable
- */
-class GtkBox extends GtkWidget
-{
+    /** A rectangle with a (circular) radius per corner; a radius of 0.0 keeps that corner square. */
     public function __construct(
-        GtkOrientation $orientation = GtkOrientation::Horizontal,
-        int $spacing = 0,
+        GrapheneRect $bounds,
+        float $top_left = 0.0,
+        float $top_right = 0.0,
+        float $bottom_right = 0.0,
+        float $bottom_left = 0.0,
     ) {}
 
-    /**
-     * Add $child at the end.
-     *
-     * @throws \ValueError If $child already has a parent - GTK inserts, it never reparents
-     */
-    public function append(GtkWidget $child): void {}
+    /** The rectangle without its corners. */
+    public function get_bounds(): GrapheneRect {}
+
+    /** The horizontal and vertical radius of one corner. */
+    public function get_corner(GskCorner $corner): GrapheneSize {}
+
+    /** Whether every corner is square (all radii 0.0). */
+    public function is_rectilinear(): bool {}
+
+    /** Whether the point lies inside the rounded rectangle. */
+    public function contains_point(GraphenePoint $point): bool {}
+
+    /** Whether the whole rectangle lies inside the rounded rectangle. */
+    public function contains_rect(GrapheneRect $rect): bool {}
+
+    /** Whether the rectangle overlaps the rounded rectangle anywhere. */
+    public function intersects_rect(GrapheneRect $rect): bool {}
+
+    /** A copy with a non-negative size and corners no larger than the sides allow. */
+    public function normalize(): GskRoundedRect {}
+
+    /** A copy moved by ($dx, $dy). */
+    public function offset(float $dx, float $dy): GskRoundedRect {}
 
     /**
-     * Add $child at the start.
-     *
-     * @throws \ValueError If $child already has a parent
+     * A copy inset by the given amounts on each side, the corners shrinking with it (negative
+     * values grow it).
      */
-    public function prepend(GtkWidget $child): void {}
+    public function shrink(float $top, float $right, float $bottom, float $left): GskRoundedRect {}
 
-    /**
-     * Insert $child directly after $sibling, or at the start when $sibling is null.
-     *
-     * To move a child that is already in this box, {@see remove()} it first.
-     *
-     * @throws \ValueError If $child already has a parent, or $sibling is not a child of this box
-     */
-    public function insert_child_after(GtkWidget $child, ?GtkWidget $sibling): void {}
-
-    /**
-     * Remove a child.
-     *
-     * @throws \ValueError If $child is not a child of this box
-     */
-    public function remove(GtkWidget $child): void {}
-
-    /** Pixels between children. */
-    public function set_spacing(int $spacing): void {}
-
-    public function get_spacing(): int {}
-
-    /** Whether every child gets the same amount of space. */
-    public function set_homogeneous(bool $homogeneous): void {}
-
-    public function get_homogeneous(): bool {}
-
-    public function set_orientation(GtkOrientation $orientation): void {}
-
-    public function get_orientation(): GtkOrientation {}
-
-    /**
-     * This box's children, in order.
-     *
-     * @return list<GtkWidget>
-     */
-    public function get_children(): array {}
+    /** Same bounds and the same four corners (what `==` compares too). */
+    public function equal(GskRoundedRect $other): bool {}
 }
 
 /**
- * A widget that displays a small amount of text.
+ * An input event, as GTK 4 delivers it to event controllers: an opaque, refcounted handle with
+ * typed getters (there are no fields to copy and no `new`). The class tells the kind — a
+ * {@see GdkKeyEvent}, {@see GdkButtonEvent}, ... — and {@see get_event_type()} the exact type.
+ * Comes from {@see GtkEventController::get_current_event()}, {@see GtkGesture::get_last_event()}
+ * and the `event` signal of {@see GtkEventControllerLegacy}.
  *
- * @property string $label
- * @property bool $use_markup
- * @property bool $selectable
- * @property bool $wrap
- *
- * @link https://docs.gtk.org/gtk4/class.Label.html
+ * @link https://docs.gtk.org/gdk4/class.Event.html
  * @not-serializable
  */
-class GtkLabel extends GtkWidget
+class GdkEvent
 {
-    public function __construct(?string $text = null) {}
+    /** What kind of event this is (also visible in the handle's class). */
+    public function get_event_type(): GdkEventType {}
 
-    public function set_text(string $text): void {}
-
-    public function get_text(): string {}
-
-    /** Set Pango markup, e.g. `<b>bold</b>`. */
-    public function set_markup(string $markup): void {}
-
-    public function set_selectable(bool $selectable): void {}
-
-    public function get_selectable(): bool {}
+    /** The event's timestamp in milliseconds (server time, 0 when the event carries none). */
+    public function get_time(): int {}
 
     /**
-     * Selected character range as [start, end], or null when nothing is selected
-     * (a boolean-returning C function with out parameters returns the outs or null).
+     * The keyboard modifiers and mouse buttons held down when the event happened
+     * ({@see GdkModifierType} flags).
+     */
+    public function get_modifier_state(): int {}
+
+    /**
+     * The pointer position [x, y] in surface coordinates, or null for events that have none
+     * (key and focus events).
+     *
+     * @return array{float, float}|null
+     */
+    public function get_position(): ?array {}
+
+    /** True for a pointer event that was synthesised from a touch sequence. */
+    public function get_pointer_emulated(): bool {}
+
+    /**
+     * True when this event is the platform's "open a context menu" gesture (the secondary
+     * button, Control+click on macOS).
+     */
+    public function triggers_context_menu(): bool {}
+
+    /** The display the event came from. */
+    public function get_display(): ?GdkDisplay {}
+}
+
+/**
+ * A key press or release.
+ *
+ * @link https://docs.gtk.org/gdk4/class.KeyEvent.html
+ * @not-serializable
+ */
+final class GdkKeyEvent extends GdkEvent
+{
+    /** The key symbol (a `GDK_KEY_*` value, e.g. 65307 for Escape). */
+    public function get_keyval(): int {}
+
+    /** The hardware key code. */
+    public function get_keycode(): int {}
+
+    /**
+     * The modifiers that were used up producing the keyval ({@see GdkModifierType} flags) -
+     * Shift for "A", for instance - and so must not count as part of an accelerator.
+     */
+    public function get_consumed_modifiers(): int {}
+
+    /** The keyboard layout (group) the key was pressed in. */
+    public function get_layout(): int {}
+
+    /** The shift level of the key. */
+    public function get_level(): int {}
+
+    /** True when the key is itself a modifier (Shift, Control, ...). */
+    public function is_modifier(): bool {}
+
+    /**
+     * Whether the event matches an accelerator of $keyval + $modifiers ({@see GdkModifierType}
+     * flags): exactly, partially (layout-independent) or not at all.
+     */
+    public function matches(int $keyval, int $modifiers): GdkKeyMatch {}
+
+    /**
+     * The [keyval, modifiers] an accelerator would have to match this event, or null when the
+     * event cannot be matched (a modifier key on its own).
      *
      * @return array{int, int}|null
      */
-    public function get_selection_bounds(): ?array {}
+    public function get_match(): ?array {}
+}
 
-    public function select_region(int $start, int $end): void {}
+/**
+ * A mouse button press or release.
+ *
+ * @link https://docs.gtk.org/gdk4/class.ButtonEvent.html
+ * @not-serializable
+ */
+final class GdkButtonEvent extends GdkEvent
+{
+    /** The mouse button (1 = primary, 2 = middle, 3 = secondary). */
+    public function get_button(): int {}
+}
+
+/**
+ * A scroll wheel or smooth-scroll event.
+ *
+ * @link https://docs.gtk.org/gdk4/class.ScrollEvent.html
+ * @not-serializable
+ */
+final class GdkScrollEvent extends GdkEvent
+{
+    /** The scroll direction; `Smooth` means {@see get_deltas()} carries the amount. */
+    public function get_direction(): GdkScrollDirection {}
+
+    /**
+     * The scroll amount [dx, dy] of a smooth scroll event.
+     *
+     * @return array{float, float}
+     */
+    public function get_deltas(): array {}
+
+    /** What the deltas are measured in (wheel clicks or surface pixels). */
+    public function get_unit(): GdkScrollUnit {}
+
+    /** True for the event that ends a smooth scroll sequence (fingers lifted). */
+    public function is_stop(): bool {}
+}
+
+/**
+ * The pointer entering or leaving a surface.
+ *
+ * @link https://docs.gtk.org/gdk4/class.CrossingEvent.html
+ * @not-serializable
+ */
+final class GdkCrossingEvent extends GdkEvent
+{
+    /** Why the pointer crossed (normal motion, a grab, ...). */
+    public function get_mode(): GdkCrossingMode {}
+
+    /** The surface hierarchy relation of the crossing. */
+    public function get_detail(): GdkNotifyType {}
+
+    /** True when the surface has (or had) keyboard focus. */
+    public function get_focus(): bool {}
+}
+
+/**
+ * Keyboard focus entering or leaving a surface.
+ *
+ * @link https://docs.gtk.org/gdk4/class.FocusEvent.html
+ * @not-serializable
+ */
+final class GdkFocusEvent extends GdkEvent
+{
+    /** True when focus came in, false when it left. */
+    public function get_in(): bool {}
+}
+
+/**
+ * A touch-screen contact.
+ *
+ * @link https://docs.gtk.org/gdk4/class.TouchEvent.html
+ * @not-serializable
+ */
+final class GdkTouchEvent extends GdkEvent
+{
+    /** True when this touch sequence also drives the pointer. */
+    public function get_emulating_pointer(): bool {}
+}
+
+/**
+ * A touchpad gesture (pinch, swipe, hold).
+ *
+ * @link https://docs.gtk.org/gdk4/class.TouchpadEvent.html
+ * @not-serializable
+ */
+final class GdkTouchpadEvent extends GdkEvent
+{
+    /** Where in the gesture this event sits (begin, update, end, cancel). */
+    public function get_gesture_phase(): GdkTouchpadGesturePhase {}
+
+    /** How many fingers the gesture uses. */
+    public function get_n_fingers(): int {}
+
+    /**
+     * The movement [dx, dy] since the previous event of the gesture.
+     *
+     * @return array{float, float}
+     */
+    public function get_deltas(): array {}
+
+    /** The rotation since the previous pinch event, in radians. */
+    public function get_pinch_angle_delta(): float {}
+
+    /** The scale of a pinch gesture relative to its start. */
+    public function get_pinch_scale(): float {}
+}
+
+/**
+ * A drawing-tablet pad event (buttons, rings and strips).
+ *
+ * @link https://docs.gtk.org/gdk4/class.PadEvent.html
+ * @not-serializable
+ */
+final class GdkPadEvent extends GdkEvent
+{
+    /**
+     * The [index, value] of the pad axis that moved (ring or strip events).
+     *
+     * @return array{int, float}
+     */
+    public function get_axis_value(): array {}
+
+    /** The pad button that was pressed or released. */
+    public function get_button(): int {}
+
+    /**
+     * The [group, mode] of the pad event.
+     *
+     * @return array{int, int}
+     */
+    public function get_group_mode(): array {}
+}
+
+/**
+ * A pointer or keyboard grab that was broken by another grab.
+ *
+ * @link https://docs.gtk.org/gdk4/class.GrabBrokenEvent.html
+ * @not-serializable
+ */
+final class GdkGrabBrokenEvent extends GdkEvent
+{
+    /** True when the broken grab was implicit (a button press), false for an explicit one. */
+    public function get_implicit(): bool {}
+}
+
+/**
+ * The identity of one touch point (or the pointer: null) for the duration of a gesture -
+ * what {@see GtkGesture::get_point()}, {@see GtkGesture::get_last_event()} and the gesture
+ * signals take and hand out. Opaque and compared by identity: the same sequence is the same
+ * handle (`===`) while PHP holds it. Never constructed.
+ *
+ * @link https://docs.gtk.org/gdk4/struct.EventSequence.html
+ * @not-serializable
+ */
+final class GdkEventSequence
+{
+}
+
+/**
+ * What an I/O watch ({@see GLib::io_add_watch()}) waits for, and what its callback is told
+ * happened: readable, writable, urgent data, error, hang-up, invalid descriptor. OR-able.
+ *
+ * @link https://docs.gtk.org/glib/flags.IOCondition.html
+ */
+final class GIOCondition
+{
+    /** There is data to read. */
+    public const int IN = 1;
+    /** There is urgent data to read. */
+    public const int PRI = 2;
+    /** Data can be written without blocking. */
+    public const int OUT = 4;
+    /** An error condition. */
+    public const int ERR = 8;
+    /** Hung up (the connection was closed). */
+    public const int HUP = 16;
+    /** Invalid request: the descriptor is not open. */
+    public const int NVAL = 32;
 }
 
 /**
@@ -901,254 +753,149 @@ class GtkLabel extends GtkWidget
  */
 final class CairoContext
 {
+    /** Opaque source colour, components 0..1. */
     public function set_source_rgb(float $red, float $green, float $blue): void {}
 
+    /** Translucent source colour, components 0..1. */
     public function set_source_rgba(float $red, float $green, float $blue, float $alpha): void {}
 
+    /** Source colour from a `GdkRGBA`. */
     public function set_source_color(GdkRGBA $color): void {}
 
+    /** Width for `stroke()` in user units. */
     public function set_line_width(float $width): void {}
 
+    /** Begin a new sub-path at the point. */
     public function move_to(float $x, float $y): void {}
 
+    /** Straight line from the current point. */
     public function line_to(float $x, float $y): void {}
 
+    /** Add a closed rectangular sub-path. */
     public function rectangle(float $x, float $y, float $width, float $height): void {}
 
     /** Angles in radians. */
     public function arc(float $xc, float $yc, float $radius, float $angle1, float $angle2): void {}
 
+    /** Line back to the start of the current sub-path. */
     public function close_path(): void {}
 
+    /** Fill the current path and clear it. */
     public function fill(): void {}
 
+    /** Fill the current path, keeping it for a following `stroke()`. */
     public function fill_preserve(): void {}
 
+    /** Stroke the current path with the line width and clear it. */
     public function stroke(): void {}
 
+    /** Stroke the current path, keeping it. */
     public function stroke_preserve(): void {}
 
     /** Paint the current source everywhere within the clip. */
     public function paint(): void {}
 
+    /** Push the drawing state (source, line width, transformation, clip). */
     public function save(): void {}
 
+    /** Pop the state pushed by `save()`. */
     public function restore(): void {}
 
+    /** Move the user-space origin. */
     public function translate(float $tx, float $ty): void {}
 
+    /** Scale user space. */
     public function scale(float $sx, float $sy): void {}
 
+    /** Rotate user space by the angle in radians. */
     public function rotate(float $angle): void {}
 
+    /** Font size in user units for `show_text()`. */
     public function set_font_size(float $size): void {}
 
+    /** Draw the text at the current point with the toy font API. */
     public function show_text(string $text): void {}
-}
-
-/**
- * A widget that paints with cairo through a PHP callback.
- *
- * ```php
- * $area->set_draw_func(function (GtkDrawingArea $a, CairoContext $cr, int $w, int $h): void {
- *     $cr->set_source_rgb(0.2, 0.4, 0.8);
- *     $cr->rectangle(0, 0, $w, $h);
- *     $cr->fill();
- * });
- * ```
- *
- * @property int $content_width
- * @property int $content_height
- *
- * @link https://docs.gtk.org/gtk4/class.DrawingArea.html
- * @not-serializable
- */
-class GtkDrawingArea extends GtkWidget
-{
-    public function __construct() {}
 
     /**
-     * Install (or with null, remove) the draw function: `function (GtkDrawingArea $area,
-     * CairoContext $cr, int $width, int $height): void`. Kept until replaced or the widget dies.
+     * Use $surface as the source pattern, its origin at ($x, $y).
+     *
+     * The cairo counterpart of GTK 3's `gdk_cairo_set_source_pixbuf()`: paint an image into a
+     * draw func by downloading a {@see GdkTexture} and setting it as the source.
      */
-    public function set_draw_func(?callable $draw_func): void {}
-
-    public function set_content_width(int $width): void {}
-
-    public function get_content_width(): int {}
-
-    public function set_content_height(int $height): void {}
-
-    public function get_content_height(): int {}
+    public function set_source_surface(CairoSurface $surface, float $x = 0.0, float $y = 0.0): void {}
 }
 
 /**
- * Decides which items of a list model are visible.
+ * A cairo image surface: pixels a {@see CairoContext} can paint from, and what
+ * {@see GdkTexture::download()} answers with. Pass one to
+ * {@see CairoContext::set_source_surface()} to draw an image inside a
+ * {@see GtkDrawingArea} draw func.
  *
- * @link https://docs.gtk.org/gtk4/class.Filter.html
+ * @link https://www.cairographics.org/manual/cairo-cairo-surface-t.html
  * @not-serializable
  */
-abstract class GtkFilter extends GObject
+final class CairoSurface
 {
-    /** Tell users of the filter that its decisions changed. */
-    public function changed(GtkFilterChange $change = GtkFilterChange::Different): void {}
+    /** The width in pixels. Only an image surface has one. */
+    public function get_width(): int {}
+
+    /** The height in pixels. Only an image surface has one. */
+    public function get_height(): int {}
+
+    /** Write the surface out as a PNG file. */
+    public function write_to_png(string $filename): void {}
 }
 
 /**
- * A GtkFilter driven by a PHP callback: `function (GObject $item): bool`.
+ * Priorities for {@see Gtk::add_provider_for_display()}, in the order GTK applies
+ * them: a property set by a higher-priority provider wins.
  *
- * @link https://docs.gtk.org/gtk4/class.CustomFilter.html
- * @not-serializable
+ * @link https://docs.gtk.org/gtk4/index.html#constants
  */
-class GtkCustomFilter extends GtkFilter
+final class GtkStyleProviderPriority
 {
-    public function __construct(?callable $match_func = null) {}
-
-    /** Replace the callback (null = everything matches) and notify users. */
-    public function set_filter_func(?callable $match_func): void {}
+    /** Below the theme: defaults an application ships that the theme may override. */
+    public const int FALLBACK = 1;
+    /** The current theme. */
+    public const int THEME = 200;
+    /** GtkSettings, e.g. gtk-key-theme-name. */
+    public const int SETTINGS = 400;
+    /** Where an application's own stylesheet belongs (the default). */
+    public const int APPLICATION = 600;
+    /** ~/.config/gtk-4.0/gtk.css; above everything an application loads. */
+    public const int USER = 800;
 }
 
 /**
- * A GListModel showing only the items of another model that pass a filter.
+ * The part of a stylesheet a `parsing-error` refers to, as passed to handlers of
+ * {@see GtkCssProvider}'s `parsing-error` signal together with a {@see GError}.
  *
- * @property ?GtkFilter $filter
- * @property ?GListModel $model
- *
- * @link https://docs.gtk.org/gtk4/class.FilterListModel.html
+ * @link https://docs.gtk.org/gtk4/struct.CssSection.html
  * @not-serializable
  */
-class GtkFilterListModel extends GObject implements GListModel
+final class GtkCssSection
 {
-    public function __construct(?GListModel $model = null, ?GtkFilter $filter = null) {}
-
-    /** @implementation-alias Gtk4\GListModel::get_item_type */
-    public function get_item_type(): string {}
-
-    /** @implementation-alias Gtk4\GListModel::get_n_items */
-    public function get_n_items(): int {}
-
-    /** @implementation-alias Gtk4\GListModel::get_item */
-    public function get_item(int $position): ?GObject {}
-
-    public function set_filter(?GtkFilter $filter): void {}
-
-    public function get_filter(): ?GtkFilter {}
-
-    public function set_model(?GListModel $model): void {}
-
-    public function get_model(): ?GListModel {}
-}
-
-/**
- * Orders the items of a list model.
- *
- * @link https://docs.gtk.org/gtk4/class.Sorter.html
- * @not-serializable
- */
-abstract class GtkSorter extends GObject
-{
-    public function changed(GtkSorterChange $change = GtkSorterChange::Different): void {}
-}
-
-/**
- * A GtkSorter driven by a PHP callback: `function (GObject $a, GObject $b): int` (negative,
- * zero, positive - like `<=>`).
- *
- * @link https://docs.gtk.org/gtk4/class.CustomSorter.html
- * @not-serializable
- */
-class GtkCustomSorter extends GtkSorter
-{
-    public function __construct(?callable $compare = null) {}
-
-    /** Replace the callback (null = keep original order) and notify users. */
-    public function set_sort_func(?callable $compare): void {}
-}
-
-/**
- * A GListModel presenting another model's items in sorted order.
- *
- * @property ?GtkSorter $sorter
- * @property ?GListModel $model
- *
- * @link https://docs.gtk.org/gtk4/class.SortListModel.html
- * @not-serializable
- */
-class GtkSortListModel extends GObject implements GListModel
-{
-    public function __construct(?GListModel $model = null, ?GtkSorter $sorter = null) {}
-
-    /** @implementation-alias Gtk4\GListModel::get_item_type */
-    public function get_item_type(): string {}
-
-    /** @implementation-alias Gtk4\GListModel::get_n_items */
-    public function get_n_items(): int {}
-
-    /** @implementation-alias Gtk4\GListModel::get_item */
-    public function get_item(int $position): ?GObject {}
-
-    public function set_sorter(?GtkSorter $sorter): void {}
-
-    public function get_sorter(): ?GtkSorter {}
-
-    public function set_model(?GListModel $model): void {}
-
-    public function get_model(): ?GListModel {}
-}
-
-/**
- * A toplevel window.
- *
- * GObject properties are also available as PHP properties (dashes become
- * underscores). The generator will list every property here from the GIR;
- * until then only the ones the tests and the example use are declared.
- *
- * @property ?string $title
- * @property int $default_width
- * @property int $default_height
- * @property bool $resizable
- * @property bool $modal
- * @property bool $visible
- * @property ?GtkWindow $transient_for
- * @property ?GtkWidget $child
- * @property ?GtkApplication $application
- *
- * @link https://docs.gtk.org/gtk4/class.Window.html
- * @not-serializable
- */
-class GtkWindow extends GtkWidget
-{
-    /** @param GtkApplication|null $application Owning application (keeps its main loop alive) */
-    public function __construct(?GtkApplication $application = null) {}
-
-    public function set_application(?GtkApplication $application): void {}
-
-    public function get_application(): ?GtkApplication {}
-
-    public function set_title(?string $title): void {}
-
-    public function get_title(): ?string {}
-
-    /** Default size in pixels; -1 to unset one dimension. */
-    public function set_default_size(int $width, int $height): void {}
-
-    /** @return array{int, int} [width, height]; -1 where unset */
-    public function get_default_size(): array {}
-
-    /** Set (or with null, remove) the single child widget. */
-    public function set_child(?GtkWidget $child): void {}
-
-    public function get_child(): ?GtkWidget {}
-
-    /** Show the window and bring it to the front. */
-    public function present(): void {}
-
-    /** Request the window to close (emits close-request; a handler returning true cancels). */
-    public function close(): void {}
+    /** "<file>:<start line>:<start column>-<end line>:<end column>", 1-based, as GTK prints it. */
+    public function to_string(): string {}
 
     /**
-     * Drop GTK's reference to the toplevel and unrealize it. The PHP handle
-     * stays valid; `destroy` is emitted when the last handle is released.
+     * The section this one is nested in, or null when there is none - which is what
+     * GTK 4.14 reports for every parsing error, nested or not.
      */
-    public function destroy(): void {}
+    public function get_parent(): ?GtkCssSection {}
+
+    /**
+     * Where the section starts, as GtkCssLocation's fields (all 0-based counts from the
+     * start of the document; `lines` is the line number, `line_chars` the column).
+     *
+     * @return array{bytes: int, chars: int, lines: int, line_bytes: int, line_chars: int}
+     */
+    public function get_start_location(): array {}
+
+    /**
+     * Where the section ends; same shape as {@see get_start_location()}.
+     *
+     * @return array{bytes: int, chars: int, lines: int, line_bytes: int, line_chars: int}
+     */
+    public function get_end_location(): array {}
 }

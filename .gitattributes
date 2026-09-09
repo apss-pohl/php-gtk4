@@ -1,0 +1,10 @@
+# LF everywhere, also on Windows checkouts (core.autocrlf=true on GitHub's runners):
+# tests compare generated files byte for byte (StubsTest, gen/ide-stub.php --check)
+# and parse the stub with \n-anchored regexes. cmd.exe is the one consumer that
+# wants CRLF.
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.png binary
+*.gif binary
+*.jpg binary
