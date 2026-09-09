@@ -47,6 +47,12 @@ jobs:
         with:
           php-version: '8.4'
           tools: none
+          # setup-php defaults to the production php.ini, where register_argc_argv is Off:
+          # PHPStan then reports "$argv might not be defined" in every CLI entry script
+          # (gen/gir.php, gen/ide-stub.php, examples/demo.php, ...) and php-qa fails on the
+          # runner while passing locally. ci.sh runs these scripts from the CLI, where argv
+          # is there - say so (WorkflowsTest pins it).
+          ini-values: register_argc_argv=On
 
       # clang 20 = what .vscode and ci.sh default to locally; the Ubuntu 24.04 image ships an
       # older one, so take it from apt.llvm.org. WebKitGTK headers so the --enable-gtk4-webkit

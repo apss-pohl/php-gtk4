@@ -103,6 +103,27 @@ final class WorkflowsTest extends TestCase
     }
 
     /**
+     * setup-php installs the *production* php.ini, which has `register_argc_argv = Off`. PHPStan
+     * then reports "Variable $argv might not be defined" in every CLI entry script (gen/gir.php,
+     * gen/ide-stub.php, gen/map-status.php, gen/method-comments.php, examples/demo.php) and
+     * php-qa fails on the runner while passing locally - which is exactly what kept the first
+     * release of the public repository from being published. Every workflow that runs the PHP
+     * tooling says so explicitly.
+     */
+    public function testTheWorkflowsThatRunPhpToolingKeepArgvDefined(): void
+    {
+        foreach (['php-qa.yml', 'cpp-lint.yml', 'release.yml'] as $file) {
+            $yml = (string) file_get_contents(self::WORKFLOWS . '/' . $file);
+            self::assertStringContainsString(
+                'ini-values: register_argc_argv=On',
+                $yml,
+                "$file runs PHPStan or the generator over PHP that uses \$argv; without"
+                . ' register_argc_argv the analysis fails on the runner only',
+            );
+        }
+    }
+
+    /**
      * A required status check has to come from a workflow that always starts. A `paths:` filter
      * on one means it does not run at all for a change outside those paths - and a check that
      * never runs never reports, so the pull request waits for it forever.
