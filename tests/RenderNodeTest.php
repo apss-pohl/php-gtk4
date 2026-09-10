@@ -255,8 +255,8 @@ final class RenderNodeTest extends GtkTestCase
 
     /**
      * The colour-matrix node was excused as "needs a graphene matrix and vec4 (not bound)" long
-     * after both were bound and its constructor became public - the stale excuse the smaller notes
-     * in docs/TODO.md warn about. It builds, keeps what it was given, and renders.
+     * after both were bound and its constructor became public - the stale excuse
+     * GtkInstancesTest now fails on. It builds, keeps what it was given, and renders.
      */
     public function testAColorMatrixNodeKeepsItsMatrixAndOffset(): void
     {

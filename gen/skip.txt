@@ -99,6 +99,10 @@ Gdk.Seat.__construct   abstract, as GdkDevice: a seat belongs to a GdkDisplay, a
 Gtk.TextChildAnchor.get_deleted   GTK warns ("hasn't been in a buffer yet") and answers TRUE for an anchor that was never inserted; the state it checks (the anchor's line segment) is private, so the binding cannot refuse the call before GTK complains
 Gtk.TextChildAnchor.get_widgets   same: it needs the anchor to be in a buffer, and nothing here can ask whether it is
 Pango.FontMap.__construct   abstract, and the concrete map belongs to the backend (PangoCairoFontMap here): a PHP subtype has no font map behind it and the getters read uninitialised state (EveryClassTest segfaulted on it). PangoContext::get_font_map() and GtkWidget::get_pango_context() are where one comes from
+Pango.Font.__construct   abstract, as Pango.FontMap: a font is what a font map loads for a description (PangoContext::load_font(), PangoFontMap::load_font()), a PHP subtype has no glyphs behind it
+Pango.FontFamily.__construct   abstract, as Pango.FontMap: a family is what the font map lists (PangoFontMap::get_family(), list_families())
+Pango.FontFace.__construct   abstract, as Pango.FontMap: a face belongs to its family (PangoFontFamily::get_face(), list_faces())
+Pango.Fontset.__construct   abstract, as Pango.FontMap: a fontset is what a context loads for a description and a language (PangoContext::load_fontset())
 Gio.InputStream.read   a caller-allocated byte buffer the C caller sizes and owns; read_bytes() answers the same bytes as a PHP string, which is the shape this binding maps GBytes to everywhere
 Gio.InputStream.read_all   as read(); read_bytes() covers it and a PHP string carries its own length
 Gio.InputStream.read_async   as read(); read_bytes_async() is the async pair, and it answers with a string

@@ -34,8 +34,8 @@ of pixbufs - are in [PORTING.md](PORTING.md). This file is the class-by-class re
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 3 | ~130 |
 
-php-gtk4 currently declares (2026-09-10) 525 classes, interfaces and enums: 28 hand-written
-(`src/gtk4.stub.php`) and 497 generated - Gtk (213), WebKit (119), Gsk (50), Gdk (32), Gio (32), Pango (22),
+php-gtk4 currently declares (2026-09-10) 531 classes, interfaces and enums: 28 hand-written
+(`src/gtk4.stub.php`) and 503 generated - Gtk (213), WebKit (119), Gsk (50), Gdk (32), Gio (32), Pango (28),
 GdkPixbuf (8), Graphene (8), Soup (6), JavaScriptCore (4), GLib (3). `stubs/gtk4.php` has the names;
 everything else in this document is open work.
 

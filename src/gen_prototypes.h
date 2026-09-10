@@ -99,10 +99,20 @@ void register_vfuncs_GtkWindow();
 namespace phpgtk {
 void register_PangoAttrList(zend_class_entry *ce);
 }  // namespace phpgtk
+void register_vfuncs_PangoFont();
 namespace phpgtk {
 void register_PangoFontDescription(zend_class_entry *ce);
 }  // namespace phpgtk
+void register_vfuncs_PangoFontFace();
+void register_vfuncs_PangoFontFamily();
 void register_vfuncs_PangoFontMap();
+namespace phpgtk {
+void register_PangoFontMetrics(zend_class_entry *ce);
+}  // namespace phpgtk
+void register_vfuncs_PangoFontset();
+namespace phpgtk {
+void register_PangoGlyphString(zend_class_entry *ce);
+}  // namespace phpgtk
 namespace phpgtk {
 void register_PangoLanguage(zend_class_entry *ce);
 }  // namespace phpgtk

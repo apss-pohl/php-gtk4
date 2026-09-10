@@ -3233,6 +3233,24 @@ class GtkFontDialog extends GObject
 
     /**
      * This function initiates a font selection operation by presenting a dialog to the user for
+     * selecting a font face (i.e. a font family and style, but not a specific font size).
+     */
+    public function choose_face(?GtkWindow $parent, ?PangoFontFace $initial_value, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes the `choose_face` call and returns the resulting font face. */
+    public function choose_face_finish(GAsyncResult $result): ?PangoFontFace {}
+
+    /**
+     * This function initiates a font selection operation by presenting a dialog to the user for
+     * selecting a font family.
+     */
+    public function choose_family(?GtkWindow $parent, ?PangoFontFamily $initial_value, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes the `choose_family` call and returns the resulting family. */
+    public function choose_family_finish(GAsyncResult $result): ?PangoFontFamily {}
+
+    /**
+     * This function initiates a font selection operation by presenting a dialog to the user for
      * selecting a font.
      */
     public function choose_font(?GtkWindow $parent, ?PangoFontDescription $initial_value, ?GCancellable $cancellable, ?callable $callback): void {}

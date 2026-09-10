@@ -7,12 +7,42 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ## [0.3.0] - 2026-09-10
 
-Housekeeping. The `Gtk4\` API is unchanged since 0.1.1 - a binary built from this tag behaves
-exactly like one built from that one - and everything below is about the machinery that ships it.
-It is a release rather than another dev build because the stubs package is published from a real
-release only: this is the first tag that pushes `php-gtk4/stubs` on its own, and the first that
+Mostly housekeeping around the machinery that ships the extension, plus the rest of Pango: the
+text engine's font side, and the geometry a program needs to draw over its own text. It is a
+release rather than another dev build because the stubs package is published from a real release
+only: this is the first tag that pushes `php-gtk4/stubs` on its own, and the first that
 `pie install php-gtk4/php-gtk4` and `composer require --dev php-gtk4/stubs` resolve from Packagist,
 where both packages are now registered.
+
+### Added
+
+- **Where text is.** `PangoRectangle` - Pango's struct has no GType, so the binding registers a
+  boxed one for it, as it did for `GskRoundedRect` - and with it `PangoLayout::get_extents()`,
+  `get_pixel_extents()`, `get_caret_pos()`, `get_cursor_pos()` and `index_to_pos()`: the ink and
+  logical boxes, the caret, and one character's cell, in Pango units (`to_pixels()` rounds
+  outwards).
+
+- **`PangoLanguage`**, which had been listed as unbindable next to `PangoFont` by mistake: it is
+  boxed with a GType of its own. `PangoContext::get_language()`/`set_language()`,
+  `GtkTextIter::get_language()`, and the `language` property of `GtkFontDialog` and
+  `GtkFontDialogButton` came with it.
+
+- **The font leaves.** `PangoFont`, `PangoFontFamily`, `PangoFontFace` and `PangoFontset` are
+  abstract and belong to the backend, exactly like `PangoFontMap` already did - `new` is refused,
+  a widget's context loads them (`load_font()`, `load_fontset()`, `get_metrics()`, and the font map
+  as a list model of families, each a list model of its faces). `PangoFontMetrics` and
+  `PangoGlyphString` are boxed values. A context built with `new PangoContext()` has no font map,
+  and the three calls that need one are a `LogicException` on it instead of Pango's assertions.
+
+- **`GskTextNode` has its constructor**, now that a font and a glyph string can cross: the node
+  `GtkSnapshot::append_layout()` makes can be taken apart (`get_font()`, `get_glyphs()`,
+  `get_offset()`) and rebuilt from the same glyphs in another colour at another offset.
+  `get_glyphs()` answers a glyph string holding the node's glyph infos, which is all a text node
+  keeps.
+
+- **`PangoGlyphString::set_size()` grows with empty glyphs.** Pango leaves the new entries as the
+  allocator left them, so a fresh string measured whatever was in the heap; grown entries are
+  `PANGO_GLYPH_EMPTY` with no geometry here, and a negative length is a `ValueError`.
 
 ### Changed
 

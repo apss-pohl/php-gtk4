@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 58708c93a27f681d1ade874279bc72312aa27779 */
+ * Stub hash: 94c16175e0dc17032476cf96ae881cd3d23a0a08 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -2103,6 +2103,28 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GtkFlowBoxChild_vfunc_activate arginfo_class_Gtk4_GtkAboutDialog_realize
 
 #define arginfo_class_Gtk4_GtkFontDialog___construct arginfo_class_Gtk4_GtkAboutDialog___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFontDialog_choose_face, 0, 4, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, parent, Gtk4\\GtkWindow, 1)
+	ZEND_ARG_OBJ_INFO(0, initial_value, Gtk4\\PangoFontFace, 1)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkFontDialog_choose_face_finish, 0, 1, Gtk4\\PangoFontFace, 1)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFontDialog_choose_family, 0, 4, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, parent, Gtk4\\GtkWindow, 1)
+	ZEND_ARG_OBJ_INFO(0, initial_value, Gtk4\\PangoFontFamily, 1)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkFontDialog_choose_family_finish, 0, 1, Gtk4\\PangoFontFamily, 1)
+	ZEND_ARG_OBJ_INFO(0, result, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFontDialog_choose_font, 0, 4, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, parent, Gtk4\\GtkWindow, 1)
@@ -7764,6 +7786,10 @@ ZEND_METHOD(Gtk4_GtkFlowBoxChild, is_selected);
 ZEND_METHOD(Gtk4_GtkFlowBoxChild, set_child);
 ZEND_METHOD(Gtk4_GtkFlowBoxChild, vfunc_activate);
 ZEND_METHOD(Gtk4_GtkFontDialog, __construct);
+ZEND_METHOD(Gtk4_GtkFontDialog, choose_face);
+ZEND_METHOD(Gtk4_GtkFontDialog, choose_face_finish);
+ZEND_METHOD(Gtk4_GtkFontDialog, choose_family);
+ZEND_METHOD(Gtk4_GtkFontDialog, choose_family_finish);
 ZEND_METHOD(Gtk4_GtkFontDialog, choose_font);
 ZEND_METHOD(Gtk4_GtkFontDialog, choose_font_and_features);
 ZEND_METHOD(Gtk4_GtkFontDialog, choose_font_finish);
@@ -10268,6 +10294,10 @@ static const zend_function_entry class_Gtk4_GtkFlowBoxChild_methods[] = {
 
 static const zend_function_entry class_Gtk4_GtkFontDialog_methods[] = {
 	ZEND_ME(Gtk4_GtkFontDialog, __construct, arginfo_class_Gtk4_GtkFontDialog___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialog, choose_face, arginfo_class_Gtk4_GtkFontDialog_choose_face, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialog, choose_face_finish, arginfo_class_Gtk4_GtkFontDialog_choose_face_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialog, choose_family, arginfo_class_Gtk4_GtkFontDialog_choose_family, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialog, choose_family_finish, arginfo_class_Gtk4_GtkFontDialog_choose_family_finish, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialog, choose_font, arginfo_class_Gtk4_GtkFontDialog_choose_font, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialog, choose_font_and_features, arginfo_class_Gtk4_GtkFontDialog_choose_font_and_features, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialog, choose_font_finish, arginfo_class_Gtk4_GtkFontDialog_choose_font_finish, ZEND_ACC_PUBLIC)

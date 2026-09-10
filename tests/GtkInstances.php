@@ -49,9 +49,7 @@ final class GtkInstances
         \Gtk4\GdkDrag::class => 'needs a pointer grab a headless X server cannot give',
         \Gtk4\GdkDrop::class => 'needs a drag from another client',
         \Gtk4\GtkDragIcon::class => 'GtkDragIcon::get_for_drag() needs a GdkDrag',
-        // Two render nodes whose constructor takes what the binding does not speak.
-        \Gtk4\GskTextNode::class =>
-            'needs a PangoFont and a glyph string - the Pango cluster is bound, those two leaves are not',
+        // A render node whose constructor takes what the binding does not speak.
         \Gtk4\GskSubsurfaceNode::class => 'needs a GdkSubsurface, a gpointer GDK keeps private',
         // An animation iterator needs a GTimeVal start time (GLib.TimeVal is not bound).
         \Gtk4\GdkPixbufAnimationIter::class => 'GdkPixbufAnimation::get_iter() takes a GTimeVal, which is not bound',
@@ -165,6 +163,18 @@ final class GtkInstances
                 \Gtk4\GrapheneVec4::zero(),
             ),
             \Gtk4\GskCairoNode::class => new \Gtk4\GskCairoNode(self::rect()),
+            \Gtk4\GskTextNode::class => self::textNode(),
+            // Pango: the backend owns the font map, fonts, families, faces and font sets; a
+            // widget's context is where all of them come from.
+            \Gtk4\PangoFontMap::class => self::pangoFont()->get_font_map(),
+            \Gtk4\PangoFont::class => self::pangoFont(),
+            \Gtk4\PangoFontFace::class => self::pangoFont()->get_face(),
+            \Gtk4\PangoFontFamily::class => self::pangoFont()->get_face()->get_family(),
+            \Gtk4\PangoFontset::class => self::pangoContext()->load_fontset(
+                \Gtk4\PangoFontDescription::from_string('Sans 12'),
+                \Gtk4\PangoLanguage::get_default(),
+            ),
+            \Gtk4\PangoFontMetrics::class => self::pangoFont()->get_metrics(null),
             \Gtk4\GskCrossFadeNode::class => new \Gtk4\GskCrossFadeNode(self::colorNode(), self::colorNode(), 0.5),
             \Gtk4\GskBlendNode::class => new \Gtk4\GskBlendNode(
                 self::colorNode(),
@@ -495,6 +505,34 @@ final class GtkInstances
         $matrix = \Gtk4\GrapheneMatrix::alloc();
         $matrix->init_identity();
         return $matrix;
+    }
+
+    /** A widget's Pango context, the one with a font map behind it; the widget stays pinned. */
+    private static function pangoContext(): \Gtk4\PangoContext
+    {
+        return self::pin(new \Gtk4\GtkLabel('x'))->get_pango_context();
+    }
+
+    /** The font the backend loads for "Sans 12". */
+    private static function pangoFont(): \Gtk4\PangoFont
+    {
+        $font = self::pangoContext()->load_font(\Gtk4\PangoFontDescription::from_string('Sans 12'));
+        \assert($font !== null, 'Sans is an alias family every font map lists');
+        return $font;
+    }
+
+    /**
+     * A text node the way GTK makes them: GtkSnapshot::append_layout() shapes a label's layout
+     * into one - the only shaping this binding has, since pango_shape() and PangoItem are not
+     * bound - and answers it as the snapshot's root when there is nothing else in it.
+     */
+    private static function textNode(): \Gtk4\GskTextNode
+    {
+        $snapshot = new \Gtk4\GtkSnapshot();
+        $snapshot->append_layout(self::pin(new \Gtk4\GtkLabel('Hamburgefonstiv'))->get_layout(), self::rgba());
+        $node = $snapshot->to_node();
+        \assert($node instanceof \Gtk4\GskTextNode, 'one layout, one line, no decoration: a bare text node');
+        return $node;
     }
 
     /** The plainest render node: a red square. */

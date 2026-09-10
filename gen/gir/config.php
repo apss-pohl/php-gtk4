@@ -308,6 +308,16 @@ const SELF_PRECONDITIONS = [
         'the application is not registered yet - notifications exist from `startup` on'],
     'gtk_application_set_menubar' => ['g_application_get_is_registered(G_APPLICATION(self)) == TRUE',
         'the application is not registered yet - the menubar exists from `startup` on'],
+    // `new PangoContext()` has no font map, so there is nothing to load a font from; Pango asserts
+    // `context->font_map != NULL` on the loaders, and get_metrics() walks on to build metrics
+    // over a NULL fontset (three more assertions and a g_object_unref(NULL)). A widget's context
+    // (GtkWidget::get_pango_context()) or PangoFontMap::create_context() comes with one.
+    'pango_context_load_font' => ['pango_context_get_font_map(self) != nullptr',
+        'the context has no font map - use a widget\'s context or set_font_map() first'],
+    'pango_context_load_fontset' => ['pango_context_get_font_map(self) != nullptr',
+        'the context has no font map - use a widget\'s context or set_font_map() first'],
+    'pango_context_get_metrics' => ['pango_context_get_font_map(self) != nullptr',
+        'the context has no font map - use a widget\'s context or set_font_map() first'],
 ];
 
 /**

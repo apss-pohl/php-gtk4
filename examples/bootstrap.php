@@ -84,8 +84,9 @@ final class Demo
             'GtkJustification', 'PangoEllipsizeMode', 'PangoWrapMode', 'GtkNaturalWrapMode',
         ],
         'Pango' => [
-            'PangoLayout', 'PangoContext', 'PangoFontMap', 'PangoLanguage', 'PangoRectangle',
-            'PangoAttrList', 'PangoTabArray', 'PangoTabAlign', 'PangoDirection',
+            'PangoLayout', 'PangoContext', 'PangoFontMap', 'PangoFontFamily', 'PangoFontFace',
+            'PangoFont', 'PangoFontset', 'PangoFontMetrics', 'PangoGlyphString', 'PangoLanguage',
+            'PangoRectangle', 'PangoAttrList', 'PangoTabArray', 'PangoTabAlign', 'PangoDirection',
         ],
         'Application' => [
             'Gtk', 'GApplication', 'GtkApplication', 'GSimpleAction', 'GAction', 'GActionMap',

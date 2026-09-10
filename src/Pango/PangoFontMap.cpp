@@ -2,8 +2,11 @@
 // Gtk4\PangoFontMap
 #include "php_gtk4.h"
 #include "core/object.h"
+#include "core/enums.h"
+#include "core/boxed.h"
 #include "core/subtype.h"
 #include "core/error.h"
+#include <array>
 
 using namespace phpgtk;
 
@@ -43,6 +46,22 @@ ZEND_METHOD(Gtk4_PangoFontMap, create_context) {
 }
 
 /**
+ * Gtk4\PangoFontMap::get_family(string $name): PangoFontFamily
+ *
+ * Gets a font family by name.
+ */
+ZEND_METHOD(Gtk4_PangoFontMap, get_family) {
+  zend_string *name;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_STR(name)
+  ZEND_PARSE_PARAMETERS_END();
+  PangoFontMap *self = PHPGTK_SELF(PangoFontMap, PANGO_TYPE_FONT_MAP);
+  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
+  PangoFontFamily *phpgtk_ret = pango_font_map_get_family(self, ZSTR_VAL(name));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\PangoFontMap::get_serial(): int
  *
  * Returns the current serial number of $fontmap.
@@ -51,6 +70,93 @@ ZEND_METHOD(Gtk4_PangoFontMap, get_serial) {
   ZEND_PARSE_PARAMETERS_NONE();
   PangoFontMap *self = PHPGTK_SELF(PangoFontMap, PANGO_TYPE_FONT_MAP);
   RETURN_LONG(static_cast<zend_long>(pango_font_map_get_serial(self)));
+}
+
+/**
+ * Gtk4\PangoFontMap::load_font(PangoContext $context, PangoFontDescription $desc): ?PangoFont
+ *
+ * Load the font in the fontmap that is the closest match for $desc.
+ */
+ZEND_METHOD(Gtk4_PangoFontMap, load_font) {
+  zval *context;
+  zval *desc;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(context, class_for_gtype(PANGO_TYPE_CONTEXT))
+  Z_PARAM_OBJECT_OF_CLASS(desc, boxed_class_for_type(PANGO_TYPE_FONT_DESCRIPTION)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  PangoFontMap *self = PHPGTK_SELF(PangoFontMap, PANGO_TYPE_FONT_MAP);
+  GObject *context_o = unwrap(context, PANGO_TYPE_CONTEXT);
+  if (context_o == nullptr) RETURN_THROWS();
+  gpointer desc_b = unwrap_boxed(desc, PANGO_TYPE_FONT_DESCRIPTION);
+  if (desc_b == nullptr) RETURN_THROWS();
+  PangoFont *phpgtk_ret = pango_font_map_load_font(self, PANGO_CONTEXT(context_o),
+                                                   static_cast<PangoFontDescription *>(desc_b));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
+/**
+ * Gtk4\PangoFontMap::load_fontset(PangoContext $context, PangoFontDescription $desc, PangoLanguage
+ * $language): ?PangoFontset
+ *
+ * Load a set of fonts in the fontmap that can be used to render a font matching $desc.
+ */
+ZEND_METHOD(Gtk4_PangoFontMap, load_fontset) {
+  zval *context;
+  zval *desc;
+  zval *language;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_OBJECT_OF_CLASS(context, class_for_gtype(PANGO_TYPE_CONTEXT))
+  Z_PARAM_OBJECT_OF_CLASS(desc, boxed_class_for_type(PANGO_TYPE_FONT_DESCRIPTION)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(language, boxed_class_for_type(PANGO_TYPE_LANGUAGE)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  PangoFontMap *self = PHPGTK_SELF(PangoFontMap, PANGO_TYPE_FONT_MAP);
+  GObject *context_o = unwrap(context, PANGO_TYPE_CONTEXT);
+  if (context_o == nullptr) RETURN_THROWS();
+  gpointer desc_b = unwrap_boxed(desc, PANGO_TYPE_FONT_DESCRIPTION);
+  if (desc_b == nullptr) RETURN_THROWS();
+  gpointer language_b = unwrap_boxed(language, PANGO_TYPE_LANGUAGE);
+  if (language_b == nullptr) RETURN_THROWS();
+  PangoFontset *phpgtk_ret = pango_font_map_load_fontset(
+      self, PANGO_CONTEXT(context_o), static_cast<PangoFontDescription *>(desc_b),
+      static_cast<PangoLanguage *>(language_b));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
+/**
+ * Gtk4\PangoFontMap::reload_font(PangoFont $font, float $scale, ?PangoContext $context, ?string
+ * $variations): PangoFont
+ *
+ * Returns a new font that is like $font, except that its size is multiplied by $scale, its
+ * backend-dependent configuration (e.g. cairo font options) is replaced by the one in $context,
+ * and its variations are replaced by $variations.
+ */
+ZEND_METHOD(Gtk4_PangoFontMap, reload_font) {
+  zval *font;
+  double scale;
+  zval *context = nullptr;
+  zend_string *variations = nullptr;
+  ZEND_PARSE_PARAMETERS_START(4, 4)
+  Z_PARAM_OBJECT_OF_CLASS(font, class_for_gtype(PANGO_TYPE_FONT))
+  Z_PARAM_DOUBLE(scale)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(context, class_for_gtype(PANGO_TYPE_CONTEXT))
+  Z_PARAM_STR_OR_NULL(variations)
+  ZEND_PARSE_PARAMETERS_END();
+  PangoFontMap *self = PHPGTK_SELF(PangoFontMap, PANGO_TYPE_FONT_MAP);
+  GObject *font_o = unwrap(font, PANGO_TYPE_FONT);
+  if (font_o == nullptr) RETURN_THROWS();
+  GObject *context_o = nullptr;
+  if (context != nullptr) {
+    context_o = unwrap(context, PANGO_TYPE_CONTEXT);
+    if (context_o == nullptr) RETURN_THROWS();
+  }
+  if (variations != nullptr && !phpgtk::check_utf8(variations, 4)) RETURN_THROWS();
+  PangoFont *phpgtk_ret = pango_font_map_reload_font(
+      self, PANGO_FONT(font_o), scale, context_o != nullptr ? PANGO_CONTEXT(context_o) : nullptr,
+      variations != nullptr ? ZSTR_VAL(variations) : nullptr);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
 }
 
 // vfunc thunks and installers: file-local, installed by class_init of a PHP subtype
@@ -81,6 +187,86 @@ void vfunc_thunk_changed(PangoFontMap *self) {
 // subtype)
 void vfunc_install_changed(gpointer klass) {
   PANGO_FONT_MAP_CLASS(klass)->changed = vfunc_thunk_changed;
+}
+
+// vfunc thunk: PANGO_FONT_MAP_CLASS->get_face -> $this->vfunc_get_face() on a PHP subclass
+PangoFontFace *vfunc_thunk_get_face(PangoFontMap *self, PangoFont *font) {
+  zval zself;
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_get_face", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
+    auto *native = PANGO_FONT_MAP_CLASS(subtype_native_class(G_OBJECT(self)));
+    return native->get_face != nullptr ? native->get_face(self, font) : nullptr;
+  }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  wrap(font != nullptr ? G_OBJECT(font) : nullptr, &argv[0]);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  PangoFontFace *result = nullptr;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    if (Z_TYPE(ret) == IS_OBJECT) {
+      GObject *o = unwrap(&ret, PANGO_TYPE_FONT_FACE);
+      result = o != nullptr ? PANGO_FONT_FACE(o) : nullptr;
+    }
+  }
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("PangoFontMap::vfunc_get_face");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
+  return result;
+}
+
+// vfunc installer: PANGO_FONT_MAP_CLASS->get_face (called from class_init / iface_init of a PHP
+// subtype)
+void vfunc_install_get_face(gpointer klass) {
+  PANGO_FONT_MAP_CLASS(klass)->get_face = vfunc_thunk_get_face;
+}
+
+// vfunc thunk: PANGO_FONT_MAP_CLASS->get_family -> $this->vfunc_get_family() on a PHP subclass
+PangoFontFamily *vfunc_thunk_get_family(PangoFontMap *self, const char *name) {
+  zval zself;
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_get_family", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
+    auto *native = PANGO_FONT_MAP_CLASS(subtype_native_class(G_OBJECT(self)));
+    return native->get_family != nullptr ? native->get_family(self, name) : nullptr;
+  }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
+  std::array<zval, 1> args{};
+  zval *argv = args.data();
+  if (name == nullptr) {
+    ZVAL_NULL(&argv[0]);
+  } else {
+    ZVAL_STRING(&argv[0], name);
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  PangoFontFamily *result = nullptr;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 1, args.data());
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    if (Z_TYPE(ret) == IS_OBJECT) {
+      GObject *o = unwrap(&ret, PANGO_TYPE_FONT_FAMILY);
+      result = o != nullptr ? PANGO_FONT_FAMILY(o) : nullptr;
+    }
+  }
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("PangoFontMap::vfunc_get_family");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
+  return result;
+}
+
+// vfunc installer: PANGO_FONT_MAP_CLASS->get_family (called from class_init / iface_init of a PHP
+// subtype)
+void vfunc_install_get_family(gpointer klass) {
+  PANGO_FONT_MAP_CLASS(klass)->get_family = vfunc_thunk_get_family;
 }
 
 // vfunc thunk: PANGO_FONT_MAP_CLASS->get_serial -> $this->vfunc_get_serial() on a PHP subclass
@@ -116,6 +302,90 @@ void vfunc_install_get_serial(gpointer klass) {
   PANGO_FONT_MAP_CLASS(klass)->get_serial = vfunc_thunk_get_serial;
 }
 
+// vfunc thunk: PANGO_FONT_MAP_CLASS->load_font -> $this->vfunc_load_font() on a PHP subclass
+PangoFont *vfunc_thunk_load_font(PangoFontMap *self, PangoContext *context,
+                                 const PangoFontDescription *desc) {
+  zval zself;
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_load_font", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
+    auto *native = PANGO_FONT_MAP_CLASS(subtype_native_class(G_OBJECT(self)));
+    return native->load_font != nullptr ? native->load_font(self, context, desc) : nullptr;
+  }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
+  std::array<zval, 2> args{};
+  zval *argv = args.data();
+  wrap(context != nullptr ? G_OBJECT(context) : nullptr, &argv[0]);
+  wrap_boxed(PANGO_TYPE_FONT_DESCRIPTION, desc, &argv[1]);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  PangoFont *result = nullptr;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 2, args.data());
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    if (Z_TYPE(ret) == IS_OBJECT) {
+      GObject *o = unwrap(&ret, PANGO_TYPE_FONT);
+      result = o != nullptr ? PANGO_FONT(o) : nullptr;
+      if (result != nullptr) g_object_ref(result);  // transfer full
+    }
+  }
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("PangoFontMap::vfunc_load_font");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
+  return result;
+}
+
+// vfunc installer: PANGO_FONT_MAP_CLASS->load_font (called from class_init / iface_init of a PHP
+// subtype)
+void vfunc_install_load_font(gpointer klass) {
+  PANGO_FONT_MAP_CLASS(klass)->load_font = vfunc_thunk_load_font;
+}
+
+// vfunc thunk: PANGO_FONT_MAP_CLASS->load_fontset -> $this->vfunc_load_fontset() on a PHP subclass
+PangoFontset *vfunc_thunk_load_fontset(PangoFontMap *self, PangoContext *context,
+                                       const PangoFontDescription *desc, PangoLanguage *language) {
+  zval zself;
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_load_fontset", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
+    auto *native = PANGO_FONT_MAP_CLASS(subtype_native_class(G_OBJECT(self)));
+    return native->load_fontset != nullptr ? native->load_fontset(self, context, desc, language)
+                                           : nullptr;
+  }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
+  std::array<zval, 3> args{};
+  zval *argv = args.data();
+  wrap(context != nullptr ? G_OBJECT(context) : nullptr, &argv[0]);
+  wrap_boxed(PANGO_TYPE_FONT_DESCRIPTION, desc, &argv[1]);
+  wrap_boxed(PANGO_TYPE_LANGUAGE, language, &argv[2]);
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  PangoFontset *result = nullptr;
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 3, args.data());
+  if (EG(exception) == nullptr && !Z_ISUNDEF(ret)) {
+    if (Z_TYPE(ret) == IS_OBJECT) {
+      GObject *o = unwrap(&ret, PANGO_TYPE_FONTSET);
+      result = o != nullptr ? PANGO_FONTSET(o) : nullptr;
+      if (result != nullptr) g_object_ref(result);  // transfer full
+    }
+  }
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("PangoFontMap::vfunc_load_fontset");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
+  return result;
+}
+
+// vfunc installer: PANGO_FONT_MAP_CLASS->load_fontset (called from class_init / iface_init of a PHP
+// subtype)
+void vfunc_install_load_fontset(gpointer klass) {
+  PANGO_FONT_MAP_CLASS(klass)->load_fontset = vfunc_thunk_load_fontset;
+}
+
 }  // namespace
 
 /**
@@ -143,6 +413,65 @@ ZEND_METHOD(Gtk4_PangoFontMap, vfunc_changed) {
 }
 
 /**
+ * Gtk4\PangoFontMap::vfunc_get_face(PangoFont $font): PangoFontFace
+ *
+ * Native `get_face` (FontMapClass.get_face): the GTK implementation below any PHP subclass, for
+ * `parent::vfunc_get_face()` from an override.
+ */
+ZEND_METHOD(Gtk4_PangoFontMap, vfunc_get_face) {
+  zval *font;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(font, class_for_gtype(PANGO_TYPE_FONT))
+  ZEND_PARSE_PARAMETERS_END();
+  PangoFontMap *self = PHPGTK_SELF(PangoFontMap, PANGO_TYPE_FONT_MAP);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "PangoFontMap::vfunc_get_face(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = PANGO_FONT_MAP_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->get_face == nullptr) {
+    enum_to_php(G_TYPE_NONE, 0, return_value);
+    return;
+  }
+  GObject *font_o = unwrap(font, PANGO_TYPE_FONT);
+  if (font_o == nullptr) RETURN_THROWS();
+  PangoFontFace *phpgtk_ret = klass->get_face(self, PANGO_FONT(font_o));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
+ * Gtk4\PangoFontMap::vfunc_get_family(string $name): PangoFontFamily
+ *
+ * Native `get_family` (FontMapClass.get_family): the GTK implementation below any PHP subclass,
+ * for `parent::vfunc_get_family()` from an override. Gets a font family by name.
+ */
+ZEND_METHOD(Gtk4_PangoFontMap, vfunc_get_family) {
+  zend_string *name;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_STR(name)
+  ZEND_PARSE_PARAMETERS_END();
+  PangoFontMap *self = PHPGTK_SELF(PangoFontMap, PANGO_TYPE_FONT_MAP);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "PangoFontMap::vfunc_get_family(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = PANGO_FONT_MAP_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->get_family == nullptr) {
+    enum_to_php(G_TYPE_NONE, 0, return_value);
+    return;
+  }
+  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
+  PangoFontFamily *phpgtk_ret = klass->get_family(self, ZSTR_VAL(name));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+}
+
+/**
  * Gtk4\PangoFontMap::vfunc_get_serial(): int
  *
  * Native `get_serial` (FontMapClass.get_serial): the GTK implementation below any PHP subclass,
@@ -166,8 +495,90 @@ ZEND_METHOD(Gtk4_PangoFontMap, vfunc_get_serial) {
   RETURN_LONG(static_cast<zend_long>(klass->get_serial(self)));
 }
 
+/**
+ * Gtk4\PangoFontMap::vfunc_load_font(PangoContext $context, PangoFontDescription $desc): ?PangoFont
+ *
+ * Native `load_font` (FontMapClass.load_font): the GTK implementation below any PHP subclass, for
+ * `parent::vfunc_load_font()` from an override. Load the font in the fontmap that is the closest
+ * match for $desc.
+ */
+ZEND_METHOD(Gtk4_PangoFontMap, vfunc_load_font) {
+  zval *context;
+  zval *desc;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(context, class_for_gtype(PANGO_TYPE_CONTEXT))
+  Z_PARAM_OBJECT_OF_CLASS(desc, boxed_class_for_type(PANGO_TYPE_FONT_DESCRIPTION)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  PangoFontMap *self = PHPGTK_SELF(PangoFontMap, PANGO_TYPE_FONT_MAP);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "PangoFontMap::vfunc_load_font(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = PANGO_FONT_MAP_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->load_font == nullptr) {
+    RETURN_NULL();
+  }
+  GObject *context_o = unwrap(context, PANGO_TYPE_CONTEXT);
+  if (context_o == nullptr) RETURN_THROWS();
+  gpointer desc_b = unwrap_boxed(desc, PANGO_TYPE_FONT_DESCRIPTION);
+  if (desc_b == nullptr) RETURN_THROWS();
+  PangoFont *phpgtk_ret =
+      klass->load_font(self, PANGO_CONTEXT(context_o), static_cast<PangoFontDescription *>(desc_b));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
+/**
+ * Gtk4\PangoFontMap::vfunc_load_fontset(PangoContext $context, PangoFontDescription $desc,
+ * PangoLanguage $language): ?PangoFontset
+ *
+ * Native `load_fontset` (FontMapClass.load_fontset): the GTK implementation below any PHP
+ * subclass, for `parent::vfunc_load_fontset()` from an override. Load a set of fonts in the
+ * fontmap that can be used to render a font matching $desc.
+ */
+ZEND_METHOD(Gtk4_PangoFontMap, vfunc_load_fontset) {
+  zval *context;
+  zval *desc;
+  zval *language;
+  ZEND_PARSE_PARAMETERS_START(3, 3)
+  Z_PARAM_OBJECT_OF_CLASS(context, class_for_gtype(PANGO_TYPE_CONTEXT))
+  Z_PARAM_OBJECT_OF_CLASS(desc, boxed_class_for_type(PANGO_TYPE_FONT_DESCRIPTION)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(language, boxed_class_for_type(PANGO_TYPE_LANGUAGE)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  PangoFontMap *self = PHPGTK_SELF(PangoFontMap, PANGO_TYPE_FONT_MAP);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "PangoFontMap::vfunc_load_fontset(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = PANGO_FONT_MAP_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (klass->load_fontset == nullptr) {
+    RETURN_NULL();
+  }
+  GObject *context_o = unwrap(context, PANGO_TYPE_CONTEXT);
+  if (context_o == nullptr) RETURN_THROWS();
+  gpointer desc_b = unwrap_boxed(desc, PANGO_TYPE_FONT_DESCRIPTION);
+  if (desc_b == nullptr) RETURN_THROWS();
+  gpointer language_b = unwrap_boxed(language, PANGO_TYPE_LANGUAGE);
+  if (language_b == nullptr) RETURN_THROWS();
+  PangoFontset *phpgtk_ret = klass->load_fontset(self, PANGO_CONTEXT(context_o),
+                                                 static_cast<PangoFontDescription *>(desc_b),
+                                                 static_cast<PangoLanguage *>(language_b));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
 // MINIT: the vfunc thunks of PangoFontMap (core/subtype.h).
 void register_vfuncs_PangoFontMap() {
   register_vfunc(PANGO_TYPE_FONT_MAP, "changed", vfunc_install_changed);
+  register_vfunc(PANGO_TYPE_FONT_MAP, "get_face", vfunc_install_get_face);
+  register_vfunc(PANGO_TYPE_FONT_MAP, "get_family", vfunc_install_get_family);
   register_vfunc(PANGO_TYPE_FONT_MAP, "get_serial", vfunc_install_get_serial);
+  register_vfunc(PANGO_TYPE_FONT_MAP, "load_font", vfunc_install_load_font);
+  register_vfunc(PANGO_TYPE_FONT_MAP, "load_fontset", vfunc_install_load_fontset);
 }

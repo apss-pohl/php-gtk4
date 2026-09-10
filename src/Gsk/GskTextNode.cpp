@@ -8,13 +8,39 @@
 using namespace phpgtk;
 
 /**
- * Gtk4\GskTextNode::__construct()
+ * Gtk4\GskTextNode::__construct(PangoFont $font, PangoGlyphString $glyphs, GdkRGBA $color,
+ * GraphenePoint $offset)
  *
- * GskTextNode has no constructor in GTK: instances come from GTK, never from `new`.
+ * Creates a render node that renders the given glyphs.
  */
 ZEND_METHOD(Gtk4_GskTextNode, __construct) {
-  // Private: never called (object_init_ex() in wrap_fundamental() skips constructors).
-  ZEND_PARSE_PARAMETERS_NONE();
+  zval *font;
+  zval *glyphs;
+  zval *color;
+  zval *offset;
+  ZEND_PARSE_PARAMETERS_START(4, 4)
+  Z_PARAM_OBJECT_OF_CLASS(font, class_for_gtype(PANGO_TYPE_FONT))
+  Z_PARAM_OBJECT_OF_CLASS(glyphs, boxed_class_for_type(PANGO_TYPE_GLYPH_STRING)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(color, boxed_class_for_type(GDK_TYPE_RGBA)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(offset, boxed_class_for_type(GRAPHENE_TYPE_POINT)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GObject *font_o = unwrap(font, PANGO_TYPE_FONT);
+  if (font_o == nullptr) RETURN_THROWS();
+  gpointer glyphs_b = unwrap_boxed(glyphs, PANGO_TYPE_GLYPH_STRING);
+  if (glyphs_b == nullptr) RETURN_THROWS();
+  gpointer color_b = unwrap_boxed(color, GDK_TYPE_RGBA);
+  if (color_b == nullptr) RETURN_THROWS();
+  gpointer offset_b = unwrap_boxed(offset, GRAPHENE_TYPE_POINT);
+  if (offset_b == nullptr) RETURN_THROWS();
+  gpointer obj =
+      gsk_text_node_new(PANGO_FONT(font_o), static_cast<PangoGlyphString *>(glyphs_b),
+                        static_cast<GdkRGBA *>(color_b), static_cast<graphene_point_t *>(offset_b));
+  if (obj == nullptr) {
+    zend_throw_error(nullptr, "%s(): GTK refused to create the instance (see the CRITICAL above)",
+                     ZSTR_VAL(EX(func)->common.function_name));
+    RETURN_THROWS();
+  }
+  fundamental_adopt(fundamental_from_zval(ZEND_THIS), GSK_TYPE_TEXT_NODE, obj);
 }
 
 /**
@@ -28,6 +54,19 @@ ZEND_METHOD(Gtk4_GskTextNode, get_color) {
   if (self == nullptr) RETURN_THROWS();
   const GdkRGBA *phpgtk_ret = gsk_text_node_get_color(self);
   wrap_boxed(GDK_TYPE_RGBA, phpgtk_ret, return_value);
+}
+
+/**
+ * Gtk4\GskTextNode::get_font(): PangoFont
+ *
+ * Returns the font used by the text $node.
+ */
+ZEND_METHOD(Gtk4_GskTextNode, get_font) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  auto *self = static_cast<GskRenderNode *>(fundamental_self(execute_data));
+  if (self == nullptr) RETURN_THROWS();
+  PangoFont *phpgtk_ret = gsk_text_node_get_font(self);
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
 
 /**
@@ -65,6 +104,32 @@ ZEND_METHOD(Gtk4_GskTextNode, has_color_glyphs) {
   auto *self = static_cast<GskRenderNode *>(fundamental_self(execute_data));
   if (self == nullptr) RETURN_THROWS();
   RETURN_BOOL(gsk_text_node_has_color_glyphs(self));
+}
+
+/**
+ * public function get_glyphs(): PangoGlyphString
+ * The glyphs the node draws, as a glyph string.
+ *
+ * GSK answers with a bare array of glyph infos plus a count, which is also all a text node
+ * keeps: gsk_text_node_new() copies the infos out of the glyph string it is given and never
+ * reads its log clusters. So a glyph string holding that array is the node's glyphs without
+ * loss - the same one `new GskTextNode()` would take to build this node again - except that its
+ * log clusters are zero, because the node has none to give back.
+ */
+ZEND_METHOD(Gtk4_GskTextNode, get_glyphs) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  auto *self = static_cast<GskRenderNode *>(fundamental_self(execute_data));
+  if (self == nullptr) RETURN_THROWS();
+  guint n = 0;
+  const PangoGlyphInfo *infos = gsk_text_node_get_glyphs(self, &n);
+  PangoGlyphString *glyphs = pango_glyph_string_new();
+  pango_glyph_string_set_size(glyphs, static_cast<int>(n));
+  if (n > 0) {
+    memcpy(glyphs->glyphs, infos, n * sizeof(PangoGlyphInfo));
+    memset(glyphs->log_clusters, 0, n * sizeof(int));
+  }
+  wrap_boxed(PANGO_TYPE_GLYPH_STRING, glyphs, return_value);
+  pango_glyph_string_free(glyphs);
 }
 
 namespace {

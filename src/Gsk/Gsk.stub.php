@@ -1165,11 +1165,14 @@ final class GskSubsurfaceNode extends GskRenderNode
  */
 final class GskTextNode extends GskRenderNode
 {
-    /** GskTextNode has no constructor in GTK: instances come from GTK, never from `new`. */
-    private function __construct() {}
+    /** Creates a render node that renders the given glyphs. */
+    public function __construct(PangoFont $font, PangoGlyphString $glyphs, GdkRGBA $color, GraphenePoint $offset) {}
 
     /** Retrieves the color used by the text $node. */
     public function get_color(): GdkRGBA {}
+
+    /** Returns the font used by the text $node. */
+    public function get_font(): PangoFont {}
 
     /** Retrieves the number of glyphs in the text node. */
     public function get_num_glyphs(): int {}
@@ -1179,6 +1182,17 @@ final class GskTextNode extends GskRenderNode
 
     /** Checks whether the text $node has color glyphs. */
     public function has_color_glyphs(): bool {}
+
+    /**
+     * The glyphs the node draws, as a glyph string.
+     *
+     * GSK answers with a bare array of glyph infos plus a count, which is also all a text node
+     * keeps: gsk_text_node_new() copies the infos out of the glyph string it is given and never
+     * reads its log clusters. So a glyph string holding that array is the node's glyphs without
+     * loss - the same one `new GskTextNode()` would take to build this node again - except that its
+     * log clusters are zero, because the node has none to give back.
+     */
+    public function get_glyphs(): PangoGlyphString {}
 }
 
 /**

@@ -17,14 +17,6 @@ history; an item leaves this file when it is done or decided against, it is not 
   `GLib::invoke_on_main(callable)` (serialise the callable or require a `parallel`-style channel;
   `g_main_context_invoke` on the GUI context, the callable released on that thread). Needs a
   concrete consumer (`ext-parallel` or PHP-native threads) before designing the API.
-- **Pango's font leaves are not blocked by a shape, only by the allowlist** (18 members).
-  `Pango.Font`, `Pango.FontFamily`, `Pango.FontFace` and `Pango.Fontset` are abstract GObjects
-  with GTypes of their own - the same shape as `Pango.FontMap`, which *is* bound with its
-  `__construct` refused because instances belong to the backend. `Pango.GlyphString` and
-  `Pango.FontMetrics` are boxed records with their own GTypes, so they need no synthetic type
-  either. That is why `gen/report.md` says "not in the closure" and not "not mappable" for
-  `PangoFontMap::load_font()`, `PangoContext::load_fontset()` and the font getters. Binding them
-  also gives `GskTextNode` the constructor it lacks (a `PangoFont` plus a glyph string).
 - **What the generator still cannot shape**, in the order of how many members each blocks
   (`gen/report.md`; the count moves as classes are bound). None of these is a missing *type* -
   the one-class-away list is empty - they are shapes the emitters do not map yet:
