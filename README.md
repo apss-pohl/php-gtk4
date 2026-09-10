@@ -42,28 +42,26 @@ Exceptions thrown in handlers are logged by default; `Gtk::set_exception_mode(Ex
 makes them propagate out of `run()` instead. `Gtk4\GMainLoop` + `Gtk4\GLib::timeout_add()` cover
 scripts without windows.
 
-**Diagnostics.** GTK refuses a value it does not accept by logging — `g_return_if_fail()` — which
-means your script did something wrong. php-gtk4 turns those into PHP errors at the line that caused
-them, rather than leaving them on stderr with no file, no line and no `error_log`:
+**Diagnostics.** GTK refuses a value it does not accept by logging, and php-gtk4 turns those into
+PHP errors *at the line that caused them* — catchable with `set_error_handler()`, and subject to
+`error_reporting` and `@` like any other. `gtk4.diagnostics` chooses between a warning, a fatal,
+GLib's own stderr and silence:
+[docs/INSTALL.md § Runtime settings](docs/INSTALL.md#runtime-settings).
 
-```text
-PHP Warning:  Gtk: gtk_editable_get_chars: assertion 'end_pos == -1 || end_pos >= start_pos'
-              failed in /home/you/app.php on line 12
+## Examples
+
+Every registered class has a page of its own under [`examples/`](examples/README.md), and one
+application mounts them all:
+
+```sh
+bin/php-gtk4 examples/demo.php              # every class, one page at a time, in a sidebar
+bin/php-gtk4 examples/demo.php GtkListView  # or a single page on its own
+bin/php-gtk4 examples/notes/notes.php       # Notes: a real application, not a page
 ```
 
-`set_error_handler()` catches them like any other PHP error, and `error_reporting`, `error_log`
-and `@` all apply. The `gtk4.diagnostics` ini directive picks what happens (changeable at runtime
-with `ini_set()`):
-
-| value                 | GLib `CRITICAL`              | GLib `WARNING` |
-| --------------------- | ---------------------------- | -------------- |
-| `warning` *(default)* | `E_WARNING`                  | `E_WARNING`    |
-| `fatal`               | `E_ERROR`                    | `E_WARNING`    |
-| `stderr`              | GLib's own output, unchanged |                |
-| `off`                 | dropped                      |                |
-
-GTK returns and carries on after a `CRITICAL`, so the default reports without ending your
-application. `fatal` is for development and CI, where an unguarded boundary should stop the run.
+`notes/` is the one to read to see how a program is put together rather than what a class does — a
+`GtkApplicationWindow` subclass, a header bar and a primary menu, list models over a `GListStore`
+of PHP objects, and autosave to JSON.
 
 ## Install
 
@@ -81,7 +79,6 @@ On Windows PIE takes the prebuilt DLL from the release instead of building. Or t
 
 ```sh
 phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(nproc)" && sudo make install
-bin/php-gtk4 examples/demo.php            # the demo app: every class, one page at a time
 ```
 
 Step-by-step installation for **Linux and Windows** — dependencies, prebuilt release binaries,
@@ -150,7 +147,11 @@ The decisions the extension is built on. `CLAUDE.md` has the working rules that 
   a string, `GVariant` a PHP value, a `GFile` a path, a `GType` a class name, C arrays are lists;
   signals take exactly `(string $signal, callable $handler)` and closures capture their context.
 - **Single GUI thread.** ZTS builds keep per-request state in module globals, but GTK stays
-  single-threaded and the loop-driving methods assert the thread that ran `Gtk::init()`.
+  single-threaded: only the thread that ran `Gtk::init()` may drive the main loop, and the
+  loop-driving methods throw `Error` from any other. Worker threads must never touch widgets — hand
+  results over with `GLib::idle_add()`. Serving GUI windows from several request threads at once is
+  not possible with GTK in any language binding
+  ([docs/BUILD.md § Threads](docs/BUILD.md#threads-and-zts)).
 - **WebKitGTK is an optional feature, generated like the rest.** `--enable-gtk4-webkit` compiles
   the `WebKit*` classes (the web view, its settings, session, user content, policy decisions,
   permission requests) and JavaScriptCore's `JSCContext`/`JSCValue` - `evaluate_javascript()`
@@ -180,15 +181,6 @@ The decisions the extension is built on. `CLAUDE.md` has the working rules that 
     streams an image needs to decode and encode (`GInputStream`/`GMemoryInputStream`,
     `GOutputStream`/`GMemoryOutputStream`): no file, socket, buffered or data streams.
   - WebKitGTK's WebExtensions API, for the reason in the WebKitGTK entry above.
-
-## Threads
-
-The extension builds for ZTS PHP and keeps all per-request state per thread, but **GTK is
-single-threaded**: only the thread that ran `Gtk::init()` may drive the main loop (the loop-driving
-methods throw `Error` from any other thread). Worker threads must never touch widgets; hand results
-to the GUI thread via `GLib::idle_add()`. Serving GUI windows from several request threads at once
-is not possible with GTK on any language binding. Details and what is still planned:
-[docs/BUILD.md § Threads](docs/BUILD.md#threads-and-zts).
 
 ## Contributing
 

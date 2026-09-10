@@ -270,9 +270,33 @@ the demo application: every bound class with its own page.
 
 ## Runtime settings
 
-| directive | default | what it does |
+### `gtk4.diagnostics`
+
+GTK refuses a value it does not accept by logging — `g_return_if_fail()` — which means the script
+did something wrong. php-gtk4 turns those into PHP errors **at the line that caused them**, rather
+than leaving them on stderr with no file, no line and no `error_log`:
+
+```text
+PHP Warning:  Gtk: gtk_editable_get_chars: assertion 'end_pos == -1 || end_pos >= start_pos'
+              failed in /home/you/app.php on line 12
+```
+
+`set_error_handler()` catches them like any other PHP error, and `error_reporting`, `error_log` and
+`@` all apply. The directive is `PHP_INI_ALL`, so `ini_set()` changes it at runtime:
+
+| value | GLib `CRITICAL` | GLib `WARNING` |
 | --- | --- | --- |
-| `gtk4.diagnostics` | `warning` | What GTK's own complaints (`g_critical` / `g_warning`) become. `warning`: PHP `E_WARNING`s at the line that caused them, catchable with `set_error_handler()`. `fatal`: a `CRITICAL` becomes `E_ERROR` — useful in development and CI, where an unguarded call should stop the run. `stderr`: GLib's raw output. `off`: dropped. |
+| `warning` *(default)* | `E_WARNING` | `E_WARNING` |
+| `fatal` | `E_ERROR` | `E_WARNING` |
+| `stderr` | GLib's own output, unchanged ||
+| `off` | dropped ||
+
+GTK returns and carries on after a `CRITICAL`, so the default reports without ending the
+application. `fatal` is for development and CI, where an unguarded boundary should stop the run.
+
+One wrinkle worth knowing: PHP's ini scanner reads `off` (and `no`, `false`, `none`) as the boolean
+false and hands the extension an empty string, which it takes as `off`. Writing
+`gtk4.diagnostics="off"` quoted, or `ini_set('gtk4.diagnostics', 'off')`, passes the word itself.
 
 `gtk4.build_info` and `gtk4.features` are informational (`phpinfo()`); the `Gtk4\BUILD_INFO` and
 `Gtk4\FEATURES` constants are baked in at build time and are the authoritative copies.
