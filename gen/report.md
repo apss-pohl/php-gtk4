@@ -69,14 +69,14 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GInputStream
 
-- `read` — caller-allocates out parameter `buffer` of type array
-- `read_all` — caller-allocates out parameter `buffer` of type array
-- `read_all_async` — caller-allocates out parameter `buffer` of type array
-- `read_async` — caller-allocates out parameter `buffer` of type array
+- `read` — skip.txt: a caller-allocated byte buffer the C caller sizes and owns; read_bytes() answers the same bytes as a PHP string, which is the shape this binding maps GBytes to everywhere
+- `read_all` — skip.txt: as read(); read_bytes() covers it and a PHP string carries its own length
+- `read_all_async` — skip.txt: as read()
+- `read_async` — skip.txt: as read(); read_bytes_async() is the async pair, and it answers with a string
 - `vfunc close_async` — return or argument type not convertible in a thunk
 - `vfunc close_finish` — GError out parameter
 - `vfunc close_fn` — GError out parameter
-- `vfunc read_async` — caller-allocates out parameter `buffer` of type array
+- `vfunc read_async` — skip.txt: as read(); read_bytes_async() is the async pair, and it answers with a string
 - `vfunc read_finish` — GError out parameter
 - `vfunc read_fn` — GError out parameter
 - `vfunc skip` — GError out parameter
