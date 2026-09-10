@@ -16,6 +16,8 @@ void register_GdkRGBA(zend_class_entry *ce);       // boxed (Gdk/GdkRGBA.cpp)
 void register_GdkRectangle(zend_class_entry *ce);  // boxed (Gdk/GdkRectangle.cpp)
 void register_GskRoundedRect(
     zend_class_entry *ce);  // boxed, synthetic GType (Gsk/GskRoundedRect.cpp)
+void register_PangoRectangle(
+    zend_class_entry *ce);  // boxed, synthetic GType (Pango/PangoRectangle.cpp)
 void register_GtkCssSection(zend_class_entry *ce);  // fundamental (Gtk/GtkCssSection.cpp)
 void register_GdkEvent(GType type,
                        zend_class_entry *ce);  // fundamental, per event GType (Gdk/GdkEvent.cpp)

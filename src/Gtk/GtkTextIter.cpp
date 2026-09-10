@@ -790,6 +790,19 @@ ZEND_METHOD(Gtk4_GtkTextIter, get_child_anchor) {
 }
 
 /**
+ * Gtk4\GtkTextIter::get_language(): PangoLanguage
+ *
+ * Returns the language in effect at $iter.
+ */
+ZEND_METHOD(Gtk4_GtkTextIter, get_language) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkTextIter *self = PHPGTK_BOXED_SELF(GtkTextIter);
+  PangoLanguage *phpgtk_ret = gtk_text_iter_get_language(self);
+  wrap_boxed(PANGO_TYPE_LANGUAGE, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) g_boxed_free(PANGO_TYPE_LANGUAGE, phpgtk_ret);
+}
+
+/**
  * Gtk4\GtkTextIter::get_line(): int
  *
  * Returns the line number containing the iterator.

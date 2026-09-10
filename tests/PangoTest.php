@@ -10,7 +10,10 @@ use Gtk4\PangoAttrList;
 use Gtk4\PangoContext;
 use Gtk4\PangoEllipsizeMode;
 use Gtk4\PangoFontMap;
+use Gtk4\PangoLanguage;
 use Gtk4\PangoLayout;
+use Gtk4\PangoRectangle;
+use Gtk4\PangoScript;
 use Gtk4\PangoTabAlign;
 use Gtk4\PangoTabArray;
 
@@ -27,6 +30,88 @@ final class PangoTest extends GtkTestCase
     private function context(): PangoContext
     {
         return $this->window()->create_pango_context();
+    }
+
+    /**
+     * The geometry a program needs to draw its own text, which was unreachable until
+     * PangoRectangle had a boxed type to cross in: Pango's struct has no GType of its own, so the
+     * binding registers one (src/Pango/PangoRectangleType.h) the way it does for GskRoundedRect.
+     *
+     * Units are Pango units - 1024 to the pixel - except where the call says pixels.
+     */
+    public function testALayoutMeasuresWhereItsInkAndLinesAre(): void
+    {
+        $layout = new PangoLayout($this->context());
+        $layout->set_text('Hello', -1);
+
+        [$ink, $logical] = $layout->get_extents();
+        self::assertInstanceOf(PangoRectangle::class, $ink);
+        self::assertGreaterThan(0, $logical->width, 'the line has a width in Pango units');
+        self::assertSame(0, $logical->width % 1, 'and it is an integer count of them');
+
+        [$pixelInk, $pixelLogical] = $layout->get_pixel_extents();
+        self::assertSame(intdiv($logical->width, 1024), $pixelLogical->width, '1024 units to the pixel');
+        self::assertLessThanOrEqual($pixelLogical->width, $pixelInk->width, 'ink fits its line');
+
+        // Where a caret would sit, and how wide the character under it is.
+        $second = $layout->index_to_pos(1);
+        self::assertGreaterThan(0, $second->x, 'the second character starts after the first');
+        self::assertGreaterThan(0, $second->width);
+
+        [$strong, $weak] = $layout->get_cursor_pos(2);
+        self::assertInstanceOf(PangoRectangle::class, $weak);
+        self::assertGreaterThan(0, $strong->height, 'a caret is as tall as the line');
+    }
+
+    /** The engine's compare handler, without static analysis folding the comparison. */
+    private static function compare(object $a, object $b): int
+    {
+        return $a <=> $b;
+    }
+
+    /** A rectangle is a value: fields are properties, a clone compares equal, `to_pixels()` converts. */
+    public function testAPangoRectangleIsAValue(): void
+    {
+        $rect = new PangoRectangle(1024, 2048, 4096, 8192);
+        self::assertSame([1024, 2048, 4096, 8192], [$rect->x, $rect->y, $rect->width, $rect->height]);
+
+        $pixels = $rect->to_pixels();
+        self::assertSame([1, 2, 4, 8], [$pixels->x, $pixels->y, $pixels->width, $pixels->height]);
+        self::assertSame(1024, $rect->x, 'to_pixels() answers with a new rectangle');
+
+        $copy = clone $rect;
+        self::assertNotSame($rect, $copy);
+        self::assertSame(0, self::compare($rect, $copy), 'compared by value, like every boxed type');
+
+        $rect->width = 512;
+        self::assertSame(512, $rect->width, 'the fields are writable');
+        self::assertSame(4096, $copy->width, 'and the clone keeps its own');
+        self::assertNotSame(0, self::compare($rect, $copy));
+    }
+
+    /**
+     * A language tag is an opaque boxed value Pango interns: `from_string()` is the only way in,
+     * it lower-cases what it is given, and a null tag is a null answer - which is why the return
+     * is nullable and `PangoContext::get_language()` is too. The context of a *fresh* Pango
+     * context carries none until one is set; a widget's context has one already.
+     */
+    public function testALanguageTagIsAValueAContextCanCarry(): void
+    {
+        $german = PangoLanguage::from_string('de-DE');
+        self::assertInstanceOf(PangoLanguage::class, $german);
+        self::assertSame('de-de', $german->to_string(), 'the tag is normalised to lower case');
+        self::assertNull(PangoLanguage::from_string(null), 'no tag, no language');
+
+        self::assertTrue($german->matches('de'), 'a range the tag falls in');
+        self::assertFalse($german->matches('fr'));
+        self::assertTrue($german->includes_script(PangoScript::Latin));
+        self::assertNotSame('', $german->get_sample_string(), 'a pangram to measure with');
+
+        self::assertInstanceOf(PangoLanguage::class, PangoLanguage::get_default());
+
+        $context = $this->context();
+        $context->set_language($german);
+        self::assertSame('de-de', $context->get_language()?->to_string());
     }
 
     /** A layout measures text: the size is in Pango units, and there is a pixel form too. */

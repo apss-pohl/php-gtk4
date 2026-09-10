@@ -50,7 +50,8 @@ final class GtkInstances
         \Gtk4\GdkDrop::class => 'needs a drag from another client',
         \Gtk4\GtkDragIcon::class => 'GtkDragIcon::get_for_drag() needs a GdkDrag',
         // Two render nodes whose constructor takes what the binding does not speak.
-        \Gtk4\GskTextNode::class => 'needs a PangoFont and glyph string (Pango is not bound)',
+        \Gtk4\GskTextNode::class =>
+            'needs a PangoFont and a glyph string - the Pango cluster is bound, those two leaves are not',
         \Gtk4\GskSubsurfaceNode::class => 'needs a GdkSubsurface, a gpointer GDK keeps private',
         // An animation iterator needs a GTimeVal start time (GLib.TimeVal is not bound).
         \Gtk4\GdkPixbufAnimationIter::class => 'GdkPixbufAnimation::get_iter() takes a GTimeVal, which is not bound',

@@ -104,6 +104,9 @@ void register_PangoFontDescription(zend_class_entry *ce);
 }  // namespace phpgtk
 void register_vfuncs_PangoFontMap();
 namespace phpgtk {
+void register_PangoLanguage(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
 void register_PangoTabArray(zend_class_entry *ce);
 }  // namespace phpgtk
 void register_vfuncs_GAction();

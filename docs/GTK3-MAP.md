@@ -7,7 +7,7 @@ php-gtk4 already implements it.
 Source of truth: php-gtk3 class headers (158 headers, ~2400 exported methods) vs.
 `src/gtk4.stub.php` + the MINIT registration block in `src/gtk4.cpp`.
 
-Status column regenerated 2026-09-09 by `gen/map-status.php` (run by `gen/gir.php --install`);
+Status column regenerated 2026-09-10 by `gen/map-status.php` (run by `gen/gir.php --install`);
 the notes are hand-written and may lag.
 
 The model differences a port runs into - no `Gtk::main()`, no containers, signals without user
@@ -34,8 +34,8 @@ of pixbufs - are in [PORTING.md](PORTING.md). This file is the class-by-class re
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 3 | ~130 |
 
-php-gtk4 currently declares (2026-09-09) 523 classes, interfaces and enums: 27 hand-written
-(`src/gtk4.stub.php`) and 496 generated - Gtk (213), WebKit (119), Gsk (50), Gdk (32), Gio (32), Pango (21),
+php-gtk4 currently declares (2026-09-10) 525 classes, interfaces and enums: 28 hand-written
+(`src/gtk4.stub.php`) and 497 generated - Gtk (213), WebKit (119), Gsk (50), Gdk (32), Gio (32), Pango (22),
 GdkPixbuf (8), Graphene (8), Soup (6), JavaScriptCore (4), GLib (3). `stubs/gtk4.php` has the names;
 everything else in this document is open work.
 

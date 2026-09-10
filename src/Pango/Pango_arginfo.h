@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 146d8c59653749ceb3429b3bd796ea1150042831 */
+ * Stub hash: 4950f0b39e333eeac43534a2b0f4e87f18dc07c2 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_PangoAttrList___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -49,6 +49,9 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_PangoContext_get_gravity_hint, 0, 0, Gtk4\\PangoGravityHint, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_PangoContext_get_language, 0, 0, Gtk4\\PangoLanguage, 1)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_PangoContext_get_round_glyph_positions, 0, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
@@ -73,6 +76,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_PangoContext_set_gravity_hint, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, hint, Gtk4\\PangoGravityHint, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_PangoContext_set_language, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, language, Gtk4\\PangoLanguage, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_PangoContext_set_round_glyph_positions, 0, 1, IS_VOID, 0)
@@ -208,6 +215,27 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_PangoFontMap_vfunc_get_serial arginfo_class_Gtk4_PangoContext_get_serial
 
+#define arginfo_class_Gtk4_PangoLanguage___construct arginfo_class_Gtk4_PangoAttrList___construct
+
+#define arginfo_class_Gtk4_PangoLanguage_get_sample_string arginfo_class_Gtk4_PangoAttrList_to_string
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_PangoLanguage_includes_script, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, script, Gtk4\\PangoScript, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_PangoLanguage_matches, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, range_list, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_PangoLanguage_to_string arginfo_class_Gtk4_PangoAttrList_to_string
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_PangoLanguage_from_string, 0, 0, Gtk4\\PangoLanguage, 1)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, language, IS_STRING, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_PangoLanguage_get_default, 0, 0, Gtk4\\PangoLanguage, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_PangoLayout___construct, 0, 0, 1)
 	ZEND_ARG_OBJ_INFO(0, context, Gtk4\\PangoContext, 0)
 ZEND_END_ARG_INFO()
@@ -233,15 +261,24 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_PangoLayout_get_baseline arginfo_class_Gtk4_PangoContext_get_serial
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_PangoLayout_get_caret_pos, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, index, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_PangoLayout_get_character_count arginfo_class_Gtk4_PangoContext_get_serial
 
 #define arginfo_class_Gtk4_PangoLayout_get_context arginfo_class_Gtk4_PangoFontMap_create_context
+
+#define arginfo_class_Gtk4_PangoLayout_get_cursor_pos arginfo_class_Gtk4_PangoLayout_get_caret_pos
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_PangoLayout_get_direction, 0, 1, Gtk4\\PangoDirection, 0)
 	ZEND_ARG_TYPE_INFO(0, index, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_PangoLayout_get_ellipsize, 0, 0, Gtk4\\PangoEllipsizeMode, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_PangoLayout_get_extents, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_PangoLayout_get_font_description arginfo_class_Gtk4_PangoContext_get_font_description
@@ -259,14 +296,15 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_PangoLayout_get_line_spacing, 0, 0, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_PangoLayout_get_pixel_size, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_PangoLayout_get_pixel_extents arginfo_class_Gtk4_PangoLayout_get_extents
+
+#define arginfo_class_Gtk4_PangoLayout_get_pixel_size arginfo_class_Gtk4_PangoLayout_get_extents
 
 #define arginfo_class_Gtk4_PangoLayout_get_serial arginfo_class_Gtk4_PangoContext_get_serial
 
 #define arginfo_class_Gtk4_PangoLayout_get_single_paragraph_mode arginfo_class_Gtk4_PangoContext_get_round_glyph_positions
 
-#define arginfo_class_Gtk4_PangoLayout_get_size arginfo_class_Gtk4_PangoLayout_get_pixel_size
+#define arginfo_class_Gtk4_PangoLayout_get_size arginfo_class_Gtk4_PangoLayout_get_extents
 
 #define arginfo_class_Gtk4_PangoLayout_get_spacing arginfo_class_Gtk4_PangoContext_get_serial
 
@@ -285,6 +323,10 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_PangoLayout_index_to_line_x, 0, 2, IS_ARRAY, 0)
 	ZEND_ARG_TYPE_INFO(0, index, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, trailing, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_PangoLayout_index_to_pos, 0, 1, Gtk4\\PangoRectangle, 0)
+	ZEND_ARG_TYPE_INFO(0, index, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_PangoLayout_is_ellipsized arginfo_class_Gtk4_PangoContext_get_round_glyph_positions
@@ -444,6 +486,7 @@ ZEND_METHOD(Gtk4_PangoContext, get_font_description);
 ZEND_METHOD(Gtk4_PangoContext, get_font_map);
 ZEND_METHOD(Gtk4_PangoContext, get_gravity);
 ZEND_METHOD(Gtk4_PangoContext, get_gravity_hint);
+ZEND_METHOD(Gtk4_PangoContext, get_language);
 ZEND_METHOD(Gtk4_PangoContext, get_round_glyph_positions);
 ZEND_METHOD(Gtk4_PangoContext, get_serial);
 ZEND_METHOD(Gtk4_PangoContext, set_base_dir);
@@ -451,6 +494,7 @@ ZEND_METHOD(Gtk4_PangoContext, set_base_gravity);
 ZEND_METHOD(Gtk4_PangoContext, set_font_description);
 ZEND_METHOD(Gtk4_PangoContext, set_font_map);
 ZEND_METHOD(Gtk4_PangoContext, set_gravity_hint);
+ZEND_METHOD(Gtk4_PangoContext, set_language);
 ZEND_METHOD(Gtk4_PangoContext, set_round_glyph_positions);
 ZEND_METHOD(Gtk4_PangoFontDescription, __construct);
 ZEND_METHOD(Gtk4_PangoFontDescription, better_match);
@@ -494,6 +538,13 @@ ZEND_METHOD(Gtk4_GListModel, get_item);
 ZEND_METHOD(Gtk4_GListModel, items_changed);
 ZEND_METHOD(Gtk4_PangoFontMap, vfunc_changed);
 ZEND_METHOD(Gtk4_PangoFontMap, vfunc_get_serial);
+ZEND_METHOD(Gtk4_PangoLanguage, __construct);
+ZEND_METHOD(Gtk4_PangoLanguage, get_sample_string);
+ZEND_METHOD(Gtk4_PangoLanguage, includes_script);
+ZEND_METHOD(Gtk4_PangoLanguage, matches);
+ZEND_METHOD(Gtk4_PangoLanguage, to_string);
+ZEND_METHOD(Gtk4_PangoLanguage, from_string);
+ZEND_METHOD(Gtk4_PangoLanguage, get_default);
 ZEND_METHOD(Gtk4_PangoLayout, __construct);
 ZEND_METHOD(Gtk4_PangoLayout, deserialize);
 ZEND_METHOD(Gtk4_PangoLayout, context_changed);
@@ -502,10 +553,13 @@ ZEND_METHOD(Gtk4_PangoLayout, get_alignment);
 ZEND_METHOD(Gtk4_PangoLayout, get_attributes);
 ZEND_METHOD(Gtk4_PangoLayout, get_auto_dir);
 ZEND_METHOD(Gtk4_PangoLayout, get_baseline);
+ZEND_METHOD(Gtk4_PangoLayout, get_caret_pos);
 ZEND_METHOD(Gtk4_PangoLayout, get_character_count);
 ZEND_METHOD(Gtk4_PangoLayout, get_context);
+ZEND_METHOD(Gtk4_PangoLayout, get_cursor_pos);
 ZEND_METHOD(Gtk4_PangoLayout, get_direction);
 ZEND_METHOD(Gtk4_PangoLayout, get_ellipsize);
+ZEND_METHOD(Gtk4_PangoLayout, get_extents);
 ZEND_METHOD(Gtk4_PangoLayout, get_font_description);
 ZEND_METHOD(Gtk4_PangoLayout, get_height);
 ZEND_METHOD(Gtk4_PangoLayout, get_indent);
@@ -513,6 +567,7 @@ ZEND_METHOD(Gtk4_PangoLayout, get_justify);
 ZEND_METHOD(Gtk4_PangoLayout, get_justify_last_line);
 ZEND_METHOD(Gtk4_PangoLayout, get_line_count);
 ZEND_METHOD(Gtk4_PangoLayout, get_line_spacing);
+ZEND_METHOD(Gtk4_PangoLayout, get_pixel_extents);
 ZEND_METHOD(Gtk4_PangoLayout, get_pixel_size);
 ZEND_METHOD(Gtk4_PangoLayout, get_serial);
 ZEND_METHOD(Gtk4_PangoLayout, get_single_paragraph_mode);
@@ -524,6 +579,7 @@ ZEND_METHOD(Gtk4_PangoLayout, get_unknown_glyphs_count);
 ZEND_METHOD(Gtk4_PangoLayout, get_width);
 ZEND_METHOD(Gtk4_PangoLayout, get_wrap);
 ZEND_METHOD(Gtk4_PangoLayout, index_to_line_x);
+ZEND_METHOD(Gtk4_PangoLayout, index_to_pos);
 ZEND_METHOD(Gtk4_PangoLayout, is_ellipsized);
 ZEND_METHOD(Gtk4_PangoLayout, is_wrapped);
 ZEND_METHOD(Gtk4_PangoLayout, move_cursor_visually);
@@ -580,6 +636,7 @@ static const zend_function_entry class_Gtk4_PangoContext_methods[] = {
 	ZEND_ME(Gtk4_PangoContext, get_font_map, arginfo_class_Gtk4_PangoContext_get_font_map, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoContext, get_gravity, arginfo_class_Gtk4_PangoContext_get_gravity, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoContext, get_gravity_hint, arginfo_class_Gtk4_PangoContext_get_gravity_hint, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_PangoContext, get_language, arginfo_class_Gtk4_PangoContext_get_language, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoContext, get_round_glyph_positions, arginfo_class_Gtk4_PangoContext_get_round_glyph_positions, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoContext, get_serial, arginfo_class_Gtk4_PangoContext_get_serial, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoContext, set_base_dir, arginfo_class_Gtk4_PangoContext_set_base_dir, ZEND_ACC_PUBLIC)
@@ -587,6 +644,7 @@ static const zend_function_entry class_Gtk4_PangoContext_methods[] = {
 	ZEND_ME(Gtk4_PangoContext, set_font_description, arginfo_class_Gtk4_PangoContext_set_font_description, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoContext, set_font_map, arginfo_class_Gtk4_PangoContext_set_font_map, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoContext, set_gravity_hint, arginfo_class_Gtk4_PangoContext_set_gravity_hint, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_PangoContext, set_language, arginfo_class_Gtk4_PangoContext_set_language, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoContext, set_round_glyph_positions, arginfo_class_Gtk4_PangoContext_set_round_glyph_positions, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
@@ -641,6 +699,17 @@ static const zend_function_entry class_Gtk4_PangoFontMap_methods[] = {
 	ZEND_FE_END
 };
 
+static const zend_function_entry class_Gtk4_PangoLanguage_methods[] = {
+	ZEND_ME(Gtk4_PangoLanguage, __construct, arginfo_class_Gtk4_PangoLanguage___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_PangoLanguage, get_sample_string, arginfo_class_Gtk4_PangoLanguage_get_sample_string, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_PangoLanguage, includes_script, arginfo_class_Gtk4_PangoLanguage_includes_script, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_PangoLanguage, matches, arginfo_class_Gtk4_PangoLanguage_matches, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_PangoLanguage, to_string, arginfo_class_Gtk4_PangoLanguage_to_string, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_PangoLanguage, from_string, arginfo_class_Gtk4_PangoLanguage_from_string, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_PangoLanguage, get_default, arginfo_class_Gtk4_PangoLanguage_get_default, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_FE_END
+};
+
 static const zend_function_entry class_Gtk4_PangoLayout_methods[] = {
 	ZEND_ME(Gtk4_PangoLayout, __construct, arginfo_class_Gtk4_PangoLayout___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, deserialize, arginfo_class_Gtk4_PangoLayout_deserialize, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
@@ -650,10 +719,13 @@ static const zend_function_entry class_Gtk4_PangoLayout_methods[] = {
 	ZEND_ME(Gtk4_PangoLayout, get_attributes, arginfo_class_Gtk4_PangoLayout_get_attributes, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, get_auto_dir, arginfo_class_Gtk4_PangoLayout_get_auto_dir, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, get_baseline, arginfo_class_Gtk4_PangoLayout_get_baseline, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_PangoLayout, get_caret_pos, arginfo_class_Gtk4_PangoLayout_get_caret_pos, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, get_character_count, arginfo_class_Gtk4_PangoLayout_get_character_count, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, get_context, arginfo_class_Gtk4_PangoLayout_get_context, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_PangoLayout, get_cursor_pos, arginfo_class_Gtk4_PangoLayout_get_cursor_pos, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, get_direction, arginfo_class_Gtk4_PangoLayout_get_direction, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, get_ellipsize, arginfo_class_Gtk4_PangoLayout_get_ellipsize, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_PangoLayout, get_extents, arginfo_class_Gtk4_PangoLayout_get_extents, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, get_font_description, arginfo_class_Gtk4_PangoLayout_get_font_description, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, get_height, arginfo_class_Gtk4_PangoLayout_get_height, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, get_indent, arginfo_class_Gtk4_PangoLayout_get_indent, ZEND_ACC_PUBLIC)
@@ -661,6 +733,7 @@ static const zend_function_entry class_Gtk4_PangoLayout_methods[] = {
 	ZEND_ME(Gtk4_PangoLayout, get_justify_last_line, arginfo_class_Gtk4_PangoLayout_get_justify_last_line, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, get_line_count, arginfo_class_Gtk4_PangoLayout_get_line_count, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, get_line_spacing, arginfo_class_Gtk4_PangoLayout_get_line_spacing, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_PangoLayout, get_pixel_extents, arginfo_class_Gtk4_PangoLayout_get_pixel_extents, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, get_pixel_size, arginfo_class_Gtk4_PangoLayout_get_pixel_size, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, get_serial, arginfo_class_Gtk4_PangoLayout_get_serial, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, get_single_paragraph_mode, arginfo_class_Gtk4_PangoLayout_get_single_paragraph_mode, ZEND_ACC_PUBLIC)
@@ -672,6 +745,7 @@ static const zend_function_entry class_Gtk4_PangoLayout_methods[] = {
 	ZEND_ME(Gtk4_PangoLayout, get_width, arginfo_class_Gtk4_PangoLayout_get_width, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, get_wrap, arginfo_class_Gtk4_PangoLayout_get_wrap, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, index_to_line_x, arginfo_class_Gtk4_PangoLayout_index_to_line_x, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_PangoLayout, index_to_pos, arginfo_class_Gtk4_PangoLayout_index_to_pos, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, is_ellipsized, arginfo_class_Gtk4_PangoLayout_is_ellipsized, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, is_wrapped, arginfo_class_Gtk4_PangoLayout_is_wrapped, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_PangoLayout, move_cursor_visually, arginfo_class_Gtk4_PangoLayout_move_cursor_visually, ZEND_ACC_PUBLIC)
@@ -933,6 +1007,16 @@ static zend_class_entry *register_class_Gtk4_PangoGravityHint(void)
 	zval enum_case_Line_value;
 	ZVAL_LONG(&enum_case_Line_value, 2);
 	zend_enum_add_case_cstr(class_entry, "Line", &enum_case_Line_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_PangoLanguage(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "PangoLanguage", class_Gtk4_PangoLanguage_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
 
 	return class_entry;
 }

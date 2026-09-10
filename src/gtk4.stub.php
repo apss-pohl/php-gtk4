@@ -420,6 +420,28 @@ final class GdkRectangle
 }
 
 /**
+ * A rectangle in Pango units (1024 to the pixel), or in pixels where the call that filled it says
+ * so - `PangoLayout::get_pixel_extents()` does, `get_extents()` does not.
+ *
+ * Pango's own struct has no GType, so the binding registers a boxed one for it
+ * (`src/Pango/PangoRectangleType.h`); the value behaves like every other boxed value here -
+ * cloneable, compared by value, its fields readable and writable as PHP properties.
+ *
+ * @property int $x
+ * @property int $y
+ * @property int $width
+ * @property int $height
+ */
+final class PangoRectangle
+{
+    /** Origin and size in Pango units, unless the call that filled it says pixels. */
+    public function __construct(int $x = 0, int $y = 0, int $width = 0, int $height = 0) {}
+
+    /** The same rectangle in pixels, rounded outwards to cover what it covered in Pango units. */
+    public function to_pixels(): PangoRectangle {}
+}
+
+/**
  * A rectangle with a size per corner (a boxed value type: cloneable, compared by value) - what
  * {@see GskRoundedClipNode}, {@see GskBorderNode}, the shadow nodes and
  * {@see GtkSnapshot::push_rounded_clip()} take. GSK gives the struct no GType; the binding

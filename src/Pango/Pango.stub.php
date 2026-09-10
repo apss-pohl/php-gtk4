@@ -83,6 +83,9 @@ class PangoContext extends GObject
     /** Retrieves the gravity hint for the context. */
     public function get_gravity_hint(): PangoGravityHint {}
 
+    /** Retrieves the global language tag for the context. */
+    public function get_language(): ?PangoLanguage {}
+
     /** Returns whether font rendering with this context should round glyph positions and widths. */
     public function get_round_glyph_positions(): bool {}
 
@@ -103,6 +106,9 @@ class PangoContext extends GObject
 
     /** Sets the gravity hint for the context. */
     public function set_gravity_hint(PangoGravityHint $hint): void {}
+
+    /** Sets the global language tag for the context. */
+    public function set_language(?PangoLanguage $language): void {}
 
     /**
      * Sets whether font rendering with this context should round glyph positions and widths to
@@ -335,6 +341,37 @@ enum PangoGravityHint: int
 }
 
 /**
+ * The `PangoLanguage` structure is used to represent a language.
+ * @not-serializable
+ */
+final class PangoLanguage
+{
+    /** PangoLanguage values come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /**
+     * Get a string that is representative of the characters needed to render a particular
+     * language.
+     */
+    public function get_sample_string(): string {}
+
+    /** Determines if $script is one of the scripts used to write $language. */
+    public function includes_script(PangoScript $script): bool {}
+
+    /** Checks if a language tag matches one of the elements in a list of language ranges. */
+    public function matches(string $range_list): bool {}
+
+    /** Gets the RFC-3066 format string representing the given language tag. */
+    public function to_string(): string {}
+
+    /** Convert a language tag to a `PangoLanguage`. */
+    public static function from_string(?string $language = null): ?PangoLanguage {}
+
+    /** Returns the `PangoLanguage` for the current locale of the process. */
+    public static function get_default(): PangoLanguage {}
+}
+
+/**
  * A `PangoLayout` structure represents an entire paragraph of text.
  */
 class PangoLayout extends GObject
@@ -372,17 +409,40 @@ class PangoLayout extends GObject
     /** Gets the Y position of baseline of the first line in $layout. */
     public function get_baseline(): int {}
 
+    /**
+     * Given an index within a layout, determines the positions that of the strong and weak cursors
+     * if the insertion point is at that index.
+     *
+     * @return array{PangoRectangle, PangoRectangle}
+     */
+    public function get_caret_pos(int $index): array {}
+
     /** Returns the number of Unicode characters in the the text of $layout. */
     public function get_character_count(): int {}
 
     /** Retrieves the `PangoContext` used for this layout. */
     public function get_context(): PangoContext {}
 
+    /**
+     * Given an index within a layout, determines the positions that of the strong and weak cursors
+     * if the insertion point is at that index.
+     *
+     * @return array{PangoRectangle, PangoRectangle}
+     */
+    public function get_cursor_pos(int $index): array {}
+
     /** Gets the text direction at the given character position in $layout. */
     public function get_direction(int $index): PangoDirection {}
 
     /** Gets the type of ellipsization being performed for $layout. */
     public function get_ellipsize(): PangoEllipsizeMode {}
+
+    /**
+     * Computes the logical and ink extents of $layout.
+     *
+     * @return array{PangoRectangle, PangoRectangle}
+     */
+    public function get_extents(): array {}
 
     /** Gets the font description for the layout, if any. */
     public function get_font_description(): ?PangoFontDescription {}
@@ -406,6 +466,13 @@ class PangoLayout extends GObject
 
     /** Gets the line spacing factor of $layout. */
     public function get_line_spacing(): float {}
+
+    /**
+     * Computes the logical and ink extents of $layout in device units.
+     *
+     * @return array{PangoRectangle, PangoRectangle}
+     */
+    public function get_pixel_extents(): array {}
 
     /**
      * Determines the logical width and height of a `PangoLayout` in device units.
@@ -451,6 +518,12 @@ class PangoLayout extends GObject
      * @return array{int, int}
      */
     public function index_to_line_x(int $index, bool $trailing): array {}
+
+    /**
+     * Converts from an index within a `PangoLayout` to the onscreen position corresponding to the
+     * grapheme at that index.
+     */
+    public function index_to_pos(int $index): PangoRectangle {}
 
     /** Queries whether the layout had to ellipsize any paragraphs. */
     public function is_ellipsized(): bool {}

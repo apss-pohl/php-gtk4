@@ -51,6 +51,7 @@ const TYPE_MACROS = [
     'cairo.Surface' => ['CAIRO_GOBJECT_TYPE_SURFACE', 'CAIRO_SURFACE'],
     'cairo.Context' => ['CAIRO_GOBJECT_TYPE_CONTEXT', 'CAIRO_CONTEXT'],
     'Gsk.RoundedRect' => ['PHPGTK_TYPE_GSK_ROUNDED_RECT', 'GSK_ROUNDED_RECT'],
+    'Pango.Rectangle' => ['PHPGTK_TYPE_PANGO_RECTANGLE', 'PANGO_RECTANGLE'],
     // "Point3D" splits into POINT3_D; graphene spells it in one piece
     'Graphene.Point3D' => ['GRAPHENE_TYPE_POINT3D', 'GRAPHENE_POINT3D'],
     'GdkPixbuf.PixbufFormat' => ['gdk_pixbuf_format_get_type()', 'GDK_PIXBUF_FORMAT'],  // no macro in gdk-pixbuf-io.h
@@ -72,6 +73,7 @@ const OPAQUE_RECORDS = ['GdkPixbuf.PixbufFormat'];
  */
 const SYNTHETIC_GTYPES = [
     'Gsk.RoundedRect' => ['GskRoundedRect', 'phpgtk::gsk_rounded_rect_php_type'],
+    'Pango.Rectangle' => ['PangoRectangle', 'phpgtk::pango_rectangle_php_type'],
 ];
 
 const BOXED_OWNERS = [
@@ -124,6 +126,9 @@ const NULLABLE_RETURNS = [
     // Windows job proved it: without an IANA database g_time_zone_new_identifier('Europe/Berlin')
     // is NULL, and the non-nullable declaration made that a fatal on a value GLib documents.
     'g_time_zone_new_identifier' => 'NULL for an identifier the platform cannot resolve',
+    // A context carries a language only once one is set on it; a fresh one answers NULL, which
+    // TypeDeclarationTest caught the moment PangoLanguage was bound.
+    'pango_context_get_language' => 'NULL until set_language()',
     'gtk_print_dialog_get_page_setup' => 'NULL until set_page_setup()',
     'gtk_print_dialog_get_print_settings' => 'NULL until set_print_settings()',
     'gtk_print_operation_get_default_page_setup' => 'NULL until set_default_page_setup()',

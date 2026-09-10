@@ -401,6 +401,7 @@ trait EmitsClasses
                 'assert_gui_thread' => '"core/mainloop.h"', 'RunningLoop' => '"core/mainloop.h"',
                 'callback_new' => '"core/callback.h"', 'CAIRO_GOBJECT_TYPE' => '<cairo-gobject.h>',
                 'PHPGTK_TYPE_GSK_ROUNDED_RECT' => '"Gsk/GskRoundedRectType.h"',
+                'PHPGTK_TYPE_PANGO_RECTANGLE' => '"Pango/PangoRectangleType.h"',
                 'std::array' => '<array>'] as $needle => $inc
         ) {
             if (

@@ -111,6 +111,18 @@ ZEND_METHOD(Gtk4_PangoContext, get_gravity_hint) {
 }
 
 /**
+ * Gtk4\PangoContext::get_language(): ?PangoLanguage
+ *
+ * Retrieves the global language tag for the context.
+ */
+ZEND_METHOD(Gtk4_PangoContext, get_language) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  PangoContext *self = PHPGTK_SELF(PangoContext, PANGO_TYPE_CONTEXT);
+  PangoLanguage *phpgtk_ret = pango_context_get_language(self);
+  wrap_boxed(PANGO_TYPE_LANGUAGE, phpgtk_ret, return_value);
+}
+
+/**
  * Gtk4\PangoContext::get_round_glyph_positions(): bool
  *
  * Returns whether font rendering with this context should round glyph positions and widths.
@@ -213,6 +225,25 @@ ZEND_METHOD(Gtk4_PangoContext, set_gravity_hint) {
   gint hint_v = 0;
   if (!enum_from_php(hint, PANGO_TYPE_GRAVITY_HINT, &hint_v)) RETURN_THROWS();
   pango_context_set_gravity_hint(self, static_cast<PangoGravityHint>(hint_v));
+}
+
+/**
+ * Gtk4\PangoContext::set_language(?PangoLanguage $language): void
+ *
+ * Sets the global language tag for the context.
+ */
+ZEND_METHOD(Gtk4_PangoContext, set_language) {
+  zval *language = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(language, boxed_class_for_type(PANGO_TYPE_LANGUAGE)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  PangoContext *self = PHPGTK_SELF(PangoContext, PANGO_TYPE_CONTEXT);
+  gpointer language_b = nullptr;
+  if (language != nullptr) {
+    language_b = unwrap_boxed(language, PANGO_TYPE_LANGUAGE);
+    if (language_b == nullptr) RETURN_THROWS();
+  }
+  pango_context_set_language(self, static_cast<PangoLanguage *>(language_b));
 }
 
 /**

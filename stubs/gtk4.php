@@ -579,6 +579,53 @@ final class GdkRectangle
     }
 }
 /**
+ * A rectangle in Pango units (1024 to the pixel), or in pixels where the call that filled it says
+ * so - `PangoLayout::get_pixel_extents()` does, `get_extents()` does not.
+ *
+ * Pango's own struct has no GType, so the binding registers a boxed one for it
+ * (`src/Pango/PangoRectangleType.h`); the value behaves like every other boxed value here -
+ * cloneable, compared by value, its fields readable and writable as PHP properties.
+ *
+ * @property int $x
+ * @property int $y
+ * @property int $width
+ * @property int $height
+ */
+final class PangoRectangle
+{
+    /** Origin and size in Pango units, unless the call that filled it says pixels. */
+    public function __construct(int $x = 0, int $y = 0, int $width = 0, int $height = 0)
+    {
+        unset($x);
+        unset($y);
+        unset($width);
+        unset($height);
+    }
+    /** The same rectangle in pixels, rounded outwards to cover what it covered in Pango units. */
+    public function to_pixels(): PangoRectangle
+    {
+        return null;
+    }
+    /** GObject property read (engine handler; see gen/ide-stub.php). */
+    public function __get(string $name): mixed
+    {
+        unset($name);
+        return null;
+    }
+    /** GObject property write (engine handler; see gen/ide-stub.php). */
+    public function __set(string $name, mixed $value): void
+    {
+        unset($name);
+        unset($value);
+    }
+    /** GObject property isset (engine handler; see gen/ide-stub.php). */
+    public function __isset(string $name): bool
+    {
+        unset($name);
+        return false;
+    }
+}
+/**
  * A rectangle with a size per corner (a boxed value type: cloneable, compared by value) - what
  * {@see GskRoundedClipNode}, {@see GskBorderNode}, the shadow nodes and
  * {@see GtkSnapshot::push_rounded_clip()} take. GSK gives the struct no GType; the binding
@@ -14592,6 +14639,7 @@ class GtkFlowBoxChild extends GtkWidget
  *
  * @property ?GtkFilter $filter
  * @property ?PangoFontMap $font_map
+ * @property ?PangoLanguage $language
  * @property bool $modal
  * @property ?string $title
  */
@@ -14639,6 +14687,11 @@ class GtkFontDialog extends GObject
     {
         return null;
     }
+    /** Returns the language for which font features are applied. */
+    public function get_language(): ?PangoLanguage
+    {
+        return null;
+    }
     /**
      * Returns whether the font chooser dialog blocks interaction with the parent window while it
      * is presented.
@@ -14662,6 +14715,11 @@ class GtkFontDialog extends GObject
     {
         unset($fontmap);
     }
+    /** Sets the language for which font features are applied. */
+    public function set_language(PangoLanguage $language): void
+    {
+        unset($language);
+    }
     /**
      * Sets whether the font chooser dialog blocks interaction with the parent window while it is
      * presented.
@@ -14683,6 +14741,7 @@ class GtkFontDialog extends GObject
  * @property ?GtkFontDialog $dialog
  * @property ?PangoFontDescription $font_desc
  * @property ?string $font_features
+ * @property ?PangoLanguage $language
  * @property GtkFontLevel $level
  * @property bool $use_font
  * @property bool $use_size
@@ -14706,6 +14765,11 @@ class GtkFontDialogButton extends GtkWidget
     }
     /** Returns the font features of the button. */
     public function get_font_features(): ?string
+    {
+        return null;
+    }
+    /** Returns the language that is used for font features. */
+    public function get_language(): ?PangoLanguage
     {
         return null;
     }
@@ -14741,6 +14805,11 @@ class GtkFontDialogButton extends GtkWidget
     public function set_font_features(?string $font_features): void
     {
         unset($font_features);
+    }
+    /** Sets the language to use for font features. */
+    public function set_language(?PangoLanguage $language): void
+    {
+        unset($language);
     }
     /** Sets the level of detail at which this dialog lets the user select fonts. */
     public function set_level(GtkFontLevel $level): void
@@ -23637,6 +23706,11 @@ final class GtkTextIter
     {
         return null;
     }
+    /** Returns the language in effect at $iter. */
+    public function get_language(): PangoLanguage
+    {
+        return null;
+    }
     /** Returns the line number containing the iterator. */
     public function get_line(): int
     {
@@ -27178,6 +27252,11 @@ class PangoContext extends GObject
     {
         return null;
     }
+    /** Retrieves the global language tag for the context. */
+    public function get_language(): ?PangoLanguage
+    {
+        return null;
+    }
     /** Returns whether font rendering with this context should round glyph positions and widths. */
     public function get_round_glyph_positions(): bool
     {
@@ -27212,6 +27291,11 @@ class PangoContext extends GObject
     public function set_gravity_hint(PangoGravityHint $hint): void
     {
         unset($hint);
+    }
+    /** Sets the global language tag for the context. */
+    public function set_language(?PangoLanguage $language): void
+    {
+        unset($language);
     }
     /**
      * Sets whether font rendering with this context should round glyph positions and widths to
@@ -27525,6 +27609,52 @@ enum PangoGravityHint : int
     case Line = 2;
 }
 /**
+ * The `PangoLanguage` structure is used to represent a language.
+ */
+final class PangoLanguage
+{
+    /** PangoLanguage values come from GTK, never from `new`. */
+    private function __construct()
+    {
+    }
+    /**
+     * Get a string that is representative of the characters needed to render a particular
+     * language.
+     */
+    public function get_sample_string(): string
+    {
+        return '';
+    }
+    /** Determines if $script is one of the scripts used to write $language. */
+    public function includes_script(PangoScript $script): bool
+    {
+        unset($script);
+        return false;
+    }
+    /** Checks if a language tag matches one of the elements in a list of language ranges. */
+    public function matches(string $range_list): bool
+    {
+        unset($range_list);
+        return false;
+    }
+    /** Gets the RFC-3066 format string representing the given language tag. */
+    public function to_string(): string
+    {
+        return '';
+    }
+    /** Convert a language tag to a `PangoLanguage`. */
+    public static function from_string(?string $language = null): ?PangoLanguage
+    {
+        unset($language);
+        return null;
+    }
+    /** Returns the `PangoLanguage` for the current locale of the process. */
+    public static function get_default(): PangoLanguage
+    {
+        return null;
+    }
+}
+/**
  * A `PangoLayout` structure represents an entire paragraph of text.
  */
 class PangoLayout extends GObject
@@ -27580,6 +27710,17 @@ class PangoLayout extends GObject
     {
         return 0;
     }
+    /**
+     * Given an index within a layout, determines the positions that of the strong and weak cursors
+     * if the insertion point is at that index.
+     *
+     * @return array{PangoRectangle, PangoRectangle}
+     */
+    public function get_caret_pos(int $index): array
+    {
+        unset($index);
+        return [];
+    }
     /** Returns the number of Unicode characters in the the text of $layout. */
     public function get_character_count(): int
     {
@@ -27589,6 +27730,17 @@ class PangoLayout extends GObject
     public function get_context(): PangoContext
     {
         return null;
+    }
+    /**
+     * Given an index within a layout, determines the positions that of the strong and weak cursors
+     * if the insertion point is at that index.
+     *
+     * @return array{PangoRectangle, PangoRectangle}
+     */
+    public function get_cursor_pos(int $index): array
+    {
+        unset($index);
+        return [];
     }
     /** Gets the text direction at the given character position in $layout. */
     public function get_direction(int $index): PangoDirection
@@ -27600,6 +27752,15 @@ class PangoLayout extends GObject
     public function get_ellipsize(): PangoEllipsizeMode
     {
         return null;
+    }
+    /**
+     * Computes the logical and ink extents of $layout.
+     *
+     * @return array{PangoRectangle, PangoRectangle}
+     */
+    public function get_extents(): array
+    {
+        return [];
     }
     /** Gets the font description for the layout, if any. */
     public function get_font_description(): ?PangoFontDescription
@@ -27637,6 +27798,15 @@ class PangoLayout extends GObject
     public function get_line_spacing(): float
     {
         return 0.0;
+    }
+    /**
+     * Computes the logical and ink extents of $layout in device units.
+     *
+     * @return array{PangoRectangle, PangoRectangle}
+     */
+    public function get_pixel_extents(): array
+    {
+        return [];
     }
     /**
      * Determines the logical width and height of a `PangoLayout` in device units.
@@ -27706,6 +27876,15 @@ class PangoLayout extends GObject
         unset($index);
         unset($trailing);
         return [];
+    }
+    /**
+     * Converts from an index within a `PangoLayout` to the onscreen position corresponding to the
+     * grapheme at that index.
+     */
+    public function index_to_pos(int $index): PangoRectangle
+    {
+        unset($index);
+        return null;
     }
     /** Queries whether the layout had to ellipsize any paragraphs. */
     public function is_ellipsized(): bool

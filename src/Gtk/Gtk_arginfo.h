@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: e3b29ae08a5ed03f4da2fe4829acabf50330bead */
+ * Stub hash: 58708c93a27f681d1ade874279bc72312aa27779 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -2122,6 +2122,9 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkFontDialog_get_font_map, 0, 0, Gtk4\\PangoFontMap, 1)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkFontDialog_get_language, 0, 0, Gtk4\\PangoLanguage, 1)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_GtkFontDialog_get_modal arginfo_class_Gtk4_GtkAboutDialog_get_wrap_license
 
 #define arginfo_class_Gtk4_GtkFontDialog_get_title arginfo_class_Gtk4_GtkAlertDialog_get_detail
@@ -2130,6 +2133,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFontDialog_set_font_map, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, fontmap, Gtk4\\PangoFontMap, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFontDialog_set_language, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, language, Gtk4\\PangoLanguage, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkFontDialog_set_modal arginfo_class_Gtk4_GtkAlertDialog_set_modal
@@ -2148,6 +2155,8 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GtkFontDialogButton_get_font_features arginfo_class_Gtk4_GtkAboutDialog_get_comments
 
+#define arginfo_class_Gtk4_GtkFontDialogButton_get_language arginfo_class_Gtk4_GtkFontDialog_get_language
+
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkFontDialogButton_get_level, 0, 0, Gtk4\\GtkFontLevel, 0)
 ZEND_END_ARG_INFO()
 
@@ -2165,6 +2174,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFontDialogButton_set_font_features, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, font_features, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFontDialogButton_set_language, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, language, Gtk4\\PangoLanguage, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkFontDialogButton_set_level, 0, 1, IS_VOID, 0)
@@ -5894,6 +5907,9 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextIter_get_child_anchor, 0, 0, Gtk4\\GtkTextChildAnchor, 1)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GtkTextIter_get_language, 0, 0, Gtk4\\PangoLanguage, 0)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_GtkTextIter_get_line arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
 
 #define arginfo_class_Gtk4_GtkTextIter_get_line_index arginfo_class_Gtk4_GtkAlertDialog_get_cancel_button
@@ -7753,22 +7769,26 @@ ZEND_METHOD(Gtk4_GtkFontDialog, choose_font_and_features);
 ZEND_METHOD(Gtk4_GtkFontDialog, choose_font_finish);
 ZEND_METHOD(Gtk4_GtkFontDialog, get_filter);
 ZEND_METHOD(Gtk4_GtkFontDialog, get_font_map);
+ZEND_METHOD(Gtk4_GtkFontDialog, get_language);
 ZEND_METHOD(Gtk4_GtkFontDialog, get_modal);
 ZEND_METHOD(Gtk4_GtkFontDialog, get_title);
 ZEND_METHOD(Gtk4_GtkFontDialog, set_filter);
 ZEND_METHOD(Gtk4_GtkFontDialog, set_font_map);
+ZEND_METHOD(Gtk4_GtkFontDialog, set_language);
 ZEND_METHOD(Gtk4_GtkFontDialog, set_modal);
 ZEND_METHOD(Gtk4_GtkFontDialog, set_title);
 ZEND_METHOD(Gtk4_GtkFontDialogButton, __construct);
 ZEND_METHOD(Gtk4_GtkFontDialogButton, get_dialog);
 ZEND_METHOD(Gtk4_GtkFontDialogButton, get_font_desc);
 ZEND_METHOD(Gtk4_GtkFontDialogButton, get_font_features);
+ZEND_METHOD(Gtk4_GtkFontDialogButton, get_language);
 ZEND_METHOD(Gtk4_GtkFontDialogButton, get_level);
 ZEND_METHOD(Gtk4_GtkFontDialogButton, get_use_font);
 ZEND_METHOD(Gtk4_GtkFontDialogButton, get_use_size);
 ZEND_METHOD(Gtk4_GtkFontDialogButton, set_dialog);
 ZEND_METHOD(Gtk4_GtkFontDialogButton, set_font_desc);
 ZEND_METHOD(Gtk4_GtkFontDialogButton, set_font_features);
+ZEND_METHOD(Gtk4_GtkFontDialogButton, set_language);
 ZEND_METHOD(Gtk4_GtkFontDialogButton, set_level);
 ZEND_METHOD(Gtk4_GtkFontDialogButton, set_use_font);
 ZEND_METHOD(Gtk4_GtkFontDialogButton, set_use_size);
@@ -8910,6 +8930,7 @@ ZEND_METHOD(Gtk4_GtkTextIter, get_bytes_in_line);
 ZEND_METHOD(Gtk4_GtkTextIter, get_char);
 ZEND_METHOD(Gtk4_GtkTextIter, get_chars_in_line);
 ZEND_METHOD(Gtk4_GtkTextIter, get_child_anchor);
+ZEND_METHOD(Gtk4_GtkTextIter, get_language);
 ZEND_METHOD(Gtk4_GtkTextIter, get_line);
 ZEND_METHOD(Gtk4_GtkTextIter, get_line_index);
 ZEND_METHOD(Gtk4_GtkTextIter, get_line_offset);
@@ -10252,10 +10273,12 @@ static const zend_function_entry class_Gtk4_GtkFontDialog_methods[] = {
 	ZEND_ME(Gtk4_GtkFontDialog, choose_font_finish, arginfo_class_Gtk4_GtkFontDialog_choose_font_finish, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialog, get_filter, arginfo_class_Gtk4_GtkFontDialog_get_filter, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialog, get_font_map, arginfo_class_Gtk4_GtkFontDialog_get_font_map, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialog, get_language, arginfo_class_Gtk4_GtkFontDialog_get_language, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialog, get_modal, arginfo_class_Gtk4_GtkFontDialog_get_modal, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialog, get_title, arginfo_class_Gtk4_GtkFontDialog_get_title, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialog, set_filter, arginfo_class_Gtk4_GtkFontDialog_set_filter, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialog, set_font_map, arginfo_class_Gtk4_GtkFontDialog_set_font_map, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialog, set_language, arginfo_class_Gtk4_GtkFontDialog_set_language, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialog, set_modal, arginfo_class_Gtk4_GtkFontDialog_set_modal, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialog, set_title, arginfo_class_Gtk4_GtkFontDialog_set_title, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
@@ -10266,12 +10289,14 @@ static const zend_function_entry class_Gtk4_GtkFontDialogButton_methods[] = {
 	ZEND_ME(Gtk4_GtkFontDialogButton, get_dialog, arginfo_class_Gtk4_GtkFontDialogButton_get_dialog, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialogButton, get_font_desc, arginfo_class_Gtk4_GtkFontDialogButton_get_font_desc, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialogButton, get_font_features, arginfo_class_Gtk4_GtkFontDialogButton_get_font_features, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialogButton, get_language, arginfo_class_Gtk4_GtkFontDialogButton_get_language, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialogButton, get_level, arginfo_class_Gtk4_GtkFontDialogButton_get_level, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialogButton, get_use_font, arginfo_class_Gtk4_GtkFontDialogButton_get_use_font, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialogButton, get_use_size, arginfo_class_Gtk4_GtkFontDialogButton_get_use_size, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialogButton, set_dialog, arginfo_class_Gtk4_GtkFontDialogButton_set_dialog, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialogButton, set_font_desc, arginfo_class_Gtk4_GtkFontDialogButton_set_font_desc, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialogButton, set_font_features, arginfo_class_Gtk4_GtkFontDialogButton_set_font_features, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkFontDialogButton, set_language, arginfo_class_Gtk4_GtkFontDialogButton_set_language, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialogButton, set_level, arginfo_class_Gtk4_GtkFontDialogButton_set_level, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialogButton, set_use_font, arginfo_class_Gtk4_GtkFontDialogButton_set_use_font, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkFontDialogButton, set_use_size, arginfo_class_Gtk4_GtkFontDialogButton_set_use_size, ZEND_ACC_PUBLIC)
@@ -11957,6 +11982,7 @@ static const zend_function_entry class_Gtk4_GtkTextIter_methods[] = {
 	ZEND_ME(Gtk4_GtkTextIter, get_char, arginfo_class_Gtk4_GtkTextIter_get_char, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextIter, get_chars_in_line, arginfo_class_Gtk4_GtkTextIter_get_chars_in_line, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextIter, get_child_anchor, arginfo_class_Gtk4_GtkTextIter_get_child_anchor, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GtkTextIter, get_language, arginfo_class_Gtk4_GtkTextIter_get_language, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextIter, get_line, arginfo_class_Gtk4_GtkTextIter_get_line, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextIter, get_line_index, arginfo_class_Gtk4_GtkTextIter_get_line_index, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkTextIter, get_line_offset, arginfo_class_Gtk4_GtkTextIter_get_line_offset, ZEND_ACC_PUBLIC)

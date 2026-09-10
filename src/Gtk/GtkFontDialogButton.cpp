@@ -81,6 +81,19 @@ ZEND_METHOD(Gtk4_GtkFontDialogButton, get_font_features) {
 }
 
 /**
+ * Gtk4\GtkFontDialogButton::get_language(): ?PangoLanguage
+ *
+ * Returns the language that is used for font features.
+ */
+ZEND_METHOD(Gtk4_GtkFontDialogButton, get_language) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkFontDialogButton *self = PHPGTK_SELF(GtkFontDialogButton, GTK_TYPE_FONT_DIALOG_BUTTON);
+  PangoLanguage *phpgtk_ret = gtk_font_dialog_button_get_language(self);
+  wrap_boxed(PANGO_TYPE_LANGUAGE, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) g_boxed_free(PANGO_TYPE_LANGUAGE, phpgtk_ret);
+}
+
+/**
  * Gtk4\GtkFontDialogButton::get_level(): GtkFontLevel
  *
  * Returns the level of detail at which this dialog lets the user select fonts.
@@ -160,6 +173,25 @@ ZEND_METHOD(Gtk4_GtkFontDialogButton, set_font_features) {
   if (font_features != nullptr && !phpgtk::check_utf8(font_features, 1)) RETURN_THROWS();
   gtk_font_dialog_button_set_font_features(
       self, font_features != nullptr ? ZSTR_VAL(font_features) : nullptr);
+}
+
+/**
+ * Gtk4\GtkFontDialogButton::set_language(?PangoLanguage $language): void
+ *
+ * Sets the language to use for font features.
+ */
+ZEND_METHOD(Gtk4_GtkFontDialogButton, set_language) {
+  zval *language = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(language, boxed_class_for_type(PANGO_TYPE_LANGUAGE)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkFontDialogButton *self = PHPGTK_SELF(GtkFontDialogButton, GTK_TYPE_FONT_DIALOG_BUTTON);
+  gpointer language_b = nullptr;
+  if (language != nullptr) {
+    language_b = unwrap_boxed(language, PANGO_TYPE_LANGUAGE);
+    if (language_b == nullptr) RETURN_THROWS();
+  }
+  gtk_font_dialog_button_set_language(self, static_cast<PangoLanguage *>(language_b));
 }
 
 /**

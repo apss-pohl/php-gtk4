@@ -253,6 +253,8 @@
   phpgtk::register_class("PangoContext", ce_PangoContext, PANGO_TYPE_CONTEXT);
   zend_class_entry *ce_PangoFontDescription = register_class_Gtk4_PangoFontDescription();
   phpgtk::register_PangoFontDescription(ce_PangoFontDescription);
+  zend_class_entry *ce_PangoLanguage = register_class_Gtk4_PangoLanguage();
+  phpgtk::register_PangoLanguage(ce_PangoLanguage);
   zend_class_entry *ce_PangoLayout = register_class_Gtk4_PangoLayout(ce_GObject);
   phpgtk::register_class("PangoLayout", ce_PangoLayout, PANGO_TYPE_LAYOUT);
   zend_class_entry *ce_PangoTabArray = register_class_Gtk4_PangoTabArray();

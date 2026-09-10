@@ -487,6 +487,10 @@ Pango.AttrList
 Pango.Layout
 Pango.Context
 Pango.FontMap
+# Opaque, boxed, with a GType of its own (pango_language_get_type) - it was on the "leaves that
+# cannot be bound" list next to Pango.Font by mistake. A PangoContext has one and a
+# GtkFontDialogButton takes one.
+Pango.Language
 
 # The key file GTK's print settings, page setup and paper size load from and save to.
 GLib.KeyFile
