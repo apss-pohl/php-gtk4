@@ -25,17 +25,13 @@ history; an item leaves this file when it is done or decided against, it is not 
   of `phpize`/`php-config` at it, build, and run PHPUnit with `-n -d extension_dir=...` plus
   dom/mbstring/tokenizer/xml/xmlwriter - `-n` alone leaves the ide-stub subprocess without
   tokenizer and fails `StubsTest` for reasons that have nothing to do with the crash.
-- **What the Windows job reports that GTK 4.14 never shows** - the sweep complaints are pinned
-  now, as `optional` lines in `tests/robustness-criticals.txt` (`GtkWidget::measure`,
-  `GtkWidget::allocate`, `GdkDisplay::translate_key`): that marker says the complaint follows the
-  environment rather than the value, which is the honest shape for a message only a GTK built
-  with `G_ENABLE_DEBUG` / `G_ENABLE_CONSISTENCY_CHECKS` emits. It replaces the plan of a `gtk>=`
-  condition plus an environmental filter, which could not have expressed either message.
-  What is still not understood, only made portable: `DragDropTest` sees a `GtkTextBuffer` in the
-  content formats where Linux sees `['string']` (the test asserts containment now), and Windows
-  gdk-pixbuf ships exactly five loaders where the count assertion wanted more (it names `png` and
-  `jpeg` instead). Reproduce without Windows: Arch's `gtk4` package is 4.22.4, and a
-  `meson --buildtype=debugoptimized` build turns the assertions and consistency checks back on.
+- **Two Windows-only behaviours nobody has explained**, both made portable rather than
+  understood: `DragDropTest` finds a `GtkTextBuffer` among the content formats where Linux finds
+  `['string']` (the test asserts containment), and gvsbuild's gdk-pixbuf ships exactly five loaders
+  where a count assertion wanted more (it names `png` and `jpeg`). The sweep complaints that used
+  to sit here are pinned as `optional` lines and need no further work. Reproduce without Windows:
+  Arch's `gtk4` is 4.22.4, and `meson --buildtype=debugoptimized` turns the assertions and
+  consistency checks back on.
 
 - **`gtk_entry_set_extra_menu(entry, NULL)` is a GTK bug worth reporting upstream.** 4.20 rewrote
   it to `g_object_ref()` the model without the NULL check its `(nullable)` annotation promises
@@ -50,23 +46,18 @@ history; an item leaves this file when it is done or decided against, it is not 
   `GLib::invoke_on_main(callable)` (serialise the callable or require a `parallel`-style channel;
   `g_main_context_invoke` on the GUI context, the callable released on that thread). Needs a
   concrete consumer (`ext-parallel` or PHP-native threads) before designing the API.
-- **Branch protection for `main`**: unblocked - the repository is public since 2026-09-09, so the
-  ruleset in `.github/ruleset-main.json` can go up:
-  `gh api -X POST repos/apss-pohl/php-gtk4/rulesets --input .github/ruleset-main.json`
-  (drop `required_approving_review_count` to 0 while there is a single maintainer). Still open with
-  it: the free security features a public repository gets - private vulnerability reporting (the
-  channel `SECURITY.md` sends people to), secret scanning and its push protection - are all off.
-
 - **What the generator still cannot shape**, in the order of how many members each blocks
   (`gen/report.md`; the count moves as classes are bound). None of these is a missing *type* -
   the one-class-away list is empty - they are shapes the emitters do not map yet:
   - *a C array as an input parameter*, for the element types that are not scalars or strings:
     `GApplication::open()` wants an array of `GFile` (unbound), `GActionMap::add_action_entries()`
     an array of C structs. The scalar and string cases are mapped.
-  - *a caller-allocated buffer out* (5): `GInputStream::read()` and friends. `read_bytes()`
-    already answers with a string, so these may be better skipped than bound.
-  - *`GType` as a value* (12), *`GObject.Value`* (7), *`GLib.HashTable`* (6), *`GLib.List`* and
-    *`GLib.PtrArray`* where the element type is unbound, *`gpointer`* (4, unsupported by design).
+  - *a caller-allocated buffer out*: `GInputStream::read()` and friends. `read_bytes()` already
+    answers with a string, so these may be better skipped than bound.
+  - *`GType` as a value* (9), *`GObject.Value`* (6), *`GLib.HashTable`* (6), *`GLib.List`* (6) and
+    *`GLib.PtrArray`* where the element type is unbound, *`gpointer`* (7, unsupported by design).
+    Counted from `gen/report.md` on 2026-09-10; the array-parameter case above is the big one at
+    49 members.
   - Pango's own leaves, now that the cluster is bound: `Pango.Font` and `Pango.FontFamily`
     (abstract, backend-owned - the same shape as `PangoFontMap`), `Pango.Language` and
     `Pango.Rectangle` (~19 members between them).
@@ -85,7 +76,9 @@ history; an item leaves this file when it is done or decided against, it is not 
 - `GtkInstances::UNREACHABLE` is guarded dynamically (`TypeDeclarationTest` fails if any getter
   hands out a class it calls unbuildable), but only through arg-less getters on classes the
   factory can build. A class reachable *only* through a method with arguments would keep a stale
-  excuse.
+  excuse - and one did: `GskColorMatrixNode` was excused as needing types that had been bound for
+  waves, until it was built by hand. A static check that every excuse is still true would have
+  caught it.
 - `GtkFontDialogButton::set_font_desc()` logs a GLib CRITICAL on GTK < 4.18 when the description
   names a family the font map does not list: `update_font_data()` walks
   `g_list_model_get_n_items(self->font_family)` with `font_family` still NULL
@@ -95,11 +88,7 @@ history; an item leaves this file when it is done or decided against, it is not 
   reaches it.
 - `GskTextNode` has no constructor until `Pango.Font` is bound (`get_font` needs it too, and
   `get_glyphs` returns an array plus out parameters); `GdkPixbufAnimationIter::advance()` needs a
-  `GLib.TimeVal`, which is deprecated in GLib and will not be. `GskColorMatrixNode` was on this
-  list too and is off it: graphene arrived, its constructor is public, and it is built by
-  `GtkInstances` and tested in `RenderNodeTest` now. That excuse had outlived its reason by
-  several waves - which is exactly the failure the `GtkInstances::UNREACHABLE` note above
-  predicts, so read that one as observed rather than theoretical.
+  `GLib.TimeVal`, which is deprecated in GLib and will not arrive.
 
 ## Keep (verified good, do not "clean up")
 
