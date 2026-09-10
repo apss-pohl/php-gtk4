@@ -22,7 +22,7 @@ use Gtk4\PangoWeight;
  * Wave 5 (gen/README.md): GTK 4.10's async dialogs. What a headless suite can hold them to
  * is everything up to the point a human would click - the configuration, the values that go
  * in and come back out, and the error paths - plus the two mappings the wave introduced:
- * a GFile is a path string (README.md "Design") and a font is a PangoFontDescription.
+ * a GFile is a path string (docs/DESIGN.md) and a font is a PangoFontDescription.
  *
  * The `choose`/`open` round trip itself needs a real dialog and belongs to the example pages.
  */

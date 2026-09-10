@@ -3,7 +3,7 @@
 /**
  * What the generator reads and what it considers in scope.
  *
- * Part of gen/gir.php, the GObject-Introspection generator (README.md "Design");
+ * Part of gen/gir.php, the GObject-Introspection generator (docs/DESIGN.md);
  * gen/README.md describes the flow. Split out of the 3 200-line original on 2026-08-30.
  */
 

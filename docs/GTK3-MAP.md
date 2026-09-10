@@ -243,7 +243,7 @@ everything else in this document is open work.
 | `GtkSourceView`, `GtkSourceBuffer`, `GtkSourceLanguage`, `GtkSourceLanguageManager` | 48 | GtkSourceView 5 | 🧩 | Separate library; not planned for the first milestones. |
 | `GladeApp`, `GladeDesignView`, `GladeEditor`, `GladePalette`, `GladeProject`, `GladeWidget` | 33 | — | 🧩 | libgladeui has no GTK 4 release; drop. |
 | `WnckScreen`, `WnckWindow`, `WnckClassGroup` | 20 | — | ⛔ | libwnck is X11-only and not part of the GTK 4 story. |
-| `GtkosxApplication` | 19 | — | ⛔ | macOS integration; Linux is the primary target (README.md "Design"). |
+| `GtkosxApplication` | 19 | — | ⛔ | macOS integration; Linux is the primary target (docs/DESIGN.md). |
 | `Cef` | 0 | — | ⛔ | Empty in php-gtk3. |
 
 ---

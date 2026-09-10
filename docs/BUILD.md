@@ -165,7 +165,7 @@ one. Consequences:
 **Status: builds through PHP's own Windows build system** — `config.w32` is the counterpart of
 `config.m4`, driven by the PHP SDK (`phpize.bat` → `configure` → `nmake`), with GTK 4 from
 [gvsbuild](https://github.com/wingtk/gvsbuild). The output is `php_gtk4.dll`. There is no IDE
-project and there will be none (php-gtk3 had one; see README.md "Design" and `docs/TODO.md`). CI builds and
+project and there will be none (php-gtk3 had one; see docs/DESIGN.md and `docs/TODO.md`). CI builds and
 tests it on `windows-2022` for PHP 8.4 and 8.5, NTS and ZTS (`.github/workflows/windows.yml` — the
 same matrix as Linux), and every release ships one
 `php_gtk4-<ver>-php<X.Y>-nts-vs17-x64.dll` per supported PHP — TS builds from source, as on Linux.

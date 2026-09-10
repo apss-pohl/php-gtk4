@@ -5,8 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 php-gtk4 is a PHP extension written in C++20 against the **native Zend API** (no PHP-CPP — see
-README.md "Design" for why it was dropped), built with the standard `phpize`/`config.m4` flow.
-It is the successor to [php-gtk3](https://github.com/scorninpc/php-gtk3); README.md "Design" records the
+docs/DESIGN.md for why it was dropped), built with the standard `phpize`/`config.m4` flow.
+It is the successor to [php-gtk3](https://github.com/scorninpc/php-gtk3); docs/DESIGN.md records the
 decisions and what is deliberately *not* carried over, `docs/TODO.md` what is open. Read both before changing
 anything under `src/core/`.
 
@@ -540,7 +540,7 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   `vfunc_<name>()` methods override class-struct slots through generated thunks, the generated
   native `vfunc_<name>()` on the owning class is what `parent::` chains to; abstract GTK classes
   have a *public* constructor that refuses the native class and works on a subclass —
-  README.md "Design"), `fundamental` (registry-driven handles for refcounted non-GObject types: `GParamSpec`,
+  docs/DESIGN.md), `fundamental` (registry-driven handles for refcounted non-GObject types: `GParamSpec`,
   `CairoContext` (cairo_t via cairo-gobject; marshal's boxed arm falls back to this registry),
   `GtkCssSection`, `GdkEvent` + subclasses, `GdkEventSequence` as a ref-less identity; `new X()` on
   the hand-written ones throws; every GIR class marked `glib:fundamental` - `GskRenderNode` and its
@@ -657,7 +657,7 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   does for readonly/uncloneable. Shared
   helpers: `PHPGTK_RETURN_STRING_OR_NULL(expr)` for nullable C strings (`php_gtk4.h`),
   the generated `?GtkWidget` parameter handling for everything else.
-- **Naming is snake_case, final** (decided 2026-08-25, README.md "Design"): methods mirror the GTK C API
+- **Naming is snake_case, final** (decided 2026-08-25, docs/DESIGN.md): methods mirror the GTK C API
   with the type prefix stripped (`gtk_window_set_title` → `set_title`), properties keep GTK's names
   with underscores (`$win->default_width`). Never add camelCase aliases. Two deliberate exceptions:
   `GError::getDomain()` sits next to the inherited `getCode()`/`getMessage()`, and enum *cases* are

@@ -7,7 +7,7 @@ body:
       value: |
         php-gtk4 is generated wave by wave from GObject-Introspection over the classes in
         [docs/GTK3-MAP.md](https://github.com/apss-pohl/php-gtk4/blob/main/docs/GTK3-MAP.md); the plan and its order live in
-        [README.md "Design"](https://github.com/apss-pohl/php-gtk4/blob/main/README.md#design) and [docs/TODO.md](https://github.com/apss-pohl/php-gtk4/blob/main/docs/TODO.md).
+        [docs/DESIGN.md](https://github.com/apss-pohl/php-gtk4/blob/main/README.md#design) and [docs/TODO.md](https://github.com/apss-pohl/php-gtk4/blob/main/docs/TODO.md).
         Checking those first tells you whether something is unbound on purpose, planned for a later
         wave, or genuinely missing.
   - type: checkboxes

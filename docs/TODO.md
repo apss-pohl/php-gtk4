@@ -1,6 +1,6 @@
 # TODO
 
-What is still open. Decisions live in README.md "Design", what shipped in `CHANGELOG.md` and the git
+What is still open. Decisions live in docs/DESIGN.md, what shipped in `CHANGELOG.md` and the git
 history; an item leaves this file when it is done or decided against, it is not ticked.
 
 ## Open work

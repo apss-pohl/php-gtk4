@@ -72,7 +72,7 @@ final class GeneratorTypeMapTest extends TestCase
         yield 'gint' => ['gint', false, 'int'];
         yield 'guint64' => ['guint64', false, 'int'];
         yield 'none' => ['none', false, 'void'];
-        // Values, not handles (README.md "Design"): a variant is a PHP value, bytes and a GType
+        // Values, not handles (docs/DESIGN.md): a variant is a PHP value, bytes and a GType
         // are strings, and since the dialogs wave a GFile is the path it points at.
         yield 'GVariant' => ['GLib.Variant', false, 'mixed'];
         yield 'GBytes' => ['GLib.Bytes', false, 'string'];

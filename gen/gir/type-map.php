@@ -9,7 +9,7 @@
  * GIR model and which types are in scope; whether to emit a member at all, and writing anything
  * down, stays with the generator (gen/gir.php).
  *
- * Part of gen/gir.php (README.md "Design"); gen/README.md describes the flow.
+ * Part of gen/gir.php (docs/DESIGN.md); gen/README.md describes the flow.
  * Split out of the 3 200-line original on 2026-08-30.
  */
 
@@ -550,7 +550,7 @@ final class TypeMap
                 return 'gpointer parameter';
             }
             if ($p->direction === 'out') {
-                // Outs are returned, never filled through a by-reference parameter (README.md "Design");
+                // Outs are returned, never filled through a by-reference parameter (docs/DESIGN.md);
                 // a caller-allocated out (gtk_widget_get_color(&rgba)) is a stack struct here.
                 $o = $this->outMapping($p);
                 if ($o === null) {
@@ -885,7 +885,7 @@ final class TypeMap
             ]);
         }
         // A GFile is a path or a URI and nothing else a PHP program can use: it is mapped to a
-        // string, like GBytes and GVariant are mapped to values (README.md "Design"). The GIO file
+        // string, like GBytes and GVariant are mapped to values (docs/DESIGN.md). The GIO file
         // stack (streams, GFileInfo) is not bound and a handle would only carry it around.
         // g_file_new_for_commandline_arg() takes both spellings.
         if ($t->name === 'Gio.File') {
@@ -1279,7 +1279,7 @@ final class TypeMap
                         $l[] = '}';
                     }
                     $l[] = $isRoot
-                        ? '// GtkRoot: GTK\'s toplevel list owns the initial reference (see README.md "Design").'
+                        ? '// GtkRoot: GTK\'s toplevel list owns the initial reference (see docs/DESIGN.md).'
                         : '';
                     $l[] = ($isRoot ? 'attach' : 'attach_new') . '(object_from_zval(ZEND_THIS), obj);';
                     return array_values(array_filter($l, fn($s) => $s !== ''));
@@ -1299,7 +1299,7 @@ final class TypeMap
         }
 
         if ($t->name === 'none') {
-            if (count($outs) === 1) {  // one out -> that value (README.md "Design")
+            if (count($outs) === 1) {  // one out -> that value (docs/DESIGN.md)
                 return ['phpType' => $outs[0]['phpType'], 'lines' => fn(string $call) => [
                     "$call;", ...$throwCheck('error != nullptr'), ...$singleOut()]];
             }

@@ -67,7 +67,7 @@ classes automatically and must not be edited for one.
 - `// NOLINTNEXTLINE(check) reason` only for findings inside GLib/Zend macro expansions, never a
   trailing `// NOLINT`. Don't reorder includes.
 - Markdown wraps at 110 columns, emphasis with `*asterisks*`.
-- Read README.md "Design" and `docs/TODO.md` before touching `src/core/`.
+- Read docs/DESIGN.md and `docs/TODO.md` before touching `src/core/`.
 
 ## Running the checks
 

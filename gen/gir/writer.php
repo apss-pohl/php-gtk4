@@ -8,7 +8,7 @@
  * content did not change is not touched at all (mtimes are what `make` reads -
  * GeneratorIdempotenceTest).
  *
- * Part of gen/gir.php (README.md "Design"); gen/README.md describes the flow.
+ * Part of gen/gir.php (docs/DESIGN.md); gen/README.md describes the flow.
  */
 
 declare(strict_types=1);

@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * The binding exposes the modern GTK 4 API only (README.md "Design", decided 2026-08-27): every
+ * The binding exposes the modern GTK 4 API only (docs/DESIGN.md, decided 2026-08-27): every
  * member GIR marks deprecated is skipped by the generator, and nothing carries #[\Deprecated].
  * This holds the extension to that against the installed .gir files - a hand-written override or
  * a promoted class cannot smuggle a deprecated member back in - and checks the policy has teeth

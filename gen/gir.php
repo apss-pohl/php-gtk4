@@ -1,7 +1,7 @@
 <?php
 
 /**
- * gir.php - the GObject-Introspection generator (README.md "Design").
+ * gir.php - the GObject-Introspection generator (docs/DESIGN.md).
  *
  * Reads the installed GIR files, takes the classes named in gen/allowlist.txt
  * (plus their parents, interfaces and the enums their kept signatures use),
