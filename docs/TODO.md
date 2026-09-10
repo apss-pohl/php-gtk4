@@ -5,11 +5,15 @@ history; an item leaves this file when it is done or decided against, it is not 
 
 ## Open work
 
-- **`gtk_entry_set_extra_menu(entry, NULL)` is a GTK bug worth reporting upstream.** 4.20 rewrote
-  it to `g_object_ref()` the model without the NULL check its `(nullable)` annotation promises
-  (`g_object_ref: assertion 'G_IS_OBJECT (object)' failed`); 4.14/4.16/4.18 delegate to
-  `gtk_text_set_extra_menu()` and are quiet, and `main` still has it. The end state is right, so
-  it is only a spurious complaint - pinned for `gtk>=4.20`, nothing to fix here.
+- **`gtk_entry_set_extra_menu(entry, NULL)` is a GTK bug to report upstream** - the report is
+  written, filing it needs a GitLab account. 4.20 rewrote the setter to `g_object_ref()` the model
+  without the NULL check its `(nullable)` annotation promises (`g_object_ref: assertion
+  'G_IS_OBJECT (object)' failed`); 4.14/4.16/4.18 delegate to `gtk_text_set_extra_menu()` and are
+  quiet, and `main` still has it (verified 2026-09-10, commit `4cf5d349e236`, MR !8774 - the model
+  had to be kept so `update_extra_menu()` can join it with the icon-action section, and the NULL
+  tolerance was lost in the move; `gtk_text_set_extra_menu()` and `gtk_text_view_set_extra_menu()`
+  use `g_set_object()` and are unaffected). The end state is right, so it is only a spurious
+  complaint - pinned for `gtk>=4.20` in `tests/robustness-criticals.txt`, nothing to fix here.
 - **A PHP-driven print preview.** `GtkPrintOperation` does not implement
   `GtkPrintOperationPreview` in PHP: its slots (`render_page`, `end_preview`, `is_selected`) are only
   valid inside the `preview` signal, where GTK keeps the state private, and dereference NULL
@@ -21,18 +25,15 @@ history; an item leaves this file when it is done or decided against, it is not 
 - **What the generator still cannot shape**, in the order of how many members each blocks
   (`gen/report.md`; the count moves as classes are bound). None of these is a missing *type* -
   the one-class-away list is empty - they are shapes the emitters do not map yet:
-  - *a C array as an input parameter*, for the element types that are not scalars or strings:
+  - *a C array as an input parameter* (31), for the element types that are not scalars or strings:
     `GApplication::open()` wants an array of `GFile` (unbound), `GActionMap::add_action_entries()`
     an array of C structs. The scalar and string cases are mapped.
-  - *a caller-allocated buffer out*: `GInputStream::read()` and friends. `read_bytes()` already
-    answers with a string, so these may be better skipped than bound.
-  - *`GType` as a value* (9), *`GObject.Value`* (6), *`GLib.HashTable`* (6), *`GLib.List`* (6) and
-    *`GLib.PtrArray`* where the element type is unbound, *`gpointer`* (7, unsupported by design).
-    Counted from `gen/report.md` on 2026-09-10; the array-parameter case above is the big one at
-    49 members.
-  - Pango's own leaves, now that the cluster is bound: `Pango.Font` and `Pango.FontFamily`
-    (abstract, backend-owned - the same shape as `PangoFontMap`), `Pango.Language` and
-    `Pango.Rectangle` (~19 members between them).
+  - *`gpointer`* (25, unsupported by design), *`GType` as a value* (19), *`GObject.Value`* (9),
+    *`GLib.HashTable`* (6), *`GLib.List`* (6) and *`GLib.PtrArray`* where the element type is
+    unbound (5). Counted on 2026-09-10 over the member lines of `gen/report.md` - methods, vfuncs
+    and properties together - so the same grep reproduces them.
+  - Pango's own leaves, now that the cluster is bound: `Pango.Font` and `Pango.FontFamily`,
+    abstract and backend-owned - the same shape as `PangoFontMap`.
 
 ## Smaller notes
 
@@ -45,12 +46,6 @@ history; an item leaves this file when it is done or decided against, it is not 
   sibling through the eight composite widgets that have one, dropping everything that holds the
   parent and calling every arg-less getter on the orphan is clean under ASan+UBSan. Re-measure
   before adding the owner-expression form `BOXED_OWNERS` has.
-- `GtkInstances::UNREACHABLE` is guarded dynamically (`TypeDeclarationTest` fails if any getter
-  hands out a class it calls unbuildable), but only through arg-less getters on classes the
-  factory can build. A class reachable *only* through a method with arguments would keep a stale
-  excuse - and one did: `GskColorMatrixNode` was excused as needing types that had been bound for
-  waves, until it was built by hand. A static check that every excuse is still true would have
-  caught it.
 - `GtkFontDialogButton::set_font_desc()` logs a GLib CRITICAL on GTK < 4.18 when the description
   names a family the font map does not list: `update_font_data()` walks
   `g_list_model_get_n_items(self->font_family)` with `font_family` still NULL

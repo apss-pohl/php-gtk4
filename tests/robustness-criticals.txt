@@ -45,6 +45,8 @@ Gtk4\GtkCssProvider::load_from_string#arguments
 # check the (nullable) annotation promises - `g_object_ref: assertion 'G_IS_OBJECT (object)'
 # failed` for the null the sweep passes. Still there in main; the end state is right, only
 # the complaint is spurious. 4.14/4.16/4.18 delegate to gtk_text_set_extra_menu() and are quiet.
+# Introduced by gtk 4cf5d349e236 (MR !8774), which had to keep the model to join it with the
+# icon-action section; the sibling setters still use g_set_object(). docs/TODO.md tracks the report.
 Gtk4\GtkEntry::set_extra_menu#arguments   gtk>=4.20
 Gtk4\GtkSnapshot::push_blur#arguments
 Gtk4\GtkSnapshot::push_cross_fade#arguments
