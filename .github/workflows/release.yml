@@ -278,9 +278,15 @@ jobs:
           pct=$(grep -oE '^lines: [0-9.]+%' coverage-stage.log | tail -1 | tr -dc '0-9.') || true
           [[ -n "$pct" ]] || { echo "::warning::no line coverage in the log, badge left alone"; exit 0; }
           floor=${COVERAGE_MIN_LINES:-80}
-          colour=red
-          awk "BEGIN { exit !($pct >= $floor) }" && colour=brightgreen \
-            || awk "BEGIN { exit !($pct >= $floor - 5) }" && colour=yellow || true
+          # if/elif, not a && || chain: `a && b || c && d` runs `c` whenever `b`'s status lets
+          # it, so 81.3% against a floor of 80 came out yellow instead of green.
+          if awk "BEGIN { exit !($pct >= $floor) }"; then
+            colour=brightgreen
+          elif awk "BEGIN { exit !($pct >= $floor - 5) }"; then
+            colour=yellow
+          else
+            colour=red
+          fi
           printf '{"schemaVersion":1,"label":"coverage","message":"%s%%","color":"%s"}\n' "$pct" "$colour" > /tmp/coverage.json
           rm -rf /tmp/badges && mkdir /tmp/badges && cd /tmp/badges
           git init -q && git config user.name github-actions && git config user.email github-actions@github.com
