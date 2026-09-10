@@ -52,7 +52,6 @@ final class GtkInstances
         // Two render nodes whose constructor takes what the binding does not speak.
         \Gtk4\GskTextNode::class => 'needs a PangoFont and glyph string (Pango is not bound)',
         \Gtk4\GskSubsurfaceNode::class => 'needs a GdkSubsurface, a gpointer GDK keeps private',
-        \Gtk4\GskColorMatrixNode::class => 'needs a graphene matrix and vec4 (not bound)',
         // An animation iterator needs a GTimeVal start time (GLib.TimeVal is not bound).
         \Gtk4\GdkPixbufAnimationIter::class => 'GdkPixbufAnimation::get_iter() takes a GTimeVal, which is not bound',
         // Printing hands these out while a print job runs and nowhere else.
@@ -159,6 +158,11 @@ final class GtkInstances
             \Gtk4\GskContainerNode::class => new \Gtk4\GskContainerNode([self::colorNode(), self::colorNode()]),
             \Gtk4\GskTransformNode::class => new \Gtk4\GskTransformNode(self::colorNode(), new \Gtk4\GskTransform()),
             \Gtk4\GskDebugNode::class => new \Gtk4\GskDebugNode(self::colorNode(), 'debug'),
+            \Gtk4\GskColorMatrixNode::class => new \Gtk4\GskColorMatrixNode(
+                self::colorNode(),
+                self::colorMatrix(),
+                \Gtk4\GrapheneVec4::zero(),
+            ),
             \Gtk4\GskCairoNode::class => new \Gtk4\GskCairoNode(self::rect()),
             \Gtk4\GskCrossFadeNode::class => new \Gtk4\GskCrossFadeNode(self::colorNode(), self::colorNode(), 0.5),
             \Gtk4\GskBlendNode::class => new \Gtk4\GskBlendNode(
@@ -482,6 +486,14 @@ final class GtkInstances
     private static function rgba(): \Gtk4\GdkRGBA
     {
         return new \Gtk4\GdkRGBA('red');
+    }
+
+    /** The identity colour matrix: a colour-matrix node that changes nothing. */
+    private static function colorMatrix(): \Gtk4\GrapheneMatrix
+    {
+        $matrix = \Gtk4\GrapheneMatrix::alloc();
+        $matrix->init_identity();
+        return $matrix;
     }
 
     /** The plainest render node: a red square. */

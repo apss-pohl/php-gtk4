@@ -6,13 +6,16 @@ namespace PhpGtk4\Tests;
 
 use Gtk4\GdkRGBA;
 use Gtk4\GdkTexture;
+use Gtk4\GrapheneMatrix;
 use Gtk4\GraphenePoint;
 use Gtk4\GrapheneRect;
+use Gtk4\GrapheneVec4;
 use Gtk4\GskBlendMode;
 use Gtk4\GskBlendNode;
 use Gtk4\GskBorderNode;
 use Gtk4\GskCairoNode;
 use Gtk4\GskCairoRenderer;
+use Gtk4\GskColorMatrixNode;
 use Gtk4\GskColorNode;
 use Gtk4\GskConicGradientNode;
 use Gtk4\GskContainerNode;
@@ -248,6 +251,34 @@ final class RenderNodeTest extends GtkTestCase
         $cr->paint();
         unset($cr);   // drawing lands in the node's (recording) surface when the context is released
         self::assertSame(8.0, $cairo->get_bounds()->get_width());
+    }
+
+    /**
+     * The colour-matrix node was excused as "needs a graphene matrix and vec4 (not bound)" long
+     * after both were bound and its constructor became public - the stale excuse the smaller notes
+     * in docs/TODO.md warn about. It builds, keeps what it was given, and renders.
+     */
+    public function testAColorMatrixNodeKeepsItsMatrixAndOffset(): void
+    {
+        $matrix = GrapheneMatrix::alloc();
+        $matrix->init_scale(1.0, 0.5, 0.25);
+        $offset = GrapheneVec4::alloc();
+        $offset->init(0.1, 0.0, 0.0, 0.0);
+
+        $child = self::red();
+        $node = new GskColorMatrixNode($child, $matrix, $offset);
+
+        self::assertSame($child, $node->get_child());
+        self::assertSame(0.5, $node->get_color_matrix()->get_y_scale());
+        self::assertEqualsWithDelta(0.1, $node->get_color_offset()->get_x(), 1.0e-6);
+        self::assertSame($child->get_bounds()->get_width(), $node->get_bounds()->get_width());
+
+        // and it survives the renderer, which is what a node is for
+        $renderer = new GskCairoRenderer();
+        $renderer->realize(null);
+        $texture = $renderer->render_texture($node, null);
+        self::assertGreaterThan(0, $texture->get_width());
+        $renderer->unrealize();
     }
 
     public function testASnapshotBecomesANodeTree(): void

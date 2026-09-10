@@ -93,9 +93,13 @@ history; an item leaves this file when it is done or decided against, it is not 
   floor and one above it - complain). Nothing to guard here, any family string is legitimate;
   `examples/GtkFontDialogButton.php` uses "Sans", which Pango always lists. Pin it if a sweep ever
   reaches it.
-- `GskTextNode` (needs a Pango font and glyph string) and `GskColorMatrixNode` (a graphene matrix
-  and vec4) have no constructor until those types are bound; `GdkPixbufAnimationIter` needs a
-  `GTimeVal`, which is not.
+- `GskTextNode` has no constructor until `Pango.Font` is bound (`get_font` needs it too, and
+  `get_glyphs` returns an array plus out parameters); `GdkPixbufAnimationIter::advance()` needs a
+  `GLib.TimeVal`, which is deprecated in GLib and will not be. `GskColorMatrixNode` was on this
+  list too and is off it: graphene arrived, its constructor is public, and it is built by
+  `GtkInstances` and tested in `RenderNodeTest` now. That excuse had outlived its reason by
+  several waves - which is exactly the failure the `GtkInstances::UNREACHABLE` note above
+  predicts, so read that one as observed rather than theoretical.
 
 ## Keep (verified good, do not "clean up")
 
