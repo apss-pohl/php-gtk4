@@ -5,7 +5,42 @@ versions follow [SemVer](https://semver.org/). The version lives in `VERSION` at
 mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./ci.sh --only=version`
 — see docs/RELEASING.md.
 
-## [Unreleased]
+## [0.3.0] - 2026-09-10
+
+Housekeeping. The `Gtk4\` API is unchanged since 0.1.1 - a binary built from this tag behaves
+exactly like one built from that one - and everything below is about the machinery that ships it.
+It is a release rather than another dev build because the stubs package is published from a real
+release only: this is the first tag that pushes `php-gtk4/stubs` on its own, and the first that
+`pie install php-gtk4/php-gtk4` and `composer require --dev php-gtk4/stubs` resolve from Packagist,
+where both packages are now registered.
+
+### Changed
+
+- **The gate runs on every push to `main`, published or not.** `verify` used to hang off whether
+  there was something to publish, and `coverage` sat behind it, so a `main` parked on an
+  already-released `VERSION` - where every real release leaves it until the follow-up bump - ran no
+  tests, no coverage and no badge, under a green tick. Whether there is an artifact to upload is a
+  question about the artifact; the gate is about the code. Only `build`, `build-windows`,
+  `release-gate` and `publish` ask about publishing now, and `WorkflowsTest` fails if either gate
+  job grows the condition back.
+
+- **README badges that can go red.** A `badge.svg?branch=main` shows the newest run of that workflow
+  *on main*, so the two badges for pull-request-only workflows had been frozen at "passing" since
+  2026-08-27 while the release run was failing. The README now carries the two workflows that do run
+  on main - the release gate and the C++ lint - plus a coverage badge published by CI itself on
+  every merge and a latest-release badge. `WorkflowsTest` rejects a `?branch=main` badge whose
+  workflow has no push trigger for main.
+
+### Fixed
+
+- **A WebKit cookie test that failed about one run in ten** (twice on CI, once locally):
+  `add_cookie_finish()` reports that the write was *accepted*, not that the store took it, and the
+  store lives in a network process the ephemeral session starts lazily - so a cookie written before
+  that process first answers was lost silently. The test wakes the store with a read before writing
+  and waits for the count it expects instead of taking the first answer.
+
+- The coverage badge's colour, which came out yellow above the floor because a `&&`/`||` chain does
+  not mean what it reads like in a shell.
 
 ## [0.1.1] - 2026-09-09
 
