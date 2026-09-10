@@ -3222,6 +3222,7 @@ class GtkFlowBoxChild extends GtkWidget
  *
  * @property ?GtkFilter $filter
  * @property ?PangoFontMap $font_map
+ * @property ?PangoLanguage $language
  * @property bool $modal
  * @property ?string $title
  */
@@ -3229,6 +3230,24 @@ class GtkFontDialog extends GObject
 {
     /** Creates a new `GtkFontDialog` object. */
     public function __construct() {}
+
+    /**
+     * This function initiates a font selection operation by presenting a dialog to the user for
+     * selecting a font face (i.e. a font family and style, but not a specific font size).
+     */
+    public function choose_face(?GtkWindow $parent, ?PangoFontFace $initial_value, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes the `choose_face` call and returns the resulting font face. */
+    public function choose_face_finish(GAsyncResult $result): ?PangoFontFace {}
+
+    /**
+     * This function initiates a font selection operation by presenting a dialog to the user for
+     * selecting a font family.
+     */
+    public function choose_family(?GtkWindow $parent, ?PangoFontFamily $initial_value, ?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes the `choose_family` call and returns the resulting family. */
+    public function choose_family_finish(GAsyncResult $result): ?PangoFontFamily {}
 
     /**
      * This function initiates a font selection operation by presenting a dialog to the user for
@@ -3251,6 +3270,9 @@ class GtkFontDialog extends GObject
     /** Returns the fontmap from which fonts are selected, or `NULL` for the default fontmap. */
     public function get_font_map(): ?PangoFontMap {}
 
+    /** Returns the language for which font features are applied. */
+    public function get_language(): ?PangoLanguage {}
+
     /**
      * Returns whether the font chooser dialog blocks interaction with the parent window while it
      * is presented.
@@ -3265,6 +3287,9 @@ class GtkFontDialog extends GObject
 
     /** Sets the fontmap from which fonts are selected. */
     public function set_font_map(?PangoFontMap $fontmap): void {}
+
+    /** Sets the language for which font features are applied. */
+    public function set_language(PangoLanguage $language): void {}
 
     /**
      * Sets whether the font chooser dialog blocks interaction with the parent window while it is
@@ -3283,6 +3308,7 @@ class GtkFontDialog extends GObject
  * @property ?GtkFontDialog $dialog
  * @property ?PangoFontDescription $font_desc
  * @property ?string $font_features
+ * @property ?PangoLanguage $language
  * @property GtkFontLevel $level
  * @property bool $use_font
  * @property bool $use_size
@@ -3300,6 +3326,9 @@ class GtkFontDialogButton extends GtkWidget
 
     /** Returns the font features of the button. */
     public function get_font_features(): ?string {}
+
+    /** Returns the language that is used for font features. */
+    public function get_language(): ?PangoLanguage {}
 
     /** Returns the level of detail at which this dialog lets the user select fonts. */
     public function get_level(): GtkFontLevel {}
@@ -3321,6 +3350,9 @@ class GtkFontDialogButton extends GtkWidget
 
     /** Sets the font features of the button. */
     public function set_font_features(?string $font_features): void {}
+
+    /** Sets the language to use for font features. */
+    public function set_language(?PangoLanguage $language): void {}
 
     /** Sets the level of detail at which this dialog lets the user select fonts. */
     public function set_level(GtkFontLevel $level): void {}
@@ -9455,6 +9487,9 @@ final class GtkTextIter
 
     /** If the location at $iter contains a child anchor, the anchor is returned. */
     public function get_child_anchor(): ?GtkTextChildAnchor {}
+
+    /** Returns the language in effect at $iter. */
+    public function get_language(): PangoLanguage {}
 
     /** Returns the line number containing the iterator. */
     public function get_line(): int {}

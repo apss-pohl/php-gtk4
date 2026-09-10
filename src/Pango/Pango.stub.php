@@ -83,11 +83,23 @@ class PangoContext extends GObject
     /** Retrieves the gravity hint for the context. */
     public function get_gravity_hint(): PangoGravityHint {}
 
+    /** Retrieves the global language tag for the context. */
+    public function get_language(): ?PangoLanguage {}
+
+    /** Get overall metric information for a particular font description. */
+    public function get_metrics(?PangoFontDescription $desc, ?PangoLanguage $language): PangoFontMetrics {}
+
     /** Returns whether font rendering with this context should round glyph positions and widths. */
     public function get_round_glyph_positions(): bool {}
 
     /** Returns the current serial number of $context. */
     public function get_serial(): int {}
+
+    /** Loads the font in one of the fontmaps in the context that is the closest match for $desc. */
+    public function load_font(PangoFontDescription $desc): ?PangoFont {}
+
+    /** Load a set of fonts in the context that can be used to render a font matching $desc. */
+    public function load_fontset(PangoFontDescription $desc, PangoLanguage $language): ?PangoFontset {}
 
     /** Sets the base direction for the context. */
     public function set_base_dir(PangoDirection $direction): void {}
@@ -103,6 +115,9 @@ class PangoContext extends GObject
 
     /** Sets the gravity hint for the context. */
     public function set_gravity_hint(PangoGravityHint $hint): void {}
+
+    /** Sets the global language tag for the context. */
+    public function set_language(?PangoLanguage $language): void {}
 
     /**
      * Sets whether font rendering with this context should round glyph positions and widths to
@@ -134,6 +149,53 @@ enum PangoEllipsizeMode: int
     case Start = 1;
     case Middle = 2;
     case End = 3;
+}
+
+/**
+ * A `PangoFont` is used to represent a font in a rendering-system-independent manner.
+ */
+class PangoFont extends GObject
+{
+    /** PangoFont is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Loads data previously created via `serialize`. */
+    public static function deserialize(PangoContext $context, string $bytes): ?PangoFont {}
+
+    /** Returns a description of the font, with font size set in points. */
+    public function describe(): PangoFontDescription {}
+
+    /** Returns a description of the font, with absolute font size set in device units. */
+    public function describe_with_absolute_size(): PangoFontDescription {}
+
+    /** Gets the `PangoFontFace` to which $font belongs. */
+    public function get_face(): PangoFontFace {}
+
+    /** Gets the font map for which the font was created. */
+    public function get_font_map(): ?PangoFontMap {}
+
+    /**
+     * Gets the logical and ink extents of a glyph within a font.
+     *
+     * @return array{PangoRectangle, PangoRectangle}
+     */
+    public function get_glyph_extents(int $glyph): array {}
+
+    /** Gets overall metric information for a font. */
+    public function get_metrics(?PangoLanguage $language): PangoFontMetrics {}
+
+    /** Returns whether the font provides a glyph for this character. */
+    public function has_char(int $wc): bool {}
+
+    /** Serializes the $font in a way that can be uniquely identified. */
+    public function serialize(): string {}
+
+    /**
+     * Native `get_font_map` (FontClass.get_font_map): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_get_font_map()` from an override. Gets the font map for which
+     * the font was created.
+     */
+    public function vfunc_get_font_map(): ?PangoFontMap {}
 }
 
 /**
@@ -249,6 +311,117 @@ final class PangoFontDescription
 }
 
 /**
+ * A `PangoFontFace` is used to represent a group of fonts with the same family, slant, weight, and
+ * width, but varying sizes.
+ */
+class PangoFontFace extends GObject
+{
+    /** PangoFontFace is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Returns a font description that matches the face. */
+    public function describe(): PangoFontDescription {}
+
+    /** Gets a name representing the style of this face. */
+    public function get_face_name(): string {}
+
+    /** Gets the `PangoFontFamily` that $face belongs to. */
+    public function get_family(): PangoFontFamily {}
+
+    /** Returns whether a `PangoFontFace` is synthesized. */
+    public function is_synthesized(): bool {}
+
+    /**
+     * Native `get_face_name` (FontFaceClass.get_face_name): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_get_face_name()` from an override. Gets a name representing the
+     * style of this face.
+     */
+    public function vfunc_get_face_name(): string {}
+
+    /**
+     * Native `get_family` (FontFaceClass.get_family): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_get_family()` from an override. Gets the `PangoFontFamily` that
+     * $face belongs to.
+     */
+    public function vfunc_get_family(): PangoFontFamily {}
+
+    /**
+     * Native `is_synthesized` (FontFaceClass.is_synthesized): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_is_synthesized()` from an override. Returns whether a
+     * `PangoFontFace` is synthesized.
+     */
+    public function vfunc_is_synthesized(): bool {}
+}
+
+/**
+ * A `PangoFontFamily` is used to represent a family of related font faces.
+ *
+ * @property-read bool $is_monospace
+ * @property-read bool $is_variable
+ * @property-read int $n_items
+ * @property-read ?string $name
+ */
+class PangoFontFamily extends GObject implements GListModel
+{
+    /** PangoFontFamily is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Gets the `PangoFontFace` of $family with the given name. */
+    public function get_face(?string $name): ?PangoFontFace {}
+
+    /** Gets the name of the family. */
+    public function get_name(): string {}
+
+    /**
+     * A monospace font is a font designed for text display where the the characters form a regular
+     * grid.
+     */
+    public function is_monospace(): bool {}
+
+    /** A variable font is a font which has axes that can be modified to produce different faces. */
+    public function is_variable(): bool {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item_type */
+    public function get_item_type(): string {}
+
+    /** @implementation-alias Gtk4\GListModel::get_n_items */
+    public function get_n_items(): int {}
+
+    /** @implementation-alias Gtk4\GListModel::get_item */
+    public function get_item(int $position): ?GObject {}
+
+    /** @implementation-alias Gtk4\GListModel::items_changed */
+    public function items_changed(int $position, int $removed, int $added): void {}
+
+    /**
+     * Native `get_face` (FontFamilyClass.get_face): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_get_face()` from an override. Gets the `PangoFontFace` of $family with
+     * the given name.
+     */
+    public function vfunc_get_face(?string $name): ?PangoFontFace {}
+
+    /**
+     * Native `get_name` (FontFamilyClass.get_name): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_get_name()` from an override. Gets the name of the family.
+     */
+    public function vfunc_get_name(): string {}
+
+    /**
+     * Native `is_monospace` (FontFamilyClass.is_monospace): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_is_monospace()` from an override. A monospace font is a font
+     * designed for text display where the the characters form a regular grid.
+     */
+    public function vfunc_is_monospace(): bool {}
+
+    /**
+     * Native `is_variable` (FontFamilyClass.is_variable): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_is_variable()` from an override. A variable font is a font
+     * which has axes that can be modified to produce different faces.
+     */
+    public function vfunc_is_variable(): bool {}
+}
+
+/**
  * A `PangoFontMap` represents the set of fonts available for a particular rendering system.
  *
  * @property-read int $n_items
@@ -267,8 +440,24 @@ class PangoFontMap extends GObject implements GListModel
     /** Creates a `PangoContext` connected to $fontmap. */
     public function create_context(): PangoContext {}
 
+    /** Gets a font family by name. */
+    public function get_family(string $name): PangoFontFamily {}
+
     /** Returns the current serial number of $fontmap. */
     public function get_serial(): int {}
+
+    /** Load the font in the fontmap that is the closest match for $desc. */
+    public function load_font(PangoContext $context, PangoFontDescription $desc): ?PangoFont {}
+
+    /** Load a set of fonts in the fontmap that can be used to render a font matching $desc. */
+    public function load_fontset(PangoContext $context, PangoFontDescription $desc, PangoLanguage $language): ?PangoFontset {}
+
+    /**
+     * Returns a new font that is like $font, except that its size is multiplied by $scale, its
+     * backend-dependent configuration (e.g. cairo font options) is replaced by the one in
+     * $context, and its variations are replaced by $variations.
+     */
+    public function reload_font(PangoFont $font, float $scale, ?PangoContext $context, ?string $variations): PangoFont {}
 
     /** @implementation-alias Gtk4\GListModel::get_item_type */
     public function get_item_type(): string {}
@@ -290,11 +479,37 @@ class PangoFontMap extends GObject implements GListModel
     public function vfunc_changed(): void {}
 
     /**
+     * Native `get_face` (FontMapClass.get_face): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_get_face()` from an override.
+     */
+    public function vfunc_get_face(PangoFont $font): PangoFontFace {}
+
+    /**
+     * Native `get_family` (FontMapClass.get_family): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_get_family()` from an override. Gets a font family by name.
+     */
+    public function vfunc_get_family(string $name): PangoFontFamily {}
+
+    /**
      * Native `get_serial` (FontMapClass.get_serial): the GTK implementation below any PHP
      * subclass, for `parent::vfunc_get_serial()` from an override. Returns the current serial
      * number of $fontmap.
      */
     public function vfunc_get_serial(): int {}
+
+    /**
+     * Native `load_font` (FontMapClass.load_font): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_load_font()` from an override. Load the font in the fontmap that is the
+     * closest match for $desc.
+     */
+    public function vfunc_load_font(PangoContext $context, PangoFontDescription $desc): ?PangoFont {}
+
+    /**
+     * Native `load_fontset` (FontMapClass.load_fontset): the GTK implementation below any PHP
+     * subclass, for `parent::vfunc_load_fontset()` from an override. Load a set of fonts in the
+     * fontmap that can be used to render a font matching $desc.
+     */
+    public function vfunc_load_fontset(PangoContext $context, PangoFontDescription $desc, PangoLanguage $language): ?PangoFontset {}
 }
 
 /**
@@ -310,6 +525,106 @@ final class PangoFontMask
     public const int SIZE = 32;
     public const int GRAVITY = 64;
     public const int VARIATIONS = 128;
+}
+
+/**
+ * A `PangoFontMetrics` structure holds the overall metric information for a font.
+ * @not-serializable
+ */
+final class PangoFontMetrics
+{
+    /** PangoFontMetrics values come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Gets the approximate character width for a font metrics structure. */
+    public function get_approximate_char_width(): int {}
+
+    /** Gets the approximate digit width for a font metrics structure. */
+    public function get_approximate_digit_width(): int {}
+
+    /** Gets the ascent from a font metrics structure. */
+    public function get_ascent(): int {}
+
+    /** Gets the descent from a font metrics structure. */
+    public function get_descent(): int {}
+
+    /** Gets the line height from a font metrics structure. */
+    public function get_height(): int {}
+
+    /** Gets the suggested position to draw the strikethrough. */
+    public function get_strikethrough_position(): int {}
+
+    /** Gets the suggested thickness to draw for the strikethrough. */
+    public function get_strikethrough_thickness(): int {}
+
+    /** Gets the suggested position to draw the underline. */
+    public function get_underline_position(): int {}
+
+    /** Gets the suggested thickness to draw for the underline. */
+    public function get_underline_thickness(): int {}
+}
+
+/**
+ * A `PangoFontset` represents a set of `PangoFont` to use when rendering text.
+ */
+class PangoFontset extends GObject
+{
+    /** PangoFontset is abstract in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Returns the font in the fontset that contains the best glyph for a Unicode character. */
+    public function get_font(int $wc): PangoFont {}
+
+    /** Get overall metric information for the fonts in the fontset. */
+    public function get_metrics(): PangoFontMetrics {}
+
+    /**
+     * Native `get_font` (FontsetClass.get_font): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_get_font()` from an override. Returns the font in the fontset that
+     * contains the best glyph for a Unicode character.
+     */
+    public function vfunc_get_font(int $wc): PangoFont {}
+}
+
+/**
+ * A `PangoGlyphString` is used to store strings of glyphs with geometry and visual attribute
+ * information.
+ *
+ * @property int $num_glyphs
+ * @not-serializable
+ */
+final class PangoGlyphString
+{
+    /** Create a new `PangoGlyphString`. */
+    public function __construct() {}
+
+    /**
+     * Compute the logical and ink extents of a glyph string.
+     *
+     * @return array{PangoRectangle, PangoRectangle}
+     */
+    public function extents(PangoFont $font): array {}
+
+    /**
+     * Computes the extents of a sub-portion of a glyph string.
+     *
+     * @return array{PangoRectangle, PangoRectangle}
+     */
+    public function extents_range(int $start, int $end, PangoFont $font): array {}
+
+    /** Computes the logical width of the glyph string. */
+    public function get_width(): int {}
+
+    /**
+     * Resize the glyph string to $new_len glyphs.
+     *
+     * Pango reallocates and leaves the new entries as the allocator left them, so a string that
+     * grew would answer extents() and get_width() from uninitialised memory; here every grown entry
+     * is PANGO_GLYPH_EMPTY with no geometry and cluster 0 - the glyph Pango draws and measures as
+     * nothing - so a fresh string measures as empty until something shapes into it. A negative
+     * length is refused before Pango's own assertion sees it.
+     */
+    public function set_size(int $new_len): void {}
 }
 
 /**
@@ -332,6 +647,37 @@ enum PangoGravityHint: int
     case Natural = 0;
     case Strong = 1;
     case Line = 2;
+}
+
+/**
+ * The `PangoLanguage` structure is used to represent a language.
+ * @not-serializable
+ */
+final class PangoLanguage
+{
+    /** PangoLanguage values come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /**
+     * Get a string that is representative of the characters needed to render a particular
+     * language.
+     */
+    public function get_sample_string(): string {}
+
+    /** Determines if $script is one of the scripts used to write $language. */
+    public function includes_script(PangoScript $script): bool {}
+
+    /** Checks if a language tag matches one of the elements in a list of language ranges. */
+    public function matches(string $range_list): bool {}
+
+    /** Gets the RFC-3066 format string representing the given language tag. */
+    public function to_string(): string {}
+
+    /** Convert a language tag to a `PangoLanguage`. */
+    public static function from_string(?string $language = null): ?PangoLanguage {}
+
+    /** Returns the `PangoLanguage` for the current locale of the process. */
+    public static function get_default(): PangoLanguage {}
 }
 
 /**
@@ -372,17 +718,40 @@ class PangoLayout extends GObject
     /** Gets the Y position of baseline of the first line in $layout. */
     public function get_baseline(): int {}
 
+    /**
+     * Given an index within a layout, determines the positions that of the strong and weak cursors
+     * if the insertion point is at that index.
+     *
+     * @return array{PangoRectangle, PangoRectangle}
+     */
+    public function get_caret_pos(int $index): array {}
+
     /** Returns the number of Unicode characters in the the text of $layout. */
     public function get_character_count(): int {}
 
     /** Retrieves the `PangoContext` used for this layout. */
     public function get_context(): PangoContext {}
 
+    /**
+     * Given an index within a layout, determines the positions that of the strong and weak cursors
+     * if the insertion point is at that index.
+     *
+     * @return array{PangoRectangle, PangoRectangle}
+     */
+    public function get_cursor_pos(int $index): array {}
+
     /** Gets the text direction at the given character position in $layout. */
     public function get_direction(int $index): PangoDirection {}
 
     /** Gets the type of ellipsization being performed for $layout. */
     public function get_ellipsize(): PangoEllipsizeMode {}
+
+    /**
+     * Computes the logical and ink extents of $layout.
+     *
+     * @return array{PangoRectangle, PangoRectangle}
+     */
+    public function get_extents(): array {}
 
     /** Gets the font description for the layout, if any. */
     public function get_font_description(): ?PangoFontDescription {}
@@ -406,6 +775,13 @@ class PangoLayout extends GObject
 
     /** Gets the line spacing factor of $layout. */
     public function get_line_spacing(): float {}
+
+    /**
+     * Computes the logical and ink extents of $layout in device units.
+     *
+     * @return array{PangoRectangle, PangoRectangle}
+     */
+    public function get_pixel_extents(): array {}
 
     /**
      * Determines the logical width and height of a `PangoLayout` in device units.
@@ -451,6 +827,12 @@ class PangoLayout extends GObject
      * @return array{int, int}
      */
     public function index_to_line_x(int $index, bool $trailing): array {}
+
+    /**
+     * Converts from an index within a `PangoLayout` to the onscreen position corresponding to the
+     * grapheme at that index.
+     */
+    public function index_to_pos(int $index): PangoRectangle {}
 
     /** Queries whether the layout had to ellipsize any paragraphs. */
     public function is_ellipsized(): bool {}

@@ -1139,7 +1139,7 @@ class GNotification extends GObject
     public function add_button_with_target(string $label, string $action, mixed $target = null): void {}
 
     /** Sets the body of $notification to $body. */
-    public function set_body(?string $body): void {}
+    public function set_body(string $body): void {}
 
     /**
      * Sets the type of $notification to $category. Categories have a main type like `email`, `im`

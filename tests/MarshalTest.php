@@ -175,4 +175,119 @@ final class MarshalTest extends GtkTestCase
         };
         self::assertSame('as', $sub->parameter_type);
     }
+
+    /**
+     * G_TYPE_STRV is a value mapping - `list<string>` in, `list<string>` out - and every
+     * element crosses like a string parameter would: no null bytes, and a list, not a string.
+     */
+    public function testAStringListPropertyIsAListOfStrings(): void
+    {
+        $label = new \Gtk4\GtkLabel('x');
+        $label->set_property('css-classes', ['a', 'b']);
+        self::assertSame(['a', 'b'], $label->get_css_classes());
+        self::assertSame(['a', 'b'], $label->css_classes, 'the property handler agrees');
+        $label->css_classes = [];
+        self::assertSame([], $label->get_property('css-classes'));
+
+        try {
+            $label->set_property('css-classes', ['a', "b\0c"]);
+            self::fail('a null byte in an element');
+        } catch (\ValueError $e) {
+            self::assertStringContainsString('null byte', $e->getMessage());
+        }
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('expected an array of strings');
+        $label->set_property('css-classes', 'not-a-list');
+    }
+
+    // ---------------------------------------------------------------- the arms emit() reaches
+
+    /**
+     * G_TYPE_PARAM: `notify` carries a GParamSpec, a fundamental with a handle class of its own.
+     * A spec that came out of one emission goes back in through emit() - the only way PHP hands
+     * the marshaller a GParamSpec - and arrives as the same handle.
+     */
+    public function testAParamSpecTravelsThroughASignalArgument(): void
+    {
+        $w = $this->window();
+        $spec = null;
+        $w->connect('notify::title', function (\Gtk4\GObject $o, \Gtk4\GParamSpec $p) use (&$spec): void {
+            $spec = $p;
+        });
+        $w->set_title('first');
+        self::assertInstanceOf(\Gtk4\GParamSpec::class, $spec);
+
+        $seen = null;
+        $w->connect('notify', function (\Gtk4\GObject $o, \Gtk4\GParamSpec $p) use (&$seen): void {
+            $seen = $p;
+        });
+        $w->emit('notify', $spec);
+        self::assertSame($spec, $seen, 'the same GParamSpec, in and out');
+
+        $this->expectException(\TypeError::class);
+        $w->emit('notify', 'not a spec');
+    }
+
+    /**
+     * A fundamental with a handle class (GdkEvent) and a GVariant both take null in a GValue:
+     * `event` on a legacy controller carries a GdkEvent PHP can never build, and `activate`
+     * on an action carries a GVariant that is null for a parameterless action.
+     */
+    public function testNullTravelsAsAFundamentalAndAsAVariant(): void
+    {
+        $controller = new \Gtk4\GtkEventControllerLegacy();
+        $got = 'unset';
+        $controller->connect('event', function (\Gtk4\GtkEventControllerLegacy $c, mixed $event) use (&$got): bool {
+            $got = $event;
+            return false;
+        });
+        $controller->emit('event', null);
+        self::assertNull($got, 'a null GdkEvent arrives as null');
+
+        $action = new \Gtk4\GSimpleAction('plain', null);
+        $param = 'unset';
+        $action->connect('activate', function (\Gtk4\GSimpleAction $a, mixed $p) use (&$param): void {
+            $param = $p;
+        });
+        $action->emit('activate', null);
+        self::assertNull($param, 'a null GVariant arrives as null');
+
+        $this->expectException(\TypeError::class);
+        $controller->emit('event', 'not an event');
+    }
+
+    /** G_TYPE_ULONG, read: a memory output stream's data-size is a gulong property. */
+    public function testAnUnsignedLongPropertyReadsAsInt(): void
+    {
+        $stream = \Gtk4\GMemoryOutputStream::new_resizable();
+        self::assertSame(0, $stream->data_size);
+        $stream->write_bytes('seven!!', null);
+        self::assertSame(7, $stream->get_property('data-size'));
+        self::assertSame($stream->get_data_size(), $stream->data_size, 'the getter agrees');
+    }
+
+    /**
+     * The 64-bit integers, both ways - GTK itself has no property or signal of either type, so
+     * WebKit's are where the arms get exercised: page-id is a guint64 read and
+     * Download::received-data carries a guint64 argument.
+     */
+    public function testTheWideIntegersTravelBothWays(): void
+    {
+        Features::requires('webkit');
+        $view = new \Gtk4\WebKitWebView();
+        self::assertGreaterThan(0, $view->page_id, 'a page id is assigned at construction');
+        self::assertSame($view->get_page_id(), $view->page_id, 'the getter agrees');
+
+        $download = $view->download_uri('about:blank');
+        $got = 'unset';
+        $download->connect('received-data', function (\Gtk4\WebKitDownload $d, int $length) use (&$got): void {
+            $got = $length;
+        });
+        $download->emit('received-data', PHP_INT_MAX);
+        self::assertSame(PHP_INT_MAX, $got, 'a guint64 argument round-trips at the top of the PHP range');
+        $download->cancel();
+
+        $this->expectException(\ValueError::class);
+        $download->emit('received-data', -1);
+    }
 }

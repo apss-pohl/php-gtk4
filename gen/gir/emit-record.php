@@ -109,7 +109,7 @@ trait EmitsRecords
                 $this->skip($n, $f->name, 'memory management belongs to the handle (clone / destructor)');
                 continue;
             }
-            $m = $this->method($n, $f, $typeMacro, $castMacro, false, [], null, $self);
+            $m = $this->method($n, $f, $typeMacro, $castMacro, false, [], [], null, $self);
             if ($m === null) {
                 continue;
             }

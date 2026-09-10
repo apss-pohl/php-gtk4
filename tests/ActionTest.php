@@ -69,6 +69,59 @@ final class ActionTest extends GtkTestCase
         yield 'tuple'    => ['(si)', ['x', 9]];
         yield 'maybe'    => ['mi', null];
         yield 'maybe v'  => ['mi', 5];
+        // the narrow integers, each at its edge: core/variant checks the range on the way in
+        yield 'byte'     => ['y', 255];
+        yield 'int16'    => ['n', -32768];
+        yield 'uint16'   => ['q', 65535];
+        yield 'uint32'   => ['u', 4294967295];
+        yield 'uint64'   => ['t', PHP_INT_MAX];
+        yield 'handle'   => ['h', 3];
+        yield 'object path' => ['o', '/org/example/Thing'];
+        yield 'signature'   => ['g', '(si)'];
+        yield 'bytes'    => ['ay', [0, 127, 255]];
+        yield 'dict'     => ['a{si}', ['one' => 1, 'two' => 2]];
+    }
+
+    /**
+     * What core/variant refuses on the way in, by type string: an integer outside the type's
+     * range, a string that is no object path or signature, a value of the wrong kind. Each is
+     * a PHP error before GLib sees anything, never a GVariant with the wrong contents.
+     *
+     * @return iterable<string, array{string, mixed, class-string<\Throwable>}>
+     */
+    public static function refusedParameters(): iterable
+    {
+        yield 'byte too big'      => ['y', 256, \ValueError::class];
+        yield 'byte negative'     => ['y', -1, \ValueError::class];
+        yield 'int16 too big'     => ['n', 32768, \ValueError::class];
+        yield 'uint16 negative'   => ['q', -1, \ValueError::class];
+        yield 'uint32 too big'    => ['u', 4294967296, \ValueError::class];
+        yield 'uint64 negative'   => ['t', -1, \ValueError::class];
+        yield 'not an object path' => ['o', 'no/leading/slash', \TypeError::class];
+        yield 'not a signature'   => ['g', 'not a signature', \TypeError::class];
+        yield 'double from string' => ['d', 'abc', \TypeError::class];
+        yield 'string from array' => ['s', ['x'], \TypeError::class];
+        yield 'string with NUL'   => ['s', "a\0b", \ValueError::class];
+        yield 'tuple too short'   => ['(si)', ['x'], \TypeError::class];
+        yield 'bytes out of range' => ['ay', [256], \ValueError::class];
+    }
+
+    /** @param class-string<\Throwable> $error */
+    #[DataProvider('refusedParameters')]
+    public function testARefusedParameterIsAnErrorNotAVariant(string $type, mixed $value, string $error): void
+    {
+        $a = new GSimpleAction('p', $type);
+        $fired = false;
+        $a->connect('activate', function () use (&$fired): void {
+            $fired = true;
+        });
+        try {
+            $a->activate($value);
+            self::fail("$type accepted " . var_export($value, true));
+        } catch (\ValueError | \TypeError $e) {
+            self::assertInstanceOf($error, $e);
+        }
+        self::assertFalse($fired, 'nothing reached the action');
     }
 
     #[DataProvider('parameterTypes')]

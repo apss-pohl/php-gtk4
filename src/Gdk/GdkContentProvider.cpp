@@ -392,11 +392,11 @@ ZEND_METHOD(Gtk4_GdkContentProvider, vfunc_attach_clipboard) {
     RETURN_THROWS();
   }
   auto *klass = GDK_CONTENT_PROVIDER_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *clipboard_o = unwrap(clipboard, GDK_TYPE_CLIPBOARD);
+  if (clipboard_o == nullptr) RETURN_THROWS();
   if (klass->attach_clipboard == nullptr) {
     return;
   }
-  GObject *clipboard_o = unwrap(clipboard, GDK_TYPE_CLIPBOARD);
-  if (clipboard_o == nullptr) RETURN_THROWS();
   klass->attach_clipboard(self, GDK_CLIPBOARD(clipboard_o));
 }
 
@@ -444,11 +444,11 @@ ZEND_METHOD(Gtk4_GdkContentProvider, vfunc_detach_clipboard) {
     RETURN_THROWS();
   }
   auto *klass = GDK_CONTENT_PROVIDER_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *clipboard_o = unwrap(clipboard, GDK_TYPE_CLIPBOARD);
+  if (clipboard_o == nullptr) RETURN_THROWS();
   if (klass->detach_clipboard == nullptr) {
     return;
   }
-  GObject *clipboard_o = unwrap(clipboard, GDK_TYPE_CLIPBOARD);
-  if (clipboard_o == nullptr) RETURN_THROWS();
   klass->detach_clipboard(self, GDK_CLIPBOARD(clipboard_o));
 }
 

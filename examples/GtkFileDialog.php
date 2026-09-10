@@ -19,7 +19,7 @@ use Gtk4\GtkWindow;
 /*
  * Gtk4\GtkFileDialog - GTK 4.10's file chooser: no run(), no widget to pack. open() returns
  * at once and the answer arrives in the callback, where open_finish() gives the file - as a
- * plain path string, because a GFile carries nothing else a PHP program can use (README.md "Design"
+ * plain path string, because a GFile carries nothing else a PHP program can use (docs/DESIGN.md
  * §2.7). Dismissing the dialog is a GError, not an empty answer.
  *
  *   bin/php-gtk4 examples/demo.php GtkFileDialog

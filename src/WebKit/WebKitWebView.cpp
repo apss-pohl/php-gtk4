@@ -2567,11 +2567,11 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_authenticate) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *request_o = unwrap(request, WEBKIT_TYPE_AUTHENTICATION_REQUEST);
+  if (request_o == nullptr) RETURN_THROWS();
   if (klass->authenticate == nullptr) {
     RETURN_FALSE;
   }
-  GObject *request_o = unwrap(request, WEBKIT_TYPE_AUTHENTICATION_REQUEST);
-  if (request_o == nullptr) RETURN_THROWS();
   RETURN_BOOL(klass->authenticate(self, WEBKIT_AUTHENTICATION_REQUEST(request_o)));
 }
 
@@ -2621,13 +2621,13 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_context_menu) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->context_menu == nullptr) {
-    RETURN_FALSE;
-  }
   GObject *context_menu_o = unwrap(context_menu, WEBKIT_TYPE_CONTEXT_MENU);
   if (context_menu_o == nullptr) RETURN_THROWS();
   GObject *hit_test_result_o = unwrap(hit_test_result, WEBKIT_TYPE_HIT_TEST_RESULT);
   if (hit_test_result_o == nullptr) RETURN_THROWS();
+  if (klass->context_menu == nullptr) {
+    RETURN_FALSE;
+  }
   RETURN_BOOL(klass->context_menu(self, WEBKIT_CONTEXT_MENU(context_menu_o),
                                   WEBKIT_HIT_TEST_RESULT(hit_test_result_o)));
 }
@@ -2676,12 +2676,12 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_create) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+  gpointer navigation_action_b = unwrap_boxed(navigation_action, WEBKIT_TYPE_NAVIGATION_ACTION);
+  if (navigation_action_b == nullptr) RETURN_THROWS();
   if (klass->create == nullptr) {
     enum_to_php(G_TYPE_NONE, 0, return_value);
     return;
   }
-  gpointer navigation_action_b = unwrap_boxed(navigation_action, WEBKIT_TYPE_NAVIGATION_ACTION);
-  if (navigation_action_b == nullptr) RETURN_THROWS();
   GtkWidget *phpgtk_ret =
       klass->create(self, static_cast<WebKitNavigationAction *>(navigation_action_b));
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
@@ -2710,13 +2710,13 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_decide_policy) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->decide_policy == nullptr) {
-    RETURN_FALSE;
-  }
   GObject *decision_o = unwrap(decision, WEBKIT_TYPE_POLICY_DECISION);
   if (decision_o == nullptr) RETURN_THROWS();
   gint type_v = 0;
   if (!enum_from_php(type, WEBKIT_TYPE_POLICY_DECISION_TYPE, &type_v)) RETURN_THROWS();
+  if (klass->decide_policy == nullptr) {
+    RETURN_FALSE;
+  }
   RETURN_BOOL(klass->decide_policy(self, WEBKIT_POLICY_DECISION(decision_o),
                                    static_cast<WebKitPolicyDecisionType>(type_v)));
 }
@@ -2765,11 +2765,11 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_insecure_content_detected) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+  gint event_v = 0;
+  if (!enum_from_php(event, WEBKIT_TYPE_INSECURE_CONTENT_EVENT, &event_v)) RETURN_THROWS();
   if (klass->insecure_content_detected == nullptr) {
     return;
   }
-  gint event_v = 0;
-  if (!enum_from_php(event, WEBKIT_TYPE_INSECURE_CONTENT_EVENT, &event_v)) RETURN_THROWS();
   klass->insecure_content_detected(self, static_cast<WebKitInsecureContentEvent>(event_v));
 }
 
@@ -2816,11 +2816,11 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_load_changed) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+  gint load_event_v = 0;
+  if (!enum_from_php(load_event, WEBKIT_TYPE_LOAD_EVENT, &load_event_v)) RETURN_THROWS();
   if (klass->load_changed == nullptr) {
     return;
   }
-  gint load_event_v = 0;
-  if (!enum_from_php(load_event, WEBKIT_TYPE_LOAD_EVENT, &load_event_v)) RETURN_THROWS();
   klass->load_changed(self, static_cast<WebKitLoadEvent>(load_event_v));
 }
 
@@ -2849,13 +2849,13 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_load_failed) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->load_failed == nullptr) {
-    RETURN_FALSE;
-  }
   gint load_event_v = 0;
   if (!enum_from_php(load_event, WEBKIT_TYPE_LOAD_EVENT, &load_event_v)) RETURN_THROWS();
   if (!phpgtk::check_utf8(failing_uri, 2)) RETURN_THROWS();
   GError *error_e = gerror_from_php(error);
+  if (klass->load_failed == nullptr) {
+    RETURN_FALSE;
+  }
   gboolean call_result = klass->load_failed(self, static_cast<WebKitLoadEvent>(load_event_v),
                                             ZSTR_VAL(failing_uri), error_e);
   if (error_e != nullptr) g_error_free(error_e);
@@ -2888,13 +2888,13 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_load_failed_with_tls_errors) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->load_failed_with_tls_errors == nullptr) {
-    RETURN_FALSE;
-  }
   if (!phpgtk::check_utf8(failing_uri, 1)) RETURN_THROWS();
   GObject *certificate_o = unwrap(certificate, G_TYPE_TLS_CERTIFICATE);
   if (certificate_o == nullptr) RETURN_THROWS();
   if (!phpgtk::check_flags(G_TYPE_TLS_CERTIFICATE_FLAGS, errors, 3)) RETURN_THROWS();
+  if (klass->load_failed_with_tls_errors == nullptr) {
+    RETURN_FALSE;
+  }
   RETURN_BOOL(klass->load_failed_with_tls_errors(self, ZSTR_VAL(failing_uri),
                                                  G_TLS_CERTIFICATE(certificate_o),
                                                  static_cast<GTlsCertificateFlags>(errors)));
@@ -2923,12 +2923,12 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_mouse_target_changed) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->mouse_target_changed == nullptr) {
-    return;
-  }
   GObject *hit_test_result_o = unwrap(hit_test_result, WEBKIT_TYPE_HIT_TEST_RESULT);
   if (hit_test_result_o == nullptr) RETURN_THROWS();
   if (!phpgtk::check_range<guint>(modifiers, 2)) RETURN_THROWS();
+  if (klass->mouse_target_changed == nullptr) {
+    return;
+  }
   klass->mouse_target_changed(self, WEBKIT_HIT_TEST_RESULT(hit_test_result_o),
                               static_cast<guint>(modifiers));
 }
@@ -2953,11 +2953,11 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_permission_request) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *permission_request_o = unwrap(permission_request, WEBKIT_TYPE_PERMISSION_REQUEST);
+  if (permission_request_o == nullptr) RETURN_THROWS();
   if (klass->permission_request == nullptr) {
     RETURN_FALSE;
   }
-  GObject *permission_request_o = unwrap(permission_request, WEBKIT_TYPE_PERMISSION_REQUEST);
-  if (permission_request_o == nullptr) RETURN_THROWS();
   RETURN_BOOL(klass->permission_request(self, WEBKIT_PERMISSION_REQUEST(permission_request_o)));
 }
 
@@ -2981,11 +2981,11 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_print) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *print_operation_o = unwrap(print_operation, WEBKIT_TYPE_PRINT_OPERATION);
+  if (print_operation_o == nullptr) RETURN_THROWS();
   if (klass->print == nullptr) {
     RETURN_FALSE;
   }
-  GObject *print_operation_o = unwrap(print_operation, WEBKIT_TYPE_PRINT_OPERATION);
-  if (print_operation_o == nullptr) RETURN_THROWS();
   RETURN_BOOL(klass->print(self, WEBKIT_PRINT_OPERATION(print_operation_o)));
 }
 
@@ -3009,11 +3009,11 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_query_permission_state) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+  gpointer query_b = unwrap_boxed(query, WEBKIT_TYPE_PERMISSION_STATE_QUERY);
+  if (query_b == nullptr) RETURN_THROWS();
   if (klass->query_permission_state == nullptr) {
     RETURN_FALSE;
   }
-  gpointer query_b = unwrap_boxed(query, WEBKIT_TYPE_PERMISSION_STATE_QUERY);
-  if (query_b == nullptr) RETURN_THROWS();
   RETURN_BOOL(
       klass->query_permission_state(self, static_cast<WebKitPermissionStateQuery *>(query_b)));
 }
@@ -3064,13 +3064,13 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_resource_load_started) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->resource_load_started == nullptr) {
-    return;
-  }
   GObject *resource_o = unwrap(resource, WEBKIT_TYPE_WEB_RESOURCE);
   if (resource_o == nullptr) RETURN_THROWS();
   GObject *request_o = unwrap(request, WEBKIT_TYPE_URI_REQUEST);
   if (request_o == nullptr) RETURN_THROWS();
+  if (klass->resource_load_started == nullptr) {
+    return;
+  }
   klass->resource_load_started(self, WEBKIT_WEB_RESOURCE(resource_o),
                                WEBKIT_URI_REQUEST(request_o));
 }
@@ -3118,11 +3118,11 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_run_color_chooser) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *request_o = unwrap(request, WEBKIT_TYPE_COLOR_CHOOSER_REQUEST);
+  if (request_o == nullptr) RETURN_THROWS();
   if (klass->run_color_chooser == nullptr) {
     RETURN_FALSE;
   }
-  GObject *request_o = unwrap(request, WEBKIT_TYPE_COLOR_CHOOSER_REQUEST);
-  if (request_o == nullptr) RETURN_THROWS();
   RETURN_BOOL(klass->run_color_chooser(self, WEBKIT_COLOR_CHOOSER_REQUEST(request_o)));
 }
 
@@ -3146,11 +3146,11 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_run_file_chooser) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *request_o = unwrap(request, WEBKIT_TYPE_FILE_CHOOSER_REQUEST);
+  if (request_o == nullptr) RETURN_THROWS();
   if (klass->run_file_chooser == nullptr) {
     RETURN_FALSE;
   }
-  GObject *request_o = unwrap(request, WEBKIT_TYPE_FILE_CHOOSER_REQUEST);
-  if (request_o == nullptr) RETURN_THROWS();
   RETURN_BOOL(klass->run_file_chooser(self, WEBKIT_FILE_CHOOSER_REQUEST(request_o)));
 }
 
@@ -3174,11 +3174,11 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_script_dialog) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+  gpointer dialog_b = unwrap_boxed(dialog, WEBKIT_TYPE_SCRIPT_DIALOG);
+  if (dialog_b == nullptr) RETURN_THROWS();
   if (klass->script_dialog == nullptr) {
     RETURN_FALSE;
   }
-  gpointer dialog_b = unwrap_boxed(dialog, WEBKIT_TYPE_SCRIPT_DIALOG);
-  if (dialog_b == nullptr) RETURN_THROWS();
   RETURN_BOOL(klass->script_dialog(self, static_cast<WebKitScriptDialog *>(dialog_b)));
 }
 
@@ -3202,11 +3202,11 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_show_notification) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *notification_o = unwrap(notification, WEBKIT_TYPE_NOTIFICATION);
+  if (notification_o == nullptr) RETURN_THROWS();
   if (klass->show_notification == nullptr) {
     RETURN_FALSE;
   }
-  GObject *notification_o = unwrap(notification, WEBKIT_TYPE_NOTIFICATION);
-  if (notification_o == nullptr) RETURN_THROWS();
   RETURN_BOOL(klass->show_notification(self, WEBKIT_NOTIFICATION(notification_o)));
 }
 
@@ -3232,13 +3232,13 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_show_option_menu) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->show_option_menu == nullptr) {
-    RETURN_FALSE;
-  }
   GObject *menu_o = unwrap(menu, WEBKIT_TYPE_OPTION_MENU);
   if (menu_o == nullptr) RETURN_THROWS();
   gpointer rectangle_b = unwrap_boxed(rectangle, GDK_TYPE_RECTANGLE);
   if (rectangle_b == nullptr) RETURN_THROWS();
+  if (klass->show_option_menu == nullptr) {
+    RETURN_FALSE;
+  }
   RETURN_BOOL(klass->show_option_menu(self, WEBKIT_OPTION_MENU(menu_o),
                                       static_cast<GdkRectangle *>(rectangle_b)));
 }
@@ -3263,11 +3263,11 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_submit_form) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *request_o = unwrap(request, WEBKIT_TYPE_FORM_SUBMISSION_REQUEST);
+  if (request_o == nullptr) RETURN_THROWS();
   if (klass->submit_form == nullptr) {
     return;
   }
-  GObject *request_o = unwrap(request, WEBKIT_TYPE_FORM_SUBMISSION_REQUEST);
-  if (request_o == nullptr) RETURN_THROWS();
   klass->submit_form(self, WEBKIT_FORM_SUBMISSION_REQUEST(request_o));
 }
 
@@ -3291,11 +3291,11 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_user_message_received) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *message_o = unwrap(message, WEBKIT_TYPE_USER_MESSAGE);
+  if (message_o == nullptr) RETURN_THROWS();
   if (klass->user_message_received == nullptr) {
     RETURN_FALSE;
   }
-  GObject *message_o = unwrap(message, WEBKIT_TYPE_USER_MESSAGE);
-  if (message_o == nullptr) RETURN_THROWS();
   RETURN_BOOL(klass->user_message_received(self, WEBKIT_USER_MESSAGE(message_o)));
 }
 
@@ -3342,12 +3342,12 @@ ZEND_METHOD(Gtk4_WebKitWebView, vfunc_web_process_terminated) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_WEB_VIEW_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->web_process_terminated == nullptr) {
-    return;
-  }
   gint reason_v = 0;
   if (!enum_from_php(reason, WEBKIT_TYPE_WEB_PROCESS_TERMINATION_REASON, &reason_v))
     RETURN_THROWS();
+  if (klass->web_process_terminated == nullptr) {
+    return;
+  }
   klass->web_process_terminated(self, static_cast<WebKitWebProcessTerminationReason>(reason_v));
 }
 

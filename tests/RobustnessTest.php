@@ -43,6 +43,8 @@ final class RobustnessTest extends GtkTestCase
         \Gtk4\GdkPixbufLoader::class . '::write_bytes' => [0],
         \Gtk4\GMemoryInputStream::class . '::new_from_bytes' => [0],
         \Gtk4\GMemoryInputStream::class . '::add_bytes' => [0],
+        \Gtk4\GOutputStream::class . '::write_bytes' => [0],
+        \Gtk4\GOutputStream::class . '::write_bytes_async' => [0],
         \Gtk4\WebKitWebView::class . '::load_bytes' => [0],
         \Gtk4\WebKitUserContentFilterStore::class . '::save' => [1],
         \Gtk4\JSCValue::class . '::new_string_from_bytes' => [1],
@@ -79,6 +81,31 @@ final class RobustnessTest extends GtkTestCase
 
     /** The key currently being swept, or '' outside the two sweep tests. */
     private string $sweeping = '';
+
+    /**
+     * The async choosers, excluded from both sweeps: every one of their arguments may legitimately
+     * be null, so a sweep that fills the other positions with valid values ends up *opening* a
+     * dialog - and one nothing will close. On a machine with a session bus it goes out to
+     * xdg-desktop-portal and answers over D-Bus somewhere in the rest of the suite; a headless
+     * argument sweep has no business starting that.
+     *
+     * Their type errors are swept by DialogTest::testTheAsyncChoosersRefuseAWrongTypedArgument(),
+     * which puts one wrong-typed value in each position and so never builds the all-null call that
+     * opens anything. Add a chooser here and it is covered there automatically.
+     *
+     * @var list<string>
+     */
+    public const array ASYNC_CHOOSERS = [
+        \Gtk4\GtkAlertDialog::class . '::choose',
+        \Gtk4\GtkColorDialog::class . '::choose_rgba',
+        \Gtk4\GtkFileDialog::class . '::open',
+        \Gtk4\GtkFileDialog::class . '::open_multiple',
+        \Gtk4\GtkFileDialog::class . '::save',
+        \Gtk4\GtkFileDialog::class . '::select_folder',
+        \Gtk4\GtkFileDialog::class . '::select_multiple_folders',
+        \Gtk4\GtkFontDialog::class . '::choose_font',
+        \Gtk4\GtkFontDialog::class . '::choose_font_and_features',
+    ];
 
     /** The second-column token that makes a line tolerate silence as well as a complaint. */
     private const string OPTIONAL = 'optional';
@@ -284,21 +311,7 @@ final class RobustnessTest extends GtkTestCase
                     // dialog at all.
                     \Gtk4\WebKitPrintOperation::class . '::run_dialog',
                     \Gtk4\WebKitPrintOperation::class . '::print',
-                    // The async choosers: every argument may legitimately be null, so the sweep
-                    // ends up *opening* a dialog that outlives the test, and on a machine with a
-                    // session bus that dialog goes out to xdg-desktop-portal and answers over
-                    // D-Bus somewhere in the rest of the suite. The 8.5 ZTS CI job segfaulted
-                    // twice in a row inside the GtkFontDialog::choose_font sweep (docs/TODO.md);
-                    // a headless argument sweep has no business opening a dialog it cannot close.
-                    \Gtk4\GtkAlertDialog::class . '::choose',
-                    \Gtk4\GtkColorDialog::class . '::choose_rgba',
-                    \Gtk4\GtkFileDialog::class . '::open',
-                    \Gtk4\GtkFileDialog::class . '::open_multiple',
-                    \Gtk4\GtkFileDialog::class . '::save',
-                    \Gtk4\GtkFileDialog::class . '::select_folder',
-                    \Gtk4\GtkFileDialog::class . '::select_multiple_folders',
-                    \Gtk4\GtkFontDialog::class . '::choose_font',
-                    \Gtk4\GtkFontDialog::class . '::choose_font_and_features',
+                    ...self::ASYNC_CHOOSERS,
                 ];
                 if (in_array($class->getName() . '::' . $m->getName(), $dialogOpeners, true)) {
                     continue;

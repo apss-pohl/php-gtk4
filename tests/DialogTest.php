@@ -17,12 +17,13 @@ use Gtk4\GtkPicture;
 use Gtk4\PangoFontDescription;
 use Gtk4\PangoStyle;
 use Gtk4\PangoWeight;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Wave 5 (gen/README.md): GTK 4.10's async dialogs. What a headless suite can hold them to
  * is everything up to the point a human would click - the configuration, the values that go
  * in and come back out, and the error paths - plus the two mappings the wave introduced:
- * a GFile is a path string (README.md "Design") and a font is a PangoFontDescription.
+ * a GFile is a path string (docs/DESIGN.md) and a font is a PangoFontDescription.
  *
  * The `choose`/`open` round trip itself needs a real dialog and belongs to the example pages.
  */
@@ -217,6 +218,51 @@ final class DialogTest extends GtkTestCase
             self::assertSame($file, $picture->get_file());
         } finally {
             unlink($file);
+        }
+    }
+
+    // ---------------------------------------------------------------- the async choosers
+
+    /**
+     * The argument guards of the nine async choosers, which RobustnessTest cannot sweep: all of
+     * their parameters are nullable, so the generic sweep's "valid value in every other position"
+     * builds an all-null call - a legal one, which opens a chooser nothing will close.
+     *
+     * This puts a `stdClass` in one position at a time and leaves the rest null. That can never
+     * be a legal call, so nothing opens, and the parameter under test is the one that has to
+     * refuse: a wrong type must be a TypeError from argument parsing, raised before GTK is
+     * reached. The list is RobustnessTest's own, so a chooser added to the exclusion is covered
+     * here without a second edit.
+     */
+    #[DataProvider('asyncChoosers')]
+    public function testTheAsyncChoosersRefuseAWrongTypedArgument(string $class, string $method): void
+    {
+        $rm = new \ReflectionMethod($class, $method);
+        $dialog = new $class();
+
+        foreach (array_keys($rm->getParameters()) as $position) {
+            $args = array_fill(0, $rm->getNumberOfParameters(), null);
+            $args[$position] = new \stdClass();
+            try {
+                $rm->invokeArgs($dialog, $args);
+                self::fail("$class::$method() accepted a stdClass in position " . ($position + 1));
+            } catch (\TypeError $e) {
+                self::assertStringContainsString(
+                    'Argument #' . ($position + 1),
+                    $e->getMessage(),
+                    "$class::$method() must name the argument it refused",
+                );
+            }
+        }
+    }
+
+    /** @return iterable<string, array{class-string, string}> */
+    public static function asyncChoosers(): iterable
+    {
+        foreach (RobustnessTest::ASYNC_CHOOSERS as $key) {
+            [$class, $method] = explode('::', $key, 2);
+            /** @var class-string $class */
+            yield $key => [$class, $method];
         }
     }
 }

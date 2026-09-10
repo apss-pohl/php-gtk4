@@ -69,14 +69,14 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GInputStream
 
-- `read` — caller-allocates out parameter `buffer` of type array
-- `read_all` — caller-allocates out parameter `buffer` of type array
-- `read_all_async` — caller-allocates out parameter `buffer` of type array
-- `read_async` — caller-allocates out parameter `buffer` of type array
+- `read` — skip.txt: a caller-allocated byte buffer the C caller sizes and owns; read_bytes() answers the same bytes as a PHP string, which is the shape this binding maps GBytes to everywhere
+- `read_all` — skip.txt: as read(); read_bytes() covers it and a PHP string carries its own length
+- `read_all_async` — skip.txt: as read()
+- `read_async` — skip.txt: as read(); read_bytes_async() is the async pair, and it answers with a string
 - `vfunc close_async` — return or argument type not convertible in a thunk
 - `vfunc close_finish` — GError out parameter
 - `vfunc close_fn` — GError out parameter
-- `vfunc read_async` — caller-allocates out parameter `buffer` of type array
+- `vfunc read_async` — skip.txt: as read(); read_bytes_async() is the async pair, and it answers with a string
 - `vfunc read_finish` — GError out parameter
 - `vfunc read_fn` — GError out parameter
 - `vfunc skip` — GError out parameter
@@ -577,9 +577,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GskTextNode
 
-- `new` — parameter `font` of type Pango.Font
-- `get_font` — return type Pango.Font (not in the closure)
-- `get_glyphs` — return array plus out parameters
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## GskTextureNode
@@ -720,20 +717,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GtkFontDialog
 
-- `choose_face` — parameter `initial_value` of type Pango.FontFace
-- `choose_face_finish` — return type Pango.FontFace (not in the closure)
-- `choose_family` — parameter `initial_value` of type Pango.FontFamily
-- `choose_family_finish` — return type Pango.FontFamily (not in the closure)
 - `choose_font_and_features_finish` — out parameter `font_desc` of type Pango.FontDescription
-- `get_language` — return type Pango.Language
-- `set_language` — parameter `language` of type Pango.Language
-- `property language` — property type Pango.Language not mappable
-
-## GtkFontDialogButton
-
-- `get_language` — return type Pango.Language
-- `set_language` — parameter `language` of type Pango.Language
-- `property language` — property type Pango.Language not mappable
 
 ## GtkFrame
 
@@ -930,7 +914,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `copy` — memory management belongs to the handle (clone / destructor)
 - `forward_find_char` — callback parameter (needs an override)
 - `free` — memory management belongs to the handle (clone / destructor)
-- `get_language` — return type Pango.Language
 
 ## GtkToggleButton
 
@@ -1025,42 +1008,89 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## PangoContext
 
-- `get_language` — return type Pango.Language
 - `get_matrix` — return type Pango.Matrix
-- `get_metrics` — parameter `language` of type Pango.Language
 - `list_families` — out parameter `families` of type array
-- `load_font` — return type Pango.Font (not in the closure)
-- `load_fontset` — parameter `language` of type Pango.Language
-- `set_language` — parameter `language` of type Pango.Language
 - `set_matrix` — parameter `matrix` of type Pango.Matrix
+
+## PangoFont
+
+- `descriptions_free` — parameter `descs` of type array (C array)
+- `get_coverage` — return type Pango.Coverage (not in the closure)
+- `get_features` — caller-allocates out parameter `features` of type array
+- `get_hb_font` — return type HarfBuzz.font_t
+- `get_languages` — return type array
+- `__construct` — skip.txt: abstract, as Pango.FontMap: a font is what a font map loads for a description (PangoContext::load_font(), PangoFontMap::load_font()), a PHP subtype has no glyphs behind it
+- `vfunc_create_hb_font` — return type HarfBuzz.font_t
+- `vfunc describe` — return or argument type not convertible in a thunk
+- `vfunc describe_absolute` — return or argument type not convertible in a thunk
+- `vfunc_get_coverage` — return type Pango.Coverage (not in the closure)
+- `vfunc get_features` — caller-allocates out parameter `features` of type array
+- `vfunc get_glyph_extents` — return or argument type not convertible in a thunk
+- `vfunc get_metrics` — return or argument type not convertible in a thunk
+- `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## PangoFontDescription
 
 - `copy` — memory management belongs to the handle (clone / destructor)
 - `free` — memory management belongs to the handle (clone / destructor)
 
-## PangoFontMap
+## PangoFontFace
 
-- `get_family` — return type Pango.FontFamily (not in the closure)
-- `list_families` — out parameter `families` of type array
-- `load_font` — return type Pango.Font (not in the closure)
-- `load_fontset` — parameter `language` of type Pango.Language
-- `reload_font` — parameter `font` of type Pango.Font
-- `__construct` — skip.txt: abstract, and the concrete map belongs to the backend (PangoCairoFontMap here): a PHP subtype has no font map behind it and the getters read uninitialised state (EveryClassTest segfaulted on it). PangoContext::get_font_map() and GtkWidget::get_pango_context() are where one comes from
-- `vfunc get_face` — parameter `font` of type Pango.Font
-- `vfunc_get_family` — return type Pango.FontFamily (not in the closure)
-- `vfunc list_families` — out parameter `families` of type array
-- `vfunc_load_font` — return type Pango.Font (not in the closure)
-- `vfunc load_fontset` — parameter `language` of type Pango.Language
+- `list_sizes` — out parameter `sizes` of type array
+- `__construct` — skip.txt: abstract, as Pango.FontMap: a face belongs to its family (PangoFontFamily::get_face(), list_faces())
+- `vfunc describe` — return or argument type not convertible in a thunk
+- `vfunc list_sizes` — out parameter `sizes` of type array
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## PangoFontFamily
+
+- `list_faces` — out parameter `faces` of type array
+- `__construct` — skip.txt: abstract, as Pango.FontMap: a family is what the font map lists (PangoFontMap::get_family(), list_families())
+- `vfunc list_faces` — out parameter `faces` of type array
 - `property item-type` — property type Pango.GType not mappable
 - `smoke test` — no constructor or factory whose parameters can be sampled
+
+## PangoFontMap
+
+- `list_families` — out parameter `families` of type array
+- `__construct` — skip.txt: abstract, and the concrete map belongs to the backend (PangoCairoFontMap here): a PHP subtype has no font map behind it and the getters read uninitialised state (EveryClassTest segfaulted on it). PangoContext::get_font_map() and GtkWidget::get_pango_context() are where one comes from
+- `vfunc list_families` — out parameter `families` of type array
+- `property item-type` — property type Pango.GType not mappable
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## PangoFontMetrics
+
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## PangoFontset
+
+- `foreach` — callback parameter (needs an override)
+- `__construct` — skip.txt: abstract, as Pango.FontMap: a fontset is what a context loads for a description and a language (PangoContext::load_fontset())
+- `vfunc foreach` — callback parameter (needs an override)
+- `vfunc get_language` — return or argument type not convertible in a thunk
+- `vfunc get_metrics` — return or argument type not convertible in a thunk
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## PangoGlyphString
+
+- `field glyphs` — field type array is not a scalar
+- `field log_clusters` — field type gint is not a scalar
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `free` — memory management belongs to the handle (clone / destructor)
+- `get_logical_widths` — parameter `logical_widths` of type array (C array)
+- `index_to_x` — parameter `analysis` of type Pango.Analysis
+- `index_to_x_full` — parameter `analysis` of type Pango.Analysis
+- `x_to_index` — parameter `analysis` of type Pango.Analysis
+
+## PangoLanguage
+
+- `get_scripts` — return array plus out parameters
+- `get_preferred` — return type array
 
 ## PangoLayout
 
 - `PHP subclasses` — constructor argument context is not a construct property (map it in gen/ctor-props.txt); `new` on a PHP subclass builds a plain PangoLayout
-- `get_caret_pos` — caller-allocates out parameter `strong_pos` of type Pango.Rectangle
-- `get_cursor_pos` — caller-allocates out parameter `strong_pos` of type Pango.Rectangle
-- `get_extents` — caller-allocates out parameter `ink_rect` of type Pango.Rectangle
 - `get_iter` — return type Pango.LayoutIter
 - `get_line` — return type Pango.LayoutLine
 - `get_line_readonly` — return type Pango.LayoutLine
@@ -1068,8 +1098,6 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `get_lines_readonly` — list of Pango.LayoutLine
 - `get_log_attrs` — out parameter `attrs` of type array
 - `get_log_attrs_readonly` — return array plus out parameters
-- `get_pixel_extents` — caller-allocates out parameter `ink_rect` of type Pango.Rectangle
-- `index_to_pos` — caller-allocates out parameter `pos` of type Pango.Rectangle
 - `smoke test` — no constructor or factory whose parameters can be sampled
 
 ## PangoTabArray
@@ -1478,6 +1506,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gsk.RepeatingRadialGradientNode`: __construct
 - `Gsk.ShadowNode`: __construct, get_shadow
 - `Gsk.Stroke`: get_dash, set_dash
+- `Gsk.TextNode`: get_glyphs
 - `Gsk.Transform`: parse
 - `Gtk.Box`: get_children
 - `Gtk.Builder`: __construct, add_from_string, add_objects_from_string, set_current_object, set_handlers
@@ -1509,6 +1538,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk.TreeListModel`: __construct
 - `Gtk.Widget`: activate_action, allocate, insert_action_group
 - `JavaScriptCore.Value`: constructor_call, function_call, object_invoke_method
+- `Pango.GlyphString`: set_size
 - `WebKit.WebContext`: register_uri_scheme
 - `WebKit.WebResource`: get_data_finish
 
@@ -1660,8 +1690,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gtk/Gtk.stub.php`
 - `Pango/PangoAttrList.cpp`
 - `Pango/PangoContext.cpp`
+- `Pango/PangoFont.cpp`
 - `Pango/PangoFontDescription.cpp`
+- `Pango/PangoFontFace.cpp`
+- `Pango/PangoFontFamily.cpp`
 - `Pango/PangoFontMap.cpp`
+- `Pango/PangoFontMetrics.cpp`
+- `Pango/PangoFontset.cpp`
+- `Pango/PangoGlyphString.cpp`
+- `Pango/PangoLanguage.cpp`
 - `Pango/PangoLayout.cpp`
 - `Pango/PangoTabArray.cpp`
 - `Pango/Pango.stub.php`

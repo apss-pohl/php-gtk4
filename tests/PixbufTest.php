@@ -121,9 +121,10 @@ final class PixbufTest extends GtkTestCase
             @unlink($file);
         }
         self::assertNull(GdkPixbuf::get_file_info(__FILE__), 'PHP source is not an image');
-        // Name the two the binding actually needs rather than counting: gvsbuild's gdk-pixbuf
-        // ships exactly five loaders, a distro build many more, and "more than five" was a
-        // Windows-only failure.
+        // Name the two the binding actually needs rather than counting. The count is a packaging
+        // difference, not a shortage: gvsbuild compiles png/gif/jpeg/tiff into gdk-pixbuf and
+        // ships one loadable module (pixbufloader_svg.dll), so Windows lists exactly five, while
+        // a distro ships a module per format and lists many more.
         $names = array_map(static fn(GdkPixbufFormat $f): string => $f->get_name(), GdkPixbuf::get_formats());
         self::assertContains('png', $names);
         self::assertContains('jpeg', $names);

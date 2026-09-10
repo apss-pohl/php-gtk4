@@ -141,8 +141,8 @@ trait EmitsVfuncs
                 "                          \"$php::$phpName(): for parent:: chaining from a PHP subclass \"",
                 '                          "only; call the public method instead");',
                 '  RETURN_THROWS();', '}',
-                "auto *klass = $classMacro(subtype_native_class(G_OBJECT(self)));",
-                "if (klass->{$v->name} == nullptr) {", ...array_map(fn($l) => "  $l", $empty), '}'];
+                "auto *klass = $classMacro(subtype_native_class(G_OBJECT(self)));"];
+            $checked = ["if (klass->{$v->name} == nullptr) {", ...array_map(fn($l) => "  $l", $empty), '}'];
             // gtk_widget_measure() hands the vfunc baselines preset to -1 ("no baseline"); the
             // out-parameter convention would report 0, which GTK then warns about.
             foreach ($outs as &$o) {
@@ -151,7 +151,7 @@ trait EmitsVfuncs
                 }
             }
             unset($o);
-            $m = $this->method($n, $native, $typeMacro, $castMacro, false, $pre, $outs);
+            $m = $this->method($n, $native, $typeMacro, $castMacro, false, $pre, $checked, $outs);
             if ($m === null) {
                 continue;  // reported by method()
             }

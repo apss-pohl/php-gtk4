@@ -620,10 +620,10 @@ ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_committed) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (!phpgtk::check_utf8(text, 1)) RETURN_THROWS();
   if (klass->committed == nullptr) {
     return;
   }
-  if (!phpgtk::check_utf8(text, 1)) RETURN_THROWS();
   klass->committed(self, ZSTR_VAL(text));
 }
 
@@ -650,11 +650,11 @@ ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_delete_surrounding) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (!phpgtk::check_range<int>(offset, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<guint>(n_chars, 2)) RETURN_THROWS();
   if (klass->delete_surrounding == nullptr) {
     return;
   }
-  if (!phpgtk::check_range<int>(offset, 1)) RETURN_THROWS();
-  if (!phpgtk::check_range<guint>(n_chars, 2)) RETURN_THROWS();
   klass->delete_surrounding(self, static_cast<int>(offset), static_cast<guint>(n_chars));
 }
 
@@ -680,11 +680,11 @@ ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_filter_key_event) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
+  gpointer key_event_f = unwrap_fundamental(key_event, GDK_TYPE_EVENT);
+  if (key_event_f == nullptr) RETURN_THROWS();
   if (klass->filter_key_event == nullptr) {
     RETURN_FALSE;
   }
-  gpointer key_event_f = unwrap_fundamental(key_event, GDK_TYPE_EVENT);
-  if (key_event_f == nullptr) RETURN_THROWS();
   RETURN_BOOL(klass->filter_key_event(self, static_cast<GdkEvent *>(key_event_f)));
 }
 
@@ -717,13 +717,13 @@ ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_notify_cursor_area) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->notify_cursor_area == nullptr) {
-    return;
-  }
   if (!phpgtk::check_range<int>(x, 1)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(y, 2)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(width, 3)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(height, 4)) RETURN_THROWS();
+  if (klass->notify_cursor_area == nullptr) {
+    return;
+  }
   klass->notify_cursor_area(self, static_cast<int>(x), static_cast<int>(y), static_cast<int>(width),
                             static_cast<int>(height));
 }
@@ -807,13 +807,13 @@ ZEND_METHOD(Gtk4_WebKitInputMethodContext, vfunc_notify_surrounding) {
     RETURN_THROWS();
   }
   auto *klass = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->notify_surrounding == nullptr) {
-    return;
-  }
   if (!phpgtk::check_utf8(text, 1)) RETURN_THROWS();
   if (!phpgtk::check_range<guint>(length, 2)) RETURN_THROWS();
   if (!phpgtk::check_range<guint>(cursor_index, 3)) RETURN_THROWS();
   if (!phpgtk::check_range<guint>(selection_index, 4)) RETURN_THROWS();
+  if (klass->notify_surrounding == nullptr) {
+    return;
+  }
   klass->notify_surrounding(self, ZSTR_VAL(text), static_cast<guint>(length),
                             static_cast<guint>(cursor_index), static_cast<guint>(selection_index));
 }

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: fa2d611032ff90ec4cf2302831505459f094f9ba */
+ * Stub hash: 5160cb40b2b1dfd62acd83f16ee181c5532844e8 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GObject___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -179,6 +179,11 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkRectangle_equal, 0, 1, _IS_BOOL, 0)
 	ZEND_ARG_OBJ_INFO(0, other, Gtk4\\GdkRectangle, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_PangoRectangle___construct arginfo_class_Gtk4_GdkRectangle___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_PangoRectangle_to_pixels, 0, 0, Gtk4\\PangoRectangle, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GskRoundedRect___construct, 0, 0, 1)
@@ -462,6 +467,8 @@ ZEND_METHOD(Gtk4_GdkRectangle, intersect);
 ZEND_METHOD(Gtk4_GdkRectangle, union);
 ZEND_METHOD(Gtk4_GdkRectangle, contains_point);
 ZEND_METHOD(Gtk4_GdkRectangle, equal);
+ZEND_METHOD(Gtk4_PangoRectangle, __construct);
+ZEND_METHOD(Gtk4_PangoRectangle, to_pixels);
 ZEND_METHOD(Gtk4_GskRoundedRect, __construct);
 ZEND_METHOD(Gtk4_GskRoundedRect, get_bounds);
 ZEND_METHOD(Gtk4_GskRoundedRect, get_corner);
@@ -624,6 +631,12 @@ static const zend_function_entry class_Gtk4_GdkRectangle_methods[] = {
 	ZEND_FE_END
 };
 
+static const zend_function_entry class_Gtk4_PangoRectangle_methods[] = {
+	ZEND_ME(Gtk4_PangoRectangle, __construct, arginfo_class_Gtk4_PangoRectangle___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_PangoRectangle, to_pixels, arginfo_class_Gtk4_PangoRectangle_to_pixels, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
 static const zend_function_entry class_Gtk4_GskRoundedRect_methods[] = {
 	ZEND_ME(Gtk4_GskRoundedRect, __construct, arginfo_class_Gtk4_GskRoundedRect___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskRoundedRect, get_bounds, arginfo_class_Gtk4_GskRoundedRect_get_bounds, ZEND_ACC_PUBLIC)
@@ -756,7 +769,7 @@ static const zend_function_entry class_Gtk4_GtkCssSection_methods[] = {
 
 static void register_gtk4_symbols(int module_number)
 {
-	REGISTER_STRING_CONSTANT("Gtk4\\VERSION", "0.2.0-dev", CONST_PERSISTENT);
+	REGISTER_STRING_CONSTANT("Gtk4\\VERSION", "0.3.0", CONST_PERSISTENT);
 	REGISTER_STRING_CONSTANT("Gtk4\\BUILD_INFO", PHPGTK_BUILD_INFO, CONST_PERSISTENT);
 	REGISTER_STRING_CONSTANT("Gtk4\\FEATURES", PHPGTK_BUILD_FEATURES, CONST_PERSISTENT);
 }
@@ -868,6 +881,16 @@ static zend_class_entry *register_class_Gtk4_GdkRectangle(void)
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GdkRectangle", class_Gtk4_GdkRectangle_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_PangoRectangle(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "PangoRectangle", class_Gtk4_PangoRectangle_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
 
 	return class_entry;
 }

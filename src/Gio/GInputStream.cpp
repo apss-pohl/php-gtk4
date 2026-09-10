@@ -197,6 +197,7 @@ ZEND_METHOD(Gtk4_GInputStream, read_bytes) {
   ZEND_PARSE_PARAMETERS_END();
   GInputStream *self = PHPGTK_SELF(GInputStream, G_TYPE_INPUT_STREAM);
   if (!phpgtk::check_range<gsize>(count, 1)) RETURN_THROWS();
+  if (!phpgtk::check_domain(count, 0, 2147483647, 1)) RETURN_THROWS();
   GObject *cancellable_o = nullptr;
   if (cancellable != nullptr) {
     cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
@@ -256,6 +257,7 @@ ZEND_METHOD(Gtk4_GInputStream, read_bytes_async) {
   ZEND_PARSE_PARAMETERS_END();
   GInputStream *self = PHPGTK_SELF(GInputStream, G_TYPE_INPUT_STREAM);
   if (!phpgtk::check_range<gsize>(count, 1)) RETURN_THROWS();
+  if (!phpgtk::check_domain(count, 0, 2147483647, 1)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(io_priority, 2)) RETURN_THROWS();
   GObject *cancellable_o = nullptr;
   if (cancellable != nullptr) {

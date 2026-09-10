@@ -5,8 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 php-gtk4 is a PHP extension written in C++20 against the **native Zend API** (no PHP-CPP — see
-README.md "Design" for why it was dropped), built with the standard `phpize`/`config.m4` flow.
-It is the successor to [php-gtk3](https://github.com/scorninpc/php-gtk3); README.md "Design" records the
+docs/DESIGN.md for why it was dropped), built with the standard `phpize`/`config.m4` flow.
+It is the successor to [php-gtk3](https://github.com/scorninpc/php-gtk3); docs/DESIGN.md records the
 decisions and what is deliberately *not* carried over, `docs/TODO.md` what is open. Read both before changing
 anything under `src/core/`.
 
@@ -322,9 +322,13 @@ display, and calls `Gtk::init()` once.
   mentions the class outside its imports, requires the shared harness, returns a page and never runs
   itself, that the page set and the registered-class set are identical, that `Demo::SECTIONS` lists
   every class exactly once, and lints every file in `examples/`.
-- `MarshalTest` uses real `GtkWindow` properties per fundamental type (`title` string,
-  `default-width` int, `resizable` bool, `opacity` double, `halign` enum, `display` object,
-  `css-classes` = unsupported GStrv). Add a row when the marshaller learns a type.
+- `MarshalTest` uses real properties and signals per fundamental type (`GtkWindow`'s `title`
+  string, `default-width` int, `resizable` bool, `opacity` double, `halign` enum, `display`
+  object; `css-classes` for GStrv, `GSimpleAction:state` for GVariant, `notify` for GParamSpec,
+  a legacy controller's `event` for a null fundamental, and WebKit's `page-id` and
+  `received-data` for the 64-bit integers, which nothing in GTK carries). Add a case when the
+  marshaller learns a type - `GBytes`, `GType` and the narrow integers have no carrier PHP can
+  reach and are the arms still untested.
 - `tests/scripts/stress.php` (not PHPUnit) churns handles/signals/exceptions/lifetimes N rounds and
   exits normally; used by the `asan` (with LSan), `coverage` and `valgrind` stages. Extend it when
   adding runtime paths. `tests/lsan.supp` and `tests/valgrind.supp` may only contain third-party
@@ -446,7 +450,11 @@ that touch what it depends on (`paths:`) and once a week, because Windows minute
 Linux rate. (5) `release.yml` on
 every push to `main`: reads `VERSION` and either publishes an
 immutable `vX.Y.Z-dev.<run>` pre-release (suffix `-dev`; the newest 5 are kept, older ones deleted with their
-tags) or the real `vX.Y.Z` release (no suffix, once),
+tags) or the real `vX.Y.Z` release (no suffix, once). **The gate (`verify`, and `coverage` behind it) does
+not depend on whether there is anything to publish** — it used to, so a `main` parked on an already-released
+`VERSION`, which is where every real release leaves it until the follow-up bump, ran no tests, no coverage
+and no badge under a green tick (`WorkflowsTest` pins it); only `build`, `build-windows`, `release-gate` and
+`publish` ask for `publish == 'true'`,
 after running `./ci.sh --skip=cpp-lint` itself — it does not key off `tests.yml`. It also runs `coverage`
 on every merge, and a **real** release additionally gets the ZTS verify cells, a `release-gate` job
 (`--only=valgrind` + `--only=asan`) and Windows binaries that ran the suite; `publish` waits for all of it,
@@ -536,7 +544,7 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   `vfunc_<name>()` methods override class-struct slots through generated thunks, the generated
   native `vfunc_<name>()` on the owning class is what `parent::` chains to; abstract GTK classes
   have a *public* constructor that refuses the native class and works on a subclass —
-  README.md "Design"), `fundamental` (registry-driven handles for refcounted non-GObject types: `GParamSpec`,
+  docs/DESIGN.md), `fundamental` (registry-driven handles for refcounted non-GObject types: `GParamSpec`,
   `CairoContext` (cairo_t via cairo-gobject; marshal's boxed arm falls back to this registry),
   `GtkCssSection`, `GdkEvent` + subclasses, `GdkEventSequence` as a ref-less identity; `new X()` on
   the hand-written ones throws; every GIR class marked `glib:fundamental` - `GskRenderNode` and its
@@ -653,7 +661,7 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   does for readonly/uncloneable. Shared
   helpers: `PHPGTK_RETURN_STRING_OR_NULL(expr)` for nullable C strings (`php_gtk4.h`),
   the generated `?GtkWidget` parameter handling for everything else.
-- **Naming is snake_case, final** (decided 2026-08-25, README.md "Design"): methods mirror the GTK C API
+- **Naming is snake_case, final** (decided 2026-08-25, docs/DESIGN.md): methods mirror the GTK C API
   with the type prefix stripped (`gtk_window_set_title` → `set_title`), properties keep GTK's names
   with underscores (`$win->default_width`). Never add camelCase aliases. Two deliberate exceptions:
   `GError::getDomain()` sits next to the inherited `getCode()`/`getMessage()`, and enum *cases* are

@@ -1,5 +1,10 @@
 # php-gtk4/stubs
 
+> **Generated — do not edit here.** `gtk4.php` comes out of `gen/ide-stub.php` in
+> [apss-pohl/php-gtk4](https://github.com/apss-pohl/php-gtk4), which is also where this package is
+> published from, and where issues and pull requests belong. Anything changed by hand is gone at
+> the next release.
+
 IDE and static-analysis stubs for the [php-gtk4](https://github.com/apss-pohl/php-gtk4) extension:
 every class, method, enum, constant and `@property` of the `Gtk4\` namespace, with the same
 signatures and docblocks the extension registers, and dummy bodies so PhpStorm, Intelephense and

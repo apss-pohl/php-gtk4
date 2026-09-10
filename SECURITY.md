@@ -40,7 +40,7 @@ In scope:
 - memory unsafety reachable from PHP values — a use-after-free, a buffer overflow, type confusion between
   a PHP handle and the GObject behind it,
 - a value a PHP script can build that ends the process instead of raising a PHP error. The binding's own
-  rule is that this must not happen (README.md "Design", `RobustnessTest`), so a case that does is a bug
+  rule is that this must not happen (docs/DESIGN.md, `RobustnessTest`), so a case that does is a bug
   worth reporting even when nobody untrusted is involved,
 - untrusted data that reaches code execution it should not: a `.ui` file resolving a signal handler the
   application never registered, a deserialised value escaping its type, an out-of-bounds read fed by an

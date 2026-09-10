@@ -93,7 +93,7 @@ a handler id for `disconnect()`.
 A Throwable thrown inside a handler never unwinds through GTK: it goes to the handler installed
 with `Gtk::set_exception_handler()`, or is reported as a PHP warning. `Gtk::set_exception_mode()`
 decides whether the program then carries on (`Log`, the default) or the loop stops and the
-Throwable reaches your own `try` (`Rethrow`) — see README.md "Design".
+Throwable reaches your own `try` (`Rethrow`) — see docs/DESIGN.md.
 
 ## 4. Dialogs answer in a callback
 
@@ -197,5 +197,5 @@ which `examples/GdkPixbuf.php` does.
 - `examples/` — one runnable page per bound class; `bin/php-gtk4 examples/demo.php` shows them all.
 - `examples/notes/` — a small complete application (menus, list models, autosave) written the
   way this page recommends.
-- README.md "Design" — why the binding is shaped like this, including what was deliberately not
+- docs/DESIGN.md — why the binding is shaped like this, including what was deliberately not
   carried over.

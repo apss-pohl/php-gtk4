@@ -201,8 +201,10 @@ final class DragDropTest extends GtkTestCase
         $gtypes = GdkContentProvider::new_for_value('x')->ref_formats();
         self::assertContains('text/plain', $gtypes->union_serialize_mime_types()->get_mime_types());
         // Containment, not identity: which GTypes a mime type deserialises into is up to the
-        // deserialisers GDK registered, and the Windows backend adds a GtkTextBuffer to the
-        // string every platform has.
+        // deserialisers GDK has registered *so far*, and that set is not fixed at startup:
+        // GtkTextBuffer registers a text/plain deserialiser when its class is first initialised,
+        // so the list gains a GtkTextBuffer as soon as anything in the process has touched one.
+        // That follows test order on every platform - it is not the Windows backend.
         $gtypesForText = new GdkContentFormats(['text/plain'])->union_deserialize_gtypes()->get_gtypes();
         self::assertContains('string', $gtypesForText);
     }

@@ -401,6 +401,7 @@ trait EmitsClasses
                 'assert_gui_thread' => '"core/mainloop.h"', 'RunningLoop' => '"core/mainloop.h"',
                 'callback_new' => '"core/callback.h"', 'CAIRO_GOBJECT_TYPE' => '<cairo-gobject.h>',
                 'PHPGTK_TYPE_GSK_ROUNDED_RECT' => '"Gsk/GskRoundedRectType.h"',
+                'PHPGTK_TYPE_PANGO_RECTANGLE' => '"Pango/PangoRectangleType.h"',
                 'std::array' => '<array>'] as $needle => $inc
         ) {
             if (
@@ -461,7 +462,7 @@ trait EmitsClasses
                 $this->skip($n, $f->name, 'memory management belongs to the handle (destructor)');
                 continue;
             }
-            $m = $this->method($n, $f, $typeMacro, $castMacro, false, [], null, $selfLine);
+            $m = $this->method($n, $f, $typeMacro, $castMacro, false, [], [], null, $selfLine);
             if ($m === null) {
                 continue;
             }
@@ -603,6 +604,7 @@ trait EmitsClasses
 
     /**
      * @param list<string> $vfuncPre lines for a native vfunc_<name>() method (after `self`)
+     * @param list<string> $vfuncChecked its empty-slot answer, emitted after the argument checks
      * @param list<array>|null $presetOuts out mappings replacing the mapped ones
      * @return array{string, string, string}|null php name, stub method, cpp method
      */
@@ -613,6 +615,7 @@ trait EmitsClasses
         string $castMacro,
         bool $isRoot,
         array $vfuncPre = [],
+        array $vfuncChecked = [],
         ?array $presetOuts = null,
         ?string $selfLine = null,
     ): ?array {
@@ -736,6 +739,9 @@ trait EmitsClasses
             $lines[] = '    RETURN_THROWS();';
             $lines[] = '  }';
         }
+        // A native vfunc's empty-slot answer goes here, after every argument check: a slot GTK
+        // left NULL is a no-op, but the arguments still have to be what the slot would take.
+        array_push($lines, ...array_map(fn($l) => "  $l", $vfuncChecked));
         foreach ($outs as $o) {
             $lines[] = $o['kind'] === 'boxed'
                 ? "  {$o['ctype']} {$o['name']}{};"

@@ -3,7 +3,7 @@
 /**
  * The loader: the installed .gir files parsed into the model.
  *
- * Part of gen/gir.php, the GObject-Introspection generator (README.md "Design");
+ * Part of gen/gir.php, the GObject-Introspection generator (docs/DESIGN.md);
  * gen/README.md describes the flow. Split out of the 3 200-line original on 2026-08-30.
  */
 
@@ -267,7 +267,7 @@ final class Gir
             $params[] = new Param(
                 // GIR escapes a name that collides in some binding language by appending an
                 // underscore (gtk_list_box_get_row_at_index's `index_`). The PHP API is
-                // snake_case, final (README.md "Design") and carries no such escape - and the
+                // snake_case, final (docs/DESIGN.md) and carries no such escape - and the
                 // generated C++ variable would fail clang-tidy's naming check besides.
                 rtrim($p->getAttribute('name'), '_') ?: $p->getAttribute('name'),
                 $t,

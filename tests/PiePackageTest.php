@@ -105,6 +105,13 @@ final class PiePackageTest extends TestCase
      * On Windows PIE downloads a zip and never builds, so the release asset has to be named the
      * way it looks for it: php_<extension>-<version>-<php>-<ts|nts>-<compiler>-<arch>, lower
      * case, holding a dll of the same name (php/pie, Platform/WindowsExtensionAssetName).
+     *
+     * That class accepts two orders - `...-<ts>-<compiler>-...` and `...-<compiler>-<ts>-...`,
+     * a leftover from PIE's own development - and its unit test spells the first one out as
+     * `php_foo-1.2.3-8.4-ts-vc14-x86_64.zip`. This is that one, and the version carries no `v`.
+     * PIE's extension-maintainers guide describes a different, longer convention under
+     * "pre-packaged-binary"; that one is not what the Windows path uses, so do not "fix" this
+     * against the prose. Verified against php/pie at 2026-09-10.
      */
     public function testTheReleaseWorkflowNamesTheWindowsAssetTheWayPieLooksForIt(): void
     {

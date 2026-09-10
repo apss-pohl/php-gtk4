@@ -111,6 +111,56 @@ ZEND_METHOD(Gtk4_PangoContext, get_gravity_hint) {
 }
 
 /**
+ * Gtk4\PangoContext::get_language(): ?PangoLanguage
+ *
+ * Retrieves the global language tag for the context.
+ */
+ZEND_METHOD(Gtk4_PangoContext, get_language) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  PangoContext *self = PHPGTK_SELF(PangoContext, PANGO_TYPE_CONTEXT);
+  PangoLanguage *phpgtk_ret = pango_context_get_language(self);
+  wrap_boxed(PANGO_TYPE_LANGUAGE, phpgtk_ret, return_value);
+}
+
+/**
+ * Gtk4\PangoContext::get_metrics(?PangoFontDescription $desc, ?PangoLanguage $language):
+ * PangoFontMetrics
+ *
+ * Get overall metric information for a particular font description.
+ */
+ZEND_METHOD(Gtk4_PangoContext, get_metrics) {
+  zval *desc = nullptr;
+  zval *language = nullptr;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(desc, boxed_class_for_type(PANGO_TYPE_FONT_DESCRIPTION)->ce)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(language, boxed_class_for_type(PANGO_TYPE_LANGUAGE)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  PangoContext *self = PHPGTK_SELF(PangoContext, PANGO_TYPE_CONTEXT);
+  gpointer desc_b = nullptr;
+  if (desc != nullptr) {
+    desc_b = unwrap_boxed(desc, PANGO_TYPE_FONT_DESCRIPTION);
+    if (desc_b == nullptr) RETURN_THROWS();
+  }
+  gpointer language_b = nullptr;
+  if (language != nullptr) {
+    language_b = unwrap_boxed(language, PANGO_TYPE_LANGUAGE);
+    if (language_b == nullptr) RETURN_THROWS();
+  }
+  const bool state_holds = pango_context_get_font_map(self) != nullptr;
+  if (!state_holds) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "%s(): the context has no font map - use a widget's context or set_font_map() first",
+        ZSTR_VAL(EX(func)->common.function_name));
+    RETURN_THROWS();
+  }
+  PangoFontMetrics *phpgtk_ret = pango_context_get_metrics(
+      self, static_cast<PangoFontDescription *>(desc_b), static_cast<PangoLanguage *>(language_b));
+  wrap_boxed(PANGO_TYPE_FONT_METRICS, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) g_boxed_free(PANGO_TYPE_FONT_METRICS, phpgtk_ret);
+}
+
+/**
  * Gtk4\PangoContext::get_round_glyph_positions(): bool
  *
  * Returns whether font rendering with this context should round glyph positions and widths.
@@ -130,6 +180,65 @@ ZEND_METHOD(Gtk4_PangoContext, get_serial) {
   ZEND_PARSE_PARAMETERS_NONE();
   PangoContext *self = PHPGTK_SELF(PangoContext, PANGO_TYPE_CONTEXT);
   RETURN_LONG(static_cast<zend_long>(pango_context_get_serial(self)));
+}
+
+/**
+ * Gtk4\PangoContext::load_font(PangoFontDescription $desc): ?PangoFont
+ *
+ * Loads the font in one of the fontmaps in the context that is the closest match for $desc.
+ */
+ZEND_METHOD(Gtk4_PangoContext, load_font) {
+  zval *desc;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(desc, boxed_class_for_type(PANGO_TYPE_FONT_DESCRIPTION)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  PangoContext *self = PHPGTK_SELF(PangoContext, PANGO_TYPE_CONTEXT);
+  gpointer desc_b = unwrap_boxed(desc, PANGO_TYPE_FONT_DESCRIPTION);
+  if (desc_b == nullptr) RETURN_THROWS();
+  const bool state_holds = pango_context_get_font_map(self) != nullptr;
+  if (!state_holds) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "%s(): the context has no font map - use a widget's context or set_font_map() first",
+        ZSTR_VAL(EX(func)->common.function_name));
+    RETURN_THROWS();
+  }
+  PangoFont *phpgtk_ret =
+      pango_context_load_font(self, static_cast<PangoFontDescription *>(desc_b));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
+/**
+ * Gtk4\PangoContext::load_fontset(PangoFontDescription $desc, PangoLanguage $language):
+ * ?PangoFontset
+ *
+ * Load a set of fonts in the context that can be used to render a font matching $desc.
+ */
+ZEND_METHOD(Gtk4_PangoContext, load_fontset) {
+  zval *desc;
+  zval *language;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(desc, boxed_class_for_type(PANGO_TYPE_FONT_DESCRIPTION)->ce)
+  Z_PARAM_OBJECT_OF_CLASS(language, boxed_class_for_type(PANGO_TYPE_LANGUAGE)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  PangoContext *self = PHPGTK_SELF(PangoContext, PANGO_TYPE_CONTEXT);
+  gpointer desc_b = unwrap_boxed(desc, PANGO_TYPE_FONT_DESCRIPTION);
+  if (desc_b == nullptr) RETURN_THROWS();
+  gpointer language_b = unwrap_boxed(language, PANGO_TYPE_LANGUAGE);
+  if (language_b == nullptr) RETURN_THROWS();
+  const bool state_holds = pango_context_get_font_map(self) != nullptr;
+  if (!state_holds) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "%s(): the context has no font map - use a widget's context or set_font_map() first",
+        ZSTR_VAL(EX(func)->common.function_name));
+    RETURN_THROWS();
+  }
+  PangoFontset *phpgtk_ret = pango_context_load_fontset(
+      self, static_cast<PangoFontDescription *>(desc_b), static_cast<PangoLanguage *>(language_b));
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
 }
 
 /**
@@ -213,6 +322,25 @@ ZEND_METHOD(Gtk4_PangoContext, set_gravity_hint) {
   gint hint_v = 0;
   if (!enum_from_php(hint, PANGO_TYPE_GRAVITY_HINT, &hint_v)) RETURN_THROWS();
   pango_context_set_gravity_hint(self, static_cast<PangoGravityHint>(hint_v));
+}
+
+/**
+ * Gtk4\PangoContext::set_language(?PangoLanguage $language): void
+ *
+ * Sets the global language tag for the context.
+ */
+ZEND_METHOD(Gtk4_PangoContext, set_language) {
+  zval *language = nullptr;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(language, boxed_class_for_type(PANGO_TYPE_LANGUAGE)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  PangoContext *self = PHPGTK_SELF(PangoContext, PANGO_TYPE_CONTEXT);
+  gpointer language_b = nullptr;
+  if (language != nullptr) {
+    language_b = unwrap_boxed(language, PANGO_TYPE_LANGUAGE);
+    if (language_b == nullptr) RETURN_THROWS();
+  }
+  pango_context_set_language(self, static_cast<PangoLanguage *>(language_b));
 }
 
 /**

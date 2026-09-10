@@ -2,6 +2,7 @@
 // Gtk4\GtkFontDialog
 #include "php_gtk4.h"
 #include "core/object.h"
+#include "core/gerror.h"
 #include "core/boxed.h"
 #include "core/subtype.h"
 #include "core/callback.h"
@@ -29,6 +30,182 @@ ZEND_METHOD(Gtk4_GtkFontDialog, __construct) {
     RETURN_THROWS();
   }
   attach_new(object_from_zval(ZEND_THIS), obj);
+}
+
+namespace {
+// AsyncReadyCallback trampoline for GtkFontDialog::choose_face(): wraps the C arguments, invokes
+// the PHP callable once and releases it (async scope).
+void cb_choose_face_callback(GObject *source_object, GAsyncResult *res, gpointer data) {
+  auto *cb = static_cast<Callback *>(data);
+  std::array<zval, 2> args{};
+  zval *argv = args.data();
+  wrap(source_object != nullptr ? G_OBJECT(source_object) : nullptr, &argv[0]);
+  wrap(res != nullptr ? G_OBJECT(res) : nullptr, &argv[1]);
+  zval ret;
+  callback_invoke(cb, 2, argv, &ret);
+  if (!Z_ISUNDEF(ret)) zval_ptr_dtor(&ret);
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  callback_free(cb);
+  callback_drain();
+}
+}  // namespace
+
+/**
+ * Gtk4\GtkFontDialog::choose_face(?GtkWindow $parent, ?PangoFontFace $initial_value, ?GCancellable
+ * $cancellable, ?callable $callback): void
+ *
+ * This function initiates a font selection operation by presenting a dialog to the user for
+ * selecting a font face (i.e. a font family and style, but not a specific font size).
+ */
+ZEND_METHOD(Gtk4_GtkFontDialog, choose_face) {
+  zval *parent = nullptr;
+  zval *initial_value = nullptr;
+  zval *cancellable = nullptr;
+  zend_fcall_info fci_callback = empty_fcall_info;
+  zend_fcall_info_cache fcc_callback = empty_fcall_info_cache;
+  ZEND_PARSE_PARAMETERS_START(4, 4)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(parent, class_for_gtype(GTK_TYPE_WINDOW))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(initial_value, class_for_gtype(PANGO_TYPE_FONT_FACE))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
+  Z_PARAM_FUNC_OR_NULL(fci_callback, fcc_callback)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkFontDialog *self = PHPGTK_SELF(GtkFontDialog, GTK_TYPE_FONT_DIALOG);
+  GObject *parent_o = nullptr;
+  if (parent != nullptr) {
+    parent_o = unwrap(parent, GTK_TYPE_WINDOW);
+    if (parent_o == nullptr) RETURN_THROWS();
+  }
+  GObject *initial_value_o = nullptr;
+  if (initial_value != nullptr) {
+    initial_value_o = unwrap(initial_value, PANGO_TYPE_FONT_FACE);
+    if (initial_value_o == nullptr) RETURN_THROWS();
+  }
+  GObject *cancellable_o = nullptr;
+  if (cancellable != nullptr) {
+    cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
+    if (cancellable_o == nullptr) RETURN_THROWS();
+  }
+  Callback *cb_callback =
+      ZEND_FCI_INITIALIZED(fci_callback)
+          ? callback_new(&fci_callback.function_name, "GtkFontDialog::choose_face")
+          : nullptr;
+  gtk_font_dialog_choose_face(
+      self, parent_o != nullptr ? GTK_WINDOW(parent_o) : nullptr,
+      initial_value_o != nullptr ? PANGO_FONT_FACE(initial_value_o) : nullptr,
+      cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
+      cb_callback != nullptr ? cb_choose_face_callback : nullptr, cb_callback);
+}
+
+/**
+ * Gtk4\GtkFontDialog::choose_face_finish(GAsyncResult $result): ?PangoFontFace
+ *
+ * Finishes the `choose_face` call and returns the resulting font face.
+ */
+ZEND_METHOD(Gtk4_GtkFontDialog, choose_face_finish) {
+  zval *result;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(result, class_for_gtype(G_TYPE_ASYNC_RESULT))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkFontDialog *self = PHPGTK_SELF(GtkFontDialog, GTK_TYPE_FONT_DIALOG);
+  GObject *result_o = unwrap(result, G_TYPE_ASYNC_RESULT);
+  if (result_o == nullptr) RETURN_THROWS();
+  GError *error = nullptr;
+  PangoFontFace *phpgtk_ret =
+      gtk_font_dialog_choose_face_finish(self, G_ASYNC_RESULT(result_o), &error);
+  if (phpgtk_ret == nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
+}
+
+namespace {
+// AsyncReadyCallback trampoline for GtkFontDialog::choose_family(): wraps the C arguments, invokes
+// the PHP callable once and releases it (async scope).
+void cb_choose_family_callback(GObject *source_object, GAsyncResult *res, gpointer data) {
+  auto *cb = static_cast<Callback *>(data);
+  std::array<zval, 2> args{};
+  zval *argv = args.data();
+  wrap(source_object != nullptr ? G_OBJECT(source_object) : nullptr, &argv[0]);
+  wrap(res != nullptr ? G_OBJECT(res) : nullptr, &argv[1]);
+  zval ret;
+  callback_invoke(cb, 2, argv, &ret);
+  if (!Z_ISUNDEF(ret)) zval_ptr_dtor(&ret);
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  callback_free(cb);
+  callback_drain();
+}
+}  // namespace
+
+/**
+ * Gtk4\GtkFontDialog::choose_family(?GtkWindow $parent, ?PangoFontFamily $initial_value,
+ * ?GCancellable $cancellable, ?callable $callback): void
+ *
+ * This function initiates a font selection operation by presenting a dialog to the user for
+ * selecting a font family.
+ */
+ZEND_METHOD(Gtk4_GtkFontDialog, choose_family) {
+  zval *parent = nullptr;
+  zval *initial_value = nullptr;
+  zval *cancellable = nullptr;
+  zend_fcall_info fci_callback = empty_fcall_info;
+  zend_fcall_info_cache fcc_callback = empty_fcall_info_cache;
+  ZEND_PARSE_PARAMETERS_START(4, 4)
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(parent, class_for_gtype(GTK_TYPE_WINDOW))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(initial_value, class_for_gtype(PANGO_TYPE_FONT_FAMILY))
+  Z_PARAM_OBJECT_OF_CLASS_OR_NULL(cancellable, class_for_gtype(G_TYPE_CANCELLABLE))
+  Z_PARAM_FUNC_OR_NULL(fci_callback, fcc_callback)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkFontDialog *self = PHPGTK_SELF(GtkFontDialog, GTK_TYPE_FONT_DIALOG);
+  GObject *parent_o = nullptr;
+  if (parent != nullptr) {
+    parent_o = unwrap(parent, GTK_TYPE_WINDOW);
+    if (parent_o == nullptr) RETURN_THROWS();
+  }
+  GObject *initial_value_o = nullptr;
+  if (initial_value != nullptr) {
+    initial_value_o = unwrap(initial_value, PANGO_TYPE_FONT_FAMILY);
+    if (initial_value_o == nullptr) RETURN_THROWS();
+  }
+  GObject *cancellable_o = nullptr;
+  if (cancellable != nullptr) {
+    cancellable_o = unwrap(cancellable, G_TYPE_CANCELLABLE);
+    if (cancellable_o == nullptr) RETURN_THROWS();
+  }
+  Callback *cb_callback =
+      ZEND_FCI_INITIALIZED(fci_callback)
+          ? callback_new(&fci_callback.function_name, "GtkFontDialog::choose_family")
+          : nullptr;
+  gtk_font_dialog_choose_family(
+      self, parent_o != nullptr ? GTK_WINDOW(parent_o) : nullptr,
+      initial_value_o != nullptr ? PANGO_FONT_FAMILY(initial_value_o) : nullptr,
+      cancellable_o != nullptr ? G_CANCELLABLE(cancellable_o) : nullptr,
+      cb_callback != nullptr ? cb_choose_family_callback : nullptr, cb_callback);
+}
+
+/**
+ * Gtk4\GtkFontDialog::choose_family_finish(GAsyncResult $result): ?PangoFontFamily
+ *
+ * Finishes the `choose_family` call and returns the resulting family.
+ */
+ZEND_METHOD(Gtk4_GtkFontDialog, choose_family_finish) {
+  zval *result;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(result, class_for_gtype(G_TYPE_ASYNC_RESULT))
+  ZEND_PARSE_PARAMETERS_END();
+  GtkFontDialog *self = PHPGTK_SELF(GtkFontDialog, GTK_TYPE_FONT_DIALOG);
+  GObject *result_o = unwrap(result, G_TYPE_ASYNC_RESULT);
+  if (result_o == nullptr) RETURN_THROWS();
+  GError *error = nullptr;
+  PangoFontFamily *phpgtk_ret =
+      gtk_font_dialog_choose_family_finish(self, G_ASYNC_RESULT(result_o), &error);
+  if (phpgtk_ret == nullptr) {
+    throw_gerror(error);
+    RETURN_THROWS();
+  }
+  wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
+  if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref
 }
 
 namespace {
@@ -207,6 +384,19 @@ ZEND_METHOD(Gtk4_GtkFontDialog, get_font_map) {
 }
 
 /**
+ * Gtk4\GtkFontDialog::get_language(): ?PangoLanguage
+ *
+ * Returns the language for which font features are applied.
+ */
+ZEND_METHOD(Gtk4_GtkFontDialog, get_language) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GtkFontDialog *self = PHPGTK_SELF(GtkFontDialog, GTK_TYPE_FONT_DIALOG);
+  PangoLanguage *phpgtk_ret = gtk_font_dialog_get_language(self);
+  wrap_boxed(PANGO_TYPE_LANGUAGE, phpgtk_ret, return_value);
+  if (phpgtk_ret != nullptr) g_boxed_free(PANGO_TYPE_LANGUAGE, phpgtk_ret);
+}
+
+/**
  * Gtk4\GtkFontDialog::get_modal(): bool
  *
  * Returns whether the font chooser dialog blocks interaction with the parent window while it is
@@ -267,6 +457,22 @@ ZEND_METHOD(Gtk4_GtkFontDialog, set_font_map) {
     if (fontmap_o == nullptr) RETURN_THROWS();
   }
   gtk_font_dialog_set_font_map(self, fontmap_o != nullptr ? PANGO_FONT_MAP(fontmap_o) : nullptr);
+}
+
+/**
+ * Gtk4\GtkFontDialog::set_language(PangoLanguage $language): void
+ *
+ * Sets the language for which font features are applied.
+ */
+ZEND_METHOD(Gtk4_GtkFontDialog, set_language) {
+  zval *language;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_OBJECT_OF_CLASS(language, boxed_class_for_type(PANGO_TYPE_LANGUAGE)->ce)
+  ZEND_PARSE_PARAMETERS_END();
+  GtkFontDialog *self = PHPGTK_SELF(GtkFontDialog, GTK_TYPE_FONT_DIALOG);
+  gpointer language_b = unwrap_boxed(language, PANGO_TYPE_LANGUAGE);
+  if (language_b == nullptr) RETURN_THROWS();
+  gtk_font_dialog_set_language(self, static_cast<PangoLanguage *>(language_b));
 }
 
 /**

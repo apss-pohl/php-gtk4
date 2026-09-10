@@ -12,3 +12,4 @@ Gdk.Event
 Gdk.EventSequence
 cairo.Surface
 Gsk.RoundedRect
+Pango.Rectangle

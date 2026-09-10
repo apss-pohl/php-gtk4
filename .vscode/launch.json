@@ -9,6 +9,41 @@
   //
   // An example file only *describes* a page (it returns Demo::page(...)), so the thing
   // to run is always examples/demo.php with the class name - that is what mounts it.
+  //
+  // The "windows" block on each configuration is what VS Code overlays per property on
+  // that platform, so the same entries are the start points on both systems - F5 in
+  // examples/GtkBox.php, or "Application: Notes", just works.
+  //
+  // It does NOT go through bin/php-gtk4.cmd. The debug extension spawns runtimeExecutable
+  // without a shell, and since the CVE-2024-27980 fix (Node 18.20.2 / 20.12.2) spawn()
+  // refuses a .bat or .cmd outright: "spawn EINVAL", before anything runs. On Windows that
+  // launcher is only PATH + -dextension anyway - there is no php-gtk3 to filter out - so
+  // the two lines are inlined here instead:
+  //   runtimeExecutable  php.exe 8.4+, built with the same VS version as the DLL. Spelled
+  //                      out because `php` from PATH is often an older or vs16 build, which
+  //                      loads nothing and explains little
+  //   runtimeArgs        -dextension=<the DLL nmake just wrote>; x64\Release is the NTS
+  //                      build, x64\Release_TS a TS one
+  //   env.PATH           <gvsbuild tree>\bin ahead of the rest, so gtk-4-1.dll resolves
+  // Machine paths on purpose - change them here when yours differ. tasks.json still calls
+  // the .cmd: a task runs in a shell, where a .cmd is fine. The Windows CI job runs
+  // tests\run.cmd, not these configurations, so nothing else depends on them.
+  //
+  // The "Example:" configurations add GTK_DEBUG=interactive, which opens the GTK inspector
+  // alongside the page and enables its Ctrl+Shift+D keybinding. On Windows GTK says three
+  // things while doing it - "Failed to open display (NULL)", "Failed to open separate
+  // connection to default display", "Using default display for GtkInspector; expect some
+  // spillover". That is normal: the inspector prefers its own display connection so it does
+  // not end up inspecting itself, win32 has no second connection to give, and it carries on
+  // with the default one. They are notices, never criticals, and nothing fails on them.
+  //
+  // No configuration sets GSK_RENDERER, on purpose: GTK then picks the best renderer it can
+  // realize - the GL one on a machine with a working GPU driver, GskCairoRenderer otherwise -
+  // and says nothing when it falls back. A GSK_RENDERER or GDK_GL left over in the environment
+  // (a GTK 3 habit) overrides that and turns the fallback into a warning per window,
+  // "Failed to realize renderer 'GskGLRenderer' ... OpenGL requires Direct Composition".
+  // Clear it in the environment VS Code inherits; a launch configuration cannot, because the
+  // debug adapter merges env over process.env and JSON has no way to spell "unset".
   "version": "0.2.0",
   "configurations": [
     {
@@ -20,6 +55,17 @@
       "request": "launch",
       "program": "${workspaceFolder}/examples/demo.php",
       "args": ["${fileBasenameNoExtension}"],
+      "windows": {
+        "runtimeExecutable": "C:\\dev_gtk3\\MAKE-8.4.14-x64\\php-8.4.24-nts-Win32-vs17-x64\\php.exe",
+        "runtimeArgs": ["-dextension=${workspaceFolder}/x64/Release/php_gtk4.dll"],
+        "env": {
+          "PATH": "C:\\gtk\\bin;${env:PATH}",
+          "XDEBUG_MODE": "debug",
+          "XDEBUG_SESSION": "1",
+          "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003",
+          "GTK_DEBUG": "interactive"
+        }
+      },
       "runtimeExecutable": "${workspaceFolder}/bin/php-gtk4",
       "cwd": "${workspaceFolder}",
       "port": 9003,
@@ -27,6 +73,7 @@
         "XDEBUG_MODE": "debug",
         "XDEBUG_SESSION": "1",
         "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003",
+        "GTK_DEBUG": "interactive",
         "GDK_BACKEND": "x11"
       }
     },
@@ -36,6 +83,17 @@
       "request": "launch",
       "program": "${workspaceFolder}/examples/demo.php",
       "args": ["${input:exampleClass}"],
+      "windows": {
+        "runtimeExecutable": "C:\\dev_gtk3\\MAKE-8.4.14-x64\\php-8.4.24-nts-Win32-vs17-x64\\php.exe",
+        "runtimeArgs": ["-dextension=${workspaceFolder}/x64/Release/php_gtk4.dll"],
+        "env": {
+          "PATH": "C:\\gtk\\bin;${env:PATH}",
+          "XDEBUG_MODE": "debug",
+          "XDEBUG_SESSION": "1",
+          "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003",
+          "GTK_DEBUG": "interactive"
+        }
+      },
       "runtimeExecutable": "${workspaceFolder}/bin/php-gtk4",
       "cwd": "${workspaceFolder}",
       "port": 9003,
@@ -43,6 +101,7 @@
         "XDEBUG_MODE": "debug",
         "XDEBUG_SESSION": "1",
         "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003",
+        "GTK_DEBUG": "interactive",
         "GDK_BACKEND": "x11"
       }
     },
@@ -51,6 +110,17 @@
       "type": "php",
       "request": "launch",
       "program": "${workspaceFolder}/examples/demo.php",
+      "windows": {
+        "runtimeExecutable": "C:\\dev_gtk3\\MAKE-8.4.14-x64\\php-8.4.24-nts-Win32-vs17-x64\\php.exe",
+        "runtimeArgs": ["-dextension=${workspaceFolder}/x64/Release/php_gtk4.dll"],
+        "env": {
+          "PATH": "C:\\gtk\\bin;${env:PATH}",
+          "XDEBUG_MODE": "debug",
+          "XDEBUG_SESSION": "1",
+          "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003",
+          "GTK_DEBUG": "interactive"
+        }
+      },
       "runtimeExecutable": "${workspaceFolder}/bin/php-gtk4",
       "cwd": "${workspaceFolder}",
       "port": 9003,
@@ -58,6 +128,7 @@
         "XDEBUG_MODE": "debug",
         "XDEBUG_SESSION": "1",
         "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003",
+        "GTK_DEBUG": "interactive",
         "GDK_BACKEND": "x11"
       }
     },
@@ -68,6 +139,16 @@
       "type": "php",
       "request": "launch",
       "program": "${workspaceFolder}/examples/notes/notes.php",
+      "windows": {
+        "runtimeExecutable": "C:\\dev_gtk3\\MAKE-8.4.14-x64\\php-8.4.24-nts-Win32-vs17-x64\\php.exe",
+        "runtimeArgs": ["-dextension=${workspaceFolder}/x64/Release/php_gtk4.dll"],
+        "env": {
+          "PATH": "C:\\gtk\\bin;${env:PATH}",
+          "XDEBUG_MODE": "debug",
+          "XDEBUG_SESSION": "1",
+          "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003"
+        }
+      },
       "runtimeExecutable": "${workspaceFolder}/bin/php-gtk4",
       "cwd": "${workspaceFolder}",
       "port": 9003,
@@ -84,6 +165,16 @@
       "type": "php",
       "request": "launch",
       "program": "${file}",
+      "windows": {
+        "runtimeExecutable": "C:\\dev_gtk3\\MAKE-8.4.14-x64\\php-8.4.24-nts-Win32-vs17-x64\\php.exe",
+        "runtimeArgs": ["-dextension=${workspaceFolder}/x64/Release/php_gtk4.dll"],
+        "env": {
+          "PATH": "C:\\gtk\\bin;${env:PATH}",
+          "XDEBUG_MODE": "debug",
+          "XDEBUG_SESSION": "1",
+          "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003"
+        }
+      },
       "runtimeExecutable": "${workspaceFolder}/bin/php-gtk4",
       "cwd": "${workspaceFolder}",
       "port": 9003,
@@ -104,6 +195,17 @@
       "request": "launch",
       "program": "${workspaceFolder}/vendor/bin/phpunit",
       "args": ["--no-coverage", "--filter", "${input:phpunitFilter}"],
+      "windows": {
+        "runtimeExecutable": "C:\\dev_gtk3\\MAKE-8.4.14-x64\\php-8.4.24-nts-Win32-vs17-x64\\php.exe",
+        "runtimeArgs": ["-dextension=${workspaceFolder}/x64/Release/php_gtk4.dll"],
+        "env": {
+          "PATH": "C:\\gtk\\bin;${env:PATH}",
+          "XDEBUG_MODE": "debug",
+          "XDEBUG_SESSION": "1",
+          "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003",
+          "GSK_RENDERER": "cairo"
+        }
+      },
       "runtimeExecutable": "${workspaceFolder}/bin/php-gtk4",
       "cwd": "${workspaceFolder}",
       "port": 9003,

@@ -103,6 +103,32 @@ final class WorkflowsTest extends TestCase
     }
 
     /**
+     * The suite and the coverage job run on every push to main, published or not.
+     *
+     * They used to hang off `plan`'s `publish` output, so a main parked on an already-released
+     * VERSION - which is where every real release leaves it until the follow-up bump - ran
+     * nothing at all: no tests, no coverage, no badge, and a green tick over it. Whether there is
+     * an artifact to upload is a question about the artifact; the gate is about the code.
+     */
+    public function testTheGateOnMainDoesNotDependOnHavingSomethingToPublish(): void
+    {
+        $release = (string) file_get_contents(self::WORKFLOWS . '/release.yml');
+        foreach (['verify', 'coverage'] as $job) {
+            self::assertSame(
+                1,
+                preg_match("/^  $job:\n(.*?)(?=\n  [a-z])/ms", $release, $m),
+                "release.yml has no $job job any more",
+            );
+            self::assertStringNotContainsString(
+                'outputs.publish',
+                $m[1] ?? '',
+                "release.yml's $job job must not depend on whether anything is published -"
+                . ' a main with nothing to release still has to be tested',
+            );
+        }
+    }
+
+    /**
      * A `badge.svg?branch=main` badge shows the newest run of that workflow **on main**, so a
      * workflow that no longer runs on main freezes its badge at whatever it last said there -
      * green, forever. That is what `php-qa.yml` and `tests.yml` did after they became

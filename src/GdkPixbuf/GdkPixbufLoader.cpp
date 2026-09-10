@@ -349,13 +349,13 @@ ZEND_METHOD(Gtk4_GdkPixbufLoader, vfunc_area_updated) {
     RETURN_THROWS();
   }
   auto *klass = GDK_PIXBUF_LOADER_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->area_updated == nullptr) {
-    return;
-  }
   if (!phpgtk::check_range<int>(x, 1)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(y, 2)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(width, 3)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(height, 4)) RETURN_THROWS();
+  if (klass->area_updated == nullptr) {
+    return;
+  }
   klass->area_updated(self, static_cast<int>(x), static_cast<int>(y), static_cast<int>(width),
                       static_cast<int>(height));
 }
@@ -405,11 +405,11 @@ ZEND_METHOD(Gtk4_GdkPixbufLoader, vfunc_size_prepared) {
     RETURN_THROWS();
   }
   auto *klass = GDK_PIXBUF_LOADER_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (!phpgtk::check_range<int>(width, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(height, 2)) RETURN_THROWS();
   if (klass->size_prepared == nullptr) {
     return;
   }
-  if (!phpgtk::check_range<int>(width, 1)) RETURN_THROWS();
-  if (!phpgtk::check_range<int>(height, 2)) RETURN_THROWS();
   klass->size_prepared(self, static_cast<int>(width), static_cast<int>(height));
 }
 

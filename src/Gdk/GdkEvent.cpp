@@ -5,7 +5,7 @@
 // everything without a class of its own (GdkMotionEvent, GdkDeleteEvent, ...) the base.
 // Events reach PHP from GtkEventController::get_current_event(), the
 // GtkEventControllerLegacy `event` signal and GtkGesture::get_last_event(); there is
-// no `new` (README.md "Design": opaque with typed getters, never a field copy).
+// no `new` (docs/DESIGN.md: opaque with typed getters, never a field copy).
 #include "php_gtk4.h"
 
 #include "classes.h"

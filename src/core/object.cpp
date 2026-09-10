@@ -149,7 +149,7 @@ void attach(Object *self, GObject *obj) {
 }
 
 // Constructor variant of attach(): adopt the initial ref instead of adding one.
-// The ownership rule (README.md "Design", gen/README.md): floating -> sink, plain
+// The ownership rule (docs/DESIGN.md, gen/README.md): floating -> sink, plain
 // GObject -> adopt, GtkRoot (windows) -> GTK's toplevel list owns the initial reference,
 // so those must use attach(). Enforced here rather than trusted: a root is ref'd like
 // attach() would, with a diagnostic so the misuse shows up in tests.

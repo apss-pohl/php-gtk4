@@ -84,10 +84,15 @@ jobs:
   # The gate. Deliberately re-runs what tests.yml ran on the PR: a release job
   # that depends on a separate workflow's result races with it, and a broken
   # pre-release is worse than a slow one.
+  #
+  # It does NOT depend on `publish`. It used to, and a main parked on an already
+  # released VERSION then ran nothing at all - no suite, no coverage, no badge,
+  # and a green tick over the lot. Whether there is an artifact to upload is a
+  # question about the artifact; whether main is sound is a question about the
+  # code. Only the jobs below that actually produce something ask the first one.
   verify:
     name: Verify PHP ${{ matrix.php }}${{ matrix.ts == 'ts' && ' ZTS' || '' }}
     needs: plan
-    if: needs.plan.outputs.publish == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
@@ -149,6 +154,7 @@ jobs:
   build:
     name: Build .so (PHP ${{ matrix.php }})
     needs: [plan, verify]
+    if: needs.plan.outputs.publish == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     strategy:
@@ -209,7 +215,7 @@ jobs:
     # Real releases only. These are what PIE installs on Windows, and PIE resolves a release,
     # never a dev pre-release - so four Windows jobs per merge built assets nobody could
     # install. windows.yml is what says whether Windows still builds at all.
-    if: needs.plan.outputs.kind == 'release'
+    if: needs.plan.outputs.kind == 'release' && needs.plan.outputs.publish == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -272,9 +278,15 @@ jobs:
           pct=$(grep -oE '^lines: [0-9.]+%' coverage-stage.log | tail -1 | tr -dc '0-9.') || true
           [[ -n "$pct" ]] || { echo "::warning::no line coverage in the log, badge left alone"; exit 0; }
           floor=${COVERAGE_MIN_LINES:-80}
-          colour=red
-          awk "BEGIN { exit !($pct >= $floor) }" && colour=brightgreen \
-            || awk "BEGIN { exit !($pct >= $floor - 5) }" && colour=yellow || true
+          # if/elif, not a && || chain: `a && b || c && d` runs `c` whenever `b`'s status lets
+          # it, so 81.3% against a floor of 80 came out yellow instead of green.
+          if awk "BEGIN { exit !($pct >= $floor) }"; then
+            colour=brightgreen
+          elif awk "BEGIN { exit !($pct >= $floor - 5) }"; then
+            colour=yellow
+          else
+            colour=red
+          fi
           printf '{"schemaVersion":1,"label":"coverage","message":"%s%%","color":"%s"}\n' "$pct" "$colour" > /tmp/coverage.json
           rm -rf /tmp/badges && mkdir /tmp/badges && cd /tmp/badges
           git init -q && git config user.name github-actions && git config user.email github-actions@github.com
@@ -298,7 +310,7 @@ jobs:
   release-gate:
     name: Sanitizers and valgrind
     needs: [plan, verify]
-    if: needs.plan.outputs.kind == 'release'
+    if: needs.plan.outputs.kind == 'release' && needs.plan.outputs.publish == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
@@ -334,6 +346,7 @@ jobs:
     # take this job with it - so the conditions are spelled out rather than inherited.
     if: |
       always()
+      && needs.plan.outputs.publish == 'true'
       && needs.verify.result == 'success'
       && needs.build.result == 'success'
       && needs.coverage.result == 'success'

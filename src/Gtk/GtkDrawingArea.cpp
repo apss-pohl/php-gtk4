@@ -199,11 +199,11 @@ ZEND_METHOD(Gtk4_GtkDrawingArea, vfunc_resize) {
     RETURN_THROWS();
   }
   auto *klass = GTK_DRAWING_AREA_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (!phpgtk::check_range<int>(width, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(height, 2)) RETURN_THROWS();
   if (klass->resize == nullptr) {
     return;
   }
-  if (!phpgtk::check_range<int>(width, 1)) RETURN_THROWS();
-  if (!phpgtk::check_range<int>(height, 2)) RETURN_THROWS();
   klass->resize(self, static_cast<int>(width), static_cast<int>(height));
 }
 

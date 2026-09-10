@@ -256,7 +256,7 @@ Gtk.TextDirection
 # without it GdkSurface would be bound and unreachable.
 Gtk.Native
 
-# Snapshot (README.md "Design"): what a widget paints. GtkSnapshot::append_cairo()
+# Snapshot (docs/DESIGN.md): what a widget paints. GtkSnapshot::append_cairo()
 # hands back a cairo context, so a PHP widget draws with the CairoContext API it already has -
 # and binding the type is what lets `vfunc_snapshot()` out of gen/skip's closure, the one
 # GtkWidget slot a PHP subclass could not override. The graphene records are the geometry its
@@ -371,7 +371,7 @@ Gdk.TextureDownloader
 # what evaluate_javascript() answers with and what a script message carries, and the URI scheme
 # request/response pair a custom scheme is answered with. Out: the WebExtensions API (2.52) -
 # Ubuntu builds WebKitGTK with ENABLE(WK_WEB_EXTENSIONS) off, so every entry point answers NULL
-# without a warning (README.md "Design") - and the WebProcess extensions.
+# without a warning (docs/DESIGN.md) - and the WebProcess extensions.
 WebKit.WebViewBase
 WebKit.WebView
 WebKit.Settings
@@ -487,6 +487,21 @@ Pango.AttrList
 Pango.Layout
 Pango.Context
 Pango.FontMap
+# Opaque, boxed, with a GType of its own (pango_language_get_type) - it was on the "leaves that
+# cannot be bound" list next to Pango.Font by mistake. A PangoContext has one and a
+# GtkFontDialogButton takes one.
+Pango.Language
+# The font leaves. Font, FontFamily, FontFace and Fontset are abstract GObjects whose instances
+# belong to the backend, exactly like Pango.FontMap above (their constructors are refused in
+# skip.txt, a PangoContext or a font map hands them out); GlyphString and FontMetrics are boxed
+# records with GTypes of their own. What a font map lists, what a layout draws with, and what
+# GskTextNode is built from.
+Pango.Font
+Pango.FontFamily
+Pango.FontFace
+Pango.Fontset
+Pango.GlyphString
+Pango.FontMetrics
 
 # The key file GTK's print settings, page setup and paper size load from and save to.
 GLib.KeyFile

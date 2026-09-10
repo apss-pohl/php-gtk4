@@ -185,13 +185,13 @@ ZEND_METHOD(Gtk4_GtkFilter, vfunc_match) {
     RETURN_THROWS();
   }
   auto *klass = GTK_FILTER_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->match == nullptr) {
-    RETURN_FALSE;
-  }
   GObject *item_o = nullptr;
   if (item != nullptr) {
     item_o = unwrap(item, G_TYPE_OBJECT);
     if (item_o == nullptr) RETURN_THROWS();
+  }
+  if (klass->match == nullptr) {
+    RETURN_FALSE;
   }
   RETURN_BOOL(klass->match(self, item_o != nullptr ? G_OBJECT(item_o) : nullptr));
 }

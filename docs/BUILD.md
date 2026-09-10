@@ -165,7 +165,7 @@ one. Consequences:
 **Status: builds through PHP's own Windows build system** — `config.w32` is the counterpart of
 `config.m4`, driven by the PHP SDK (`phpize.bat` → `configure` → `nmake`), with GTK 4 from
 [gvsbuild](https://github.com/wingtk/gvsbuild). The output is `php_gtk4.dll`. There is no IDE
-project and there will be none (php-gtk3 had one; see README.md "Design" and `docs/TODO.md`). CI builds and
+project and there will be none (php-gtk3 had one; see docs/DESIGN.md and `docs/TODO.md`). CI builds and
 tests it on `windows-2022` for PHP 8.4 and 8.5, NTS and ZTS (`.github/workflows/windows.yml` — the
 same matrix as Linux), and every release ships one
 `php_gtk4-<ver>-php<X.Y>-nts-vs17-x64.dll` per supported PHP — TS builds from source, as on Linux.
@@ -233,6 +233,13 @@ tests\run --filter SignalTest            :: PHPUnit on the real desktop (no Xvfb
 `tests/run.sh`. There is no php-gtk3 to filter out and no display to fake, so they are only
 `PATH` + `-dextension`; `tests/run.cmd` sets `GSK_RENDERER=cairo`, `GTK_A11Y=none` and
 `XDEBUG_MODE=off` like the Linux runner does.
+
+Those two are defaults, not overrides: a `GSK_RENDERER` or `GDK_GL` already in the environment
+wins. A shell that carries `GSK_RENDERER=gl` from other GTK work makes the whole suite fail with
+`Failed to realize renderer 'GskGLRenderer' ... OpenGL requires Direct Composition` - one GLib
+CRITICAL per windowed test, and `GtkTestCase` fails a test on any of them. Clear it before
+running, and note that `GDK_DISABLE=gl` is not the cure: GTK then complains just as loudly that
+OpenGL was disabled that way.
 
 ### The pinned GTK version (`GVSBUILD_VERSION`)
 

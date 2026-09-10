@@ -5,7 +5,86 @@ versions follow [SemVer](https://semver.org/). The version lives in `VERSION` at
 mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./ci.sh --only=version`
 — see docs/RELEASING.md.
 
-## [Unreleased]
+## [0.3.0] - 2026-09-10
+
+Mostly housekeeping around the machinery that ships the extension, plus the rest of Pango: the
+text engine's font side, and the geometry a program needs to draw over its own text. It is a
+release rather than another dev build because the stubs package is published from a real release
+only: this is the first tag that pushes `php-gtk4/stubs` on its own, and the first that
+`pie install php-gtk4/php-gtk4` and `composer require --dev php-gtk4/stubs` resolve from Packagist,
+where both packages are now registered.
+
+### Added
+
+- **Where text is.** `PangoRectangle` - Pango's struct has no GType, so the binding registers a
+  boxed one for it, as it did for `GskRoundedRect` - and with it `PangoLayout::get_extents()`,
+  `get_pixel_extents()`, `get_caret_pos()`, `get_cursor_pos()` and `index_to_pos()`: the ink and
+  logical boxes, the caret, and one character's cell, in Pango units (`to_pixels()` rounds
+  outwards).
+
+- **`PangoLanguage`**, which had been listed as unbindable next to `PangoFont` by mistake: it is
+  boxed with a GType of its own. `PangoContext::get_language()`/`set_language()`,
+  `GtkTextIter::get_language()`, and the `language` property of `GtkFontDialog` and
+  `GtkFontDialogButton` came with it.
+
+- **The font leaves.** `PangoFont`, `PangoFontFamily`, `PangoFontFace` and `PangoFontset` are
+  abstract and belong to the backend, exactly like `PangoFontMap` already did - `new` is refused,
+  a widget's context loads them (`load_font()`, `load_fontset()`, `get_metrics()`, and the font map
+  as a list model of families, each a list model of its faces). `PangoFontMetrics` and
+  `PangoGlyphString` are boxed values. A context built with `new PangoContext()` has no font map,
+  and the three calls that need one are a `LogicException` on it instead of Pango's assertions.
+
+- **`GskTextNode` has its constructor**, now that a font and a glyph string can cross: the node
+  `GtkSnapshot::append_layout()` makes can be taken apart (`get_font()`, `get_glyphs()`,
+  `get_offset()`) and rebuilt from the same glyphs in another colour at another offset.
+  `get_glyphs()` answers a glyph string holding the node's glyph infos, which is all a text node
+  keeps.
+
+- **`PangoGlyphString::set_size()` grows with empty glyphs.** Pango leaves the new entries as the
+  allocator left them, so a fresh string measured whatever was in the heap; grown entries are
+  `PANGO_GLYPH_EMPTY` with no geometry here, and a negative length is a `ValueError`.
+
+### Changed
+
+- **The gate runs on every push to `main`, published or not.** `verify` used to hang off whether
+  there was something to publish, and `coverage` sat behind it, so a `main` parked on an
+  already-released `VERSION` - where every real release leaves it until the follow-up bump - ran no
+  tests, no coverage and no badge, under a green tick. Whether there is an artifact to upload is a
+  question about the artifact; the gate is about the code. Only `build`, `build-windows`,
+  `release-gate` and `publish` ask about publishing now, and `WorkflowsTest` fails if either gate
+  job grows the condition back.
+
+- **README badges that can go red.** A `badge.svg?branch=main` shows the newest run of that workflow
+  *on main*, so the two badges for pull-request-only workflows had been frozen at "passing" since
+  2026-08-27 while the release run was failing. The README now carries the two workflows that do run
+  on main - the release gate and the C++ lint - plus a coverage badge published by CI itself on
+  every merge and a latest-release badge. `WorkflowsTest` rejects a `?branch=main` badge whose
+  workflow has no push trigger for main.
+
+### Fixed
+
+- **`PangoLayout::get_caret_pos(-1)` was a SIGSEGV.** Pango asserts the index in
+  `get_cursor_pos()` and returns, but `get_caret_pos()` walks on with it, finds no line for a
+  negative one and dereferences NULL. The index-taking layout calls now refuse anything outside
+  the text as a `ValueError`. `GInputStream::read_bytes(PHP_INT_MAX)` was a GLib-ERROR abort on
+  the allocation for the same reason - GLib allocates the whole count first - and is capped at
+  what one read can yield. Both surfaced the moment the classes had an instance to sweep: 24
+  registered classes had neither a factory branch nor an excuse, so both sweeps had been skipping
+  them silently - `PangoLayout` and `PangoFontMap` among them. Every registered class is now built
+  or excused, and `GtkInstancesTest` fails on one that is neither.
+
+- **A native `vfunc_*()` whose slot GTK left NULL skipped its argument checks.** The empty-slot
+  return came before them, so `parent::vfunc_committed("a\0b")` accepted what the public method
+  refuses; the checks come first now, on every generated native vfunc.
+
+- **A WebKit cookie test that failed about one run in ten** (twice on CI, once locally):
+  `add_cookie_finish()` reports that the write was *accepted*, not that the store took it, and the
+  store lives in a network process the ephemeral session starts lazily - so a cookie written before
+  that process first answers was lost silently. The test wakes the store with a read before writing
+  and waits for the count it expects instead of taking the first answer.
+
+- The coverage badge's colour, which came out yellow above the floor because a `&&`/`||` chain does
+  not mean what it reads like in a shell.
 
 ## [0.1.1] - 2026-09-09
 
