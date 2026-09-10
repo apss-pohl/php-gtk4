@@ -64,8 +64,21 @@ if test "$PHP_GTK4" != "no"; then
   fi
   AC_MSG_RESULT([$gtk4_version])
 
-  dnl Build metadata baked in at configure time.
-  GTK4_GIT_HASH=`git -C "$srcdir" rev-parse --short HEAD 2>/dev/null || echo unknown`
+  dnl Build metadata baked in at configure time. The commit comes from ./.git-commit when this
+  dnl is a source archive (git archive's export-subst has replaced the placeholder: the release
+  dnl tarball, the GitHub zipball PIE builds from), else from the checkout's own git - "own",
+  dnl because a tree extracted under some unrelated repository must not report that one's HEAD.
+  GTK4_GIT_HASH=`head -n1 "$srcdir/.git-commit" 2>/dev/null`
+  case "$GTK4_GIT_HASH" in
+    *'$Format'*|'') GTK4_GIT_HASH= ;;
+  esac
+  if test -z "$GTK4_GIT_HASH"; then
+    gtk4_top=`git -C "$srcdir" rev-parse --show-toplevel 2>/dev/null`
+    if test -n "$gtk4_top" && test "$gtk4_top" = "`cd "$srcdir" && pwd -P`"; then
+      GTK4_GIT_HASH=`git -C "$srcdir" rev-parse --short HEAD 2>/dev/null`
+    fi
+  fi
+  test -n "$GTK4_GIT_HASH" || GTK4_GIT_HASH=unknown
   GTK4_BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ`
   AC_DEFINE_UNQUOTED([PHPGTK_BUILD_INFO], ["built $GTK4_BUILD_DATE, git $GTK4_GIT_HASH"], [Build info])
 

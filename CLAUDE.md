@@ -68,7 +68,10 @@ phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(n
   `gir1.2-webkit-6.0`: the WebKit namespaces are generated whether or not the build has the
   flag). `config.m4` refuses PHP < 8.4 and GTK < 4.14.
   Build metadata (git hash, date, features) is baked in at configure time (`PHPGTK_BUILD_INFO` in
-  config.h).
+  config.h). The hash comes from `.git-commit` where `git archive`'s `export-subst` has filled it
+  in (the release tarball, the GitHub zipball PIE builds from - neither has a `.git`), else from
+  the checkout's own git; `BuildMetadataTest` pins both sources and `ExtensionTest` refuses
+  `git unknown`.
 - **Editing `config.m4` requires re-running `phpize`** (configure is generated from it); `ci.sh`
   does that on every build. **Never run `phpize --clean`**: it deletes `tests/*.php` (php-src
   assumes `.phpt` tests there). Use `make clean` — and note that phpize's `make clean` removes every

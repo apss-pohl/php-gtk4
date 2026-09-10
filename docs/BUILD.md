@@ -211,7 +211,8 @@ nmake                               # -> x64\Release\php_gtk4.dll (Release_TS fo
 ```
 
 `config.w32` does what `config.m4` does: refuses PHP < 8.4, checks `src/php_gtk4.h` against
-`VERSION`, bakes git hash/date into `Gtk4\BUILD_INFO`, compiles every `src/**/*.cpp` with
+`VERSION`, bakes git hash/date into `Gtk4\BUILD_INFO` (from `.git-commit` in a source archive, from
+git in a checkout - docs/RELEASING.md), compiles every `src/**/*.cpp` with
 `/std:c++20 /EHsc`, and takes the include/library flags from `<root>\bin\pkgconf.exe`
 (`--define-prefix`, so the tree may live anywhere) — falling back to the known gvsbuild layout when
 `pkgconf` is missing. `--enable-gtk4-webkit` is refused and `src\WebKit`, `src\JavaScriptCore` are

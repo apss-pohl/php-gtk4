@@ -148,11 +148,25 @@ if (PHP_GTK4 != "no") {
 	STDOUT.WriteLine("php-gtk4 version " + want);
 
 	// ---- Build metadata (what config.m4 bakes into PHPGTK_BUILD_INFO / PHPGTK_BUILD_FEATURES).
+	// The commit comes from .git-commit when this is a source archive (git archive's
+	// export-subst has replaced the placeholder: the release tarball, the GitHub zipball PIE
+	// builds from), else from the checkout's own git - "own", because a tree extracted under
+	// some unrelated repository must not report that one's HEAD.
 	var git_hash = "unknown";
 	try {
-		var h = trim(execute('git -C "' + gtk4_src + '" rev-parse --short HEAD'));
+		var stamp = FSO.OpenTextFile(gtk4_src + "\\.git-commit", 1);
+		var h = trim(stamp.ReadLine());
+		stamp.Close();
 		if (h.match(new RegExp("^[0-9a-f]+$"))) git_hash = h;
 	} catch (e) {}
+	if (git_hash == "unknown") {
+		try {
+			var top = trim(execute('git -C "' + gtk4_src + '" rev-parse --show-toplevel')).replace(/\//g, "\\");
+			var h = trim(execute('git -C "' + gtk4_src + '" rev-parse --short HEAD'));
+			if (top.toLowerCase() == FSO.GetAbsolutePathName(gtk4_src).toLowerCase() &&
+				h.match(new RegExp("^[0-9a-f]+$"))) git_hash = h;
+		} catch (e) {}
+	}
 	var d = new Date();
 	function pad(n) { return (n < 10 ? "0" : "") + n; }
 	var build_date = d.getUTCFullYear() + "-" + pad(d.getUTCMonth() + 1) + "-" + pad(d.getUTCDate()) + "T" +

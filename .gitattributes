@@ -8,3 +8,6 @@
 *.png binary
 *.gif binary
 *.jpg binary
+# git archive (the release tarball, and the GitHub zipball PIE builds from) replaces the
+# placeholder with the commit hash; config.m4/config.w32 read it when there is no .git.
+.git-commit export-subst

@@ -7,6 +7,14 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ## [Unreleased]
 
+### Fixed
+
+- **A `pie install` knows its commit.** `Gtk4\BUILD_INFO` said `git unknown` for every build from a
+  source archive - the release tarball and the GitHub zipball PIE builds from have no `.git`.
+  `.git-commit` is now marked `export-subst`, so `git archive` (which is what GitHub serves) writes
+  the hash into it, and `config.m4`/`config.w32` read that before asking git. A checkout extracted
+  under some unrelated repository no longer reports that repository's HEAD either.
+
 ## [0.3.0] - 2026-09-10
 
 Mostly housekeeping around the machinery that ships the extension, plus the rest of Pango: the

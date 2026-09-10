@@ -19,7 +19,11 @@ final class ExtensionTest extends GtkTestCase
         self::assertMatchesRegularExpression('/^\d+\.\d+\.\d+(-dev)?$/', \Gtk4\VERSION);
         $build = \Gtk4\BUILD_INFO;
         $features = \Gtk4\FEATURES;
-        self::assertStringContainsString('git', $build);
+        self::assertMatchesRegularExpression(
+            '/^built \d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ, git [0-9a-f]{7,40}$/',
+            $build,
+            'a build must know its commit (BuildMetadataTest: .git-commit or the checkout\'s git)',
+        );
         self::assertMatchesRegularExpression('/^webkit=(yes|no)$/', $features);
         self::assertFalse(defined('PHPGTK_VERSION'), 'no global (gtk3-style) constants');
     }
