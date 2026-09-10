@@ -349,9 +349,6 @@ ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_item_attribute_value) {
     RETURN_THROWS();
   }
   auto *klass = G_MENU_MODEL_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->get_item_attribute_value == nullptr) {
-    RETURN_NULL();
-  }
   if (!phpgtk::check_range<gint>(item_index, 1)) RETURN_THROWS();
   if (!phpgtk::check_utf8(attribute, 2)) RETURN_THROWS();
   GVariantType *expected_type_t = nullptr;
@@ -362,6 +359,9 @@ ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_item_attribute_value) {
       RETURN_THROWS();
     }
     expected_type_t = g_variant_type_new(ZSTR_VAL(expected_type));
+  }
+  if (klass->get_item_attribute_value == nullptr) {
+    RETURN_NULL();
   }
   GVariant *call_result = klass->get_item_attribute_value(self, static_cast<gint>(item_index),
                                                           ZSTR_VAL(attribute), expected_type_t);
@@ -397,11 +397,11 @@ ZEND_METHOD(Gtk4_GMenuModel, vfunc_get_item_link) {
     RETURN_THROWS();
   }
   auto *klass = G_MENU_MODEL_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (!phpgtk::check_range<gint>(item_index, 1)) RETURN_THROWS();
+  if (!phpgtk::check_utf8(link, 2)) RETURN_THROWS();
   if (klass->get_item_link == nullptr) {
     RETURN_NULL();
   }
-  if (!phpgtk::check_range<gint>(item_index, 1)) RETURN_THROWS();
-  if (!phpgtk::check_utf8(link, 2)) RETURN_THROWS();
   GMenuModel *phpgtk_ret =
       klass->get_item_link(self, static_cast<gint>(item_index), ZSTR_VAL(link));
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);

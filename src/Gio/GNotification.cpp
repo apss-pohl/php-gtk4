@@ -46,6 +46,11 @@ ZEND_METHOD(Gtk4_GNotification, add_button) {
   GNotification *self = PHPGTK_SELF(GNotification, G_TYPE_NOTIFICATION);
   if (!phpgtk::check_utf8(label, 1)) RETURN_THROWS();
   if (!phpgtk::check_utf8(detailed_action, 2)) RETURN_THROWS();
+  const bool precondition_0 = g_str_has_prefix(ZSTR_VAL(detailed_action), "app.");
+  if (!precondition_0) {
+    zend_argument_value_error(2, "must name an application action (app.<name>)");
+    RETURN_THROWS();
+  }
   g_notification_add_button(self, ZSTR_VAL(label), ZSTR_VAL(detailed_action));
 }
 
@@ -75,23 +80,28 @@ ZEND_METHOD(Gtk4_GNotification, add_button_with_target) {
     if (target_v == nullptr) RETURN_THROWS();
     g_variant_ref_sink(target_v);
   }
+  const bool precondition_0 = g_str_has_prefix(ZSTR_VAL(action), "app.");
+  if (!precondition_0) {
+    zend_argument_value_error(2, "must name an application action (app.<name>)");
+    RETURN_THROWS();
+  }
   g_notification_add_button_with_target_value(self, ZSTR_VAL(label), ZSTR_VAL(action), target_v);
   if (target_v != nullptr) g_variant_unref(target_v);
 }
 
 /**
- * Gtk4\GNotification::set_body(?string $body): void
+ * Gtk4\GNotification::set_body(string $body): void
  *
  * Sets the body of $notification to $body.
  */
 ZEND_METHOD(Gtk4_GNotification, set_body) {
-  zend_string *body = nullptr;
+  zend_string *body;
   ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_STR_OR_NULL(body)
+  Z_PARAM_STR(body)
   ZEND_PARSE_PARAMETERS_END();
   GNotification *self = PHPGTK_SELF(GNotification, G_TYPE_NOTIFICATION);
-  if (body != nullptr && !phpgtk::check_utf8(body, 1)) RETURN_THROWS();
-  g_notification_set_body(self, body != nullptr ? ZSTR_VAL(body) : nullptr);
+  if (!phpgtk::check_utf8(body, 1)) RETURN_THROWS();
+  g_notification_set_body(self, ZSTR_VAL(body));
 }
 
 /**
@@ -124,6 +134,11 @@ ZEND_METHOD(Gtk4_GNotification, set_default_action) {
   ZEND_PARSE_PARAMETERS_END();
   GNotification *self = PHPGTK_SELF(GNotification, G_TYPE_NOTIFICATION);
   if (!phpgtk::check_utf8(detailed_action, 1)) RETURN_THROWS();
+  const bool precondition_0 = g_str_has_prefix(ZSTR_VAL(detailed_action), "app.");
+  if (!precondition_0) {
+    zend_argument_value_error(1, "must name an application action (app.<name>)");
+    RETURN_THROWS();
+  }
   g_notification_set_default_action(self, ZSTR_VAL(detailed_action));
 }
 
@@ -148,6 +163,11 @@ ZEND_METHOD(Gtk4_GNotification, set_default_action_and_target) {
     target_v = php_to_variant(target, nullptr);
     if (target_v == nullptr) RETURN_THROWS();
     g_variant_ref_sink(target_v);
+  }
+  const bool precondition_0 = g_str_has_prefix(ZSTR_VAL(action), "app.");
+  if (!precondition_0) {
+    zend_argument_value_error(1, "must name an application action (app.<name>)");
+    RETURN_THROWS();
   }
   g_notification_set_default_action_and_target_value(self, ZSTR_VAL(action), target_v);
   if (target_v != nullptr) g_variant_unref(target_v);

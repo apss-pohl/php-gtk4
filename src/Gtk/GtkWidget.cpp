@@ -2980,12 +2980,12 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_direction_changed) {
     RETURN_THROWS();
   }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->direction_changed == nullptr) {
-    return;
-  }
   gint previous_direction_v = 0;
   if (!enum_from_php(previous_direction, GTK_TYPE_TEXT_DIRECTION, &previous_direction_v))
     RETURN_THROWS();
+  if (klass->direction_changed == nullptr) {
+    return;
+  }
   klass->direction_changed(self, static_cast<GtkTextDirection>(previous_direction_v));
 }
 
@@ -3008,11 +3008,11 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_focus) {
     RETURN_THROWS();
   }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+  gint direction_v = 0;
+  if (!enum_from_php(direction, GTK_TYPE_DIRECTION_TYPE, &direction_v)) RETURN_THROWS();
   if (klass->focus == nullptr) {
     RETURN_FALSE;
   }
-  gint direction_v = 0;
-  if (!enum_from_php(direction, GTK_TYPE_DIRECTION_TYPE, &direction_v)) RETURN_THROWS();
   RETURN_BOOL(klass->focus(self, static_cast<GtkDirectionType>(direction_v)));
 }
 
@@ -3086,11 +3086,11 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_keynav_failed) {
     RETURN_THROWS();
   }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+  gint direction_v = 0;
+  if (!enum_from_php(direction, GTK_TYPE_DIRECTION_TYPE, &direction_v)) RETURN_THROWS();
   if (klass->keynav_failed == nullptr) {
     RETURN_FALSE;
   }
-  gint direction_v = 0;
-  if (!enum_from_php(direction, GTK_TYPE_DIRECTION_TYPE, &direction_v)) RETURN_THROWS();
   RETURN_BOOL(klass->keynav_failed(self, static_cast<GtkDirectionType>(direction_v)));
 }
 
@@ -3139,6 +3139,9 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_measure) {
     RETURN_THROWS();
   }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+  gint orientation_v = 0;
+  if (!enum_from_php(orientation, GTK_TYPE_ORIENTATION, &orientation_v)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(for_size, 2)) RETURN_THROWS();
   if (klass->measure == nullptr) {
     array_init_size(return_value, 4);
     add_next_index_long(return_value, 0);
@@ -3147,9 +3150,6 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_measure) {
     add_next_index_long(return_value, -1);
     return;
   }
-  gint orientation_v = 0;
-  if (!enum_from_php(orientation, GTK_TYPE_ORIENTATION, &orientation_v)) RETURN_THROWS();
-  if (!phpgtk::check_range<int>(for_size, 2)) RETURN_THROWS();
   int minimum = 0;
   int natural = 0;
   int minimum_baseline = -1;
@@ -3227,11 +3227,11 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_move_focus) {
     RETURN_THROWS();
   }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+  gint direction_v = 0;
+  if (!enum_from_php(direction, GTK_TYPE_DIRECTION_TYPE, &direction_v)) RETURN_THROWS();
   if (klass->move_focus == nullptr) {
     return;
   }
-  gint direction_v = 0;
-  if (!enum_from_php(direction, GTK_TYPE_DIRECTION_TYPE, &direction_v)) RETURN_THROWS();
   klass->move_focus(self, static_cast<GtkDirectionType>(direction_v));
 }
 
@@ -3301,13 +3301,13 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_set_focus_child) {
     RETURN_THROWS();
   }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->set_focus_child == nullptr) {
-    return;
-  }
   GObject *child_o = nullptr;
   if (child != nullptr) {
     child_o = unwrap(child, GTK_TYPE_WIDGET);
     if (child_o == nullptr) RETURN_THROWS();
+  }
+  if (klass->set_focus_child == nullptr) {
+    return;
   }
   klass->set_focus_child(self, child_o != nullptr ? GTK_WIDGET(child_o) : nullptr);
 }
@@ -3340,12 +3340,12 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_size_allocate) {
     RETURN_THROWS();
   }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->size_allocate == nullptr) {
-    return;
-  }
   if (!phpgtk::check_range<int>(width, 1)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(height, 2)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(baseline, 3)) RETURN_THROWS();
+  if (klass->size_allocate == nullptr) {
+    return;
+  }
   klass->size_allocate(self, static_cast<int>(width), static_cast<int>(height),
                        static_cast<int>(baseline));
 }
@@ -3371,11 +3371,11 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_snapshot) {
     RETURN_THROWS();
   }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *snapshot_o = unwrap(snapshot, GTK_TYPE_SNAPSHOT);
+  if (snapshot_o == nullptr) RETURN_THROWS();
   if (klass->snapshot == nullptr) {
     return;
   }
-  GObject *snapshot_o = unwrap(snapshot, GTK_TYPE_SNAPSHOT);
-  if (snapshot_o == nullptr) RETURN_THROWS();
   klass->snapshot(self, GTK_SNAPSHOT(snapshot_o));
 }
 
@@ -3400,10 +3400,10 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_state_flags_changed) {
     RETURN_THROWS();
   }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (!phpgtk::check_flags(GTK_TYPE_STATE_FLAGS, previous_state_flags, 1)) RETURN_THROWS();
   if (klass->state_flags_changed == nullptr) {
     return;
   }
-  if (!phpgtk::check_flags(GTK_TYPE_STATE_FLAGS, previous_state_flags, 1)) RETURN_THROWS();
   klass->state_flags_changed(self, static_cast<GtkStateFlags>(previous_state_flags));
 }
 
@@ -3428,10 +3428,10 @@ ZEND_METHOD(Gtk4_GtkWidget, vfunc_system_setting_changed) {
     RETURN_THROWS();
   }
   auto *klass = GTK_WIDGET_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (!phpgtk::check_enum_member(GTK_TYPE_SYSTEM_SETTING, settings, 1)) RETURN_THROWS();
   if (klass->system_setting_changed == nullptr) {
     return;
   }
-  if (!phpgtk::check_enum_member(GTK_TYPE_SYSTEM_SETTING, settings, 1)) RETURN_THROWS();
   klass->system_setting_changed(self, static_cast<GtkSystemSetting>(settings));
 }
 

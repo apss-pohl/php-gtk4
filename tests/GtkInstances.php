@@ -64,6 +64,13 @@ final class GtkInstances
         \Gtk4\GtkNativeObject::class => 'every GtkNative is a widget, so wrap() finds a class',
         \Gtk4\GtkOrientableObject::class => 'every GtkOrientable is a widget, so wrap() finds a class',
         \Gtk4\GtkRootObject::class => 'every GtkRoot is a widget, so wrap() finds a class',
+        // The non-widget fallback that could be reached is not: every GIcon GTK hands out is a
+        // GThemedIcon, which is bound, and the others (GFileIcon, GBytesIcon, GEmblemedIcon)
+        // are neither bound nor buildable without a GFile.
+        \Gtk4\GIconObject::class => 'every GIcon a bound call answers is a GThemedIcon, which wrap() finds',
+        // A URI scheme request only exists inside the handler WebKitWebContext::register_uri_scheme()
+        // runs for a navigation to that scheme; nothing outside it can hold one.
+        \Gtk4\WebKitURISchemeRequest::class => 'only exists inside a registered URI scheme handler',
         \Gtk4\GtkScrollableObject::class => 'every GtkScrollable is a widget, so wrap() finds a class',
         \Gtk4\GtkStyleProviderObject::class => 'the only style providers PHP can reach are bound',
         \Gtk4\GAsyncResultObject::class => 'every GAsyncResult PHP sees is a bound GTask',
@@ -108,6 +115,17 @@ final class GtkInstances
         \Gtk4\WebKitITPFirstParty::class => 'only WebKitWebsiteDataManager::get_itp_summary_finish() hands them out',
         \Gtk4\WebKitITPThirdParty::class => 'only WebKitWebsiteDataManager::get_itp_summary_finish() hands them out',
         \Gtk4\WebKitDownload::class => 'WebKitWebView::download_uri() starts a network transfer the suite must not',
+    ];
+
+    /**
+     * Classes the factory builds only where the machine has what they need, with what that is.
+     * A branch answers null when it is missing, and {@see GtkInstancesTest} skips the class with
+     * this reason instead of failing the guard that every other class is swept or excused.
+     *
+     * @var array<string, string>
+     */
+    public const ENVIRONMENTAL = [
+        \Gtk4\GTlsCertificate::class => 'needs a GIO TLS backend (Debian/Ubuntu: glib-networking)',
     ];
 
     /**
@@ -163,6 +181,29 @@ final class GtkInstances
                 \Gtk4\GrapheneVec4::zero(),
             ),
             \Gtk4\GskCairoNode::class => new \Gtk4\GskCairoNode(self::rect()),
+            // Values with static constructors, or constructor arguments the generic path cannot
+            // invent (a time zone, a tab count, a title, an icon name, a certificate).
+            \Gtk4\GrapheneMatrix::class => self::colorMatrix(),
+            \Gtk4\GrapheneVec2::class => \Gtk4\GrapheneVec2::zero(),
+            \Gtk4\GrapheneVec3::class => \Gtk4\GrapheneVec3::zero(),
+            \Gtk4\GrapheneVec4::class => \Gtk4\GrapheneVec4::zero(),
+            \Gtk4\GTimeZone::class => \Gtk4\GTimeZone::new_utc(),
+            \Gtk4\GDateTime::class => \Gtk4\GDateTime::new_from_unix_utc(0),
+            \Gtk4\GNotification::class => new \Gtk4\GNotification('title'),
+            \Gtk4\GThemedIcon::class => new \Gtk4\GThemedIcon('edit-copy'),
+            \Gtk4\GTlsCertificate::class => self::certificate(),
+            \Gtk4\GtkAspectFrame::class => new \Gtk4\GtkAspectFrame(0.5, 0.5, 1.0, false),
+            // The abstract streams through the memory-backed ones, the way the sweeps build
+            // every abstract base: the members the base declares are the ones under test.
+            \Gtk4\GInputStream::class => \Gtk4\GMemoryInputStream::new_from_bytes('bytes'),
+            \Gtk4\GOutputStream::class => \Gtk4\GMemoryOutputStream::new_resizable(),
+            // The seat and its pointer device, which the headless X server does provide.
+            \Gtk4\GdkSeat::class => self::display()->get_default_seat(),
+            \Gtk4\GdkDevice::class => self::display()->get_default_seat()?->get_pointer(),
+            // Pango: a layout the way a widget has one, the interned default language, tab stops.
+            \Gtk4\PangoLayout::class => self::pin(new \Gtk4\GtkLabel('x'))->get_layout(),
+            \Gtk4\PangoLanguage::class => \Gtk4\PangoLanguage::get_default(),
+            \Gtk4\PangoTabArray::class => new \Gtk4\PangoTabArray(2, true),
             \Gtk4\GskTextNode::class => self::textNode(),
             // Pango: the backend owns the font map, fonts, families, faces and font sets; a
             // widget's context is where all of them come from.
@@ -368,8 +409,16 @@ final class GtkInstances
             \Gtk4\WebKitWebViewSessionState::class => self::webView()->get_session_state(),
             \Gtk4\WebKitCookieManager::class => self::webView()->get_network_session()->get_cookie_manager(),
             \Gtk4\WebKitWebsiteDataManager::class => self::webView()->get_network_session()->get_website_data_manager(),
-            \Gtk4\WebKitFaviconDatabase::class => self::webView()->get_network_session()->get_website_data_manager()
-                ->get_favicon_database(),
+            \Gtk4\WebKitFaviconDatabase::class => self::faviconDatabase(),
+            // The abstract input-method context has no bound concrete subclass; a PHP one is the
+            // plainest there is. A scheme response is a stream with a length.
+            \Gtk4\WebKitInputMethodContext::class => self::inputMethodContext(),
+            \Gtk4\WebKitURISchemeResponse::class => new \Gtk4\WebKitURISchemeResponse(
+                \Gtk4\GMemoryInputStream::new_from_bytes('<p>hi</p>'),
+                -1,
+            ),
+            \Gtk4\SoupCookie::class => new \Gtk4\SoupCookie('name', 'value', 'example.test', '/', -1),
+            \Gtk4\SoupMessageHeaders::class => new \Gtk4\SoupMessageHeaders(\Gtk4\SoupMessageHeadersType::Request),
             \Gtk4\WebKitSecurityManager::class => self::webView()->get_context()->get_security_manager(),
             \Gtk4\WebKitGeolocationManager::class => self::webView()->get_context()->get_geolocation_manager(),
             \Gtk4\WebKitPrintOperation::class => new \Gtk4\WebKitPrintOperation(self::webView()),
@@ -533,6 +582,38 @@ final class GtkInstances
         $node = $snapshot->to_node();
         \assert($node instanceof \Gtk4\GskTextNode, 'one layout, one line, no decoration: a bare text node');
         return $node;
+    }
+
+    /**
+     * The certificate GTlsCertificateTest parses, or null where GIO has no TLS backend to parse
+     * it with ({@see ENVIRONMENTAL}).
+     */
+    private static function certificate(): ?\Gtk4\GTlsCertificate
+    {
+        try {
+            return \Gtk4\GTlsCertificate::new_from_pem(GTlsCertificateTest::pem(), -1);
+        } catch (\Gtk4\GError $e) {
+            if (str_contains($e->getMessage(), 'TLS support is not available')) {
+                return null;
+            }
+            throw $e;
+        }
+    }
+
+    /** A PHP subclass: the plainest concrete input-method context there is. */
+    private static function inputMethodContext(): \Gtk4\WebKitInputMethodContext
+    {
+        return new class extends \Gtk4\WebKitInputMethodContext {
+            // nothing overridden: the sweep wants the base class's own members
+        };
+    }
+
+    /** The favicon database exists once favicons are switched on for the data manager. */
+    private static function faviconDatabase(): ?\Gtk4\WebKitFaviconDatabase
+    {
+        $manager = self::webView()->get_network_session()->get_website_data_manager();
+        $manager->set_favicons_enabled(true);
+        return $manager->get_favicon_database();
     }
 
     /** The plainest render node: a red square. */

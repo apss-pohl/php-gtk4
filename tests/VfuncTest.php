@@ -227,6 +227,22 @@ final class VfuncTest extends GtkTestCase
         $this->checkAllVfuncs(GtkDrawingArea::class, $d, ['vfunc_resize']);
     }
 
+    /**
+     * A slot GTK left NULL (`resize` is a signal with no class handler) makes the native
+     * vfunc_resize() a no-op - but a no-op that still checks its arguments. The empty-slot return
+     * used to come first, so parent::vfunc_committed("a\0b") on WebKitInputMethodContext
+     * accepted the null byte the public method refuses (RobustnessTest, 2026-09-10).
+     */
+    public function testAnEmptySlotStillChecksItsArguments(): void
+    {
+        $class = self::recordingSubclass(GtkDrawingArea::class);
+        $d = new $class();
+        $d->vfunc_resize(80, 60);   // the no-op
+
+        $this->expectException(\ValueError::class);
+        $d->vfunc_resize(PHP_INT_MAX, 60);
+    }
+
     public function testLayoutManagerDivertsSizeAllocateAndMeasure(): void
     {
         // GTK 4 hands a widget that has a layout manager (GtkBox, GtkOverlay, ...) to that

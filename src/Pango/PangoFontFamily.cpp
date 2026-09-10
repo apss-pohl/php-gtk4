@@ -235,10 +235,10 @@ ZEND_METHOD(Gtk4_PangoFontFamily, vfunc_get_face) {
     RETURN_THROWS();
   }
   auto *klass = PANGO_FONT_FAMILY_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (name != nullptr && !phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   if (klass->get_face == nullptr) {
     RETURN_NULL();
   }
-  if (name != nullptr && !phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   PangoFontFace *phpgtk_ret = klass->get_face(self, name != nullptr ? ZSTR_VAL(name) : nullptr);
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }

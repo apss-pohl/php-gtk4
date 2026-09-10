@@ -169,10 +169,6 @@ ZEND_METHOD(Gtk4_GtkSorter, vfunc_compare) {
     RETURN_THROWS();
   }
   auto *klass = GTK_SORTER_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->compare == nullptr) {
-    enum_to_php(GTK_TYPE_ORDERING, 0, return_value);
-    return;
-  }
   GObject *item1_o = nullptr;
   if (item1 != nullptr) {
     item1_o = unwrap(item1, G_TYPE_OBJECT);
@@ -182,6 +178,10 @@ ZEND_METHOD(Gtk4_GtkSorter, vfunc_compare) {
   if (item2 != nullptr) {
     item2_o = unwrap(item2, G_TYPE_OBJECT);
     if (item2_o == nullptr) RETURN_THROWS();
+  }
+  if (klass->compare == nullptr) {
+    enum_to_php(GTK_TYPE_ORDERING, 0, return_value);
+    return;
   }
   enum_to_php(GTK_TYPE_ORDERING,
               klass->compare(self, item1_o != nullptr ? G_OBJECT(item1_o) : nullptr,

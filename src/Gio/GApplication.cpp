@@ -895,14 +895,14 @@ ZEND_METHOD(Gtk4_GApplication, vfunc_after_emit) {
     RETURN_THROWS();
   }
   auto *klass = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->after_emit == nullptr) {
-    return;
-  }
   GVariant *platform_data_v = nullptr;
   if (platform_data != nullptr && Z_TYPE_P(platform_data) != IS_NULL) {
     platform_data_v = php_to_variant(platform_data, nullptr);
     if (platform_data_v == nullptr) RETURN_THROWS();
     g_variant_ref_sink(platform_data_v);
+  }
+  if (klass->after_emit == nullptr) {
+    return;
   }
   klass->after_emit(self, platform_data_v);
   if (platform_data_v != nullptr) g_variant_unref(platform_data_v);
@@ -931,14 +931,14 @@ ZEND_METHOD(Gtk4_GApplication, vfunc_before_emit) {
     RETURN_THROWS();
   }
   auto *klass = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->before_emit == nullptr) {
-    return;
-  }
   GVariant *platform_data_v = nullptr;
   if (platform_data != nullptr && Z_TYPE_P(platform_data) != IS_NULL) {
     platform_data_v = php_to_variant(platform_data, nullptr);
     if (platform_data_v == nullptr) RETURN_THROWS();
     g_variant_ref_sink(platform_data_v);
+  }
+  if (klass->before_emit == nullptr) {
+    return;
   }
   klass->before_emit(self, platform_data_v);
   if (platform_data_v != nullptr) g_variant_unref(platform_data_v);

@@ -192,6 +192,8 @@ const NON_NULLABLE_PARAMS = [
     'pango_context_set_font_description.desc' => 'pango_context_set_font_description()'
         . ' asserts on a null description',
     'gdk_pixbuf_get_file_info_async.callback' => 'asserts callback != NULL',
+    // GIR says nullable, GIO asserts: an empty body is set_body("")
+    'g_notification_set_body.body' => "g_notification_set_body: assertion 'body != NULL'",
     'gdk_clipboard_read_async.callback' => 'gdk_clipboard_read_async: assertion callback != NULL',
     'gdk_clipboard_read_text_async.callback' => 'gdk_clipboard_read_text_async: assertion callback != NULL',
     'gdk_clipboard_read_texture_async.callback' => 'gdk_clipboard_read_texture_async: assertion callback != NULL',
@@ -330,6 +332,43 @@ const SELF_PRECONDITIONS = [
  * pin report (GTK4_PIN_REPORT) prints, is what each predicate mirrors.
  */
 const ARG_PRECONDITIONS = [
+    // A byte index into the layout's text. Pango asserts `index >= 0 && index <= layout->length`
+    // on get_cursor_pos() and returns; get_caret_pos() calls it, then walks on with the index
+    // regardless - and a negative one finds no line, so pango_layout_line_get_run(NULL, ...)
+    // is a SIGSEGV (RobustnessTest, 2026-09-10). The same bound on both, and on the two other
+    // calls that assert it.
+    'pango_layout_get_cursor_pos' => [[1,
+        'index >= 0 && static_cast<size_t>(index) <= strlen(pango_layout_get_text(self))',
+        'must be a byte index into the text, from 0 to its length']],
+    'pango_layout_get_caret_pos' => [[1,
+        'index >= 0 && static_cast<size_t>(index) <= strlen(pango_layout_get_text(self))',
+        'must be a byte index into the text, from 0 to its length']],
+    'pango_layout_index_to_line_x' => [[1,
+        'index >= 0 && static_cast<size_t>(index) <= strlen(pango_layout_get_text(self))',
+        'must be a byte index into the text, from 0 to its length']],
+    'pango_layout_move_cursor_visually' => [
+        [2, 'old_index >= 0 && static_cast<size_t>(old_index) <= strlen(pango_layout_get_text(self))',
+            'must be a byte index into the text, from 0 to its length'],
+        [3, 'old_trailing >= 0 && (old_trailing == 0 '
+            . '|| static_cast<size_t>(old_index) < strlen(pango_layout_get_text(self)))',
+            'must not be negative, and must be 0 at the end of the text'],
+    ],
+    // index_to_pos() only refuses a negative index; past the end is the last position
+    'pango_layout_index_to_pos' => [[1, 'index >= 0', 'must not be negative']],
+    // GIO warns "action 'x' does not start with 'app.'. This is unlikely to work properly" and
+    // keeps the name anyway: a notification's actions are the application's, by contract
+    'g_notification_add_button' => [[2, 'g_str_has_prefix(ZSTR_VAL(detailed_action), "app.")',
+        'must name an application action (app.<name>)']],
+    'g_notification_add_button_with_target_value' => [[2, 'g_str_has_prefix(ZSTR_VAL(action), "app.")',
+        'must name an application action (app.<name>)']],
+    'g_notification_set_default_action' => [[1, 'g_str_has_prefix(ZSTR_VAL(detailed_action), "app.")',
+        'must name an application action (app.<name>)']],
+    'g_notification_set_default_action_and_target_value' => [[1, 'g_str_has_prefix(ZSTR_VAL(action), "app.")',
+        'must name an application action (app.<name>)']],
+    // libsoup asserts `(expectations & ~SOUP_EXPECTATION_CONTINUE) == 0`: Continue is the one
+    // expectation HTTP has
+    'soup_message_headers_set_expectations' => [[1, '(expectations & ~SOUP_EXPECTATION_CONTINUE) == 0',
+        'must be 0 or SoupExpectation::CONTINUE']],
     // an icon with no names, and a localised list with no items, are both assertions
     'g_themed_icon_new_from_names' => [[1,
         'zend_hash_num_elements(Z_ARRVAL_P(iconnames)) > 0', 'must name at least one icon']],
@@ -500,6 +539,20 @@ const SELF_UNPARENTED_OR = [
  * documentation alone - the pin file is what proves GTK enforces it.
  */
 const PARAM_DOMAINS = [
+    // read_bytes() allocates the whole count before reading, so a count no machine can hold is
+    // a GLib-ERROR abort on the allocation ("failed to allocate 9223372036854775807 bytes",
+    // RobustnessTest, 2026-09-10) - not an error PHP sees. One read never yields more than
+    // G_MAXINT anyway: the kernel caps a single read() at 0x7ffff000 bytes, and every backend
+    // reads once. Not a GTK assertion but a process-ending value, which the same rule covers.
+    'g_input_stream_read_bytes.count' => [0, 2147483647],
+    'g_input_stream_read_bytes_async.count' => [0, 2147483647],
+    // pango_tab_array_*: `tab_index >= 0`, and a tab stop's `location >= 0`; an index past the
+    // end grows the array (set) or answers 0 (get), so only the sign is asserted
+    'pango_tab_array_get_tab.tab_index' => [0, null],
+    'pango_tab_array_get_decimal_point.tab_index' => [0, null],
+    'pango_tab_array_set_tab.tab_index' => [0, null],
+    'pango_tab_array_set_tab.location' => [0, null],
+    'pango_tab_array_set_decimal_point.tab_index' => [0, null],
     'webkit_memory_pressure_settings_set_kill_threshold.value' => [0.0, null],
     'webkit_memory_pressure_settings_set_poll_interval.value' => [0.0, null, 'open'],
     'gtk_calendar_set_day.day' => [1, 31],

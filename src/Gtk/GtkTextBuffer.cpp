@@ -1783,15 +1783,15 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_apply_tag) {
     RETURN_THROWS();
   }
   auto *klass = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->apply_tag == nullptr) {
-    return;
-  }
   GObject *tag_o = unwrap(tag, GTK_TYPE_TEXT_TAG);
   if (tag_o == nullptr) RETURN_THROWS();
   gpointer start_b = unwrap_boxed(start, GTK_TYPE_TEXT_ITER);
   if (start_b == nullptr) RETURN_THROWS();
   gpointer end_b = unwrap_boxed(end, GTK_TYPE_TEXT_ITER);
   if (end_b == nullptr) RETURN_THROWS();
+  if (klass->apply_tag == nullptr) {
+    return;
+  }
   klass->apply_tag(self, GTK_TEXT_TAG(tag_o), static_cast<GtkTextIter *>(start_b),
                    static_cast<GtkTextIter *>(end_b));
 }
@@ -1868,13 +1868,13 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_delete_range) {
     RETURN_THROWS();
   }
   auto *klass = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->delete_range == nullptr) {
-    return;
-  }
   gpointer start_b = unwrap_boxed(start, GTK_TYPE_TEXT_ITER);
   if (start_b == nullptr) RETURN_THROWS();
   gpointer end_b = unwrap_boxed(end, GTK_TYPE_TEXT_ITER);
   if (end_b == nullptr) RETURN_THROWS();
+  if (klass->delete_range == nullptr) {
+    return;
+  }
   klass->delete_range(self, static_cast<GtkTextIter *>(start_b), static_cast<GtkTextIter *>(end_b));
 }
 
@@ -1925,13 +1925,13 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_insert_child_anchor) {
     RETURN_THROWS();
   }
   auto *klass = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->insert_child_anchor == nullptr) {
-    return;
-  }
   gpointer iter_b = unwrap_boxed(iter, GTK_TYPE_TEXT_ITER);
   if (iter_b == nullptr) RETURN_THROWS();
   GObject *anchor_o = unwrap(anchor, GTK_TYPE_TEXT_CHILD_ANCHOR);
   if (anchor_o == nullptr) RETURN_THROWS();
+  if (klass->insert_child_anchor == nullptr) {
+    return;
+  }
   klass->insert_child_anchor(self, static_cast<GtkTextIter *>(iter_b),
                              GTK_TEXT_CHILD_ANCHOR(anchor_o));
 }
@@ -1959,13 +1959,13 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_insert_paintable) {
     RETURN_THROWS();
   }
   auto *klass = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->insert_paintable == nullptr) {
-    return;
-  }
   gpointer iter_b = unwrap_boxed(iter, GTK_TYPE_TEXT_ITER);
   if (iter_b == nullptr) RETURN_THROWS();
   GObject *paintable_o = unwrap(paintable, GDK_TYPE_PAINTABLE);
   if (paintable_o == nullptr) RETURN_THROWS();
+  if (klass->insert_paintable == nullptr) {
+    return;
+  }
   klass->insert_paintable(self, static_cast<GtkTextIter *>(iter_b), GDK_PAINTABLE(paintable_o));
 }
 
@@ -1995,13 +1995,13 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_insert_text) {
     RETURN_THROWS();
   }
   auto *klass = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->insert_text == nullptr) {
-    return;
-  }
   gpointer pos_b = unwrap_boxed(pos, GTK_TYPE_TEXT_ITER);
   if (pos_b == nullptr) RETURN_THROWS();
   if (!phpgtk::check_utf8(new_text, 2)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(new_text_length, 3)) RETURN_THROWS();
+  if (klass->insert_text == nullptr) {
+    return;
+  }
   klass->insert_text(self, static_cast<GtkTextIter *>(pos_b), ZSTR_VAL(new_text),
                      static_cast<int>(new_text_length));
 }
@@ -2027,11 +2027,11 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_mark_deleted) {
     RETURN_THROWS();
   }
   auto *klass = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *mark_o = unwrap(mark, GTK_TYPE_TEXT_MARK);
+  if (mark_o == nullptr) RETURN_THROWS();
   if (klass->mark_deleted == nullptr) {
     return;
   }
-  GObject *mark_o = unwrap(mark, GTK_TYPE_TEXT_MARK);
-  if (mark_o == nullptr) RETURN_THROWS();
   klass->mark_deleted(self, GTK_TEXT_MARK(mark_o));
 }
 
@@ -2058,13 +2058,13 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_mark_set) {
     RETURN_THROWS();
   }
   auto *klass = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->mark_set == nullptr) {
-    return;
-  }
   gpointer location_b = unwrap_boxed(location, GTK_TYPE_TEXT_ITER);
   if (location_b == nullptr) RETURN_THROWS();
   GObject *mark_o = unwrap(mark, GTK_TYPE_TEXT_MARK);
   if (mark_o == nullptr) RETURN_THROWS();
+  if (klass->mark_set == nullptr) {
+    return;
+  }
   klass->mark_set(self, static_cast<GtkTextIter *>(location_b), GTK_TEXT_MARK(mark_o));
 }
 
@@ -2113,11 +2113,11 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_paste_done) {
     RETURN_THROWS();
   }
   auto *klass = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *clipboard_o = unwrap(clipboard, GDK_TYPE_CLIPBOARD);
+  if (clipboard_o == nullptr) RETURN_THROWS();
   if (klass->paste_done == nullptr) {
     return;
   }
-  GObject *clipboard_o = unwrap(clipboard, GDK_TYPE_CLIPBOARD);
-  if (clipboard_o == nullptr) RETURN_THROWS();
   klass->paste_done(self, GDK_CLIPBOARD(clipboard_o));
 }
 
@@ -2169,15 +2169,15 @@ ZEND_METHOD(Gtk4_GtkTextBuffer, vfunc_remove_tag) {
     RETURN_THROWS();
   }
   auto *klass = GTK_TEXT_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->remove_tag == nullptr) {
-    return;
-  }
   GObject *tag_o = unwrap(tag, GTK_TYPE_TEXT_TAG);
   if (tag_o == nullptr) RETURN_THROWS();
   gpointer start_b = unwrap_boxed(start, GTK_TYPE_TEXT_ITER);
   if (start_b == nullptr) RETURN_THROWS();
   gpointer end_b = unwrap_boxed(end, GTK_TYPE_TEXT_ITER);
   if (end_b == nullptr) RETURN_THROWS();
+  if (klass->remove_tag == nullptr) {
+    return;
+  }
   klass->remove_tag(self, GTK_TEXT_TAG(tag_o), static_cast<GtkTextIter *>(start_b),
                     static_cast<GtkTextIter *>(end_b));
 }

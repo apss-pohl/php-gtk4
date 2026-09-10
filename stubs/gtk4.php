@@ -5954,7 +5954,7 @@ class GNotification extends GObject
         unset($target);
     }
     /** Sets the body of $notification to $body. */
-    public function set_body(?string $body): void
+    public function set_body(string $body): void
     {
         unset($body);
     }

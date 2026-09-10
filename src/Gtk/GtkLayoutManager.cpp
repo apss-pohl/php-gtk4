@@ -459,14 +459,14 @@ ZEND_METHOD(Gtk4_GtkLayoutManager, vfunc_allocate) {
     RETURN_THROWS();
   }
   auto *klass = GTK_LAYOUT_MANAGER_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->allocate == nullptr) {
-    return;
-  }
   GObject *widget_o = unwrap(widget, GTK_TYPE_WIDGET);
   if (widget_o == nullptr) RETURN_THROWS();
   if (!phpgtk::check_range<int>(width, 2)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(height, 3)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(baseline, 4)) RETURN_THROWS();
+  if (klass->allocate == nullptr) {
+    return;
+  }
   klass->allocate(self, GTK_WIDGET(widget_o), static_cast<int>(width), static_cast<int>(height),
                   static_cast<int>(baseline));
 }
@@ -495,14 +495,14 @@ ZEND_METHOD(Gtk4_GtkLayoutManager, vfunc_create_layout_child) {
     RETURN_THROWS();
   }
   auto *klass = GTK_LAYOUT_MANAGER_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->create_layout_child == nullptr) {
-    enum_to_php(G_TYPE_NONE, 0, return_value);
-    return;
-  }
   GObject *widget_o = unwrap(widget, GTK_TYPE_WIDGET);
   if (widget_o == nullptr) RETURN_THROWS();
   GObject *for_child_o = unwrap(for_child, GTK_TYPE_WIDGET);
   if (for_child_o == nullptr) RETURN_THROWS();
+  if (klass->create_layout_child == nullptr) {
+    enum_to_php(G_TYPE_NONE, 0, return_value);
+    return;
+  }
   GtkLayoutChild *phpgtk_ret =
       klass->create_layout_child(self, GTK_WIDGET(widget_o), GTK_WIDGET(for_child_o));
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
@@ -531,12 +531,12 @@ ZEND_METHOD(Gtk4_GtkLayoutManager, vfunc_get_request_mode) {
     RETURN_THROWS();
   }
   auto *klass = GTK_LAYOUT_MANAGER_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *widget_o = unwrap(widget, GTK_TYPE_WIDGET);
+  if (widget_o == nullptr) RETURN_THROWS();
   if (klass->get_request_mode == nullptr) {
     enum_to_php(GTK_TYPE_SIZE_REQUEST_MODE, 0, return_value);
     return;
   }
-  GObject *widget_o = unwrap(widget, GTK_TYPE_WIDGET);
-  if (widget_o == nullptr) RETURN_THROWS();
   enum_to_php(GTK_TYPE_SIZE_REQUEST_MODE, klass->get_request_mode(self, GTK_WIDGET(widget_o)),
               return_value);
 }
@@ -567,6 +567,11 @@ ZEND_METHOD(Gtk4_GtkLayoutManager, vfunc_measure) {
     RETURN_THROWS();
   }
   auto *klass = GTK_LAYOUT_MANAGER_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *widget_o = unwrap(widget, GTK_TYPE_WIDGET);
+  if (widget_o == nullptr) RETURN_THROWS();
+  gint orientation_v = 0;
+  if (!enum_from_php(orientation, GTK_TYPE_ORIENTATION, &orientation_v)) RETURN_THROWS();
+  if (!phpgtk::check_range<int>(for_size, 3)) RETURN_THROWS();
   if (klass->measure == nullptr) {
     array_init_size(return_value, 4);
     add_next_index_long(return_value, 0);
@@ -575,11 +580,6 @@ ZEND_METHOD(Gtk4_GtkLayoutManager, vfunc_measure) {
     add_next_index_long(return_value, -1);
     return;
   }
-  GObject *widget_o = unwrap(widget, GTK_TYPE_WIDGET);
-  if (widget_o == nullptr) RETURN_THROWS();
-  gint orientation_v = 0;
-  if (!enum_from_php(orientation, GTK_TYPE_ORIENTATION, &orientation_v)) RETURN_THROWS();
-  if (!phpgtk::check_range<int>(for_size, 3)) RETURN_THROWS();
   int minimum = 0;
   int natural = 0;
   int minimum_baseline = -1;

@@ -377,6 +377,11 @@ ZEND_METHOD(Gtk4_SoupMessageHeaders, set_expectations) {
   ZEND_PARSE_PARAMETERS_END();
   SoupMessageHeaders *self = PHPGTK_BOXED_SELF(SoupMessageHeaders);
   if (!phpgtk::check_flags(SOUP_TYPE_EXPECTATION, expectations, 1)) RETURN_THROWS();
+  const bool precondition_0 = (expectations & ~SOUP_EXPECTATION_CONTINUE) == 0;
+  if (!precondition_0) {
+    zend_argument_value_error(1, "must be 0 or SoupExpectation::CONTINUE");
+    RETURN_THROWS();
+  }
   soup_message_headers_set_expectations(self, static_cast<SoupExpectation>(expectations));
 }
 

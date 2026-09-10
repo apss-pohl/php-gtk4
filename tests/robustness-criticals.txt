@@ -48,6 +48,15 @@ Gtk4\GtkCssProvider::load_from_string#arguments
 # Introduced by gtk 4cf5d349e236 (MR !8774), which had to keep the model to join it with the
 # icon-action section; the sibling setters still use g_set_object(). docs/TODO.md tracks the report.
 Gtk4\GtkEntry::set_extra_menu#arguments   gtk>=4.20
+# An interval is an index into the zone's transition table, which GLib keeps private
+# (`interval_valid (tz, interval)`); only find_interval() and adjust_time() can answer a valid
+# one, so the binding has no bound to check against.
+Gtk4\GTimeZone::get_abbreviation#arguments
+Gtk4\GTimeZone::get_abbreviation#values
+Gtk4\GTimeZone::get_offset#arguments
+Gtk4\GTimeZone::get_offset#values
+Gtk4\GTimeZone::is_dst#arguments
+Gtk4\GTimeZone::is_dst#values
 Gtk4\GtkSnapshot::push_blur#arguments
 Gtk4\GtkSnapshot::push_cross_fade#arguments
 Gtk4\GtkSnapshot::push_opacity#arguments

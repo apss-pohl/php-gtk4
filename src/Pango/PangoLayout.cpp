@@ -149,6 +149,12 @@ ZEND_METHOD(Gtk4_PangoLayout, get_caret_pos) {
   ZEND_PARSE_PARAMETERS_END();
   PangoLayout *self = PHPGTK_SELF(PangoLayout, PANGO_TYPE_LAYOUT);
   if (!phpgtk::check_range<int>(index, 1)) RETURN_THROWS();
+  const bool precondition_0 =
+      index >= 0 && static_cast<size_t>(index) <= strlen(pango_layout_get_text(self));
+  if (!precondition_0) {
+    zend_argument_value_error(1, "must be a byte index into the text, from 0 to its length");
+    RETURN_THROWS();
+  }
   PangoRectangle strong_pos{};
   PangoRectangle weak_pos{};
   pango_layout_get_caret_pos(self, static_cast<int>(index), &strong_pos, &weak_pos);
@@ -201,6 +207,12 @@ ZEND_METHOD(Gtk4_PangoLayout, get_cursor_pos) {
   ZEND_PARSE_PARAMETERS_END();
   PangoLayout *self = PHPGTK_SELF(PangoLayout, PANGO_TYPE_LAYOUT);
   if (!phpgtk::check_range<int>(index, 1)) RETURN_THROWS();
+  const bool precondition_0 =
+      index >= 0 && static_cast<size_t>(index) <= strlen(pango_layout_get_text(self));
+  if (!precondition_0) {
+    zend_argument_value_error(1, "must be a byte index into the text, from 0 to its length");
+    RETURN_THROWS();
+  }
   PangoRectangle strong_pos{};
   PangoRectangle weak_pos{};
   pango_layout_get_cursor_pos(self, static_cast<int>(index), &strong_pos, &weak_pos);
@@ -524,6 +536,12 @@ ZEND_METHOD(Gtk4_PangoLayout, index_to_line_x) {
   ZEND_PARSE_PARAMETERS_END();
   PangoLayout *self = PHPGTK_SELF(PangoLayout, PANGO_TYPE_LAYOUT);
   if (!phpgtk::check_range<int>(index, 1)) RETURN_THROWS();
+  const bool precondition_0 =
+      index >= 0 && static_cast<size_t>(index) <= strlen(pango_layout_get_text(self));
+  if (!precondition_0) {
+    zend_argument_value_error(1, "must be a byte index into the text, from 0 to its length");
+    RETURN_THROWS();
+  }
   int line = 0;
   int x_pos = 0;
   pango_layout_index_to_line_x(self, static_cast<int>(index), trailing, &line, &x_pos);
@@ -553,6 +571,11 @@ ZEND_METHOD(Gtk4_PangoLayout, index_to_pos) {
   ZEND_PARSE_PARAMETERS_END();
   PangoLayout *self = PHPGTK_SELF(PangoLayout, PANGO_TYPE_LAYOUT);
   if (!phpgtk::check_range<int>(index, 1)) RETURN_THROWS();
+  const bool precondition_0 = index >= 0;
+  if (!precondition_0) {
+    zend_argument_value_error(1, "must not be negative");
+    RETURN_THROWS();
+  }
   PangoRectangle pos{};
   pango_layout_index_to_pos(self, static_cast<int>(index), &pos);
   wrap_boxed(PHPGTK_TYPE_PANGO_RECTANGLE, &pos, return_value);
@@ -601,6 +624,19 @@ ZEND_METHOD(Gtk4_PangoLayout, move_cursor_visually) {
   if (!phpgtk::check_range<int>(old_index, 2)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(old_trailing, 3)) RETURN_THROWS();
   if (!phpgtk::check_range<int>(direction, 4)) RETURN_THROWS();
+  const bool precondition_0 =
+      old_index >= 0 && static_cast<size_t>(old_index) <= strlen(pango_layout_get_text(self));
+  if (!precondition_0) {
+    zend_argument_value_error(2, "must be a byte index into the text, from 0 to its length");
+    RETURN_THROWS();
+  }
+  const bool precondition_1 =
+      old_trailing >= 0 &&
+      (old_trailing == 0 || static_cast<size_t>(old_index) < strlen(pango_layout_get_text(self)));
+  if (!precondition_1) {
+    zend_argument_value_error(3, "must not be negative, and must be 0 at the end of the text");
+    RETURN_THROWS();
+  }
   int new_index = 0;
   int new_trailing = 0;
   pango_layout_move_cursor_visually(self, strong, static_cast<int>(old_index),

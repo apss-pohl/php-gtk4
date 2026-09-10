@@ -12,9 +12,11 @@ use Gtk4\GdkDisplay;
 use Gtk4\GdkTexture;
 use Gtk4\GKeyFile;
 use Gtk4\GListStore;
+use Gtk4\GMemoryInputStream;
 use Gtk4\GMenu;
 use Gtk4\GMenuItem;
 use Gtk4\GMenuModel;
+use Gtk4\GNotification;
 use Gtk4\GObject;
 use Gtk4\GSimpleAction;
 use Gtk4\GTask;
@@ -43,6 +45,8 @@ use Gtk4\GtkTextWindowType;
 use Gtk4\GtkWindow;
 use Gtk4\GTlsCertificate;
 use Gtk4\PangoFontDescription;
+use Gtk4\PangoTabAlign;
+use Gtk4\PangoTabArray;
 use Gtk4\PhpValue;
 use PhpGtk4\Tests\Subclass\ChainingScale;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -882,5 +886,69 @@ final class ArgumentGuardTest extends GtkTestCase
         $view->move_overlay($overlay, 5, 6);
 
         self::assertSame($overlay, $view->get_first_child()?->get_first_child() ?? $overlay);
+    }
+
+    // ---------------------------------------------------------------- the classes the sweeps
+    // ---------------------------------------------------------------- had been skipping
+
+    /**
+     * Pango asserts the index on get_cursor_pos() and returns; get_caret_pos() calls it and then
+     * walks on with the index regardless, and a negative one finds no line, so
+     * pango_layout_line_get_run(NULL, ...) was a SIGSEGV. Found the day PangoLayout got a
+     * factory branch (2026-09-10) - it had no instance for the sweep before that.
+     */
+    public function testACaretIndexOutsideTheTextIsAValueError(): void
+    {
+        $layout = new GtkLabel('Hello')->get_layout();
+        self::assertCount(2, $layout->get_caret_pos(5), 'the end of the text is a position');
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('must be a byte index into the text');
+        $layout->get_caret_pos(-1);
+    }
+
+    public function testACursorIndexPastTheTextIsAValueError(): void
+    {
+        $layout = new GtkLabel('Hello')->get_layout();
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('from 0 to its length');
+        $layout->get_cursor_pos(6);
+    }
+
+    /**
+     * read_bytes() allocates the whole count before reading, and a count no machine holds is
+     * a GLib-ERROR on the allocation - `failed to allocate 9223372036854775807 bytes`, a
+     * SIGTRAP, not anything PHP sees. One read never yields more than G_MAXINT anyway.
+     */
+    public function testAReadCountBeyondOneReadIsAValueError(): void
+    {
+        $stream = GMemoryInputStream::new_from_bytes('bytes');
+        self::assertSame('bytes', $stream->read_bytes(1 << 20, null), 'a count past the end reads to it');
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('between 0 and 2147483647');
+        $stream->read_bytes(PHP_INT_MAX, null);
+    }
+
+    /** GIO warns and keeps the name; the contract is that a notification's actions are the app's. */
+    public function testANotificationActionHasToBeAnApplicationAction(): void
+    {
+        $notification = new GNotification('title');
+        $notification->set_default_action('app.show');
+        $notification->add_button('Open', 'app.open');
+
+        $this->expectException(\ValueError::class);
+        $this->expectExceptionMessage('must name an application action (app.<name>)');
+        $notification->add_button('Open', 'win.open');
+    }
+
+    public function testATabIndexIsNotNegative(): void
+    {
+        $tabs = new PangoTabArray(2, true);
+        $tabs->set_tab(1, PangoTabAlign::Left, 40);
+        self::assertSame([PangoTabAlign::Left, 40], $tabs->get_tab(1));
+
+        $this->expectException(\ValueError::class);
+        $tabs->get_tab(-1);
     }
 }

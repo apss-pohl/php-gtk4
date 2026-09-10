@@ -325,11 +325,11 @@ ZEND_METHOD(Gtk4_GtkApplication, vfunc_window_added) {
     RETURN_THROWS();
   }
   auto *klass = GTK_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *window_o = unwrap(window, GTK_TYPE_WINDOW);
+  if (window_o == nullptr) RETURN_THROWS();
   if (klass->window_added == nullptr) {
     return;
   }
-  GObject *window_o = unwrap(window, GTK_TYPE_WINDOW);
-  if (window_o == nullptr) RETURN_THROWS();
   klass->window_added(self, GTK_WINDOW(window_o));
 }
 
@@ -355,11 +355,11 @@ ZEND_METHOD(Gtk4_GtkApplication, vfunc_window_removed) {
     RETURN_THROWS();
   }
   auto *klass = GTK_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *window_o = unwrap(window, GTK_TYPE_WINDOW);
+  if (window_o == nullptr) RETURN_THROWS();
   if (klass->window_removed == nullptr) {
     return;
   }
-  GObject *window_o = unwrap(window, GTK_TYPE_WINDOW);
-  if (window_o == nullptr) RETURN_THROWS();
   klass->window_removed(self, GTK_WINDOW(window_o));
 }
 

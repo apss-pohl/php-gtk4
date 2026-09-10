@@ -63,6 +63,20 @@ where both packages are now registered.
 
 ### Fixed
 
+- **`PangoLayout::get_caret_pos(-1)` was a SIGSEGV.** Pango asserts the index in
+  `get_cursor_pos()` and returns, but `get_caret_pos()` walks on with it, finds no line for a
+  negative one and dereferences NULL. The index-taking layout calls now refuse anything outside
+  the text as a `ValueError`. `GInputStream::read_bytes(PHP_INT_MAX)` was a GLib-ERROR abort on
+  the allocation for the same reason - GLib allocates the whole count first - and is capped at
+  what one read can yield. Both surfaced the moment the classes had an instance to sweep: 24
+  registered classes had neither a factory branch nor an excuse, so both sweeps had been skipping
+  them silently - `PangoLayout` and `PangoFontMap` among them. Every registered class is now built
+  or excused, and `GtkInstancesTest` fails on one that is neither.
+
+- **A native `vfunc_*()` whose slot GTK left NULL skipped its argument checks.** The empty-slot
+  return came before them, so `parent::vfunc_committed("a\0b")` accepted what the public method
+  refuses; the checks come first now, on every generated native vfunc.
+
 - **A WebKit cookie test that failed about one run in ten** (twice on CI, once locally):
   `add_cookie_finish()` reports that the write was *accepted*, not that the store took it, and the
   store lives in a network process the ephemeral session starts lazily - so a cookie written before

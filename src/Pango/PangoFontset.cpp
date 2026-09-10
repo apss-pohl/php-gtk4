@@ -115,11 +115,11 @@ ZEND_METHOD(Gtk4_PangoFontset, vfunc_get_font) {
     RETURN_THROWS();
   }
   auto *klass = PANGO_FONTSET_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (!phpgtk::check_range<guint>(wc, 1)) RETURN_THROWS();
   if (klass->get_font == nullptr) {
     enum_to_php(G_TYPE_NONE, 0, return_value);
     return;
   }
-  if (!phpgtk::check_range<guint>(wc, 1)) RETURN_THROWS();
   PangoFont *phpgtk_ret = klass->get_font(self, static_cast<guint>(wc));
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
   if (phpgtk_ret != nullptr) g_object_unref(phpgtk_ret);  // the handle took its own ref

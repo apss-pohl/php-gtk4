@@ -422,11 +422,11 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, vfunc_delete_text) {
     RETURN_THROWS();
   }
   auto *klass = GTK_ENTRY_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<guint>(n_chars, 2)) RETURN_THROWS();
   if (klass->delete_text == nullptr) {
     RETURN_LONG(0);
   }
-  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
-  if (!phpgtk::check_range<guint>(n_chars, 2)) RETURN_THROWS();
   RETURN_LONG(static_cast<zend_long>(
       klass->delete_text(self, static_cast<guint>(position), static_cast<guint>(n_chars))));
 }
@@ -453,11 +453,11 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, vfunc_deleted_text) {
     RETURN_THROWS();
   }
   auto *klass = GTK_ENTRY_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
+  if (!phpgtk::check_range<guint>(n_chars, 2)) RETURN_THROWS();
   if (klass->deleted_text == nullptr) {
     return;
   }
-  if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
-  if (!phpgtk::check_range<guint>(n_chars, 2)) RETURN_THROWS();
   klass->deleted_text(self, static_cast<guint>(position), static_cast<guint>(n_chars));
 }
 
@@ -510,12 +510,12 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, vfunc_insert_text) {
     RETURN_THROWS();
   }
   auto *klass = GTK_ENTRY_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->insert_text == nullptr) {
-    RETURN_LONG(0);
-  }
   if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
   if (!phpgtk::check_utf8(chars, 2)) RETURN_THROWS();
   if (!phpgtk::check_range<guint>(n_chars, 3)) RETURN_THROWS();
+  if (klass->insert_text == nullptr) {
+    RETURN_LONG(0);
+  }
   RETURN_LONG(static_cast<zend_long>(klass->insert_text(
       self, static_cast<guint>(position), ZSTR_VAL(chars), static_cast<guint>(n_chars))));
 }
@@ -544,12 +544,12 @@ ZEND_METHOD(Gtk4_GtkEntryBuffer, vfunc_inserted_text) {
     RETURN_THROWS();
   }
   auto *klass = GTK_ENTRY_BUFFER_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->inserted_text == nullptr) {
-    return;
-  }
   if (!phpgtk::check_range<guint>(position, 1)) RETURN_THROWS();
   if (!phpgtk::check_utf8(chars, 2)) RETURN_THROWS();
   if (!phpgtk::check_range<guint>(n_chars, 3)) RETURN_THROWS();
+  if (klass->inserted_text == nullptr) {
+    return;
+  }
   klass->inserted_text(self, static_cast<guint>(position), ZSTR_VAL(chars),
                        static_cast<guint>(n_chars));
 }

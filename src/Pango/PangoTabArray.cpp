@@ -64,6 +64,7 @@ ZEND_METHOD(Gtk4_PangoTabArray, get_decimal_point) {
   ZEND_PARSE_PARAMETERS_END();
   PangoTabArray *self = PHPGTK_BOXED_SELF(PangoTabArray);
   if (!phpgtk::check_range<int>(tab_index, 1)) RETURN_THROWS();
+  if (!phpgtk::check_domain(tab_index, 0, ZEND_LONG_MAX, 1)) RETURN_THROWS();
   RETURN_LONG(
       static_cast<zend_long>(pango_tab_array_get_decimal_point(self, static_cast<int>(tab_index))));
 }
@@ -102,6 +103,7 @@ ZEND_METHOD(Gtk4_PangoTabArray, get_tab) {
   ZEND_PARSE_PARAMETERS_END();
   PangoTabArray *self = PHPGTK_BOXED_SELF(PangoTabArray);
   if (!phpgtk::check_range<gint>(tab_index, 1)) RETURN_THROWS();
+  if (!phpgtk::check_domain(tab_index, 0, ZEND_LONG_MAX, 1)) RETURN_THROWS();
   PangoTabAlign alignment = static_cast<PangoTabAlign>(0);
   gint location = 0;
   pango_tab_array_get_tab(self, static_cast<gint>(tab_index), &alignment, &location);
@@ -147,6 +149,7 @@ ZEND_METHOD(Gtk4_PangoTabArray, set_decimal_point) {
   ZEND_PARSE_PARAMETERS_END();
   PangoTabArray *self = PHPGTK_BOXED_SELF(PangoTabArray);
   if (!phpgtk::check_range<int>(tab_index, 1)) RETURN_THROWS();
+  if (!phpgtk::check_domain(tab_index, 0, ZEND_LONG_MAX, 1)) RETURN_THROWS();
   if (!phpgtk::check_range<gunichar>(decimal_point, 2)) RETURN_THROWS();
   pango_tab_array_set_decimal_point(self, static_cast<int>(tab_index),
                                     static_cast<gunichar>(decimal_point));
@@ -182,9 +185,11 @@ ZEND_METHOD(Gtk4_PangoTabArray, set_tab) {
   ZEND_PARSE_PARAMETERS_END();
   PangoTabArray *self = PHPGTK_BOXED_SELF(PangoTabArray);
   if (!phpgtk::check_range<gint>(tab_index, 1)) RETURN_THROWS();
+  if (!phpgtk::check_domain(tab_index, 0, ZEND_LONG_MAX, 1)) RETURN_THROWS();
   gint alignment_v = 0;
   if (!enum_from_php(alignment, PANGO_TYPE_TAB_ALIGN, &alignment_v)) RETURN_THROWS();
   if (!phpgtk::check_range<gint>(location, 3)) RETURN_THROWS();
+  if (!phpgtk::check_domain(location, 0, ZEND_LONG_MAX, 3)) RETURN_THROWS();
   pango_tab_array_set_tab(self, static_cast<gint>(tab_index),
                           static_cast<PangoTabAlign>(alignment_v), static_cast<gint>(location));
 }

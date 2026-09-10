@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 24004b97f88855f20a1a63b4c1543353ebef2076 */
+ * Stub hash: a728b767fc12e203f5ea1fb946c3c362da11848e */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_change_state, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
@@ -644,7 +644,7 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GNotification_add_but
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GNotification_set_body, 0, 1, IS_VOID, 0)
-	ZEND_ARG_TYPE_INFO(0, body, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, body, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GNotification_set_category, 0, 1, IS_VOID, 0)

@@ -852,11 +852,11 @@ ZEND_METHOD(Gtk4_GtkPrintOperation, vfunc_begin_print) {
     RETURN_THROWS();
   }
   auto *klass = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *context_o = unwrap(context, GTK_TYPE_PRINT_CONTEXT);
+  if (context_o == nullptr) RETURN_THROWS();
   if (klass->begin_print == nullptr) {
     return;
   }
-  GObject *context_o = unwrap(context, GTK_TYPE_PRINT_CONTEXT);
-  if (context_o == nullptr) RETURN_THROWS();
   klass->begin_print(self, GTK_PRINT_CONTEXT(context_o));
 }
 
@@ -908,11 +908,11 @@ ZEND_METHOD(Gtk4_GtkPrintOperation, vfunc_custom_widget_apply) {
     RETURN_THROWS();
   }
   auto *klass = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *widget_o = unwrap(widget, GTK_TYPE_WIDGET);
+  if (widget_o == nullptr) RETURN_THROWS();
   if (klass->custom_widget_apply == nullptr) {
     return;
   }
-  GObject *widget_o = unwrap(widget, GTK_TYPE_WIDGET);
-  if (widget_o == nullptr) RETURN_THROWS();
   klass->custom_widget_apply(self, GTK_WIDGET(widget_o));
 }
 
@@ -937,11 +937,11 @@ ZEND_METHOD(Gtk4_GtkPrintOperation, vfunc_done) {
     RETURN_THROWS();
   }
   auto *klass = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
+  gint result_v = 0;
+  if (!enum_from_php(result, GTK_TYPE_PRINT_OPERATION_RESULT, &result_v)) RETURN_THROWS();
   if (klass->done == nullptr) {
     return;
   }
-  gint result_v = 0;
-  if (!enum_from_php(result, GTK_TYPE_PRINT_OPERATION_RESULT, &result_v)) RETURN_THROWS();
   klass->done(self, static_cast<GtkPrintOperationResult>(result_v));
 }
 
@@ -968,12 +968,12 @@ ZEND_METHOD(Gtk4_GtkPrintOperation, vfunc_draw_page) {
     RETURN_THROWS();
   }
   auto *klass = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->draw_page == nullptr) {
-    return;
-  }
   GObject *context_o = unwrap(context, GTK_TYPE_PRINT_CONTEXT);
   if (context_o == nullptr) RETURN_THROWS();
   if (!phpgtk::check_range<int>(page_nr, 2)) RETURN_THROWS();
+  if (klass->draw_page == nullptr) {
+    return;
+  }
   klass->draw_page(self, GTK_PRINT_CONTEXT(context_o), static_cast<int>(page_nr));
 }
 
@@ -998,11 +998,11 @@ ZEND_METHOD(Gtk4_GtkPrintOperation, vfunc_end_print) {
     RETURN_THROWS();
   }
   auto *klass = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *context_o = unwrap(context, GTK_TYPE_PRINT_CONTEXT);
+  if (context_o == nullptr) RETURN_THROWS();
   if (klass->end_print == nullptr) {
     return;
   }
-  GObject *context_o = unwrap(context, GTK_TYPE_PRINT_CONTEXT);
-  if (context_o == nullptr) RETURN_THROWS();
   klass->end_print(self, GTK_PRINT_CONTEXT(context_o));
 }
 
@@ -1027,11 +1027,11 @@ ZEND_METHOD(Gtk4_GtkPrintOperation, vfunc_paginate) {
     RETURN_THROWS();
   }
   auto *klass = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *context_o = unwrap(context, GTK_TYPE_PRINT_CONTEXT);
+  if (context_o == nullptr) RETURN_THROWS();
   if (klass->paginate == nullptr) {
     RETURN_FALSE;
   }
-  GObject *context_o = unwrap(context, GTK_TYPE_PRINT_CONTEXT);
-  if (context_o == nullptr) RETURN_THROWS();
   RETURN_BOOL(klass->paginate(self, GTK_PRINT_CONTEXT(context_o)));
 }
 
@@ -1061,14 +1061,14 @@ ZEND_METHOD(Gtk4_GtkPrintOperation, vfunc_request_page_setup) {
     RETURN_THROWS();
   }
   auto *klass = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->request_page_setup == nullptr) {
-    return;
-  }
   GObject *context_o = unwrap(context, GTK_TYPE_PRINT_CONTEXT);
   if (context_o == nullptr) RETURN_THROWS();
   if (!phpgtk::check_range<int>(page_nr, 2)) RETURN_THROWS();
   GObject *setup_o = unwrap(setup, GTK_TYPE_PAGE_SETUP);
   if (setup_o == nullptr) RETURN_THROWS();
+  if (klass->request_page_setup == nullptr) {
+    return;
+  }
   klass->request_page_setup(self, GTK_PRINT_CONTEXT(context_o), static_cast<int>(page_nr),
                             GTK_PAGE_SETUP(setup_o));
 }
@@ -1123,15 +1123,15 @@ ZEND_METHOD(Gtk4_GtkPrintOperation, vfunc_update_custom_widget) {
     RETURN_THROWS();
   }
   auto *klass = GTK_PRINT_OPERATION_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->update_custom_widget == nullptr) {
-    return;
-  }
   GObject *widget_o = unwrap(widget, GTK_TYPE_WIDGET);
   if (widget_o == nullptr) RETURN_THROWS();
   GObject *setup_o = unwrap(setup, GTK_TYPE_PAGE_SETUP);
   if (setup_o == nullptr) RETURN_THROWS();
   GObject *settings_o = unwrap(settings, GTK_TYPE_PRINT_SETTINGS);
   if (settings_o == nullptr) RETURN_THROWS();
+  if (klass->update_custom_widget == nullptr) {
+    return;
+  }
   klass->update_custom_widget(self, GTK_WIDGET(widget_o), GTK_PAGE_SETUP(setup_o),
                               GTK_PRINT_SETTINGS(settings_o));
 }

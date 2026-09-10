@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use Gtk4\GtkWindow;
 use ReflectionClass;
 use ReflectionExtension;
 
@@ -17,6 +18,13 @@ use ReflectionExtension;
  */
 final class GtkInstancesTest extends GtkTestCase
 {
+    /** Releases the owners {@see GtkInstances} pinned for the handles it handed out. */
+    protected function tearDown(): void
+    {
+        GtkInstances::release();
+        parent::tearDown();
+    }
+
     /** @return iterable<string, array{class-string, string}> */
     public static function unreachableClasses(): iterable
     {
@@ -87,6 +95,47 @@ final class GtkInstancesTest extends GtkTestCase
             "$class has a public constructor, so PHP can build one - the excuse \"$reason\" is"
             . ' stale. Add a GtkInstances branch and drop the line.',
         );
+    }
+
+    /**
+     * The third state, and the one nothing used to count. A class the factory cannot build and
+     * the list does not excuse is skipped by both sweeps with "no instance this test can build"
+     * - silently, since a skip is not a failure - and PangoFontMap sat there for three waves:
+     * no branch, no excuse, no sweep. Every registered class is either built here or named
+     * in UNREACHABLE; a class the machine cannot build (ENVIRONMENTAL) is skipped with what it
+     * lacks, so the report says so instead of the guard failing on a runner without it.
+     *
+     * @param class-string $class
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('registeredClasses')]
+    public function testEveryClassIsBuiltOrExcused(string $class): void
+    {
+        if (isset(GtkInstances::UNREACHABLE[$class])) {
+            self::assertNull(GtkInstances::make($class), "$class is excused, yet the factory builds one");
+            return;
+        }
+        $instance = $class === GtkWindow::class ? $this->window() : GtkInstances::make($class);
+        if ($instance === null && isset(GtkInstances::ENVIRONMENTAL[$class])) {
+            self::markTestSkipped("$class: " . GtkInstances::ENVIRONMENTAL[$class]);
+        }
+        self::assertInstanceOf(
+            $class,
+            $instance,
+            "$class is neither built by GtkInstances nor excused in UNREACHABLE, so no sweep sees it",
+        );
+    }
+
+    /** @return iterable<string, array{class-string}> */
+    public static function registeredClasses(): iterable
+    {
+        foreach (new ReflectionExtension('gtk4')->getClasses() as $rc) {
+            if ($rc->isInterface() || $rc->isEnum()) {
+                continue;
+            }
+            /** @var class-string $name */
+            $name = $rc->getName();
+            yield $name => [$name];
+        }
     }
 
     /** The list is the exception, not the rule: the table has to carry its weight. */

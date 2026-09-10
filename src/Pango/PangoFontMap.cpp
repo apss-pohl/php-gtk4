@@ -432,12 +432,12 @@ ZEND_METHOD(Gtk4_PangoFontMap, vfunc_get_face) {
     RETURN_THROWS();
   }
   auto *klass = PANGO_FONT_MAP_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *font_o = unwrap(font, PANGO_TYPE_FONT);
+  if (font_o == nullptr) RETURN_THROWS();
   if (klass->get_face == nullptr) {
     enum_to_php(G_TYPE_NONE, 0, return_value);
     return;
   }
-  GObject *font_o = unwrap(font, PANGO_TYPE_FONT);
-  if (font_o == nullptr) RETURN_THROWS();
   PangoFontFace *phpgtk_ret = klass->get_face(self, PANGO_FONT(font_o));
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
@@ -462,11 +462,11 @@ ZEND_METHOD(Gtk4_PangoFontMap, vfunc_get_family) {
     RETURN_THROWS();
   }
   auto *klass = PANGO_FONT_MAP_CLASS(subtype_native_class(G_OBJECT(self)));
+  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   if (klass->get_family == nullptr) {
     enum_to_php(G_TYPE_NONE, 0, return_value);
     return;
   }
-  if (!phpgtk::check_utf8(name, 1)) RETURN_THROWS();
   PangoFontFamily *phpgtk_ret = klass->get_family(self, ZSTR_VAL(name));
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
 }
@@ -518,13 +518,13 @@ ZEND_METHOD(Gtk4_PangoFontMap, vfunc_load_font) {
     RETURN_THROWS();
   }
   auto *klass = PANGO_FONT_MAP_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->load_font == nullptr) {
-    RETURN_NULL();
-  }
   GObject *context_o = unwrap(context, PANGO_TYPE_CONTEXT);
   if (context_o == nullptr) RETURN_THROWS();
   gpointer desc_b = unwrap_boxed(desc, PANGO_TYPE_FONT_DESCRIPTION);
   if (desc_b == nullptr) RETURN_THROWS();
+  if (klass->load_font == nullptr) {
+    RETURN_NULL();
+  }
   PangoFont *phpgtk_ret =
       klass->load_font(self, PANGO_CONTEXT(context_o), static_cast<PangoFontDescription *>(desc_b));
   wrap(phpgtk_ret != nullptr ? G_OBJECT(phpgtk_ret) : nullptr, return_value);
@@ -557,15 +557,15 @@ ZEND_METHOD(Gtk4_PangoFontMap, vfunc_load_fontset) {
     RETURN_THROWS();
   }
   auto *klass = PANGO_FONT_MAP_CLASS(subtype_native_class(G_OBJECT(self)));
-  if (klass->load_fontset == nullptr) {
-    RETURN_NULL();
-  }
   GObject *context_o = unwrap(context, PANGO_TYPE_CONTEXT);
   if (context_o == nullptr) RETURN_THROWS();
   gpointer desc_b = unwrap_boxed(desc, PANGO_TYPE_FONT_DESCRIPTION);
   if (desc_b == nullptr) RETURN_THROWS();
   gpointer language_b = unwrap_boxed(language, PANGO_TYPE_LANGUAGE);
   if (language_b == nullptr) RETURN_THROWS();
+  if (klass->load_fontset == nullptr) {
+    RETURN_NULL();
+  }
   PangoFontset *phpgtk_ret = klass->load_fontset(self, PANGO_CONTEXT(context_o),
                                                  static_cast<PangoFontDescription *>(desc_b),
                                                  static_cast<PangoLanguage *>(language_b));
