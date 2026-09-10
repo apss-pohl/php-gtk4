@@ -61,14 +61,22 @@ final class DeviceTest extends GtkTestCase
         self::assertSame(GdkInputSource::Keyboard, $seat->get_keyboard()?->get_source());
     }
 
-    /** The lock states are a keyboard's business; nothing has pressed a lock key here. */
+    /**
+     * The lock states are a keyboard's business - and the host's. A headless runner never has a
+     * lock key set, but a real desktop keyboard commonly sits with Num Lock on, so their values
+     * are the environment's to choose and cannot be asserted; reading them is what has to work,
+     * and TypeDeclarationTest pins the declared bool. What *is* knowable is the modifier state:
+     * that is which keys are being *held*, and nothing is holding one here.
+     */
     public function testTheKeyboardReportsItsLockStates(): void
     {
         $seat = $this->display()->get_default_seat() ?? self::fail('no seat');
         $keyboard = $seat->get_keyboard() ?? self::fail('no keyboard');
 
-        self::assertFalse($keyboard->get_caps_lock_state());
-        self::assertFalse($keyboard->get_num_lock_state());
+        $keyboard->get_caps_lock_state();
+        $keyboard->get_num_lock_state();
+        $keyboard->get_scroll_lock_state();
+
         self::assertSame(0, $keyboard->get_modifier_state(), 'no modifier is held down');
     }
 

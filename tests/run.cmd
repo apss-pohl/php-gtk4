@@ -18,6 +18,10 @@ if not exist "vendor\bin\phpunit" (
     exit /b 1
 )
 rem Match tests/run.sh: software rendering, no accessibility bus, no xdebug.
+rem No GDK_DEBUG=gl-disable counterpart on purpose: GSK_RENDERER=cairo is enough and is silent,
+rem while the 4.16+ spelling GDK_DISABLE=gl makes GTK complain "OpenGL support disabled via
+rem GDK_DISABLE" as soon as anything asks for the GL renderer - a CRITICAL that fails tests just
+rem like the GL-realize failure it was meant to avoid.
 if "%GSK_RENDERER%"=="" set "GSK_RENDERER=cairo"
 if "%GTK_A11Y%"=="" set "GTK_A11Y=none"
 set "XDEBUG_MODE=off"

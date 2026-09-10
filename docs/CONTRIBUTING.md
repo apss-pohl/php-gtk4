@@ -104,7 +104,27 @@ included — the call stack then shows your closure above `GtkApplication::run()
 extension (`.vscode/extensions.json` recommends it); how `xdebug.mode` is set in `php.ini` does not
 matter, the launch configuration decides.
 
-`.vscode/launch.json` has six ready configurations:
+`.vscode/launch.json` has seven ready configurations, each of which also carries a `windows`
+block, so the same entry is the start point on either system. On Windows it launches `php.exe`
+directly — with `-dextension=` pointing at the DLL `nmake` wrote and the gvsbuild `bin\` prepended
+to `PATH` — rather than `bin\php-gtk4.cmd`: the debug extension spawns without a shell, and Node
+refuses a `.cmd` there (`spawn EINVAL`, the CVE-2024-27980 fix). That launcher is only `PATH` +
+`-dextension` on Windows anyway, so nothing is lost; the *tasks* still call it, because a task runs
+in a shell. The php.exe and GTK paths are this workspace's — change them there when yours differ.
+Xdebug itself is a separate install on Windows: without it the entries still *run* the application,
+they just stop at no breakpoint.
+
+The three **Example:** configurations also set `GTK_DEBUG=interactive`, so the GTK inspector opens
+with the page (and `Ctrl+Shift+D` works). On Windows GTK notes that it could not open a separate
+display connection for it and is "using default display for GtkInspector; expect some spillover" —
+expected, and a notice rather than a critical.
+
+Nothing sets `GSK_RENDERER`, deliberately: GTK then realizes the best renderer it can — the GL one
+where the GPU driver supports it, `GskCairoRenderer` otherwise — and is silent about the fallback.
+A stale `GSK_RENDERER=gl` or `GDK_GL=always` in the environment (a GTK 3 habit) forces the attempt
+and turns that fallback into a warning per window, e.g. `Failed to realize renderer 'GskGLRenderer'
+… OpenGL requires Direct Composition` on Windows. Clear it where VS Code inherits it — a launch
+configuration cannot, since the adapter merges `env` over `process.env` and JSON cannot say "unset".
 
 | Configuration | Runs |
 | ------------- | ---- |
