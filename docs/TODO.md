@@ -5,38 +5,6 @@ history; an item leaves this file when it is done or decided against, it is not 
 
 ## Open work
 
-- **The segfault behind the 8.5 ZTS CI job is worked around, not understood.** The event log
-  named it twice in a row:
-  `RobustnessTest::testWrongArgumentsThrowInsteadOfCrashing#Gtk4\GtkFontDialog::choose_font`,
-  prepared and never finished (runs 34115054496 and 34116287179; an earlier one, 34085363767,
-  died at the same ~46% mark). The async choosers are off the sweep now - every argument may
-  legitimately be null, so the sweep was *opening* a dialog that outlives the test, which a
-  headless argument sweep has no business doing - and that is what makes the job green, not a
-  fix. Only that one matrix cell ever dies: 8.5 NTS and 8.4 ZTS pass the same commit.
-  What is known: it reproduces on no configuration that can be built here, and the PHP build is
-  no longer the unknown. The *exact* binary the job runs - the `php_8.5-zts+ubuntu24.04.tar.zst`
-  that `shivammathur/php-builder` publishes and setup-php unpacks, PHP 8.5.10 ZTS - runs the
-  whole suite with the async choosers put back into the sweep, on Ubuntu 24.04 with GTK 4.14.5,
-  and passes: twice over, plain and under `dbus-run-session`. So it is neither ZTS by itself nor
-  an artefact of a hand-built PHP (a hand-built one and 8.4 NTS pass too). What is left is the
-  runner: 4 cores against 16, its font set, and whatever else `choose_font` reaches for when it
-  opens a dialog nothing will close.
-  To try again without CI: extract that tarball into a scratch prefix (never `/`), point copies
-  of `phpize`/`php-config` at it, build, and run PHPUnit with `-n -d extension_dir=...` plus
-  dom/mbstring/tokenizer/xml/xmlwriter - `-n` alone leaves the ide-stub subprocess without
-  tokenizer and fails `StubsTest` for reasons that have nothing to do with the crash.
-- **What the Windows job reports that GTK 4.14 never shows** - the sweep complaints are pinned
-  now, as `optional` lines in `tests/robustness-criticals.txt` (`GtkWidget::measure`,
-  `GtkWidget::allocate`, `GdkDisplay::translate_key`): that marker says the complaint follows the
-  environment rather than the value, which is the honest shape for a message only a GTK built
-  with `G_ENABLE_DEBUG` / `G_ENABLE_CONSISTENCY_CHECKS` emits. It replaces the plan of a `gtk>=`
-  condition plus an environmental filter, which could not have expressed either message.
-  What is still not understood, only made portable: `DragDropTest` sees a `GtkTextBuffer` in the
-  content formats where Linux sees `['string']` (the test asserts containment now), and Windows
-  gdk-pixbuf ships exactly five loaders where the count assertion wanted more (it names `png` and
-  `jpeg` instead). Reproduce without Windows: Arch's `gtk4` package is 4.22.4, and a
-  `meson --buildtype=debugoptimized` build turns the assertions and consistency checks back on.
-
 - **`gtk_entry_set_extra_menu(entry, NULL)` is a GTK bug worth reporting upstream.** 4.20 rewrote
   it to `g_object_ref()` the model without the NULL check its `(nullable)` annotation promises
   (`g_object_ref: assertion 'G_IS_OBJECT (object)' failed`); 4.14/4.16/4.18 delegate to

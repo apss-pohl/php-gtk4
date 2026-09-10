@@ -234,6 +234,13 @@ tests\run --filter SignalTest            :: PHPUnit on the real desktop (no Xvfb
 `PATH` + `-dextension`; `tests/run.cmd` sets `GSK_RENDERER=cairo`, `GTK_A11Y=none` and
 `XDEBUG_MODE=off` like the Linux runner does.
 
+Those two are defaults, not overrides: a `GSK_RENDERER` or `GDK_GL` already in the environment
+wins. A shell that carries `GSK_RENDERER=gl` from other GTK work makes the whole suite fail with
+`Failed to realize renderer 'GskGLRenderer' ... OpenGL requires Direct Composition` - one GLib
+CRITICAL per windowed test, and `GtkTestCase` fails a test on any of them. Clear it before
+running, and note that `GDK_DISABLE=gl` is not the cure: GTK then complains just as loudly that
+OpenGL was disabled that way.
+
 ### The pinned GTK version (`GVSBUILD_VERSION`)
 
 Linux CI takes GTK from apt; Windows CI has no package manager and downloads gvsbuild's prebuilt

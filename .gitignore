@@ -46,6 +46,7 @@ compile_commands.json
 # --- Windows build (phpize.bat + configure + nmake, config.w32)
 /configure.js
 /configure.bat
+/config.nice.bat
 /config.pickle.h
 /x64/
 /Release/

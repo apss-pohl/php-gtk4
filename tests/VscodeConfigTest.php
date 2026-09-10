@@ -123,6 +123,20 @@ final class VscodeConfigTest extends TestCase
             if (str_starts_with($name, 'Example:')) {
                 $examples++;
                 self::assertSame('${workspaceFolder}/examples/demo.php', $config['program'], $name);
+                // A page is for looking at, so the inspector comes up with it - in both envs,
+                // because the windows block replaces the base one rather than merging into it.
+                $windows = $config['windows'] ?? null;
+                self::assertIsArray($windows, "$name: no windows block");
+                $windowsEnv = $windows['env'] ?? null;
+                foreach ([$config['env'] ?? null, $windowsEnv] as $i => $env) {
+                    self::assertIsArray($env, $name);
+                    $where = $i === 0 ? $name : "$name (windows)";
+                    self::assertSame(
+                        'interactive',
+                        $env['GTK_DEBUG'] ?? null,
+                        "$where: GTK_DEBUG=interactive opens the GTK inspector with the page",
+                    );
+                }
             }
         }
         self::assertGreaterThan(0, $examples, 'no Example: configuration left');
@@ -147,5 +161,105 @@ final class VscodeConfigTest extends TestCase
         $source = (string) file_get_contents($script);
         self::assertStringContainsString('XDEBUG_MODE=debug', $source);
         self::assertStringContainsString('php-gtk4', $source, 'it must go through the launcher');
+    }
+
+    /**
+     * Every configuration carries a `windows` block, which VS Code overlays property by
+     * property on that platform. It deliberately does *not* run bin/php-gtk4.cmd: the debug
+     * extension spawns runtimeExecutable without a shell, and Node's CVE-2024-27980 fix makes
+     * spawn() refuse a .cmd outright ("spawn EINVAL"). So the two things that launcher does on
+     * Windows - put the gvsbuild bin\ on PATH, add -dextension - are inlined, and this pins
+     * them: a php.exe, an extension argument naming a DLL this build produces, and a PATH that
+     * still inherits the rest. The overlay is a replacement rather than a merge, so the block
+     * also has to repeat everything that starts the Xdebug session.
+     *
+     * The paths themselves are this machine's and are not checked for existence: the suite runs
+     * on Linux too, and the Windows CI job runs tests\run.cmd rather than these.
+     */
+    public function testTheWindowsOverridesLaunchPhpDirectlyRatherThanTheCmd(): void
+    {
+        $seen = 0;
+        foreach (self::entries('.vscode/launch.json', 'configurations') as $config) {
+            $name = self::str($config, 'name');
+            if (!isset($config['program'])) {
+                self::assertArrayNotHasKey('windows', $config, "$name: the listen-only one starts nothing");
+                continue;
+            }
+            $windows = $config['windows'] ?? null;
+            self::assertIsArray($windows, "$name: no windows block, so Windows would run bin/php-gtk4");
+            /** @var array<string, mixed> $windows */
+            $seen++;
+
+            $exe = self::str($windows, 'runtimeExecutable', "$name (windows)");
+            self::assertStringEndsWith('php.exe', $exe, "$name (windows): spawn() cannot run a .cmd");
+
+            $args = $windows['runtimeArgs'] ?? null;
+            self::assertIsArray($args, "$name (windows): nothing loads the extension");
+            $extension = null;
+            foreach ($args as $arg) {
+                if (is_string($arg) && str_starts_with($arg, '-dextension=')) {
+                    $extension = substr($arg, strlen('-dextension='));
+                }
+            }
+            self::assertIsString($extension, "$name (windows): no -dextension argument");
+            self::assertStringEndsWith('php_gtk4.dll', $extension, "$name (windows): -dextension");
+            self::assertStringStartsWith(
+                '${workspaceFolder}/x64/',
+                $extension,
+                "$name (windows): the DLL is the one this checkout built",
+            );
+
+            $env = $windows['env'] ?? null;
+            self::assertIsArray($env, "$name: a windows env that replaces the base one, or Xdebug stays off");
+            /** @var array<string, mixed> $env */
+            $path = self::str($env, 'PATH', "$name (windows)");
+            self::assertStringContainsString('bin', $path, "$name (windows): PATH must reach the GTK DLLs");
+            self::assertStringContainsString(
+                '${env:PATH}',
+                $path,
+                "$name (windows): PATH must extend the inherited one, not replace it",
+            );
+
+            self::assertSame('debug', $env['XDEBUG_MODE'] ?? null, "$name (windows): XDEBUG_MODE");
+            self::assertArrayHasKey('XDEBUG_SESSION', $env, "$name (windows): nothing triggers the session");
+            $port = $config['port'] ?? null;
+            self::assertIsInt($port, "$name (windows): port");
+            self::assertStringContainsString(
+                "client_port=$port",
+                self::str($env, 'XDEBUG_CONFIG', "$name (windows)"),
+                "$name (windows): XDEBUG_CONFIG must name the port",
+            );
+            self::assertArrayNotHasKey('GDK_BACKEND', $env, "$name (windows): there is no X11 on Windows");
+        }
+        self::assertGreaterThan(0, $seen, 'no windows override left');
+    }
+    /**
+     * The tasks that run something go through a launcher this repository ships, on both
+     * platforms - `command` for Linux and the `windows` override for the .cmd.
+     */
+    public function testTasksThatRunSomethingHaveAWindowsCommand(): void
+    {
+        foreach (self::entries('.vscode/tasks.json', 'tasks') as $task) {
+            $label = self::str($task, 'label');
+            if (!str_starts_with(self::str($task, 'command', $label), 'bin/php-gtk4')) {
+                continue;   // ./ci.sh is Linux-only on purpose - see the comment in tasks.json
+            }
+            $windows = $task['windows'] ?? null;
+            self::assertIsArray($windows, "task '$label': no windows command");
+            /** @var array<string, mixed> $windows */
+            $command = self::str($windows, 'command', $label);
+            self::assertStringStartsWith('bin/php-gtk4.cmd ', $command, "task '$label'");
+            $script = explode(' ', $command)[1] ?? '';
+            self::assertFileExists(self::ROOT . '/' . $script, "task '$label': $script is gone");
+
+            // Same two knobs as launch.json, so Run Task needs no environment either.
+            $options = $windows['options'] ?? null;
+            self::assertIsArray($options, "task '$label': no windows options");
+            $env = $options['env'] ?? null;
+            self::assertIsArray($env, "task '$label': no windows env");
+            /** @var array<string, mixed> $env */
+            self::assertStringEndsWith('php.exe', self::str($env, 'PHP', $label), "task '$label': PHP");
+            self::assertNotSame('', self::str($env, 'GTK4_ROOT', $label), "task '$label': GTK4_ROOT");
+        }
     }
 }

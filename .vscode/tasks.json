@@ -3,6 +3,11 @@
   // preLaunchTask on the debug configurations - a rebuild is ~20 s and the PHP side of
   // an example changes far more often than the extension. Run "build extension" after
   // touching anything under src/, then F5.
+  //
+  // The run tasks carry a "windows" command - bin/php-gtk4.cmd - and, like launch.json,
+  // this workspace's PHP and GTK4_ROOT next to it, so Run Task works without setting up
+  // an environment first. The build task has no Windows variant: ci.sh is Linux-only, and
+  // a Windows build wants the phpsdk-vs17-x64 shell around nmake (docs/BUILD.md "Windows").
   "version": "2.0.0",
   "tasks": [
     {
@@ -18,6 +23,10 @@
       "detail": "every class, one page at a time - no debugger attached",
       "type": "shell",
       "command": "bin/php-gtk4 examples/demo.php",
+      "windows": {
+        "command": "bin/php-gtk4.cmd examples/demo.php",
+        "options": { "env": { "PHP": "C:\\dev_gtk3\\MAKE-8.4.14-x64\\php-8.4.24-nts-Win32-vs17-x64\\php.exe", "GTK4_ROOT": "C:\\gtk" } }
+      },
       "problemMatcher": [],
       "group": "none"
     },
@@ -26,6 +35,22 @@
       "detail": "examples/demo.php <the open file's class>, no debugger",
       "type": "shell",
       "command": "bin/php-gtk4 examples/demo.php ${fileBasenameNoExtension}",
+      "windows": {
+        "command": "bin/php-gtk4.cmd examples/demo.php ${fileBasenameNoExtension}",
+        "options": { "env": { "PHP": "C:\\dev_gtk3\\MAKE-8.4.14-x64\\php-8.4.24-nts-Win32-vs17-x64\\php.exe", "GTK4_ROOT": "C:\\gtk" } }
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "php-gtk4: run the Notes application",
+      "detail": "examples/notes/notes.php - the example that is a program, not a page",
+      "type": "shell",
+      "command": "bin/php-gtk4 examples/notes/notes.php",
+      "windows": {
+        "command": "bin/php-gtk4.cmd examples/notes/notes.php",
+        "options": { "env": { "PHP": "C:\\dev_gtk3\\MAKE-8.4.14-x64\\php-8.4.24-nts-Win32-vs17-x64\\php.exe", "GTK4_ROOT": "C:\\gtk" } }
+      },
       "problemMatcher": [],
       "group": "none"
     },
