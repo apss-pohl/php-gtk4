@@ -50,7 +50,15 @@ final class PangoTest extends GtkTestCase
         self::assertSame(0, $logical->width % 1, 'and it is an integer count of them');
 
         [$pixelInk, $pixelLogical] = $layout->get_pixel_extents();
-        self::assertSame(intdiv($logical->width, 1024), $pixelLogical->width, '1024 units to the pixel');
+        // The logical rectangle is rounded to the nearest pixel edge at both ends (Pango's
+        // "nearest" conversion, PANGO_PIXELS on each edge), so the width is the difference of
+        // two rounded edges, not the width rounded - on Windows' fonts the two differ by one.
+        $nearest = static fn(int $units): int => (int) floor(($units + 512) / 1024);
+        self::assertSame(
+            $nearest($logical->x + $logical->width) - $nearest($logical->x),
+            $pixelLogical->width,
+            '1024 units to the pixel, rounded at each edge',
+        );
         self::assertLessThanOrEqual($pixelLogical->width, $pixelInk->width, 'ink fits its line');
 
         // Where a caret would sit, and how wide the character under it is.

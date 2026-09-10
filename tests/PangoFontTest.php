@@ -175,7 +175,9 @@ final class PangoFontTest extends GtkTestCase
 
         self::assertInstanceOf(PangoGlyphString::class, $glyphs);
         self::assertGreaterThan(0, $node->get_num_glyphs());
-        self::assertLessThan(8, $node->get_num_glyphs(), '"ffi" shapes to one glyph, so fewer glyphs than characters');
+        // Whether "ffi" shapes to one glyph is the font's decision (DejaVu does, Segoe UI does
+        // not), so the count is bounded by the characters, not asserted below them.
+        self::assertLessThanOrEqual(8, $node->get_num_glyphs(), 'Latin never needs more glyphs than characters');
         self::assertGreaterThan(0, $glyphs->get_width(), 'the advance sum, in Pango units');
 
         [$ink, $logical] = $glyphs->extents($font);
