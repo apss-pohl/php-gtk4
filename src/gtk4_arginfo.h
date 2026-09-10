@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 5160cb40b2b1dfd62acd83f16ee181c5532844e8 */
+ * Stub hash: 1dbb8dd6ff9d9201c8b0d8ea9b9ef85834c45644 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GObject___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -769,7 +769,7 @@ static const zend_function_entry class_Gtk4_GtkCssSection_methods[] = {
 
 static void register_gtk4_symbols(int module_number)
 {
-	REGISTER_STRING_CONSTANT("Gtk4\\VERSION", "0.3.0", CONST_PERSISTENT);
+	REGISTER_STRING_CONSTANT("Gtk4\\VERSION", "0.4.0-dev", CONST_PERSISTENT);
 	REGISTER_STRING_CONSTANT("Gtk4\\BUILD_INFO", PHPGTK_BUILD_INFO, CONST_PERSISTENT);
 	REGISTER_STRING_CONSTANT("Gtk4\\FEATURES", PHPGTK_BUILD_FEATURES, CONST_PERSISTENT);
 }

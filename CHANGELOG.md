@@ -5,6 +5,8 @@ versions follow [SemVer](https://semver.org/). The version lives in `VERSION` at
 mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./ci.sh --only=version`
 — see docs/RELEASING.md.
 
+## [Unreleased]
+
 ## [0.3.0] - 2026-09-10
 
 Mostly housekeeping around the machinery that ships the extension, plus the rest of Pango: the
