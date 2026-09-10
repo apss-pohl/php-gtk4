@@ -322,9 +322,13 @@ display, and calls `Gtk::init()` once.
   mentions the class outside its imports, requires the shared harness, returns a page and never runs
   itself, that the page set and the registered-class set are identical, that `Demo::SECTIONS` lists
   every class exactly once, and lints every file in `examples/`.
-- `MarshalTest` uses real `GtkWindow` properties per fundamental type (`title` string,
-  `default-width` int, `resizable` bool, `opacity` double, `halign` enum, `display` object,
-  `css-classes` = unsupported GStrv). Add a row when the marshaller learns a type.
+- `MarshalTest` uses real properties and signals per fundamental type (`GtkWindow`'s `title`
+  string, `default-width` int, `resizable` bool, `opacity` double, `halign` enum, `display`
+  object; `css-classes` for GStrv, `GSimpleAction:state` for GVariant, `notify` for GParamSpec,
+  a legacy controller's `event` for a null fundamental, and WebKit's `page-id` and
+  `received-data` for the 64-bit integers, which nothing in GTK carries). Add a case when the
+  marshaller learns a type - `GBytes`, `GType` and the narrow integers have no carrier PHP can
+  reach and are the arms still untested.
 - `tests/scripts/stress.php` (not PHPUnit) churns handles/signals/exceptions/lifetimes N rounds and
   exits normally; used by the `asan` (with LSan), `coverage` and `valgrind` stages. Extend it when
   adding runtime paths. `tests/lsan.supp` and `tests/valgrind.supp` may only contain third-party
