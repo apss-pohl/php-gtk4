@@ -295,6 +295,11 @@ static GVariant *php_to_variant_at(zval *value, const GVariantType *type, int de
         return fail(value, type);
     }
   }
+  // A byte array from a PHP string: `ay` is how D-Bus carries binary data (an icon pixmap, a
+  // file's contents), and a PHP string is bytes already. A list of ints still converts too.
+  if (Z_TYPE_P(value) == IS_STRING && g_variant_type_equal(type, G_VARIANT_TYPE_BYTESTRING)) {
+    return g_variant_new_fixed_array(G_VARIANT_TYPE_BYTE, Z_STRVAL_P(value), Z_STRLEN_P(value), 1);
+  }
   if (Z_TYPE_P(value) != IS_ARRAY) return fail(value, type);
   HashTable *ht = Z_ARRVAL_P(value);
   // `$a = [1]; $a[] = &$a;` used to recurse until the stack was gone.

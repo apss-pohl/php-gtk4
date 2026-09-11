@@ -41,6 +41,10 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   PHP value cannot spell), or by a `$signature` the caller gives the connection-level calls. What a
   StatusNotifierItem tray, a screensaver inhibit or "focus the running instance" need.
 
+- **A PHP string is bytes for a typed `ay`**: a D-Bus body, an action parameter or a `GVariant`
+  property declared `ay` takes the string's bytes directly (a StatusNotifierItem icon pixmap, a
+  file's contents); a list of byte values still converts, and an `ay` still reads as one.
+
 ### Changed
 
 - **Boxed record fields**: a C string field reads as a `?string` property and a NULL-terminated

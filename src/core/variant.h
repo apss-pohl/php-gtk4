@@ -5,6 +5,7 @@
 // PHP -> GVariant needs a type: either an explicit GVariantType (the action's
 // parameter type, the state's current type) or inference (bool->b, int->i,
 // float->d, string->s, list of strings->as, other list->av, assoc->a{sv}).
+// A typed `ay` also takes a PHP string as the bytes (D-Bus binary payloads).
 #pragma once
 #include "php_gtk4.h"
 
