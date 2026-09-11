@@ -41,6 +41,10 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   PHP value cannot spell), or by a `$signature` the caller gives the connection-level calls. What a
   StatusNotifierItem tray, a screensaver inhibit or "focus the running instance" need.
 
+- **`GLib::set_prgname()` / `get_prgname()`**: the program name GLib knows the process by. GDK
+  makes it the X11 window class (`WM_CLASS`), which is what a taskbar matches a desktop entry's
+  `StartupWMClass` against - a PHP application was `php8.4` there; set it to the application id
+  before `Gtk::init()`.
 - **A PHP string is bytes for a typed `ay`**: a D-Bus body, an action parameter or a `GVariant`
   property declared `ay` takes the string's bytes directly (a StatusNotifierItem icon pixmap, a
   file's contents); a list of byte values still converts, and an `ay` still reads as one.

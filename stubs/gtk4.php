@@ -373,6 +373,21 @@ final class GLib
         unset($may_block);
         return false;
     }
+    /**
+     * The program name GLib knows the process by (g_set_prgname), `php` or `php8.4` otherwise:
+     * on X11 it is the window class (`WM_CLASS`) a taskbar matches a desktop entry's
+     * `StartupWMClass` against, so an application sets it to its application id before
+     * {@see Gtk::init()}. A NUL-free, non-empty string.
+     */
+    public static function set_prgname(string $prgname): void
+    {
+        unset($prgname);
+    }
+    /** The program name GLib knows the process by, null while none is set. */
+    public static function get_prgname(): ?string
+    {
+        return null;
+    }
 }
 /**
  * A bare GLib main loop on the default context. Prefer {@see GtkApplication}

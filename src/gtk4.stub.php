@@ -287,6 +287,18 @@ final class GLib
      * raised by a dispatched callback propagates from this call.
      */
     public static function main_context_iteration(bool $may_block = false): bool {}
+
+    /**
+     * The program name GLib knows the process by (g_set_prgname), `php` or `php8.4` otherwise:
+     * on X11 it is the window class (`WM_CLASS`) a taskbar matches a desktop entry's
+     * `StartupWMClass` against, so an application sets it to its application id before
+     * {@see Gtk::init()}. A NUL-free, non-empty string.
+     */
+    public static function set_prgname(string $prgname): void {}
+
+    /** The program name GLib knows the process by, null while none is set. */
+    public static function get_prgname(): ?string {}
+
 }
 
 /**

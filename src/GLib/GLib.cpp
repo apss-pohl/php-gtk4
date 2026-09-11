@@ -202,3 +202,34 @@ ZEND_METHOD(Gtk4_GLib, main_context_iteration) {
   if (rethrow_parked_exception() || EG(exception) != nullptr) RETURN_THROWS();
   RETURN_BOOL(dispatched);
 }
+
+/**
+ * static Gtk4\GLib::set_prgname(string $prgname): void
+ *
+ * The program name GLib knows the process by (g_set_prgname), `php` or `php8.4` otherwise: on X11
+ * it is the window class (`WM_CLASS`) a taskbar matches a desktop entry's `StartupWMClass`
+ * against, so an application sets it to its application id before {@see Gtk::init()}. A NUL-free,
+ * non-empty string.
+ */
+ZEND_METHOD(Gtk4_GLib, set_prgname) {
+  zend_string *prgname;
+  ZEND_PARSE_PARAMETERS_START(1, 1)
+  Z_PARAM_STR(prgname)
+  ZEND_PARSE_PARAMETERS_END();
+  if (!check_utf8(prgname, 1)) RETURN_THROWS();
+  if (ZSTR_LEN(prgname) == 0) {
+    zend_argument_value_error(1, "must not be empty");
+    RETURN_THROWS();
+  }
+  g_set_prgname(ZSTR_VAL(prgname));
+}
+
+/**
+ * static Gtk4\GLib::get_prgname(): ?string
+ *
+ * The program name GLib knows the process by, null while none is set.
+ */
+ZEND_METHOD(Gtk4_GLib, get_prgname) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  PHPGTK_RETURN_STRING_OR_NULL(g_get_prgname());
+}

@@ -154,4 +154,15 @@ final class MainLoopTest extends GtkTestCase
         $run();
         self::assertNotNull($quit);
     }
+
+    public function testTheProgramNameIsGLibs(): void
+    {
+        // GLib has none until something sets it (GDK falls back to the binary's name for the
+        // X11 class); what is set is what is read
+        GLib::set_prgname('org.phpgtk4.suite');
+        self::assertSame('org.phpgtk4.suite', GLib::get_prgname());
+
+        $this->expectException(\ValueError::class);
+        GLib::set_prgname('');
+    }
 }
