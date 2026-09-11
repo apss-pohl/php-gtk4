@@ -39,7 +39,7 @@ void proxy_call_ready(GObject *source_object, GAsyncResult *res, gpointer data) 
   wrap(source_object, args.data());
   wrap(res != nullptr ? G_OBJECT(res) : nullptr, &args[1]);
   zval ret;
-  callback_invoke(cb, args.size(), args.data(), &ret);
+  callback_invoke(cb, 2, args.data(), &ret);
   zval_ptr_dtor(&ret);
   for (zval &a : args) zval_ptr_dtor(&a);
   callback_free(cb);

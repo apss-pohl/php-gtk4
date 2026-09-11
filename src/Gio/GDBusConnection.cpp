@@ -124,7 +124,7 @@ void signal_trampoline(GDBusConnection *connection, const gchar *sender_name,
   ZVAL_STRING(&args[4], signal_name);
   variant_to_php(parameters, &args[5]);
   zval retval;
-  callback_invoke(&c->cb, args.size(), args.data(), &retval);
+  callback_invoke(&c->cb, 6, args.data(), &retval);
   zval_ptr_dtor(&retval);
   for (zval &a : args) zval_ptr_dtor(&a);
 }
@@ -198,7 +198,7 @@ void method_call_trampoline(GDBusConnection *connection, const gchar *sender,
   variant_to_php(parameters, &args[5]);
   wrap(G_OBJECT(invocation), &args[6]);
   zval retval;
-  callback_invoke(&e->method_call, args.size(), args.data(), &retval);
+  callback_invoke(&e->method_call, 7, args.data(), &retval);
   zval_ptr_dtor(&retval);
   for (zval &a : args) zval_ptr_dtor(&a);
 }
@@ -214,7 +214,7 @@ GVariant *get_property_trampoline(GDBusConnection *connection, const gchar *send
   export_args(connection, sender, object_path, interface_name, args.data());
   ZVAL_STRING(&args[4], property_name);
   zval retval;
-  const bool ok = callback_invoke(&e->get_property, args.size(), args.data(), &retval);
+  const bool ok = callback_invoke(&e->get_property, 5, args.data(), &retval);
   for (zval &a : args) zval_ptr_dtor(&a);
   GVariant *result = nullptr;
   if (ok && !Z_ISUNDEF(retval) && Z_TYPE(retval) != IS_NULL) {
@@ -248,7 +248,7 @@ gboolean set_property_trampoline(GDBusConnection *connection, const gchar *sende
   ZVAL_STRING(&args[4], property_name);
   variant_to_php(value, &args[5]);
   zval retval;
-  const bool ok = callback_invoke(&e->set_property, args.size(), args.data(), &retval);
+  const bool ok = callback_invoke(&e->set_property, 6, args.data(), &retval);
   for (zval &a : args) zval_ptr_dtor(&a);
   const gboolean accepted = ok && !Z_ISUNDEF(retval) && zend_is_true(&retval) ? TRUE : FALSE;
   zval_ptr_dtor(&retval);
@@ -272,7 +272,7 @@ void dbus_call_ready(GObject *source_object, GAsyncResult *res, gpointer data) {
   wrap(source_object, args.data());
   wrap(res != nullptr ? G_OBJECT(res) : nullptr, &args[1]);
   zval ret;
-  callback_invoke(cb, args.size(), args.data(), &ret);
+  callback_invoke(cb, 2, args.data(), &ret);
   zval_ptr_dtor(&ret);
   for (zval &a : args) zval_ptr_dtor(&a);
   callback_free(cb);
