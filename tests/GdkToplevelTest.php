@@ -59,6 +59,11 @@ final class GdkToplevelTest extends GtkTestCase
 
     public function testTheToplevelOnlyCallsAnswer(): void
     {
+        if (getenv('GDK_BACKEND') !== 'x11') {
+            // What a window-manager request answers is the backend's (Win32 said false to the
+            // first of them). This pins X11, which tests/run.sh forces.
+            self::markTestSkipped('the answers below are X11\'s (tests/run.sh forces GDK_BACKEND=x11)');
+        }
         $surface = $this->realized();
         // Both are requests to the window manager; X11 sends them and reports "sent".
         self::assertTrue($surface->minimize());

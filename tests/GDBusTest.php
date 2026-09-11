@@ -63,6 +63,12 @@ final class GDBusTest extends GtkTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        if (PHP_OS_FAMILY === 'Windows') {
+            // GLib autolaunches its own minimal session bus there (g_win32_run_session_bus):
+            // its ListNames left out our unique name and a signal never came back to its
+            // sender (the 2026-09-11 Windows CI run). D-Bus is Linux desktop plumbing.
+            self::markTestSkipped('no real session bus on Windows: GLib\'s built-in daemon answers differently');
+        }
         if (self::$conn === null) {
             try {
                 self::$conn = GDBusConnection::bus_get_sync(GBusType::Session);
@@ -339,6 +345,30 @@ final class GDBusTest extends GtkTestCase
         } finally {
             self::assertTrue(self::connection()->unregister_object($id));
         }
+    }
+
+    /**
+     * GLib's worker thread refs and unrefs the connection for every message it moves. A toggle
+     * reference would have GObject call the handle from that thread - a hold or its release on
+     * the wrong thread, and a handle PHP had just freed - so the D-Bus classes hold a plain
+     * reference (core/object.h, object_threaded_type()). Dropping the last PHP handle while
+     * traffic flows is then only an unref; the sanitizer run is what would see anything else.
+     */
+    public function testDroppingTheConnectionHandleUnderTrafficIsOnlyAnUnref(): void
+    {
+        $me = self::me();
+        self::$conn = null;   // the only PHP reference from here on is the local one
+        $dbus = 'org.freedesktop.DBus';
+        for ($i = 0; $i < 25; $i++) {
+            $conn = GDBusConnection::bus_get_sync(GBusType::Session);
+            self::assertSame($me, $conn->get_unique_name(), 'the same connection, a fresh handle');
+            $conn->call($dbus, '/org/freedesktop/DBus', 'org.freedesktop.DBus.Peer', 'Ping');
+            $conn->emit_signal(null, self::PATH, self::IFACE, 'Ping', ['traffic']);
+            unset($conn);   // the worker thread is still moving both messages
+            GLib::main_context_iteration(false);
+        }
+        self::$conn = GDBusConnection::bus_get_sync(GBusType::Session);
+        self::assertSame($me, self::$conn->get_unique_name());
     }
 
     public function testASignalRoundTrip(): void

@@ -508,9 +508,11 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   (underscores → dashes) to GObject properties unless the PHP class declares a property of that
   name - a declared property is the author's and wins (a `GtkWindow` subclass may have its own
   `$title`; GTK's stays reachable through `get_title()`), `get_debug_info` for `var_dump`; a **toggle ref** +
-  qdata identity: while GTK holds other refs the GObject holds the `zend_object` (`held`), so a
-  PHP subclass' state survives the script dropping its reference, released in the toggle notify
-  and in RSHUTDOWN (`object_release_holds()`, or Zend reports the handle as a leak);
+  qdata identity (a plain reference for the D-Bus classes, `object_threaded_type()` in MINIT: their
+  worker thread refs them, and a toggle notify runs on the thread whose ref crossed the line): while
+  GTK holds other refs the GObject holds the `zend_object` (`held`), so a PHP subclass' state
+  survives the script dropping its reference, released in the toggle notify and in RSHUTDOWN
+  (`object_release_holds()`, or Zend reports the handle as a leak);
   `object_hold_owner()` for the getters whose result keeps a bare pointer into its owner
   (`gtk_stack_get_pages()`, a composite widget's `get_first_child()` — `RETURNS_HOLD_SELF` in
   `gen/gir/config.php`, the object counterpart of `BOXED_OWNERS`): the reference is held between

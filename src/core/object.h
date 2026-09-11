@@ -10,6 +10,14 @@
 // notify says ours is the last reference again the hold is released (and the
 // handle freed with it if PHP had let go too). Handles cannot be cloned or
 // serialized.
+// A type another thread references (object_threaded_type(): the D-Bus classes,
+// whose worker thread refs the connection for every message) gets a PLAIN
+// reference instead: GObject runs the toggle notify on whichever thread's ref
+// crossed the 1 <-> 2 line, and Zend is single-threaded - the hold (a
+// GC_ADDREF, a std::set) would run on the worker, and a handle PHP had just
+// freed would be called there (ASan, ShutdownTest). Such a handle keeps its
+// C object alive and nothing more: a PHP subclass' state does not outlive the
+// script's own reference.
 // GObject properties are exposed as PHP properties ($win->title) through
 // the read/write/has_property handlers and in var_dump() via get_debug_info.
 #pragma once
@@ -20,6 +28,7 @@ namespace phpgtk {
 struct Object {
   GObject *obj;     // nullptr = not attached yet
   bool held;        // the GObject holds a reference on `std` (toggle ref: not the last ref)
+  bool toggled;     // the reference is a toggle ref (else plain: object_threaded_type)
   bool disposed;    // GObject::dispose ran while PHP still referenced it (gtk_window_destroy)
   zval owner;       // handle this one may not outlive (object_hold_owner), IS_UNDEF for most
   zend_object std;  // must be last (zend_object is variable-sized)
@@ -61,6 +70,10 @@ Object *object_handle(GObject *obj);
 // subtype.cpp instance_init: bind the handle under construction to its instance before
 // g_object_new() returns (so vfuncs and wrap() find it); attach*() then settles the ref.
 void object_prebind(Object *self, GObject *obj);
+
+// MINIT: instances of `type` are referenced from other threads, so a handle holds a plain
+// reference on them, never a toggle ref (see the header comment). GLib's D-Bus classes.
+void object_threaded_type(GType type);
 
 // Bind a handle to an object we are BORROWING (wrap() of something GTK owns,
 // or a floating widget): takes its own reference with g_object_ref_sink().
