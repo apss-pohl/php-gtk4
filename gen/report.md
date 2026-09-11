@@ -457,7 +457,9 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 ## GdkToplevel
 
+- `set_modal` — skip.txt: GDK's Win32 backend pushes the surface onto a global modal list on every `true` (gdksurface-win32.c _gdk_push_modal_window), never pops it on `false`, and removes one entry when the surface is destroyed; a second `true` leaves a freed surface in the list for the next WM_ACTIVATE to read (gdkevents-win32.c _gdk_modal_blocked) - an access violation in whatever window comes next (the Windows CI run of 2026-09-11). GtkWindow::set_modal() is the API, and it writes once per change
 - `property icon-list` — property type gpointer not mappable
+- `property modal` — skip.txt: same list, through g_object_set
 
 ## GdkToplevelLayout
 

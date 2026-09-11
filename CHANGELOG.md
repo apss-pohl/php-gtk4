@@ -13,7 +13,9 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   window manager sets - minimized, maximized, focused, tiled), `minimize()`, `lower()`, `focus()`,
   `begin_move()`/`begin_resize()`, `set_icon_list()` (a list of `GdkTexture`, the GTK 4 way to give
   a window an icon of its own), `present()` with a **`GdkToplevelLayout`**, and the `GdkFullscreenMode`,
-  `GdkSurfaceEdge` and `GdkTitlebarGesture` enums. A `GtkWindow`'s surface is implemented by a
+  `GdkSurfaceEdge` and `GdkTitlebarGesture` enums (`set_modal()` and the `modal` property are left
+  out: GDK's Win32 backend corrupts its modal-window list on a repeated write, `docs/TODO.md`;
+  `GtkWindow::set_modal()` is the API). A `GtkWindow`'s surface is implemented by a
   backend-private class GIR does not describe, so `get_surface()` used to answer with a bare
   `GdkSurface`; it now answers with `GdkToplevelObject`, a `GdkSurface` that is the interface with
   a body. The mechanism is general: `INTERFACE_FALLBACK_BASE` (`gen/gir/config.php`) names the

@@ -1215,7 +1215,6 @@ enum GdkTitlebarGesture: int
  * @property bool $decorated
  * @property bool $deletable
  * @property GdkFullscreenMode $fullscreen_mode
- * @property bool $modal
  * @property-read bool $shortcuts_inhibited
  * @property ?string $startup_id
  * @property-read int $state
@@ -1259,9 +1258,6 @@ interface GdkToplevel
 
     /** Sets the toplevel to be deletable. */
     public function set_deletable(bool $deletable): void;
-
-    /** Sets the toplevel to be modal. */
-    public function set_modal(bool $modal): void;
 
     /** Sets the startup notification ID. */
     public function set_startup_id(string $startup_id): void;
@@ -1341,9 +1337,6 @@ final class GdkToplevelObject extends GdkSurface implements GdkToplevel
 
     /** @implementation-alias Gtk4\GdkToplevel::set_icon_list */
     public function set_icon_list(array $surfaces): void {}
-
-    /** @implementation-alias Gtk4\GdkToplevel::set_modal */
-    public function set_modal(bool $modal): void {}
 
     /** @implementation-alias Gtk4\GdkToplevel::set_startup_id */
     public function set_startup_id(string $startup_id): void {}

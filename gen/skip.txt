@@ -23,6 +23,8 @@ Gtk.Builder.new_from_file     as new_from_string; add_from_file() throws instead
 Gtk.Builder.new_from_resource as new_from_string; add_from_resource() throws instead
 Gdk.Clipboard.__construct   GDK owns the clipboards (GdkDisplay::get_clipboard()/get_primary_clipboard()); `new` aborts the process in gdk_clipboard_set_property ("assertion failed: (priv->display != NULL)")
 Gdk.Surface.__construct     GDK creates surfaces for a widget (GtkWindow) or through new_toplevel()/new_popup(); a PHP subtype has no display and aborts in gdk_surface_set_property
+Gdk.Toplevel.set_modal   GDK's Win32 backend pushes the surface onto a global modal list on every `true` (gdksurface-win32.c _gdk_push_modal_window), never pops it on `false`, and removes one entry when the surface is destroyed; a second `true` leaves a freed surface in the list for the next WM_ACTIVATE to read (gdkevents-win32.c _gdk_modal_blocked) - an access violation in whatever window comes next (the Windows CI run of 2026-09-11). GtkWindow::set_modal() is the API, and it writes once per change
+Gdk.Toplevel.property:modal   same list, through g_object_set
 Gdk.Monitor.__construct     GDK owns the monitors (GdkDisplay::get_monitors()); a standalone one answers NULL from get_display(), which its declared type does not allow
 Gtk.IconPaintable.__construct   GtkIconTheme creates them (lookup_icon()); a standalone one paints nothing and has neither file nor icon name
 Gtk.Snapshot.free_to_paintable   frees the GtkSnapshot itself, so the handle is left on freed memory and its next qdata/toggle-ref touch is a SEGV (ASan caught it); to_paintable() answers with the same paintable and leaves the object alive

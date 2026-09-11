@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 94e3bc7bede1376512a595f59d9e950ad6ed1e57 */
+ * Stub hash: 44db6a37fa3954b2c378bd16104a59f18052810b */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GdkClipboard___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -649,10 +649,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkToplevel_set_delet
 	ZEND_ARG_TYPE_INFO(0, deletable, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkToplevel_set_modal, 0, 1, IS_VOID, 0)
-	ZEND_ARG_TYPE_INFO(0, modal, _IS_BOOL, 0)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GdkToplevel_set_startup_id, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, startup_id, IS_STRING, 0)
 ZEND_END_ARG_INFO()
@@ -704,8 +700,6 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GdkToplevelObject_set_deletable arginfo_class_Gtk4_GdkToplevel_set_deletable
 
 #define arginfo_class_Gtk4_GdkToplevelObject_set_icon_list arginfo_class_Gtk4_GdkToplevel_set_icon_list
-
-#define arginfo_class_Gtk4_GdkToplevelObject_set_modal arginfo_class_Gtk4_GdkToplevel_set_modal
 
 #define arginfo_class_Gtk4_GdkToplevelObject_set_startup_id arginfo_class_Gtk4_GdkToplevel_set_startup_id
 
@@ -1237,7 +1231,6 @@ static const zend_function_entry class_Gtk4_GdkToplevel_methods[] = {
 	ZEND_RAW_FENTRY("restore_system_shortcuts", NULL, arginfo_class_Gtk4_GdkToplevel_restore_system_shortcuts, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("set_decorated", NULL, arginfo_class_Gtk4_GdkToplevel_set_decorated, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("set_deletable", NULL, arginfo_class_Gtk4_GdkToplevel_set_deletable, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
-	ZEND_RAW_FENTRY("set_modal", NULL, arginfo_class_Gtk4_GdkToplevel_set_modal, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("set_startup_id", NULL, arginfo_class_Gtk4_GdkToplevel_set_startup_id, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("set_title", NULL, arginfo_class_Gtk4_GdkToplevel_set_title, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
 	ZEND_RAW_FENTRY("set_transient_for", NULL, arginfo_class_Gtk4_GdkToplevel_set_transient_for, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
@@ -1262,7 +1255,6 @@ static const zend_function_entry class_Gtk4_GdkToplevelObject_methods[] = {
 	ZEND_RAW_FENTRY("set_decorated", zim_Gtk4_GdkToplevel_set_decorated, arginfo_class_Gtk4_GdkToplevelObject_set_decorated, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("set_deletable", zim_Gtk4_GdkToplevel_set_deletable, arginfo_class_Gtk4_GdkToplevelObject_set_deletable, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("set_icon_list", zim_Gtk4_GdkToplevel_set_icon_list, arginfo_class_Gtk4_GdkToplevelObject_set_icon_list, ZEND_ACC_PUBLIC, NULL, NULL)
-	ZEND_RAW_FENTRY("set_modal", zim_Gtk4_GdkToplevel_set_modal, arginfo_class_Gtk4_GdkToplevelObject_set_modal, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("set_startup_id", zim_Gtk4_GdkToplevel_set_startup_id, arginfo_class_Gtk4_GdkToplevelObject_set_startup_id, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("set_title", zim_Gtk4_GdkToplevel_set_title, arginfo_class_Gtk4_GdkToplevelObject_set_title, ZEND_ACC_PUBLIC, NULL, NULL)
 	ZEND_RAW_FENTRY("set_transient_for", zim_Gtk4_GdkToplevel_set_transient_for, arginfo_class_Gtk4_GdkToplevelObject_set_transient_for, ZEND_ACC_PUBLIC, NULL, NULL)

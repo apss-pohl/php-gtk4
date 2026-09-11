@@ -196,20 +196,6 @@ ZEND_METHOD(Gtk4_GdkToplevel, set_deletable) {
 }
 
 /**
- * Gtk4\GdkToplevel::set_modal(bool $modal): void
- *
- * Sets the toplevel to be modal.
- */
-ZEND_METHOD(Gtk4_GdkToplevel, set_modal) {
-  bool modal;
-  ZEND_PARSE_PARAMETERS_START(1, 1)
-  Z_PARAM_BOOL(modal)
-  ZEND_PARSE_PARAMETERS_END();
-  GdkToplevel *self = PHPGTK_SELF(GdkToplevel, GDK_TYPE_TOPLEVEL);
-  gdk_toplevel_set_modal(self, modal);
-}
-
-/**
  * Gtk4\GdkToplevel::set_startup_id(string $startup_id): void
  *
  * Sets the startup notification ID.

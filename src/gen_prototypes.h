@@ -210,7 +210,6 @@ ZEND_METHOD(Gtk4_GdkToplevel, restore_system_shortcuts);
 ZEND_METHOD(Gtk4_GdkToplevel, set_decorated);
 ZEND_METHOD(Gtk4_GdkToplevel, set_deletable);
 ZEND_METHOD(Gtk4_GdkToplevel, set_icon_list);
-ZEND_METHOD(Gtk4_GdkToplevel, set_modal);
 ZEND_METHOD(Gtk4_GdkToplevel, set_startup_id);
 ZEND_METHOD(Gtk4_GdkToplevel, set_title);
 ZEND_METHOD(Gtk4_GdkToplevel, set_transient_for);
