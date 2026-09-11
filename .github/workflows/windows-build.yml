@@ -17,6 +17,11 @@ on:
         required: false
         type: string
         default: nts
+      phpunit-args:
+        description: extra PHPUnit arguments (temporary bisect of the VfuncTest crash)
+        required: false
+        type: string
+        default: ''
       run-tests:
         description: run the PHPUnit suite against the built dll
         required: false
@@ -194,7 +199,7 @@ jobs:
       - name: Run PHPUnit
         if: inputs.run-tests
         shell: cmd
-        run: tests\run.cmd --log-junit phpunit-junit.xml --log-events-text phpunit-events.txt --display-warnings
+        run: tests\run.cmd --log-junit phpunit-junit.xml --log-events-text phpunit-events.txt --display-warnings ${{ inputs.phpunit-args }}
 
       - name: Name the last test on a crash
         if: inputs.run-tests && failure()

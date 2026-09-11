@@ -45,9 +45,25 @@ jobs:
         # Both thread models, like tests.yml. setup-php reads phpts; the devel pack drops its
         # -nts suffix; output lands in Release_TS.
         ts: [nts, ts]
+        # TEMPORARY bisect of the VfuncTest::testDrawingArea access violation: each cell runs a
+        # different subset of the suite; reverted once the culprit is known.
+        include:
+          - php: '8.4'
+            ts: nts
+            args: --filter VfuncTest
+          - php: '8.4'
+            ts: ts
+            args: --exclude-filter "RobustnessTest|TypeDeclarationTest|GtkInstancesTest|EveryClassTest"
+          - php: '8.5'
+            ts: nts
+            args: --exclude-filter MainLoopTest
+          - php: '8.5'
+            ts: ts
+            args: --exclude-filter "GdkToplevelTest|GdkConstantsTest|GDBusTest|BuildMetadataTest|VariantTest|ApplicationTest|GApplicationTest|ShutdownTest"
     uses: ./.github/workflows/windows-build.yml
     with:
       php: ${{ matrix.php }}
       ts: ${{ matrix.ts }}
       run-tests: true
+      phpunit-args: ${{ matrix.args }}
       artifact: php_gtk4-php${{ matrix.php }}-${{ matrix.ts }}-vs17-x64
