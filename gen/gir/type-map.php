@@ -1366,8 +1366,11 @@ final class TypeMap
                 : ["RETURN_LONG(static_cast<zend_long>($call));"]];
         }
         if ($t->name === 'GLib.Variant') {
+            // A `throws` function's NULL is the error (GDBusProxy::call_finish() on an error
+            // reply), never a "none"; without one, NULL is a plain null.
             return ['phpType' => 'mixed', 'lines' => fn(string $call) => [
-                "GVariant *phpgtk_ret = $call;", 'if (phpgtk_ret == nullptr) RETURN_NULL();',
+                "GVariant *phpgtk_ret = $call;", ...$throwCheck('phpgtk_ret == nullptr'),
+                'if (phpgtk_ret == nullptr) RETURN_NULL();',
                 'variant_to_php(phpgtk_ret, return_value);', ...($full ? ['g_variant_unref(phpgtk_ret);'] : [])]];
         }
         if ($t->name === 'GLib.VariantType') {

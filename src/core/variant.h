@@ -18,4 +18,10 @@ void variant_to_php(GVariant *variant, zval *rv);
 // to infer.
 GVariant *php_to_variant(zval *value, const GVariantType *type);
 
+// A D-Bus message body: always a tuple. `type` is the tuple type (a method's in/out
+// signature from its GDBusMethodInfo, or one the caller spelled) or nullptr, when a PHP list
+// becomes a tuple of its inferred members and null the empty tuple. A non-list is refused
+// (TypeError naming `arg_num`). Same ownership as php_to_variant().
+GVariant *php_to_variant_tuple(zval *value, const GVariantType *type, uint32_t arg_num);
+
 }  // namespace phpgtk

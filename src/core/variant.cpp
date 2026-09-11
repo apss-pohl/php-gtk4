@@ -1,7 +1,9 @@
 #include "variant.h"
+
 #include "marshal.h"
 
 #include <string>
+#include <vector>
 
 namespace phpgtk {
 
@@ -377,6 +379,44 @@ static GVariant *php_to_variant_at(zval *value, const GVariantType *type, int de
 // PHP value -> GVariant of `type` (or inferred when nullptr); see variant.h.
 GVariant *php_to_variant(zval *value, const GVariantType *type) {
   return php_to_variant_at(value, type, 0);
+}
+
+// A D-Bus body: the tuple `type` asks for, or one inferred member by member; see variant.h.
+GVariant *php_to_variant_tuple(zval *value, const GVariantType *type, uint32_t arg_num) {
+  if (type != nullptr && !g_variant_type_is_tuple(type)) {
+    gchar *ts = g_variant_type_dup_string(type);
+    zend_argument_value_error(arg_num, "must be a tuple type, \"%s\" given", ts);
+    g_free(ts);
+    return nullptr;
+  }
+  if (value == nullptr || Z_TYPE_P(value) == IS_NULL) {
+    if (type != nullptr && !g_variant_type_equal(type, G_VARIANT_TYPE_UNIT)) {
+      zend_argument_type_error(arg_num, "must be a list for a %s body, null given",
+                               g_variant_type_peek_string(type));
+      return nullptr;
+    }
+    return g_variant_new_tuple(nullptr, 0);
+  }
+  if (Z_TYPE_P(value) != IS_ARRAY || !zend_array_is_list(Z_ARRVAL_P(value))) {
+    zend_argument_type_error(arg_num, "must be a list (a D-Bus body is a tuple), %s given",
+                             zend_zval_value_name(value));
+    return nullptr;
+  }
+  if (type != nullptr) return php_to_variant_at(value, type, 0);
+  std::vector<GVariant *> children;
+  children.reserve(zend_hash_num_elements(Z_ARRVAL_P(value)));
+  zval *entry = nullptr;
+  // NOLINTNEXTLINE(readability-math-missing-parentheses) Zend macro expansion
+  ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(value), entry) {
+    GVariant *child = php_to_variant_at(entry, nullptr, 1);
+    if (child == nullptr) {
+      for (GVariant *c : children) g_variant_unref(g_variant_ref_sink(c));
+      return nullptr;
+    }
+    children.push_back(child);
+  }
+  ZEND_HASH_FOREACH_END();
+  return g_variant_new_tuple(children.data(), static_cast<gsize>(children.size()));
 }
 
 }  // namespace phpgtk

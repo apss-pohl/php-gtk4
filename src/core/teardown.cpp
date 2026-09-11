@@ -51,7 +51,13 @@ void teardown_untrack_source(guint source_id) {
 
 // Called by the installing method (set_draw_func, set_filter_func, ...).
 void teardown_track_notified(gpointer key, GObject *owner, void (*clear)(GObject *)) {
-  notified()[key] = {.owner = owner, .clear = clear};
+  notified()[key] = {.owner = owner, .clear = clear, .clear_keyed = nullptr};
+}
+
+// As teardown_track_notified() for an owner with several callables (see teardown.h).
+void teardown_track_notified_keyed(gpointer key, GObject *owner,
+                                   void (*clear)(GObject *, gpointer)) {
+  notified()[key] = {.owner = owner, .clear = nullptr, .clear_keyed = clear};
 }
 
 // Called by the callable's destroy notify.
@@ -89,7 +95,11 @@ void teardown_request() {
   while (!notified().empty()) {
     const auto [key, n] = *notified().begin();
     notified().erase(key);
-    n.clear(n.owner);  // runs the destroy notify
+    if (n.clear_keyed != nullptr) {
+      n.clear_keyed(n.owner, key);  // runs (or defers) the destroy notify
+    } else {
+      n.clear(n.owner);  // runs the destroy notify
+    }
   }
   object_release_holds();  // may free handles -> finalize GObjects -> more destroy notifies
   callback_drain();

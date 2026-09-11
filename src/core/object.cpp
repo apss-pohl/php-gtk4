@@ -9,6 +9,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace phpgtk {
 
@@ -525,26 +526,41 @@ std::unordered_map<GType, zend_class_entry *> &fallbacks() {
   return map;
 }
 
-// The fallback class for an object whose own classes are all unregistered: the most derived
-// registered interface it implements (GtkSelectionModel over its GListModel prerequisite), or
-// nullptr. That is how a GTK-private class (GtkNotebookPages) still gets get_n_items().
-zend_class_entry *fallback_for(GType type) {
+// The classes some fallback extends (its parent at registration): only an instance whose
+// nearest registered class is one of these can be refined, so wrap() asks g_type_interfaces()
+// for those alone and stays a map lookup for everything else.
+std::unordered_set<zend_class_entry *> &refinable() {
+  static std::unordered_set<zend_class_entry *> set;
+  return set;
+}
+
+// The class for an instance of `type` whose nearest registered class is `ce`: the fallback of
+// the most derived registered interface the instance implements *that extends ce*, else ce.
+// Two shapes: a GTK-private class with no registered ancestor but GObject gets its interface's
+// class (GtkNotebookPages -> GListModelObject, GtkSelectionModel over its GListModel
+// prerequisite), and a backend-private subclass of a bound class gets the fallback that
+// extends that class (a GdkX11Toplevel -> GdkToplevelObject, which is a GdkSurface;
+// INTERFACE_FALLBACK_BASE in gen/gir/config.php).
+zend_class_entry *refine(GType type, zend_class_entry *ce) {
+  if (!refinable().contains(ce)) return ce;
   guint n = 0;
   GType *ifaces = g_type_interfaces(type, &n);
   GType best = 0;
   for (guint i = 0; i < n; i++) {
-    if (!fallbacks().contains(ifaces[i])) continue;
+    auto it = fallbacks().find(ifaces[i]);
+    if (it == fallbacks().end() || it->second->parent != ce) continue;
     if (best == 0 || g_type_is_a(ifaces[i], best)) best = ifaces[i];
   }
   g_free(ifaces);
-  return best == 0 ? nullptr : fallbacks()[best];
+  return best == 0 ? ce : fallbacks()[best];
 }
 }  // namespace
 
-// MINIT: the class wrap() uses for an unregistered GObject class implementing `iface`.
+// MINIT: the class wrap() uses for an instance of `ce`'s parent class implementing `iface`.
 void register_interface_fallback(GType iface, zend_class_entry *ce) {
   fallbacks()[iface] = ce;
   gtypes()[ce] = iface;
+  refinable().insert(ce->parent);
 }
 
 // Registry lookup by GType value.
@@ -582,10 +598,8 @@ void wrap(GObject *obj, zval *rv) {
   }
   for (GType t = G_OBJECT_TYPE(obj); t != 0; t = g_type_parent(t)) {
     zend_class_entry *ce = is_php_type(t) ? subtype_class_for_gtype(t) : class_for_gtype(t);
-    if (t == G_TYPE_OBJECT && ce != nullptr) {  // nothing more specific: an interface's class?
-      if (zend_class_entry *fb = fallback_for(G_OBJECT_TYPE(obj))) ce = fb;
-    }
     if (ce != nullptr) {
+      if (t != G_OBJECT_TYPE(obj)) ce = refine(G_OBJECT_TYPE(obj), ce);  // an interface's class?
       if (object_init_ex(rv, ce) == FAILURE) {  // abstract/uninstantiable class: Error is pending
         ZVAL_NULL(rv);
         return;

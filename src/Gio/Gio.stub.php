@@ -411,6 +411,16 @@ class GApplication extends GObject implements GActionGroup, GActionMap
     public function withdraw_notification(string $id): void {}
 
     /**
+     * The D-Bus connection the application registered on, or null when it has none.
+     *
+     * GLib fills it in while registering, and CRITICALs when asked before that. Registration
+     * happens on `run()` / `register()`, so "not registered yet" is a state, not an absence - and
+     * a `GApplicationFlags::NON_UNIQUE` application never registers on D-Bus at all: null then,
+     * and {@see GDBusConnection::bus_get_sync()} is the way to the bus.
+     */
+    public function get_dbus_connection(): ?GDBusConnection {}
+
+    /**
      * The D-Bus object path the application exports its actions on, or null when it has none.
      *
      * GLib fills it in while registering, and CRITICALs when asked before that. Registration
@@ -503,6 +513,14 @@ class GApplication extends GObject implements GActionGroup, GActionMap
     public function vfunc_before_emit(mixed $platform_data = null): void {}
 
     /**
+     * Native `dbus_unregister` (ApplicationClass.dbus_unregister): the GTK implementation below
+     * any PHP subclass, for `parent::vfunc_dbus_unregister()` from an override. invoked locally
+     * during unregistration, if the application is using its D-Bus backend. Use this to undo
+     * anything done by the $dbus_register vfunc. Since: 2.34
+     */
+    public function vfunc_dbus_unregister(GDBusConnection $connection, string $object_path): void {}
+
+    /**
      * Native `name_lost` (ApplicationClass.name_lost): the GTK implementation below any PHP
      * subclass, for `parent::vfunc_name_lost()` from an override. invoked when another instance is
      * taking over the name. Since: 2.60
@@ -586,6 +604,17 @@ final class GAsyncResultObject extends GObject implements GAsyncResult
 }
 
 /**
+ * An enumeration for well-known message buses.
+ */
+enum GBusType: int
+{
+    case Starter = -1;
+    case None = 0;
+    case System = 1;
+    case Session = 2;
+}
+
+/**
  * `GCancellable` allows operations to be cancelled.
  */
 class GCancellable extends GObject
@@ -646,6 +675,669 @@ class GCancellable extends GObject
      * subclass, for `parent::vfunc_cancelled()` from an override.
      */
     public function vfunc_cancelled(): void {}
+}
+
+/**
+ * Information about an argument for a method or a signal.
+ *
+ * @property-read ?string $name
+ * @property-read ?string $signature
+ * @not-serializable
+ */
+final class GDBusArgInfo
+{
+    /** GDBusArgInfo values come from GTK, never from `new`. */
+    private function __construct() {}
+}
+
+/**
+ * Flags used in g_dbus_connection_call() and similar APIs.
+ */
+final class GDBusCallFlags
+{
+    public const int NONE = 0;
+    public const int NO_AUTO_START = 1;
+    public const int ALLOW_INTERACTIVE_AUTHORIZATION = 2;
+}
+
+/**
+ * Capabilities negotiated with the remote peer.
+ */
+final class GDBusCapabilityFlags
+{
+    public const int NONE = 0;
+    public const int UNIX_FD_PASSING = 1;
+}
+
+/**
+ * The `GDBusConnection` type is used for D-Bus connections to remote peers such as a message
+ * buses.
+ *
+ * @property-write ?string $address
+ * @property-read int $capabilities
+ * @property-read bool $closed
+ * @property bool $exit_on_close
+ * @property int $flags
+ * @property ?string $guid
+ * @property-read ?string $unique_name
+ */
+class GDBusConnection extends GObject
+{
+    /** GDBusConnection has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Finishes an operation started with g_dbus_connection_new(). */
+    public static function new_finish(GAsyncResult $res): GDBusConnection {}
+
+    /** Finishes an operation started with g_dbus_connection_new_for_address(). */
+    public static function new_for_address_finish(GAsyncResult $res): GDBusConnection {}
+
+    /** Finishes an operation started with g_dbus_connection_call(). */
+    public function call_finish(GAsyncResult $res): mixed {}
+
+    /**
+     * Closes $connection. Note that this never causes the process to exit (this might only happen
+     * if the other end of a shared message bus connection disconnects, see
+     * #GDBusConnection:exit-on-close).
+     */
+    public function close(?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes an operation started with g_dbus_connection_close(). */
+    public function close_finish(GAsyncResult $res): bool {}
+
+    /**
+     * Synchronously closes $connection. The calling thread is blocked until this is done. See
+     * g_dbus_connection_close() for the asynchronous version of this method and more details about
+     * what it does.
+     */
+    public function close_sync(?GCancellable $cancellable): bool {}
+
+    /** Exports $action_group on $connection at $object_path. */
+    public function export_action_group(string $object_path, GActionGroup $action_group): int {}
+
+    /** Exports $menu on $connection at $object_path. */
+    public function export_menu_model(string $object_path, GMenuModel $menu): int {}
+
+    /**
+     * Asynchronously flushes $connection, that is, writes all queued outgoing message to the
+     * transport and then flushes the transport (using g_output_stream_flush_async()). This is
+     * useful in programs that wants to emit a D-Bus signal and then exit immediately. Without
+     * flushing the connection, there is no guaranteed that the message has been sent to the
+     * networking buffers in the OS kernel.
+     */
+    public function flush(?GCancellable $cancellable, ?callable $callback): void {}
+
+    /** Finishes an operation started with g_dbus_connection_flush(). */
+    public function flush_finish(GAsyncResult $res): bool {}
+
+    /**
+     * Synchronously flushes $connection. The calling thread is blocked until this is done. See
+     * g_dbus_connection_flush() for the asynchronous version of this method and more details about
+     * what it does.
+     */
+    public function flush_sync(?GCancellable $cancellable): bool {}
+
+    /** Gets the capabilities negotiated with the remote peer */
+    public function get_capabilities(): int {}
+
+    /**
+     * Gets whether the process is terminated when $connection is closed by the remote peer. See
+     * #GDBusConnection:exit-on-close for more details.
+     */
+    public function get_exit_on_close(): bool {}
+
+    /** Gets the flags used to construct this connection */
+    public function get_flags(): int {}
+
+    /**
+     * The GUID of the peer performing the role of server when authenticating. See
+     * #GDBusConnection:guid for more details.
+     */
+    public function get_guid(): string {}
+
+    /**
+     * Retrieves the last serial number assigned to a #GDBusMessage on the current thread. This
+     * includes messages sent via both low-level API such as g_dbus_connection_send_message() as
+     * well as high-level API such as g_dbus_connection_emit_signal(), g_dbus_connection_call() or
+     * g_dbus_proxy_call().
+     */
+    public function get_last_serial(): int {}
+
+    /**
+     * Gets the unique name of $connection as assigned by the message bus. This can also be used to
+     * figure out if $connection is a message bus connection.
+     */
+    public function get_unique_name(): ?string {}
+
+    /** Gets whether $connection is closed. */
+    public function is_closed(): bool {}
+
+    /** Removes a filter. */
+    public function remove_filter(int $filter_id): void {}
+
+    /**
+     * Sets whether the process should be terminated when $connection is closed by the remote peer.
+     * See #GDBusConnection:exit-on-close for more details.
+     */
+    public function set_exit_on_close(bool $exit_on_close): void {}
+
+    /** Unsubscribes from signals. */
+    public function signal_unsubscribe(int $subscription_id): void {}
+
+    /**
+     * If $connection was created with %G_DBUS_CONNECTION_FLAGS_DELAY_MESSAGE_PROCESSING, this
+     * method starts processing messages. Does nothing on if $connection wasn't created with this
+     * flag or if the method has already been called.
+     */
+    public function start_message_processing(): void {}
+
+    /** Reverses the effect of a previous call to g_dbus_connection_export_action_group(). */
+    public function unexport_action_group(int $export_id): void {}
+
+    /** Reverses the effect of a previous call to g_dbus_connection_export_menu_model(). */
+    public function unexport_menu_model(int $export_id): void {}
+
+    /** Unregisters an object. */
+    public function unregister_object(int $registration_id): bool {}
+
+    /** Unregisters a subtree. */
+    public function unregister_subtree(int $registration_id): bool {}
+
+    /**
+     * The shared connection to the session or system bus (`g_bus_get_sync()`).
+     *
+     * GLib keeps one connection per bus type and hands out the same instance every time, so this
+     * is where a program gets its bus: {@see GtkApplication::get_dbus_connection()} answers only
+     * once the application is registered on D-Bus, which `GApplicationFlags::NON_UNIQUE` never does.
+     * Connecting is synchronous and can take a moment on a cold bus.
+     *
+     * @throws GError If the bus cannot be reached (no session bus, `DBUS_SESSION_BUS_ADDRESS` unset)
+     */
+    public static function bus_get_sync(GBusType $bus_type, ?GCancellable $cancellable = null): GDBusConnection {}
+
+    /**
+     * Asynchronously invokes the method_name method on the interface_name D-Bus interface on the
+     * remote object at object_path owned by bus_name.
+     *
+     * The arguments are as {@see call_sync()}'s: a list, typed by inference or by `$signature`.
+     * `$callback` gets the connection and a {@see GAsyncResult} to hand to {@see call_finish()}.
+     */
+    public function call(?string $bus_name, string $object_path, string $interface_name, string $method_name, ?array $parameters = null, ?string $reply_type = null, int $flags = 0, int $timeout_msec = -1, ?GCancellable $cancellable = null, ?callable $callback = null, ?string $signature = null): void {}
+
+    /**
+     * Synchronously invokes the method_name method on the interface_name D-Bus interface on the
+     * remote object at object_path owned by bus_name.
+     *
+     * `$parameters` is the method's arguments as a PHP list - a D-Bus body is a tuple - each
+     * converted by inference (bool, int as `i`, float, string, a list of strings as `as`, an
+     * associative array as `a{sv}`). Where the method wants something inference cannot spell (`u`,
+     * `o`, `ay`), `$signature` names the tuple type, `"(su)"`. A {@see GDBusProxy} with interface
+     * info types the arguments itself. The reply is the reply tuple as a list, `[]` for none.
+     *
+     * @throws GError The remote error, or the transport's
+     */
+    public function call_sync(?string $bus_name, string $object_path, string $interface_name, string $method_name, ?array $parameters = null, ?string $reply_type = null, int $flags = 0, int $timeout_msec = -1, ?GCancellable $cancellable = null, ?string $signature = null): array {}
+
+    /**
+     * Emits a signal.
+     *
+     * `$parameters` is the signal's arguments as a list (a D-Bus body is a tuple), typed by
+     * inference or by `$signature` - see {@see call_sync()}. `$destination_bus_name` null
+     * broadcasts.
+     *
+     * @throws GError If the message could not be sent
+     */
+    public function emit_signal(?string $destination_bus_name, string $object_path, string $interface_name, string $signal_name, ?array $parameters = null, ?string $signature = null): bool {}
+
+    /**
+     * Registers callbacks for exported objects at object_path with the D-Bus interface that is
+     * described in interface_info.
+     *
+     * The three handlers are `function (GDBusConnection $connection, string $sender, string
+     * $object_path, string $interface_name, ...)` continued by, for `$method_call`, `string
+     * $method_name, array $parameters, GDBusMethodInvocation $invocation` (answer through the
+     * invocation - {@see GDBusMethodInvocation::return_value()} types the reply from the method's
+     * introspection); for `$get_property`, `string $property_name` returning the value, converted
+     * to the property's signature from `$interface_info`; for `$set_property`, `string
+     * $property_name, mixed $value` returning whether it was accepted. A handler left null makes
+     * GLib answer that part itself (properties through `$method_call` as
+     * `org.freedesktop.DBus.Properties` calls). The id is for {@see unregister_object()}; an object
+     * still registered at request shutdown is unregistered then.
+     *
+     * @throws GError If the path is taken on this connection
+     */
+    public function register_object(string $object_path, GDBusInterfaceInfo $interface_info, ?callable $method_call, ?callable $get_property = null, ?callable $set_property = null): int {}
+
+    /**
+     * Subscribes to signals on connection.
+     *
+     * Every null widens the match. `$callback` is `function (GDBusConnection $connection, ?string
+     * $sender, string $object_path, string $interface_name, string $signal_name, array $parameters)`,
+     * the parameters the signal's tuple as a list. The id is for {@see signal_unsubscribe()}; a
+     * subscription still alive at request shutdown is removed then.
+     */
+    public function signal_subscribe(?string $sender, ?string $interface_name, ?string $member, ?string $object_path, ?string $arg0, int $flags, callable $callback): int {}
+}
+
+/**
+ * Flags used when creating a new #GDBusConnection.
+ */
+final class GDBusConnectionFlags
+{
+    public const int NONE = 0;
+    public const int AUTHENTICATION_CLIENT = 1;
+    public const int AUTHENTICATION_SERVER = 2;
+    public const int AUTHENTICATION_ALLOW_ANONYMOUS = 4;
+    public const int MESSAGE_BUS_CONNECTION = 8;
+    public const int DELAY_MESSAGE_PROCESSING = 16;
+    public const int AUTHENTICATION_REQUIRE_SAME_USER = 32;
+    public const int CROSS_NAMESPACE = 64;
+}
+
+/**
+ * Error codes for the %G_DBUS_ERROR error domain.
+ */
+enum GDBusError: int
+{
+    case Failed = 0;
+    case NoMemory = 1;
+    case ServiceUnknown = 2;
+    case NameHasNoOwner = 3;
+    case NoReply = 4;
+    case IoError = 5;
+    case BadAddress = 6;
+    case NotSupported = 7;
+    case LimitsExceeded = 8;
+    case AccessDenied = 9;
+    case AuthFailed = 10;
+    case NoServer = 11;
+    case Timeout = 12;
+    case NoNetwork = 13;
+    case AddressInUse = 14;
+    case Disconnected = 15;
+    case InvalidArgs = 16;
+    case FileNotFound = 17;
+    case FileExists = 18;
+    case UnknownMethod = 19;
+    case TimedOut = 20;
+    case MatchRuleNotFound = 21;
+    case MatchRuleInvalid = 22;
+    case SpawnExecFailed = 23;
+    case SpawnForkFailed = 24;
+    case SpawnChildExited = 25;
+    case SpawnChildSignaled = 26;
+    case SpawnFailed = 27;
+    case SpawnSetupFailed = 28;
+    case SpawnConfigInvalid = 29;
+    case SpawnServiceInvalid = 30;
+    case SpawnServiceNotFound = 31;
+    case SpawnPermissionsInvalid = 32;
+    case SpawnFileInvalid = 33;
+    case SpawnNoMemory = 34;
+    case UnixProcessIdUnknown = 35;
+    case InvalidSignature = 36;
+    case InvalidFileContent = 37;
+    case SelinuxSecurityContextUnknown = 38;
+    case AdtAuditDataUnknown = 39;
+    case ObjectPathInUse = 40;
+    case UnknownObject = 41;
+    case UnknownInterface = 42;
+    case UnknownProperty = 43;
+    case PropertyReadOnly = 44;
+}
+
+/**
+ * Information about a D-Bus interface.
+ *
+ * @property-read ?string $name
+ * @property-read list<GDBusMethodInfo> $methods
+ * @property-read list<GDBusSignalInfo> $signals
+ * @property-read list<GDBusPropertyInfo> $properties
+ * @not-serializable
+ */
+final class GDBusInterfaceInfo
+{
+    /** GDBusInterfaceInfo values come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /**
+     * Builds a lookup-cache to speed up g_dbus_interface_info_lookup_method(),
+     * g_dbus_interface_info_lookup_signal() and g_dbus_interface_info_lookup_property().
+     */
+    public function cache_build(): void {}
+
+    /**
+     * Decrements the usage count for the cache for $info built by
+     * g_dbus_interface_info_cache_build() (if any) and frees the resources used by the cache if
+     * the usage count drops to zero.
+     */
+    public function cache_release(): void {}
+
+    /** Looks up information about a method. */
+    public function lookup_method(string $name): ?GDBusMethodInfo {}
+
+    /** Looks up information about a property. */
+    public function lookup_property(string $name): ?GDBusPropertyInfo {}
+
+    /** Looks up information about a signal. */
+    public function lookup_signal(string $name): ?GDBusSignalInfo {}
+}
+
+/**
+ * Information about a method on an D-Bus interface.
+ *
+ * @property-read ?string $name
+ * @property-read list<GDBusArgInfo> $in_args
+ * @property-read list<GDBusArgInfo> $out_args
+ * @not-serializable
+ */
+final class GDBusMethodInfo
+{
+    /** GDBusMethodInfo values come from GTK, never from `new`. */
+    private function __construct() {}
+}
+
+/**
+ * Instances of the `GDBusMethodInvocation` class are used when handling D-Bus method calls. It
+ * provides a way to asynchronously return results and errors.
+ */
+class GDBusMethodInvocation extends GObject
+{
+    /** GDBusMethodInvocation has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Gets the #GDBusConnection the method was invoked on. */
+    public function get_connection(): GDBusConnection {}
+
+    /** Gets the name of the D-Bus interface the method was invoked on. */
+    public function get_interface_name(): string {}
+
+    /** Gets information about the method call, if any. */
+    public function get_method_info(): ?GDBusMethodInfo {}
+
+    /** Gets the name of the method that was invoked. */
+    public function get_method_name(): string {}
+
+    /** Gets the object path the method was invoked on. */
+    public function get_object_path(): string {}
+
+    /**
+     * Gets the parameters of the method invocation. If there are no input parameters then this
+     * will return a GVariant with 0 children rather than NULL.
+     */
+    public function get_parameters(): mixed {}
+
+    /** Gets information about the property that this method call is for, if any. */
+    public function get_property_info(): ?GDBusPropertyInfo {}
+
+    /** Gets the bus name that invoked the method. */
+    public function get_sender(): string {}
+
+    /**
+     * Finishes handling a D-Bus method call by returning an error.
+     *
+     * `$error_name` is a valid D-Bus error name, `org.example.Failed`. An invocation answers once:
+     * a second reply of any kind is a `LogicException`.
+     */
+    public function return_dbus_error(string $error_name, string $error_message): void {}
+
+    /**
+     * Like g_dbus_method_invocation_return_error() but takes a #GError instead of the error domain,
+     * error code and message.
+     *
+     * The exception's domain, code and message become the D-Bus error. An invocation answers once:
+     * a second reply of any kind is a `LogicException`.
+     */
+    public function return_gerror(GError $error): void {}
+
+    /**
+     * Finishes handling a D-Bus method call by returning parameters.
+     *
+     * The reply as a list (a D-Bus body is a tuple; null or `[]` for a method without out-args),
+     * converted to the out-argument signatures of the method's introspection when the invocation
+     * carries it ({@see get_method_info()}), by inference otherwise. An invocation answers once:
+     * a second reply of any kind is a `LogicException`.
+     */
+    public function return_value(?array $parameters = null): void {}
+}
+
+/**
+ * Information about nodes in a remote object hierarchy.
+ *
+ * @property-read ?string $path
+ * @property-read list<GDBusInterfaceInfo> $interfaces
+ * @property-read list<GDBusNodeInfo> $nodes
+ * @not-serializable
+ */
+final class GDBusNodeInfo
+{
+    /** GDBusNodeInfo values come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Parses $xml_data and returns a #GDBusNodeInfo representing the data. */
+    public static function new_for_xml(string $xml_data): GDBusNodeInfo {}
+
+    /** Looks up information about an interface. */
+    public function lookup_interface(string $name): ?GDBusInterfaceInfo {}
+}
+
+/**
+ * Information about a D-Bus property on a D-Bus interface.
+ *
+ * @property-read ?string $name
+ * @property-read ?string $signature
+ * @property-read int $flags
+ * @not-serializable
+ */
+final class GDBusPropertyInfo
+{
+    /** GDBusPropertyInfo values come from GTK, never from `new`. */
+    private function __construct() {}
+}
+
+/**
+ * Flags describing the access control of a D-Bus property.
+ */
+final class GDBusPropertyInfoFlags
+{
+    public const int NONE = 0;
+    public const int READABLE = 1;
+    public const int WRITABLE = 2;
+}
+
+/**
+ * `GDBusProxy` is a base class used for proxies to access a D-Bus interface on a remote object. A
+ * `GDBusProxy` can be constructed for both well-known and unique names.
+ *
+ * @property-write GBusType $g_bus_type
+ * @property ?GDBusConnection $g_connection
+ * @property int $g_default_timeout
+ * @property int $g_flags
+ * @property ?GDBusInterfaceInfo $g_interface_info
+ * @property ?string $g_interface_name
+ * @property ?string $g_name
+ * @property-read ?string $g_name_owner
+ * @property ?string $g_object_path
+ */
+class GDBusProxy extends GObject
+{
+    /** GDBusProxy has no constructor in GTK: instances come from GTK, never from `new`. */
+    private function __construct() {}
+
+    /** Finishes creating a #GDBusProxy. */
+    public static function new_finish(GAsyncResult $res): GDBusProxy {}
+
+    /** Finishes creating a #GDBusProxy. */
+    public static function new_for_bus_finish(GAsyncResult $res): GDBusProxy {}
+
+    /** Like g_dbus_proxy_new_sync() but takes a #GBusType instead of a #GDBusConnection. */
+    public static function new_for_bus_sync(GBusType $bus_type, int $flags, ?GDBusInterfaceInfo $info, string $name, string $object_path, string $interface_name, ?GCancellable $cancellable = null): GDBusProxy {}
+
+    /**
+     * Creates a proxy for accessing $interface_name on the remote object at $object_path owned by
+     * $name at $connection and synchronously loads D-Bus properties unless the
+     * %G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES flag is used.
+     */
+    public static function new_sync(GDBusConnection $connection, int $flags, ?GDBusInterfaceInfo $info, ?string $name, string $object_path, string $interface_name, ?GCancellable $cancellable = null): GDBusProxy {}
+
+    /**
+     * Creates a proxy for accessing $interface_name on the remote object at $object_path owned by
+     * $name at $connection and asynchronously loads D-Bus properties unless the
+     * %G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES flag is used. Connect to the
+     * #GDBusProxy::g-properties-changed signal to get notified about property changes.
+     */
+    public static function new(GDBusConnection $connection, int $flags, ?GDBusInterfaceInfo $info, ?string $name, string $object_path, string $interface_name, ?GCancellable $cancellable = null, ?callable $callback = null): void {}
+
+    /** Like g_dbus_proxy_new() but takes a #GBusType instead of a #GDBusConnection. */
+    public static function new_for_bus(GBusType $bus_type, int $flags, ?GDBusInterfaceInfo $info, string $name, string $object_path, string $interface_name, ?GCancellable $cancellable = null, ?callable $callback = null): void {}
+
+    /** Finishes an operation started with g_dbus_proxy_call(). */
+    public function call_finish(GAsyncResult $res): mixed {}
+
+    /** Looks up the value for a property from the cache. This call does no blocking IO. */
+    public function get_cached_property(string $property_name): mixed {}
+
+    /**
+     * Gets the names of all cached properties on $proxy.
+     *
+     * @return list<string>
+     */
+    public function get_cached_property_names(): array {}
+
+    /** Gets the connection $proxy is for. */
+    public function get_connection(): GDBusConnection {}
+
+    /**
+     * Gets the timeout to use if -1 (specifying default timeout) is passed as $timeout_msec in the
+     * g_dbus_proxy_call() and g_dbus_proxy_call_sync() functions.
+     */
+    public function get_default_timeout(): int {}
+
+    /** Gets the flags that $proxy was constructed with. */
+    public function get_flags(): int {}
+
+    /**
+     * Returns the #GDBusInterfaceInfo, if any, specifying the interface that $proxy conforms to.
+     * See the #GDBusProxy:g-interface-info property for more details.
+     */
+    public function get_interface_info(): ?GDBusInterfaceInfo {}
+
+    /** Gets the D-Bus interface name $proxy is for. */
+    public function get_interface_name(): string {}
+
+    /** Gets the name that $proxy was constructed for. */
+    public function get_name(): ?string {}
+
+    /**
+     * The unique name that owns the name that $proxy is for or `null` if no-one currently owns
+     * that name. You may connect to the #GObject::notify signal to track changes to the
+     * #GDBusProxy:g-name-owner property.
+     */
+    public function get_name_owner(): ?string {}
+
+    /** Gets the object path $proxy is for. */
+    public function get_object_path(): string {}
+
+    /**
+     * If $value is not `null`, sets the cached value for the property with name $property_name to
+     * the value in $value.
+     */
+    public function set_cached_property(string $property_name, mixed $value = null): void {}
+
+    /**
+     * Sets the timeout to use if -1 (specifying default timeout) is passed as $timeout_msec in the
+     * g_dbus_proxy_call() and g_dbus_proxy_call_sync() functions.
+     */
+    public function set_default_timeout(int $timeout_msec): void {}
+
+    /**
+     * Ensure that interactions with $proxy conform to the given interface. See the
+     * #GDBusProxy:g-interface-info property for more details.
+     */
+    public function set_interface_info(?GDBusInterfaceInfo $info): void {}
+
+    /**
+     * Asynchronously invokes the method_name method on proxy.
+     *
+     * The arguments are as {@see call_sync()}'s. `$callback` gets the proxy and a
+     * {@see GAsyncResult} to hand to {@see call_finish()}.
+     */
+    public function call(string $method_name, ?array $parameters = null, int $flags = 0, int $timeout_msec = -1, ?GCancellable $cancellable = null, ?callable $callback = null): void {}
+
+    /**
+     * Synchronously invokes the method_name method on proxy.
+     *
+     * `$parameters` is the method's arguments as a list. With interface info on the proxy (given
+     * to the constructor, or {@see set_interface_info()}) each argument converts to the type the
+     * method declares; without, by inference (bool, int as `i`, float, string, list of strings,
+     * associative array as `a{sv}`). The reply tuple comes back as a list, `[]` for none.
+     *
+     * @throws GError The remote error, or the transport's
+     */
+    public function call_sync(string $method_name, ?array $parameters = null, int $flags = 0, int $timeout_msec = -1, ?GCancellable $cancellable = null): array {}
+
+    /**
+     * Native `g_signal` (DBusProxyClass.g_signal): the GTK implementation below any PHP subclass,
+     * for `parent::vfunc_g_signal()` from an override. Signal class handler for the
+     * #GDBusProxy::g-signal signal.
+     */
+    public function vfunc_g_signal(string $sender_name, string $signal_name, mixed $parameters = null): void {}
+}
+
+/**
+ * Flags used when constructing an instance of a #GDBusProxy derived class.
+ */
+final class GDBusProxyFlags
+{
+    public const int NONE = 0;
+    public const int DO_NOT_LOAD_PROPERTIES = 1;
+    public const int DO_NOT_CONNECT_SIGNALS = 2;
+    public const int DO_NOT_AUTO_START = 4;
+    public const int GET_INVALIDATED_PROPERTIES = 8;
+    public const int DO_NOT_AUTO_START_AT_CONSTRUCTION = 16;
+    public const int NO_MATCH_RULE = 32;
+}
+
+/**
+ * Flags used when sending #GDBusMessages on a #GDBusConnection.
+ */
+final class GDBusSendMessageFlags
+{
+    public const int NONE = 0;
+    public const int PRESERVE_SERIAL = 1;
+}
+
+/**
+ * Flags used when subscribing to signals via g_dbus_connection_signal_subscribe().
+ */
+final class GDBusSignalFlags
+{
+    public const int NONE = 0;
+    public const int NO_MATCH_RULE = 1;
+    public const int MATCH_ARG0_NAMESPACE = 2;
+    public const int MATCH_ARG0_PATH = 4;
+}
+
+/**
+ * Information about a signal on a D-Bus interface.
+ *
+ * @property-read ?string $name
+ * @property-read list<GDBusArgInfo> $args
+ * @not-serializable
+ */
+final class GDBusSignalInfo
+{
+    /** GDBusSignalInfo values come from GTK, never from `new`. */
+    private function __construct() {}
+}
+
+/**
+ * Flags passed to g_dbus_connection_register_subtree().
+ */
+final class GDBusSubtreeFlags
+{
+    public const int NONE = 0;
+    public const int DISPATCH_TO_UNENUMERATED_NODES = 1;
 }
 
 /**
@@ -1480,6 +2172,58 @@ class GTask extends GObject implements GAsyncResult
 
     /** @implementation-alias Gtk4\GAsyncResult::legacy_propagate_error */
     public function legacy_propagate_error(): bool {}
+}
+
+/**
+ * A helper class for testing code which uses D-Bus without touching the user’s session bus.
+ *
+ * @property int $flags
+ */
+class GTestDBus extends GObject
+{
+    /** Create a new #GTestDBus object. */
+    public function __construct(int $flags) {}
+
+    /**
+     * Unset DISPLAY and DBUS_SESSION_BUS_ADDRESS env variables to ensure the test won't use user's
+     * session bus.
+     */
+    public static function unset(): void {}
+
+    /**
+     * Add a path where dbus-daemon will look up .service files. This can't be called after
+     * g_test_dbus_up().
+     */
+    public function add_service_dir(string $path): void {}
+
+    /** Stop the session bus started by g_test_dbus_up(). */
+    public function down(): void {}
+
+    /**
+     * Get the address on which dbus-daemon is running. If g_test_dbus_up() has not been called
+     * yet, `null` is returned. This can be used with g_dbus_connection_new_for_address().
+     */
+    public function get_bus_address(): ?string {}
+
+    /** Get the flags of the #GTestDBus object. */
+    public function get_flags(): int {}
+
+    /** Stop the session bus started by g_test_dbus_up(). */
+    public function stop(): void {}
+
+    /**
+     * Start a dbus-daemon instance and set DBUS_SESSION_BUS_ADDRESS. After this call, it is safe
+     * for unit tests to start sending messages on the session bus.
+     */
+    public function up(): void {}
+}
+
+/**
+ * Flags to define future #GTestDBus behaviour.
+ */
+final class GTestDBusFlags
+{
+    public const int NONE = 0;
 }
 
 /**

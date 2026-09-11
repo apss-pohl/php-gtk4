@@ -344,6 +344,14 @@ display, and calls `Gtk::init()` once.
   `malloc(): unaligned fastbin chunk`, a write into a freed block inside libgtk with zero frames of
   ours). CI never saw it because runners have no compositor. Xvfb/X11 is the test target; Wayland
   is exercised manually.
+- `tests/run.sh` runs the suite on a **private session bus** (`dbus-run-session
+  --config-file=tests/dbus-session.conf`, a config without service activation, where the tool
+  exists): GTK connects to the session bus at init and GLib keeps that connection as the
+  process singleton, so a `GTestDBus` started inside a test is bypassed and stalls 30 s on
+  finalize waiting for a connection GTK holds - never use one in the suite. `GDBusTest` and
+  `tests/scripts/shutdown.php` use `bus_get_sync()` and skip their D-Bus part without a bus; a
+  call to an object the same process exports must be asynchronous (the loop that would
+  dispatch it is the one a synchronous call blocks).
 - `tests/run.sh` forces `XDEBUG_MODE=off`: xdebug's observer segfaults at request
   shutdown after `ReflectionMethod::invoke()` on internal methods (`debug` mode too, not only
   `develop` — verified 2026-08-29 with Xdebug 3.5: the suite passes, then the process dies after
@@ -511,9 +519,12 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   owner's `get_gc` reports the held child handles it is the parent of, the edge that runs
   through C (`OwnerCycleTest`); a boxed value holds its owner's *handle* for the same reason; the
   GType-name → `zend_class_entry` registry; `wrap()`/`unwrap()`/
-  `PHPGTK_SELF`; when no class up the parent chain is registered but a registered *interface* is,
-  `wrap()` uses that interface's generated `Gtk4\<Interface>Object` fallback class, most derived
-  interface first), `marshal` (the single `GValue` ↔ `zval` bridge; a property write or signal argument converts
+  `PHPGTK_SELF`; when the instance's own class is unregistered but it implements a registered
+  *interface* whose generated `Gtk4\<Interface>Object` fallback extends the nearest registered
+  class, `wrap()` uses that fallback, most derived interface first - `GListModelObject` extends
+  `GObject` for a GTK-private list model, `GdkToplevelObject` extends `GdkSurface` for a
+  backend-private toplevel surface (`INTERFACE_FALLBACK_BASE` in `gen/gir/config.php` names
+  the base)), `marshal` (the single `GValue` ↔ `zval` bridge; a property write or signal argument converts
   like a typed parameter - `caller_is_strict()` honours the assigning file's `strict_types`,
   weak coercion otherwise - and then `check_range`/`check_flags`/`check_utf8` from
   `php_gtk4.h`), `gsignal` (`connect()` via a

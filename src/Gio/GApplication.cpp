@@ -530,6 +530,28 @@ ZEND_METHOD(Gtk4_GApplication, withdraw_notification) {
 }
 
 /**
+ * public function get_dbus_connection(): ?GDBusConnection
+ * The D-Bus connection the application registered on, or null when it has none.
+ *
+ * GLib fills it in while registering, and CRITICALs when asked before that. Registration
+ * happens on `run()` / `register()`, so "not registered yet" is a state, not an absence - and
+ * a `GApplicationFlags::NON_UNIQUE` application never registers on D-Bus at all: null then,
+ * and {@see GDBusConnection::bus_get_sync()} is the way to the bus.
+ */
+ZEND_METHOD(Gtk4_GApplication, get_dbus_connection) {
+  ZEND_PARSE_PARAMETERS_NONE();
+  GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (g_application_get_is_registered(self) == FALSE) {
+    zend_throw_exception(spl_ce_LogicException,
+                         "Gtk4\\GApplication::get_dbus_connection(): the application is not "
+                         "registered yet",
+                         0);
+    RETURN_THROWS();
+  }
+  wrap(G_OBJECT(g_application_get_dbus_connection(self)), return_value);
+}
+
+/**
  * public function get_dbus_object_path(): ?string
  * The D-Bus object path the application exports its actions on, or null when it has none.
  *
@@ -706,6 +728,44 @@ void vfunc_thunk_before_emit(GApplication *self, GVariant *platform_data) {
 // subtype)
 void vfunc_install_before_emit(gpointer klass) {
   G_APPLICATION_CLASS(klass)->before_emit = vfunc_thunk_before_emit;
+}
+
+// vfunc thunk: G_APPLICATION_CLASS->dbus_unregister -> $this->vfunc_dbus_unregister() on a PHP
+// subclass
+void vfunc_thunk_dbus_unregister(GApplication *self, GDBusConnection *connection,
+                                 const gchar *object_path) {
+  zval zself;
+  zend_function *fn = subtype_vfunc(G_OBJECT(self), "vfunc_dbus_unregister", &zself);
+  if (fn == nullptr) {  // no handle (mid-construction, after shutdown)
+    auto *native = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
+    if (native->dbus_unregister != nullptr) native->dbus_unregister(self, connection, object_path);
+    return;
+  }
+  // PHP cannot run with an exception pending, and the default is no answer to
+  // give GTK: park it for the call, as Zend does around a __destruct().
+  zend_exception_save();
+  std::array<zval, 2> args{};
+  zval *argv = args.data();
+  wrap(connection != nullptr ? G_OBJECT(connection) : nullptr, &argv[0]);
+  if (object_path == nullptr) {
+    ZVAL_NULL(&argv[1]);
+  } else {
+    ZVAL_STRING(&argv[1], object_path);
+  }
+  zval ret;
+  ZVAL_UNDEF(&ret);
+  zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 2, args.data());
+  for (zval &arg : args) zval_ptr_dtor(&arg);
+  zval_ptr_dtor(&ret);
+  zval_ptr_dtor(&zself);
+  report_pending_exception("GApplication::vfunc_dbus_unregister");
+  zend_exception_restore();  // the parked one, previous of whatever this threw
+}
+
+// vfunc installer: G_APPLICATION_CLASS->dbus_unregister (called from class_init / iface_init of a
+// PHP subtype)
+void vfunc_install_dbus_unregister(gpointer klass) {
+  G_APPLICATION_CLASS(klass)->dbus_unregister = vfunc_thunk_dbus_unregister;
 }
 
 // vfunc thunk: G_APPLICATION_CLASS->name_lost -> $this->vfunc_name_lost() on a PHP subclass
@@ -945,6 +1005,39 @@ ZEND_METHOD(Gtk4_GApplication, vfunc_before_emit) {
 }
 
 /**
+ * Gtk4\GApplication::vfunc_dbus_unregister(GDBusConnection $connection, string $object_path): void
+ *
+ * Native `dbus_unregister` (ApplicationClass.dbus_unregister): the GTK implementation below any
+ * PHP subclass, for `parent::vfunc_dbus_unregister()` from an override. invoked locally during
+ * unregistration, if the application is using its D-Bus backend. Use this to undo anything done by
+ * the $dbus_register vfunc. Since: 2.34
+ */
+ZEND_METHOD(Gtk4_GApplication, vfunc_dbus_unregister) {
+  zval *connection;
+  zend_string *object_path;
+  ZEND_PARSE_PARAMETERS_START(2, 2)
+  Z_PARAM_OBJECT_OF_CLASS(connection, class_for_gtype(G_TYPE_DBUS_CONNECTION))
+  Z_PARAM_STR(object_path)
+  ZEND_PARSE_PARAMETERS_END();
+  GApplication *self = PHPGTK_SELF(GApplication, G_TYPE_APPLICATION);
+  if (!is_php_type(G_OBJECT_TYPE(self))) {
+    zend_throw_exception_ex(
+        spl_ce_LogicException, 0,
+        "GApplication::vfunc_dbus_unregister(): for parent:: chaining from a PHP subclass "
+        "only; call the public method instead");
+    RETURN_THROWS();
+  }
+  auto *klass = G_APPLICATION_CLASS(subtype_native_class(G_OBJECT(self)));
+  GObject *connection_o = unwrap(connection, G_TYPE_DBUS_CONNECTION);
+  if (connection_o == nullptr) RETURN_THROWS();
+  if (!phpgtk::check_utf8(object_path, 2)) RETURN_THROWS();
+  if (klass->dbus_unregister == nullptr) {
+    return;
+  }
+  klass->dbus_unregister(self, G_DBUS_CONNECTION(connection_o), ZSTR_VAL(object_path));
+}
+
+/**
  * Gtk4\GApplication::vfunc_name_lost(): bool
  *
  * Native `name_lost` (ApplicationClass.name_lost): the GTK implementation below any PHP subclass,
@@ -1071,6 +1164,7 @@ void register_vfuncs_GApplication() {
   register_vfunc(G_TYPE_APPLICATION, "activate", vfunc_install_activate);
   register_vfunc(G_TYPE_APPLICATION, "after_emit", vfunc_install_after_emit);
   register_vfunc(G_TYPE_APPLICATION, "before_emit", vfunc_install_before_emit);
+  register_vfunc(G_TYPE_APPLICATION, "dbus_unregister", vfunc_install_dbus_unregister);
   register_vfunc(G_TYPE_APPLICATION, "name_lost", vfunc_install_name_lost);
   register_vfunc(G_TYPE_APPLICATION, "quit_mainloop", vfunc_install_quit_mainloop);
   register_vfunc(G_TYPE_APPLICATION, "run_mainloop", vfunc_install_run_mainloop);

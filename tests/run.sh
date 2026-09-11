@@ -49,4 +49,14 @@ export PHP_GTK4_ENV=${PHP_GTK4_ENV:-}
 # gtk4.diagnostics is left at its default (warning), so the suite runs what ships: GLib's own
 # CRITICAL/WARNING messages arrive as PHP warnings that GtkTestCase collects and fails the
 # causing test on.
-exec xvfb-run -a bin/php-gtk4 vendor/bin/phpunit "$@"
+# A private session bus for the run (GDBusTest, and GTK's own portal lookups): GTK connects
+# to the session bus at init and GLib keeps that connection as the process's singleton, so a
+# GTestDBus started inside a test is bypassed - and stalls 30 s on finalize waiting for a
+# connection GTK holds. dbus-run-session gives the whole process its own bus instead; where
+# it is missing (a runner without dbus) the suite runs on whatever bus the environment has
+# and the D-Bus tests skip themselves when there is none.
+BUS=()
+if command -v dbus-run-session >/dev/null 2>&1; then
+    BUS=(dbus-run-session --config-file=tests/dbus-session.conf --)
+fi
+exec "${BUS[@]}" xvfb-run -a bin/php-gtk4 vendor/bin/phpunit "$@"

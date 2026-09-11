@@ -19,6 +19,26 @@ if (!Gtk::init()) {
     exit(1);
 }
 
+// D-Bus callables GLib holds with a destroy notify it defers to an idle: an exported object
+// and a signal subscription, never released by the script. Teardown's keyed clears
+// unregister/unsubscribe them and release the callables while Zend is up; the idle never
+// runs. On the session bus the environment provides (tests/run.sh: a private one); skipped
+// where there is none.
+try {
+    $conn = Gtk4\GDBusConnection::bus_get_sync(Gtk4\GBusType::Session);
+    $info = Gtk4\GDBusNodeInfo::new_for_xml('<node><interface name="org.phpgtk4.Shutdown">'
+        . '<method name="Never"/></interface></node>')->interfaces[0];
+    $conn->register_object('/org/phpgtk4/Shutdown', $info, function (): void {
+        echo "never (dbus method)\n";
+    }, fn(): string => 'never', fn(): bool => false);
+    $conn->signal_subscribe(null, 'org.phpgtk4.Shutdown', null, null, null, 0, function (): void {
+        echo "never (dbus signal)\n";
+    });
+    unset($conn, $info);
+} catch (Gtk4\GError $e) {
+    fwrite(STDERR, "no session bus, D-Bus part skipped: {$e->getMessage()}\n");
+}
+
 $win = new GtkWindow();
 $display = $win->get_property('display');   // GdkDisplay: lives until process exit
 if (!$display instanceof Gtk4\GObject) {

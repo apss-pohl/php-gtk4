@@ -547,3 +547,41 @@ Soup.Cookie
 Soup.MessageHeaders
 Soup.MessageHeadersType
 Soup.SameSitePolicy
+
+# GdkToplevel: the interface a GtkWindow's surface implements (through a backend-private class,
+# so its fallback GdkToplevelObject extends GdkSurface - INTERFACE_FALLBACK_BASE). What a
+# window cannot do itself: minimize()/lower()/focus(), the state flags a window manager sets,
+# begin_move()/begin_resize() for a custom titlebar, and the layout present() takes.
+Gdk.Toplevel
+Gdk.ToplevelState
+Gdk.ToplevelLayout
+Gdk.FullscreenMode
+Gdk.SurfaceEdge
+Gdk.TitlebarGesture
+
+# The Gdk namespace constants as Gdk::KEY_*, BUTTON_*, EVENT_PROPAGATE/STOP, ...: what a
+# key-pressed handler compares its keyval against (a program had to carry 0xff0d itself).
+Gdk.constants
+
+# D-Bus (Gio): a session/system bus connection, calls, signals and exported objects - what a
+# StatusNotifierItem tray, a screensaver inhibit or "focus the running instance" need.
+# GTestDBus starts a private bus for the tests.
+Gio.DBusConnection
+Gio.DBusProxy
+Gio.DBusMethodInvocation
+Gio.DBusNodeInfo
+Gio.DBusInterfaceInfo
+Gio.DBusMethodInfo
+Gio.DBusSignalInfo
+Gio.DBusPropertyInfo
+Gio.DBusArgInfo
+Gio.TestDBus
+Gio.BusType
+Gio.DBusCallFlags
+Gio.DBusProxyFlags
+Gio.DBusSignalFlags
+Gio.DBusConnectionFlags
+Gio.DBusCapabilityFlags
+Gio.DBusPropertyInfoFlags
+Gio.TestDBusFlags
+Gio.DBusError

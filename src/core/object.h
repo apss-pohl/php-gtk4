@@ -89,8 +89,10 @@ void register_class(const char *gtype_name, zend_class_entry *ce, GType type);
 // MINIT: record an interface's class entry and GType (no create_object: nothing instantiates
 // it) so class_for_gtype(G_TYPE_LIST_MODEL) works for ?GListModel parameters.
 void register_interface(const char *gtype_name, zend_class_entry *ce, GType type);
-// The concrete class wrap() uses for a GObject whose own classes are all unregistered but which
-// implements `iface` (generated as Gtk4\<Interface>Object, private constructor).
+// The concrete class wrap() uses for a GObject whose own class is unregistered, whose nearest
+// registered class is `ce`'s parent, and which implements `iface` (generated as
+// Gtk4\<Interface>Object with a private constructor: extends GObject for a GTK-private class,
+// or a bound base for a backend-private subclass of it - GdkToplevelObject is a GdkSurface).
 void register_interface_fallback(GType iface, zend_class_entry *ce);
 // Registry lookup by GType name (gtype_from_php_name(); wrap() uses class_for_gtype()).
 zend_class_entry *class_for_gtype_name(const char *gtype_name);

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: a728b767fc12e203f5ea1fb946c3c362da11848e */
+ * Stub hash: 62a92d3f2936be485c4a5d936e0958cb0cfe2b8b */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GAction_change_state, 0, 0, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
@@ -240,6 +240,9 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GApplication_withdraw
 	ZEND_ARG_TYPE_INFO(0, id, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GApplication_get_dbus_connection, 0, 0, Gtk4\\GDBusConnection, 1)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_GApplication_get_dbus_object_path arginfo_class_Gtk4_GAction_get_parameter_type
 
 #define arginfo_class_Gtk4_GApplication_get_is_remote arginfo_class_Gtk4_GAction_get_enabled
@@ -288,6 +291,11 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GApplication_vfunc_before_emit arginfo_class_Gtk4_GApplication_vfunc_after_emit
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GApplication_vfunc_dbus_unregister, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, connection, Gtk4\\GDBusConnection, 0)
+	ZEND_ARG_TYPE_INFO(0, object_path, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 #define arginfo_class_Gtk4_GApplication_vfunc_name_lost arginfo_class_Gtk4_GAction_get_enabled
 
 #define arginfo_class_Gtk4_GApplication_vfunc_quit_mainloop arginfo_class_Gtk4_GApplication_activate
@@ -331,6 +339,325 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GCancellable_set_error_if_cancelled arginfo_class_Gtk4_GAction_get_enabled
 
 #define arginfo_class_Gtk4_GCancellable_vfunc_cancelled arginfo_class_Gtk4_GApplication_activate
+
+#define arginfo_class_Gtk4_GDBusArgInfo___construct arginfo_class_Gtk4_GActionObject___construct
+
+#define arginfo_class_Gtk4_GDBusConnection___construct arginfo_class_Gtk4_GActionObject___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDBusConnection_new_finish, 0, 1, Gtk4\\GDBusConnection, 0)
+	ZEND_ARG_OBJ_INFO(0, res, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusConnection_new_for_address_finish arginfo_class_Gtk4_GDBusConnection_new_finish
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusConnection_call_finish, 0, 1, IS_MIXED, 0)
+	ZEND_ARG_OBJ_INFO(0, res, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusConnection_close, 0, 2, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, cancellable, Gtk4\\GCancellable, 1)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusConnection_close_finish, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, res, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusConnection_close_sync arginfo_class_Gtk4_GApplication_register
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusConnection_export_action_group, 0, 2, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, object_path, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, action_group, Gtk4\\GActionGroup, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusConnection_export_menu_model, 0, 2, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, object_path, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, menu, Gtk4\\GMenuModel, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusConnection_flush arginfo_class_Gtk4_GDBusConnection_close
+
+#define arginfo_class_Gtk4_GDBusConnection_flush_finish arginfo_class_Gtk4_GDBusConnection_close_finish
+
+#define arginfo_class_Gtk4_GDBusConnection_flush_sync arginfo_class_Gtk4_GApplication_register
+
+#define arginfo_class_Gtk4_GDBusConnection_get_capabilities arginfo_class_Gtk4_GApplication_get_flags
+
+#define arginfo_class_Gtk4_GDBusConnection_get_exit_on_close arginfo_class_Gtk4_GAction_get_enabled
+
+#define arginfo_class_Gtk4_GDBusConnection_get_flags arginfo_class_Gtk4_GApplication_get_flags
+
+#define arginfo_class_Gtk4_GDBusConnection_get_guid arginfo_class_Gtk4_GAction_get_name
+
+#define arginfo_class_Gtk4_GDBusConnection_get_last_serial arginfo_class_Gtk4_GApplication_get_flags
+
+#define arginfo_class_Gtk4_GDBusConnection_get_unique_name arginfo_class_Gtk4_GAction_get_parameter_type
+
+#define arginfo_class_Gtk4_GDBusConnection_is_closed arginfo_class_Gtk4_GAction_get_enabled
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusConnection_remove_filter, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, filter_id, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusConnection_set_exit_on_close, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, exit_on_close, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusConnection_signal_unsubscribe, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, subscription_id, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusConnection_start_message_processing arginfo_class_Gtk4_GApplication_activate
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusConnection_unexport_action_group, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, export_id, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusConnection_unexport_menu_model arginfo_class_Gtk4_GDBusConnection_unexport_action_group
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusConnection_unregister_object, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, registration_id, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusConnection_unregister_subtree arginfo_class_Gtk4_GDBusConnection_unregister_object
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDBusConnection_bus_get_sync, 0, 1, Gtk4\\GDBusConnection, 0)
+	ZEND_ARG_OBJ_INFO(0, bus_type, Gtk4\\GBusType, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, cancellable, Gtk4\\GCancellable, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusConnection_call, 0, 4, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, bus_name, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, object_path, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, interface_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, method_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameters, IS_ARRAY, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, reply_type, IS_STRING, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 0, "0")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, timeout_msec, IS_LONG, 0, "-1")
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, cancellable, Gtk4\\GCancellable, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, callback, IS_CALLABLE, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, signature, IS_STRING, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusConnection_call_sync, 0, 4, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, bus_name, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, object_path, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, interface_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, method_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameters, IS_ARRAY, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, reply_type, IS_STRING, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 0, "0")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, timeout_msec, IS_LONG, 0, "-1")
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, cancellable, Gtk4\\GCancellable, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, signature, IS_STRING, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusConnection_emit_signal, 0, 4, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, destination_bus_name, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, object_path, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, interface_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, signal_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameters, IS_ARRAY, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, signature, IS_STRING, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusConnection_register_object, 0, 3, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, object_path, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, interface_info, Gtk4\\GDBusInterfaceInfo, 0)
+	ZEND_ARG_TYPE_INFO(0, method_call, IS_CALLABLE, 1)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, get_property, IS_CALLABLE, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, set_property, IS_CALLABLE, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusConnection_signal_subscribe, 0, 7, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, sender, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, interface_name, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, member, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, object_path, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, arg0, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, flags, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusInterfaceInfo___construct arginfo_class_Gtk4_GActionObject___construct
+
+#define arginfo_class_Gtk4_GDBusInterfaceInfo_cache_build arginfo_class_Gtk4_GApplication_activate
+
+#define arginfo_class_Gtk4_GDBusInterfaceInfo_cache_release arginfo_class_Gtk4_GApplication_activate
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDBusInterfaceInfo_lookup_method, 0, 1, Gtk4\\GDBusMethodInfo, 1)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDBusInterfaceInfo_lookup_property, 0, 1, Gtk4\\GDBusPropertyInfo, 1)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDBusInterfaceInfo_lookup_signal, 0, 1, Gtk4\\GDBusSignalInfo, 1)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusMethodInfo___construct arginfo_class_Gtk4_GActionObject___construct
+
+#define arginfo_class_Gtk4_GDBusMethodInvocation___construct arginfo_class_Gtk4_GActionObject___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDBusMethodInvocation_get_connection, 0, 0, Gtk4\\GDBusConnection, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusMethodInvocation_get_interface_name arginfo_class_Gtk4_GAction_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDBusMethodInvocation_get_method_info, 0, 0, Gtk4\\GDBusMethodInfo, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusMethodInvocation_get_method_name arginfo_class_Gtk4_GAction_get_name
+
+#define arginfo_class_Gtk4_GDBusMethodInvocation_get_object_path arginfo_class_Gtk4_GAction_get_name
+
+#define arginfo_class_Gtk4_GDBusMethodInvocation_get_parameters arginfo_class_Gtk4_GAction_get_state
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDBusMethodInvocation_get_property_info, 0, 0, Gtk4\\GDBusPropertyInfo, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusMethodInvocation_get_sender arginfo_class_Gtk4_GAction_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusMethodInvocation_return_dbus_error, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, error_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, error_message, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusMethodInvocation_return_gerror, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, error, Gtk4\\GError, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusMethodInvocation_return_value, 0, 0, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameters, IS_ARRAY, 1, "null")
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusNodeInfo___construct arginfo_class_Gtk4_GActionObject___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDBusNodeInfo_new_for_xml, 0, 1, Gtk4\\GDBusNodeInfo, 0)
+	ZEND_ARG_TYPE_INFO(0, xml_data, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDBusNodeInfo_lookup_interface, 0, 1, Gtk4\\GDBusInterfaceInfo, 1)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusPropertyInfo___construct arginfo_class_Gtk4_GActionObject___construct
+
+#define arginfo_class_Gtk4_GDBusProxy___construct arginfo_class_Gtk4_GActionObject___construct
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDBusProxy_new_finish, 0, 1, Gtk4\\GDBusProxy, 0)
+	ZEND_ARG_OBJ_INFO(0, res, Gtk4\\GAsyncResult, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusProxy_new_for_bus_finish arginfo_class_Gtk4_GDBusProxy_new_finish
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDBusProxy_new_for_bus_sync, 0, 6, Gtk4\\GDBusProxy, 0)
+	ZEND_ARG_OBJ_INFO(0, bus_type, Gtk4\\GBusType, 0)
+	ZEND_ARG_TYPE_INFO(0, flags, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, info, Gtk4\\GDBusInterfaceInfo, 1)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, object_path, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, interface_name, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, cancellable, Gtk4\\GCancellable, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDBusProxy_new_sync, 0, 6, Gtk4\\GDBusProxy, 0)
+	ZEND_ARG_OBJ_INFO(0, connection, Gtk4\\GDBusConnection, 0)
+	ZEND_ARG_TYPE_INFO(0, flags, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, info, Gtk4\\GDBusInterfaceInfo, 1)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, object_path, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, interface_name, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, cancellable, Gtk4\\GCancellable, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusProxy_new, 0, 6, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, connection, Gtk4\\GDBusConnection, 0)
+	ZEND_ARG_TYPE_INFO(0, flags, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, info, Gtk4\\GDBusInterfaceInfo, 1)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, object_path, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, interface_name, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, cancellable, Gtk4\\GCancellable, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, callback, IS_CALLABLE, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusProxy_new_for_bus, 0, 6, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, bus_type, Gtk4\\GBusType, 0)
+	ZEND_ARG_TYPE_INFO(0, flags, IS_LONG, 0)
+	ZEND_ARG_OBJ_INFO(0, info, Gtk4\\GDBusInterfaceInfo, 1)
+	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, object_path, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, interface_name, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, cancellable, Gtk4\\GCancellable, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, callback, IS_CALLABLE, 1, "null")
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusProxy_call_finish arginfo_class_Gtk4_GDBusConnection_call_finish
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusProxy_get_cached_property, 0, 1, IS_MIXED, 0)
+	ZEND_ARG_TYPE_INFO(0, property_name, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusProxy_get_cached_property_names arginfo_class_Gtk4_GActionGroup_list_actions
+
+#define arginfo_class_Gtk4_GDBusProxy_get_connection arginfo_class_Gtk4_GDBusMethodInvocation_get_connection
+
+#define arginfo_class_Gtk4_GDBusProxy_get_default_timeout arginfo_class_Gtk4_GApplication_get_flags
+
+#define arginfo_class_Gtk4_GDBusProxy_get_flags arginfo_class_Gtk4_GApplication_get_flags
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GDBusProxy_get_interface_info, 0, 0, Gtk4\\GDBusInterfaceInfo, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusProxy_get_interface_name arginfo_class_Gtk4_GAction_get_name
+
+#define arginfo_class_Gtk4_GDBusProxy_get_name arginfo_class_Gtk4_GAction_get_parameter_type
+
+#define arginfo_class_Gtk4_GDBusProxy_get_name_owner arginfo_class_Gtk4_GAction_get_parameter_type
+
+#define arginfo_class_Gtk4_GDBusProxy_get_object_path arginfo_class_Gtk4_GAction_get_name
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusProxy_set_cached_property, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, property_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_MIXED, 0, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusProxy_set_default_timeout, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, timeout_msec, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusProxy_set_interface_info, 0, 1, IS_VOID, 0)
+	ZEND_ARG_OBJ_INFO(0, info, Gtk4\\GDBusInterfaceInfo, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusProxy_call, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, method_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameters, IS_ARRAY, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 0, "0")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, timeout_msec, IS_LONG, 0, "-1")
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, cancellable, Gtk4\\GCancellable, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, callback, IS_CALLABLE, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusProxy_call_sync, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, method_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameters, IS_ARRAY, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 0, "0")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, timeout_msec, IS_LONG, 0, "-1")
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, cancellable, Gtk4\\GCancellable, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GDBusProxy_vfunc_g_signal, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, sender_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, signal_name, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, parameters, IS_MIXED, 0, "null")
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GDBusSignalInfo___construct arginfo_class_Gtk4_GActionObject___construct
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GIcon_equal, 0, 1, _IS_BOOL, 0)
 	ZEND_ARG_OBJ_INFO(0, icon2, Gtk4\\GIcon, 1)
@@ -824,15 +1151,33 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GTask_return_boolean,
 	ZEND_ARG_TYPE_INFO(0, result, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GTask_return_error, 0, 1, IS_VOID, 0)
-	ZEND_ARG_OBJ_INFO(0, error, Gtk4\\GError, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Gtk4_GTask_return_error arginfo_class_Gtk4_GDBusMethodInvocation_return_gerror
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GTask_return_int, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, result, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GTask_legacy_propagate_error arginfo_class_Gtk4_GAction_get_enabled
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GTestDBus___construct, 0, 0, 1)
+	ZEND_ARG_TYPE_INFO(0, flags, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GTestDBus_unset arginfo_class_Gtk4_GApplication_activate
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GTestDBus_add_service_dir, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, path, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GTestDBus_down arginfo_class_Gtk4_GApplication_activate
+
+#define arginfo_class_Gtk4_GTestDBus_get_bus_address arginfo_class_Gtk4_GAction_get_parameter_type
+
+#define arginfo_class_Gtk4_GTestDBus_get_flags arginfo_class_Gtk4_GApplication_get_flags
+
+#define arginfo_class_Gtk4_GTestDBus_stop arginfo_class_Gtk4_GApplication_activate
+
+#define arginfo_class_Gtk4_GTestDBus_up arginfo_class_Gtk4_GApplication_activate
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GThemedIcon___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, iconname, IS_STRING, 0)
@@ -944,12 +1289,14 @@ ZEND_METHOD(Gtk4_GApplication, set_version);
 ZEND_METHOD(Gtk4_GApplication, unbind_busy_property);
 ZEND_METHOD(Gtk4_GApplication, unmark_busy);
 ZEND_METHOD(Gtk4_GApplication, withdraw_notification);
+ZEND_METHOD(Gtk4_GApplication, get_dbus_connection);
 ZEND_METHOD(Gtk4_GApplication, get_dbus_object_path);
 ZEND_METHOD(Gtk4_GApplication, get_is_remote);
 ZEND_METHOD(Gtk4_GApplication, run);
 ZEND_METHOD(Gtk4_GApplication, vfunc_activate);
 ZEND_METHOD(Gtk4_GApplication, vfunc_after_emit);
 ZEND_METHOD(Gtk4_GApplication, vfunc_before_emit);
+ZEND_METHOD(Gtk4_GApplication, vfunc_dbus_unregister);
 ZEND_METHOD(Gtk4_GApplication, vfunc_name_lost);
 ZEND_METHOD(Gtk4_GApplication, vfunc_quit_mainloop);
 ZEND_METHOD(Gtk4_GApplication, vfunc_run_mainloop);
@@ -968,6 +1315,88 @@ ZEND_METHOD(Gtk4_GCancellable, push_current);
 ZEND_METHOD(Gtk4_GCancellable, reset);
 ZEND_METHOD(Gtk4_GCancellable, set_error_if_cancelled);
 ZEND_METHOD(Gtk4_GCancellable, vfunc_cancelled);
+ZEND_METHOD(Gtk4_GDBusArgInfo, __construct);
+ZEND_METHOD(Gtk4_GDBusConnection, __construct);
+ZEND_METHOD(Gtk4_GDBusConnection, new_finish);
+ZEND_METHOD(Gtk4_GDBusConnection, new_for_address_finish);
+ZEND_METHOD(Gtk4_GDBusConnection, call_finish);
+ZEND_METHOD(Gtk4_GDBusConnection, close);
+ZEND_METHOD(Gtk4_GDBusConnection, close_finish);
+ZEND_METHOD(Gtk4_GDBusConnection, close_sync);
+ZEND_METHOD(Gtk4_GDBusConnection, export_action_group);
+ZEND_METHOD(Gtk4_GDBusConnection, export_menu_model);
+ZEND_METHOD(Gtk4_GDBusConnection, flush);
+ZEND_METHOD(Gtk4_GDBusConnection, flush_finish);
+ZEND_METHOD(Gtk4_GDBusConnection, flush_sync);
+ZEND_METHOD(Gtk4_GDBusConnection, get_capabilities);
+ZEND_METHOD(Gtk4_GDBusConnection, get_exit_on_close);
+ZEND_METHOD(Gtk4_GDBusConnection, get_flags);
+ZEND_METHOD(Gtk4_GDBusConnection, get_guid);
+ZEND_METHOD(Gtk4_GDBusConnection, get_last_serial);
+ZEND_METHOD(Gtk4_GDBusConnection, get_unique_name);
+ZEND_METHOD(Gtk4_GDBusConnection, is_closed);
+ZEND_METHOD(Gtk4_GDBusConnection, remove_filter);
+ZEND_METHOD(Gtk4_GDBusConnection, set_exit_on_close);
+ZEND_METHOD(Gtk4_GDBusConnection, signal_unsubscribe);
+ZEND_METHOD(Gtk4_GDBusConnection, start_message_processing);
+ZEND_METHOD(Gtk4_GDBusConnection, unexport_action_group);
+ZEND_METHOD(Gtk4_GDBusConnection, unexport_menu_model);
+ZEND_METHOD(Gtk4_GDBusConnection, unregister_object);
+ZEND_METHOD(Gtk4_GDBusConnection, unregister_subtree);
+ZEND_METHOD(Gtk4_GDBusConnection, bus_get_sync);
+ZEND_METHOD(Gtk4_GDBusConnection, call);
+ZEND_METHOD(Gtk4_GDBusConnection, call_sync);
+ZEND_METHOD(Gtk4_GDBusConnection, emit_signal);
+ZEND_METHOD(Gtk4_GDBusConnection, register_object);
+ZEND_METHOD(Gtk4_GDBusConnection, signal_subscribe);
+ZEND_METHOD(Gtk4_GDBusInterfaceInfo, __construct);
+ZEND_METHOD(Gtk4_GDBusInterfaceInfo, cache_build);
+ZEND_METHOD(Gtk4_GDBusInterfaceInfo, cache_release);
+ZEND_METHOD(Gtk4_GDBusInterfaceInfo, lookup_method);
+ZEND_METHOD(Gtk4_GDBusInterfaceInfo, lookup_property);
+ZEND_METHOD(Gtk4_GDBusInterfaceInfo, lookup_signal);
+ZEND_METHOD(Gtk4_GDBusMethodInfo, __construct);
+ZEND_METHOD(Gtk4_GDBusMethodInvocation, __construct);
+ZEND_METHOD(Gtk4_GDBusMethodInvocation, get_connection);
+ZEND_METHOD(Gtk4_GDBusMethodInvocation, get_interface_name);
+ZEND_METHOD(Gtk4_GDBusMethodInvocation, get_method_info);
+ZEND_METHOD(Gtk4_GDBusMethodInvocation, get_method_name);
+ZEND_METHOD(Gtk4_GDBusMethodInvocation, get_object_path);
+ZEND_METHOD(Gtk4_GDBusMethodInvocation, get_parameters);
+ZEND_METHOD(Gtk4_GDBusMethodInvocation, get_property_info);
+ZEND_METHOD(Gtk4_GDBusMethodInvocation, get_sender);
+ZEND_METHOD(Gtk4_GDBusMethodInvocation, return_dbus_error);
+ZEND_METHOD(Gtk4_GDBusMethodInvocation, return_gerror);
+ZEND_METHOD(Gtk4_GDBusMethodInvocation, return_value);
+ZEND_METHOD(Gtk4_GDBusNodeInfo, __construct);
+ZEND_METHOD(Gtk4_GDBusNodeInfo, new_for_xml);
+ZEND_METHOD(Gtk4_GDBusNodeInfo, lookup_interface);
+ZEND_METHOD(Gtk4_GDBusPropertyInfo, __construct);
+ZEND_METHOD(Gtk4_GDBusProxy, __construct);
+ZEND_METHOD(Gtk4_GDBusProxy, new_finish);
+ZEND_METHOD(Gtk4_GDBusProxy, new_for_bus_finish);
+ZEND_METHOD(Gtk4_GDBusProxy, new_for_bus_sync);
+ZEND_METHOD(Gtk4_GDBusProxy, new_sync);
+ZEND_METHOD(Gtk4_GDBusProxy, new);
+ZEND_METHOD(Gtk4_GDBusProxy, new_for_bus);
+ZEND_METHOD(Gtk4_GDBusProxy, call_finish);
+ZEND_METHOD(Gtk4_GDBusProxy, get_cached_property);
+ZEND_METHOD(Gtk4_GDBusProxy, get_cached_property_names);
+ZEND_METHOD(Gtk4_GDBusProxy, get_connection);
+ZEND_METHOD(Gtk4_GDBusProxy, get_default_timeout);
+ZEND_METHOD(Gtk4_GDBusProxy, get_flags);
+ZEND_METHOD(Gtk4_GDBusProxy, get_interface_info);
+ZEND_METHOD(Gtk4_GDBusProxy, get_interface_name);
+ZEND_METHOD(Gtk4_GDBusProxy, get_name);
+ZEND_METHOD(Gtk4_GDBusProxy, get_name_owner);
+ZEND_METHOD(Gtk4_GDBusProxy, get_object_path);
+ZEND_METHOD(Gtk4_GDBusProxy, set_cached_property);
+ZEND_METHOD(Gtk4_GDBusProxy, set_default_timeout);
+ZEND_METHOD(Gtk4_GDBusProxy, set_interface_info);
+ZEND_METHOD(Gtk4_GDBusProxy, call);
+ZEND_METHOD(Gtk4_GDBusProxy, call_sync);
+ZEND_METHOD(Gtk4_GDBusProxy, vfunc_g_signal);
+ZEND_METHOD(Gtk4_GDBusSignalInfo, __construct);
 ZEND_METHOD(Gtk4_GIconObject, __construct);
 ZEND_METHOD(Gtk4_GIcon, to_string);
 ZEND_METHOD(Gtk4_GInputStream, __construct);
@@ -1100,6 +1529,14 @@ ZEND_METHOD(Gtk4_GTask, propagate_int);
 ZEND_METHOD(Gtk4_GTask, return_boolean);
 ZEND_METHOD(Gtk4_GTask, return_error);
 ZEND_METHOD(Gtk4_GTask, return_int);
+ZEND_METHOD(Gtk4_GTestDBus, __construct);
+ZEND_METHOD(Gtk4_GTestDBus, unset);
+ZEND_METHOD(Gtk4_GTestDBus, add_service_dir);
+ZEND_METHOD(Gtk4_GTestDBus, down);
+ZEND_METHOD(Gtk4_GTestDBus, get_bus_address);
+ZEND_METHOD(Gtk4_GTestDBus, get_flags);
+ZEND_METHOD(Gtk4_GTestDBus, stop);
+ZEND_METHOD(Gtk4_GTestDBus, up);
 ZEND_METHOD(Gtk4_GThemedIcon, __construct);
 ZEND_METHOD(Gtk4_GThemedIcon, new_from_names);
 ZEND_METHOD(Gtk4_GThemedIcon, new_with_default_fallbacks);
@@ -1228,6 +1665,7 @@ static const zend_function_entry class_Gtk4_GApplication_methods[] = {
 	ZEND_ME(Gtk4_GApplication, unbind_busy_property, arginfo_class_Gtk4_GApplication_unbind_busy_property, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, unmark_busy, arginfo_class_Gtk4_GApplication_unmark_busy, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, withdraw_notification, arginfo_class_Gtk4_GApplication_withdraw_notification, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GApplication, get_dbus_connection, arginfo_class_Gtk4_GApplication_get_dbus_connection, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, get_dbus_object_path, arginfo_class_Gtk4_GApplication_get_dbus_object_path, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, get_is_remote, arginfo_class_Gtk4_GApplication_get_is_remote, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, run, arginfo_class_Gtk4_GApplication_run, ZEND_ACC_PUBLIC)
@@ -1250,6 +1688,7 @@ static const zend_function_entry class_Gtk4_GApplication_methods[] = {
 	ZEND_ME(Gtk4_GApplication, vfunc_activate, arginfo_class_Gtk4_GApplication_vfunc_activate, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, vfunc_after_emit, arginfo_class_Gtk4_GApplication_vfunc_after_emit, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, vfunc_before_emit, arginfo_class_Gtk4_GApplication_vfunc_before_emit, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GApplication, vfunc_dbus_unregister, arginfo_class_Gtk4_GApplication_vfunc_dbus_unregister, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, vfunc_name_lost, arginfo_class_Gtk4_GApplication_vfunc_name_lost, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, vfunc_quit_mainloop, arginfo_class_Gtk4_GApplication_vfunc_quit_mainloop, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GApplication, vfunc_run_mainloop, arginfo_class_Gtk4_GApplication_vfunc_run_mainloop, ZEND_ACC_PUBLIC)
@@ -1282,6 +1721,124 @@ static const zend_function_entry class_Gtk4_GCancellable_methods[] = {
 	ZEND_ME(Gtk4_GCancellable, reset, arginfo_class_Gtk4_GCancellable_reset, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GCancellable, set_error_if_cancelled, arginfo_class_Gtk4_GCancellable_set_error_if_cancelled, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GCancellable, vfunc_cancelled, arginfo_class_Gtk4_GCancellable_vfunc_cancelled, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GDBusArgInfo_methods[] = {
+	ZEND_ME(Gtk4_GDBusArgInfo, __construct, arginfo_class_Gtk4_GDBusArgInfo___construct, ZEND_ACC_PRIVATE)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GDBusConnection_methods[] = {
+	ZEND_ME(Gtk4_GDBusConnection, __construct, arginfo_class_Gtk4_GDBusConnection___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GDBusConnection, new_finish, arginfo_class_Gtk4_GDBusConnection_new_finish, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GDBusConnection, new_for_address_finish, arginfo_class_Gtk4_GDBusConnection_new_for_address_finish, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GDBusConnection, call_finish, arginfo_class_Gtk4_GDBusConnection_call_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, close, arginfo_class_Gtk4_GDBusConnection_close, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, close_finish, arginfo_class_Gtk4_GDBusConnection_close_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, close_sync, arginfo_class_Gtk4_GDBusConnection_close_sync, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, export_action_group, arginfo_class_Gtk4_GDBusConnection_export_action_group, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, export_menu_model, arginfo_class_Gtk4_GDBusConnection_export_menu_model, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, flush, arginfo_class_Gtk4_GDBusConnection_flush, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, flush_finish, arginfo_class_Gtk4_GDBusConnection_flush_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, flush_sync, arginfo_class_Gtk4_GDBusConnection_flush_sync, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, get_capabilities, arginfo_class_Gtk4_GDBusConnection_get_capabilities, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, get_exit_on_close, arginfo_class_Gtk4_GDBusConnection_get_exit_on_close, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, get_flags, arginfo_class_Gtk4_GDBusConnection_get_flags, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, get_guid, arginfo_class_Gtk4_GDBusConnection_get_guid, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, get_last_serial, arginfo_class_Gtk4_GDBusConnection_get_last_serial, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, get_unique_name, arginfo_class_Gtk4_GDBusConnection_get_unique_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, is_closed, arginfo_class_Gtk4_GDBusConnection_is_closed, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, remove_filter, arginfo_class_Gtk4_GDBusConnection_remove_filter, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, set_exit_on_close, arginfo_class_Gtk4_GDBusConnection_set_exit_on_close, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, signal_unsubscribe, arginfo_class_Gtk4_GDBusConnection_signal_unsubscribe, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, start_message_processing, arginfo_class_Gtk4_GDBusConnection_start_message_processing, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, unexport_action_group, arginfo_class_Gtk4_GDBusConnection_unexport_action_group, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, unexport_menu_model, arginfo_class_Gtk4_GDBusConnection_unexport_menu_model, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, unregister_object, arginfo_class_Gtk4_GDBusConnection_unregister_object, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, unregister_subtree, arginfo_class_Gtk4_GDBusConnection_unregister_subtree, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, bus_get_sync, arginfo_class_Gtk4_GDBusConnection_bus_get_sync, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GDBusConnection, call, arginfo_class_Gtk4_GDBusConnection_call, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, call_sync, arginfo_class_Gtk4_GDBusConnection_call_sync, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, emit_signal, arginfo_class_Gtk4_GDBusConnection_emit_signal, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, register_object, arginfo_class_Gtk4_GDBusConnection_register_object, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusConnection, signal_subscribe, arginfo_class_Gtk4_GDBusConnection_signal_subscribe, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GDBusInterfaceInfo_methods[] = {
+	ZEND_ME(Gtk4_GDBusInterfaceInfo, __construct, arginfo_class_Gtk4_GDBusInterfaceInfo___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GDBusInterfaceInfo, cache_build, arginfo_class_Gtk4_GDBusInterfaceInfo_cache_build, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusInterfaceInfo, cache_release, arginfo_class_Gtk4_GDBusInterfaceInfo_cache_release, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusInterfaceInfo, lookup_method, arginfo_class_Gtk4_GDBusInterfaceInfo_lookup_method, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusInterfaceInfo, lookup_property, arginfo_class_Gtk4_GDBusInterfaceInfo_lookup_property, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusInterfaceInfo, lookup_signal, arginfo_class_Gtk4_GDBusInterfaceInfo_lookup_signal, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GDBusMethodInfo_methods[] = {
+	ZEND_ME(Gtk4_GDBusMethodInfo, __construct, arginfo_class_Gtk4_GDBusMethodInfo___construct, ZEND_ACC_PRIVATE)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GDBusMethodInvocation_methods[] = {
+	ZEND_ME(Gtk4_GDBusMethodInvocation, __construct, arginfo_class_Gtk4_GDBusMethodInvocation___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GDBusMethodInvocation, get_connection, arginfo_class_Gtk4_GDBusMethodInvocation_get_connection, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusMethodInvocation, get_interface_name, arginfo_class_Gtk4_GDBusMethodInvocation_get_interface_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusMethodInvocation, get_method_info, arginfo_class_Gtk4_GDBusMethodInvocation_get_method_info, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusMethodInvocation, get_method_name, arginfo_class_Gtk4_GDBusMethodInvocation_get_method_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusMethodInvocation, get_object_path, arginfo_class_Gtk4_GDBusMethodInvocation_get_object_path, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusMethodInvocation, get_parameters, arginfo_class_Gtk4_GDBusMethodInvocation_get_parameters, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusMethodInvocation, get_property_info, arginfo_class_Gtk4_GDBusMethodInvocation_get_property_info, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusMethodInvocation, get_sender, arginfo_class_Gtk4_GDBusMethodInvocation_get_sender, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusMethodInvocation, return_dbus_error, arginfo_class_Gtk4_GDBusMethodInvocation_return_dbus_error, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusMethodInvocation, return_gerror, arginfo_class_Gtk4_GDBusMethodInvocation_return_gerror, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusMethodInvocation, return_value, arginfo_class_Gtk4_GDBusMethodInvocation_return_value, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GDBusNodeInfo_methods[] = {
+	ZEND_ME(Gtk4_GDBusNodeInfo, __construct, arginfo_class_Gtk4_GDBusNodeInfo___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GDBusNodeInfo, new_for_xml, arginfo_class_Gtk4_GDBusNodeInfo_new_for_xml, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GDBusNodeInfo, lookup_interface, arginfo_class_Gtk4_GDBusNodeInfo_lookup_interface, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GDBusPropertyInfo_methods[] = {
+	ZEND_ME(Gtk4_GDBusPropertyInfo, __construct, arginfo_class_Gtk4_GDBusPropertyInfo___construct, ZEND_ACC_PRIVATE)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GDBusProxy_methods[] = {
+	ZEND_ME(Gtk4_GDBusProxy, __construct, arginfo_class_Gtk4_GDBusProxy___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(Gtk4_GDBusProxy, new_finish, arginfo_class_Gtk4_GDBusProxy_new_finish, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GDBusProxy, new_for_bus_finish, arginfo_class_Gtk4_GDBusProxy_new_for_bus_finish, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GDBusProxy, new_for_bus_sync, arginfo_class_Gtk4_GDBusProxy_new_for_bus_sync, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GDBusProxy, new_sync, arginfo_class_Gtk4_GDBusProxy_new_sync, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GDBusProxy, new, arginfo_class_Gtk4_GDBusProxy_new, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GDBusProxy, new_for_bus, arginfo_class_Gtk4_GDBusProxy_new_for_bus, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GDBusProxy, call_finish, arginfo_class_Gtk4_GDBusProxy_call_finish, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, get_cached_property, arginfo_class_Gtk4_GDBusProxy_get_cached_property, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, get_cached_property_names, arginfo_class_Gtk4_GDBusProxy_get_cached_property_names, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, get_connection, arginfo_class_Gtk4_GDBusProxy_get_connection, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, get_default_timeout, arginfo_class_Gtk4_GDBusProxy_get_default_timeout, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, get_flags, arginfo_class_Gtk4_GDBusProxy_get_flags, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, get_interface_info, arginfo_class_Gtk4_GDBusProxy_get_interface_info, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, get_interface_name, arginfo_class_Gtk4_GDBusProxy_get_interface_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, get_name, arginfo_class_Gtk4_GDBusProxy_get_name, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, get_name_owner, arginfo_class_Gtk4_GDBusProxy_get_name_owner, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, get_object_path, arginfo_class_Gtk4_GDBusProxy_get_object_path, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, set_cached_property, arginfo_class_Gtk4_GDBusProxy_set_cached_property, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, set_default_timeout, arginfo_class_Gtk4_GDBusProxy_set_default_timeout, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, set_interface_info, arginfo_class_Gtk4_GDBusProxy_set_interface_info, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, call, arginfo_class_Gtk4_GDBusProxy_call, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, call_sync, arginfo_class_Gtk4_GDBusProxy_call_sync, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GDBusProxy, vfunc_g_signal, arginfo_class_Gtk4_GDBusProxy_vfunc_g_signal, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GDBusSignalInfo_methods[] = {
+	ZEND_ME(Gtk4_GDBusSignalInfo, __construct, arginfo_class_Gtk4_GDBusSignalInfo___construct, ZEND_ACC_PRIVATE)
 	ZEND_FE_END
 };
 
@@ -1502,6 +2059,18 @@ static const zend_function_entry class_Gtk4_GTask_methods[] = {
 	ZEND_FE_END
 };
 
+static const zend_function_entry class_Gtk4_GTestDBus_methods[] = {
+	ZEND_ME(Gtk4_GTestDBus, __construct, arginfo_class_Gtk4_GTestDBus___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTestDBus, unset, arginfo_class_Gtk4_GTestDBus_unset, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(Gtk4_GTestDBus, add_service_dir, arginfo_class_Gtk4_GTestDBus_add_service_dir, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTestDBus, down, arginfo_class_Gtk4_GTestDBus_down, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTestDBus, get_bus_address, arginfo_class_Gtk4_GTestDBus_get_bus_address, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTestDBus, get_flags, arginfo_class_Gtk4_GTestDBus_get_flags, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTestDBus, stop, arginfo_class_Gtk4_GTestDBus_stop, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GTestDBus, up, arginfo_class_Gtk4_GTestDBus_up, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
 static const zend_function_entry class_Gtk4_GThemedIcon_methods[] = {
 	ZEND_ME(Gtk4_GThemedIcon, __construct, arginfo_class_Gtk4_GThemedIcon___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GThemedIcon, new_from_names, arginfo_class_Gtk4_GThemedIcon_new_from_names, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
@@ -1699,12 +2268,578 @@ static zend_class_entry *register_class_Gtk4_GAsyncResultObject(zend_class_entry
 	return class_entry;
 }
 
+static zend_class_entry *register_class_Gtk4_GBusType(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GBusType", IS_LONG, NULL);
+
+	zval enum_case_Starter_value;
+	ZVAL_LONG(&enum_case_Starter_value, -1);
+	zend_enum_add_case_cstr(class_entry, "Starter", &enum_case_Starter_value);
+
+	zval enum_case_None_value;
+	ZVAL_LONG(&enum_case_None_value, 0);
+	zend_enum_add_case_cstr(class_entry, "None", &enum_case_None_value);
+
+	zval enum_case_System_value;
+	ZVAL_LONG(&enum_case_System_value, 1);
+	zend_enum_add_case_cstr(class_entry, "System", &enum_case_System_value);
+
+	zval enum_case_Session_value;
+	ZVAL_LONG(&enum_case_Session_value, 2);
+	zend_enum_add_case_cstr(class_entry, "Session", &enum_case_Session_value);
+
+	return class_entry;
+}
+
 static zend_class_entry *register_class_Gtk4_GCancellable(zend_class_entry *class_entry_Gtk4_GObject)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GCancellable", class_Gtk4_GCancellable_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusArgInfo(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusArgInfo", class_Gtk4_GDBusArgInfo_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusCallFlags(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusCallFlags", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NONE_value;
+	ZVAL_LONG(&const_NONE_value, 0);
+	zend_string *const_NONE_name = zend_string_init_interned("NONE", sizeof("NONE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NONE_name, &const_NONE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NONE_name);
+
+	zval const_NO_AUTO_START_value;
+	ZVAL_LONG(&const_NO_AUTO_START_value, 1);
+	zend_string *const_NO_AUTO_START_name = zend_string_init_interned("NO_AUTO_START", sizeof("NO_AUTO_START") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NO_AUTO_START_name, &const_NO_AUTO_START_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NO_AUTO_START_name);
+
+	zval const_ALLOW_INTERACTIVE_AUTHORIZATION_value;
+	ZVAL_LONG(&const_ALLOW_INTERACTIVE_AUTHORIZATION_value, 2);
+	zend_string *const_ALLOW_INTERACTIVE_AUTHORIZATION_name = zend_string_init_interned("ALLOW_INTERACTIVE_AUTHORIZATION", sizeof("ALLOW_INTERACTIVE_AUTHORIZATION") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_ALLOW_INTERACTIVE_AUTHORIZATION_name, &const_ALLOW_INTERACTIVE_AUTHORIZATION_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_ALLOW_INTERACTIVE_AUTHORIZATION_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusCapabilityFlags(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusCapabilityFlags", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NONE_value;
+	ZVAL_LONG(&const_NONE_value, 0);
+	zend_string *const_NONE_name = zend_string_init_interned("NONE", sizeof("NONE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NONE_name, &const_NONE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NONE_name);
+
+	zval const_UNIX_FD_PASSING_value;
+	ZVAL_LONG(&const_UNIX_FD_PASSING_value, 1);
+	zend_string *const_UNIX_FD_PASSING_name = zend_string_init_interned("UNIX_FD_PASSING", sizeof("UNIX_FD_PASSING") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_UNIX_FD_PASSING_name, &const_UNIX_FD_PASSING_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_UNIX_FD_PASSING_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusConnection(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusConnection", class_Gtk4_GDBusConnection_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusConnectionFlags(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusConnectionFlags", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NONE_value;
+	ZVAL_LONG(&const_NONE_value, 0);
+	zend_string *const_NONE_name = zend_string_init_interned("NONE", sizeof("NONE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NONE_name, &const_NONE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NONE_name);
+
+	zval const_AUTHENTICATION_CLIENT_value;
+	ZVAL_LONG(&const_AUTHENTICATION_CLIENT_value, 1);
+	zend_string *const_AUTHENTICATION_CLIENT_name = zend_string_init_interned("AUTHENTICATION_CLIENT", sizeof("AUTHENTICATION_CLIENT") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_AUTHENTICATION_CLIENT_name, &const_AUTHENTICATION_CLIENT_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_AUTHENTICATION_CLIENT_name);
+
+	zval const_AUTHENTICATION_SERVER_value;
+	ZVAL_LONG(&const_AUTHENTICATION_SERVER_value, 2);
+	zend_string *const_AUTHENTICATION_SERVER_name = zend_string_init_interned("AUTHENTICATION_SERVER", sizeof("AUTHENTICATION_SERVER") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_AUTHENTICATION_SERVER_name, &const_AUTHENTICATION_SERVER_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_AUTHENTICATION_SERVER_name);
+
+	zval const_AUTHENTICATION_ALLOW_ANONYMOUS_value;
+	ZVAL_LONG(&const_AUTHENTICATION_ALLOW_ANONYMOUS_value, 4);
+	zend_string *const_AUTHENTICATION_ALLOW_ANONYMOUS_name = zend_string_init_interned("AUTHENTICATION_ALLOW_ANONYMOUS", sizeof("AUTHENTICATION_ALLOW_ANONYMOUS") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_AUTHENTICATION_ALLOW_ANONYMOUS_name, &const_AUTHENTICATION_ALLOW_ANONYMOUS_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_AUTHENTICATION_ALLOW_ANONYMOUS_name);
+
+	zval const_MESSAGE_BUS_CONNECTION_value;
+	ZVAL_LONG(&const_MESSAGE_BUS_CONNECTION_value, 8);
+	zend_string *const_MESSAGE_BUS_CONNECTION_name = zend_string_init_interned("MESSAGE_BUS_CONNECTION", sizeof("MESSAGE_BUS_CONNECTION") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_MESSAGE_BUS_CONNECTION_name, &const_MESSAGE_BUS_CONNECTION_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_MESSAGE_BUS_CONNECTION_name);
+
+	zval const_DELAY_MESSAGE_PROCESSING_value;
+	ZVAL_LONG(&const_DELAY_MESSAGE_PROCESSING_value, 16);
+	zend_string *const_DELAY_MESSAGE_PROCESSING_name = zend_string_init_interned("DELAY_MESSAGE_PROCESSING", sizeof("DELAY_MESSAGE_PROCESSING") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_DELAY_MESSAGE_PROCESSING_name, &const_DELAY_MESSAGE_PROCESSING_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_DELAY_MESSAGE_PROCESSING_name);
+
+	zval const_AUTHENTICATION_REQUIRE_SAME_USER_value;
+	ZVAL_LONG(&const_AUTHENTICATION_REQUIRE_SAME_USER_value, 32);
+	zend_string *const_AUTHENTICATION_REQUIRE_SAME_USER_name = zend_string_init_interned("AUTHENTICATION_REQUIRE_SAME_USER", sizeof("AUTHENTICATION_REQUIRE_SAME_USER") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_AUTHENTICATION_REQUIRE_SAME_USER_name, &const_AUTHENTICATION_REQUIRE_SAME_USER_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_AUTHENTICATION_REQUIRE_SAME_USER_name);
+
+	zval const_CROSS_NAMESPACE_value;
+	ZVAL_LONG(&const_CROSS_NAMESPACE_value, 64);
+	zend_string *const_CROSS_NAMESPACE_name = zend_string_init_interned("CROSS_NAMESPACE", sizeof("CROSS_NAMESPACE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_CROSS_NAMESPACE_name, &const_CROSS_NAMESPACE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_CROSS_NAMESPACE_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusError(void)
+{
+	zend_class_entry *class_entry = zend_register_internal_enum("Gtk4\\GDBusError", IS_LONG, NULL);
+
+	zval enum_case_Failed_value;
+	ZVAL_LONG(&enum_case_Failed_value, 0);
+	zend_enum_add_case_cstr(class_entry, "Failed", &enum_case_Failed_value);
+
+	zval enum_case_NoMemory_value;
+	ZVAL_LONG(&enum_case_NoMemory_value, 1);
+	zend_enum_add_case_cstr(class_entry, "NoMemory", &enum_case_NoMemory_value);
+
+	zval enum_case_ServiceUnknown_value;
+	ZVAL_LONG(&enum_case_ServiceUnknown_value, 2);
+	zend_enum_add_case_cstr(class_entry, "ServiceUnknown", &enum_case_ServiceUnknown_value);
+
+	zval enum_case_NameHasNoOwner_value;
+	ZVAL_LONG(&enum_case_NameHasNoOwner_value, 3);
+	zend_enum_add_case_cstr(class_entry, "NameHasNoOwner", &enum_case_NameHasNoOwner_value);
+
+	zval enum_case_NoReply_value;
+	ZVAL_LONG(&enum_case_NoReply_value, 4);
+	zend_enum_add_case_cstr(class_entry, "NoReply", &enum_case_NoReply_value);
+
+	zval enum_case_IoError_value;
+	ZVAL_LONG(&enum_case_IoError_value, 5);
+	zend_enum_add_case_cstr(class_entry, "IoError", &enum_case_IoError_value);
+
+	zval enum_case_BadAddress_value;
+	ZVAL_LONG(&enum_case_BadAddress_value, 6);
+	zend_enum_add_case_cstr(class_entry, "BadAddress", &enum_case_BadAddress_value);
+
+	zval enum_case_NotSupported_value;
+	ZVAL_LONG(&enum_case_NotSupported_value, 7);
+	zend_enum_add_case_cstr(class_entry, "NotSupported", &enum_case_NotSupported_value);
+
+	zval enum_case_LimitsExceeded_value;
+	ZVAL_LONG(&enum_case_LimitsExceeded_value, 8);
+	zend_enum_add_case_cstr(class_entry, "LimitsExceeded", &enum_case_LimitsExceeded_value);
+
+	zval enum_case_AccessDenied_value;
+	ZVAL_LONG(&enum_case_AccessDenied_value, 9);
+	zend_enum_add_case_cstr(class_entry, "AccessDenied", &enum_case_AccessDenied_value);
+
+	zval enum_case_AuthFailed_value;
+	ZVAL_LONG(&enum_case_AuthFailed_value, 10);
+	zend_enum_add_case_cstr(class_entry, "AuthFailed", &enum_case_AuthFailed_value);
+
+	zval enum_case_NoServer_value;
+	ZVAL_LONG(&enum_case_NoServer_value, 11);
+	zend_enum_add_case_cstr(class_entry, "NoServer", &enum_case_NoServer_value);
+
+	zval enum_case_Timeout_value;
+	ZVAL_LONG(&enum_case_Timeout_value, 12);
+	zend_enum_add_case_cstr(class_entry, "Timeout", &enum_case_Timeout_value);
+
+	zval enum_case_NoNetwork_value;
+	ZVAL_LONG(&enum_case_NoNetwork_value, 13);
+	zend_enum_add_case_cstr(class_entry, "NoNetwork", &enum_case_NoNetwork_value);
+
+	zval enum_case_AddressInUse_value;
+	ZVAL_LONG(&enum_case_AddressInUse_value, 14);
+	zend_enum_add_case_cstr(class_entry, "AddressInUse", &enum_case_AddressInUse_value);
+
+	zval enum_case_Disconnected_value;
+	ZVAL_LONG(&enum_case_Disconnected_value, 15);
+	zend_enum_add_case_cstr(class_entry, "Disconnected", &enum_case_Disconnected_value);
+
+	zval enum_case_InvalidArgs_value;
+	ZVAL_LONG(&enum_case_InvalidArgs_value, 16);
+	zend_enum_add_case_cstr(class_entry, "InvalidArgs", &enum_case_InvalidArgs_value);
+
+	zval enum_case_FileNotFound_value;
+	ZVAL_LONG(&enum_case_FileNotFound_value, 17);
+	zend_enum_add_case_cstr(class_entry, "FileNotFound", &enum_case_FileNotFound_value);
+
+	zval enum_case_FileExists_value;
+	ZVAL_LONG(&enum_case_FileExists_value, 18);
+	zend_enum_add_case_cstr(class_entry, "FileExists", &enum_case_FileExists_value);
+
+	zval enum_case_UnknownMethod_value;
+	ZVAL_LONG(&enum_case_UnknownMethod_value, 19);
+	zend_enum_add_case_cstr(class_entry, "UnknownMethod", &enum_case_UnknownMethod_value);
+
+	zval enum_case_TimedOut_value;
+	ZVAL_LONG(&enum_case_TimedOut_value, 20);
+	zend_enum_add_case_cstr(class_entry, "TimedOut", &enum_case_TimedOut_value);
+
+	zval enum_case_MatchRuleNotFound_value;
+	ZVAL_LONG(&enum_case_MatchRuleNotFound_value, 21);
+	zend_enum_add_case_cstr(class_entry, "MatchRuleNotFound", &enum_case_MatchRuleNotFound_value);
+
+	zval enum_case_MatchRuleInvalid_value;
+	ZVAL_LONG(&enum_case_MatchRuleInvalid_value, 22);
+	zend_enum_add_case_cstr(class_entry, "MatchRuleInvalid", &enum_case_MatchRuleInvalid_value);
+
+	zval enum_case_SpawnExecFailed_value;
+	ZVAL_LONG(&enum_case_SpawnExecFailed_value, 23);
+	zend_enum_add_case_cstr(class_entry, "SpawnExecFailed", &enum_case_SpawnExecFailed_value);
+
+	zval enum_case_SpawnForkFailed_value;
+	ZVAL_LONG(&enum_case_SpawnForkFailed_value, 24);
+	zend_enum_add_case_cstr(class_entry, "SpawnForkFailed", &enum_case_SpawnForkFailed_value);
+
+	zval enum_case_SpawnChildExited_value;
+	ZVAL_LONG(&enum_case_SpawnChildExited_value, 25);
+	zend_enum_add_case_cstr(class_entry, "SpawnChildExited", &enum_case_SpawnChildExited_value);
+
+	zval enum_case_SpawnChildSignaled_value;
+	ZVAL_LONG(&enum_case_SpawnChildSignaled_value, 26);
+	zend_enum_add_case_cstr(class_entry, "SpawnChildSignaled", &enum_case_SpawnChildSignaled_value);
+
+	zval enum_case_SpawnFailed_value;
+	ZVAL_LONG(&enum_case_SpawnFailed_value, 27);
+	zend_enum_add_case_cstr(class_entry, "SpawnFailed", &enum_case_SpawnFailed_value);
+
+	zval enum_case_SpawnSetupFailed_value;
+	ZVAL_LONG(&enum_case_SpawnSetupFailed_value, 28);
+	zend_enum_add_case_cstr(class_entry, "SpawnSetupFailed", &enum_case_SpawnSetupFailed_value);
+
+	zval enum_case_SpawnConfigInvalid_value;
+	ZVAL_LONG(&enum_case_SpawnConfigInvalid_value, 29);
+	zend_enum_add_case_cstr(class_entry, "SpawnConfigInvalid", &enum_case_SpawnConfigInvalid_value);
+
+	zval enum_case_SpawnServiceInvalid_value;
+	ZVAL_LONG(&enum_case_SpawnServiceInvalid_value, 30);
+	zend_enum_add_case_cstr(class_entry, "SpawnServiceInvalid", &enum_case_SpawnServiceInvalid_value);
+
+	zval enum_case_SpawnServiceNotFound_value;
+	ZVAL_LONG(&enum_case_SpawnServiceNotFound_value, 31);
+	zend_enum_add_case_cstr(class_entry, "SpawnServiceNotFound", &enum_case_SpawnServiceNotFound_value);
+
+	zval enum_case_SpawnPermissionsInvalid_value;
+	ZVAL_LONG(&enum_case_SpawnPermissionsInvalid_value, 32);
+	zend_enum_add_case_cstr(class_entry, "SpawnPermissionsInvalid", &enum_case_SpawnPermissionsInvalid_value);
+
+	zval enum_case_SpawnFileInvalid_value;
+	ZVAL_LONG(&enum_case_SpawnFileInvalid_value, 33);
+	zend_enum_add_case_cstr(class_entry, "SpawnFileInvalid", &enum_case_SpawnFileInvalid_value);
+
+	zval enum_case_SpawnNoMemory_value;
+	ZVAL_LONG(&enum_case_SpawnNoMemory_value, 34);
+	zend_enum_add_case_cstr(class_entry, "SpawnNoMemory", &enum_case_SpawnNoMemory_value);
+
+	zval enum_case_UnixProcessIdUnknown_value;
+	ZVAL_LONG(&enum_case_UnixProcessIdUnknown_value, 35);
+	zend_enum_add_case_cstr(class_entry, "UnixProcessIdUnknown", &enum_case_UnixProcessIdUnknown_value);
+
+	zval enum_case_InvalidSignature_value;
+	ZVAL_LONG(&enum_case_InvalidSignature_value, 36);
+	zend_enum_add_case_cstr(class_entry, "InvalidSignature", &enum_case_InvalidSignature_value);
+
+	zval enum_case_InvalidFileContent_value;
+	ZVAL_LONG(&enum_case_InvalidFileContent_value, 37);
+	zend_enum_add_case_cstr(class_entry, "InvalidFileContent", &enum_case_InvalidFileContent_value);
+
+	zval enum_case_SelinuxSecurityContextUnknown_value;
+	ZVAL_LONG(&enum_case_SelinuxSecurityContextUnknown_value, 38);
+	zend_enum_add_case_cstr(class_entry, "SelinuxSecurityContextUnknown", &enum_case_SelinuxSecurityContextUnknown_value);
+
+	zval enum_case_AdtAuditDataUnknown_value;
+	ZVAL_LONG(&enum_case_AdtAuditDataUnknown_value, 39);
+	zend_enum_add_case_cstr(class_entry, "AdtAuditDataUnknown", &enum_case_AdtAuditDataUnknown_value);
+
+	zval enum_case_ObjectPathInUse_value;
+	ZVAL_LONG(&enum_case_ObjectPathInUse_value, 40);
+	zend_enum_add_case_cstr(class_entry, "ObjectPathInUse", &enum_case_ObjectPathInUse_value);
+
+	zval enum_case_UnknownObject_value;
+	ZVAL_LONG(&enum_case_UnknownObject_value, 41);
+	zend_enum_add_case_cstr(class_entry, "UnknownObject", &enum_case_UnknownObject_value);
+
+	zval enum_case_UnknownInterface_value;
+	ZVAL_LONG(&enum_case_UnknownInterface_value, 42);
+	zend_enum_add_case_cstr(class_entry, "UnknownInterface", &enum_case_UnknownInterface_value);
+
+	zval enum_case_UnknownProperty_value;
+	ZVAL_LONG(&enum_case_UnknownProperty_value, 43);
+	zend_enum_add_case_cstr(class_entry, "UnknownProperty", &enum_case_UnknownProperty_value);
+
+	zval enum_case_PropertyReadOnly_value;
+	ZVAL_LONG(&enum_case_PropertyReadOnly_value, 44);
+	zend_enum_add_case_cstr(class_entry, "PropertyReadOnly", &enum_case_PropertyReadOnly_value);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusInterfaceInfo(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusInterfaceInfo", class_Gtk4_GDBusInterfaceInfo_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusMethodInfo(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusMethodInfo", class_Gtk4_GDBusMethodInfo_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusMethodInvocation(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusMethodInvocation", class_Gtk4_GDBusMethodInvocation_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusNodeInfo(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusNodeInfo", class_Gtk4_GDBusNodeInfo_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusPropertyInfo(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusPropertyInfo", class_Gtk4_GDBusPropertyInfo_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusPropertyInfoFlags(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusPropertyInfoFlags", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NONE_value;
+	ZVAL_LONG(&const_NONE_value, 0);
+	zend_string *const_NONE_name = zend_string_init_interned("NONE", sizeof("NONE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NONE_name, &const_NONE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NONE_name);
+
+	zval const_READABLE_value;
+	ZVAL_LONG(&const_READABLE_value, 1);
+	zend_string *const_READABLE_name = zend_string_init_interned("READABLE", sizeof("READABLE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_READABLE_name, &const_READABLE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_READABLE_name);
+
+	zval const_WRITABLE_value;
+	ZVAL_LONG(&const_WRITABLE_value, 2);
+	zend_string *const_WRITABLE_name = zend_string_init_interned("WRITABLE", sizeof("WRITABLE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_WRITABLE_name, &const_WRITABLE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_WRITABLE_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusProxy(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusProxy", class_Gtk4_GDBusProxy_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusProxyFlags(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusProxyFlags", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NONE_value;
+	ZVAL_LONG(&const_NONE_value, 0);
+	zend_string *const_NONE_name = zend_string_init_interned("NONE", sizeof("NONE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NONE_name, &const_NONE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NONE_name);
+
+	zval const_DO_NOT_LOAD_PROPERTIES_value;
+	ZVAL_LONG(&const_DO_NOT_LOAD_PROPERTIES_value, 1);
+	zend_string *const_DO_NOT_LOAD_PROPERTIES_name = zend_string_init_interned("DO_NOT_LOAD_PROPERTIES", sizeof("DO_NOT_LOAD_PROPERTIES") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_DO_NOT_LOAD_PROPERTIES_name, &const_DO_NOT_LOAD_PROPERTIES_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_DO_NOT_LOAD_PROPERTIES_name);
+
+	zval const_DO_NOT_CONNECT_SIGNALS_value;
+	ZVAL_LONG(&const_DO_NOT_CONNECT_SIGNALS_value, 2);
+	zend_string *const_DO_NOT_CONNECT_SIGNALS_name = zend_string_init_interned("DO_NOT_CONNECT_SIGNALS", sizeof("DO_NOT_CONNECT_SIGNALS") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_DO_NOT_CONNECT_SIGNALS_name, &const_DO_NOT_CONNECT_SIGNALS_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_DO_NOT_CONNECT_SIGNALS_name);
+
+	zval const_DO_NOT_AUTO_START_value;
+	ZVAL_LONG(&const_DO_NOT_AUTO_START_value, 4);
+	zend_string *const_DO_NOT_AUTO_START_name = zend_string_init_interned("DO_NOT_AUTO_START", sizeof("DO_NOT_AUTO_START") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_DO_NOT_AUTO_START_name, &const_DO_NOT_AUTO_START_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_DO_NOT_AUTO_START_name);
+
+	zval const_GET_INVALIDATED_PROPERTIES_value;
+	ZVAL_LONG(&const_GET_INVALIDATED_PROPERTIES_value, 8);
+	zend_string *const_GET_INVALIDATED_PROPERTIES_name = zend_string_init_interned("GET_INVALIDATED_PROPERTIES", sizeof("GET_INVALIDATED_PROPERTIES") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_GET_INVALIDATED_PROPERTIES_name, &const_GET_INVALIDATED_PROPERTIES_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_GET_INVALIDATED_PROPERTIES_name);
+
+	zval const_DO_NOT_AUTO_START_AT_CONSTRUCTION_value;
+	ZVAL_LONG(&const_DO_NOT_AUTO_START_AT_CONSTRUCTION_value, 16);
+	zend_string *const_DO_NOT_AUTO_START_AT_CONSTRUCTION_name = zend_string_init_interned("DO_NOT_AUTO_START_AT_CONSTRUCTION", sizeof("DO_NOT_AUTO_START_AT_CONSTRUCTION") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_DO_NOT_AUTO_START_AT_CONSTRUCTION_name, &const_DO_NOT_AUTO_START_AT_CONSTRUCTION_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_DO_NOT_AUTO_START_AT_CONSTRUCTION_name);
+
+	zval const_NO_MATCH_RULE_value;
+	ZVAL_LONG(&const_NO_MATCH_RULE_value, 32);
+	zend_string *const_NO_MATCH_RULE_name = zend_string_init_interned("NO_MATCH_RULE", sizeof("NO_MATCH_RULE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NO_MATCH_RULE_name, &const_NO_MATCH_RULE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NO_MATCH_RULE_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusSendMessageFlags(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusSendMessageFlags", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NONE_value;
+	ZVAL_LONG(&const_NONE_value, 0);
+	zend_string *const_NONE_name = zend_string_init_interned("NONE", sizeof("NONE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NONE_name, &const_NONE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NONE_name);
+
+	zval const_PRESERVE_SERIAL_value;
+	ZVAL_LONG(&const_PRESERVE_SERIAL_value, 1);
+	zend_string *const_PRESERVE_SERIAL_name = zend_string_init_interned("PRESERVE_SERIAL", sizeof("PRESERVE_SERIAL") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_PRESERVE_SERIAL_name, &const_PRESERVE_SERIAL_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_PRESERVE_SERIAL_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusSignalFlags(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusSignalFlags", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NONE_value;
+	ZVAL_LONG(&const_NONE_value, 0);
+	zend_string *const_NONE_name = zend_string_init_interned("NONE", sizeof("NONE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NONE_name, &const_NONE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NONE_name);
+
+	zval const_NO_MATCH_RULE_value;
+	ZVAL_LONG(&const_NO_MATCH_RULE_value, 1);
+	zend_string *const_NO_MATCH_RULE_name = zend_string_init_interned("NO_MATCH_RULE", sizeof("NO_MATCH_RULE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NO_MATCH_RULE_name, &const_NO_MATCH_RULE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NO_MATCH_RULE_name);
+
+	zval const_MATCH_ARG0_NAMESPACE_value;
+	ZVAL_LONG(&const_MATCH_ARG0_NAMESPACE_value, 2);
+	zend_string *const_MATCH_ARG0_NAMESPACE_name = zend_string_init_interned("MATCH_ARG0_NAMESPACE", sizeof("MATCH_ARG0_NAMESPACE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_MATCH_ARG0_NAMESPACE_name, &const_MATCH_ARG0_NAMESPACE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_MATCH_ARG0_NAMESPACE_name);
+
+	zval const_MATCH_ARG0_PATH_value;
+	ZVAL_LONG(&const_MATCH_ARG0_PATH_value, 4);
+	zend_string *const_MATCH_ARG0_PATH_name = zend_string_init_interned("MATCH_ARG0_PATH", sizeof("MATCH_ARG0_PATH") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_MATCH_ARG0_PATH_name, &const_MATCH_ARG0_PATH_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_MATCH_ARG0_PATH_name);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusSignalInfo(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusSignalInfo", class_Gtk4_GDBusSignalInfo_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GDBusSubtreeFlags(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GDBusSubtreeFlags", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NONE_value;
+	ZVAL_LONG(&const_NONE_value, 0);
+	zend_string *const_NONE_name = zend_string_init_interned("NONE", sizeof("NONE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NONE_name, &const_NONE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NONE_name);
+
+	zval const_DISPATCH_TO_UNENUMERATED_NODES_value;
+	ZVAL_LONG(&const_DISPATCH_TO_UNENUMERATED_NODES_value, 1);
+	zend_string *const_DISPATCH_TO_UNENUMERATED_NODES_name = zend_string_init_interned("DISPATCH_TO_UNENUMERATED_NODES", sizeof("DISPATCH_TO_UNENUMERATED_NODES") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_DISPATCH_TO_UNENUMERATED_NODES_name, &const_DISPATCH_TO_UNENUMERATED_NODES_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_DISPATCH_TO_UNENUMERATED_NODES_name);
 
 	return class_entry;
 }
@@ -1911,6 +3046,32 @@ static zend_class_entry *register_class_Gtk4_GTask(zend_class_entry *class_entry
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GTask", class_Gtk4_GTask_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
 	zend_class_implements(class_entry, 1, class_entry_Gtk4_GAsyncResult);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GTestDBus(zend_class_entry *class_entry_Gtk4_GObject)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GTestDBus", class_Gtk4_GTestDBus_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_Gtk4_GObject, 0);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GTestDBusFlags(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GTestDBusFlags", NULL);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+
+	zval const_NONE_value;
+	ZVAL_LONG(&const_NONE_value, 0);
+	zend_string *const_NONE_name = zend_string_init_interned("NONE", sizeof("NONE") - 1, 1);
+	zend_declare_typed_class_constant(class_entry, const_NONE_name, &const_NONE_value, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(const_NONE_name);
 
 	return class_entry;
 }

@@ -108,3 +108,9 @@ Gio.InputStream.read_all   as read(); read_bytes() covers it and a PHP string ca
 Gio.InputStream.read_async   as read(); read_bytes_async() is the async pair, and it answers with a string
 Gio.InputStream.read_all_async   as read()
 Gio.InputStream.vfunc_read_async   as read(); a PHP subclass overrides read_bytes_async() instead
+Gio.DBusConnection.__construct   a connection is a GInitable over a stream GLib authenticates: g_object_new() without one is an object every call CRITICALs on - bus_get_sync() (the session or system bus) and new_for_address_sync() are where one comes from
+Gio.DBusProxy.__construct   as GDBusConnection: a proxy is initialised against a bus name - new_sync() / new_for_bus_sync() are the constructors
+Gio.DBusMethodInvocation.__construct   only the method-call handler of GDBusConnection::register_object() is handed one; g_object_new() has no message behind it and the getters dereference null
+Gio.DBusMethodInvocation.return_error_literal   a GQuark domain is an interned string GLib hands out and PHP has no way to make a meaningful one (as Gio.Task.return_new_error_literal); return_dbus_error() names the error the D-Bus way
+Gio.DBusMethodInvocation.take_error   consumes a GError the handle owns; return_gerror() is the same reply without the transfer
+Gio.DBusProxy.vfunc_g_properties_changed   GIR types invalidated_properties as one utf8 where the C slot takes a `const gchar * const *` array, so the thunk cannot be emitted; the `g-properties-changed` signal carries the same two arguments and connect() reaches it

@@ -75,6 +75,17 @@ final class Demo
             'GtkWidget', 'GtkWindow', 'GtkRoot', 'GtkBox', 'GtkOrientable', 'GtkButton',
             'GtkLabel', 'GtkDrawingArea', 'CairoContext', 'CairoSurface', 'GtkSnapshot',
         ],
+        'Toplevel surface' => [
+            'GdkToplevel', 'GdkToplevelLayout', 'GdkToplevelState', 'GdkFullscreenMode',
+            'GdkSurfaceEdge', 'GdkTitlebarGesture', 'Gdk',
+        ],
+        'D-Bus' => [
+            'GDBusConnection', 'GDBusProxy', 'GDBusMethodInvocation', 'GDBusNodeInfo', 'GDBusInterfaceInfo',
+            'GDBusMethodInfo', 'GDBusSignalInfo', 'GDBusPropertyInfo', 'GDBusArgInfo', 'GBusType',
+            'GDBusCallFlags', 'GDBusProxyFlags', 'GDBusSignalFlags', 'GDBusConnectionFlags',
+            'GDBusCapabilityFlags', 'GDBusPropertyInfoFlags', 'GDBusSendMessageFlags', 'GDBusSubtreeFlags',
+            'GDBusError', 'GTestDBus', 'GTestDBusFlags',
+        ],
         'Widget enums' => [
             'GtkAlign', 'GtkOrientation', 'GtkBaselinePosition', 'GtkOverflow',
             'GtkTextDirection', 'GtkDirectionType', 'GtkSizeRequestMode', 'GtkStateFlags',

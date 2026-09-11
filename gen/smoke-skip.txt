@@ -44,3 +44,4 @@ GdkPixbuf.Pixbuf.*   the factories need real image data (PixbufTest covers it)
 GdkPixbuf.PixbufAnimation.*   same: new_from_file() needs an image file
 WebKit.Settings.set_webrtc_udp_ports_range   'smoke' is not a port range (min:max); WebKit keeps the old value
 WebKit.Settings.webrtc_udp_ports_range       same, as a property
+Gio.TestDBus.*   GTestDBusFlags has one member, NONE = 0, so the sample flags value 1 is outside its mask; and inside this suite the class is bypassed anyway (GTK holds the session-bus singleton, tests/run.sh provides the bus - CLAUDE.md "Tests")
