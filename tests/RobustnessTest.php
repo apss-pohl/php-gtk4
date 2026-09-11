@@ -669,7 +669,7 @@ final class RobustnessTest extends GtkTestCase
      */
     private static function whyNoInstance(string $class): string
     {
-        $reason = GtkInstances::UNREACHABLE[$class] ?? null;
+        $reason = GtkInstances::UNREACHABLE[$class] ?? GtkInstances::ENVIRONMENTAL[$class] ?? null;
         return $reason === null
             ? "$class is not instantiable"
             : "$class cannot be built: $reason";

@@ -50,6 +50,7 @@ struct VfuncKeyHash {
 struct TrackedNotified {
   GObject *owner;
   void (*clear)(GObject *);
+  void (*clear_keyed)(GObject *, gpointer);  // set instead of clear when the key is needed
 };
 // diagnostics.cpp: a GLib/php-gtk4 message waiting for a VM safe point, with the PHP
 // file/line that was executing when it arrived.

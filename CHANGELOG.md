@@ -5,6 +5,75 @@ versions follow [SemVer](https://semver.org/). The version lives in `VERSION` at
 mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./ci.sh --only=version`
 — see docs/RELEASING.md.
 
+## [Unreleased]
+
+### Added
+
+- **`GdkToplevel`**, the surface side of a window: `get_state()` (the `GdkToplevelState` flags a
+  window manager sets - minimized, maximized, focused, tiled), `minimize()`, `lower()`, `focus()`,
+  `begin_move()`/`begin_resize()`, `set_icon_list()` (a list of `GdkTexture`, the GTK 4 way to give
+  a window an icon of its own), `present()` with a **`GdkToplevelLayout`**, and the `GdkFullscreenMode`,
+  `GdkSurfaceEdge` and `GdkTitlebarGesture` enums (`set_modal()` and the `modal` property are left
+  out: GDK's Win32 backend corrupts its modal-window list on a repeated write, `docs/TODO.md`;
+  `GtkWindow::set_modal()` is the API). A `GtkWindow`'s surface is implemented by a
+  backend-private class GIR does not describe, so `get_surface()` used to answer with a bare
+  `GdkSurface`; it now answers with `GdkToplevelObject`, a `GdkSurface` that is the interface with
+  a body. The mechanism is general: `INTERFACE_FALLBACK_BASE` (`gen/gir/config.php`) names the
+  bound class an interface's fallback extends, and `wrap()` refines to it whenever the instance
+  implements the interface.
+
+- **`Gdk`, the namespace constants**: `Gdk::KEY_Return`, `Gdk::KEY_Escape`, ... (every keysym
+  `gdkkeysyms.h` names, 2,278 of them), `Gdk::BUTTON_PRIMARY`, `Gdk::EVENT_STOP` /
+  `EVENT_PROPAGATE`, `Gdk::CURRENT_TIME`, `Gdk::MODIFIER_MASK` - the C `GDK_*` names without
+  their prefix, as a `key-pressed` handler compares its keyval against them. Generated from GIR's
+  `<constant>`s (`gen/gir.php` learned a `constants` node, allow-listed as `Gdk.constants`).
+
+- **D-Bus.** `GDBusConnection` (`bus_get_sync()` for the session or system bus, `call()` /
+  `call_sync()`, `emit_signal()`, `signal_subscribe()`, `register_object()` with PHP handlers for
+  method calls and properties, and `GApplication::get_dbus_connection()` with it), `GDBusProxy`
+  (`new_sync()` / `new_for_bus_sync()`, `call()` / `call_sync()`, cached properties, the `g-signal`
+  and `g-properties-changed` signals), `GDBusMethodInvocation` (`return_value()`,
+  `return_dbus_error()`, `return_gerror()` - one answer per invocation, a second is a
+  `LogicException`), the introspection records `GDBusNodeInfo::new_for_xml()`,
+  `GDBusInterfaceInfo`, `GDBusMethodInfo`, `GDBusSignalInfo`, `GDBusPropertyInfo`, `GDBusArgInfo`
+  with their names, signatures and argument lists as read-only properties, `GTestDBus`, and the
+  `GBusType`, `GDBusCallFlags`, `GDBusProxyFlags`, `GDBusSignalFlags`, `GDBusConnectionFlags`,
+  `GDBusError` enums. A D-Bus body is a PHP list: converted by inference, by the method's
+  introspection where a proxy or an invocation has it (`u`, `o`, `a{sv}` and the like that a plain
+  PHP value cannot spell), or by a `$signature` the caller gives the connection-level calls. What a
+  StatusNotifierItem tray, a screensaver inhibit or "focus the running instance" need.
+
+- **`GLib::set_prgname()` / `get_prgname()`**: the program name GLib knows the process by. GDK
+  makes it the X11 window class (`WM_CLASS`), which is what a taskbar matches a desktop entry's
+  `StartupWMClass` against - a PHP application was `php8.4` there; set it to the application id
+  before `Gtk::init()`.
+- **A PHP string is bytes for a typed `ay`**: a D-Bus body, an action parameter or a `GVariant`
+  property declared `ay` takes the string's bytes directly (a StatusNotifierItem icon pixmap, a
+  file's contents); a list of byte values still converts, and an `ay` still reads as one.
+
+### Changed
+
+- **Boxed record fields**: a C string field reads as a `?string` property and a NULL-terminated
+  array of pointers to a bound boxed record as a `list<...>` property (the introspection records
+  above are made of them); a flags-typed field reads as its int. Read-only, all of them; a
+  refcounted record's `ref_count` is never a property.
+- **`tests/run.sh` runs the suite on a private session bus** (`dbus-run-session` with
+  `tests/dbus-session.conf`, no service activation) where the tool exists: GTK connects to the
+  session bus at init and keeps that connection as the process singleton, so a `GTestDBus` started
+  inside a test is bypassed and stalls on finalize. The D-Bus tests skip themselves without a bus.
+
+### Fixed
+
+- **A `throws` function returning a `GVariant` raised nothing on failure**:
+  `GDBusProxy::call_finish()` answered `null` for an error reply and leaked the `GError`; it throws
+  it now, as every other `throws` return does.
+
+- **A `pie install` knows its commit.** `Gtk4\BUILD_INFO` said `git unknown` for every build from a
+  source archive - the release tarball and the GitHub zipball PIE builds from have no `.git`.
+  `.git-commit` is now marked `export-subst`, so `git archive` (which is what GitHub serves) writes
+  the hash into it, and `config.m4`/`config.w32` read that before asking git. A checkout extracted
+  under some unrelated repository no longer reports that repository's HEAD either.
+
 ## [0.3.0] - 2026-09-10
 
 Mostly housekeeping around the machinery that ships the extension, plus the rest of Pango: the

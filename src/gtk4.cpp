@@ -157,6 +157,13 @@ static PHP_MINIT_FUNCTION(gtk4) {
   // a conditional namespace registers from its own function in gen_minit_defs.inc.
 #include "gen_minit.inc"
 
+  // GLib's D-Bus worker thread refs the connection for every message it moves, and refs a
+  // proxy and an invocation while it serves them: a handle on one holds a plain reference,
+  // never a toggle ref, whose notify would run on that thread (core/object.h).
+  phpgtk::object_threaded_type(G_TYPE_DBUS_CONNECTION);
+  phpgtk::object_threaded_type(G_TYPE_DBUS_PROXY);
+  phpgtk::object_threaded_type(G_TYPE_DBUS_METHOD_INVOCATION);
+
   // libgtk-3 and libgtk-4 export the same C symbols; whichever loaded first
   // wins symbol resolution, so with php-gtk3 present every gtk4 call silently
   // lands in GTK 3. PHP names are namespaced and do not clash - warn anyway.

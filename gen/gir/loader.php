@@ -182,6 +182,31 @@ final class Gir
             }
             $this->types[$node->qname()] = $node;
         }
+
+        // The namespace's `<constant>`s (GDK_KEY_*, GDK_BUTTON_PRIMARY, ...) as one node of kind
+        // `constants`, allow-listed as `<Ns>.constants` and emitted as the class `<Ns>` with a
+        // `public const` per constant. Only integer and boolean values: nothing else occurs.
+        $constants = new Node($ns, 'constants', 'constants', null, null, null, null);
+        $constantNodes = $x->query('g:constant', $nsNode);
+        foreach ($constantNodes === false ? [] : $constantNodes as $k) {
+            assert($k instanceof \DOMElement);
+            $t = self::type($x, $ns, $k);
+            if ($t === null || !in_array($t->name, ['gint', 'guint', 'gboolean'], true)) {
+                continue;
+            }
+            $value = $k->getAttribute('value');
+            $constants->members[] = [
+                'name' => $k->getAttribute('name'),
+                'value' => $t->name === 'gboolean' ? $value === 'true' : (int) $value,
+                'deprecated' => $k->hasAttribute('deprecated') || $k->hasAttribute('deprecated-version'),
+                'version' => $k->getAttribute('version') ?: null,
+            ];
+        }
+        if ($constants->members !== []) {
+            $constants->doc = "The constants of the $ns namespace: the C `" . strtoupper($this->prefixes[$ns])
+                . '_*` names without their prefix, as GTK\'s own documentation writes them.';
+            $this->types[$constants->qname()] = $constants;
+        }
     }
 
     public static function qualify(string $ns, string $name): string

@@ -88,7 +88,10 @@ final class Node
     public ?string $structFor = null;   // record: the class this is the class struct of (qualified)
     /** @var list<array{name: string, type: Type, readable: bool, writable: bool, constructOnly: bool, deprecated: ?string, doc: string}> */
     public array $props = [];
-    /** @var list<array{name: string, value: int, deprecated: bool, version: ?string}> */
+    /**
+     * @var list<array{name: string, value: int|bool, deprecated: bool, version: ?string}> enum/flags
+     *      members, or - on the namespace's `constants` node - its `<constant>`s (bool for gboolean)
+     */
     public array $members = [];
     /** @var list<string> qualified names */
     public array $implements = [];
@@ -107,7 +110,7 @@ final class Node
     public function __construct(
         public string $ns,
         public string $name,
-        public string $kind,            // class|interface|enum|bitfield|record|callback|alias
+        public string $kind,            // class|interface|enum|bitfield|record|callback|alias|constants
         public ?string $ctype,
         public ?string $gtypeName,
         public ?string $getType,
@@ -136,13 +139,17 @@ function macroParts(Gir $gir, Node $n): array
     // put in both places, so preferring it changes nothing for them.
     $ctype = $n->gtypeName ?? $n->ctype ?? ($prefix . $n->name);
     $rest = substr($ctype, strlen($prefix));
+    // GLib spells its D-Bus types G_TYPE_DBUS_CONNECTION, one word, where the hump rule below
+    // would split GDBusConnection into D_BUS; same for GTestDBus (G_TYPE_TEST_DBUS).
+    $rest = str_replace('DBus', 'Dbus', $rest);
     $snake = strtoupper(preg_replace('/(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/', '_', $rest) ?? $rest);
     return [strtoupper($prefix) . '_TYPE_' . $snake, strtoupper($prefix) . '_' . $snake];
 }
 
 function phpClass(Node $n): string
 {
-    return $n->gtypeName ?? $n->name;
+    // the namespace's constants class carries the namespace's own name: Gdk::KEY_Return
+    return $n->kind === 'constants' ? $n->ns : ($n->gtypeName ?? $n->name);
 }
 
 function camel(string $snake): string

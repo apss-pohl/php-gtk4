@@ -36,6 +36,19 @@ const CONDITIONAL_NAMESPACES = [
     'Soup' => ['feature' => 'webkit', 'macro' => 'PHPGTK_WITH_WEBKIT', 'include' => '<libsoup/soup.h>'],
 ];
 const PHP_NAMESPACE = 'Gtk4';
+
+/**
+ * Interfaces whose implementations are backend-private classes below a bound base class:
+ * qname -> the base. The generated fallback (`<Iface>Object`) extends that base instead of
+ * GObject, and wrap() hands it out for an instance of the base that implements the interface
+ * (core/object.cpp refine): a GtkWindow's surface is a GdkX11Toplevel/GdkWaylandToplevel, GIR
+ * knows neither, and without this `get_surface()` answered with a bare GdkSurface that could
+ * not `minimize()`.
+ */
+const INTERFACE_FALLBACK_BASE = [
+    'Gdk.Toplevel' => 'Gdk.Surface',
+    'Gdk.Popup' => 'Gdk.Surface',
+];
 const INT_TYPES = '/^g(u?int(8|16|32|64)?|size|ssize|u?long|u?short|unichar|u?char)$/';
 
 /**
@@ -274,6 +287,29 @@ const CHILD_PARAMS = [
  * after check_utf8(). Every line retired an entry from tests/robustness-criticals.txt.
  */
 const PARAM_VALIDATORS = [
+    // D-Bus: GLib g_return_if_fail()s on a malformed bus name, object path, interface or member
+    // name (the same predicates guard the hand-written GDBusConnection calls, gen/overrides).
+    'g_dbus_proxy_new.name' => ['g_dbus_is_name(%s)', 'must be a D-Bus name'],
+    'g_dbus_proxy_new_sync.name' => ['g_dbus_is_name(%s)', 'must be a D-Bus name'],
+    'g_dbus_proxy_new_for_bus.name' => ['g_dbus_is_name(%s)', 'must be a D-Bus name'],
+    'g_dbus_proxy_new_for_bus_sync.name' => ['g_dbus_is_name(%s)', 'must be a D-Bus name'],
+    'g_dbus_proxy_new.object_path' => ['g_variant_is_object_path(%s)', 'must be a D-Bus object path'],
+    'g_dbus_proxy_new_sync.object_path' => ['g_variant_is_object_path(%s)', 'must be a D-Bus object path'],
+    'g_dbus_proxy_new_for_bus.object_path' => ['g_variant_is_object_path(%s)',
+        'must be a D-Bus object path'],
+    'g_dbus_proxy_new_for_bus_sync.object_path' => ['g_variant_is_object_path(%s)',
+        'must be a D-Bus object path'],
+    'g_dbus_proxy_new.interface_name' => ['g_dbus_is_interface_name(%s)', 'must be a D-Bus interface name'],
+    'g_dbus_proxy_new_sync.interface_name' => ['g_dbus_is_interface_name(%s)',
+        'must be a D-Bus interface name'],
+    'g_dbus_proxy_new_for_bus.interface_name' => ['g_dbus_is_interface_name(%s)',
+        'must be a D-Bus interface name'],
+    'g_dbus_proxy_new_for_bus_sync.interface_name' => ['g_dbus_is_interface_name(%s)',
+        'must be a D-Bus interface name'],
+    'g_dbus_connection_export_action_group.object_path' => ['g_variant_is_object_path(%s)',
+        'must be a D-Bus object path'],
+    'g_dbus_connection_export_menu_model.object_path' => ['g_variant_is_object_path(%s)',
+        'must be a D-Bus object path'],
     // WebKit: "Path ... must be created before adding it to the sandbox" / an invalid proxy URI
     'webkit_web_context_add_path_to_sandbox.path' => ['g_file_test(%s, G_FILE_TEST_EXISTS)',
         'must be an existing path'],

@@ -37,8 +37,12 @@ A decision leaves this file when it stops being true, not when it stops being ne
 - **One handle per object, identity preserved.** A PHP handle holds a toggle reference on its
   GObject; while GTK holds other references the GObject holds the `zend_object`, so a PHP subclass
   and its state survive `$box->append(new MyButton())` and come back as the same object from
-  `get_first_child()`. A qdata back-pointer makes `===` hold. The ownership rule at construction is
-  fixed, not per class: floating references are sunk, `transfer full` results adopted, a `GtkRoot`
+  `get_first_child()`. A qdata back-pointer makes `===` hold. The D-Bus classes are the exception:
+  GLib's worker thread refs a connection for every message, and GObject runs a toggle notify on
+  whichever thread's ref crossed the line, so their handles hold a plain reference and a PHP
+  subclass' state lives only as long as the script's own reference (`object_threaded_type()`). The
+  ownership rule at construction is fixed, not per class: floating references are sunk, `transfer
+  full` results adopted, a `GtkRoot`
   belongs to GTK's toplevel list. Boxed structs are value handles (cloneable, compared by value,
   in-place C operations bound as copies); refcounted non-GObject types (`GdkEvent`, cairo,
   `GskRenderNode`) are handles on a registry with the type's ref/unref pair.

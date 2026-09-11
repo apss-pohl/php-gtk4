@@ -23,13 +23,11 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 
 - `add_main_option_entries` — parameter `entries` of type array (C array)
 - `add_option_group` — parameter `group` of type GLib.OptionGroup
-- `get_dbus_connection` — return type Gio.DBusConnection (not in the closure)
 - `open` — parameter `files` of type array (C array)
 - `set_action_group` — deprecated (2.32)
 - `vfunc add_platform_data` — parameter `builder` of type GLib.VariantBuilder
 - `vfunc command_line` — parameter `command_line` of type Gio.ApplicationCommandLine
 - `vfunc dbus_register` — GError out parameter
-- `vfunc dbus_unregister` — parameter `connection` of type Gio.DBusConnection
 - `vfunc handle_local_options` — parameter `options` of type GLib.VariantDict
 - `vfunc local_command_line` — inout parameter arguments
 - `vfunc open` — parameter `files` of type array (C array)
@@ -51,6 +49,87 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `make_pollfd` — parameter `pollfd` of type GLib.PollFD
 - `release_fd` — skip.txt: aborts the process (GLib-GIO:ERROR "priv->fd_refcount > 0") unless get_fd() was called first, and the refcount is not observable from here
 - `source_new` — return type GLib.Source
+
+## GDBusArgInfo
+
+- `field annotations` — field type array is not a scalar
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## GDBusConnection
+
+- `new_for_address_sync` — parameter `observer` of type Gio.DBusAuthObserver
+- `new_sync` — parameter `stream` of type Gio.IOStream
+- `new` — parameter `stream` of type Gio.IOStream
+- `new_for_address` — parameter `observer` of type Gio.DBusAuthObserver
+- `add_filter` — callback parameter (needs an override)
+- `call_with_unix_fd_list` — parameter `fd_list` of type Gio.UnixFDList
+- `call_with_unix_fd_list_finish` — out parameter `out_fd_list` of type Gio.UnixFDList
+- `call_with_unix_fd_list_sync` — parameter `fd_list` of type Gio.UnixFDList
+- `get_peer_credentials` — return type Gio.Credentials (not in the closure)
+- `get_stream` — return type Gio.IOStream (not in the closure)
+- `register_subtree` — callback parameter (needs an override)
+- `send_message` — parameter `message` of type Gio.DBusMessage
+- `send_message_with_reply` — parameter `message` of type Gio.DBusMessage
+- `send_message_with_reply_finish` — return type Gio.DBusMessage (not in the closure)
+- `send_message_with_reply_sync` — parameter `message` of type Gio.DBusMessage
+- `__construct` — skip.txt: a connection is a GInitable over a stream GLib authenticates: g_object_new() without one is an object every call CRITICALs on - bus_get_sync() (the session or system bus) and new_for_address_sync() are where one comes from
+- `property authentication-observer` — property type Gio.DBusAuthObserver not mappable
+- `property stream` — property type Gio.IOStream not mappable
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GDBusInterfaceInfo
+
+- `field annotations` — field type array is not a scalar
+- `generate_xml` — parameter `string_builder` of type GLib.String
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## GDBusMethodInfo
+
+- `field annotations` — field type array is not a scalar
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## GDBusMethodInvocation
+
+- `get_message` — return type Gio.DBusMessage (not in the closure)
+- `get_user_data` — return type gpointer
+- `return_error` — varargs
+- `return_error_literal` — skip.txt: a GQuark domain is an interned string GLib hands out and PHP has no way to make a meaningful one (as Gio.Task.return_new_error_literal); return_dbus_error() names the error the D-Bus way
+- `return_error_valist` — parameter `var_args` of type Gio.va_list
+- `return_value_with_unix_fd_list` — parameter `fd_list` of type Gio.UnixFDList
+- `take_error` — skip.txt: consumes a GError the handle owns; return_gerror() is the same reply without the transfer
+- `__construct` — skip.txt: only the method-call handler of GDBusConnection::register_object() is handed one; g_object_new() has no message behind it and the getters dereference null
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GDBusNodeInfo
+
+- `field annotations` — field type array is not a scalar
+- `generate_xml` — parameter `string_builder` of type GLib.String
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## GDBusPropertyInfo
+
+- `field annotations` — field type array is not a scalar
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
+
+## GDBusProxy
+
+- `call_with_unix_fd_list` — parameter `fd_list` of type Gio.UnixFDList
+- `call_with_unix_fd_list_finish` — out parameter `out_fd_list` of type Gio.UnixFDList
+- `call_with_unix_fd_list_sync` — parameter `fd_list` of type Gio.UnixFDList
+- `__construct` — skip.txt: as GDBusConnection: a proxy is initialised against a bus name - new_sync() / new_for_bus_sync() are the constructors
+- `vfunc_g_properties_changed` — skip.txt: GIR types invalidated_properties as one utf8 where the C slot takes a `const gchar * const *` array, so the thunk cannot be emitted; the `g-properties-changed` signal carries the same two arguments and connect() reaches it
+- `smoke test` — no constructor or factory whose parameters can be sampled
+
+## GDBusSignalInfo
+
+- `field annotations` — field type array is not a scalar
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
 
 ## GDateTime
 
@@ -190,6 +269,10 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `run_in_thread_sync` — callback parameter (needs an override)
 - `set_source_tag` — gpointer parameter
 - `set_task_data` — gpointer parameter
+
+## GTestDBus
+
+- `smoke test` — smoke-skip.txt: GTestDBusFlags has one member, NONE = 0, so the sample flags value 1 is outside its mask; and inside this suite the class is bypassed anyway (GTK holds the session-bus singleton, tests/run.sh provides the bus - CLAUDE.md "Tests")
 
 ## GThemedIcon
 
@@ -371,6 +454,18 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `copy` — memory management belongs to the handle (clone / destructor)
 - `download_into` — parameter `data` of type array (C array)
 - `free` — memory management belongs to the handle (clone / destructor)
+
+## GdkToplevel
+
+- `set_modal` — skip.txt: GDK's Win32 backend pushes the surface onto a global modal list on every `true` (gdksurface-win32.c _gdk_push_modal_window), never pops it on `false`, and removes one entry when the surface is destroyed; a second `true` leaves a freed surface in the list for the next WM_ACTIVATE to read (gdkevents-win32.c _gdk_modal_blocked) - an access violation in whatever window comes next (the Windows CI run of 2026-09-11). GtkWindow::set_modal() is the API, and it writes once per change
+- `property icon-list` — property type gpointer not mappable
+- `property modal` — skip.txt: same list, through g_object_set
+
+## GdkToplevelLayout
+
+- `copy` — memory management belongs to the handle (clone / destructor)
+- `ref` — memory management belongs to the handle (clone / destructor)
+- `unref` — memory management belongs to the handle (clone / destructor)
 
 ## GrapheneMatrix
 
@@ -1485,12 +1580,17 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gdk.ContentFormats`: __construct, contain_gtype, get_gtypes, get_mime_types
 - `Gdk.ContentProvider`: get_value, new_for_value
 - `Gdk.Paintable`: compute_concrete_size
+- `Gdk.Surface`: destroy
 - `Gdk.Texture`: download
 - `Gdk.TextureDownloader`: download_bytes
+- `Gdk.Toplevel`: set_icon_list
 - `GdkPixbuf.Pixbuf`: get_file_info, get_options, save_to_bufferv, savev
 - `Gio.Action`: activate
 - `Gio.ActionGroup`: activate_action, change_action_state, get_action_enabled, get_action_parameter_type, get_action_state, get_action_state_hint, get_action_state_type, has_action, list_actions
-- `Gio.Application`: get_dbus_object_path, get_is_remote, run
+- `Gio.Application`: get_dbus_connection, get_dbus_object_path, get_is_remote, run
+- `Gio.DBusConnection`: bus_get_sync, call, call_sync, emit_signal, register_object, signal_subscribe
+- `Gio.DBusMethodInvocation`: return_dbus_error, return_gerror, return_value
+- `Gio.DBusProxy`: call, call_sync
 - `Gio.ListStore`: __construct
 - `Gio.MenuModel`: get_item_attribute_value, get_item_link
 - `Gio.SimpleAction`: set_state
@@ -1708,6 +1808,15 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GApplication.cpp`
 - `Gio/GAsyncResult.cpp`
 - `Gio/GCancellable.cpp`
+- `Gio/GDBusArgInfo.cpp`
+- `Gio/GDBusConnection.cpp`
+- `Gio/GDBusInterfaceInfo.cpp`
+- `Gio/GDBusMethodInfo.cpp`
+- `Gio/GDBusMethodInvocation.cpp`
+- `Gio/GDBusNodeInfo.cpp`
+- `Gio/GDBusPropertyInfo.cpp`
+- `Gio/GDBusProxy.cpp`
+- `Gio/GDBusSignalInfo.cpp`
 - `Gio/GIcon.cpp`
 - `Gio/GInputStream.cpp`
 - `Gio/GListModel.cpp`
@@ -1721,6 +1830,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gio/GOutputStream.cpp`
 - `Gio/GSimpleAction.cpp`
 - `Gio/GTask.cpp`
+- `Gio/GTestDBus.cpp`
 - `Gio/GThemedIcon.cpp`
 - `Gio/GTlsCertificate.cpp`
 - `Gio/Gio.stub.php`
@@ -1740,6 +1850,8 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gdk/GdkSurface.cpp`
 - `Gdk/GdkTexture.cpp`
 - `Gdk/GdkTextureDownloader.cpp`
+- `Gdk/GdkToplevel.cpp`
+- `Gdk/GdkToplevelLayout.cpp`
 - `Gdk/Gdk.stub.php`
 - `Gsk/GskBlendNode.cpp`
 - `Gsk/GskBlurNode.cpp`

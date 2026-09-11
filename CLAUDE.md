@@ -68,7 +68,10 @@ phpize8.4 && ./configure --with-php-config=/usr/bin/php-config8.4 && make -j"$(n
   `gir1.2-webkit-6.0`: the WebKit namespaces are generated whether or not the build has the
   flag). `config.m4` refuses PHP < 8.4 and GTK < 4.14.
   Build metadata (git hash, date, features) is baked in at configure time (`PHPGTK_BUILD_INFO` in
-  config.h).
+  config.h). The hash comes from `.git-commit` where `git archive`'s `export-subst` has filled it
+  in (the release tarball, the GitHub zipball PIE builds from - neither has a `.git`), else from
+  the checkout's own git; `BuildMetadataTest` pins both sources and `ExtensionTest` refuses
+  `git unknown`.
 - **Editing `config.m4` requires re-running `phpize`** (configure is generated from it); `ci.sh`
   does that on every build. **Never run `phpize --clean`**: it deletes `tests/*.php` (php-src
   assumes `.phpt` tests there). Use `make clean` — and note that phpize's `make clean` removes every
@@ -341,6 +344,14 @@ display, and calls `Gtk::init()` once.
   `malloc(): unaligned fastbin chunk`, a write into a freed block inside libgtk with zero frames of
   ours). CI never saw it because runners have no compositor. Xvfb/X11 is the test target; Wayland
   is exercised manually.
+- `tests/run.sh` runs the suite on a **private session bus** (`dbus-run-session
+  --config-file=tests/dbus-session.conf`, a config without service activation, where the tool
+  exists): GTK connects to the session bus at init and GLib keeps that connection as the
+  process singleton, so a `GTestDBus` started inside a test is bypassed and stalls 30 s on
+  finalize waiting for a connection GTK holds - never use one in the suite. `GDBusTest` and
+  `tests/scripts/shutdown.php` use `bus_get_sync()` and skip their D-Bus part without a bus; a
+  call to an object the same process exports must be asynchronous (the loop that would
+  dispatch it is the one a synchronous call blocks).
 - `tests/run.sh` forces `XDEBUG_MODE=off`: xdebug's observer segfaults at request
   shutdown after `ReflectionMethod::invoke()` on internal methods (`debug` mode too, not only
   `develop` — verified 2026-08-29 with Xdebug 3.5: the suite passes, then the process dies after
@@ -497,9 +508,11 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   (underscores → dashes) to GObject properties unless the PHP class declares a property of that
   name - a declared property is the author's and wins (a `GtkWindow` subclass may have its own
   `$title`; GTK's stays reachable through `get_title()`), `get_debug_info` for `var_dump`; a **toggle ref** +
-  qdata identity: while GTK holds other refs the GObject holds the `zend_object` (`held`), so a
-  PHP subclass' state survives the script dropping its reference, released in the toggle notify
-  and in RSHUTDOWN (`object_release_holds()`, or Zend reports the handle as a leak);
+  qdata identity (a plain reference for the D-Bus classes, `object_threaded_type()` in MINIT: their
+  worker thread refs them, and a toggle notify runs on the thread whose ref crossed the line): while
+  GTK holds other refs the GObject holds the `zend_object` (`held`), so a PHP subclass' state
+  survives the script dropping its reference, released in the toggle notify and in RSHUTDOWN
+  (`object_release_holds()`, or Zend reports the handle as a leak);
   `object_hold_owner()` for the getters whose result keeps a bare pointer into its owner
   (`gtk_stack_get_pages()`, a composite widget's `get_first_child()` — `RETURNS_HOLD_SELF` in
   `gen/gir/config.php`, the object counterpart of `BOXED_OWNERS`): the reference is held between
@@ -508,9 +521,12 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   owner's `get_gc` reports the held child handles it is the parent of, the edge that runs
   through C (`OwnerCycleTest`); a boxed value holds its owner's *handle* for the same reason; the
   GType-name → `zend_class_entry` registry; `wrap()`/`unwrap()`/
-  `PHPGTK_SELF`; when no class up the parent chain is registered but a registered *interface* is,
-  `wrap()` uses that interface's generated `Gtk4\<Interface>Object` fallback class, most derived
-  interface first), `marshal` (the single `GValue` ↔ `zval` bridge; a property write or signal argument converts
+  `PHPGTK_SELF`; when the instance's own class is unregistered but it implements a registered
+  *interface* whose generated `Gtk4\<Interface>Object` fallback extends the nearest registered
+  class, `wrap()` uses that fallback, most derived interface first - `GListModelObject` extends
+  `GObject` for a GTK-private list model, `GdkToplevelObject` extends `GdkSurface` for a
+  backend-private toplevel surface (`INTERFACE_FALLBACK_BASE` in `gen/gir/config.php` names
+  the base)), `marshal` (the single `GValue` ↔ `zval` bridge; a property write or signal argument converts
   like a typed parameter - `caller_is_strict()` honours the assigning file's `strict_types`,
   weak coercion otherwise - and then `check_range`/`check_flags`/`check_utf8` from
   `php_gtk4.h`), `gsignal` (`connect()` via a

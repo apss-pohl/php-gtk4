@@ -22,6 +22,10 @@ void teardown_track_source(guint source_id);
 // owner drop the callable (which runs the notify -> untrack). Track from the
 // installing method, untrack from the destroy notify.
 void teardown_track_notified(gpointer key, GObject *owner, void (*clear)(GObject *));
+// As above for a callable the owner holds several of (a D-Bus signal subscription, an exported
+// object: one connection, many ids): `clear(owner, key)` gets the key back to find its own.
+void teardown_track_notified_keyed(gpointer key, GObject *owner,
+                                   void (*clear)(GObject *, gpointer));
 // Called by the callable's destroy notify.
 void teardown_untrack_notified(gpointer key);
 // Called by the source destroy notify.

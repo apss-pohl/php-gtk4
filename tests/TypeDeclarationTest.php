@@ -56,7 +56,7 @@ final class TypeDeclarationTest extends GtkTestCase
         $reflection = new ReflectionClass($class);
         $object = $this->construct($reflection);
         if ($object === null) {
-            $reason = GtkInstances::UNREACHABLE[$class] ?? null;
+            $reason = GtkInstances::UNREACHABLE[$class] ?? GtkInstances::ENVIRONMENTAL[$class] ?? null;
             self::markTestSkipped(
                 $reason === null
                     ? "$class has no instance this test can build"
@@ -137,11 +137,15 @@ final class TypeDeclarationTest extends GtkTestCase
         }
         $nullable = str_starts_with($type, '?');
         $declared = ltrim($type, '?');
+        // a list<X> (a boxed record's array field): every element an X
+        $element = preg_match('/^list<(\w+)>$/', $declared, $m) === 1 ? 'Gtk4\\' . $m[1] : null;
         $ok = match (true) {
             $value === null => $nullable || $declared === 'mixed',
             $declared === 'mixed' => true,
             $declared === get_debug_type($value) => true,
             $declared === 'float' && is_int($value) => true,
+            $element !== null => is_array($value) && array_is_list($value)
+                && array_all($value, fn($item) => $item instanceof $element),
             default => (class_exists('Gtk4\\' . $declared) || interface_exists('Gtk4\\' . $declared))
                 && $value instanceof ('Gtk4\\' . $declared),
         };

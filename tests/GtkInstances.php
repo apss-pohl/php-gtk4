@@ -77,6 +77,12 @@ final class GtkInstances
         \Gtk4\GActionObject::class => 'every GAction PHP can reach is a bound GSimpleAction',
         \Gtk4\GActionGroupObject::class => 'the action groups PHP can reach are bound',
         \Gtk4\GActionMapObject::class => 'the action maps PHP can reach are bound',
+        // A live bus connection is a process-wide singleton with exit-on-close set: the sweeps'
+        // acceptable garbage (null for a ?GCancellable) would close() it and end the process.
+        // GDBusTest drives the surface by hand on a GTestDBus.
+        \Gtk4\GDBusConnection::class => 'the session-bus singleton: close() under the sweeps ends the process',
+        \Gtk4\GDBusProxy::class => 'needs a bus and a peer; every call is a round trip GDBusTest makes on purpose',
+        \Gtk4\GDBusMethodInvocation::class => 'only exists inside the method-call handler of an exported object',
         // WebKit hands these out inside a signal while a page does something - asks for a
         // permission, submits a form, opens a chooser - and nowhere else; a headless test page
         // that never loads from the network cannot make it do any of that.
@@ -126,6 +132,10 @@ final class GtkInstances
      */
     public const ENVIRONMENTAL = [
         \Gtk4\GTlsCertificate::class => 'needs a GIO TLS backend (Debian/Ubuntu: glib-networking)',
+        \Gtk4\GdkToplevelObject::class => 'its window-manager requests are real off X11 (tests/run.sh forces'
+            . ' GDK_BACKEND=x11, where Xvfb has no manager to answer them): on the Windows desktop the'
+            . ' sweeps\' invented calls on a standalone toplevel surface left GDK in a state that killed'
+            . ' the next window presented (an access violation in VfuncTest, 2026-09-11)',
     ];
 
     /**
@@ -378,6 +388,19 @@ final class GtkInstances
             // The display's own handles: no constructor, one owner that outlives every test.
             \Gtk4\GdkClipboard::class => self::display()->get_clipboard(),
             \Gtk4\GdkSurface::class => \Gtk4\GdkSurface::new_toplevel(self::display()),
+            // A toplevel surface is a backend-private GdkSurface subclass; wrap() refines it
+            // to the interface's fallback (INTERFACE_FALLBACK_BASE), so the same call builds it.
+            \Gtk4\GdkToplevelObject::class => self::toplevelSurface(),
+            // never up(): a GTestDBus is bypassed inside this suite (CLAUDE.md "Tests"), but its
+            // flags/address getters and add_service_dir() are a surface like any other
+            \Gtk4\GTestDBus::class => new \Gtk4\GTestDBus(\Gtk4\GTestDBusFlags::NONE),
+            // D-Bus introspection: a node parsed from XML, and what hangs off it
+            \Gtk4\GDBusNodeInfo::class => self::dbusNode(),
+            \Gtk4\GDBusInterfaceInfo::class => self::dbusNode()->interfaces[0],
+            \Gtk4\GDBusMethodInfo::class => self::dbusNode()->interfaces[0]->methods[0],
+            \Gtk4\GDBusSignalInfo::class => self::dbusNode()->interfaces[0]->signals[0],
+            \Gtk4\GDBusPropertyInfo::class => self::dbusNode()->interfaces[0]->properties[0],
+            \Gtk4\GDBusArgInfo::class => self::dbusNode()->interfaces[0]->methods[0]->in_args[0],
             \Gtk4\GdkMonitor::class => self::display()->get_monitors()->get_item(0),
             \Gtk4\GtkIconPaintable::class => \Gtk4\GtkIconTheme::get_for_display(self::display())
                 ->lookup_icon('list-add', null, 16, 1, \Gtk4\GtkTextDirection::None, 0),
@@ -600,6 +623,27 @@ final class GtkInstances
         }
     }
 
+    /**
+     * A standalone toplevel surface for the sweeps, on X11 only (ENVIRONMENTAL says why): the
+     * sweeps call GdkToplevel's window-manager requests with invented arguments, which reach
+     * nobody under Xvfb and a real desktop otherwise. On the Windows runner the first window
+     * presented after them died with an access violation (VfuncTest::testDrawingArea,
+     * 2026-09-11); the suite with only this class's sweeps excluded ran clean, and the cell that
+     * kept begin_resize()/begin_move() but dropped focus(), set_decorated(), set_deletable(),
+     * set_icon_list(), set_title(), set_startup_id() and inhibit_system_shortcuts() passed too,
+     * so it is one of those acting on a surface GTK never mapped - not isolated further, since
+     * each round costs the Windows matrix.
+     */
+    private static function toplevelSurface(): ?\Gtk4\GdkToplevelObject
+    {
+        if (getenv('GDK_BACKEND') !== 'x11') {
+            return null;
+        }
+        $surface = \Gtk4\GdkSurface::new_toplevel(self::display());
+
+        return $surface instanceof \Gtk4\GdkToplevelObject ? $surface : null;
+    }
+
     /** A PHP subclass: the plainest concrete input-method context there is. */
     private static function inputMethodContext(): \Gtk4\WebKitInputMethodContext
     {
@@ -738,5 +782,18 @@ final class GtkInstances
         $w->destroy();
         assert($spec instanceof \Gtk4\GParamSpec);
         return $spec;
+    }
+
+    /** One introspected interface with a method, a signal and a property, for the record sweeps. */
+    private static function dbusNode(): \Gtk4\GDBusNodeInfo
+    {
+        return \Gtk4\GDBusNodeInfo::new_for_xml(
+            '<node><interface name="org.example.Sweep">'
+            . '<method name="Echo"><arg type="s" name="text" direction="in"/>'
+            . '<arg type="s" name="out" direction="out"/></method>'
+            . '<signal name="Ping"><arg type="s" name="what"/></signal>'
+            . '<property name="Name" type="s" access="readwrite"/>'
+            . '</interface></node>',
+        );
     }
 }

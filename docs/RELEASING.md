@@ -112,7 +112,10 @@ gh release list --limit 5 --json tagName,isPrerelease --jq '[.[]|select(.isPrere
 A dev build's assets carry the `.<run>` suffix in their filenames while the module itself reports the plain
 `0.2.0-dev` — two dev builds are different files and must not collide in a downloads folder, but the version
 the binary reports still comes from `VERSION` and nowhere else. `PHPGTK_BUILD_INFO` (baked in by `config.m4`)
-carries the git hash, so a build identifies its exact commit from the inside.
+carries the git hash, so a build identifies its exact commit from the inside. That holds for a build without
+a `.git` too - the source tarball and the GitHub zipball PIE installs from - because `.git-commit` is marked
+`export-subst` in `.gitattributes`: `git archive` (which is what GitHub serves) replaces its `$Format:%h$`
+placeholder with the commit, and `config.m4`/`config.w32` read the file before asking git.
 
 ## Artifacts
 

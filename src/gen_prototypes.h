@@ -151,6 +151,25 @@ void register_vfuncs_GAsyncResult();
 ZEND_METHOD(Gtk4_GAsyncResult, get_source_object);
 ZEND_METHOD(Gtk4_GAsyncResult, legacy_propagate_error);
 void register_vfuncs_GCancellable();
+namespace phpgtk {
+void register_GDBusArgInfo(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GDBusInterfaceInfo(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GDBusMethodInfo(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GDBusNodeInfo(zend_class_entry *ce);
+}  // namespace phpgtk
+namespace phpgtk {
+void register_GDBusPropertyInfo(zend_class_entry *ce);
+}  // namespace phpgtk
+void register_vfuncs_GDBusProxy();
+namespace phpgtk {
+void register_GDBusSignalInfo(zend_class_entry *ce);
+}  // namespace phpgtk
 void register_vfuncs_GIcon();
 ZEND_METHOD(Gtk4_GIcon, equal);
 ZEND_METHOD(Gtk4_GIcon, hash);
@@ -178,6 +197,27 @@ ZEND_METHOD(Gtk4_GdkPaintable, invalidate_size);
 ZEND_METHOD(Gtk4_GdkPaintable, snapshot);
 namespace phpgtk {
 void register_GdkTextureDownloader(zend_class_entry *ce);
+}  // namespace phpgtk
+ZEND_METHOD(Gtk4_GdkToplevel, begin_move);
+ZEND_METHOD(Gtk4_GdkToplevel, begin_resize);
+ZEND_METHOD(Gtk4_GdkToplevel, focus);
+ZEND_METHOD(Gtk4_GdkToplevel, get_state);
+ZEND_METHOD(Gtk4_GdkToplevel, inhibit_system_shortcuts);
+ZEND_METHOD(Gtk4_GdkToplevel, lower);
+ZEND_METHOD(Gtk4_GdkToplevel, minimize);
+ZEND_METHOD(Gtk4_GdkToplevel, present);
+ZEND_METHOD(Gtk4_GdkToplevel, restore_system_shortcuts);
+ZEND_METHOD(Gtk4_GdkToplevel, set_decorated);
+ZEND_METHOD(Gtk4_GdkToplevel, set_deletable);
+ZEND_METHOD(Gtk4_GdkToplevel, set_icon_list);
+ZEND_METHOD(Gtk4_GdkToplevel, set_startup_id);
+ZEND_METHOD(Gtk4_GdkToplevel, set_title);
+ZEND_METHOD(Gtk4_GdkToplevel, set_transient_for);
+ZEND_METHOD(Gtk4_GdkToplevel, show_window_menu);
+ZEND_METHOD(Gtk4_GdkToplevel, supports_edge_constraints);
+ZEND_METHOD(Gtk4_GdkToplevel, titlebar_gesture);
+namespace phpgtk {
+void register_GdkToplevelLayout(zend_class_entry *ce);
 }  // namespace phpgtk
 namespace phpgtk {
 void register_GskBlendNode(zend_class_entry *ce);

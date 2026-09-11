@@ -80,13 +80,22 @@ zval *read_property(zend_object *o, zend_string *member, int type, void **cache_
   return zend_std_read_property(o, member, type, cache_slot, rv);
 }
 
-// write_property handler: struct fields via the class's writer, else standard properties.
+// write_property handler: struct fields via the class's writer, else standard properties. A
+// field the reader knows but the writer does not is read-only (a C string the struct owns, an
+// array of records, a flags-typed field): an Error, as the engine gives a readonly property,
+// rather than a dynamic property shadowing the field.
 zval *write_property(zend_object *o, zend_string *member, zval *value, void **cache_slot) {
   Boxed *self = boxed_from_zend(o);
   const BoxedClass *info = info_of(self);
-  if (info != nullptr && self->data != nullptr &&
-      info->write(self->data, ZSTR_VAL(member), value)) {
-    return value;
+  if (info != nullptr && self->data != nullptr) {
+    if (info->write(self->data, ZSTR_VAL(member), value)) return value;
+    zval probe;
+    if (info->read(self->data, ZSTR_VAL(member), &probe)) {
+      zval_ptr_dtor(&probe);
+      zend_throw_error(nullptr, "Cannot modify readonly property %s::$%s", ZSTR_VAL(o->ce->name),
+                       ZSTR_VAL(member));
+      return &EG(uninitialized_zval);
+    }
   }
   return zend_std_write_property(o, member, value, cache_slot);
 }

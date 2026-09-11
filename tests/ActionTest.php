@@ -137,6 +137,21 @@ final class ActionTest extends GtkTestCase
         self::assertSame($value, $got);
     }
 
+    public function testAStringIsBytesForATypedByteArray(): void
+    {
+        // `ay` is how D-Bus carries binary data; a PHP string is bytes already, and it comes
+        // back as the list of byte values every other `ay` reads as.
+        $a = new GSimpleAction('bytes', 'ay');
+        $got = null;
+        $a->connect('activate', function (GSimpleAction $act, mixed $param) use (&$got): void {
+            $got = $param;
+        });
+        $a->activate("\x00\x7fA\xff");
+        self::assertSame([0, 127, 65, 255], $got);
+        $a->activate('');
+        self::assertSame([], $got);
+    }
+
     public function testParameterTypeMismatchIsATypeError(): void
     {
         $a = new GSimpleAction('p', 'i');

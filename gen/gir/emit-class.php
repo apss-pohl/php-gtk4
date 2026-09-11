@@ -320,7 +320,11 @@ trait EmitsClasses
             // -> GListModelObject). Every interface method, aliased; never constructed.
             $fb = $php . 'Object';
             $fbCe = 'ce_' . $fb;
-            $minit[] = "  zend_class_entry *$fbCe = register_class_{$this->ceName($fb)}(ce_GObject, $ce);";
+            // INTERFACE_FALLBACK_BASE: the fallback extends a bound class when the implementations
+            // are private subclasses of it (GdkToplevelObject extends GdkSurface).
+            $fbBaseQ = INTERFACE_FALLBACK_BASE[$n->qname()] ?? null;
+            $fbBase = $fbBaseQ === null ? 'GObject' : phpClass($this->gir->types[$fbBaseQ]);
+            $minit[] = "  zend_class_entry *$fbCe = register_class_{$this->ceName($fb)}(ce_$fbBase, $ce);";
             $minit[] = "  phpgtk::register_interface_fallback($typeMacro, $fbCe);";
             $fbMethods = ["    /** Never called: these handles only come from wrap(). */\n"
                 . "    private function __construct() {}\n"];
@@ -346,7 +350,14 @@ trait EmitsClasses
                         continue;
                     }
                     $phpName = $f->shadows ?? $f->name;
-                    $sig = $this->typeMap->stubSignature($fbSource, $f, $phpName);
+                    // an overridden interface method carries its own signature (as above)
+                    $fbOverride = $this->overrides[$fbSource->qname()][$phpName] ?? null;
+                    if ($fbOverride !== null) {
+                        preg_match('/function (\w+\(.*\)(?:: [^\s{]+)?)/', $fbOverride['stub'], $sm);
+                        $sig = $sm[1] ?? null;
+                    } else {
+                        $sig = $this->typeMap->stubSignature($fbSource, $f, $phpName);
+                    }
                     if ($sig === null || isset($fbSeen[$phpName])) {
                         continue;
                     }
@@ -355,11 +366,16 @@ trait EmitsClasses
                         . "    public function $sig {}\n";
                 }
             }
-            $stub .= "\n/**\n * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only\n"
-                . " * registered interface is {@see $php} - a private list model behind a `get_pages()`, for\n"
-                . " * instance. Not a GType of its own and never constructed; it is {@see $php} with a body.\n"
-                . " *\n * @not-serializable\n */\n"
-                . "final class $fb extends GObject implements $php\n{\n" . implode("\n", $fbMethods) . "}\n";
+            $fbDoc = $fbBaseQ === null
+                ? " * The handle {@see GObject} wrapping falls back to for a GTK-internal class whose only\n"
+                    . " * registered interface is {@see $php} - a private list model behind a `get_pages()`, for\n"
+                    . " * instance. Not a GType of its own and never constructed; it is {@see $php} with a body.\n"
+                : " * The handle for a {@see $fbBase} that is a {@see $php}: the implementations are\n"
+                    . " * backend-private classes (X11, Wayland) GIR does not describe, so wrapping one answers\n"
+                    . " * with this class, which is {@see $fbBase} plus {@see $php} with a body. Not a GType\n"
+                    . " * of its own and never constructed.\n";
+            $stub .= "\n/**\n" . $fbDoc . " *\n * @not-serializable\n */\n"
+                . "final class $fb extends $fbBase implements $php\n{\n" . implode("\n", $fbMethods) . "}\n";
             $cpp .= "\n/**\n * Gtk4\\$fb::__construct()\n *\n"
                 . " * Never called: these handles only come from wrap().\n */\n"
                 . "ZEND_METHOD({$this->ceName($fb)}, __construct) {\n  ZEND_PARSE_PARAMETERS_NONE();\n}\n";
@@ -552,8 +568,14 @@ trait EmitsClasses
     /** Cheap pre-check shared by class and interface emission (no report entry). */
     private function methodEmittable(Node $n, Func $f): bool
     {
-        return $this->methodSkipReason($n, $f) === null
-            && $this->typeMap->stubSignature($n, $f, $f->shadows ?? $f->name) !== null;
+        if ($this->methodSkipReason($n, $f) !== null) {
+            return false;
+        }
+        // An override supplies its own signature, so a GIR one the type map cannot express
+        // (GdkToplevel::set_icon_list's GList) is still a method - and still aliased onto
+        // the implementing and fallback classes.
+        return isset($this->overrides[$n->qname()][$f->shadows ?? $f->name])
+            || $this->typeMap->stubSignature($n, $f, $f->shadows ?? $f->name) !== null;
     }
 
     private function methodSkipReason(Node $n, Func $f): ?string

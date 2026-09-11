@@ -48,6 +48,39 @@ trait EmitsRecords
     }
 
     /**
+     * The namespace's `<constant>`s as one final class of `public const`s named after the
+     * namespace (`Gdk::KEY_Return`, `Gdk::BUTTON_PRIMARY`): the C names without their prefix,
+     * which is how GTK's own documentation refers to them. No GType behind it, so MINIT only
+     * declares the class (a "// constants" line, kept with the enums in gen_minit.inc).
+     *
+     * @param list<string> $minit
+     */
+    private function emitConstants(Node $n, array &$minit): string
+    {
+        $php = phpClass($n);
+        $lines = [];
+        foreach ($n->members as $m) {
+            $key = $n->qname() . '.' . $m['name'];
+            if (isset($this->skipList[$key])) {
+                $this->skip($n, $m['name'], 'skip.txt: ' . $this->skipList[$key]);
+                continue;
+            }
+            if ($m['deprecated'] || ($m['version'] !== null && version_compare($m['version'], GTK_FLOOR, '>'))) {
+                $why = $m['deprecated'] ? 'deprecated constant' : "constant since {$m['version']}";
+                $this->skip($n, $m['name'], $why);
+                continue;
+            }
+            $lines[] = is_bool($m['value'])
+                ? "    public const bool {$m['name']} = " . ($m['value'] ? 'true' : 'false') . ';'
+                : "    public const int {$m['name']} = {$m['value']};";
+        }
+        $minit[] = "  register_class_{$this->ceName($php)}();  // constants";
+        return "/**\n * " . $n->doc . "\n *\n * " . count($lines)
+            . " constants. Never instantiated: a namespace's constants only.\n */\nfinal class $php\n{\n"
+            . implode("\n", $lines) . "\n}\n";
+    }
+
+    /**
      * A boxed record (glib:get-type) as a value-type handle on core/boxed: public scalar fields
      * become PHP properties, GIR methods/constructors are emitted like a class's with the handle's
      * data as `self`; copy/free/ref/unref are the handle's business and skipped.
@@ -68,20 +101,39 @@ trait EmitsRecords
                 break;  // the C struct is opaque: GIR's fields are not reachable
             }
             $t = $fld['type'];
+            $elem = $t->isArray && $t->zeroTerminated && $t->element !== null
+                ? ($this->gir->types[$t->element->name] ?? null) : null;
             $kind = match (true) {
                 $t->name === 'gboolean' => 'bool',
                 in_array($t->name, ['gfloat', 'gdouble'], true) => 'float',
                 preg_match(INT_TYPES, $t->name) === 1 => 'int',
+                // a flags-typed field reads as its int (as a flags parameter does)
+                ($this->gir->types[$t->name] ?? null)?->kind === 'bitfield' && !$t->isArray => 'int',
+                // read-only: a C string the struct owns (GDBusArgInfo.name), or a NULL-terminated
+                // array of pointers to a boxed record in the closure (GDBusMethodInfo.in_args) as a
+                // list of handles, each a boxed copy (a ref, for these refcounted infos)
+                $t->name === 'utf8' && !$t->isArray => 'string',
+                $elem !== null && $elem->kind === 'record' && $elem->gtypeName !== null
+                    && $this->types->known($elem->qname()) && str_ends_with($t->ctype ?? '', '**') => 'list',
                 default => null,
             };
-            if ($fld['private'] || $kind === null || $t->isArray || str_ends_with($t->ctype ?? '', '*')) {
+            $scalar = in_array($kind, ['bool', 'float', 'int'], true);
+            // the flags field reads as an int but is not written back (its C type is the enum)
+            $flags = $kind === 'int' && ($this->gir->types[$t->name] ?? null)?->kind === 'bitfield';
+            // A refcounted record's `ref_count` field is the handle's business (as its ref/unref
+            // are), never a property - GDBusNodeInfo.ref_count is public in GIR all the same.
+            if ($fld['name'] === 'ref_count' && $kind === 'int') {
+                continue;
+            }
+            $pointer = $t->isArray || str_ends_with($t->ctype ?? '', '*');
+            if ($fld['private'] || $kind === null || ($scalar && $pointer)) {
                 if (!$fld['private']) {
                     $this->skip($n, 'field ' . $fld['name'], "field type {$t->name} is not a scalar");
                 }
                 continue;
             }
             $fields[] = ['name' => $fld['name'], 'kind' => $kind, 'ctype' => $t->ctype ?? 'int',
-                'writable' => $fld['writable']];
+                'writable' => $fld['writable'] && $scalar && !$flags, 'elem' => $elem];
         }
 
         $stubMethods = [];
@@ -130,7 +182,8 @@ trait EmitsRecords
         $ce = $this->ceName($php);
         if (!isset($seenNames['__construct'])) {
             $seenNames['__construct'] = true;
-            if ($fields !== []) {
+            $scalars = array_filter($fields, fn($fd) => in_array($fd['kind'], ['bool', 'float', 'int'], true));
+            if ($fields !== [] && count($scalars) === count($fields)) {
                 // a plain struct: construct from its fields (a stack value copied by the type's
                 // own copy function, so the handle frees it with the matching free function)
                 $params = [];
@@ -181,6 +234,12 @@ trait EmitsRecords
             $zv = match ($fd['kind']) {
                 'bool' => "ZVAL_BOOL(rv, value->{$fd['name']} != FALSE);",
                 'float' => "ZVAL_DOUBLE(rv, value->{$fd['name']});",
+                'string' => "if (value->{$fd['name']} == nullptr) {\n      ZVAL_NULL(rv);\n    } else {\n"
+                    . "      ZVAL_STRING(rv, value->{$fd['name']});\n    }",
+                'list' => "array_init(rv);\n    for (auto **item = value->{$fd['name']}; "
+                    . "item != nullptr && *item != nullptr; item++) {\n      zval h;\n"
+                    . '      wrap_boxed(' . macroParts($this->gir, $fd['elem'] ?? $n)[0] . ", *item, &h);\n"
+                    . "      add_next_index_zval(rv, &h);\n    }",
                 default => "ZVAL_LONG(rv, static_cast<zend_long>(value->{$fd['name']}));",
             };
             $reads[] = "  if (strcmp(field, \"{$fd['name']}\") == 0) {\n    $zv\n    return true;\n  }";
@@ -263,7 +322,12 @@ trait EmitsRecords
         // ---- stub
         $props = [];
         foreach ($fields as $fd) {
-            $props[] = ' * @' . ($fd['writable'] ? 'property' : 'property-read') . " {$fd['kind']} \${$fd['name']}";
+            $type = match ($fd['kind']) {
+                'string' => '?string',
+                'list' => 'list<' . phpClass($fd['elem'] ?? $n) . '>',
+                default => $fd['kind'],
+            };
+            $props[] = ' * @' . ($fd['writable'] ? 'property' : 'property-read') . " $type \${$fd['name']}";
         }
         $docLines = docLines(docSummary($n->doc), '');
         $head = "/**\n" . implode("\n", $docLines) . ($docLines !== [] && $props !== [] ? "\n *\n" : '')

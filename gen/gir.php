@@ -221,6 +221,9 @@ final class Generator
                     case 'bitfield':
                         $stub[] = $this->emitEnum($n, $minit);
                         break;
+                    case 'constants':
+                        $stub[] = $this->emitConstants($n, $minit);
+                        break;
                     case 'interface':
                     case 'class':
                         [$stubText, $cpp] = $n->fundamental
@@ -521,7 +524,7 @@ final class Generator
     private function minitBlock(array $minit, array $vfuncs, array &$defined): string
     {
         $enums = array_filter($minit, fn($l) => str_contains($l, 'register_enum')
-            || str_contains($l, 'register_flags'));
+            || str_contains($l, 'register_flags') || str_ends_with($l, '// constants'));
         $rest = array_values(array_diff($minit, $enums));
         // order class registrations so that a parent's ce_ exists before use
         $ordered = [];

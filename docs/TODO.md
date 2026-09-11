@@ -9,6 +9,18 @@ history; an item leaves this file when it is done or decided against, it is not 
   against GTK `main`; filing it needs an account on gitlab.gnome.org. Nothing to fix here - the
   complaint is spurious and the whole trail (the commit that lost the NULL check, why, and the
   sibling setters that kept it) is in the pin comment in `tests/robustness-criticals.txt`.
+- **File the GDK Win32 modal-list report upstream.** `gdksurface-win32.c`: `_gdk_push_modal_window()`
+  prepends the surface on every `modal = TRUE`, nothing pops it on `FALSE`, and
+  `_gdk_remove_modal_window()` at destroy deletes one link - so two writes leave a freed surface
+  in the list, and the next `WM_ACTIVATE` walks it (`_gdk_modal_blocked()`): an access violation in
+  whatever window comes next. Read on the `gtk-4-14` branch on 2026-09-11, hit by the robustness
+  sweep on gvsbuild's GTK 4.22. Until it is fixed upstream `GdkToplevel::set_modal()` and the
+  `modal` property stay in `gen/skip.txt` (`GtkWindow::set_modal()` writes once per change and is
+  the API); re-expose them behind a `GTK_CHECK_VERSION` once a release carries the fix.
+- **The shutdown script's D-Bus part on Windows.** `tests/scripts/shutdown.php` skips it there: with
+  a live connection to GLib's built-in session bus the process exit died with an access violation
+  on the TS runner (2026-09-11, NTS was fine). Needs a Windows machine with a debugger to say
+  whether it is ours (teardown vs. the D-Bus worker thread at exit) or GLib's.
 - **A PHP-driven print preview.** `GtkPrintOperation` does not implement
   `GtkPrintOperationPreview` in PHP: its slots (`render_page`, `end_preview`, `is_selected`) are only
   valid inside the `preview` signal, where GTK keeps the state private, and dereference NULL
