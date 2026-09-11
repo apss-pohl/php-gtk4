@@ -17,6 +17,10 @@ history; an item leaves this file when it is done or decided against, it is not 
   sweep on gvsbuild's GTK 4.22. Until it is fixed upstream `GdkToplevel::set_modal()` and the
   `modal` property stay in `gen/skip.txt` (`GtkWindow::set_modal()` writes once per change and is
   the API); re-expose them behind a `GTK_CHECK_VERSION` once a release carries the fix.
+- **The shutdown script's D-Bus part on Windows.** `tests/scripts/shutdown.php` skips it there: with
+  a live connection to GLib's built-in session bus the process exit died with an access violation
+  on the TS runner (2026-09-11, NTS was fine). Needs a Windows machine with a debugger to say
+  whether it is ours (teardown vs. the D-Bus worker thread at exit) or GLib's.
 - **A PHP-driven print preview.** `GtkPrintOperation` does not implement
   `GtkPrintOperationPreview` in PHP: its slots (`render_page`, `end_preview`, `is_selected`) are only
   valid inside the `preview` signal, where GTK keeps the state private, and dereference NULL

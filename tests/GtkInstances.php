@@ -132,6 +132,10 @@ final class GtkInstances
      */
     public const ENVIRONMENTAL = [
         \Gtk4\GTlsCertificate::class => 'needs a GIO TLS backend (Debian/Ubuntu: glib-networking)',
+        \Gtk4\GdkToplevelObject::class => 'its window-manager requests are real off X11 (tests/run.sh forces'
+            . ' GDK_BACKEND=x11, where Xvfb has no manager to answer them): on the Windows desktop the'
+            . ' sweeps\' invented calls on a standalone toplevel surface left GDK in a state that killed'
+            . ' the next window presented (an access violation in VfuncTest, 2026-09-11)',
     ];
 
     /**
@@ -386,7 +390,7 @@ final class GtkInstances
             \Gtk4\GdkSurface::class => \Gtk4\GdkSurface::new_toplevel(self::display()),
             // A toplevel surface is a backend-private GdkSurface subclass; wrap() refines it
             // to the interface's fallback (INTERFACE_FALLBACK_BASE), so the same call builds it.
-            \Gtk4\GdkToplevelObject::class => \Gtk4\GdkSurface::new_toplevel(self::display()),
+            \Gtk4\GdkToplevelObject::class => self::toplevelSurface(),
             // never up(): a GTestDBus is bypassed inside this suite (CLAUDE.md "Tests"), but its
             // flags/address getters and add_service_dir() are a surface like any other
             \Gtk4\GTestDBus::class => new \Gtk4\GTestDBus(\Gtk4\GTestDBusFlags::NONE),
@@ -617,6 +621,27 @@ final class GtkInstances
             }
             throw $e;
         }
+    }
+
+    /**
+     * A standalone toplevel surface for the sweeps, on X11 only (ENVIRONMENTAL says why): the
+     * sweeps call GdkToplevel's window-manager requests with invented arguments, which reach
+     * nobody under Xvfb and a real desktop otherwise. On the Windows runner the first window
+     * presented after them died with an access violation (VfuncTest::testDrawingArea,
+     * 2026-09-11); the suite with only this class's sweeps excluded ran clean, and the cell that
+     * kept begin_resize()/begin_move() but dropped focus(), set_decorated(), set_deletable(),
+     * set_icon_list(), set_title(), set_startup_id() and inhibit_system_shortcuts() passed too,
+     * so it is one of those acting on a surface GTK never mapped - not isolated further, since
+     * each round costs the Windows matrix.
+     */
+    private static function toplevelSurface(): ?\Gtk4\GdkToplevelObject
+    {
+        if (getenv('GDK_BACKEND') !== 'x11') {
+            return null;
+        }
+        $surface = \Gtk4\GdkSurface::new_toplevel(self::display());
+
+        return $surface instanceof \Gtk4\GdkToplevelObject ? $surface : null;
     }
 
     /** A PHP subclass: the plainest concrete input-method context there is. */

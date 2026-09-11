@@ -56,7 +56,7 @@ final class TypeDeclarationTest extends GtkTestCase
         $reflection = new ReflectionClass($class);
         $object = $this->construct($reflection);
         if ($object === null) {
-            $reason = GtkInstances::UNREACHABLE[$class] ?? null;
+            $reason = GtkInstances::UNREACHABLE[$class] ?? GtkInstances::ENVIRONMENTAL[$class] ?? null;
             self::markTestSkipped(
                 $reason === null
                     ? "$class has no instance this test can build"
