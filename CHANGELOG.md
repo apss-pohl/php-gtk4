@@ -9,6 +9,10 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **`docs/INVENTORY.md`**: every class, interface and enum the extension registers, by GIR
+  namespace, each linked to its page in the upstream documentation and marked generated,
+  hand-written or php-gtk4's own. Written by `gen/gir.php --install` (`gen/gir/inventory.php`) and
+  held to the registered classes by `InventoryTest`.
 - **`GdkToplevel`**, the surface side of a window: `get_state()` (the `GdkToplevelState` flags a
   window manager sets - minimized, maximized, focused, tiled), `minimize()`, `lower()`, `focus()`,
   `begin_move()`/`begin_resize()`, `set_icon_list()` (a list of `GdkTexture`, the GTK 4 way to give

@@ -36,6 +36,7 @@ require_once __DIR__ . '/gir/emit-class.php';
 require_once __DIR__ . '/gir/emit-record.php';
 require_once __DIR__ . '/gir/emit-vfunc.php';
 require_once __DIR__ . '/gir/emit-tests.php';
+require_once __DIR__ . '/gir/inventory.php';
 
 // ---------------------------------------------------------------- generator
 
@@ -81,6 +82,15 @@ final class Generator
 
     /** @var array<string, array{node: Node, stub: string}> php class -> what emitClass produced */
     private array $classInfo = [];
+    /** @var list<Node> every type run() emitted, for docs/INVENTORY.md */
+    private array $emitted = [];
+    /** docs/INVENTORY.md, written on --install only */
+    private ?string $inventoryPath = null;
+
+    public function setInventoryPath(string $path): void
+    {
+        $this->inventoryPath = $path;
+    }
     /** @var array<string, string> 'Ns.Type.member' (member may be *) -> reason: no smoke test */
     private array $smokeSkip = [];
 
@@ -220,9 +230,11 @@ final class Generator
                     case 'enum':
                     case 'bitfield':
                         $stub[] = $this->emitEnum($n, $minit);
+                        $this->emitted[] = $n;
                         break;
                     case 'constants':
                         $stub[] = $this->emitConstants($n, $minit);
+                        $this->emitted[] = $n;
                         break;
                     case 'interface':
                     case 'class':
@@ -234,6 +246,7 @@ final class Generator
                         }
                         $stub[] = $stubText;
                         $this->write("$ns/" . phpClass($n) . '.cpp', $cpp);
+                        $this->emitted[] = $n;
                         break;
                     case 'record':
                         if ($n->gtypeName === null || $n->getType === null) {
@@ -243,6 +256,7 @@ final class Generator
                         [$stubText, $cpp] = $this->emitRecord($n, $minit, $protos);
                         $stub[] = $stubText;
                         $this->write("$ns/" . phpClass($n) . '.cpp', $cpp);
+                        $this->emitted[] = $n;
                         break;
                     default:
                         $this->skip($n, '*', "{$n->kind}: not generated");
@@ -270,6 +284,10 @@ final class Generator
         $report = $this->reportText();
         $reportPath = dirname(__DIR__) . '/gen/report.md';
         self::putIfChanged($reportPath, rtrim($report) . "\n");
+        if ($this->inventoryPath !== null) {
+            $inventory = inventoryText($this->gir->types, $this->emitted, dirname(__DIR__) . '/src/gtk4.stub.php');
+            self::putIfChanged($this->inventoryPath, rtrim($inventory) . "\n");
+        }
     }
 
     private function write(string $rel, string $text): void
@@ -661,6 +679,9 @@ foreach (readList("$root/gen/ctor-props.txt") as $line) {
 }
 $g->setCtorProps($ctorProps);
 $g->configure(readList("$root/gen/allowlist.txt"), readList("$root/gen/handwritten.txt"), $skip);
+if ($install) {
+    $g->setInventoryPath("$root/docs/INVENTORY.md");
+}
 $g->run();
 if ($install) {
     passthru(PHP_BINARY . ' ' . escapeshellarg(__DIR__ . '/map-status.php'), $rc);
