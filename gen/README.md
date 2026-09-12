@@ -141,7 +141,7 @@ absent - `FeatureGateTest` keeps the five places in step.
                                          |
    src/<Ns>/<Ns>.stub.php   src/<Ns>/<Class>.cpp   src/gen_minit.inc   src/gen_prototypes.h   src/gen_arginfo.h
    tests/Generated/<Class>SmokeTest.php   examples/<Class>.php (skeleton, once)   examples/generated-sections.inc
-   gen/report.md   docs/GTK3-MAP.md (status column, via map-status.php)
+   gen/report.md   docs/GTK3-MAP.md (status column, via map-status.php)   docs/INVENTORY.md
                                          |
                               ./ci.sh --only=stubs --fix           (gen_stub.php -> <Ns>_arginfo.h,
                                          |                          ide-stub.php -> stubs/gtk4.php)

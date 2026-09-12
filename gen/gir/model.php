@@ -105,6 +105,8 @@ final class Node
     public bool $fundamental = false;
     public ?string $refFunc = null;
     public ?string $unrefFunc = null;
+    // glib:error-domain: an enum of GError codes (gi-docgen documents it as error.<Name>)
+    public ?string $errorDomain = null;
     public string $doc = '';
 
     public function __construct(

@@ -10,7 +10,8 @@
 
 PHP extension binding GTK 4, written in C++20 against the native Zend API (standard `phpize`
 build). The design decisions are in [docs/DESIGN.md](docs/DESIGN.md); what is still open in
-[docs/TODO.md](docs/TODO.md).
+[docs/TODO.md](docs/TODO.md). Every class the extension registers, with a link to its upstream
+documentation, is in [docs/INVENTORY.md](docs/INVENTORY.md).
 
 ## Usage
 
