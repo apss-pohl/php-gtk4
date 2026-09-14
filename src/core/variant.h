@@ -6,6 +6,9 @@
 // parameter type, the state's current type) or inference (bool->b, int->i,
 // float->d, string->s, list of strings->as, other list->av, assoc->a{sv}).
 // A typed `ay` also takes a PHP string as the bytes (D-Bus binary payloads).
+// A Gtk4\GVariant handle (src/GLib/GVariant.cpp) is a value already typed: passed as it is
+// under inference, wrapped under `v`, accepted under its own type, refused under any other -
+// the way to spell what inference cannot (a tuple inside a variant, `ay` from a string).
 #pragma once
 #include "php_gtk4.h"
 
@@ -24,5 +27,11 @@ GVariant *php_to_variant(zval *value, const GVariantType *type);
 // becomes a tuple of its inferred members and null the empty tuple. A non-list is refused
 // (TypeError naming `arg_num`). Same ownership as php_to_variant().
 GVariant *php_to_variant_tuple(zval *value, const GVariantType *type, uint32_t arg_num);
+
+// Gtk4\GVariant's class entry (src/GLib/GVariant.cpp).
+extern zend_class_entry *ce_GVariant;
+// The value a Gtk4\GVariant handle carries; nullptr when `value` is not one (or one
+// __construct() never filled).
+GVariant *variant_of_handle(zval *value);
 
 }  // namespace phpgtk

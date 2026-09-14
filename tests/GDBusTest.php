@@ -13,6 +13,7 @@ use Gtk4\GDBusProxy;
 use Gtk4\GDBusProxyFlags;
 use Gtk4\GError;
 use Gtk4\GLib;
+use Gtk4\GVariant;
 
 /**
  * D-Bus on the session bus (a private one under tests/run.sh): the connection, an exported
@@ -33,9 +34,12 @@ final class GDBusTest extends GtkTestCase
         . '<arg type="u" name="times" direction="in"/>'
         . '<arg type="s" name="out" direction="out"/><arg type="u" name="count" direction="out"/></method>'
         . '<method name="Fail"/>'
+        . '<method name="Layout"><arg type="u" name="revision" direction="out"/>'
+        . '<arg type="(ia{sv}av)" name="root" direction="out"/></method>'
         . '<method name="Slow"/>'
         . '<property name="Name" type="s" access="readwrite"/>'
         . '<property name="Path" type="o" access="read"/>'
+        . '<property name="Blob" type="ay" access="readwrite"/>'
         . '<signal name="Ping"><arg type="s" name="what"/></signal>'
         . '</interface></node>';
 
@@ -150,7 +154,7 @@ final class GDBusTest extends GtkTestCase
     {
         $info = GDBusNodeInfo::new_for_xml(self::XML)->lookup_interface(self::IFACE);
         self::assertNotNull($info);
-        $state = ['Name' => 'initial'];
+        $state = ['Name' => 'initial', 'Blob' => []];
         $onCall = function (
             GDBusConnection $c,
             string $sender,
@@ -171,15 +175,21 @@ final class GDBusTest extends GtkTestCase
                 case 'Fail':
                     $inv->return_dbus_error('org.phpgtk4.Test.Error.Nope', 'no way');
                     break;
+                case 'Layout':
+                    // dbusmenu's GetLayout: every child is an (ia{sv}av) inside its v, which
+                    // only a typed handle can spell - a plain list would cross as an av
+                    $child = new GVariant('(ia{sv}av)', [2, ['label' => 'Quit'], []]);
+                    $inv->return_value([1, [0, ['children-display' => 'submenu'], [$child]]]);
+                    break;
                 case 'Slow':
                     break;  // never answered: the caller's timeout is the reply
                 default:
                     $inv->return_dbus_error('org.freedesktop.DBus.Error.UnknownMethod', $method);
             }
         };
-        $onGet = function (GDBusConnection $c, string $s, string $p, string $i, string $prop) use (&$state): string {
+        $onGet = function (GDBusConnection $c, string $s, string $p, string $i, string $prop) use (&$state): mixed {
             $this->log[] = ['get', $prop];
-            return $prop === 'Path' ? '/answered/as/an/object/path' : (string) $state[$prop];
+            return $prop === 'Path' ? '/answered/as/an/object/path' : $state[$prop];
         };
         $onSet = function (
             GDBusConnection $c,
@@ -192,7 +202,7 @@ final class GDBusTest extends GtkTestCase
             &$state
         ): bool {
             $this->log[] = ['set', $prop, $v];
-            if (!is_string($v)) {
+            if ($prop === 'Blob' ? !is_array($v) : !is_string($v)) {
                 return false;
             }
             $state[$prop] = $v;
@@ -340,7 +350,7 @@ final class GDBusTest extends GtkTestCase
                 $this->callOwn(self::PROPS, 'Set', [self::IFACE, 'Name', 7], '(ssv)'),
             );
 
-            $all = [['Name' => 'renamed', 'Path' => '/answered/as/an/object/path']];
+            $all = [['Name' => 'renamed', 'Path' => '/answered/as/an/object/path', 'Blob' => []]];
             self::assertSame($all, $this->callOwn(self::PROPS, 'GetAll', [self::IFACE]));
         } finally {
             self::assertTrue(self::connection()->unregister_object($id));
@@ -467,13 +477,41 @@ final class GDBusTest extends GtkTestCase
         $this->assertThrows(\ValueError::class, 'object path', $register);
     }
 
+    /**
+     * A `GVariant` handle in a reply or a body keeps the type it spells across the bus: the
+     * dbusmenu child arrives as its tuple, and a property set with an `ay` arrives as bytes
+     * where the same PHP string would have inferred to `s`.
+     */
+    public function testAVariantHandleKeepsItsTypeAcrossTheBus(): void
+    {
+        $id = $this->export();
+        try {
+            self::assertSame(
+                [1, [0, ['children-display' => 'submenu'], [[2, ['label' => 'Quit'], []]]]],
+                $this->callOwn(self::IFACE, 'Layout', null),
+            );
+
+            // Blob is declared `ay`: GDBus itself checks the value's type before the handler runs
+            $bytes = new GVariant('ay', "\x01\x02");
+            self::assertSame([], $this->callOwn(self::PROPS, 'Set', [self::IFACE, 'Blob', $bytes], '(ssv)'));
+            self::assertSame(['set', 'Blob', [1, 2]], $this->lastLogged(), 'arrived as ay');
+            self::assertSame([[1, 2]], $this->callOwn(self::PROPS, 'Get', [self::IFACE, 'Blob']));
+            $refused = $this->callOwn(self::PROPS, 'Set', [self::IFACE, 'Blob', "\x01\x02"], '(ssv)');
+            self::assertInstanceOf(GError::class, $refused, 'the same PHP string inferred to s');
+            self::assertStringContainsString('ay', $refused->getMessage());
+            self::assertSame(['get', 'Blob'], $this->lastLogged(), 'GDBus refused it itself, no handler ran');
+        } finally {
+            self::connection()->unregister_object($id);
+        }
+    }
+
     public function testIntrospectionRecordsReadAsProperties(): void
     {
         $node = GDBusNodeInfo::new_for_xml(self::XML);
         self::assertNull($node->path);
         $iface = $node->interfaces[0];
         self::assertSame(self::IFACE, $iface->name);
-        self::assertSame(['Echo', 'Fail', 'Slow'], array_map(fn($m) => $m->name, $iface->methods));
+        self::assertSame(['Echo', 'Fail', 'Layout', 'Slow'], array_map(fn($m) => $m->name, $iface->methods));
         $echo = $iface->lookup_method('Echo');
         self::assertNotNull($echo);
         self::assertSame(['text' => 's', 'times' => 'u'], array_combine(

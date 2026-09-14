@@ -9,6 +9,7 @@
 
 namespace phpgtk {
 void register_GMainLoop(zend_class_entry *ce);     // own object layout (GLib/GMainLoop.cpp)
+void register_GVariant(zend_class_entry *ce);      // own object layout (GLib/GVariant.cpp)
 void register_GParamSpec(zend_class_entry *ce);    // fundamental (core/paramspec.cpp)
 void register_CairoContext(zend_class_entry *ce);  // fundamental (Cairo/CairoContext.cpp)
 void register_CairoSurface(zend_class_entry *ce);  // fundamental (Cairo/CairoSurface.cpp)

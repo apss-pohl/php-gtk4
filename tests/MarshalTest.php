@@ -141,6 +141,23 @@ final class MarshalTest extends GtkTestCase
     }
 
     /**
+     * A `Gtk4\GVariant` handle is a value already typed: the G_TYPE_VARIANT arm passes it through
+     * where a plain value would be inferred, so a state can be an `x` where an int infers to `i`.
+     */
+    public function testVariantHandleTypesAPropertyWrite(): void
+    {
+        $action = \Gtk4\GSimpleAction::new_stateful('mode', null, new \Gtk4\GVariant('x', 1));
+        self::assertSame('x', $action->get_state_type());
+
+        $action->set_property('state', new \Gtk4\GVariant('x', 2));
+        self::assertSame(2, $action->get_property('state'), 'read back as the plain value');
+
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('cannot convert a GVariant of type s to GVariant type x');
+        $action->set_property('state', new \Gtk4\GVariant('s', 'no'));
+    }
+
+    /**
      * A boxed type with a bound class travels in a GValue as itself: GtkPopover:pointing-to is
      * a GdkRectangle in and a GdkRectangle out, not an array and not an opaque handle.
      */

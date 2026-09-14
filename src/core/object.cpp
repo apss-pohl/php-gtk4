@@ -346,7 +346,7 @@ zval *write_property(zend_object *o, zend_string *member, zval *value, void **ca
   if (!property_writable(spec, ZSTR_VAL(o->ce->name), ZSTR_VAL(member))) return value;
   if (refuse_dead(self, member)) return value;
   GValue v = G_VALUE_INIT;
-  if (to_gvalue(value, spec->value_type, &v)) {
+  if (to_gvalue_property(value, self->obj, spec, &v)) {
     const std::string what = std::string(ZSTR_VAL(o->ce->name)) + "::$" + ZSTR_VAL(member);
     if (property_value_in_range(spec, &v, what.c_str()))
       g_object_set_property(self->obj, spec->name, &v);

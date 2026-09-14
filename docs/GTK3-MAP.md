@@ -7,7 +7,7 @@ php-gtk4 already implements it.
 Source of truth: php-gtk3 class headers (158 headers, ~2400 exported methods) vs.
 `src/gtk4.stub.php` + the MINIT registration block in `src/gtk4.cpp`.
 
-Status column regenerated 2026-09-10 by `gen/map-status.php` (run by `gen/gir.php --install`);
+Status column regenerated 2026-09-14 by `gen/map-status.php` (run by `gen/gir.php --install`);
 the notes are hand-written and may lag.
 
 The model differences a port runs into - no `Gtk::main()`, no containers, signals without user
@@ -34,7 +34,7 @@ of pixbufs - are in [PORTING.md](PORTING.md). This file is the class-by-class re
 | ⛔ removed in GTK 4 | 41 | ~520 |
 | 🧩 out of scope / later milestone | 3 | ~130 |
 
-php-gtk4 currently declares (2026-09-10) 560 classes, interfaces and enums: 28 hand-written
+php-gtk4 currently declares (2026-09-14) 561 classes, interfaces and enums: 29 hand-written
 (`src/gtk4.stub.php`) and 532 generated - Gtk (213), WebKit (119), Gio (53), Gsk (50), Gdk (40), Pango (28),
 GdkPixbuf (8), Graphene (8), Soup (6), JavaScriptCore (4), GLib (3). `stubs/gtk4.php` has the names;
 everything else in this document is open work.
@@ -49,7 +49,7 @@ everything else in this document is open work.
 | `GApplication` | 37 | `GApplication` | ✅ | Generated (wave 0): the whole GTK 4 method set (hold/release, `run` with argv, registration, actions via `GActionMap`/`GActionGroup`). `open`, `send_notification`, option groups wait for `GFile`/`GNotification`/`GOptionGroup` (gen/report.md). |
 | `GIcon` | 4 | `GIcon` / `GThemedIcon` / `GFileIcon` | 🟡 | `GIcon` and `GThemedIcon` are bound; `GFileIcon` waits for `GFile`, which nothing maps yet (a path crosses as a string). |
 | — | — | `GParamSpec` | ✅ | New in php-gtk4, no php-gtk3 counterpart. |
-| — | — | `GVariant` (as plain PHP values) | ✅ | New: `src/core/variant.cpp`, used by `GSimpleAction`. |
+| — | — | `GVariant` (as plain PHP values) | ✅ | New: `src/core/variant.cpp`, used by `GSimpleAction`; `Gtk4\GVariant` types a value where inference cannot. |
 | — | — | `GAction` / `GActionMap` / `GActionGroup` / `GSimpleAction` | ✅ | New: GTK 4 replaces `GtkAction`/`GtkUIManager` with the `GAction` stack. |
 
 ## Gtk top-level (`php-gtk3/src/Gtk/Gtk.h`)

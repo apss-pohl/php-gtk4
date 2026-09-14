@@ -35,6 +35,7 @@ use Gtk4\GtkStringObject;
 use Gtk4\GtkStyleProviderPriority;
 use Gtk4\GtkTreeListModel;
 use Gtk4\GtkWindow;
+use Gtk4\GVariant;
 use PhpGtk4\Tests\Scripts\StressSquare;
 
 if (!Gtk::init()) {
@@ -253,6 +254,28 @@ try {
         exit(1);
     }
 }
+// Typed variants: handles nested in handles, accepted, wrapped and refused, cloned and compared.
+for ($i = 0; $i < $rounds; $i++) {
+    $child = new GVariant('(ia{sv}av)', [$i, ['label' => "item $i"], []]);
+    $root = new GVariant('(u(ia{sv}av))', [$i, [0, [], [$child, clone $child]]]);
+    $expected = [$i, [0, [], [$child->unpack(), $child->unpack()]]];
+    if ($root->unpack() !== $expected || !($child == clone $child)) {
+        fwrite(STDERR, "variant round trip wrong\n");
+        exit(1);
+    }
+    $action = Gtk4\GSimpleAction::new_stateful("s$i", null, new GVariant('x', $i));
+    $action->set_state(new GVariant('x', $i + 1));
+    try {
+        $action->set_state(new GVariant('s', 'no'));
+        fwrite(STDERR, "variant type mismatch accepted\n");
+        exit(1);
+    } catch (TypeError) {
+    }
+    if ($i % 10 === 0) {
+        $keep[] = $root;
+    }
+}
+
 Gtk::set_exception_mode(ExceptionMode::Log);
 $app = new GtkApplication(null, 1 << 5);
 $app->connect('activate', function (GtkApplication $a): void {

@@ -329,6 +329,50 @@ final class GMainLoop
 }
 
 /**
+ * A `GVariant` with a type PHP spelled. GVariant values cross as plain PHP values everywhere
+ * (a `GSimpleAction` state, a D-Bus body, a `GMenuItem` target), and where nothing declares
+ * their type it is inferred - a list becomes `as` or `av`, an int `i`, a string `s` - which
+ * cannot spell a tuple inside a variant, a byte array from a string or an integer wider than
+ * `i`. This handle carries the value already typed: wherever a value is expected it is accepted
+ * under its own type (or under inference), wrapped under a `v`, and a `TypeError` under any
+ * other. A dbusmenu `GetLayout` reply is `(u(ia{sv}av))` with every child an `(ia{sv}av)`
+ * inside its `v`: `new GVariant('(ia{sv}av)', [$id, $props, $children])` per child.
+ *
+ * Immutable: `clone` shares the value and `==` compares by value. Reading never yields one - a
+ * GVariant coming back from GLib is always the plain value ({@see unpack()}).
+ *
+ * @link https://docs.gtk.org/glib/struct.Variant.html
+ * @not-serializable
+ */
+final class GVariant
+{
+    /**
+     * Converts `$value` to the GVariant type `$type` spells, exactly like a parameter of that
+     * type (`strict_types` honoured, `check_range` for the integers, valid UTF-8 for the strings).
+     *
+     * @param string $type a definite GVariant type string (`(ia{sv}av)`, `ay`, `x`)
+     * @param mixed $value the PHP value: a list for a tuple or an array, an associative array
+     *                     for a dictionary, a string for `ay`, null for an empty maybe
+     *
+     * @throws \ValueError If `$type` is not a definite GVariant type string
+     * @throws \TypeError If `$value` does not fit `$type`
+     */
+    public function __construct(string $type, mixed $value) {}
+
+    /** The type string the value was built with. */
+    public function get_type_string(): string {}
+
+    /**
+     * The plain PHP value, converted the way every GVariant crosses back into PHP (a tuple a
+     * list, a dictionary an associative array, a `v` its inner value).
+     */
+    public function unpack(): mixed {}
+
+    /** GLib's text form of the value (`g_variant_print()`), with the type annotated on request. */
+    public function print(bool $type_annotate = false): string {}
+}
+
+/**
  * A GLib error (`GError`) surfaced as an exception. Every method whose C
  * counterpart takes a `GError **` throws this instead of returning false/null.
  * `getCode()` is GLib's error code within {@see getDomain()}.

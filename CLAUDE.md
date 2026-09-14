@@ -549,7 +549,10 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   `boxed` (value-type handles: owned `g_boxed_copy`, clone/compare by value, fields as properties
   via per-class reader/writer; `GdkRGBA`, `GdkRectangle`; `GStrv` ↔ `list<string>` is a value
   mapping), `variant` (`GVariant` ↔
-  PHP values, type-directed or inferred), `paramspec` (`GParamSpec` handle), `gerror`
+  PHP values, type-directed or inferred; `Gtk4\GVariant` (`src/GLib/GVariant.cpp`, own object
+  layout) is a value with a type PHP spelled, accepted wherever a value is expected — as is under
+  inference, wrapped under `v`, refused under another type — for what inference cannot spell: a
+  tuple inside a variant, `ay` from a string), `paramspec` (`GParamSpec` handle), `gerror`
   (`throw_gerror()` for `GError **` APIs,
   `GError` values → `Gtk4\GError` exceptions), `cairo` (`CairoContext` registration),
   `phpvalue` (GType `PhpValue`: a GObject subclass carrying a zval so PHP data can sit in
@@ -659,8 +662,10 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   with `use`. `emit()` emits with converted arguments (use it in tests instead of `activate()`,
   whose `clicked` needs a realized widget).
 - Actions: `GSimpleAction` + `GtkApplication::add_action()`; GVariant parameters/states are plain
-  PHP values. `has_action/list_actions/activate_action` only work once the app is registered
-  (from `startup` on); `add/remove/lookup_action` always. Errors raised *to* PHP from methods use the PHP 8
+  PHP values (a `Gtk4\GVariant` handle where the inferred type would be wrong; a `state` property
+  write converts to the action's state type like `set_state()` does).
+  `has_action/list_actions/activate_action` only work once the app is registered (from `startup`
+  on); `add/remove/lookup_action` always. Errors raised *to* PHP from methods use the PHP 8
   vocabulary, by what went wrong. Two argument checks are shared and must not be skipped
   (`src/php_gtk4.h`, emitted by the generator, applied by `core/marshal` for property writes and
   signal arguments, and by `core/variant` for GVariant strings): `check_utf8()` — a GLib string
