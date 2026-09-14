@@ -58,5 +58,6 @@ For a project that does not use Composer, point the IDE at the directory instead
 
 This directory *is* the package: `release.yml` copies it into the
 [php-gtk4-stubs](https://github.com/apss-pohl/php-gtk4-stubs) repository and tags it with the
-extension's version on every real release (`docs/RELEASING.md` "The stubs package"). Nothing in
-that repository is edited by hand.
+extension's version on every publish - real releases as `vX.Y.Z`, dev builds as `vX.Y.Z-rc.<run>`,
+of which only the newest few are kept (`docs/RELEASING.md` "The stubs package"). Nothing in that
+repository is edited by hand.

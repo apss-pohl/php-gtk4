@@ -57,6 +57,10 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Changed
 
+- **`php-gtk4/stubs` is published for dev builds too**: `release.yml`'s `publish-stubs` job
+  runs on every publish, so `vX.Y.Z-rc.<run>` exists on Packagist for the stubs as well as the
+  extension and a project can type-check against exactly the dev build it installed. Only the
+  newest `KEEP_PRERELEASES` dev-build stub tags are kept, mirroring the pre-release pruning.
 - **Boxed record fields**: a C string field reads as a `?string` property and a NULL-terminated
   array of pointers to a bound boxed record as a `list<...>` property (the introspection records
   above are made of them); a flags-typed field reads as its int. Read-only, all of them; a

@@ -202,13 +202,17 @@ does not build at all: it takes one of the release zips above.
 `stubs/` is also a Composer package, `php-gtk4/stubs`, so a project can `composer require --dev` the
 IDE/PHPStan stub instead of pointing its editor at a checkout. Composer cannot install a subdirectory of a
 repository, so the package has a repository of its own, `apss-pohl/php-gtk4-stubs`, that nobody edits: the
-`publish-stubs` job in `release.yml` runs on every **real** release, copies `stubs/gtk4.php`,
+`publish-stubs` job in `release.yml` runs on every publish, copies `stubs/gtk4.php`,
 `stubs/composer.json`, `stubs/extension.neon`, `stubs/README.md`, `LICENSE`, `THIRD-PARTY-NOTICES.md` and
 `LICENSES/PHP-3.01.txt` into a checkout of it, commits, tags it with the same `vX.Y.Z` and pushes. The
 notices go with it because `gtk4.php` is mostly GTK's own documentation and says so
 (`DocsTest::testTheStubsPackageShipsTheThirdPartyNotices` pins the list). Packagist follows the tags, so
-the stub version always equals the extension version. Dev builds are skipped: an editor does not need a
-stub per merge.
+the stub version always equals the extension version. Dev builds are published too, as
+`vX.Y.Z-rc.<run>`, so a project on `pie install php-gtk4/php-gtk4:X.Y.Z-rc.<run>` can
+`composer require --dev php-gtk4/stubs:X.Y.Z-rc.<run>` and type-check against exactly that build. They
+are pruned the way the pre-releases are: only the newest `KEEP_PRERELEASES` dev-build tags stay in the
+stubs repository, and Packagist drops a version with its tag - so a lock file pinned to an old dev
+build stops installing once it is pruned, exactly as `pie install` does for the extension.
 
 The job needs one secret, `STUBS_DEPLOY_KEY`: the private half of a deploy key with write access on the stubs
 repository (`ssh-keygen -t ed25519`, public key under that repository's *Deploy keys* with *Allow write
