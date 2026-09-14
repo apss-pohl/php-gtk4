@@ -461,7 +461,9 @@ pinned GTK version"), `phpize && configure --with-gtk4 && nmake` with a warning 
 that touch what it depends on (`paths:`) and once a week, because Windows minutes bill at nearly twice the
 Linux rate. (5) `release.yml` on
 every push to `main`: reads `VERSION` and either publishes an
-immutable `vX.Y.Z-dev.<run>` pre-release (suffix `-dev`; the newest 5 are kept, older ones deleted with their
+immutable `vX.Y.Z-rc.<run>` pre-release (`VERSION` keeps `-dev`, the tag swaps it for `-rc`:
+`-dev.<run>` is not a Composer version, so Packagist and PIE never saw those builds; the newest 5
+are kept, older ones deleted with their
 tags) or the real `vX.Y.Z` release (no suffix, once). **The gate (`verify`, and `coverage` behind it) does
 not depend on whether there is anything to publish** — it used to, so a `main` parked on an already-released
 `VERSION`, which is where every real release leaves it until the follow-up bump, ran no tests, no coverage

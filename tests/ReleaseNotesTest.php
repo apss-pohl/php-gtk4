@@ -137,12 +137,12 @@ final class ReleaseNotesTest extends TestCase
         $this->repository(['chore: root', 'feat: before the release']);
         $this->git('tag v0.1.0');
         $this->repository_add('fix: after the release');
-        $this->git('tag v0.2.0-dev.3');
+        $this->git('tag v0.2.0-rc.3');
         $this->repository_add('fix: after the dev tag');
 
         // Default: the newest tag of any kind, which for a dev build is the last dev tag.
         $latest = $this->notes();
-        self::assertStringContainsString('### Changes since `v0.2.0-dev.3`', $latest);
+        self::assertStringContainsString('### Changes since `v0.2.0-rc.3`', $latest);
         self::assertStringContainsString('- after the dev tag', $latest);
         self::assertStringNotContainsString('before the release', $latest);
 

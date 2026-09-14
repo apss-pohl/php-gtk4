@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use Composer\Semver\Comparator;
+use Composer\Semver\VersionParser;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -16,7 +18,8 @@ use PHPUnit\Framework\TestCase;
  * build fails when those drift apart - the first sign is `pie install` finding no asset, months
  * later - so the pieces are pinned to each other here: the declared extension name against the
  * extension this suite is running on, the declared configure options against config.m4, and the
- * release workflow's asset name against the shape php/pie's WindowsExtensionAssetName expects.
+ * release workflow's asset name against the shape php/pie's WindowsExtensionAssetName expects, and
+ * its dev-build tag against Composer's own version parser.
  */
 final class PiePackageTest extends TestCase
 {
@@ -138,6 +141,43 @@ final class PiePackageTest extends TestCase
     {
         $release = (string) file_get_contents(self::ROOT . '/.github/workflows/release.yml');
         self::assertMatchesRegularExpression('/ts:\s*\[nts,\s*ts\]/', $release);
+    }
+
+    /**
+     * PIE resolves versions from Packagist, and Packagist lists only the tags Composer can parse -
+     * valid SemVer is not enough. Dev builds used to be tagged `v0.2.0-dev.7`, which Composer
+     * rejects ("Invalid version string": it takes `-dev` only as a bare suffix), so none of them
+     * ever reached Packagist and `pie install` could not see a single one. The workflow's own tag
+     * expression is replayed here against Composer's parser (docs/RELEASING.md "Dev builds").
+     */
+    public function testDevBuildTagsAreVersionsComposerCanResolve(): void
+    {
+        $release = (string) file_get_contents(self::ROOT . '/.github/workflows/release.yml');
+        if (preg_match('/^\s*kind=dev; relver="([^"]+)"; tag="v\$relver"/m', $release, $m) !== 1) {
+            self::fail('release.yml no longer names a dev build in the form this test replays');
+        }
+
+        $expression = $m[1];
+        $tag = static fn(int $run): string => 'v' . strtr($expression, [
+            '${version%-dev}' => '0.4.0',
+            '$version' => '0.4.0-dev',
+            '${{ github.run_number }}' => (string) $run,
+        ]);
+        $parser = new VersionParser();
+
+        // normalize() throws on anything Composer (and so Packagist) would not list.
+        $run7 = $parser->normalize($tag(7));
+        $run11 = $parser->normalize($tag(11));
+        self::assertSame('RC', VersionParser::parseStability($tag(7)), 'a dev build is tagged -rc.<run>');
+        self::assertTrue(Comparator::lessThan($run7, $run11), 'run numbers must order numerically');
+        self::assertTrue(
+            Comparator::lessThan($run11, $parser->normalize('v0.4.0')),
+            'a dev build must sort below the release it leads to',
+        );
+        self::assertTrue(
+            Comparator::greaterThan($run7, $parser->normalize('v0.3.0')),
+            'a dev build must sort above the previous release',
+        );
     }
 
     /** The stubs are their own package; the two names must not collide on Packagist. */
