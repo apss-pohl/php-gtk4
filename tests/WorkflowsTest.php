@@ -264,6 +264,45 @@ final class WorkflowsTest extends TestCase
         );
     }
 
+    /**
+     * The stub is the only description of the API a dev build has, and it changes between
+     * builds - so a project on `pie install php-gtk4/php-gtk4:X.Y.Z-rc.<run>` needs
+     * `php-gtk4/stubs:X.Y.Z-rc.<run>` to exist. The tags are pruned like the pre-releases so the
+     * version list stays the release list.
+     */
+    public function testTheStubsArePublishedForDevBuildsToo(): void
+    {
+        $yml = (string) file_get_contents(self::WORKFLOWS . '/release.yml');
+        $job = substr($yml, (int) strpos($yml, "\n  publish-stubs:"));
+
+        self::assertMatchesRegularExpression(
+            "/^    if: needs\\.plan\\.outputs\\.publish == 'true'$/m",
+            $job,
+            'publish-stubs is gated on a real release again; dev builds need their stub on Packagist',
+        );
+        self::assertStringNotContainsString(
+            "kind == 'release'",
+            $job,
+            'publish-stubs must not depend on the kind',
+        );
+        self::assertStringContainsString(
+            'commit -q -m "php-gtk4 $relver"',
+            $job,
+            'the stubs commit names the build, not X.Y.Z-dev',
+        );
+        self::assertStringContainsString(
+            "git tag --list 'v*-rc.*' --sort=-creatordate",
+            $job,
+            'dev-build stub tags are never pruned',
+        );
+        self::assertStringContainsString('git push origin --delete "$tag"', $job);
+        self::assertStringContainsString(
+            'KEEP_PRERELEASES + 1',
+            $job,
+            'the stubs keep a different number of dev builds than the releases page',
+        );
+    }
+
     /** Windows minutes bill at nearly twice Linux's, so the four-job matrix is not on every push. */
     public function testWindowsIsNotBuiltForEveryDevBuild(): void
     {
