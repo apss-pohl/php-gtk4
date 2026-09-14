@@ -109,6 +109,7 @@ final class Gir
             $node->fundamental = $el->getAttributeNS(NS_GLIB, 'fundamental') === '1';
             $node->refFunc = $el->getAttributeNS(NS_GLIB, 'ref-func') ?: null;
             $node->unrefFunc = $el->getAttributeNS(NS_GLIB, 'unref-func') ?: null;
+            $node->errorDomain = $el->getAttributeNS(NS_GLIB, 'error-domain') ?: null;
             $node->doc = self::doc($x, $el);
             if ($el->hasAttribute('parent')) {
                 $node->parent = self::qualify($ns, $el->getAttribute('parent'));

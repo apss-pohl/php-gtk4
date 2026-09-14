@@ -286,7 +286,8 @@ display, and calls `Gtk::init()` once.
   meta tests (`ExtensionTest`, `StubsTest`, `ExampleTest`, `EveryClassTest`, `RobustnessTest`,
   `DeprecationTest` (no deprecated GIR member is bound), `DocsTest`,
   `HeaderNamesTest`, `WorkflowsTest`, `CommitLintTest`, `ReleaseNotesTest`,
-  `GeneratorIdempotenceTest`, `VscodeConfigTest`, `PiePackageTest`). Every test that touches GTK
+  `GeneratorIdempotenceTest`, `VscodeConfigTest`, `PiePackageTest`, `InventoryTest`
+  (`docs/INVENTORY.md` lists exactly the registered classes)). Every test that touches GTK
   extends `GtkTestCase`; the meta
   tests that never load a widget extend PHPUnit's `TestCase` directly. Fixtures that subclass GTK
   classes live in `tests/Subclass/` (namespace `PhpGtk4\Tests\Subclass`), script-only ones next to
@@ -619,8 +620,10 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   `ZEND_MALIAS`, no per-class C++. `G_TYPE_POINTER` is unsupported on purpose.
 - `gen/` — `gir.php` (the GIR generator: per-namespace stubs, `src/<Ns>/<Class>.cpp`, `gen_minit.inc`,
   `gen_minit_defs.inc`, `gen_prototypes.h`, vfunc thunks, smoke tests, example skeletons,
-  `report.md`, the map's status column via `map-status.php`) with its inputs `allowlist.txt`,
-  `handwritten.txt`, `skip.txt`, `ctor-props.txt`, `smoke-skip.txt` and `overrides/`;
+  `report.md`, the map's status column via `map-status.php`, and `docs/INVENTORY.md` - every
+  registered class by namespace with a link to its upstream documentation, `gen/gir/inventory.php`)
+  with its inputs `allowlist.txt`, `handwritten.txt`, `skip.txt`, `ctor-props.txt`, `smoke-skip.txt`
+  and `overrides/`;
   `gen_stub.php` (vendored from php-src), `ide-stub.php`, `method-comments.php`.
   `gen/README.md` has the flow diagram.
 - **Everything PHP-visible is in the `Gtk4\` namespace**; PHP class name = `Gtk4\<GTypeName>`, and
