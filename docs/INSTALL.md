@@ -25,6 +25,17 @@ The stubs are a separate Composer package and are declarations only — the exte
 classes, so the package is never autoloaded. It is what makes an editor and PHPStan understand
 `Gtk4\` without pointing them at a checkout.
 
+Every merge into `main` also publishes a development build, tagged `vX.Y.Z-rc.<run>` on the
+[releases page](https://github.com/apss-pohl/php-gtk4/releases). PIE installs one only when asked, and on
+Linux only — dev builds ship no Windows binaries:
+
+```sh
+pie install php-gtk4/php-gtk4:0.4.0-rc.14              # that exact build
+pie install "php-gtk4/php-gtk4:^0.4@RC"                # the newest 0.4 dev build, or 0.4.0 once released
+```
+
+Only the newest five dev builds are kept; [RELEASING.md](RELEASING.md) "Dev builds" has the details.
+
 The prebuilt binaries are **not portable**: each one is bound to a PHP version, NTS, and (on Linux)
 the C++ ABI, glibc and GTK 4 soname it was built against — the filename spells all of it out. When
 in doubt, build from source; it is one `phpize && ./configure && make` away and always correct.

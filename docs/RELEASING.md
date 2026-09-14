@@ -14,7 +14,7 @@ version, and without the suffix the file would name the version already shipped.
 
 | `VERSION` | every merge into `main` publishes |
 | --------- | --------------------------------- |
-| `0.2.0-dev` | a dev build, **`v0.2.0-dev.<run>`**, as a pre-release |
+| `0.2.0-dev` | a dev build, **`v0.2.0-rc.<run>`**, as a pre-release |
 | `0.2.0` | the real release **`v0.2.0`** — once; later merges are a no-op until someone bumps again |
 
 `.github/workflows/release.yml` reads the file and decides. Nothing else *triggers* a release: no tag pushes,
@@ -51,7 +51,7 @@ Two halves, in this order:
 
 ```sh
 bin/release-notes                 # since the newest tag - what the next dev build will list
-bin/release-notes --stable        # since the newest real release, skipping the v*-dev.* tags
+bin/release-notes --stable        # since the newest real release, skipping the v*-rc.* dev tags
 bin/release-notes v0.1.0          # since that tag
 ```
 
@@ -84,16 +84,24 @@ Nothing accepts a version from a command line or an environment variable. There 
 
 ## Dev builds
 
-Every merge into `main` gets its own immutable pre-release, tagged `v<version>.<run>` — the version file
-verbatim plus GitHub's monotonic run number:
+Every merge into `main` gets its own immutable pre-release, tagged `v<version>-rc.<run>` — the version
+file with its `-dev` suffix swapped for `-rc`, plus GitHub's monotonic run number:
 
 ```text
-v0.2.0-dev.7   v0.2.0-dev.11   v0.2.0-dev.14   …
+v0.2.0-rc.7   v0.2.0-rc.11   v0.2.0-rc.14   …
 ```
 
-That is valid SemVer, and it sorts the way you want: `0.2.0-dev.7` < `0.2.0-dev.11` < `0.2.0` (numeric
-prerelease identifiers compare numerically, and any prerelease sorts below the release). Run numbers skip
-whenever a run does not publish; gaps are fine, collisions would not be.
+The tag has to be a version **Composer** can parse, not merely valid SemVer: PIE resolves versions from
+Packagist, and Packagist skips any tag Composer rejects. The first scheme, `v0.2.0-dev.7`, was exactly that
+case — Composer accepts `-dev` only as a bare suffix, so `0.2.0-dev.7` is an "Invalid version string", none
+of those builds ever appeared on Packagist, and `pie install` could not see them. `0.2.0-rc.7` normalizes to
+`0.2.0.0-RC7` (stability `RC`) and sorts the way you want under both rule sets: `0.2.0-rc.7` <
+`0.2.0-rc.11` < `0.2.0`. `PiePackageTest` replays the workflow's tag expression against Composer's own
+parser. Run numbers skip whenever a run does not publish; gaps are fine, collisions would not be.
+
+`rc` here means "a build of `main` on its way to that version", not a hand-picked release candidate: every
+merge produces one. `VERSION` keeps its `-dev` suffix — that is the state machine above — and the module
+reports it unchanged.
 
 **The newest five pre-releases stay downloadable.** After every publish the workflow deletes the rest, tags
 included (`KEEP_PRERELEASES` in `release.yml`). The rule is uniform and does not care which version a
@@ -109,13 +117,29 @@ GitHub only serves `/releases/latest` for real releases. Find the newest with:
 gh release list --limit 5 --json tagName,isPrerelease --jq '[.[]|select(.isPrerelease)][0].tagName'
 ```
 
-A dev build's assets carry the `.<run>` suffix in their filenames while the module itself reports the plain
+A dev build's assets carry `-rc.<run>` in their filenames while the module itself reports the plain
 `0.2.0-dev` — two dev builds are different files and must not collide in a downloads folder, but the version
 the binary reports still comes from `VERSION` and nowhere else. `PHPGTK_BUILD_INFO` (baked in by `config.m4`)
 carries the git hash, so a build identifies its exact commit from the inside. That holds for a build without
 a `.git` too - the source tarball and the GitHub zipball PIE installs from - because `.git-commit` is marked
 `export-subst` in `.gitattributes`: `git archive` (which is what GitHub serves) replaces its `$Format:%h$`
 placeholder with the commit, and `config.m4`/`config.w32` read the file before asking git.
+
+### Installing a dev build with PIE
+
+A plain `pie install php-gtk4/php-gtk4` still installs the newest real release: PIE's minimum stability is
+`stable` unless the constraint says otherwise. A dev build has to be asked for, by exact version or with a
+stability flag:
+
+```sh
+pie install php-gtk4/php-gtk4:0.4.0-rc.14      # exactly that build
+pie install "php-gtk4/php-gtk4:^0.4@RC"        # the newest 0.4 dev build, or 0.4.0 once it is out
+```
+
+Linux only: PIE builds it from source, the same as a release. On Windows PIE never builds, and a dev build
+ships no Windows zips (see "Gating"), so there is nothing for it to take. Packagist follows the pruning
+above: once a dev build is deleted its version is gone, and a `pie.json` pinned to it stops resolving. Pin a
+dev build to try something out, not for anything that has to install again next month.
 
 ## Artifacts
 
@@ -132,7 +156,8 @@ php_gtk4-0.2.0-8.5-ts-vs17-x86_64.zip
 SHA256SUMS
 ```
 
-A dev build is the same set with `0.2.0-dev.7` in place of `0.2.0`.
+A dev build is the Linux half of that set, with `0.2.0-rc.7` in place of `0.2.0` — no Windows zips (see
+"Gating").
 
 A `.so` is not portable the way a phar or a manylinux wheel is: it is bound to the PHP `ZEND_MODULE_API`
 number, the thread-safety mode, the C++ ABI, glibc, and the GTK 4 soname it linked against. So the filename
@@ -182,8 +207,8 @@ repository, so the package has a repository of its own, `apss-pohl/php-gtk4-stub
 `LICENSES/PHP-3.01.txt` into a checkout of it, commits, tags it with the same `vX.Y.Z` and pushes. The
 notices go with it because `gtk4.php` is mostly GTK's own documentation and says so
 (`DocsTest::testTheStubsPackageShipsTheThirdPartyNotices` pins the list). Packagist follows the tags, so
-the stub version always equals the extension version. Dev builds are skipped: Composer does not understand
-the `-dev.<run>` suffix, and an editor does not need a stub per merge.
+the stub version always equals the extension version. Dev builds are skipped: an editor does not need a
+stub per merge.
 
 The job needs one secret, `STUBS_DEPLOY_KEY`: the private half of a deploy key with write access on the stubs
 repository (`ssh-keygen -t ed25519`, public key under that repository's *Deploy keys* with *Allow write
@@ -217,9 +242,10 @@ Those first two are what "Cutting a release" above asks the maintainer to run lo
 fast feedback, and this is what makes forgetting it harmless rather than a shipped regression.
 
 The Windows assets are built for real releases only. They are what `pie install` puts on a Windows machine,
-and PIE resolves a release rather than a dev pre-release, so building four of them per merge produced
-binaries nobody could install. `windows.yml` is what says whether Windows still compiles at all, on the pull
-requests that touch anything it depends on and once a week regardless.
+and four Windows jobs per merge, billed at nearly twice the Linux rate, would be most of what a dev build
+costs. So a dev build installs through PIE on Linux, where PIE builds from source, and not on Windows.
+`windows.yml` is what says whether Windows still compiles at all, on the pull requests that touch anything
+it depends on and once a week regardless.
 
 Branch protection on `main` should require the `C++ static analysis`, `PHP QA (...)` and `PHP 8.4` /
 `PHP 8.5` checks (the job names in `.github/workflows/`), with squash merges — one merge

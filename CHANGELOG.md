@@ -65,6 +65,12 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   `tests/dbus-session.conf`, no service activation) where the tool exists: GTK connects to the
   session bus at init and keeps that connection as the process singleton, so a `GTestDBus` started
   inside a test is bypassed and stalls on finalize. The D-Bus tests skip themselves without a bus.
+- **Dev builds are tagged `vX.Y.Z-rc.<run>`**, no longer `vX.Y.Z-dev.<run>`, so PIE can install them:
+  `pie install php-gtk4/php-gtk4:0.4.0-rc.14`, or `"php-gtk4/php-gtk4:^0.4@RC"` for the newest (Linux only,
+  built from source). Composer rejects `0.4.0-dev.8` as a version string, so Packagist skipped every
+  dev-build tag and PIE never saw one. `VERSION` and the module still say `X.Y.Z-dev`; `PiePackageTest`
+  replays the release workflow's tag expression against Composer's parser. The remaining `-dev.<run>`
+  pre-releases age out with the usual pruning.
 
 ### Fixed
 
@@ -973,5 +979,5 @@ Full details in docs/RELEASING.md. `VERSION` is the only trigger — there is no
 6. Merge as a `release: 0.2.0` PR — `.github/workflows/release.yml` tags, builds and publishes.
 7. Follow-up PR: `VERSION` → `0.3.0-dev`, `./ci.sh --only=version,stubs --fix`, fresh `## [Unreleased]`.
 
-Between releases every merge into `main` publishes a `vX.Y.Z-dev.<run>` pre-release instead; the
+Between releases every merge into `main` publishes a `vX.Y.Z-rc.<run>` pre-release instead; the
 newest five stay downloadable.

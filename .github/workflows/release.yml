@@ -1,7 +1,7 @@
 name: Release
 
 # ./VERSION is the gate (docs/RELEASING.md):
-#   0.2.0-dev  -> publish the dev build v0.2.0-dev.<run> as a pre-release
+#   0.2.0-dev  -> publish the dev build v0.2.0-rc.<run> as a pre-release
 #   0.2.0      -> publish the real release v0.2.0 (once; later merges are a no-op)
 # Both attach the .so (Linux) and php_gtk4.dll (Windows) built here for every
 # supported PHP, plus a source tarball and SHA256SUMS, with build provenance instead of a signed tag. Pre-releases are
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       version: ${{ steps.plan.outputs.version }}      # what the binary reports, from ./VERSION
-      relver: ${{ steps.plan.outputs.relver }}        # what this release is called (dev builds add .<run>)
+      relver: ${{ steps.plan.outputs.relver }}        # what this release is called (dev builds: X.Y.Z-rc.<run>)
       kind: ${{ steps.plan.outputs.kind }}
       tag: ${{ steps.plan.outputs.tag }}
       publish: ${{ steps.plan.outputs.publish }}
@@ -63,9 +63,12 @@ jobs:
             || { echo "::error file=VERSION::must be X.Y.Z or X.Y.Z-dev, got '$version'"; exit 1; }
 
           if [[ "$version" == *-dev ]]; then
-            # github.run_number is monotonic per workflow, so 0.2.0-dev.7 < 0.2.0-dev.11
-            # < 0.2.0 under SemVer prerelease ordering. Gaps are fine; collisions are not.
-            kind=dev; relver="$version.${{ github.run_number }}"; tag="v$relver"; publish=true
+            # The tag says -rc.<run>, not -dev.<run>: Composer rejects "0.2.0-dev.7" as a version
+            # string, so Packagist skipped those tags and `pie install` never saw a dev build.
+            # "0.2.0-rc.7" normalizes to 0.2.0.0-RC7 (PiePackageTest replays this line). run_number
+            # is monotonic per workflow, so 0.2.0-rc.7 < 0.2.0-rc.11 < 0.2.0 under SemVer and
+            # Composer ordering alike. Gaps are fine; collisions are not.
+            kind=dev; relver="${version%-dev}-rc.${{ github.run_number }}"; tag="v$relver"; publish=true
           else
             kind=release; relver="$version"; tag="v$version"
             # A real release is published exactly once; every merge after it,
@@ -188,8 +191,8 @@ jobs:
           name="gtk4-$relver-php${{ matrix.php }}-nts-$arch-$DIST.so"
           mkdir -p dist && cp gtk4.so "dist/$name"
           # Last line of defence: the file we are about to publish must report the
-          # version in ./VERSION. On a dev build the filename carries a .<run> suffix
-          # the binary does not - two dev builds are different files and must not
+          # version in ./VERSION. On a dev build the filename says -rc.<run> where the
+          # binary says -dev - two dev builds are different files and must not
           # share a name in someone's downloads folder. PHPGTK_BUILD_INFO (git hash)
           # identifies the exact commit from inside the module.
           got=$(php -n -dextension="$PWD/dist/$name" -r 'echo phpversion("gtk4");')
@@ -212,9 +215,10 @@ jobs:
   build-windows:
     name: Build .dll (PHP ${{ matrix.php }} ${{ matrix.ts }})
     needs: [plan, verify]
-    # Real releases only. These are what PIE installs on Windows, and PIE resolves a release,
-    # never a dev pre-release - so four Windows jobs per merge built assets nobody could
-    # install. windows.yml is what says whether Windows still builds at all.
+    # Real releases only. Windows minutes bill at nearly twice Linux's and these four jobs would
+    # be most of a dev build's cost, so a dev build (`pie install php-gtk4/php-gtk4:X.Y.Z-rc.N`)
+    # installs through PIE on Linux, where PIE builds from source, and not on Windows, where it
+    # would need these. windows.yml is what says whether Windows still builds at all.
     if: needs.plan.outputs.kind == 'release' && needs.plan.outputs.publish == 'true'
     strategy:
       fail-fast: false
@@ -407,17 +411,22 @@ jobs:
         run: |
           set -euo pipefail
           version="${{ needs.plan.outputs.version }}"
+          relver="${{ needs.plan.outputs.relver }}"
           {
             if [[ "${{ needs.plan.outputs.kind }}" == dev ]]; then
               cat <<EOF
           **Development build of $version, not a release.** Built from
           [\`${GITHUB_SHA:0:7}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}).
-          The module itself reports \`$version\` - the \`.$GITHUB_RUN_NUMBER\` in the tag and the
-          filenames distinguishes builds of it. Only the newest $KEEP_PRERELEASES dev builds are
-          kept; this one is deleted once $KEEP_PRERELEASES newer merges land.
+          The module itself reports \`$version\` - the tag and the filenames call this build
+          \`$relver\`, a version Composer understands, so PIE can install exactly this one. Only the
+          newest $KEEP_PRERELEASES dev builds are kept; this one is deleted once $KEEP_PRERELEASES
+          newer merges land, and \`pie install\` cannot resolve it after that.
 
-          Linux only: the Windows builds are made for real releases, which is what \`pie install\`
-          resolves.
+          \`\`\`sh
+          pie install php-gtk4/php-gtk4:$relver
+          \`\`\`
+
+          Linux only: PIE builds it from source. The Windows builds are made for real releases.
 
           EOF
             else
@@ -434,7 +443,7 @@ jobs:
             # The commit messages, grouped by Conventional Commit type. They are the
             # detail behind the prose above and the whole body of a dev build's notes
             # (docs/RELEASING.md "What a release body says"). --stable measures a real
-            # release from the previous real release, skipping the v*-dev.* tags between.
+            # release from the previous real release, skipping the v*-rc.* dev tags between.
             printf '\n'
             if [[ "${{ needs.plan.outputs.kind }}" == dev ]]; then
               ./bin/release-notes
@@ -507,7 +516,8 @@ jobs:
       # rest, tags included. Runs after both kinds of publish: a real release does
       # not wipe the dev builds, it just becomes one more thing newer than them,
       # so there are always KEEP_PRERELEASES dev builds to fall back to. Deleting
-      # a release does not touch anything that already downloaded it.
+      # a release does not touch anything that already installed it, but Packagist drops
+      # the version with its tag: `pie install ...:X.Y.Z-rc.N` stops resolving for it.
       - name: Prune old pre-releases
         env:
           GH_TOKEN: ${{ github.token }}
@@ -530,8 +540,8 @@ jobs:
           done <<< "$stale"
 
   # The stubs package: stubs/ as it is at this commit, committed to STUBS_REPO and tagged
-  # with the release version. Real releases only - Composer has no notion of the
-  # `-dev.<run>` suffix, and an IDE does not need a stub per merge. Idempotent: a tag
+  # with the release version. Real releases only - an IDE does not need a stub per merge,
+  # and one per dev build would bury the releases in the package's version list. Idempotent: a tag
   # that already exists there is left alone.
   publish-stubs:
     name: Publish stubs ${{ needs.plan.outputs.tag }}

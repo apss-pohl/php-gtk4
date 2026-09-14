@@ -7,7 +7,7 @@
 #
 #   bin/release-notes                 since the newest tag reachable from HEAD
 #   bin/release-notes v0.1.0          since that tag
-#   bin/release-notes --stable        since the newest *real* release tag, skipping v*-dev.*
+#   bin/release-notes --stable        since the newest *real* release tag, skipping v*-rc.*
 #
 # Commit links are added when GITHUB_SERVER_URL and GITHUB_REPOSITORY are set (they
 # are inside Actions); locally the short hash is printed on its own.
@@ -30,7 +30,7 @@ esac
 
 # The tag the previous release was cut from: the nearest one *in history*, not the
 # newest by date (two tags can share a timestamp; only the graph is authoritative).
-# Dev pre-releases are tagged too (v0.2.0-dev.7), so --stable skips anything with a
+# Dev pre-releases are tagged too (v0.2.0-rc.7), so --stable skips anything with a
 # suffix and measures a real release from the previous real release.
 previous_tag() {
     local from=$1
