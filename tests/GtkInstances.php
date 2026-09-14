@@ -341,6 +341,7 @@ final class GtkInstances
             // Printing: a named paper size (null is the locale's default), the rest through `new`.
             \Gtk4\GtkPaperSize::class => new \Gtk4\GtkPaperSize(null),
             \Gtk4\GError::class => new \Gtk4\GError('x'),
+            \Gtk4\GVariant::class => new \Gtk4\GVariant('(ia{sv}av)', [1, ['label' => 'x'], []]),
             \Gtk4\GListStore::class => new \Gtk4\GListStore(),
             \Gtk4\GtkFilter::class, \Gtk4\GtkCustomFilter::class => new \Gtk4\GtkCustomFilter(fn() => true),
             \Gtk4\GtkSorter::class, \Gtk4\GtkCustomSorter::class => new \Gtk4\GtkCustomSorter(fn() => 0),

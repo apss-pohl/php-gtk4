@@ -124,6 +124,7 @@ static PHP_MINIT_FUNCTION(gtk4) {
   register_class_Gtk4_Gtk();
   register_class_Gtk4_GLib();
   phpgtk::register_GMainLoop(register_class_Gtk4_GMainLoop());
+  phpgtk::register_GVariant(register_class_Gtk4_GVariant());
   phpgtk::register_GdkRGBA(register_class_Gtk4_GdkRGBA());
   phpgtk::register_GdkRectangle(register_class_Gtk4_GdkRectangle());
   phpgtk::register_GskRoundedRect(register_class_Gtk4_GskRoundedRect());

@@ -9,6 +9,14 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Added
 
+- **`GVariant`**, a value with a type PHP spelled. GVariant values cross as plain PHP values
+  everywhere, and where nothing declares their type it is inferred - which cannot spell a tuple
+  inside a variant (every item of a dbusmenu `GetLayout` reply is an `(ia{sv}av)` inside its
+  `v`), a byte array from a string or an integer wider than `i`. `new GVariant('(ia{sv}av)',
+  [$id, $props, $children])` is accepted wherever a plain value would be inferred - a D-Bus body
+  or reply, an action state, a property write - as it is under inference, wrapped under a `v`, a
+  `TypeError` under any other type; `unpack()` is the plain value, `print()` GLib's text form,
+  `clone` and `==` work by value.
 - **`docs/INVENTORY.md`**: every class, interface and enum the extension registers, by GIR
   namespace, each linked to its page in the upstream documentation and marked generated,
   hand-written or php-gtk4's own. Written by `gen/gir.php --install` (`gen/gir/inventory.php`) and
@@ -57,6 +65,10 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ### Changed
 
+- **`php-gtk4/stubs` is published for dev builds too**: `release.yml`'s `publish-stubs` job
+  runs on every publish, so `vX.Y.Z-rc.<run>` exists on Packagist for the stubs as well as the
+  extension and a project can type-check against exactly the dev build it installed. Only the
+  newest `KEEP_PRERELEASES` dev-build stub tags are kept, mirroring the pre-release pruning.
 - **Boxed record fields**: a C string field reads as a `?string` property and a NULL-terminated
   array of pointers to a bound boxed record as a `list<...>` property (the introspection records
   above are made of them); a flags-typed field reads as its int. Read-only, all of them; a

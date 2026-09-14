@@ -14,7 +14,7 @@ own. A namespace that needs a configure feature says so in its heading.
 
 | Namespace | Types | Documentation |
 | --- | ---: | --- |
-| [GLib](#glib) | 6 | <https://docs.gtk.org/glib/> |
+| [GLib](#glib) | 7 | <https://docs.gtk.org/glib/> |
 | [GObject](#gobject) | 2 | <https://docs.gtk.org/gobject/> |
 | [Gio](#gio) | 53 | <https://docs.gtk.org/gio/> |
 | [Gdk](#gdk) | 53 | <https://docs.gtk.org/gdk4/> |
@@ -28,7 +28,7 @@ own. A namespace that needs a configure feature says so in its heading.
 | [JavaScriptCore](#javascriptcore) | 4 | <https://webkitgtk.org/reference/jsc-glib/stable/> |
 | [WebKit](#webkit) | 119 | <https://webkitgtk.org/reference/webkitgtk/stable/> |
 | [php-gtk4](#php-gtk4) | 5 | <https://github.com/apss-pohl/php-gtk4> |
-| **all** | **560** | |
+| **all** | **561** | |
 
 ## GLib
 
@@ -42,6 +42,7 @@ GLib, <https://docs.gtk.org/glib/>.
 | `GKeyFile` | struct | generated | [GLib.KeyFile](https://docs.gtk.org/glib/struct.KeyFile.html) |
 | `GMainLoop` | struct | hand-written | [GLib.MainLoop](https://docs.gtk.org/glib/struct.MainLoop.html) |
 | `GTimeZone` | struct | generated | [GLib.TimeZone](https://docs.gtk.org/glib/struct.TimeZone.html) |
+| `GVariant` | struct | hand-written | [GLib.Variant](https://docs.gtk.org/glib/struct.Variant.html) |
 
 ## GObject
 

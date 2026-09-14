@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 51bb6da828e9e01c7327be4fc3ed530f7d8308ef */
+ * Stub hash: 11fcd2406a6795f0f551256bd5ccbae54837f2ea */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GObject___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -134,6 +134,19 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GMainLoop_quit arginfo_class_Gtk4_GMainLoop_run
 
 #define arginfo_class_Gtk4_GMainLoop_is_running arginfo_class_Gtk4_GParamSpec_is_readable
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GVariant___construct, 0, 0, 2)
+	ZEND_ARG_TYPE_INFO(0, type, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, value, IS_MIXED, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_Gtk4_GVariant_get_type_string arginfo_class_Gtk4_GParamSpec_get_name
+
+#define arginfo_class_Gtk4_GVariant_unpack arginfo_class_Gtk4_GParamSpec_get_default_value
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GVariant_print, 0, 0, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, type_annotate, _IS_BOOL, 0, "false")
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_Gtk4_GError_getDomain arginfo_class_Gtk4_GParamSpec_get_name
 
@@ -461,6 +474,10 @@ ZEND_METHOD(Gtk4_GMainLoop, __construct);
 ZEND_METHOD(Gtk4_GMainLoop, run);
 ZEND_METHOD(Gtk4_GMainLoop, quit);
 ZEND_METHOD(Gtk4_GMainLoop, is_running);
+ZEND_METHOD(Gtk4_GVariant, __construct);
+ZEND_METHOD(Gtk4_GVariant, get_type_string);
+ZEND_METHOD(Gtk4_GVariant, unpack);
+ZEND_METHOD(Gtk4_GVariant, print);
 ZEND_METHOD(Gtk4_GError, getDomain);
 ZEND_METHOD(Gtk4_PhpValue, __construct);
 ZEND_METHOD(Gtk4_PhpValue, get_value);
@@ -608,6 +625,14 @@ static const zend_function_entry class_Gtk4_GMainLoop_methods[] = {
 	ZEND_ME(Gtk4_GMainLoop, run, arginfo_class_Gtk4_GMainLoop_run, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMainLoop, quit, arginfo_class_Gtk4_GMainLoop_quit, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GMainLoop, is_running, arginfo_class_Gtk4_GMainLoop_is_running, ZEND_ACC_PUBLIC)
+	ZEND_FE_END
+};
+
+static const zend_function_entry class_Gtk4_GVariant_methods[] = {
+	ZEND_ME(Gtk4_GVariant, __construct, arginfo_class_Gtk4_GVariant___construct, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GVariant, get_type_string, arginfo_class_Gtk4_GVariant_get_type_string, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GVariant, unpack, arginfo_class_Gtk4_GVariant_unpack, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GVariant, print, arginfo_class_Gtk4_GVariant_print, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
@@ -844,6 +869,16 @@ static zend_class_entry *register_class_Gtk4_GMainLoop(void)
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GMainLoop", class_Gtk4_GMainLoop_methods);
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+
+	return class_entry;
+}
+
+static zend_class_entry *register_class_Gtk4_GVariant(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "Gtk4", "GVariant", class_Gtk4_GVariant_methods);
 	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
 
 	return class_entry;

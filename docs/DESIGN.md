@@ -63,7 +63,9 @@ A decision leaves this file when it stops being true, not when it stops being ne
   returns what it declares and generic sweeps check every method and getter.
 - **Values, not GLib shapes, at the PHP side.** Out parameters are return values (several become a
   list; a boolean-plus-outs returns the outs or null); `GError **` throws `Gtk4\GError`; `GBytes` is
-  a string, `GVariant` a PHP value, a `GFile` a path, a `GType` a class name, C arrays are lists;
+  a string, `GVariant` a PHP value (a `Gtk4\GVariant` handle spells a type inference cannot: a
+  tuple inside a variant, `ay` from a string), a `GFile` a path, a `GType` a class name, C arrays
+  are lists;
   signals take exactly `(string $signal, callable $handler)` and closures capture their context.
 - **Single GUI thread.** ZTS builds keep per-request state in module globals, but GTK stays
   single-threaded: only the thread that ran `Gtk::init()` may drive the main loop, and the

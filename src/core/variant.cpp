@@ -152,6 +152,25 @@ class RecursionGuard {
   HashTable *ht = nullptr;
 };
 
+// A Gtk4\GVariant handle where a value is expected: accepted under its own type (or under
+// inference), wrapped under `v`, a TypeError under any other. Like every other arm this returns
+// a floating reference the caller sinks - a fresh instance over the handle's serialised bytes,
+// which it shares - so the handle keeps the one reference it owns.
+GVariant *from_handle(GVariant *given, const GVariantType *type) {
+  if (type != nullptr && !g_variant_is_of_type(given, type)) {
+    if (g_variant_type_is_variant(type)) return g_variant_new_variant(given);
+    gchar *ts = g_variant_type_dup_string(type);
+    zend_type_error("cannot convert a GVariant of type %s to GVariant type %s",
+                    g_variant_get_type_string(given), ts);
+    g_free(ts);
+    return nullptr;
+  }
+  GBytes *bytes = g_variant_get_data_as_bytes(given);
+  GVariant *copy = g_variant_new_from_bytes(g_variant_get_type(given), bytes, TRUE);
+  g_bytes_unref(bytes);
+  return copy;
+}
+
 // Throw the TypeError for a value that does not fit `type` and return nullptr.
 GVariant *fail(zval *value, const GVariantType *type) {
   gchar *ts = type != nullptr ? g_variant_type_dup_string(type) : g_strdup("(inferred)");
@@ -171,6 +190,7 @@ static GVariant *php_to_variant_at(zval *value, const GVariantType *type, int de
     zend_value_error("array is nested too deeply for a GVariant (limit %d)", max_depth);
     return nullptr;
   }
+  if (GVariant *given = variant_of_handle(value); given != nullptr) return from_handle(given, type);
   if (type == nullptr) {
     // Inference
     switch (Z_TYPE_P(value)) {

@@ -38,7 +38,8 @@ provider restyles what is on screen; parse errors arrive through the provider's 
 signal as a `GtkCssSection` and a `GError` (the loaders themselves never throw).
 
 Actions: `new GSimpleAction('quit')` + `$app->add_action()` — reachable as `app.quit` from widgets
-(`$button->activate_action('app.quit')`); GVariant parameters/states are plain PHP values.
+(`$button->activate_action('app.quit')`); GVariant parameters/states are plain PHP values, and
+`new GVariant('(ia{sv}av)', [...])` spells a type where inference cannot (a tuple inside a `v`).
 Exceptions thrown in handlers are logged by default; `Gtk::set_exception_mode(ExceptionMode::Rethrow)`
 makes them propagate out of `run()` instead. `Gtk4\GMainLoop` + `Gtk4\GLib::timeout_add()` cover
 scripts without windows.

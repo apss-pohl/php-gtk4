@@ -295,6 +295,42 @@ zend_string *php_name_for_gtype(GType type) {
   return zend_string_init(name, strlen(name), false);
 }
 
+// GVariant <- zval with a type to fit, into a GValue already initialised as G_TYPE_VARIANT.
+bool to_gvalue_variant(zval *pv, const GVariantType *type, GValue *out) {
+  if (G_VALUE_TYPE(out) != G_TYPE_VARIANT) g_value_init(out, G_TYPE_VARIANT);
+  if (Z_TYPE_P(pv) == IS_NULL) {
+    g_value_set_variant(out, nullptr);
+    return true;
+  }
+  GVariant *variant = php_to_variant(pv, type);
+  if (variant == nullptr) {
+    g_value_unset(out);
+    return false;
+  }
+  g_value_take_variant(out, g_variant_ref_sink(variant));
+  return true;
+}
+
+// The GVariant type a variant property's write has to fit: the pspec's when it is definite,
+// else - for a GAction's `state`, which GSimpleAction declares as `*` and types per instance
+// (g_simple_action_set_state() asserts on the instance's type) - the action's own state type.
+const GVariantType *variant_property_type(GObject *obj, GParamSpec *spec) {
+  const GVariantType *type = G_PARAM_SPEC_VARIANT(spec)->type;
+  if (type != nullptr && g_variant_type_is_definite(type)) return type;
+  // NOLINTNEXTLINE(bugprone-assignment-in-if-condition) G_IS_ACTION() macro expansion
+  if (G_IS_ACTION(obj) && strcmp(spec->name, "state") == 0)
+    return g_action_get_state_type(G_ACTION(obj));
+  return type;
+}
+
+// A property write: the variant arm typed by the pspec or the owner, everything else to_gvalue().
+bool to_gvalue_property(zval *pv, GObject *obj, GParamSpec *spec, GValue *out) {
+  // NOLINTNEXTLINE(bugprone-assignment-in-if-condition) G_IS_PARAM_SPEC_VARIANT() macro expansion
+  if (G_IS_PARAM_SPEC_VARIANT(spec))
+    return to_gvalue_variant(pv, variant_property_type(obj, spec), out);
+  return to_gvalue(pv, spec->value_type, out);
+}
+
 // zval -> GValue of type `t`. Returns false (TypeError thrown, *out unset) on failure.
 bool to_gvalue(zval *pv, GType t, GValue *out) {
   g_value_init(out, t);
@@ -466,19 +502,8 @@ bool to_gvalue(zval *pv, GType t, GValue *out) {
       g_value_set_boxed(out, data);  // copies
       return true;
     }
-    case G_TYPE_VARIANT: {
-      if (Z_TYPE_P(pv) == IS_NULL) {
-        g_value_set_variant(out, nullptr);
-        return true;
-      }
-      GVariant *variant = php_to_variant(pv, nullptr);
-      if (variant == nullptr) {
-        g_value_unset(out);
-        return false;
-      }
-      g_value_take_variant(out, g_variant_ref_sink(variant));
-      return true;
-    }
+    case G_TYPE_VARIANT:
+      return to_gvalue_variant(pv, nullptr, out);
     default:
       if (G_TYPE_IS_INSTANTIATABLE(t) && fundamental_class_for_type(t) != nullptr) {
         if (Z_TYPE_P(pv) == IS_NULL) {

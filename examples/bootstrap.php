@@ -111,7 +111,7 @@ final class Demo
         ],
         'Objects & values' => [
             'GObject', 'GParamSpec', 'PhpValue', 'GdkRGBA', 'GdkRectangle',
-            'GdkTexture', 'GdkMemoryFormat', 'GError', 'ExceptionMode',
+            'GdkTexture', 'GdkMemoryFormat', 'GError', 'GVariant', 'ExceptionMode',
             'GIcon', 'GThemedIcon', 'GDateTime', 'GTimeZone', 'GKeyFile',
             'GInputStream', 'GMemoryInputStream', 'GOutputStream', 'GMemoryOutputStream',
         ],
