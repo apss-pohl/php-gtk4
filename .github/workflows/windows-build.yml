@@ -67,7 +67,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up PHP ${{ inputs.php }}
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
           php-version: ${{ inputs.php }}
           extensions: dom, mbstring, tokenizer, xml, xmlwriter
@@ -203,7 +203,7 @@ jobs:
 
       - name: Upload PHPUnit report
         if: inputs.run-tests && always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: phpunit-junit-windows-php${{ inputs.php }}-${{ inputs.ts }}
           path: |
@@ -217,7 +217,7 @@ jobs:
           Copy-Item $env:GTK4_DLL "dist\${{ inputs.dll-name }}"
 
       - name: Upload php_gtk4.dll
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ${{ inputs.artifact }}
           path: dist/${{ inputs.dll-name }}
