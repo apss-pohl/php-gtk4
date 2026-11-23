@@ -1,0 +1,37 @@
+// Renovate, for the two pins Dependabot cannot see (.github/dependabot.yml keeps composer, npm and the
+// actions): the gvsbuild GTK 4 every Windows binary is linked against, with its hash, and the tag of
+// php-src's Windows SDK. Both live as env: values in .github/workflows/windows-build.yml, so a PR that
+// moves one runs the Windows build (windows.yml) before anyone merges it. Needs the Renovate GitHub App
+// on this repository. docs/BUILD.md "The pinned GTK version".
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: ["config:recommended"],
+  timezone: "UTC",
+  schedule: ["before 7am on monday"],
+  enabledManagers: ["custom.regex"],
+  // PR titles are commits here (bin/commit-lint): ci(deps), like Dependabot's action updates
+  semanticCommits: "enabled",
+  semanticCommitType: "ci",
+  semanticCommitScope: "deps",
+  minimumReleaseAge: "3 days",
+  customManagers: [
+    {
+      // GVSBUILD_VERSION and GVSBUILD_SHA256, moved together: the datasource finds the release file
+      // with the pinned hash (GTK4_Gvsbuild_<ver>_x64.zip) and hashes the same file of the new release.
+      customType: "regex",
+      managerFilePatterns: ["/^\\.github/workflows/windows-build\\.yml$/"],
+      matchStrings: ["GVSBUILD_VERSION: '(?<currentValue>[0-9.]+)'[\\s\\S]*?GVSBUILD_SHA256: '(?<currentDigest>[0-9a-f]{64})'"],
+      depNameTemplate: "wingtk/gvsbuild",
+      datasourceTemplate: "github-release-attachments",
+      versioningTemplate: "loose",
+    },
+    {
+      customType: "regex",
+      managerFilePatterns: ["/^\\.github/workflows/windows-build\\.yml$/"],
+      matchStrings: ["PHP_SDK_REF: (?<currentValue>php-sdk-\\d+\\.\\d+\\.\\d+)"],
+      depNameTemplate: "php/php-sdk-binary-tools",
+      datasourceTemplate: "github-tags",
+      versioningTemplate: "regex:^php-sdk-(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
+    },
+  ],
+}

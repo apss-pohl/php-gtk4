@@ -11,7 +11,8 @@
 #
 # The first three are what Dependabot already opens PRs for (.github/dependabot.yml); this script is
 # the local equivalent, for when you want them all current in one commit instead of five PRs. The
-# last three Dependabot cannot see: an env: value, a vendored file and a runner label.
+# last three Dependabot cannot see: an env: value, a vendored file and a runner label. Renovate
+# (.github/renovate.json5) proposes the gvsbuild pin, with its hash, and the PHP_SDK_REF tag.
 #
 # Usage:
 #   ./update-deps.sh                 update composer, npm and the action pins; report the rest

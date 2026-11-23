@@ -249,8 +249,10 @@ Linux CI takes GTK from apt; Windows CI has no package manager and downloads gvs
 `.github/workflows/windows-build.yml` — the one reusable Windows recipe that both `windows.yml` (CI)
 and the `build-windows` job of `release.yml` call (the pin is also the cache key, so the 300 MB zip is
 fetched once per version). The Windows build
-stays on that GTK until the number is bumped — nothing does it automatically: Dependabot only tracks
-package ecosystems and `uses:` lines, not an `env:` value.
+stays on that GTK until the number is bumped. Dependabot only tracks package ecosystems and `uses:` lines,
+not an `env:` value, so Renovate (`.github/renovate.json5`, the Renovate GitHub App) opens that PR: it
+moves `GVSBUILD_VERSION` and `GVSBUILD_SHA256` together, the hash taken from the same zip of the new
+release, and the PR runs the Windows build before it is merged. It does the same for `PHP_SDK_REF`.
 
 The archive is pinned twice: `GVSBUILD_VERSION` names it and `GVSBUILD_SHA256` says what it must
 contain. A GitHub release asset can be replaced by its owner and the workflow caches the unpacked

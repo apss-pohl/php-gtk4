@@ -454,9 +454,10 @@ in which the `WebKit*`/`JSC*` classes and their tests exist). The apt package li
 mirror `config.m4`'s pkg-config modules (plus `gir1.2-gtk-4.0` where the `gen` stage runs).
 (4) `windows.yml`: the 8.4/8.5 × NTS/ZTS matrix calling `windows-build.yml` — `windows-2022`,
 setup-php + the matching devel pack from windows.php.net + php-sdk-binary-tools + the cached
-`GTK4_Gvsbuild_<ver>_x64.zip` release asset (`GVSBUILD_VERSION`, pinned by hand in
-`windows-build.yml` only — `WorkflowsTest` enforces that, nothing bumps it; docs/BUILD.md "The
-pinned GTK version"), `phpize && configure --with-gtk4 && nmake` with a warning gate over `src\`
+`GTK4_Gvsbuild_<ver>_x64.zip` release asset (`GVSBUILD_VERSION`, pinned in
+`windows-build.yml` only — `WorkflowsTest` enforces that; Renovate proposes a new one with its hash, as
+it does the `PHP_SDK_REF` tag, `.github/renovate.json5`; docs/BUILD.md "The pinned GTK version"),
+`phpize && configure --with-gtk4 && nmake` with a warning gate over `src\`
 (`/W3`), load check, PHPUnit via `tests/run.cmd` on the runner's desktop (no phpt) — on the pull requests
 that touch what it depends on (`paths:`) and once a week, because Windows minutes bill at nearly twice the
 Linux rate. (5) `release.yml` on
