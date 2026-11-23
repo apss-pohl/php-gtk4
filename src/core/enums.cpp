@@ -91,6 +91,27 @@ void enums_verify() {
   }
 }
 
+// dl() MINIT: see enums.h. Interned names are not refcounted, so only the runtime ones change.
+void enums_hold_case_names(int module_number) {
+  zval *entry = nullptr;
+  // NOLINTNEXTLINE(readability-math-missing-parentheses) Zend macro expansion
+  ZEND_HASH_MAP_FOREACH_VAL(CG(class_table), entry) {
+    if (Z_TYPE_P(entry) != IS_PTR) continue;  // a class_alias() names a class a second time
+    auto *ce = static_cast<zend_class_entry *>(Z_PTR_P(entry));
+    if (ce->type != ZEND_INTERNAL_CLASS || ce->backed_enum_table == nullptr ||
+        ce->info.internal.module->module_number != module_number) {
+      continue;
+    }
+    zval *name = nullptr;
+    // NOLINTNEXTLINE(readability-math-missing-parentheses) Zend macro expansion
+    ZEND_HASH_FOREACH_VAL(ce->backed_enum_table, name) {
+      Z_TRY_ADDREF_P(name);
+    }
+    ZEND_HASH_FOREACH_END();
+  }
+  ZEND_HASH_FOREACH_END();
+}
+
 // Registry lookup by GType.
 zend_class_entry *enum_class_for_type(GType type) {
   auto it = registry().find(type);

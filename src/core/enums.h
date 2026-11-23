@@ -18,6 +18,14 @@ void register_flags(GType type, zend_class_entry *ce);
 // (nick is not checked); a mismatch is a fatal error - the stub drifted from the
 // GTK headers. Cannot run at MINIT: internal enum case objects do not exist yet.
 void enums_verify();
+// MINIT of a dl()-loaded module: take the reference on every case name that the engine's
+// backed-enum table drops at unload but never took. zend_enum_add_case() assumes the name is
+// interned; under OPcache a name created at runtime is not (accel_init_interned_string_for_php
+// only finds strings already in shared memory), so the table's ZVAL_PTR_DTOR efree()d a
+// persistent string at request shutdown: "zend_mm_heap corrupted".
+// shortcut: compensates a php-src bug (Zend/zend_enum.c, still in master), drop when PHP takes
+// the reference itself.
+void enums_hold_case_names(int module_number);
 // Registry lookup by GType: the PHP enum (or flags constant class) bound to it, nullptr if none.
 zend_class_entry *enum_class_for_type(GType type);
 

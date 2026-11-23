@@ -165,6 +165,9 @@ static PHP_MINIT_FUNCTION(gtk4) {
   phpgtk::object_threaded_type(G_TYPE_DBUS_PROXY);
   phpgtk::object_threaded_type(G_TYPE_DBUS_METHOD_INVOCATION);
 
+  // dl() registers the classes at runtime, where OPcache leaves the enum case names un-interned.
+  if (type == MODULE_TEMPORARY) phpgtk::enums_hold_case_names(module_number);
+
   // libgtk-3 and libgtk-4 export the same C symbols; whichever loaded first
   // wins symbol resolution, so with php-gtk3 present every gtk4 call silently
   // lands in GTK 3. PHP names are namespaced and do not clash - warn anyway.

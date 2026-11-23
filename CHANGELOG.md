@@ -96,6 +96,13 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   the hash into it, and `config.m4`/`config.w32` read that before asking git. A checkout extracted
   under some unrelated repository no longer reports that repository's HEAD either.
 
+- **`dl()` with OPcache ended in `zend_mm_heap corrupted`** at request shutdown (the Windows PHP
+  bundles load the extension this way). PHP's backed-enum table holds each case name without a
+  reference, which is harmless only while the name is interned; registered at runtime under OPcache
+  it is not, and unloading the module freed the persistent string with `efree()`. MINIT of a
+  dl()-loaded module now takes the missing reference (`enums_hold_case_names()`, a php-src bug
+  worked around until PHP fixes it); `ShutdownTest` loads the module through `dl()` with OPcache on.
+
 ## [0.3.0] - 2026-09-10
 
 Mostly housekeeping around the machinery that ships the extension, plus the rest of Pango: the
