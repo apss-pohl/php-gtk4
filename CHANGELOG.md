@@ -5,7 +5,11 @@ versions follow [SemVer](https://semver.org/). The version lives in `VERSION` at
 mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./ci.sh --only=version`
 — see docs/RELEASING.md.
 
-## [Unreleased]
+## [0.4.0] - 2026-11-23
+
+GVariant, D-Bus and the GDK surface side, and the fix that lets the extension be loaded with `dl()`
+while OPcache is on. It is a release rather than another dev build because the Windows PHP bundles
+load it that way and take only real releases, which are the only ones with Windows zips.
 
 ### Added
 
