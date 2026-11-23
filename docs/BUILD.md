@@ -184,7 +184,7 @@ and library lists from, so the flag list never has to be maintained by hand.
 | What | Windows |
 | --- | --- |
 | Visual Studio | 2022 for PHP 8.4 and 8.5, 2026 for PHP 8.6 (Community is fine), workload *Desktop development with C++*. The series must match the PHP build (VS17, VS18): `php.exe` refuses a module linked with a newer MSVC than its core. |
-| PHP | `php.exe` 8.4+ from <https://windows.php.net/download/> (NTS or TS) **and** the matching *Development package* (`php-devel-pack-<ver>[-nts]-Win32-<vs17|vs18>-x64.zip`): headers, `php8.lib`, `phpize.bat`. |
+| PHP | `php.exe` 8.4+ from <https://windows.php.net/download/> (NTS or TS) **and** the matching *Development package* (`php-devel-pack-<ver>[-nts]-Win32-vs17-x64.zip`, `-vs18-` for 8.6): headers, `php8.lib`, `phpize.bat`. |
 | PHP SDK | [php-sdk-binary-tools](https://github.com/php/php-sdk-binary-tools) (`git clone`); it provides the `phpsdk-vs17-x64.bat` (`-vs18-` for PHP 8.6) shell in which everything below runs. |
 | GTK 4 | A gvsbuild tree: `<root>\include\gtk-4.0`, `<root>\lib\*.lib`, `<root>\lib\pkgconfig`, `<root>\bin\*.dll`. |
 | Composer | for the test suite only. |
