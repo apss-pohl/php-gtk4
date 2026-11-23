@@ -41,8 +41,15 @@ final class ShutdownTest extends TestCase
      */
     public function testDlUnderOpcacheExitsCleanly(): void
     {
-        $so = (string) realpath(getenv('GTK4_SO') ?: (getenv('GTK4_DLL') ?: './gtk4.so'));
-        self::assertFileExists($so);
+        $module = getenv('GTK4_SO') ?: (getenv('GTK4_DLL') ?: './gtk4.so');
+        // dl() takes a bare file name from extension_dir. A bare GTK4_SO (=gtk4, the installed
+        // module) already is one, and dl() adds the platform's suffix to it.
+        $extDir = (string) ini_get('extension_dir');
+        if (strpbrk($module, '/\\') !== false) {
+            $so = (string) realpath($module);
+            self::assertFileExists($so);
+            [$extDir, $module] = [dirname($so), basename($so)];
+        }
         $opcache = '';
         if (PHP_VERSION_ID < 80500) { // 8.5 builds OPcache in
             $file = PHP_OS_FAMILY === 'Windows' ? 'php_opcache.dll' : 'opcache.so';
@@ -53,16 +60,15 @@ final class ShutdownTest extends TestCase
             }
             self::assertNotSame('', $opcache, "no shared $file next to this PHP");
         }
-        // dl() takes a bare file name from extension_dir. No ! " or % in the code: Windows'
-        // escapeshellarg() blanks them.
-        $code = 'dl(' . var_export(basename($so), true) . ');'
+        // No ! " or % in the code: Windows' escapeshellarg() blanks them.
+        $code = 'dl(' . var_export($module, true) . ');'
             . " echo Gtk4\\GtkAlign::from(Gtk4\\GtkAlign::Center->value)->name, ' ',"
             . " count(Gtk4\\ExceptionMode::cases()), ' ', is_array(opcache_get_status()) ? 'opcache' : '-';";
         $cmd = sprintf(
             '%s -n %s -d opcache.enable_cli=1 -d enable_dl=1 -d %s -r %s 2>&1',
             escapeshellarg(PHP_BINARY),
             $opcache,
-            escapeshellarg('extension_dir=' . dirname($so)),
+            escapeshellarg('extension_dir=' . $extDir),
             escapeshellarg($code),
         );
         $out = [];
