@@ -70,19 +70,28 @@ void enums_verify() {
       if (!(ZEND_CLASS_CONST_FLAGS(c) & ZEND_CLASS_CONST_IS_CASE)) continue;
       // Read the backing value from the constant AST instead of materialising the
       // case object (which would consume object handles before user code runs).
-      zend_long v = 0;
+      zval *value = nullptr;
       if (Z_TYPE(c->value) == IS_CONSTANT_AST) {
-        // The backing value is the last child: [class, name, value] up to PHP 8.5, 8.6 put the
-        // case id in between. The node kind carries its child count.
+        // The backing value is the last child: [class, name, value] up to PHP 8.5, [class,
+        // case id, name, value] from 8.6. The node kind carries its child count.
         constexpr int value_child = (ZEND_AST_CONST_ENUM_INIT >> ZEND_AST_NUM_CHILDREN_SHIFT) - 1;
         zend_ast *ast = Z_ASTVAL(c->value);
-        if (ast->kind != ZEND_AST_CONST_ENUM_INIT || ast->child[value_child] == nullptr) continue;
-        v = Z_LVAL_P(zend_ast_get_zval(ast->child[value_child]));
+        if (ast->kind == ZEND_AST_CONST_ENUM_INIT && ast->child[value_child] != nullptr) {
+          value = zend_ast_get_zval(ast->child[value_child]);
+        }
       } else if (Z_TYPE(c->value) == IS_OBJECT) {
-        v = Z_LVAL_P(zend_enum_fetch_case_value(Z_OBJ(c->value)));
-      } else {
+        value = zend_enum_fetch_case_value(Z_OBJ(c->value));
+      }
+      // Every bound enum is int-backed. Anything else is an engine layout this code does not
+      // know (8.6 moved the value, and the old index read the case name's pointer as a number):
+      // stop rather than verify nothing.
+      if (value == nullptr || Z_TYPE_P(value) != IS_LONG) {
+        php_error_docref(nullptr, E_ERROR,
+                         "php-gtk4: cannot read the value of %s::%s - unknown enum case layout",
+                         ZSTR_VAL(ce->name), ZSTR_VAL(key));
         continue;
       }
+      const zend_long v = Z_LVAL_P(value);
       if (g_enum_get_value(klass, static_cast<gint>(v)) == nullptr) {
         php_error_docref(nullptr, E_ERROR, "php-gtk4: %s::%s = %ld does not exist in the C enum %s",
                          ZSTR_VAL(ce->name), ZSTR_VAL(key), static_cast<long>(v),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpGtk4\Tests;
 
+use Gtk4\GtkAdjustment;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /** src/core/marshal: GValue <-> Php::Value through get/set_property. */
@@ -65,6 +66,46 @@ final class MarshalTest extends GtkTestCase
 
         $this->expectException(\TypeError::class);
         $w->set_property($property, $set);
+    }
+
+    /**
+     * Zend's weak conversion of a string to float (and of anything to bool) answers differently
+     * from PHP 8.6 on - the value, NAN for "does not convert", or a status - and parse_double_weak()
+     * / parse_bool_weak() in php_gtk4.h map that back. GtkAdjustment's `value` keeps a double exactly
+     * (opacity is quantised to 8 bit).
+     */
+    public function testWeakCallersConvertANumericStringToFloat(): void
+    {
+        $adjustment = new GtkAdjustment(0.0, 0.0, 10.0, 1.0, 1.0, 0.0);
+        $weak = eval('return static fn(\Gtk4\GObject $o, string $n, mixed $v) => $o->set_property($n, $v);');
+        self::assertIsCallable($weak);
+
+        $weak($adjustment, 'value', '2.5');
+
+        self::assertSame(2.5, $adjustment->get_property('value'));
+    }
+
+    /**
+     * ...and what does not convert is still refused: a NAN taken for a value, or an error status
+     * for `false`, would have stored it silently.
+     *
+     * @return iterable<string, array{string, mixed}>
+     */
+    public static function unconvertibleProperties(): iterable
+    {
+        yield 'float from a word' => ['value', 'abc'];
+        yield 'bool from an array' => ['resizable', []];
+    }
+
+    #[DataProvider('unconvertibleProperties')]
+    public function testWeakCallersStillRefuseWhatDoesNotConvert(string $property, mixed $set): void
+    {
+        $object = $property === 'value' ? new GtkAdjustment(0.0, 0.0, 10.0, 1.0, 1.0, 0.0) : $this->window();
+        $weak = eval('return static fn(\Gtk4\GObject $o, string $n, mixed $v) => $o->set_property($n, $v);');
+        self::assertIsCallable($weak);
+
+        $this->expectException(\TypeError::class);
+        $weak($object, $property, $set);
     }
 
     public function testDoubleRoundTrip(): void

@@ -55,14 +55,16 @@ bool rethrow_parked_exception();
 
 // A vfunc thunk entered while a Throwable is pending (GTK calling back during an unwind): Zend runs
 // no PHP then, so the thunk sets it aside for the call and puts it back afterwards, as the previous
-// of whatever the call threw - what Zend does around a __destruct() (zend_objects_destroy_object).
-// PHP 8.6 removed zend_exception_save()/zend_exception_restore(), which did this through
+// of whatever the call threw - step for step what Zend does around a __destruct()
+// (zend_objects_destroy_object), the executing frame's opline included. PHP 8.6 removed
+// zend_exception_save()/zend_exception_restore(), which did the exception half of it through
 // EG(prev_exception). Not the parking above: this one lives for one call, on the C stack.
+// The struct holds the engine's reference to the Throwable until it is put back, exactly once.
 struct SetAsideException {
   zend_object *exception;
   const zend_op *opline_before_exception;
 };
-SetAsideException set_aside_exception();               // before the call: EG(exception) taken out
-void put_back_exception(SetAsideException set_aside);  // after it: back, or previous of the new one
+[[nodiscard]] SetAsideException set_aside_exception();  // before the call: EG(exception) taken out
+void put_back_exception(SetAsideException set_aside);   // after it: back, or previous of the new one
 
 }  // namespace phpgtk

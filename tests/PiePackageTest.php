@@ -147,6 +147,39 @@ final class PiePackageTest extends TestCase
         self::assertStringContainsString('zip -qj "${dll%.dll}.zip" "$dll"', $release);
     }
 
+    /**
+     * windows-build.yml picks the compiler (PHP_SDK_VS) and the runner image that has it from two
+     * tables keyed by PHP minor. A minor only in the image table builds with an empty compiler and
+     * fails late, at the devel pack download, on a run that is weekly or paths-filtered; one only in
+     * the compiler table has no runner. Both tables cover the same minors, every one the Windows
+     * matrices build.
+     */
+    public function testTheWindowsCompilerAndRunnerTablesCoverEveryBuiltPhp(): void
+    {
+        $build = (string) file_get_contents(self::ROOT . '/.github/workflows/windows-build.yml');
+        $keys = static function (string $pattern) use ($build): array {
+            self::assertSame(1, preg_match($pattern, $build, $line), "windows-build.yml: no $pattern");
+            preg_match_all('/"(\d+\.\d+)":"/', $line[1], $m);
+            $minors = $m[1];
+            sort($minors);
+
+            return $minors;
+        };
+        $compilers = $keys('/^\s*PHP_SDK_VS:\s*(\S.*)$/m');
+        self::assertSame($compilers, $keys('/^\s*runs-on:\s*(\S.*)$/m'), 'the two tables cover other minors');
+
+        foreach (['windows.yml', 'release.yml'] as $workflow) {
+            $text = (string) file_get_contents(self::ROOT . "/.github/workflows/$workflow");
+            preg_match_all('/php: \\[([^\\]]*)\\]/', $text, $matrices);
+            foreach ($matrices[1] as $matrix) {
+                preg_match_all("/'(\\d+\\.\\d+)'/", $matrix, $built);
+                foreach ($built[1] as $minor) {
+                    self::assertContains($minor, $compilers, "$workflow builds PHP $minor, which the tables lack");
+                }
+            }
+        }
+    }
+
     /** Both thread models are published, or a Windows ZTS `pie install` finds nothing. */
     public function testTheWindowsMatrixCoversBothThreadModels(): void
     {

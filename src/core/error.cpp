@@ -153,18 +153,35 @@ bool report_pending_exception(const char *origin_c) {
   return true;
 }
 
-// Take a pending Throwable out of the engine for one call into PHP (see error.h).
+// Take a pending Throwable out of the engine for one call into PHP (see error.h). Step for step
+// what zend_objects_destroy_object() does before a __destruct(): a Throwable an internal function
+// threw has not been rethrown into the user frame yet (its DO_ICALL does that only once the call
+// is torn down, which is where a dispose - and so this thunk - can run), and until then
+// EG(opline_before_exception) still names an earlier throw; saving that value and restoring it
+// later would send the frame's exception handling to the wrong opline.
 SetAsideException set_aside_exception() {
-  const SetAsideException set_aside{.exception = EG(exception),
-                                    .opline_before_exception = EG(opline_before_exception)};
+  SetAsideException set_aside{.exception = EG(exception), .opline_before_exception = nullptr};
+  if (set_aside.exception == nullptr) return set_aside;
+  zend_execute_data *frame = EG(current_execute_data);
+  if (frame != nullptr) {
+    if (frame->func != nullptr && ZEND_USER_CODE(frame->func->common.type)) {
+      zend_rethrow_exception(frame);
+    }
+    frame->opline = EG(opline_before_exception);
+    set_aside.opline_before_exception = EG(opline_before_exception);
+  }
   EG(exception) = nullptr;
   return set_aside;
 }
 
-// Hand it back: the previous of whatever the call threw, else pending again as it was.
+// Hand it back: the previous of whatever the call threw, else pending again as it was - and the
+// frame back on the exception handler, as zend_objects_destroy_object() leaves it.
 void put_back_exception(SetAsideException set_aside) {
   if (set_aside.exception == nullptr) return;
-  EG(opline_before_exception) = set_aside.opline_before_exception;
+  if (EG(current_execute_data) != nullptr) {
+    EG(current_execute_data)->opline = EG(exception_op);
+    EG(opline_before_exception) = set_aside.opline_before_exception;
+  }
   if (EG(exception) != nullptr) {
     zend_exception_set_previous(EG(exception), set_aside.exception);
   } else {

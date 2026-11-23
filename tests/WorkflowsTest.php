@@ -218,7 +218,7 @@ final class WorkflowsTest extends TestCase
     }
 
     /**
-     * `PHP 8.4` / `PHP 8.5` are required status checks and they are the NTS cells, so whatever
+     * `PHP 8.4` / `PHP 8.5` / `PHP 8.6` are required status checks and they are the NTS cells, so whatever
      * the `changes` job decides, NTS has to be in it - a matrix that leaves a required cell out
      * is the same dead end as a workflow that never starts, just harder to see.
      */

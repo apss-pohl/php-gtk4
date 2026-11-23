@@ -52,10 +52,11 @@ env:
   GTK4_ROOT: C:\gtk
   # php-src's Windows SDK (phpsdk-vs1x-x64.bat, nmake wrappers, deps handling).
   PHP_SDK_REF: php-sdk-2.8.3  # a tag, never a branch: this shell builds what release.yml attests
-  # The Visual Studio each PHP minor is built with: php.exe refuses a module linked with a newer
-  # MSVC than its core, so 8.6 (Visual Studio 2026) needs vs18 and 8.4/8.5 stay vs17. It is part
-  # of the devel pack's and the release asset's name. The runner image below has to carry that
-  # Visual Studio: keep the two tables in step. A minor in neither fails the job at once.
+  # The Visual Studio each PHP minor is built with: php.exe loads only a module built for the same
+  # series (its build id says VS17 or VS18) and linked with no newer MSVC than its core, so 8.6
+  # (Visual Studio 2026) needs vs18 and 8.4/8.5 stay vs17. It is part of the devel pack's and the
+  # release asset's name. The runner image below has to carry that Visual Studio: the two tables
+  # have the same keys (PiePackageTest), and a minor missing from them fails the job.
   PHP_SDK_VS: ${{ fromJSON('{"8.4":"vs17","8.5":"vs17","8.6":"vs18"}')[inputs.php] }}
 
 jobs:
