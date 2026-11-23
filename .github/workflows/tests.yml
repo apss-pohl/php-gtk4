@@ -211,7 +211,9 @@ jobs:
 
       - name: Build and load
         run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          # The checkout belongs to the runner's user, the container runs as root: ci.sh refuses a tree
+          # owned by someone else (and git would too), so hand it over first.
+          chown -R "$(id -u):$(id -g)" "$GITHUB_WORKSPACE"
           ./ci.sh --only=build,load
 
       - name: No deprecated member is bound (this GIR)
