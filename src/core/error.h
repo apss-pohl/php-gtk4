@@ -62,7 +62,7 @@ struct SetAsideException {
   zend_object *exception;
   const zend_op *opline_before_exception;
 };
-SetAsideException set_aside_exception();
-void put_back_exception(SetAsideException set_aside);
+SetAsideException set_aside_exception();               // before the call: EG(exception) taken out
+void put_back_exception(SetAsideException set_aside);  // after it: back, or previous of the new one
 
 }  // namespace phpgtk

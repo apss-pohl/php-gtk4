@@ -269,4 +269,39 @@ final class RethrowModeTest extends GtkTestCase
         self::assertSame(1, $seen, 'the handler saw the Throwable exactly once');
         self::assertSame(2, $w->calls, 'the second vfunc ran with the first Throwable parked');
     }
+
+    public function testAThrowFromAVfuncWithOneParkedKeepsTheParkedOneAsPrevious(): void
+    {
+        // As above, but the second vfunc throws as well. The thunk took the first Throwable out
+        // of the engine for the call (core/error set_aside_exception(), since PHP 8.6 has no
+        // zend_exception_save()) and puts it back as the previous of the new one - the object
+        // itself, not a copy - as Zend does around a __destruct().
+        $w = new class extends GtkWidget {
+            public ?\RuntimeException $first = null;
+
+            public function vfunc_get_request_mode(): GtkSizeRequestMode
+            {
+                throw $this->first = new \RuntimeException('first');
+            }
+
+            public function vfunc_measure(GtkOrientation $orientation, int $for_size): array
+            {
+                throw new \LogicException('second');
+            }
+        };
+        $seen = [];
+        Gtk::set_exception_handler(function (\Throwable $e) use (&$seen): void {
+            $seen[] = $e->getMessage();
+        });
+        try {
+            $w->measure(GtkOrientation::Horizontal, -1);
+            self::fail('Rethrow mode must propagate the Throwable');
+        } catch (\LogicException $e) {
+            self::assertSame('second', $e->getMessage());
+            self::assertSame($w->first, $e->getPrevious(), 'the parked Throwable is the previous one');
+        } finally {
+            Gtk::set_exception_handler(null);
+        }
+        self::assertSame(['first', 'second'], $seen, 'each Throwable reached the handler once');
+    }
 }
