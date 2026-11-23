@@ -201,7 +201,7 @@ jobs:
           apt-get update
           apt-get install -y --no-install-recommends \
             ca-certificates git pkg-config build-essential php8.4-cli php8.4-dev libgtk-4-dev \
-            gir1.2-glib-2.0-dev php8.4-xml php8.4-mbstring composer xvfb xauth dbus
+            gir1.2-glib-2.0-dev php8.4-xml php8.4-mbstring composer unzip xvfb xauth dbus
 
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
