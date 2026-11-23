@@ -290,7 +290,7 @@ void vfunc_thunk_attach_clipboard(GdkContentProvider *self, GdkClipboard *clipbo
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(clipboard != nullptr ? G_OBJECT(clipboard) : nullptr, &argv[0]);
@@ -301,7 +301,7 @@ void vfunc_thunk_attach_clipboard(GdkContentProvider *self, GdkClipboard *clipbo
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GdkContentProvider::vfunc_attach_clipboard");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GDK_CONTENT_PROVIDER_CLASS->attach_clipboard (called from class_init /
@@ -322,14 +322,14 @@ void vfunc_thunk_content_changed(GdkContentProvider *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GdkContentProvider::vfunc_content_changed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GDK_CONTENT_PROVIDER_CLASS->content_changed (called from class_init / iface_init
@@ -350,7 +350,7 @@ void vfunc_thunk_detach_clipboard(GdkContentProvider *self, GdkClipboard *clipbo
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(clipboard != nullptr ? G_OBJECT(clipboard) : nullptr, &argv[0]);
@@ -361,7 +361,7 @@ void vfunc_thunk_detach_clipboard(GdkContentProvider *self, GdkClipboard *clipbo
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GdkContentProvider::vfunc_detach_clipboard");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GDK_CONTENT_PROVIDER_CLASS->detach_clipboard (called from class_init /

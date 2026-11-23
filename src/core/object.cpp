@@ -509,7 +509,7 @@ void object_hold_owner(zval *handle, zval *owner) {
 // MINIT: build the shared handler table for all GObject classes.
 void object_handlers_init() {
   memcpy(&handlers, &std_object_handlers, sizeof(zend_object_handlers));
-  handlers.offset = XtOffsetOf(Object, std);
+  handlers.offset = offsetof(Object, std);
   handlers.free_obj = free_obj;
   handlers.clone_obj = nullptr;  // "Trying to clone an uncloneable object of class ..."
   handlers.read_property = read_property;

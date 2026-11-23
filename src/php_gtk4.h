@@ -112,6 +112,31 @@ inline bool check_range(zend_long v, uint32_t arg) {
   return true;
 }
 
+// Zend's weak (coercive) conversion of a non-double / non-bool zval, as a non-strict caller's
+// argument gets it. PHP 8.6 returns the value instead of filling an out parameter: NAN for a
+// double that does not convert (no numeric string yields NAN), a status for a bool. These keep
+// the shape every caller used before, on both sides of that change.
+inline bool parse_double_weak(const zval *v, double *out) {
+#if PHP_VERSION_ID >= 80600
+  const double d = zend_parse_arg_double_weak(v, 0);
+  if (zend_isnan(d)) return false;
+  *out = d;
+  return true;
+#else
+  return zend_parse_arg_double_weak(v, out, 0);
+#endif
+}
+inline bool parse_bool_weak(const zval *v, bool *out) {
+#if PHP_VERSION_ID >= 80600
+  const zpp_parse_bool_status status = zend_parse_arg_bool_weak(v, 0);
+  if (status == ZPP_PARSE_BOOL_STATUS_ERROR) return false;
+  *out = status == ZPP_PARSE_BOOL_STATUS_TRUE;
+  return true;
+#else
+  return zend_parse_arg_bool_weak(v, out, 0);
+#endif
+}
+
 // A parameter whose C function documents a domain narrower than its type: gtk_calendar_set_month()
 // takes an int and accepts 0..11, gtk_grid_attach() a positive span. GTK states these as
 // g_return_if_fail(), which means a CRITICAL and the call silently not happening - the property

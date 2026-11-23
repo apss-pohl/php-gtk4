@@ -82,7 +82,7 @@ const char *vfunc_thunk_get_face_name(PangoFontFace *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   const char *result = nullptr;
@@ -95,7 +95,7 @@ const char *vfunc_thunk_get_face_name(PangoFontFace *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("PangoFontFace::vfunc_get_face_name");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -115,7 +115,7 @@ PangoFontFamily *vfunc_thunk_get_family(PangoFontFace *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   PangoFontFamily *result = nullptr;
@@ -129,7 +129,7 @@ PangoFontFamily *vfunc_thunk_get_family(PangoFontFace *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("PangoFontFace::vfunc_get_family");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -150,7 +150,7 @@ gboolean vfunc_thunk_is_synthesized(PangoFontFace *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -161,7 +161,7 @@ gboolean vfunc_thunk_is_synthesized(PangoFontFace *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("PangoFontFace::vfunc_is_synthesized");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 

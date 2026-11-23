@@ -644,14 +644,14 @@ void vfunc_thunk_activate(GApplication *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_activate");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_APPLICATION_CLASS->activate (called from class_init / iface_init of a PHP
@@ -671,7 +671,7 @@ void vfunc_thunk_after_emit(GApplication *self, GVariant *platform_data) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (platform_data == nullptr) {
@@ -686,7 +686,7 @@ void vfunc_thunk_after_emit(GApplication *self, GVariant *platform_data) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_after_emit");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_APPLICATION_CLASS->after_emit (called from class_init / iface_init of a PHP
@@ -706,7 +706,7 @@ void vfunc_thunk_before_emit(GApplication *self, GVariant *platform_data) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (platform_data == nullptr) {
@@ -721,7 +721,7 @@ void vfunc_thunk_before_emit(GApplication *self, GVariant *platform_data) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_before_emit");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_APPLICATION_CLASS->before_emit (called from class_init / iface_init of a PHP
@@ -743,7 +743,7 @@ void vfunc_thunk_dbus_unregister(GApplication *self, GDBusConnection *connection
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap(connection != nullptr ? G_OBJECT(connection) : nullptr, &argv[0]);
@@ -759,7 +759,7 @@ void vfunc_thunk_dbus_unregister(GApplication *self, GDBusConnection *connection
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_dbus_unregister");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_APPLICATION_CLASS->dbus_unregister (called from class_init / iface_init of a
@@ -778,7 +778,7 @@ gboolean vfunc_thunk_name_lost(GApplication *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -789,7 +789,7 @@ gboolean vfunc_thunk_name_lost(GApplication *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_name_lost");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -810,14 +810,14 @@ void vfunc_thunk_quit_mainloop(GApplication *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_quit_mainloop");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_APPLICATION_CLASS->quit_mainloop (called from class_init / iface_init of a PHP
@@ -837,14 +837,14 @@ void vfunc_thunk_run_mainloop(GApplication *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_run_mainloop");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_APPLICATION_CLASS->run_mainloop (called from class_init / iface_init of a PHP
@@ -864,14 +864,14 @@ void vfunc_thunk_shutdown(GApplication *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_shutdown");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_APPLICATION_CLASS->shutdown (called from class_init / iface_init of a PHP
@@ -891,14 +891,14 @@ void vfunc_thunk_startup(GApplication *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GApplication::vfunc_startup");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_APPLICATION_CLASS->startup (called from class_init / iface_init of a PHP

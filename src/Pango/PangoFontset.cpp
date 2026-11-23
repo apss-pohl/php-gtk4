@@ -63,7 +63,7 @@ PangoFont *vfunc_thunk_get_font(PangoFontset *self, guint wc) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(wc));
@@ -82,7 +82,7 @@ PangoFont *vfunc_thunk_get_font(PangoFontset *self, guint wc) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("PangoFontset::vfunc_get_font");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 

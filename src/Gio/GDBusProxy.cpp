@@ -752,7 +752,7 @@ void vfunc_thunk_g_signal(GDBusProxy *self, const gchar *sender_name, const gcha
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   if (sender_name == nullptr) {
@@ -777,7 +777,7 @@ void vfunc_thunk_g_signal(GDBusProxy *self, const gchar *sender_name, const gcha
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GDBusProxy::vfunc_g_signal");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: G_DBUS_PROXY_CLASS->g_signal (called from class_init / iface_init of a PHP

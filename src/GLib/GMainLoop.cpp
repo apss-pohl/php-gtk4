@@ -18,7 +18,7 @@ zend_object_handlers handlers;
 // zend_object -> our embedding struct.
 MainLoopObject *from_zend(zend_object *o) {
   return reinterpret_cast<MainLoopObject *>(reinterpret_cast<char *>(o) -
-                                            XtOffsetOf(MainLoopObject, std));
+                                            offsetof(MainLoopObject, std));
 }
 
 // create_object handler: every GMainLoop handle owns a fresh loop on the default context.
@@ -108,7 +108,7 @@ namespace phpgtk {
 // MINIT: install the object handlers on the class entry.
 void register_GMainLoop(zend_class_entry *ce) {
   memcpy(&handlers, &std_object_handlers, sizeof(zend_object_handlers));
-  handlers.offset = XtOffsetOf(MainLoopObject, std);
+  handlers.offset = offsetof(MainLoopObject, std);
   handlers.free_obj = free_obj;
   handlers.clone_obj = nullptr;
   ce->create_object = create_object;

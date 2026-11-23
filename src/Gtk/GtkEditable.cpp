@@ -351,14 +351,14 @@ void vfunc_thunk_changed(GtkEditable *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEditable::changed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GtkEditableInterface *>->changed (called from class_init /
@@ -378,7 +378,7 @@ void vfunc_thunk_delete_text(GtkEditable *self, int start_pos, int end_pos) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(start_pos));
@@ -390,7 +390,7 @@ void vfunc_thunk_delete_text(GtkEditable *self, int start_pos, int end_pos) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEditable::delete_text");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GtkEditableInterface *>->delete_text (called from class_init /
@@ -410,7 +410,7 @@ void vfunc_thunk_do_delete_text(GtkEditable *self, int start_pos, int end_pos) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(start_pos));
@@ -422,7 +422,7 @@ void vfunc_thunk_do_delete_text(GtkEditable *self, int start_pos, int end_pos) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEditable::do_delete_text");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GtkEditableInterface *>->do_delete_text (called from class_init /
@@ -442,7 +442,7 @@ GtkEditable *vfunc_thunk_get_delegate(GtkEditable *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   GtkEditable *result = nullptr;
@@ -456,7 +456,7 @@ GtkEditable *vfunc_thunk_get_delegate(GtkEditable *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEditable::get_delegate");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -477,7 +477,7 @@ gboolean vfunc_thunk_get_selection_bounds(GtkEditable *self, int *start_pos, int
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -501,7 +501,7 @@ gboolean vfunc_thunk_get_selection_bounds(GtkEditable *self, int *start_pos, int
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEditable::get_selection_bounds");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -522,7 +522,7 @@ const char *vfunc_thunk_get_text(GtkEditable *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   const char *result = nullptr;
@@ -535,7 +535,7 @@ const char *vfunc_thunk_get_text(GtkEditable *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEditable::get_text");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -556,7 +556,7 @@ void vfunc_thunk_set_selection_bounds(GtkEditable *self, int start_pos, int end_
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(start_pos));
@@ -568,7 +568,7 @@ void vfunc_thunk_set_selection_bounds(GtkEditable *self, int start_pos, int end_
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEditable::set_selection_bounds");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GtkEditableInterface *>->set_selection_bounds (called from

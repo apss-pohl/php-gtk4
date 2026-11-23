@@ -19,7 +19,7 @@ struct Boxed {
 
 // zend_object -> the embedding handle.
 inline Boxed *boxed_from_zend(zend_object *o) {
-  return reinterpret_cast<Boxed *>(reinterpret_cast<char *>(o) - XtOffsetOf(Boxed, std));
+  return reinterpret_cast<Boxed *>(reinterpret_cast<char *>(o) - offsetof(Boxed, std));
 }
 // zval (IS_OBJECT) -> the embedding handle.
 inline Boxed *boxed_from_zval(const zval *zv) {

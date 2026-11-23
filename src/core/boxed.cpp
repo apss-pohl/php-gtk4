@@ -213,7 +213,7 @@ HashTable *get_gc(zend_object *o, zval **table, int *n) {
 // MINIT: build the shared handler table for all boxed classes.
 void boxed_handlers_init() {
   memcpy(&handlers, &std_object_handlers, sizeof(zend_object_handlers));
-  handlers.offset = XtOffsetOf(Boxed, std);
+  handlers.offset = offsetof(Boxed, std);
   handlers.free_obj = free_obj;
   handlers.get_constructor = get_constructor;
   handlers.clone_obj = clone_obj;
@@ -248,7 +248,7 @@ bool boxed_field_double(zval *v, const char *class_name, const char *field, doub
     *out = static_cast<double>(Z_LVAL_P(v));
     return true;
   }
-  if (!caller_is_strict() && zend_parse_arg_double_weak(v, out, 0)) return true;
+  if (!caller_is_strict() && parse_double_weak(v, out)) return true;
   zend_type_error("Cannot assign %s to property %s::$%s of type float", zend_zval_value_name(v),
                   class_name, field);
   return false;
@@ -260,7 +260,7 @@ bool boxed_field_bool(zval *v, const char *class_name, const char *field, bool *
     *out = Z_TYPE_P(v) == IS_TRUE;
     return true;
   }
-  if (!caller_is_strict() && zend_parse_arg_bool_weak(v, out, 0)) return true;
+  if (!caller_is_strict() && parse_bool_weak(v, out)) return true;
   zend_type_error("Cannot assign %s to property %s::$%s of type bool", zend_zval_value_name(v),
                   class_name, field);
   return false;

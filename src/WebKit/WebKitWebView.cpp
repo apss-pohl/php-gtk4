@@ -1577,7 +1577,7 @@ gboolean vfunc_thunk_authenticate(WebKitWebView *self, WebKitAuthenticationReque
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(request != nullptr ? G_OBJECT(request) : nullptr, &argv[0]);
@@ -1592,7 +1592,7 @@ gboolean vfunc_thunk_authenticate(WebKitWebView *self, WebKitAuthenticationReque
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_authenticate");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1613,14 +1613,14 @@ void vfunc_thunk_close(WebKitWebView *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_close");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->close (called from class_init / iface_init of a PHP
@@ -1642,7 +1642,7 @@ gboolean vfunc_thunk_context_menu(WebKitWebView *self, WebKitContextMenu *contex
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap(context_menu != nullptr ? G_OBJECT(context_menu) : nullptr, &argv[0]);
@@ -1658,7 +1658,7 @@ gboolean vfunc_thunk_context_menu(WebKitWebView *self, WebKitContextMenu *contex
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_context_menu");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1680,14 +1680,14 @@ void vfunc_thunk_context_menu_dismissed(WebKitWebView *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_context_menu_dismissed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->context_menu_dismissed (called from class_init /
@@ -1706,7 +1706,7 @@ GtkWidget *vfunc_thunk_create(WebKitWebView *self, WebKitNavigationAction *navig
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap_boxed(WEBKIT_TYPE_NAVIGATION_ACTION, navigation_action, &argv[0]);
@@ -1724,7 +1724,7 @@ GtkWidget *vfunc_thunk_create(WebKitWebView *self, WebKitNavigationAction *navig
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_create");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1746,7 +1746,7 @@ gboolean vfunc_thunk_decide_policy(WebKitWebView *self, WebKitPolicyDecision *de
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap(decision != nullptr ? G_OBJECT(decision) : nullptr, &argv[0]);
@@ -1762,7 +1762,7 @@ gboolean vfunc_thunk_decide_policy(WebKitWebView *self, WebKitPolicyDecision *de
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_decide_policy");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1783,7 +1783,7 @@ gboolean vfunc_thunk_enter_fullscreen(WebKitWebView *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -1794,7 +1794,7 @@ gboolean vfunc_thunk_enter_fullscreen(WebKitWebView *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_enter_fullscreen");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1817,7 +1817,7 @@ void vfunc_thunk_insecure_content_detected(WebKitWebView *self, WebKitInsecureCo
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   enum_to_php(WEBKIT_TYPE_INSECURE_CONTENT_EVENT, static_cast<gint>(event), &argv[0]);
@@ -1828,7 +1828,7 @@ void vfunc_thunk_insecure_content_detected(WebKitWebView *self, WebKitInsecureCo
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_insecure_content_detected");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->insecure_content_detected (called from class_init /
@@ -1848,7 +1848,7 @@ gboolean vfunc_thunk_leave_fullscreen(WebKitWebView *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -1859,7 +1859,7 @@ gboolean vfunc_thunk_leave_fullscreen(WebKitWebView *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_leave_fullscreen");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1880,7 +1880,7 @@ void vfunc_thunk_load_changed(WebKitWebView *self, WebKitLoadEvent load_event) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   enum_to_php(WEBKIT_TYPE_LOAD_EVENT, static_cast<gint>(load_event), &argv[0]);
@@ -1891,7 +1891,7 @@ void vfunc_thunk_load_changed(WebKitWebView *self, WebKitLoadEvent load_event) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_load_changed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->load_changed (called from class_init / iface_init of a
@@ -1913,7 +1913,7 @@ gboolean vfunc_thunk_load_failed(WebKitWebView *self, WebKitLoadEvent load_event
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   enum_to_php(WEBKIT_TYPE_LOAD_EVENT, static_cast<gint>(load_event), &argv[0]);
@@ -1934,7 +1934,7 @@ gboolean vfunc_thunk_load_failed(WebKitWebView *self, WebKitLoadEvent load_event
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_load_failed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -1959,7 +1959,7 @@ gboolean vfunc_thunk_load_failed_with_tls_errors(WebKitWebView *self, const gcha
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   if (failing_uri == nullptr) {
@@ -1980,7 +1980,7 @@ gboolean vfunc_thunk_load_failed_with_tls_errors(WebKitWebView *self, const gcha
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_load_failed_with_tls_errors");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2005,7 +2005,7 @@ void vfunc_thunk_mouse_target_changed(WebKitWebView *self, WebKitHitTestResult *
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap(hit_test_result != nullptr ? G_OBJECT(hit_test_result) : nullptr, &argv[0]);
@@ -2017,7 +2017,7 @@ void vfunc_thunk_mouse_target_changed(WebKitWebView *self, WebKitHitTestResult *
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_mouse_target_changed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->mouse_target_changed (called from class_init / iface_init
@@ -2040,7 +2040,7 @@ gboolean vfunc_thunk_permission_request(WebKitWebView *self,
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(permission_request != nullptr ? G_OBJECT(permission_request) : nullptr, &argv[0]);
@@ -2055,7 +2055,7 @@ gboolean vfunc_thunk_permission_request(WebKitWebView *self,
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_permission_request");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2075,7 +2075,7 @@ gboolean vfunc_thunk_print(WebKitWebView *self, WebKitPrintOperation *print_oper
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(print_operation != nullptr ? G_OBJECT(print_operation) : nullptr, &argv[0]);
@@ -2090,7 +2090,7 @@ gboolean vfunc_thunk_print(WebKitWebView *self, WebKitPrintOperation *print_oper
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_print");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2113,7 +2113,7 @@ gboolean vfunc_thunk_query_permission_state(WebKitWebView *self,
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap_boxed(WEBKIT_TYPE_PERMISSION_STATE_QUERY, query, &argv[0]);
@@ -2128,7 +2128,7 @@ gboolean vfunc_thunk_query_permission_state(WebKitWebView *self,
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_query_permission_state");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2150,14 +2150,14 @@ void vfunc_thunk_ready_to_show(WebKitWebView *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_ready_to_show");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->ready_to_show (called from class_init / iface_init of a
@@ -2180,7 +2180,7 @@ void vfunc_thunk_resource_load_started(WebKitWebView *self, WebKitWebResource *r
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap(resource != nullptr ? G_OBJECT(resource) : nullptr, &argv[0]);
@@ -2192,7 +2192,7 @@ void vfunc_thunk_resource_load_started(WebKitWebView *self, WebKitWebResource *r
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_resource_load_started");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->resource_load_started (called from class_init /
@@ -2212,14 +2212,14 @@ void vfunc_thunk_run_as_modal(WebKitWebView *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_run_as_modal");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->run_as_modal (called from class_init / iface_init of a
@@ -2239,7 +2239,7 @@ gboolean vfunc_thunk_run_color_chooser(WebKitWebView *self, WebKitColorChooserRe
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(request != nullptr ? G_OBJECT(request) : nullptr, &argv[0]);
@@ -2254,7 +2254,7 @@ gboolean vfunc_thunk_run_color_chooser(WebKitWebView *self, WebKitColorChooserRe
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_run_color_chooser");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2275,7 +2275,7 @@ gboolean vfunc_thunk_run_file_chooser(WebKitWebView *self, WebKitFileChooserRequ
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(request != nullptr ? G_OBJECT(request) : nullptr, &argv[0]);
@@ -2290,7 +2290,7 @@ gboolean vfunc_thunk_run_file_chooser(WebKitWebView *self, WebKitFileChooserRequ
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_run_file_chooser");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2311,7 +2311,7 @@ gboolean vfunc_thunk_script_dialog(WebKitWebView *self, WebKitScriptDialog *dial
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap_boxed(WEBKIT_TYPE_SCRIPT_DIALOG, dialog, &argv[0]);
@@ -2326,7 +2326,7 @@ gboolean vfunc_thunk_script_dialog(WebKitWebView *self, WebKitScriptDialog *dial
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_script_dialog");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2348,7 +2348,7 @@ gboolean vfunc_thunk_show_notification(WebKitWebView *self, WebKitNotification *
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(notification != nullptr ? G_OBJECT(notification) : nullptr, &argv[0]);
@@ -2363,7 +2363,7 @@ gboolean vfunc_thunk_show_notification(WebKitWebView *self, WebKitNotification *
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_show_notification");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2386,7 +2386,7 @@ gboolean vfunc_thunk_show_option_menu(WebKitWebView *self, WebKitOptionMenu *men
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap(menu != nullptr ? G_OBJECT(menu) : nullptr, &argv[0]);
@@ -2402,7 +2402,7 @@ gboolean vfunc_thunk_show_option_menu(WebKitWebView *self, WebKitOptionMenu *men
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_show_option_menu");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2423,7 +2423,7 @@ void vfunc_thunk_submit_form(WebKitWebView *self, WebKitFormSubmissionRequest *r
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(request != nullptr ? G_OBJECT(request) : nullptr, &argv[0]);
@@ -2434,7 +2434,7 @@ void vfunc_thunk_submit_form(WebKitWebView *self, WebKitFormSubmissionRequest *r
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_submit_form");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->submit_form (called from class_init / iface_init of a PHP
@@ -2455,7 +2455,7 @@ gboolean vfunc_thunk_user_message_received(WebKitWebView *self, WebKitUserMessag
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(message != nullptr ? G_OBJECT(message) : nullptr, &argv[0]);
@@ -2470,7 +2470,7 @@ gboolean vfunc_thunk_user_message_received(WebKitWebView *self, WebKitUserMessag
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_user_message_received");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2491,7 +2491,7 @@ gboolean vfunc_thunk_web_process_crashed(WebKitWebView *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -2502,7 +2502,7 @@ gboolean vfunc_thunk_web_process_crashed(WebKitWebView *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_web_process_crashed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2525,7 +2525,7 @@ void vfunc_thunk_web_process_terminated(WebKitWebView *self,
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   enum_to_php(WEBKIT_TYPE_WEB_PROCESS_TERMINATION_REASON, static_cast<gint>(reason), &argv[0]);
@@ -2536,7 +2536,7 @@ void vfunc_thunk_web_process_terminated(WebKitWebView *self,
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitWebView::vfunc_web_process_terminated");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_WEB_VIEW_CLASS->web_process_terminated (called from class_init /

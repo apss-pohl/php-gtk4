@@ -339,7 +339,7 @@ void vfunc_thunk_action_added(GActionGroup *self, const gchar *action_name) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -354,7 +354,7 @@ void vfunc_thunk_action_added(GActionGroup *self, const gchar *action_name) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::action_added");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GActionGroupInterface *>->action_added (called from class_init /
@@ -375,7 +375,7 @@ void vfunc_thunk_action_enabled_changed(GActionGroup *self, const gchar *action_
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -391,7 +391,7 @@ void vfunc_thunk_action_enabled_changed(GActionGroup *self, const gchar *action_
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::action_enabled_changed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GActionGroupInterface *>->action_enabled_changed (called from
@@ -412,7 +412,7 @@ void vfunc_thunk_action_removed(GActionGroup *self, const gchar *action_name) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -427,7 +427,7 @@ void vfunc_thunk_action_removed(GActionGroup *self, const gchar *action_name) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::action_removed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GActionGroupInterface *>->action_removed (called from class_init /
@@ -448,7 +448,7 @@ void vfunc_thunk_action_state_changed(GActionGroup *self, const gchar *action_na
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -468,7 +468,7 @@ void vfunc_thunk_action_state_changed(GActionGroup *self, const gchar *action_na
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::action_state_changed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GActionGroupInterface *>->action_state_changed (called from
@@ -490,7 +490,7 @@ void vfunc_thunk_activate_action(GActionGroup *self, const gchar *action_name,
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -510,7 +510,7 @@ void vfunc_thunk_activate_action(GActionGroup *self, const gchar *action_name,
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::activate_action");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GActionGroupInterface *>->activate_action (called from class_init /
@@ -531,7 +531,7 @@ void vfunc_thunk_change_action_state(GActionGroup *self, const gchar *action_nam
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -551,7 +551,7 @@ void vfunc_thunk_change_action_state(GActionGroup *self, const gchar *action_nam
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::change_action_state");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GActionGroupInterface *>->change_action_state (called from
@@ -572,7 +572,7 @@ gboolean vfunc_thunk_get_action_enabled(GActionGroup *self, const gchar *action_
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -591,7 +591,7 @@ gboolean vfunc_thunk_get_action_enabled(GActionGroup *self, const gchar *action_
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::get_action_enabled");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -613,7 +613,7 @@ const GVariantType *vfunc_thunk_get_action_parameter_type(GActionGroup *self,
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -635,7 +635,7 @@ const GVariantType *vfunc_thunk_get_action_parameter_type(GActionGroup *self,
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::get_action_parameter_type");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -657,7 +657,7 @@ GVariant *vfunc_thunk_get_action_state(GActionGroup *self, const gchar *action_n
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -680,7 +680,7 @@ GVariant *vfunc_thunk_get_action_state(GActionGroup *self, const gchar *action_n
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::get_action_state");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -701,7 +701,7 @@ GVariant *vfunc_thunk_get_action_state_hint(GActionGroup *self, const gchar *act
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -723,7 +723,7 @@ GVariant *vfunc_thunk_get_action_state_hint(GActionGroup *self, const gchar *act
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::get_action_state_hint");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -746,7 +746,7 @@ const GVariantType *vfunc_thunk_get_action_state_type(GActionGroup *self,
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -768,7 +768,7 @@ const GVariantType *vfunc_thunk_get_action_state_type(GActionGroup *self,
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::get_action_state_type");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -790,7 +790,7 @@ gboolean vfunc_thunk_has_action(GActionGroup *self, const gchar *action_name) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -809,7 +809,7 @@ gboolean vfunc_thunk_has_action(GActionGroup *self, const gchar *action_name) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::has_action");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -830,7 +830,7 @@ gchar **vfunc_thunk_list_actions(GActionGroup *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   char **result = nullptr;
@@ -842,7 +842,7 @@ gchar **vfunc_thunk_list_actions(GActionGroup *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionGroup::list_actions");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 

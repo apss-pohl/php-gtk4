@@ -85,7 +85,7 @@ gboolean vfunc_thunk_equal(GIcon *self, GIcon *icon2) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(icon2 != nullptr ? G_OBJECT(icon2) : nullptr, &argv[0]);
@@ -100,7 +100,7 @@ gboolean vfunc_thunk_equal(GIcon *self, GIcon *icon2) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GIcon::equal");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -120,7 +120,7 @@ guint vfunc_thunk_hash(GIcon *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   guint result = 0;
@@ -133,7 +133,7 @@ guint vfunc_thunk_hash(GIcon *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GIcon::hash");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -153,7 +153,7 @@ GVariant *vfunc_thunk_serialize(GIcon *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   GVariant *result = nullptr;
@@ -167,7 +167,7 @@ GVariant *vfunc_thunk_serialize(GIcon *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GIcon::serialize");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 

@@ -250,7 +250,7 @@ void vfunc_thunk_window_added(GtkApplication *self, GtkWindow *window) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(window != nullptr ? G_OBJECT(window) : nullptr, &argv[0]);
@@ -261,7 +261,7 @@ void vfunc_thunk_window_added(GtkApplication *self, GtkWindow *window) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkApplication::vfunc_window_added");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_APPLICATION_CLASS->window_added (called from class_init / iface_init of a
@@ -282,7 +282,7 @@ void vfunc_thunk_window_removed(GtkApplication *self, GtkWindow *window) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(window != nullptr ? G_OBJECT(window) : nullptr, &argv[0]);
@@ -293,7 +293,7 @@ void vfunc_thunk_window_removed(GtkApplication *self, GtkWindow *window) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkApplication::vfunc_window_removed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_APPLICATION_CLASS->window_removed (called from class_init / iface_init of a

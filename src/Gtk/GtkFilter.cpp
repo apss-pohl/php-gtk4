@@ -82,7 +82,7 @@ GtkFilterMatch vfunc_thunk_get_strictness(GtkFilter *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   GtkFilterMatch result = static_cast<GtkFilterMatch>(0);
@@ -94,7 +94,7 @@ GtkFilterMatch vfunc_thunk_get_strictness(GtkFilter *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkFilter::vfunc_get_strictness");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -114,7 +114,7 @@ gboolean vfunc_thunk_match(GtkFilter *self, gpointer item) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(item != nullptr ? G_OBJECT(item) : nullptr, &argv[0]);
@@ -129,7 +129,7 @@ gboolean vfunc_thunk_match(GtkFilter *self, gpointer item) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkFilter::vfunc_match");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 

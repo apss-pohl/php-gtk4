@@ -220,7 +220,7 @@ bool as_double(zval *pv, GType t, double *out) {
     *out = static_cast<double>(Z_LVAL_P(pv));
     return true;
   }
-  if (caller_is_strict() || !zend_parse_arg_double_weak(pv, out, 0)) {
+  if (caller_is_strict() || !parse_double_weak(pv, out)) {
     zend_type_error("cannot assign %s to a value of type %s", zend_zval_value_name(pv),
                     g_type_name(t));
     return false;
@@ -234,7 +234,7 @@ bool as_bool(zval *pv, GType t, bool *out) {
     *out = Z_TYPE_P(pv) == IS_TRUE;
     return true;
   }
-  if (caller_is_strict() || !zend_parse_arg_bool_weak(pv, out, 0)) {
+  if (caller_is_strict() || !parse_bool_weak(pv, out)) {
     zend_type_error("cannot assign %s to a value of type %s", zend_zval_value_name(pv),
                     g_type_name(t));
     return false;

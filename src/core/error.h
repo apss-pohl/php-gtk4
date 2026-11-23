@@ -53,4 +53,16 @@ bool report_pending_exception(const char *origin);
 // Throwable back to the engine. True if one was rethrown (caller RETURN_THROWS()).
 bool rethrow_parked_exception();
 
+// A vfunc thunk entered while a Throwable is pending (GTK calling back during an unwind): Zend runs
+// no PHP then, so the thunk sets it aside for the call and puts it back afterwards, as the previous
+// of whatever the call threw - what Zend does around a __destruct() (zend_objects_destroy_object).
+// PHP 8.6 removed zend_exception_save()/zend_exception_restore(), which did this through
+// EG(prev_exception). Not the parking above: this one lives for one call, on the C stack.
+struct SetAsideException {
+  zend_object *exception;
+  const zend_op *opline_before_exception;
+};
+SetAsideException set_aside_exception();
+void put_back_exception(SetAsideException set_aside);
+
 }  // namespace phpgtk

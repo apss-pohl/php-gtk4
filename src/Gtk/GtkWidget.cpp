@@ -2289,7 +2289,7 @@ gboolean vfunc_thunk_contains(GtkWidget *self, double x, double y) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_DOUBLE(&argv[0], x);
@@ -2305,7 +2305,7 @@ gboolean vfunc_thunk_contains(GtkWidget *self, double x, double y) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_contains");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2327,7 +2327,7 @@ void vfunc_thunk_direction_changed(GtkWidget *self, GtkTextDirection previous_di
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   enum_to_php(GTK_TYPE_TEXT_DIRECTION, static_cast<gint>(previous_direction), &argv[0]);
@@ -2338,7 +2338,7 @@ void vfunc_thunk_direction_changed(GtkWidget *self, GtkTextDirection previous_di
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_direction_changed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->direction_changed (called from class_init / iface_init of a
@@ -2357,7 +2357,7 @@ gboolean vfunc_thunk_focus(GtkWidget *self, GtkDirectionType direction) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   enum_to_php(GTK_TYPE_DIRECTION_TYPE, static_cast<gint>(direction), &argv[0]);
@@ -2372,7 +2372,7 @@ gboolean vfunc_thunk_focus(GtkWidget *self, GtkDirectionType direction) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_focus");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2393,7 +2393,7 @@ GtkSizeRequestMode vfunc_thunk_get_request_mode(GtkWidget *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   GtkSizeRequestMode result = static_cast<GtkSizeRequestMode>(0);
@@ -2406,7 +2406,7 @@ GtkSizeRequestMode vfunc_thunk_get_request_mode(GtkWidget *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_get_request_mode");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2426,7 +2426,7 @@ gboolean vfunc_thunk_grab_focus(GtkWidget *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -2437,7 +2437,7 @@ gboolean vfunc_thunk_grab_focus(GtkWidget *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_grab_focus");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2457,7 +2457,7 @@ gboolean vfunc_thunk_keynav_failed(GtkWidget *self, GtkDirectionType direction) 
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   enum_to_php(GTK_TYPE_DIRECTION_TYPE, static_cast<gint>(direction), &argv[0]);
@@ -2472,7 +2472,7 @@ gboolean vfunc_thunk_keynav_failed(GtkWidget *self, GtkDirectionType direction) 
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_keynav_failed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2493,14 +2493,14 @@ void vfunc_thunk_map(GtkWidget *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_map");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->map (called from class_init / iface_init of a PHP subtype)
@@ -2522,7 +2522,7 @@ void vfunc_thunk_measure(GtkWidget *self, GtkOrientation orientation, int for_si
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   enum_to_php(GTK_TYPE_ORIENTATION, static_cast<gint>(orientation), &argv[0]);
@@ -2560,7 +2560,7 @@ void vfunc_thunk_measure(GtkWidget *self, GtkOrientation orientation, int for_si
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_measure");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->measure (called from class_init / iface_init of a PHP subtype)
@@ -2580,7 +2580,7 @@ gboolean vfunc_thunk_mnemonic_activate(GtkWidget *self, gboolean group_cycling) 
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   ZVAL_BOOL(&argv[0], group_cycling != FALSE);
@@ -2595,7 +2595,7 @@ gboolean vfunc_thunk_mnemonic_activate(GtkWidget *self, gboolean group_cycling) 
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_mnemonic_activate");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -2616,7 +2616,7 @@ void vfunc_thunk_move_focus(GtkWidget *self, GtkDirectionType direction) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   enum_to_php(GTK_TYPE_DIRECTION_TYPE, static_cast<gint>(direction), &argv[0]);
@@ -2627,7 +2627,7 @@ void vfunc_thunk_move_focus(GtkWidget *self, GtkDirectionType direction) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_move_focus");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->move_focus (called from class_init / iface_init of a PHP
@@ -2647,14 +2647,14 @@ void vfunc_thunk_realize(GtkWidget *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_realize");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->realize (called from class_init / iface_init of a PHP subtype)
@@ -2673,14 +2673,14 @@ void vfunc_thunk_root(GtkWidget *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_root");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->root (called from class_init / iface_init of a PHP subtype)
@@ -2700,7 +2700,7 @@ void vfunc_thunk_set_focus_child(GtkWidget *self, GtkWidget *child) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(child != nullptr ? G_OBJECT(child) : nullptr, &argv[0]);
@@ -2711,7 +2711,7 @@ void vfunc_thunk_set_focus_child(GtkWidget *self, GtkWidget *child) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_set_focus_child");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->set_focus_child (called from class_init / iface_init of a PHP
@@ -2731,7 +2731,7 @@ void vfunc_thunk_size_allocate(GtkWidget *self, int width, int height, int basel
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(width));
@@ -2744,7 +2744,7 @@ void vfunc_thunk_size_allocate(GtkWidget *self, int width, int height, int basel
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_size_allocate");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->size_allocate (called from class_init / iface_init of a PHP
@@ -2764,7 +2764,7 @@ void vfunc_thunk_snapshot(GtkWidget *self, GtkSnapshot *snapshot) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(snapshot != nullptr ? G_OBJECT(snapshot) : nullptr, &argv[0]);
@@ -2775,7 +2775,7 @@ void vfunc_thunk_snapshot(GtkWidget *self, GtkSnapshot *snapshot) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_snapshot");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->snapshot (called from class_init / iface_init of a PHP
@@ -2797,7 +2797,7 @@ void vfunc_thunk_state_flags_changed(GtkWidget *self, GtkStateFlags previous_sta
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(previous_state_flags));
@@ -2808,7 +2808,7 @@ void vfunc_thunk_state_flags_changed(GtkWidget *self, GtkStateFlags previous_sta
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_state_flags_changed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->state_flags_changed (called from class_init / iface_init of a
@@ -2829,7 +2829,7 @@ void vfunc_thunk_system_setting_changed(GtkWidget *self, GtkSystemSetting settin
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(settings));
@@ -2840,7 +2840,7 @@ void vfunc_thunk_system_setting_changed(GtkWidget *self, GtkSystemSetting settin
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_system_setting_changed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->system_setting_changed (called from class_init / iface_init of
@@ -2860,14 +2860,14 @@ void vfunc_thunk_unmap(GtkWidget *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_unmap");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->unmap (called from class_init / iface_init of a PHP subtype)
@@ -2886,14 +2886,14 @@ void vfunc_thunk_unrealize(GtkWidget *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_unrealize");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->unrealize (called from class_init / iface_init of a PHP
@@ -2913,14 +2913,14 @@ void vfunc_thunk_unroot(GtkWidget *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkWidget::vfunc_unroot");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_WIDGET_CLASS->unroot (called from class_init / iface_init of a PHP subtype)

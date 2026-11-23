@@ -173,14 +173,14 @@ void vfunc_thunk_changed(PangoFontMap *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("PangoFontMap::vfunc_changed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: PANGO_FONT_MAP_CLASS->changed (called from class_init / iface_init of a PHP
@@ -199,7 +199,7 @@ PangoFontFace *vfunc_thunk_get_face(PangoFontMap *self, PangoFont *font) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(font != nullptr ? G_OBJECT(font) : nullptr, &argv[0]);
@@ -217,7 +217,7 @@ PangoFontFace *vfunc_thunk_get_face(PangoFontMap *self, PangoFont *font) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("PangoFontMap::vfunc_get_face");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -237,7 +237,7 @@ PangoFontFamily *vfunc_thunk_get_family(PangoFontMap *self, const char *name) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (name == nullptr) {
@@ -259,7 +259,7 @@ PangoFontFamily *vfunc_thunk_get_family(PangoFontMap *self, const char *name) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("PangoFontMap::vfunc_get_family");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -279,7 +279,7 @@ guint vfunc_thunk_get_serial(PangoFontMap *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   guint result = 0;
@@ -292,7 +292,7 @@ guint vfunc_thunk_get_serial(PangoFontMap *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("PangoFontMap::vfunc_get_serial");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -313,7 +313,7 @@ PangoFont *vfunc_thunk_load_font(PangoFontMap *self, PangoContext *context,
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   wrap(context != nullptr ? G_OBJECT(context) : nullptr, &argv[0]);
@@ -333,7 +333,7 @@ PangoFont *vfunc_thunk_load_font(PangoFontMap *self, PangoContext *context,
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("PangoFontMap::vfunc_load_font");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -355,7 +355,7 @@ PangoFontset *vfunc_thunk_load_fontset(PangoFontMap *self, PangoContext *context
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   wrap(context != nullptr ? G_OBJECT(context) : nullptr, &argv[0]);
@@ -376,7 +376,7 @@ PangoFontset *vfunc_thunk_load_fontset(PangoFontMap *self, PangoContext *context
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("PangoFontMap::vfunc_load_fontset");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 

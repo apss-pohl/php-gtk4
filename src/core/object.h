@@ -36,7 +36,7 @@ struct Object {
 
 // zend_object -> the embedding handle.
 inline Object *object_from_zend(zend_object *o) {
-  return reinterpret_cast<Object *>(reinterpret_cast<char *>(o) - XtOffsetOf(Object, std));
+  return reinterpret_cast<Object *>(reinterpret_cast<char *>(o) - offsetof(Object, std));
 }
 // zval (IS_OBJECT) -> the embedding handle.
 inline Object *object_from_zval(const zval *zv) {

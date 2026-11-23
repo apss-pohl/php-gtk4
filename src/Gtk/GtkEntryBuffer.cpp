@@ -220,7 +220,7 @@ guint vfunc_thunk_delete_text(GtkEntryBuffer *self, guint position, guint n_char
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(position));
@@ -238,7 +238,7 @@ guint vfunc_thunk_delete_text(GtkEntryBuffer *self, guint position, guint n_char
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEntryBuffer::vfunc_delete_text");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -260,7 +260,7 @@ void vfunc_thunk_deleted_text(GtkEntryBuffer *self, guint position, guint n_char
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(position));
@@ -272,7 +272,7 @@ void vfunc_thunk_deleted_text(GtkEntryBuffer *self, guint position, guint n_char
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEntryBuffer::vfunc_deleted_text");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_ENTRY_BUFFER_CLASS->deleted_text (called from class_init / iface_init of a
@@ -291,7 +291,7 @@ guint vfunc_thunk_get_length(GtkEntryBuffer *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   guint result = 0;
@@ -304,7 +304,7 @@ guint vfunc_thunk_get_length(GtkEntryBuffer *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEntryBuffer::vfunc_get_length");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -325,7 +325,7 @@ guint vfunc_thunk_insert_text(GtkEntryBuffer *self, guint position, const char *
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(position));
@@ -348,7 +348,7 @@ guint vfunc_thunk_insert_text(GtkEntryBuffer *self, guint position, const char *
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEntryBuffer::vfunc_insert_text");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -371,7 +371,7 @@ void vfunc_thunk_inserted_text(GtkEntryBuffer *self, guint position, const char 
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(position));
@@ -388,7 +388,7 @@ void vfunc_thunk_inserted_text(GtkEntryBuffer *self, guint position, const char 
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GtkEntryBuffer::vfunc_inserted_text");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: GTK_ENTRY_BUFFER_CLASS->inserted_text (called from class_init / iface_init of a

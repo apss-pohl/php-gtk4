@@ -72,9 +72,12 @@ void enums_verify() {
       // case object (which would consume object handles before user code runs).
       zend_long v = 0;
       if (Z_TYPE(c->value) == IS_CONSTANT_AST) {
+        // The backing value is the last child: [class, name, value] up to PHP 8.5, 8.6 put the
+        // case id in between. The node kind carries its child count.
+        constexpr int value_child = (ZEND_AST_CONST_ENUM_INIT >> ZEND_AST_NUM_CHILDREN_SHIFT) - 1;
         zend_ast *ast = Z_ASTVAL(c->value);
-        if (ast->kind != ZEND_AST_CONST_ENUM_INIT || ast->child[2] == nullptr) continue;
-        v = Z_LVAL_P(zend_ast_get_zval(ast->child[2]));
+        if (ast->kind != ZEND_AST_CONST_ENUM_INIT || ast->child[value_child] == nullptr) continue;
+        v = Z_LVAL_P(zend_ast_get_zval(ast->child[value_child]));
       } else if (Z_TYPE(c->value) == IS_OBJECT) {
         v = Z_LVAL_P(zend_enum_fetch_case_value(Z_OBJ(c->value)));
       } else {

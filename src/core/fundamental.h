@@ -15,8 +15,7 @@ struct Fundamental {
 
 // zend_object -> the embedding handle.
 inline Fundamental *fundamental_from_zend(zend_object *o) {
-  return reinterpret_cast<Fundamental *>(reinterpret_cast<char *>(o) -
-                                         XtOffsetOf(Fundamental, std));
+  return reinterpret_cast<Fundamental *>(reinterpret_cast<char *>(o) - offsetof(Fundamental, std));
 }
 // zval (IS_OBJECT) -> the embedding handle.
 inline Fundamental *fundamental_from_zval(const zval *zv) {

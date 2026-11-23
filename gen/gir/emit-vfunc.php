@@ -250,7 +250,7 @@ trait EmitsVfuncs
         // a __destruct().
         $l[] = '  // PHP cannot run with an exception pending, and the default is no answer to';
         $l[] = '  // give GTK: park it for the call, as Zend does around a __destruct().';
-        $l[] = '  zend_exception_save();';
+        $l[] = '  const SetAsideException set_aside = set_aside_exception();';
         if ($argc > 0) {
             $l[] = "  std::array<zval, $argc> args{};";
             $l[] = '  zval *argv = args.data();';
@@ -278,7 +278,7 @@ trait EmitsVfuncs
         $l[] = '  zval_ptr_dtor(&ret);';
         $l[] = '  zval_ptr_dtor(&zself);';
         $l[] = "  report_pending_exception(\"$php::$phpName\");";
-        $l[] = '  zend_exception_restore();  // the parked one, previous of whatever this threw';
+        $l[] = '  put_back_exception(set_aside);  // the parked one, previous of whatever this threw';
         if ($retCt !== 'void') {
             $l[] = "  return $resultRet;";
         }

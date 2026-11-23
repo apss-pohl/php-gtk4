@@ -20,7 +20,7 @@ zend_object_handlers handlers;
 // zend_object -> our embedding struct.
 VariantObject *from_zend(zend_object *o) {
   return reinterpret_cast<VariantObject *>(reinterpret_cast<char *>(o) -
-                                           XtOffsetOf(VariantObject, std));
+                                           offsetof(VariantObject, std));
 }
 
 // create_object handler: an empty handle until __construct() fills it.
@@ -165,7 +165,7 @@ GVariant *variant_of_handle(zval *value) {
 void register_GVariant(zend_class_entry *ce) {
   ce_GVariant = ce;
   memcpy(&handlers, &std_object_handlers, sizeof(zend_object_handlers));
-  handlers.offset = XtOffsetOf(VariantObject, std);
+  handlers.offset = offsetof(VariantObject, std);
   handlers.free_obj = free_obj;
   handlers.clone_obj = clone_obj;
   handlers.compare = compare_objects;

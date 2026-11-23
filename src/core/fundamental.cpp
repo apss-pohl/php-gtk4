@@ -57,7 +57,7 @@ void free_obj(zend_object *o) {
 // MINIT: build the shared handler table for all fundamental handle classes.
 void fundamental_handlers_init() {
   memcpy(&handlers, &std_object_handlers, sizeof(zend_object_handlers));
-  handlers.offset = XtOffsetOf(Fundamental, std);
+  handlers.offset = offsetof(Fundamental, std);
   handlers.free_obj = free_obj;
   handlers.clone_obj = nullptr;
   handlers.get_constructor = get_constructor;

@@ -171,7 +171,7 @@ GVariant *vfunc_thunk_get_item_attribute_value(GMenuModel *self, gint item_index
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 3> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(item_index));
@@ -200,7 +200,7 @@ GVariant *vfunc_thunk_get_item_attribute_value(GMenuModel *self, gint item_index
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GMenuModel::vfunc_get_item_attribute_value");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -221,7 +221,7 @@ GMenuModel *vfunc_thunk_get_item_link(GMenuModel *self, gint item_index, const g
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(item_index));
@@ -245,7 +245,7 @@ GMenuModel *vfunc_thunk_get_item_link(GMenuModel *self, gint item_index, const g
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GMenuModel::vfunc_get_item_link");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -265,7 +265,7 @@ gint vfunc_thunk_get_n_items(GMenuModel *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   gint result = 0;
@@ -278,7 +278,7 @@ gint vfunc_thunk_get_n_items(GMenuModel *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GMenuModel::vfunc_get_n_items");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -298,7 +298,7 @@ gboolean vfunc_thunk_is_mutable(GMenuModel *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   gboolean result = FALSE;
@@ -309,7 +309,7 @@ gboolean vfunc_thunk_is_mutable(GMenuModel *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GMenuModel::vfunc_is_mutable");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 

@@ -53,7 +53,7 @@ GObject *vfunc_thunk_get_source_object(GAsyncResult *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   GObject *result = nullptr;
@@ -68,7 +68,7 @@ GObject *vfunc_thunk_get_source_object(GAsyncResult *self) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GAsyncResult::get_source_object");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 

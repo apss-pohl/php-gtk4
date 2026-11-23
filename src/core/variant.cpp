@@ -257,7 +257,7 @@ static GVariant *php_to_variant_at(zval *value, const GVariantType *type, int de
         bool b = false;
         if (Z_TYPE_P(value) == IS_TRUE || Z_TYPE_P(value) == IS_FALSE) {
           b = Z_TYPE_P(value) == IS_TRUE;
-        } else if (caller_is_strict() || !zend_parse_arg_bool_weak(value, &b, 0)) {
+        } else if (caller_is_strict() || !parse_bool_weak(value, &b)) {
           return fail(value, type);
         }
         return g_variant_new_boolean(b ? TRUE : FALSE);
@@ -284,7 +284,7 @@ static GVariant *php_to_variant_at(zval *value, const GVariantType *type, int de
           d = Z_DVAL_P(value);
         } else if (Z_TYPE_P(value) == IS_LONG) {  // widening: allowed under strict_types too
           d = static_cast<double>(Z_LVAL_P(value));
-        } else if (caller_is_strict() || !zend_parse_arg_double_weak(value, &d, 0)) {
+        } else if (caller_is_strict() || !parse_double_weak(value, &d)) {
           return fail(value, type);
         }
         return g_variant_new_double(d);

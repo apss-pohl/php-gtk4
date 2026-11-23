@@ -153,4 +153,22 @@ bool report_pending_exception(const char *origin_c) {
   return true;
 }
 
+// Take a pending Throwable out of the engine for one call into PHP (see error.h).
+SetAsideException set_aside_exception() {
+  const SetAsideException set_aside{EG(exception), EG(opline_before_exception)};
+  EG(exception) = nullptr;
+  return set_aside;
+}
+
+// Hand it back: the previous of whatever the call threw, else pending again as it was.
+void put_back_exception(SetAsideException set_aside) {
+  if (set_aside.exception == nullptr) return;
+  EG(opline_before_exception) = set_aside.opline_before_exception;
+  if (EG(exception) != nullptr) {
+    zend_exception_set_previous(EG(exception), set_aside.exception);
+  } else {
+    EG(exception) = set_aside.exception;
+  }
+}
+
 }  // namespace phpgtk

@@ -227,7 +227,7 @@ void vfunc_thunk_committed(WebKitInputMethodContext *self, const char *text) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (text == nullptr) {
@@ -242,7 +242,7 @@ void vfunc_thunk_committed(WebKitInputMethodContext *self, const char *text) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_committed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->committed (called from class_init /
@@ -263,7 +263,7 @@ void vfunc_thunk_delete_surrounding(WebKitInputMethodContext *self, int offset, 
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 2> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(offset));
@@ -275,7 +275,7 @@ void vfunc_thunk_delete_surrounding(WebKitInputMethodContext *self, int offset, 
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_delete_surrounding");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->delete_surrounding (called from class_init /
@@ -295,7 +295,7 @@ gboolean vfunc_thunk_filter_key_event(WebKitInputMethodContext *self, GdkEvent *
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(key_event != nullptr ? G_OBJECT(key_event) : nullptr, &argv[0]);
@@ -310,7 +310,7 @@ gboolean vfunc_thunk_filter_key_event(WebKitInputMethodContext *self, GdkEvent *
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_filter_key_event");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -334,7 +334,7 @@ void vfunc_thunk_notify_cursor_area(WebKitInputMethodContext *self, int x, int y
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 4> args{};
   zval *argv = args.data();
   ZVAL_LONG(&argv[0], static_cast<zend_long>(x));
@@ -348,7 +348,7 @@ void vfunc_thunk_notify_cursor_area(WebKitInputMethodContext *self, int x, int y
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_notify_cursor_area");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->notify_cursor_area (called from class_init /
@@ -369,14 +369,14 @@ void vfunc_thunk_notify_focus_in(WebKitInputMethodContext *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_notify_focus_in");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->notify_focus_in (called from class_init /
@@ -397,14 +397,14 @@ void vfunc_thunk_notify_focus_out(WebKitInputMethodContext *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_notify_focus_out");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->notify_focus_out (called from class_init /
@@ -427,7 +427,7 @@ void vfunc_thunk_notify_surrounding(WebKitInputMethodContext *self, const gchar 
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 4> args{};
   zval *argv = args.data();
   if (text == nullptr) {
@@ -445,7 +445,7 @@ void vfunc_thunk_notify_surrounding(WebKitInputMethodContext *self, const gchar 
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_notify_surrounding");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->notify_surrounding (called from class_init /
@@ -466,14 +466,14 @@ void vfunc_thunk_preedit_changed(WebKitInputMethodContext *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_preedit_changed");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->preedit_changed (called from class_init /
@@ -494,14 +494,14 @@ void vfunc_thunk_preedit_finished(WebKitInputMethodContext *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_preedit_finished");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->preedit_finished (called from class_init /
@@ -522,14 +522,14 @@ void vfunc_thunk_preedit_started(WebKitInputMethodContext *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_preedit_started");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->preedit_started (called from class_init /
@@ -549,14 +549,14 @@ void vfunc_thunk_reset(WebKitInputMethodContext *self) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   zval ret;
   ZVAL_UNDEF(&ret);
   zend_call_known_instance_method(fn, Z_OBJ(zself), &ret, 0, nullptr);
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_reset");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->reset (called from class_init / iface_init of
@@ -577,7 +577,7 @@ void vfunc_thunk_set_enable_preedit(WebKitInputMethodContext *self, gboolean ena
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   ZVAL_BOOL(&argv[0], enabled != FALSE);
@@ -588,7 +588,7 @@ void vfunc_thunk_set_enable_preedit(WebKitInputMethodContext *self, gboolean ena
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("WebKitInputMethodContext::vfunc_set_enable_preedit");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: WEBKIT_INPUT_METHOD_CONTEXT_CLASS->set_enable_preedit (called from class_init /

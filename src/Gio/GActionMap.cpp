@@ -69,7 +69,7 @@ void vfunc_thunk_add_action(GActionMap *self, GAction *action) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   wrap(action != nullptr ? G_OBJECT(action) : nullptr, &argv[0]);
@@ -80,7 +80,7 @@ void vfunc_thunk_add_action(GActionMap *self, GAction *action) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionMap::add_action");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GActionMapInterface *>->add_action (called from class_init /
@@ -100,7 +100,7 @@ GAction *vfunc_thunk_lookup_action(GActionMap *self, const gchar *action_name) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -122,7 +122,7 @@ GAction *vfunc_thunk_lookup_action(GActionMap *self, const gchar *action_name) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionMap::lookup_action");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
   return result;
 }
 
@@ -143,7 +143,7 @@ void vfunc_thunk_remove_action(GActionMap *self, const gchar *action_name) {
   }
   // PHP cannot run with an exception pending, and the default is no answer to
   // give GTK: park it for the call, as Zend does around a __destruct().
-  zend_exception_save();
+  const SetAsideException set_aside = set_aside_exception();
   std::array<zval, 1> args{};
   zval *argv = args.data();
   if (action_name == nullptr) {
@@ -158,7 +158,7 @@ void vfunc_thunk_remove_action(GActionMap *self, const gchar *action_name) {
   zval_ptr_dtor(&ret);
   zval_ptr_dtor(&zself);
   report_pending_exception("GActionMap::remove_action");
-  zend_exception_restore();  // the parked one, previous of whatever this threw
+  put_back_exception(set_aside);  // the parked one, previous of whatever this threw
 }
 
 // vfunc installer: static_cast<GActionMapInterface *>->remove_action (called from class_init /
