@@ -303,7 +303,7 @@ final class WorkflowsTest extends TestCase
         );
     }
 
-    /** Windows minutes bill at nearly twice Linux's, so the four-job matrix is not on every push. */
+    /** Windows minutes bill at nearly twice Linux's, so the Windows matrix is not on every push. */
     public function testWindowsIsNotBuiltForEveryDevBuild(): void
     {
         $release = (string) file_get_contents(self::WORKFLOWS . '/release.yml');

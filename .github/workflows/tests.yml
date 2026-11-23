@@ -17,10 +17,10 @@ concurrency:
 
 jobs:
   # Which thread models this push has to be run against. ZTS exists here to catch per-request
-  # state put in a plain static instead of the module globals, so it is worth its four jobs when
+  # state put in a plain static instead of the module globals, so it is worth its extra jobs when
   # something under src/core (or the header that declares the globals) moved, and not otherwise.
   # Anything that is not a pull request has no base to compare against and gets both.
-  # `PHP 8.4 ZTS` / `PHP 8.5 ZTS` are deliberately not required status checks, which is what
+  # The `PHP 8.x ZTS` cells are deliberately not required status checks, which is what
   # makes leaving the cells out safe - see docs/RELEASING.md "Gating".
   changes:
     name: What this push touches
@@ -60,7 +60,7 @@ jobs:
       fail-fast: false
       matrix:
         # Everything we claim to support (8.4+), on the GTK floor (24.04 = GTK 4.14).
-        php: ['8.4', '8.5']
+        php: ['8.4', '8.5', '8.6']
         ts: ${{ fromJSON(needs.changes.outputs.thread-models) }}
     env:
       phpts: ${{ matrix.ts }}

@@ -166,13 +166,14 @@ one. Consequences:
 `config.m4`, driven by the PHP SDK (`phpize.bat` → `configure` → `nmake`), with GTK 4 from
 [gvsbuild](https://github.com/wingtk/gvsbuild). The output is `php_gtk4.dll`. There is no IDE
 project and there will be none (php-gtk3 had one; see docs/DESIGN.md and `docs/TODO.md`). CI builds and
-tests it on `windows-2022` for PHP 8.4 and 8.5, NTS and ZTS (`.github/workflows/windows.yml` — the
-same matrix as Linux), and every release ships one
-`php_gtk4-<ver>-php<X.Y>-nts-vs17-x64.dll` per supported PHP — TS builds from source, as on Linux.
+tests it for PHP 8.4, 8.5 and 8.6, NTS and ZTS (`.github/workflows/windows.yml` — the same matrix as
+Linux; 8.4/8.5 on `windows-2022`, 8.6 on `windows-2025-vs2026`), and every release ships one
+`php_gtk4-<ver>-<X.Y>-<nts|ts>-<vs17|vs18>-x86_64.zip` per supported PHP and thread model, the name PIE
+looks for.
 
 ### Why gvsbuild
 
-Windows PHP is built with MSVC (VS17 for 8.4/8.5, see
+Windows PHP is built with MSVC (VS17 for 8.4/8.5, VS18 for 8.6, see
 <https://windows.php.net/downloads/php-sdk/deps/series/>). gvsbuild builds GTK with the same
 compiler, so the extension, PHP and GTK share one CRT and one `malloc` — no MinGW/MSVC boundary to
 crash at. It also ships `pkgconf` and the `.pc` files, which is what `config.w32` reads the include
@@ -182,9 +183,9 @@ and library lists from, so the flag list never has to be maintained by hand.
 
 | What | Windows |
 | --- | --- |
-| Visual Studio | 2022 (Community is fine), workload *Desktop development with C++*. The series must match the PHP build: VS17 for PHP 8.4 and 8.5. |
-| PHP | `php.exe` 8.4+ from <https://windows.php.net/download/> (NTS or TS) **and** the matching *Development package* (`php-devel-pack-<ver>[-nts]-Win32-vs17-x64.zip`): headers, `php8.lib`, `phpize.bat`. |
-| PHP SDK | [php-sdk-binary-tools](https://github.com/php/php-sdk-binary-tools) (`git clone`); it provides the `phpsdk-vs17-x64.bat` shell in which everything below runs. |
+| Visual Studio | 2022 for PHP 8.4 and 8.5, 2026 for PHP 8.6 (Community is fine), workload *Desktop development with C++*. The series must match the PHP build (VS17, VS18): `php.exe` refuses a module linked with a newer MSVC than its core. |
+| PHP | `php.exe` 8.4+ from <https://windows.php.net/download/> (NTS or TS) **and** the matching *Development package* (`php-devel-pack-<ver>[-nts]-Win32-<vs17|vs18>-x64.zip`): headers, `php8.lib`, `phpize.bat`. |
+| PHP SDK | [php-sdk-binary-tools](https://github.com/php/php-sdk-binary-tools) (`git clone`); it provides the `phpsdk-vs17-x64.bat` (`-vs18-` for PHP 8.6) shell in which everything below runs. |
 | GTK 4 | A gvsbuild tree: `<root>\include\gtk-4.0`, `<root>\lib\*.lib`, `<root>\lib\pkgconfig`, `<root>\bin\*.dll`. |
 | Composer | for the test suite only. |
 
@@ -201,8 +202,8 @@ gvsbuild build gtk4          # -> C:\gtk-build\gtk\x64\release
 
 ### Build
 
-In a `phpsdk-vs17-x64.bat` shell, with the devel pack's directory (the one containing
-`phpize.bat`) on `PATH`, from the repo root:
+In a `phpsdk-vs17-x64.bat` (8.4/8.5) or `phpsdk-vs18-x64.bat` (8.6) shell, with the devel pack's
+directory (the one containing `phpize.bat`) on `PATH`, from the repo root:
 
 ```bat
 phpize

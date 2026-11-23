@@ -157,7 +157,7 @@ php8.4 -d extension=gtk4 -m | grep gtk4
 ### Dependencies
 
 1. **PHP 8.4+ for Windows**, x64, from <https://windows.php.net/download/> — the *NTS* build unless
-   you specifically need TS. Prebuilt DLLs here are NTS/VS17/x64.
+   you specifically need TS. Prebuilt DLLs exist for both, x64, VS17 for PHP 8.4/8.5 and VS18 for 8.6.
 2. **GTK 4** built with MSVC, from gvsbuild — php-gtk4, PHP and GTK must share one CRT, so a MinGW
    or MSYS2 GTK will not do. Unpack the prebuilt release asset:
 
@@ -174,8 +174,8 @@ php8.4 -d extension=gtk4 -m | grep gtk4
    [Environment]::SetEnvironmentVariable('Path', $env:Path + ';C:\gtk\bin', 'User')
    ```
 
-Building additionally needs Visual Studio 2022 with *Desktop development with C++*, the PHP
-*development package* matching your `php.exe`, and
+Building additionally needs Visual Studio 2022 (PHP 8.4/8.5) or 2026 (PHP 8.6) with *Desktop
+development with C++*, the PHP *development package* matching your `php.exe`, and
 [php-sdk-binary-tools](https://github.com/php/php-sdk-binary-tools).
 
 ### Option A — PIE
@@ -200,12 +200,13 @@ Expand-Archive php_gtk4-<ver>-8.4-nts-vs17-x86_64.zip -DestinationPath .
 Copy-Item php_gtk4-<ver>-8.4-nts-vs17-x86_64.dll C:\php\ext\php_gtk4.dll
 ```
 
-PHP version, threading (NTS) and compiler series (VS17) in the name must all match your `php.exe`
-— `php -i` prints them. Anything else: build from source.
+PHP version, threading (NTS) and compiler series (VS17; `-vs18-` for PHP 8.6) in the name must all
+match your `php.exe` — `php -i` prints them. Anything else: build from source.
 
 ### Option C — from source
 
-In a `phpsdk-vs17-x64.bat` shell, with the devel pack's `phpize.bat` on `PATH`, from the repo root:
+In a `phpsdk-vs17-x64.bat` shell (`phpsdk-vs18-x64.bat` for PHP 8.6), with the devel pack's
+`phpize.bat` on `PATH`, from the repo root:
 
 ```bat
 phpize

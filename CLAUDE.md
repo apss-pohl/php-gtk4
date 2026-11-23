@@ -19,8 +19,8 @@ Hard constraints:
   CGI) are not a target and never a design consideration. ZTS is built and tested because it is a
   PHP build flavour, not because of any multi-threaded server use.
 
-- **PHP 8.4+ only** — 8.4 and 8.5 in the CI matrix; **locally only 8.4 is built/tested** (`ci.sh`
-  defaults, `buildall.sh` has 8.5 disabled — `ONLY=8.5 ./buildall.sh` to force). `config.m4` and
+- **PHP 8.4+ only** — 8.4, 8.5 and 8.6 in the CI matrix; **locally only 8.4 is built/tested** (`ci.sh`
+  defaults, `buildall.sh` has 8.5 and 8.6 disabled — `ONLY=8.6 ./buildall.sh` to force). `config.m4` and
   `src/php_gtk4.h` (`#error` on `PHP_VERSION_ID < 80400`) both refuse older PHP. Don't add
   compatibility shims for older PHP; do use PHP 8.4 features in stubs/tests/examples.
 - **C++20** (`-std=c++20`, GCC 11+/Clang 14+). `ci.sh` (clang-tidy) and `.clang-format` use the
@@ -444,7 +444,7 @@ setup-php 8.4, GTK4/WebKitGTK headers, clang 20 from apt.llvm.org, `phpize && ./
 (2) `./ci.sh --only=php-qa` + `--only=md-lint`, plus a `commits` job that runs `bin/commit-lint`
 over the PR title (a squash merge makes it the commit) and `./ci.sh --only=commits` over the
 branch's commits (a rebase merge keeps them); (3) build the extension and run the
-PHPUnit suite *and* `./ci.sh --only=phpt` for PHP 8.4 and 8.5 — NTS always, **ZTS when something under
+PHPUnit suite *and* `./ci.sh --only=phpt` for PHP 8.4, 8.5 and 8.6 — NTS always, **ZTS when something under
 `src/core/` changed** (a `changes` job decides; ZTS is there to catch per-request state in a plain static,
 and a release runs it regardless), on Ubuntu 24.04 (`fail-fast: false`;
 failing `.out`/`.diff` files upload as the `phpt-failures-php*-<ts>` artifact), plus `sanitizers`
@@ -452,7 +452,8 @@ failing `.out`/`.diff` files upload as the `phpt-failures-php*-<ts>` artifact), 
 `webkit` job on 8.4 (`--enable-gtk4-webkit` build, load and the whole PHPUnit suite — the only run
 in which the `WebKit*`/`JSC*` classes and their tests exist). The apt package lists must
 mirror `config.m4`'s pkg-config modules (plus `gir1.2-gtk-4.0` where the `gen` stage runs).
-(4) `windows.yml`: the 8.4/8.5 × NTS/ZTS matrix calling `windows-build.yml` — `windows-2022`,
+(4) `windows.yml`: the 8.4/8.5/8.6 × NTS/ZTS matrix calling `windows-build.yml` — `windows-2022`
+with vs17 for 8.4/8.5, `windows-2025-vs2026` with vs18 for 8.6 (one table there, `PHP_SDK_VS`),
 setup-php + the matching devel pack from windows.php.net + php-sdk-binary-tools + the cached
 `GTK4_Gvsbuild_<ver>_x64.zip` release asset (`GVSBUILD_VERSION`, pinned by hand in
 `windows-build.yml` only — `WorkflowsTest` enforces that, nothing bumps it; docs/BUILD.md "The
@@ -479,7 +480,7 @@ too. A real release also runs
 `CHANGELOG.md` section for the version (required, verbatim) followed by `bin/release-notes`,
 which groups the commits since the previous release by Conventional Commit type. Assets are one `.so` per
 supported PHP named with its whole ABI identity, one
-`php_gtk4-<ver>-<X.Y>-<nts|ts>-vs17-x86_64.zip` per supported PHP and thread model (the
+`php_gtk4-<ver>-<X.Y>-<nts|ts>-<vs17|vs18>-x86_64.zip` per supported PHP and thread model (the
 `build-windows` job calling `windows-build.yml`, then zipped in `publish`), plus the source tarball
 and `SHA256SUMS`, with build provenance attestation instead of a signed tag.
 **Two packages ship from this repository**: the extension itself as a PIE package
@@ -641,11 +642,12 @@ context fields marked required and blank issues disabled; `IssueTemplateTest` ke
   (handler, else an `E_WARNING` through `core/diagnostics`; GTK continues) or `Rethrow` (handler,
   then the Throwable stays pending, `quit_running_loops()` stops
   `GMainLoop::run`/`GtkApplication::run`, and it propagates to PHP).
-  A vfunc thunk *parks* a Throwable that is already pending (`zend_exception_save()` around the
-  call, restored after): Zend refuses to run PHP while one is in flight, and answering GTK with
-  the slot's default instead is a lie about the object — a `GListModel` that says "0 items"
-  because PHP happens to be unwinding leaves `GtkListView`'s item manager holding rows GTK
-  believes gone, which a GTK built with assertions aborts on.
+  A vfunc thunk *parks* a Throwable that is already pending (`set_aside_exception()` /
+  `put_back_exception()` from `core/error` around the call, what Zend does around a `__destruct()`;
+  PHP 8.6 removed `zend_exception_save()`/`_restore()`): Zend refuses to run PHP while one is in
+  flight, and answering GTK with the slot's default instead is a lie about the object — a
+  `GListModel` that says "0 items" because PHP happens to be unwinding leaves `GtkListView`'s item
+  manager holding rows GTK believes gone, which a GTK built with assertions aborts on.
   Non-signal callbacks go through `src/core/callback.*` with the installing method as origin;
   typed C callbacks (`GtkDrawingAreaDrawFunc`, `GtkCustomFilterFunc`, `GCompareDataFunc`) follow
   the trampoline rule in gen/README.md ("Typed C callbacks") — `gen/overrides/Gtk.DrawingArea.cpp`,

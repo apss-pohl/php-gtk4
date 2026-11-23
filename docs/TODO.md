@@ -44,5 +44,5 @@ history; an item leaves this file when it is done or decided against, it is not 
 
 Namespace `Gtk4\`; PHP class == GType name + registry; toggle-ref hold + qdata identity;
 GValue-array GClosure marshaller; single GValue bridge; catch → leave scope → report; `ci.sh`
-stages; ASan/UBSan/LSan + valgrind + gcov; `EveryClassTest`/`ExampleTest`; PHP 8.4/8.5 × NTS/ZTS
+stages; ASan/UBSan/LSan + valgrind + gcov; `EveryClassTest`/`ExampleTest`; PHP 8.4/8.5/8.6 × NTS/ZTS
 on GTK 4.14 (Linux) and the pinned gvsbuild GTK (Windows); C++20.

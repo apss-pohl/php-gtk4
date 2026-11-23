@@ -149,10 +149,13 @@ Every release, dev builds included, carries:
 php-gtk4-0.2.0.tar.gz                                     # source dist - what PIE builds on Linux
 gtk4-0.2.0-php8.4-nts-x86_64-linux-gnu-ubuntu24.04.so
 gtk4-0.2.0-php8.5-nts-x86_64-linux-gnu-ubuntu24.04.so
+gtk4-0.2.0-php8.6-nts-x86_64-linux-gnu-ubuntu24.04.so
 php_gtk4-0.2.0-8.4-nts-vs17-x86_64.zip                    # Windows, one per PHP x thread model
 php_gtk4-0.2.0-8.4-ts-vs17-x86_64.zip
 php_gtk4-0.2.0-8.5-nts-vs17-x86_64.zip
 php_gtk4-0.2.0-8.5-ts-vs17-x86_64.zip
+php_gtk4-0.2.0-8.6-nts-vs18-x86_64.zip                    # 8.6: Visual Studio 2026
+php_gtk4-0.2.0-8.6-ts-vs18-x86_64.zip
 SHA256SUMS
 ```
 
@@ -223,11 +226,12 @@ extension defines every class, loading the stub next to it would redeclare them 
 
 ## Gating
 
-`release.yml` runs `./ci.sh` in full (PHP 8.4 and 8.5, ubuntu-24.04) before it builds anything for upload,
-rather than keying off the result of `tests.yml`. That re-runs work the PR already did, and costs ~10 minutes
-per merge. It buys a release job that cannot publish a broken artifact because of a `workflow_run` race, which
-at this stage is the better half of the trade. `concurrency: release-main` with `cancel-in-progress: false`
-serialises two merges landing back to back — which also keeps the prune step from racing itself.
+`release.yml` runs `./ci.sh` in full (PHP 8.4, 8.5 and 8.6, ubuntu-24.04) before it builds anything for
+upload, rather than keying off the result of `tests.yml`. That re-runs work the PR already did, and costs ~10
+minutes per merge. It buys a release job that cannot publish a broken artifact because of a `workflow_run`
+race, which at this stage is the better half of the trade. `concurrency: release-main` with
+`cancel-in-progress: false` serialises two merges landing back to back — which also keeps the prune step from
+racing itself.
 
 Because that gate exists, `tests.yml`, `php-qa.yml` and `windows.yml` run on pull requests only: the commit
 being merged is the one the pull request just validated, and this job validates it again on `main`. Leaving
@@ -252,7 +256,7 @@ costs. So a dev build installs through PIE on Linux, where PIE builds from sourc
 it depends on and once a week regardless.
 
 Branch protection on `main` should require the `C++ static analysis`, `PHP QA (...)` and `PHP 8.4` /
-`PHP 8.5` checks (the job names in `.github/workflows/`), with squash merges — one merge
+`PHP 8.5` / `PHP 8.6` checks (the job names in `.github/workflows/`), with squash merges — one merge
 is one commit is one dev build. A required check must come from a workflow that always starts:
 a `paths:` filter on one would mean it never runs for a change outside those paths, never reports,
 and the pull request waits for a check that cannot arrive. That is why `cpp-lint.yml` is not filtered

@@ -26,11 +26,13 @@ on:
         description: name of the uploaded dll artifact
         required: true
         type: string
-      dll-name:
-        description: file name for the dll in the artifact (default php_gtk4.dll)
+      asset-stem:
+        description: >-
+          release asset stem (php_gtk4-<version>): the dll is then named
+          <stem>-<php>-<ts>-<vs>-x86_64.dll, the name PIE looks for; empty = php_gtk4.dll
         required: false
         type: string
-        default: php_gtk4.dll
+        default: ''
       expect-version:
         description: phpversion("gtk4") the dll must report (default VERSION file)
         required: false
@@ -48,14 +50,18 @@ env:
   #     | jq -r '.assets[] | select(.name | test("GTK4")) | .digest'
   GVSBUILD_SHA256: '1f95a92d037f5292da05e6ab1037032ff21ddb7b20d4ac8e83e3674c864c07b0'
   GTK4_ROOT: C:\gtk
-  # php-src's Windows SDK (phpsdk-vs17-x64.bat, nmake wrappers, deps handling).
+  # php-src's Windows SDK (phpsdk-vs1x-x64.bat, nmake wrappers, deps handling).
   PHP_SDK_REF: php-sdk-2.8.3  # a tag, never a branch: this shell builds what release.yml attests
-  PHP_SDK_VS: vs17
+  # The Visual Studio each PHP minor is built with: php.exe refuses a module linked with a newer
+  # MSVC than its core, so 8.6 (Visual Studio 2026) needs vs18 and 8.4/8.5 stay vs17. It is part
+  # of the devel pack's and the release asset's name. The runner image below has to carry that
+  # Visual Studio: keep the two tables in step. A minor in neither fails the job at once.
+  PHP_SDK_VS: ${{ fromJSON('{"8.4":"vs17","8.5":"vs17","8.6":"vs18"}')[inputs.php] }}
 
 jobs:
   build:
     name: PHP ${{ inputs.php }} (${{ inputs.ts }})
-    runs-on: windows-2022
+    runs-on: ${{ fromJSON('{"8.4":"windows-2022","8.5":"windows-2022","8.6":"windows-2025-vs2026"}')[inputs.php] }}
     timeout-minutes: 45
     env:
       phpts: ${{ inputs.ts }}
@@ -174,7 +180,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'php_gtk4.dll did not load' }
           if ($got -ne $want) { throw "php_gtk4.dll reports '$got', expected '$want'" }
           php -n -dextension="$dll" -r 'echo Gtk4\BUILD_INFO, " ", Gtk4\FEATURES, "\n";'
-          "${{ inputs.dll-name }} -> $got (GTK from gvsbuild $env:GVSBUILD_VERSION)" >> $env:GITHUB_STEP_SUMMARY
+          "PHP ${{ inputs.php }} ${{ inputs.ts }} ($env:PHP_SDK_VS): php_gtk4.dll -> $got (GTK from gvsbuild $env:GVSBUILD_VERSION)" >> $env:GITHUB_STEP_SUMMARY
 
       - name: Cache Composer packages
         if: inputs.run-tests
@@ -211,15 +217,20 @@ jobs:
             phpunit-events.txt
           if-no-files-found: ignore
 
+      # A release asset is named the way PIE looks for it on Windows:
+      # php_<extension>-<version>-<php>-<ts|nts>-<compiler>-<arch>, lower case (php/pie,
+      # Platform/WindowsExtensionAssetName; PiePackageTest).
       - name: Stage the dll under its artifact name
         run: |
+          $stem = '${{ inputs.asset-stem }}'
+          $name = if ($stem) { "$stem-${{ inputs.php }}-${{ inputs.ts }}-$env:PHP_SDK_VS-x86_64.dll" } else { 'php_gtk4.dll' }
           New-Item -ItemType Directory dist | Out-Null
-          Copy-Item $env:GTK4_DLL "dist\${{ inputs.dll-name }}"
+          Copy-Item $env:GTK4_DLL "dist\$name"
 
       - name: Upload php_gtk4.dll
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ${{ inputs.artifact }}
-          path: dist/${{ inputs.dll-name }}
+          path: dist/*.dll
           if-no-files-found: error
           retention-days: 7

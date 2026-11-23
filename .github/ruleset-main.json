@@ -59,6 +59,9 @@
             "context": "PHP 8.5"
           },
           {
+            "context": "PHP 8.6"
+          },
+          {
             "context": "C++ static analysis"
           },
           {

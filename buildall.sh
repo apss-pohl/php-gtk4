@@ -25,10 +25,11 @@ fi
 WITH_WEBKIT=${WITH_WEBKIT:-0}
 
 # FORMAT: "version:enabled"   (enabled: 1=build by default, 0=skip; ONLY=x forces)
-# Local default is 8.4 only; 8.5 is covered by the CI matrix.
+# Local default is 8.4 only; 8.5 and 8.6 are covered by the CI matrix.
 BUILDS=(
     "8.4:1"
     "8.5:0"
+    "8.6:0"
 )
 
 for BUILD in "${BUILDS[@]}"; do
