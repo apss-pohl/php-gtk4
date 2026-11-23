@@ -450,7 +450,10 @@ and a release runs it regardless), on Ubuntu 24.04 (`fail-fast: false`;
 failing `.out`/`.diff` files upload as the `phpt-failures-php*-<ts>` artifact), plus `sanitizers`
 (`ci.sh --only=valgrind` + `--only=asan`) and a
 `webkit` job on 8.4 (`--enable-gtk4-webkit` build, load and the whole PHPUnit suite — the only run
-in which the `WebKit*`/`JSC*` classes and their tests exist). The apt package lists must
+in which the `WebKit*`/`JSC*` classes and their tests exist), and `newer-gtk`: build, load and
+`DeprecationTest` only, in a `debian:trixie` container (GTK 4.18, GLib 2.84, PHP 8.4 from Debian),
+so an API a later GTK or GIR deprecates fails here rather than on a user's machine; a deprecated
+member goes to `gen/skip.txt`. The apt package lists must
 mirror `config.m4`'s pkg-config modules (plus `gir1.2-gtk-4.0` where the `gen` stage runs).
 (4) `windows.yml`: the 8.4/8.5/8.6 × NTS/ZTS matrix calling `windows-build.yml` — `windows-2022`
 with vs17 for 8.4/8.5, `windows-2025-vs2026` with vs18 for 8.6 (one table there, `PHP_SDK_VS`),
