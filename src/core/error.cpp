@@ -155,7 +155,8 @@ bool report_pending_exception(const char *origin_c) {
 
 // Take a pending Throwable out of the engine for one call into PHP (see error.h).
 SetAsideException set_aside_exception() {
-  const SetAsideException set_aside{EG(exception), EG(opline_before_exception)};
+  const SetAsideException set_aside{.exception = EG(exception),
+                                    .opline_before_exception = EG(opline_before_exception)};
   EG(exception) = nullptr;
   return set_aside;
 }
