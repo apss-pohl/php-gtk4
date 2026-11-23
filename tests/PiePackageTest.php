@@ -170,7 +170,14 @@ final class PiePackageTest extends TestCase
 
         foreach (['windows.yml', 'release.yml'] as $workflow) {
             $text = (string) file_get_contents(self::ROOT . "/.github/workflows/$workflow");
+            if ($workflow === 'release.yml') { // its other matrices are the Linux ones
+                if (preg_match('/^  build-windows:\n(.*?)(?=^  [\w-]+:\n)/ms', $text, $job) !== 1) {
+                    self::fail('release.yml has no build-windows job any more');
+                }
+                $text = $job[1];
+            }
             preg_match_all('/php: \\[([^\\]]*)\\]/', $text, $matrices);
+            self::assertNotEmpty($matrices[1], "$workflow: no Windows php matrix");
             foreach ($matrices[1] as $matrix) {
                 preg_match_all("/'(\\d+\\.\\d+)'/", $matrix, $built);
                 foreach ($built[1] as $minor) {
