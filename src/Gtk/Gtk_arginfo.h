@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 94c16175e0dc17032476cf96ae881cd3d23a0a08 */
+ * Stub hash: 87468945c767b608e78c525f80a9be8db53841a2 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GtkAboutDialog___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -4915,8 +4915,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkSnapshot_append_te
 	ZEND_ARG_OBJ_INFO(0, bounds, Gtk4\\GrapheneRect, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_Gtk4_GtkSnapshot_gl_shader_pop_texture arginfo_class_Gtk4_GtkAboutDialog_realize
-
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_Gtk4_GtkSnapshot_perspective, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, depth, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
@@ -8653,7 +8651,6 @@ ZEND_METHOD(Gtk4_GtkSnapshot, append_outset_shadow);
 ZEND_METHOD(Gtk4_GtkSnapshot, append_scaled_texture);
 ZEND_METHOD(Gtk4_GtkSnapshot, append_stroke);
 ZEND_METHOD(Gtk4_GtkSnapshot, append_texture);
-ZEND_METHOD(Gtk4_GtkSnapshot, gl_shader_pop_texture);
 ZEND_METHOD(Gtk4_GtkSnapshot, perspective);
 ZEND_METHOD(Gtk4_GtkSnapshot, pop);
 ZEND_METHOD(Gtk4_GtkSnapshot, push_blend);
@@ -11593,7 +11590,6 @@ static const zend_function_entry class_Gtk4_GtkSnapshot_methods[] = {
 	ZEND_ME(Gtk4_GtkSnapshot, append_scaled_texture, arginfo_class_Gtk4_GtkSnapshot_append_scaled_texture, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkSnapshot, append_stroke, arginfo_class_Gtk4_GtkSnapshot_append_stroke, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkSnapshot, append_texture, arginfo_class_Gtk4_GtkSnapshot_append_texture, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GtkSnapshot, gl_shader_pop_texture, arginfo_class_Gtk4_GtkSnapshot_gl_shader_pop_texture, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkSnapshot, perspective, arginfo_class_Gtk4_GtkSnapshot_perspective, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkSnapshot, pop, arginfo_class_Gtk4_GtkSnapshot_pop, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GtkSnapshot, push_blend, arginfo_class_Gtk4_GtkSnapshot_push_blend, ZEND_ACC_PUBLIC)

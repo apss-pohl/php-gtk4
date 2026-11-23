@@ -31,6 +31,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `vfunc handle_local_options` — parameter `options` of type GLib.VariantDict
 - `vfunc local_command_line` — inout parameter arguments
 - `vfunc open` — parameter `files` of type array (C array)
+- `property action-group` — skip.txt: deprecated since GLib 2.32 like set_action_group(), and newer GIR says so (GLib 2.84: DeprecationTest fails there); add actions with add_action(), GApplication is the GActionMap
 
 ## GApplicationFlags
 
@@ -965,6 +966,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `append_repeating_radial_gradient` — parameter `stops` of type array (C array)
 - `free_to_node` — skip.txt: frees the GtkSnapshot itself like free_to_paintable; to_node() answers with the same node and leaves the object alive
 - `free_to_paintable` — skip.txt: frees the GtkSnapshot itself, so the handle is left on freed memory and its next qdata/toggle-ref touch is a SEGV (ASan caught it); to_paintable() answers with the same paintable and leaves the object alive
+- `gl_shader_pop_texture` — skip.txt: deprecated in GTK 4.16 with GskGLShader, so a build against newer GTK fails on the deprecation warning; it pops what push_gl_shader pushed, and that is not bound (Gsk.GLShader)
 - `push_debug` — varargs
 - `push_gl_shader` — parameter `shader` of type Gsk.GLShader
 - `push_shadow` — parameter `shadow` of type array (C array)

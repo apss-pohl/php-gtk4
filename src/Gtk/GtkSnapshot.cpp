@@ -278,18 +278,6 @@ ZEND_METHOD(Gtk4_GtkSnapshot, append_texture) {
 }
 
 /**
- * Gtk4\GtkSnapshot::gl_shader_pop_texture(): void
- *
- * Removes the top element from the stack of render nodes and adds it to the nearest `GLShaderNode`
- * below it.
- */
-ZEND_METHOD(Gtk4_GtkSnapshot, gl_shader_pop_texture) {
-  ZEND_PARSE_PARAMETERS_NONE();
-  GtkSnapshot *self = PHPGTK_SELF(GtkSnapshot, GTK_TYPE_SNAPSHOT);
-  gtk_snapshot_gl_shader_pop_texture(self);
-}
-
-/**
  * Gtk4\GtkSnapshot::perspective(float $depth): void
  *
  * Applies a perspective projection transform.

@@ -287,7 +287,6 @@ final class GActionMapObject extends GObject implements GActionMap
 /**
  * `GApplication` is the core class for application support.
  *
- * @property-write ?GActionGroup $action_group
  * @property ?string $application_id
  * @property int $flags
  * @property int $inactivity_timeout

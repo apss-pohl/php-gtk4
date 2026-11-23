@@ -7879,12 +7879,6 @@ class GtkSnapshot extends GdkSnapshot
      */
     public function append_texture(GdkTexture $texture, GrapheneRect $bounds): void {}
 
-    /**
-     * Removes the top element from the stack of render nodes and adds it to the nearest
-     * `GLShaderNode` below it.
-     */
-    public function gl_shader_pop_texture(): void {}
-
     /** Applies a perspective projection transform. */
     public function perspective(float $depth): void {}
 

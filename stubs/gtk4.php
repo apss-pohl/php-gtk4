@@ -7405,7 +7405,6 @@ final class GActionMapObject extends GObject implements GActionMap
 /**
  * `GApplication` is the core class for application support.
  *
- * @property-write ?GActionGroup $action_group
  * @property ?string $application_id
  * @property int $flags
  * @property int $inactivity_timeout
@@ -25128,13 +25127,6 @@ class GtkSnapshot extends GdkSnapshot
     {
         unset($texture);
         unset($bounds);
-    }
-    /**
-     * Removes the top element from the stack of render nodes and adds it to the nearest
-     * `GLShaderNode` below it.
-     */
-    public function gl_shader_pop_texture(): void
-    {
     }
     /** Applies a perspective projection transform. */
     public function perspective(float $depth): void

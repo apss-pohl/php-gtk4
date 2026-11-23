@@ -20,6 +20,16 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   enum case's constant has the case id as a new child, which `enums_verify()` now reads past - and
   stops at a layout it does not know, instead of checking nothing.
 
+### Removed
+
+- **`GtkSnapshot::gl_shader_pop_texture()`**: GTK deprecated it in 4.16 together with `GskGLShader`, and
+  a build against a newer GTK (Debian 13: GTK 4.18) failed on the deprecation warning. It could not do
+  anything useful from PHP anyway: it pops what `push_gl_shader()` pushed, and that is not bound (no
+  `GskGLShader`). A CI job now builds against Debian 13's GTK, so the next deprecation fails there.
+- **`GApplication::$action_group`**: deprecated since GLib 2.32 like `set_action_group()`, which was
+  never bound; newer GIR (GLib 2.84) says so, and `DeprecationTest` failed there. Add actions with
+  `add_action()`: a `GApplication` is the `GActionMap`.
+
 ## [0.4.0] - 2026-11-23
 
 GVariant, D-Bus and the GDK surface side, and the fix that lets the extension be loaded with `dl()`
