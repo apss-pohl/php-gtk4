@@ -94,9 +94,11 @@ final class GDBusTest extends GtkTestCase
     }
 
     /**
-     * Run the loop until a reply landed in $outcome, or the budget is spent; returns it.
+     * Run the loop until a reply landed in $outcome, or the budget is spent; returns it. Impure:
+     * each call takes the next reply.
      *
      * @return list<mixed>|GError
+     * @phpstan-impure
      */
     private function reply(int $ms = 5000): array|GError
     {

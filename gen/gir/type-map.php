@@ -715,7 +715,8 @@ final class TypeMap
         if ($relation === null) {
             return [];
         }
-        [$kind, $of] = str_contains($relation, ':') ? explode(':', $relation, 2) : [$relation, ''];
+        $parts = explode(':', $relation, 2);
+        [$kind, $of] = [$parts[0], $parts[1] ?? ''];
         $widget = "GTK_WIDGET({$name}_o)";
         $fn = 'ZSTR_VAL(EX(func)->common.function_name)';
         [$test, $message, $args] = match ($kind) {

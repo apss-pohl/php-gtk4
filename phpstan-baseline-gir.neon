@@ -115,18 +115,6 @@ parameters:
 			path: gen/gir.php
 
 		-
-			message: '#^Parameter \#1 \$string of function ltrim expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: gen/gir.php
-
-		-
-			message: '#^Parameter \#1 \$type of static method PhpGtk4\\Gen\\Generator\:\:assertion\(\) expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: gen/gir.php
-
-		-
 			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, list given\.$#'
 			identifier: argument.type
 			count: 1
