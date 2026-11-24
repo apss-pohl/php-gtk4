@@ -7,6 +7,12 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ## [Unreleased]
 
+### Changed
+
+- The CI job on Debian 13's GTK 4.18 runs what the GTK 4.14 jobs run: the whole PHPUnit suite and
+  phpt, and valgrind and the sanitizers in a part of its own, since the GL switch they set differs
+  from GTK 4.16 on. It ran only `DeprecationTest`, `PangoFontTest` and phpt before.
+
 ## [0.5.1] - 2026-11-24
 
 A crash fix for thread-safe (ZTS) PHP with D-Bus, and the test tooling on GTK 4.16 and later.

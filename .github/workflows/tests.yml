@@ -181,20 +181,26 @@ jobs:
       - name: Run sanitizer stage
         run: ./ci.sh --only=asan
 
-  # The rest of this workflow builds on the GTK floor (4.14), where nothing is deprecated yet. A
-  # function GTK deprecates later is a warning in a newer GTK's headers, and ci.sh fails the build on
-  # any warning: gtk_snapshot_gl_shader_pop_texture() (deprecated in 4.16) broke the build on
-  # Debian 13 while every job here stayed green. The same goes for what a newer GIR marks deprecated
-  # (GApplication:action-group): DeprecationTest reads the installed GIR, so it runs here too. So does
-  # PangoFontTest: GskTextNode::get_color() works around a bug of GTK 4.16 to 4.21 that the floor does
-  # not have. And the phpt stage: its tests compare stderr, where a newer GTK says what the floor does
-# not (GDK_DEBUG=gl-disable is "Unrecognized" from 4.16 on). Not the whole PHPUnit suite: its pinned GTK behaviour (tests/robustness-criticals.txt) is the
-  # floor's.
+  # The rest of this workflow builds on the GTK floor (4.14); this job runs the same checks on a
+  # newer GTK, where the floor cannot see: a function GTK deprecates later is a warning in the newer
+  # headers, and ci.sh fails the build on any warning (gtk_snapshot_gl_shader_pop_texture(),
+  # deprecated in 4.16, broke the build on Debian 13 while every job here stayed green); a newer GIR
+  # marks members deprecated (DeprecationTest reads the installed GIR); GTK 4.16 to 4.21 have bugs
+  # the binding works around (GskTextNode::get_color()) and print to stderr what the floor does not
+  # (GDK_DEBUG=gl-disable is "Unrecognized" from 4.16 on, which fails every phpt). So the whole
+  # suite and phpt run here, and valgrind and ASan in a part of their own, in parallel: the GL
+  # switch they set differs from 4.16 on. tests/robustness-criticals.txt is version-aware
+  # (`gtk>=X.Y` lines). dbus-run-session: without a bus, GLib forks for dbus-launch (not installed)
+  # and valgrind reports the failed children's memory as leaks.
   newer-gtk:
-    name: Build against a newer GTK (Debian 13)
+    name: Newer GTK (Debian 13), ${{ matrix.part }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 30
     container: debian:trixie
+    strategy:
+      fail-fast: false
+      matrix:
+        part: [tests, sanitizers]
     env:
       COMPOSER_ALLOW_SUPERUSER: 1
     steps:
@@ -203,7 +209,8 @@ jobs:
           apt-get update
           apt-get install -y --no-install-recommends \
             ca-certificates git pkg-config build-essential php8.4-cli php8.4-dev libgtk-4-dev \
-            gir1.2-glib-2.0-dev php8.4-xml php8.4-mbstring composer unzip xvfb xauth dbus
+            gir1.2-glib-2.0-dev php8.4-xml php8.4-mbstring composer unzip xvfb xauth dbus \
+            glib-networking libxtst6 ${{ matrix.part == 'sanitizers' && 'valgrind' || '' }}
 
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -218,13 +225,20 @@ jobs:
           chown -R "$(id -u):$(id -g)" "$GITHUB_WORKSPACE"
           ./ci.sh --only=build,load
 
-      - name: No deprecated member is bound (this GIR), text node colors (this GTK)
-        run: |
-          composer install --no-interaction --no-progress --prefer-dist
-          ./ci.sh --only=test --filter 'DeprecationTest|PangoFontTest'
+      - name: Install PHPUnit
+        run: composer install --no-interaction --no-progress --prefer-dist
 
-      - name: run-tests.php (tests/phpt)
+      - name: Run PHPUnit
+        if: matrix.part == 'tests'
+        run: ./ci.sh --only=test
+
+      - name: Run run-tests.php (tests/phpt)
+        if: matrix.part == 'tests'
         run: ./ci.sh --only=phpt
+
+      - name: Run valgrind and sanitizer stages
+        if: matrix.part == 'sanitizers'
+        run: dbus-run-session -- ./ci.sh --only=valgrind,asan
 
   # --enable-gtk4-webkit is analysed by cpp-lint.yml; this leg builds it, loads it and runs the
   # suite against it - the only run in which the WebKit* / JSC* classes exist (the matrix above
