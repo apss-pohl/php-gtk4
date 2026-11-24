@@ -13495,11 +13495,6 @@ final class GskTextNode extends GskRenderNode
         unset($color);
         unset($offset);
     }
-    /** Retrieves the color used by the text $node. */
-    public function get_color(): GdkRGBA
-    {
-        return null;
-    }
     /** Returns the font used by the text $node. */
     public function get_font(): PangoFont
     {
@@ -13519,6 +13514,13 @@ final class GskTextNode extends GskRenderNode
     public function has_color_glyphs(): bool
     {
         return false;
+    }
+    /**
+     * Retrieves the color used by the text $node.
+     */
+    public function get_color(): GdkRGBA
+    {
+        return null;
     }
     /**
      * The glyphs the node draws, as a glyph string.

@@ -30,6 +30,13 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
   never bound; newer GIR (GLib 2.84) says so, and `DeprecationTest` failed there. Add actions with
   `add_action()`: a `GApplication` is the `GActionMap`.
 
+### Fixed
+
+- **`GskTextNode::get_color()` on GTK 4.16 to 4.21** returned garbage (red around -5572, a black node
+  `rgba(0,0,0,0)`): those GTKs hand out the address of the node's internal color with its color state
+  pointer in front, not of its four floats (fixed in GTK 4.22). The method now reads past that pointer on
+  those versions. The CI job on Debian 13's GTK runs `PangoFontTest` too, which checks this color.
+
 ## [0.4.0] - 2026-11-23
 
 GVariant, D-Bus and the GDK surface side, and the fix that lets the extension be loaded with `dl()`

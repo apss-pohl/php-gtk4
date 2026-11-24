@@ -1608,7 +1608,7 @@ Skipped members, by class. Fix with gen/overrides (a hand-written body), gen/ski
 - `Gsk.RepeatingRadialGradientNode`: __construct
 - `Gsk.ShadowNode`: __construct, get_shadow
 - `Gsk.Stroke`: get_dash, set_dash
-- `Gsk.TextNode`: get_glyphs
+- `Gsk.TextNode`: get_color, get_glyphs
 - `Gsk.Transform`: parse
 - `Gtk.Box`: get_children
 - `Gtk.Builder`: __construct, add_from_string, add_objects_from_string, set_current_object, set_handlers

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: eeef0dfbddef6a1cd79080efdb832ac3e7183781 */
+ * Stub hash: 01ea9ae3612cba58ce838a7af6ea855ae41a33a9 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GskBlendNode___construct, 0, 0, 3)
 	ZEND_ARG_OBJ_INFO(0, bottom, Gtk4\\GskRenderNode, 0)
@@ -587,8 +587,6 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Gtk4_GskTextNode___construct, 0, 0, 4)
 	ZEND_ARG_OBJ_INFO(0, offset, Gtk4\\GraphenePoint, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_Gtk4_GskTextNode_get_color arginfo_class_Gtk4_GskBorderNode_get_colors
-
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskTextNode_get_font, 0, 0, Gtk4\\PangoFont, 0)
 ZEND_END_ARG_INFO()
 
@@ -597,6 +595,8 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Gtk4_GskTextNode_get_offset arginfo_class_Gtk4_GskConicGradientNode_get_center
 
 #define arginfo_class_Gtk4_GskTextNode_has_color_glyphs arginfo_class_Gtk4_GskPath_is_closed
+
+#define arginfo_class_Gtk4_GskTextNode_get_color arginfo_class_Gtk4_GskBorderNode_get_colors
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Gtk4_GskTextNode_get_glyphs, 0, 0, Gtk4\\PangoGlyphString, 0)
 ZEND_END_ARG_INFO()
@@ -890,11 +890,11 @@ ZEND_METHOD(Gtk4_GskStrokeNode, get_stroke);
 ZEND_METHOD(Gtk4_GskSubsurfaceNode, __construct);
 ZEND_METHOD(Gtk4_GskSubsurfaceNode, get_child);
 ZEND_METHOD(Gtk4_GskTextNode, __construct);
-ZEND_METHOD(Gtk4_GskTextNode, get_color);
 ZEND_METHOD(Gtk4_GskTextNode, get_font);
 ZEND_METHOD(Gtk4_GskTextNode, get_num_glyphs);
 ZEND_METHOD(Gtk4_GskTextNode, get_offset);
 ZEND_METHOD(Gtk4_GskTextNode, has_color_glyphs);
+ZEND_METHOD(Gtk4_GskTextNode, get_color);
 ZEND_METHOD(Gtk4_GskTextNode, get_glyphs);
 ZEND_METHOD(Gtk4_GskTextureNode, __construct);
 ZEND_METHOD(Gtk4_GskTextureNode, get_texture);
@@ -1244,11 +1244,11 @@ static const zend_function_entry class_Gtk4_GskSubsurfaceNode_methods[] = {
 
 static const zend_function_entry class_Gtk4_GskTextNode_methods[] = {
 	ZEND_ME(Gtk4_GskTextNode, __construct, arginfo_class_Gtk4_GskTextNode___construct, ZEND_ACC_PUBLIC)
-	ZEND_ME(Gtk4_GskTextNode, get_color, arginfo_class_Gtk4_GskTextNode_get_color, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTextNode, get_font, arginfo_class_Gtk4_GskTextNode_get_font, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTextNode, get_num_glyphs, arginfo_class_Gtk4_GskTextNode_get_num_glyphs, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTextNode, get_offset, arginfo_class_Gtk4_GskTextNode_get_offset, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTextNode, has_color_glyphs, arginfo_class_Gtk4_GskTextNode_has_color_glyphs, ZEND_ACC_PUBLIC)
+	ZEND_ME(Gtk4_GskTextNode, get_color, arginfo_class_Gtk4_GskTextNode_get_color, ZEND_ACC_PUBLIC)
 	ZEND_ME(Gtk4_GskTextNode, get_glyphs, arginfo_class_Gtk4_GskTextNode_get_glyphs, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };

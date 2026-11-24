@@ -1168,9 +1168,6 @@ final class GskTextNode extends GskRenderNode
     /** Creates a render node that renders the given glyphs. */
     public function __construct(PangoFont $font, PangoGlyphString $glyphs, GdkRGBA $color, GraphenePoint $offset) {}
 
-    /** Retrieves the color used by the text $node. */
-    public function get_color(): GdkRGBA {}
-
     /** Returns the font used by the text $node. */
     public function get_font(): PangoFont {}
 
@@ -1182,6 +1179,11 @@ final class GskTextNode extends GskRenderNode
 
     /** Checks whether the text $node has color glyphs. */
     public function has_color_glyphs(): bool {}
+
+    /**
+     * Retrieves the color used by the text $node.
+     */
+    public function get_color(): GdkRGBA {}
 
     /**
      * The glyphs the node draws, as a glyph string.
