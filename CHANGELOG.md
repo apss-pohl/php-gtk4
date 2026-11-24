@@ -5,7 +5,9 @@ versions follow [SemVer](https://semver.org/). The version lives in `VERSION` at
 mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./ci.sh --only=version`
 — see docs/RELEASING.md.
 
-## [Unreleased]
+## [0.5.1] - 2026-11-24
+
+A fix in the test tooling only: the module does the same as 0.5.0 on every GTK.
 
 ### Fixed
 
