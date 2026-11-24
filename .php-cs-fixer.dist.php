@@ -17,6 +17,9 @@ $finder = Finder::create()
 return (new Config())
     ->setParallelConfig(ParallelConfigFactory::detect())
     ->setRiskyAllowed(true)
+    // release.yml's verify runs php-qa on every PHP in the matrix, and php-cs-fixer refuses a runtime newer
+    // than the syntax it knows (8.6). The code is PHP 8.4 (@PHP84Migration), which it parses on any runtime.
+    ->setUnsupportedPhpVersionAllowed(true)
     ->setCacheFile('.php-cs-fixer.cache')
     ->setRules([
         '@PER-CS2.0' => true,
