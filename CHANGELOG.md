@@ -5,7 +5,10 @@ versions follow [SemVer](https://semver.org/). The version lives in `VERSION` at
 mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./ci.sh --only=version`
 — see docs/RELEASING.md.
 
-## [Unreleased]
+## [0.5.0] - 2026-11-24
+
+PHP 8.6, on Linux and Windows. It is a release rather than another dev build because the PHP 8.6
+Windows bundle needs the 8.6 Windows zips, which only real releases have.
 
 ### Added
 
