@@ -35,7 +35,8 @@ struct DBusCallable {
 };
 
 // An exported object's three handlers (any of them may be unset) and its interface info, which
-// types the property values the handlers answer.
+// types the property values the handlers answer. `tracked` while the teardown list holds it: with
+// no handler at all, the handlers' state cannot tell.
 struct DBusExport {
   Callback method_call;
   Callback get_property;
@@ -43,6 +44,7 @@ struct DBusExport {
   GDBusInterfaceInfo *info;
   guint id;
   GWeakRef owner;
+  bool tracked;
 };
 
 // A Callback in a g_malloc'ed struct: an ADDREF'd copy of the callable, or UNDEF for none.
@@ -119,16 +121,10 @@ void signal_trampoline(GDBusConnection *connection, const gchar *sender_name,
   for (zval &a : args) zval_ptr_dtor(&a);
 }
 
-// Whether any of the three handlers is still held.
-bool export_live(const DBusExport *e) {
-  return !Z_ISUNDEF(e->method_call.callable) || !Z_ISUNDEF(e->get_property.callable) ||
-         !Z_ISUNDEF(e->set_property.callable);
-}
-
 // GDestroyNotify of an exported object (deferred to an idle by GLib, as above).
 void dbus_export_free(gpointer p) {
   auto *e = static_cast<DBusExport *>(p);
-  if (export_live(e)) {
+  if (e->tracked) {
     teardown_untrack_notified(e);
     callback_retire(&e->method_call);
     callback_retire(&e->get_property);
@@ -142,6 +138,7 @@ void dbus_export_free(gpointer p) {
 // teardown clear (keyed) of an exported object, as subscription_clear().
 void export_clear(GObject * /*owner*/, gpointer key) {
   auto *e = static_cast<DBusExport *>(key);
+  e->tracked = false;  // teardown took the entry out
   callback_release(&e->method_call);
   callback_release(&e->get_property);
   callback_release(&e->set_property);
@@ -1168,6 +1165,7 @@ ZEND_METHOD(Gtk4_GDBusConnection, register_object) {
   }
   g_weak_ref_init(&e->owner, self);
   teardown_track_notified_keyed(e, G_OBJECT(self), export_clear);
+  e->tracked = true;
   RETURN_LONG(e->id);
 }
 

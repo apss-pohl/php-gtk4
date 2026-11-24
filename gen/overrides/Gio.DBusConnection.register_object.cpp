@@ -66,5 +66,6 @@ ZEND_METHOD(Gtk4_GDBusConnection, register_object) {
   }
   g_weak_ref_init(&e->owner, self);
   teardown_track_notified_keyed(e, G_OBJECT(self), export_clear);
+  e->tracked = true;
   RETURN_LONG(e->id);
 }

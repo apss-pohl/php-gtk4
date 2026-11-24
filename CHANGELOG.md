@@ -18,6 +18,9 @@ A crash fix for thread-safe (ZTS) PHP with D-Bus, and the test tooling on GTK 4.
   data race instead). The connection is now held as a `GWeakRef`, which runs no code on any
   thread. Seen as a rare `ShutdownTest` failure on PHP 8.6 ZTS; `GDBusTest` now drives that path
   in a fresh process, which crashed every time before the fix.
+- `GDBusConnection::register_object()` with no handler at all left the export in the request's
+  teardown list after GLib freed it (on `unregister_object()` or when the connection went), and
+  request shutdown then read freed memory.
 - `./ci.sh`'s phpt stage failed 16 of its 19 tests on GTK 4.16 and later: it switched GL off with
   `GDK_DEBUG=gl-disable`, which those GTKs no longer know and answer with
   `Unrecognized value "gl-disable"` on stderr, the stream the phpt tests compare. `ci.sh` and
