@@ -5,6 +5,8 @@ versions follow [SemVer](https://semver.org/). The version lives in `VERSION` at
 mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./ci.sh --only=version`
 — see docs/RELEASING.md.
 
+## [Unreleased]
+
 ## [0.5.1] - 2026-11-24
 
 A crash fix for thread-safe (ZTS) PHP with D-Bus, and the test tooling on GTK 4.16 and later.
