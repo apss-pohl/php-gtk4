@@ -383,6 +383,29 @@ final class GDBusTest extends GtkTestCase
         self::assertSame($me, self::$conn->get_unique_name());
     }
 
+    /**
+     * A connection the script let go is finalized wherever its last reference goes, and that is
+     * often GLib's worker thread (still handling the AddMatch reply of a subscription). What
+     * the module watches the connection with must not run PHP code there: a weak-ref notify did,
+     * and touched the module globals from a thread without them (a segfault on ZTS, a data race
+     * on NTS). Here GTK keeps the session connection alive, so it runs in a fresh process.
+     */
+    public function testALastUnrefOnTheWorkerThreadRunsNoPhpCode(): void
+    {
+        $so = getenv('GTK4_SO') ?: (getenv('GTK4_DLL') ?: './gtk4.so');
+        $cmd = sprintf(
+            '%s -n -dextension=%s %s 2>&1',
+            escapeshellarg(PHP_BINARY),
+            escapeshellarg($so),
+            escapeshellarg(__DIR__ . '/scripts/dbus-last-unref.php'),
+        );
+        $out = [];
+        exec($cmd, $out, $rc);
+        $output = implode("\n", $out);
+        self::assertSame(0, $rc, "exit code $rc:\n$output");
+        self::assertSame('dbus ok', $output);
+    }
+
     public function testASignalRoundTrip(): void
     {
         $conn = self::connection();

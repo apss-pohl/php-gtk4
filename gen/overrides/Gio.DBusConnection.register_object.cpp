@@ -64,8 +64,7 @@ ZEND_METHOD(Gtk4_GDBusConnection, register_object) {
     throw_gerror(error);
     RETURN_THROWS();
   }
-  e->owner = G_OBJECT(self);
-  g_object_weak_ref(e->owner, export_owner_gone, e);
+  g_weak_ref_init(&e->owner, self);
   teardown_track_notified_keyed(e, G_OBJECT(self), export_clear);
   RETURN_LONG(e->id);
 }

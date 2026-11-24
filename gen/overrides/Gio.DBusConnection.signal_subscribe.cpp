@@ -57,8 +57,7 @@ ZEND_METHOD(Gtk4_GDBusConnection, signal_subscribe) {
       object_path != nullptr ? ZSTR_VAL(object_path) : nullptr,
       arg0 != nullptr ? ZSTR_VAL(arg0) : nullptr, static_cast<GDBusSignalFlags>(flags),
       signal_trampoline, c, dbus_callable_free);
-  c->owner = G_OBJECT(self);
-  g_object_weak_ref(c->owner, subscription_owner_gone, c);
+  g_weak_ref_init(&c->owner, self);
   teardown_track_notified_keyed(c, G_OBJECT(self), subscription_clear);
   RETURN_LONG(c->id);
 }

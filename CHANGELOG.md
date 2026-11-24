@@ -7,10 +7,17 @@ mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./c
 
 ## [0.5.1] - 2026-11-24
 
-A fix in the test tooling only: the module does the same as 0.5.0 on every GTK.
+A crash fix for thread-safe (ZTS) PHP with D-Bus, and the test tooling on GTK 4.16 and later.
 
 ### Fixed
 
+- A process with a D-Bus signal subscription or an exported object could segfault on a
+  thread-safe PHP once the script dropped its last `GDBusConnection` handle: GDBus's worker thread
+  often finalizes the connection, and the weak-reference notify the module watched it with ran
+  there, touching the module globals of a thread that has none (on a non-thread-safe PHP, a silent
+  data race instead). The connection is now held as a `GWeakRef`, which runs no code on any
+  thread. Seen as a rare `ShutdownTest` failure on PHP 8.6 ZTS; `GDBusTest` now drives that path
+  in a fresh process, which crashed every time before the fix.
 - `./ci.sh`'s phpt stage failed 16 of its 19 tests on GTK 4.16 and later: it switched GL off with
   `GDK_DEBUG=gl-disable`, which those GTKs no longer know and answer with
   `Unrecognized value "gl-disable"` on stderr, the stream the phpt tests compare. `ci.sh` and

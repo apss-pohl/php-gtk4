@@ -14,14 +14,16 @@
 namespace {
 
 // One PHP callable GLib holds: the Callback (callback_invoke() reads callable/origin), the id
-// the connection knows it by, and the connection while a weak ref watches it (a connection
-// finalized before the request ends - GTestDBus::down() - takes its subscriptions with it,
-// and the notify GLib then defers must not find the teardown entry pointing at a dead owner).
-// g_new0'ed; dbus_callable_free() is its destroy notify.
+// the connection knows it by, and the connection as a GWeakRef. A connection can be finalized
+// before the request ends (GTestDBus::down(), or the script's last reference gone) and then
+// takes its subscriptions with it; its last unref often runs on GDBus's worker thread, so a
+// weak-ref *notify* would touch the module globals and Zend from a thread that has neither
+// (a segfault on ZTS, a data race on NTS). The GWeakRef runs no code there and is thread-safe.
+// g_new0'ed (a zeroed GWeakRef is an empty one); dbus_callable_free() is its destroy notify.
 struct DBusCallable {
   Callback cb;
   guint id;
-  GObject *owner;
+  GWeakRef owner;
 };
 
 // An exported object's three handlers (any of them may be unset) and its interface info, which
@@ -32,7 +34,7 @@ struct DBusExport {
   Callback set_property;
   GDBusInterfaceInfo *info;
   guint id;
-  GObject *owner;
+  GWeakRef owner;
 };
 
 // A Callback in a g_malloc'ed struct: an ADDREF'd copy of the callable, or UNDEF for none.
@@ -61,41 +63,29 @@ void callback_retire(Callback *cb) {
   ZVAL_UNDEF(&cb->callable);
 }
 
-// The connection of a subscription is gone (finalized with the request still running): the
-// subscription went with it, so forget the teardown entry and retire the callable now; the
-// deferred notify then only frees the struct.
-void subscription_owner_gone(gpointer data, GObject * /*where_the_object_was*/) {
-  auto *c = static_cast<DBusCallable *>(data);
-  c->owner = nullptr;
-  teardown_untrack_notified(c);
-  callback_retire(&c->cb);
-}
-
-// Stop watching the owner (the entry is going away by another route).
-void subscription_unwatch(DBusCallable *c) {
-  if (c->owner == nullptr) return;
-  g_object_weak_unref(c->owner, subscription_owner_gone, c);
-  c->owner = nullptr;
-}
-
-// GDestroyNotify of a subscription: nothing to release when teardown or the owner's death did.
+// GDestroyNotify of a subscription, which GLib runs from an idle of the subscribing thread after
+// an unsubscribe and after the connection's finalization alike: nothing to release when teardown
+// did.
 void dbus_callable_free(gpointer p) {
   auto *c = static_cast<DBusCallable *>(p);
   if (!Z_ISUNDEF(c->cb.callable)) {
-    subscription_unwatch(c);
     teardown_untrack_notified(c);
     callback_retire(&c->cb);
   }
+  g_weak_ref_clear(&c->owner);
   g_free(c);
 }
 
 // teardown clear (keyed) of a subscription: drop the callable, then unsubscribe - the notify
-// GLib defers to an idle finds nothing left to release.
-void subscription_clear(GObject *owner, gpointer key) {
+// GLib defers to an idle finds nothing left to release. The tracked owner pointer is not used:
+// the connection may be gone, and the subscription with it.
+void subscription_clear(GObject * /*owner*/, gpointer key) {
   auto *c = static_cast<DBusCallable *>(key);
-  subscription_unwatch(c);
   callback_release(&c->cb);
-  g_dbus_connection_signal_unsubscribe(G_DBUS_CONNECTION(owner), c->id);
+  auto *connection = static_cast<GDBusConnection *>(g_weak_ref_get(&c->owner));
+  if (connection == nullptr) return;
+  g_dbus_connection_signal_unsubscribe(connection, c->id);
+  g_object_unref(connection);
 }
 
 // GDBusSignalCallback: (GDBusConnection, ?string sender, string path, string iface, string
@@ -127,45 +117,30 @@ bool export_live(const DBusExport *e) {
          !Z_ISUNDEF(e->set_property.callable);
 }
 
-// The connection of an exported object is gone: as subscription_owner_gone().
-void export_owner_gone(gpointer data, GObject * /*where_the_object_was*/) {
-  auto *e = static_cast<DBusExport *>(data);
-  e->owner = nullptr;
-  teardown_untrack_notified(e);
-  callback_retire(&e->method_call);
-  callback_retire(&e->get_property);
-  callback_retire(&e->set_property);
-}
-
-// Stop watching the owner.
-void export_unwatch(DBusExport *e) {
-  if (e->owner == nullptr) return;
-  g_object_weak_unref(e->owner, export_owner_gone, e);
-  e->owner = nullptr;
-}
-
 // GDestroyNotify of an exported object (deferred to an idle by GLib, as above).
 void dbus_export_free(gpointer p) {
   auto *e = static_cast<DBusExport *>(p);
   if (export_live(e)) {
-    export_unwatch(e);
     teardown_untrack_notified(e);
     callback_retire(&e->method_call);
     callback_retire(&e->get_property);
     callback_retire(&e->set_property);
   }
+  g_weak_ref_clear(&e->owner);
   g_dbus_interface_info_unref(e->info);
   g_free(e);
 }
 
-// teardown clear (keyed) of an exported object.
-void export_clear(GObject *owner, gpointer key) {
+// teardown clear (keyed) of an exported object, as subscription_clear().
+void export_clear(GObject * /*owner*/, gpointer key) {
   auto *e = static_cast<DBusExport *>(key);
-  export_unwatch(e);
   callback_release(&e->method_call);
   callback_release(&e->get_property);
   callback_release(&e->set_property);
-  g_dbus_connection_unregister_object(G_DBUS_CONNECTION(owner), e->id);
+  auto *connection = static_cast<GDBusConnection *>(g_weak_ref_get(&e->owner));
+  if (connection == nullptr) return;
+  g_dbus_connection_unregister_object(connection, e->id);
+  g_object_unref(connection);
 }
 
 // The four strings every vtable handler is told: connection, sender, path, interface.
