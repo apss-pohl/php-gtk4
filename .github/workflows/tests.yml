@@ -187,7 +187,8 @@ jobs:
   # Debian 13 while every job here stayed green. The same goes for what a newer GIR marks deprecated
   # (GApplication:action-group): DeprecationTest reads the installed GIR, so it runs here too. So does
   # PangoFontTest: GskTextNode::get_color() works around a bug of GTK 4.16 to 4.21 that the floor does
-  # not have. Not the whole suite: its pinned GTK behaviour (tests/robustness-criticals.txt) is the
+  # not have. And the phpt stage: its tests compare stderr, where a newer GTK says what the floor does
+# not (GDK_DEBUG=gl-disable is "Unrecognized" from 4.16 on). Not the whole PHPUnit suite: its pinned GTK behaviour (tests/robustness-criticals.txt) is the
   # floor's.
   newer-gtk:
     name: Build against a newer GTK (Debian 13)
@@ -221,6 +222,9 @@ jobs:
         run: |
           composer install --no-interaction --no-progress --prefer-dist
           ./ci.sh --only=test --filter 'DeprecationTest|PangoFontTest'
+
+      - name: run-tests.php (tests/phpt)
+        run: ./ci.sh --only=phpt
 
   # --enable-gtk4-webkit is analysed by cpp-lint.yml; this leg builds it, loads it and runs the
   # suite against it - the only run in which the WebKit* / JSC* classes exist (the matrix above

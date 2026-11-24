@@ -55,6 +55,10 @@ JOBS=${JOBS:-$(nproc)}
 COMPOSER=${COMPOSER:-$(command -v composer || echo /usr/local/bin/composer)}
 # What the phpt stage hands to run-tests.php; narrow it to one file while iterating.
 PHPT_TESTS=${PHPT_TESTS:-tests/phpt}
+# Keeps GDK from initialising GL in the processes the stages start (see tests/run.sh for why). GTK
+# 4.16 renamed GDK_DEBUG=gl-disable to GDK_DISABLE=gl and prints "Unrecognized value" on stderr for
+# the old one, which fails every phpt that compares stderr; 4.14 knows only the old spelling.
+if pkg-config --atleast-version=4.16 gtk4 2>/dev/null; then GL_OFF=GDK_DISABLE=gl; else GL_OFF=GDK_DEBUG=gl-disable; fi
 # Newest installed clang-tidy-N / clang-format-N (Debian naming), else the unversioned
 # name from PATH, unless overridden.
 newest_tool() {
@@ -563,7 +567,7 @@ stage_asan() {
                   UBSAN_OPTIONS="print_stacktrace=1:halt_on_error=1")
 
     step "asan: stress script (tests/scripts/stress.php)"
-    xvfb-run -a env "${env[@]}" GSK_RENDERER=cairo GDK_DEBUG=gl-disable GDK_BACKEND=x11 "$PHP" -n -dextension=./gtk4-asan.so tests/scripts/stress.php 300 \
+    xvfb-run -a env "${env[@]}" GSK_RENDERER=cairo "$GL_OFF" GDK_BACKEND=x11 "$PHP" -n -dextension=./gtk4-asan.so tests/scripts/stress.php 300 \
         || fail "asan stress (see report above)"
 
     # The PHPUnit process also loads dom/mbstring/intl/... from the system ini;
@@ -594,7 +598,7 @@ stage_coverage() {
 
     step "coverage: phpunit suite + stress script"
     PHP="$PHP" GTK4_SO=./gtk4-cov.so ./tests/run.sh "${PHPUNIT_ARGS[@]}" || fail "coverage phpunit"
-    xvfb-run -a env GSK_RENDERER=cairo GDK_DEBUG=gl-disable GDK_BACKEND=x11 "$PHP" -n -dextension=./gtk4-cov.so tests/scripts/stress.php 50 || fail "coverage stress"
+    xvfb-run -a env GSK_RENDERER=cairo "$GL_OFF" GDK_BACKEND=x11 "$PHP" -n -dextension=./gtk4-cov.so tests/scripts/stress.php 50 || fail "coverage stress"
 
     step "coverage: report (gcovr)"
     command -v gcovr >/dev/null || fail "gcovr not installed"
@@ -641,7 +645,7 @@ stage_phpt() {
     if [[ -f gtk4.so ]] && ! cmp -s gtk4.so modules/gtk4.so; then cp -f gtk4.so modules/gtk4.so; fi
     # GTK_A11Y=none: these tests compare stderr, and a session bus without an a11y service (CI
     # runners) makes GTK print "Unable to acquire the address of the accessibility bus".
-    GTK_A11Y=none GSK_RENDERER=cairo GDK_DEBUG=gl-disable GDK_BACKEND=x11 xvfb-run -a make --no-print-directory test TESTS="$PHPT_TESTS" \
+    env GTK_A11Y=none GSK_RENDERER=cairo "$GL_OFF" GDK_BACKEND=x11 xvfb-run -a make --no-print-directory test TESTS="$PHPT_TESTS" \
         || fail "phpt (see the FAILED TEST SUMMARY above; .out/.diff files sit next to each .phpt)"
 }
 
@@ -656,14 +660,14 @@ stage_valgrind() {
     local glib_supp=/usr/share/glib-2.0/valgrind/glib.supp
     local -a supp=(--suppressions="$PWD/tests/valgrind.supp")
     [[ -f "$glib_supp" ]] && supp+=(--suppressions="$glib_supp")
-    # GDK_DEBUG=gl-disable: no Mesa/llvmpipe in the process (its thread pools leak on CI runners).
+    # $GL_OFF: no Mesa/llvmpipe in the process (its thread pools leak on CI runners).
     # ZEND_DONT_UNLOAD_MODULES: PHP dlclose()s extensions at MSHUTDOWN, which also unloads
     # libgtk-4 - its static caches then lose their roots ("definitely lost" with ??? frames that
     # no suppression can match). Same switch php-src's run-tests.php uses under valgrind;
     # --keep-debuginfo keeps symbols for anything that still gets unloaded.
     # --show-leak-kinds=definite keeps the report readable; the exit code is what matters.
     xvfb-run -a env USE_ZEND_ALLOC=0 ZEND_DONT_UNLOAD_MODULES=1 \
-        GSK_RENDERER=cairo GDK_DEBUG=gl-disable GDK_BACKEND=x11 \
+        GSK_RENDERER=cairo "$GL_OFF" GDK_BACKEND=x11 \
         valgrind --quiet --error-exitcode=42 --leak-check=full --errors-for-leak-kinds=definite \
                  --show-leak-kinds=definite --keep-debuginfo=yes --track-origins=yes \
                  --num-callers=16 "${supp[@]}" \

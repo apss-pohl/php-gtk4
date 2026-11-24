@@ -338,9 +338,10 @@ display, and calls `Gtk::init()` once.
   adding runtime paths. `tests/lsan.supp` and `tests/valgrind.supp` may only contain third-party
   symbols.
 - `tests/run.sh` **forces `GDK_BACKEND=x11`** and unsets `WAYLAND_DISPLAY` (forced, not defaulted;
-  `GSK_RENDERER=cairo` and `GDK_DEBUG=gl-disable` stay overridable — a follow-up wants a
-  `GSK_RENDERER=gl` run). A desktop session exports `GDK_BACKEND=wayland`, GDK then prefers the real
-  compositor over the display Xvfb provides, and GTK 4.14's Wayland backend corrupts the heap
+  `GSK_RENDERER=cairo` and the GL switch (`GDK_DEBUG=gl-disable`, `GDK_DISABLE=gl` from GTK 4.16)
+  stay overridable — a follow-up wants a `GSK_RENDERER=gl` run). A desktop session exports
+  `GDK_BACKEND=wayland`, GDK then prefers the real compositor over the display Xvfb provides, and
+  GTK 4.14's Wayland backend corrupts the heap
   partway through the suite (`gtk_widget_queue_draw: assertion 'GTK_IS_WIDGET (widget)' failed`,
   `malloc(): unaligned fastbin chunk`, a write into a freed block inside libgtk with zero frames of
   ours). CI never saw it because runners have no compositor. Xvfb/X11 is the test target; Wayland
@@ -451,11 +452,13 @@ failing `.out`/`.diff` files upload as the `phpt-failures-php*-<ts>` artifact), 
 (`ci.sh --only=valgrind` + `--only=asan`) and a
 `webkit` job on 8.4 (`--enable-gtk4-webkit` build, load and the whole PHPUnit suite — the only run
 in which the `WebKit*`/`JSC*` classes and their tests exist), and `newer-gtk`: build, load,
-`DeprecationTest` and `PangoFontTest` only, in a `debian:trixie` container (GTK 4.18, GLib 2.84, PHP 8.4
-from Debian), so an API a later GTK or GIR deprecates fails here rather than on a user's machine (a
-deprecated member goes to `gen/skip.txt`), and so does the `GskTextNode::get_color()` workaround for
-GTK 4.16 to 4.21, which the floor never takes. The apt package lists must
-mirror `config.m4`'s pkg-config modules (plus `gir1.2-gtk-4.0` where the `gen` stage runs).
+`DeprecationTest`, `PangoFontTest` and the phpt stage only, in a `debian:trixie` container (GTK 4.18, GLib
+2.84, PHP 8.4 from Debian), so an API a later GTK or GIR deprecates fails here rather than on a user's
+machine (a deprecated member goes to `gen/skip.txt`), and so does the `GskTextNode::get_color()`
+workaround for GTK 4.16 to 4.21, which the floor never takes, and the GL switch `ci.sh` and `tests/run.sh`
+pick per GTK (`GDK_DEBUG=gl-disable` on 4.14, `GDK_DISABLE=gl` from 4.16, which warns about the old one on
+stderr). The apt package lists must mirror `config.m4`'s pkg-config modules (plus `gir1.2-gtk-4.0` where
+the `gen` stage runs).
 (4) `windows.yml`: the 8.4/8.5/8.6 × NTS/ZTS matrix calling `windows-build.yml` — `windows-2022`
 with vs17 for 8.4/8.5, `windows-2025-vs2026` with vs18 for 8.6 (one table there, `PHP_SDK_VS`),
 setup-php + the matching devel pack from windows.php.net + php-sdk-binary-tools + the cached

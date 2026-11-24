@@ -5,6 +5,17 @@ versions follow [SemVer](https://semver.org/). The version lives in `VERSION` at
 mirrored into `src/php_gtk4.h`, `src/gtk4.stub.php` and the built module by `./ci.sh --only=version`
 — see docs/RELEASING.md.
 
+## [Unreleased]
+
+### Fixed
+
+- `./ci.sh`'s phpt stage failed 16 of its 19 tests on GTK 4.16 and later: it switched GL off with
+  `GDK_DEBUG=gl-disable`, which those GTKs no longer know and answer with
+  `Unrecognized value "gl-disable"` on stderr, the stream the phpt tests compare. `ci.sh` and
+  `tests/run.sh` now set the spelling the installed GTK knows (`GDK_DISABLE=gl` from 4.16 on), and
+  the asan, coverage and valgrind stress runs, which ignored the old spelling there, keep GL out
+  again. The `newer-gtk` CI job (Debian 13, GTK 4.18) runs the phpt stage too.
+
 ## [0.5.0] - 2026-11-24
 
 PHP 8.6, on Linux and Windows. It is a release rather than another dev build because the PHP 8.6

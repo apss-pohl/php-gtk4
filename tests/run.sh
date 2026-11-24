@@ -16,8 +16,13 @@ export LIBGL_ALWAYS_SOFTWARE=1
 # ...and keep GDK from initialising GL at all (Mesa's llvmpipe leaks thread pools under
 # valgrind/LSan on CI runners, and Xvfb prints libEGL DRI3 warnings on stderr).
 # GTK 4.14 (the CI floor) honours GDK_DEBUG=gl-disable; GDK_DISABLE=gl is the 4.16+ spelling and
-# is ignored on 4.14 - and setting both makes 4.14 ignore GDK_DEBUG. Revisit when the floor moves.
-export GDK_DEBUG=${GDK_DEBUG:-gl-disable}
+# is ignored on 4.14 - and setting both makes 4.14 ignore GDK_DEBUG, while 4.16+ prints
+# "Unrecognized value" on stderr for the old one. So set the one this GTK knows (ci.sh does the same).
+if pkg-config --atleast-version=4.16 gtk4 2>/dev/null; then
+    export GDK_DISABLE=${GDK_DISABLE:-gl}
+else
+    export GDK_DEBUG=${GDK_DEBUG:-gl-disable}
+fi
 # No accessibility bus under Xvfb: silences the "Unable to acquire the address of the
 # accessibility bus" warning on runners that have a session bus but no a11y service.
 export GTK_A11Y=${GTK_A11Y:-none}

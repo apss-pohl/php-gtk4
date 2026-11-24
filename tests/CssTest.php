@@ -238,7 +238,7 @@ final class CssTest extends GtkTestCase
     }
 
     /**
-     * The one GError path on GdkDisplay: under Xvfb with GDK_DEBUG=gl-disable it fails,
+     * The one GError path on GdkDisplay: under Xvfb with GL disabled (tests/run.sh) it fails,
      * on a real GPU session it succeeds. Both are correct - what is asserted is that a
      * failure arrives as a Gtk4\GError and never as a false return.
      */
