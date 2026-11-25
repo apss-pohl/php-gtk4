@@ -42,13 +42,18 @@ on:
 env:
   # https://github.com/wingtk/gvsbuild/releases - prebuilt GTK4_Gvsbuild_<ver>_x64.zip.
   # Bump here (the cache key follows); the asset is ~300 MB so it is cached per version.
-  GVSBUILD_VERSION: '2026.10.0'
+  # Not 2026.10.0: its GTK 4.24.1 leaves the Windows IME message filter registered when a focused text
+  # widget's input method context is disposed. The next Windows message runs the filter on freed memory
+  # (gtk_im_context_ime_message_filter: assertion 'GTK_IS_IM_CONTEXT_IME (data)' failed, then an access
+  # violation), and the test suite crashed on all six builds. GTK 4.24.2 fixes it (GTK commit 2a50bd4a);
+  # .github/renovate.json5 skips 2026.10.0 so that the next gvsbuild is proposed instead.
+  GVSBUILD_VERSION: '2026.8.0'
   # The archive every Windows binary is linked against, pinned by content: a release asset is
   # mutable by its owner, and this one is cached, so without the hash a replaced upload would be
   # picked up once and reused for every later build. Renovate bumps both together; by hand (docs/BUILD.md):
   #   curl -s https://api.github.com/repos/wingtk/gvsbuild/releases/tags/<ver> \
   #     | jq -r '.assets[] | select(.name | test("GTK4")) | .digest'
-  GVSBUILD_SHA256: '8005b860447e73b10c7f508b1f348e2b6390e01dd61fd5c617b8190a046022fe'
+  GVSBUILD_SHA256: '1f95a92d037f5292da05e6ab1037032ff21ddb7b20d4ac8e83e3674c864c07b0'
   GTK4_ROOT: C:\gtk
   # php-src's Windows SDK (phpsdk-vs1x-x64.bat, nmake wrappers, deps handling).
   PHP_SDK_REF: php-sdk-2.9.0  # a tag, never a branch: this shell builds what release.yml attests

@@ -11,8 +11,20 @@
   enabledManagers: ["custom.regex"],
   // PR titles are commits here (bin/commit-lint): ci(deps), like Dependabot's action updates
   semanticCommits: "enabled",
-  semanticCommitType: "ci",
   semanticCommitScope: "deps",
+  packageRules: [
+    {
+      // Not a top-level semanticCommitType: config:recommended's :semanticPrefixFixDepsChoreOthers sets chore
+      // in a packageRule, which beats it (the first PRs came out as chore(deps)). A rule of ours comes later.
+      matchManagers: ["custom.regex"],
+      semanticCommitType: "ci",
+    },
+    {
+      // GTK 4.24.1 crashes the Windows test suite (.github/workflows/windows-build.yml, above GVSBUILD_VERSION)
+      matchPackageNames: ["wingtk/gvsbuild"],
+      allowedVersions: "!/^2026\\.10\\.0$/",
+    },
+  ],
   minimumReleaseAge: "3 days",
   customManagers: [
     {
