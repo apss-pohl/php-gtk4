@@ -51,7 +51,7 @@ env:
   GVSBUILD_SHA256: '1f95a92d037f5292da05e6ab1037032ff21ddb7b20d4ac8e83e3674c864c07b0'
   GTK4_ROOT: C:\gtk
   # php-src's Windows SDK (phpsdk-vs1x-x64.bat, nmake wrappers, deps handling).
-  PHP_SDK_REF: php-sdk-2.8.3  # a tag, never a branch: this shell builds what release.yml attests
+  PHP_SDK_REF: php-sdk-2.9.0  # a tag, never a branch: this shell builds what release.yml attests
   # The Visual Studio each PHP minor is built with: php.exe loads only a module built for the same
   # series (its build id says VS17 or VS18) and linked with no newer MSVC than its core, so 8.6
   # (Visual Studio 2026) needs vs18 and 8.4/8.5 stay vs17. It is part of the devel pack's and the
